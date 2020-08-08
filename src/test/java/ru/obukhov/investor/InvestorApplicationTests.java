@@ -1,4 +1,4 @@
-package ru.obukhov.investor.investor;
+package ru.obukhov.investor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
