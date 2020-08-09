@@ -2,20 +2,23 @@ package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
+import ru.obukhov.investor.model.transform.CandleMapper;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
 import ru.tinkoff.invest.openapi.MarketContext;
-import ru.tinkoff.invest.openapi.models.market.Candle;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -24,6 +27,7 @@ public class MarketServiceImpl implements MarketService {
 
     private final ConnectionService connectionService;
     private final String token;
+    private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     @Override
     public List<Candle> getMarketCandles(@NotNull final String ticker,
@@ -50,7 +54,10 @@ public class MarketServiceImpl implements MarketService {
         return getContext()
                 .getMarketCandles(instrument.figi, from, to, interval).join()
                 .map(c -> c.candles)
-                .orElse(new ArrayList<>());
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(candleMapper::mapCandle)
+                .collect(Collectors.toList());
     }
 
     @Override

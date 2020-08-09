@@ -1,8 +1,8 @@
 package ru.obukhov.investor.service;
 
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetStatisticsRequest;
-import ru.tinkoff.invest.openapi.models.market.Candle;
 
 import java.util.List;
 

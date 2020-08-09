@@ -2,7 +2,7 @@ package ru.obukhov.investor.web.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.models.market.Candle;
+import ru.obukhov.investor.model.Candle;
 
 import java.util.List;
 

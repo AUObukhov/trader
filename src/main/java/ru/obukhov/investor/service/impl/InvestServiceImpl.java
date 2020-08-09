@@ -5,12 +5,12 @@ import lombok.extern.java.Log;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetStatisticsRequest;
-import ru.tinkoff.invest.openapi.models.market.Candle;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.OffsetDateTime;

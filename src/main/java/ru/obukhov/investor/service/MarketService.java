@@ -1,8 +1,8 @@
 package ru.obukhov.investor.service;
 
 import org.jetbrains.annotations.NotNull;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
-import ru.tinkoff.invest.openapi.models.market.Candle;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
