@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
+import ru.obukhov.investor.web.model.GetStatisticsRequest;
 import ru.tinkoff.invest.openapi.models.market.Candle;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class ApiController {
 
     private final InvestService investService;
 
-    @GetMapping("/get-candles")
+    @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
         List<Candle> candles = investService.getCandles(request);
@@ -30,4 +31,8 @@ public class ApiController {
 
     }
 
+    @GetMapping("/statistics")
+    public void getStatistics(@RequestBody GetStatisticsRequest request) {
+        investService.getStatistics(request);
+    }
 }

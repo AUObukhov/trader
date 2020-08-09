@@ -9,8 +9,13 @@ import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
+import ru.obukhov.investor.web.model.GetStatisticsRequest;
 import ru.tinkoff.invest.openapi.models.market.Candle;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log
@@ -23,7 +28,7 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     public List<Candle> getCandles(GetCandlesRequest request) {
-        MarketService marketService = getMarketService(request);
+        MarketService marketService = getMarketService(request.getToken());
 
         List<Candle> candles = marketService.getMarketCandles(request.getTicker(),
                 request.getTickerType(),
@@ -36,9 +41,31 @@ public class InvestServiceImpl implements InvestService {
         return candles;
     }
 
+    @Override
+    public void getStatistics(GetStatisticsRequest request) {
+        MarketService marketService = getMarketService(request.getToken());
+        OffsetDateTime to = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime from = to.minusDays(1);
+
+        List<List<Candle>> candlesByDays = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            List<Candle> candles = marketService.getMarketCandles(request.getTicker(),
+                    request.getTickerType(),
+                    from,
+                    to,
+                    CandleInterval.ONE_MIN);
+            candlesByDays.add(candles);
+
+            to = from;
+            from = to.minusDays(1);
+        }
+
+    }
+
     @NotNull
-    private MarketService getMarketService(GetCandlesRequest request) {
-        return appContext.getBean(MarketService.class, connectionService, request.getToken());
+    private MarketService getMarketService(String token) {
+        return appContext.getBean(MarketService.class, connectionService, token);
     }
 
 }
