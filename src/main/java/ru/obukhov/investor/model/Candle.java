@@ -15,6 +15,8 @@ public class Candle {
     @JsonSerialize(using = MoneySerializer.class)
     public BigDecimal closePrice;
     @JsonSerialize(using = MoneySerializer.class)
+    public BigDecimal saldo;
+    @JsonSerialize(using = MoneySerializer.class)
     public BigDecimal highestPrice;
     @JsonSerialize(using = MoneySerializer.class)
     public BigDecimal lowestPrice;
