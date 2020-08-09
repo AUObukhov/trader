@@ -11,8 +11,12 @@ import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetStatisticsRequest;
+import ru.obukhov.investor.web.model.GetStatisticsResponse;
 
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Log
 @RestController
@@ -32,7 +36,10 @@ public class ApiController {
     }
 
     @GetMapping("/statistics")
-    public void getStatistics(@RequestBody GetStatisticsRequest request) {
-        investService.getStatistics(request);
+    public GetStatisticsResponse getStatistics(@RequestBody GetStatisticsRequest request) {
+
+        Map<LocalTime, BigDecimal> saldosByTimes = investService.getStatistics(request);
+
+        return new GetStatisticsResponse(saldosByTimes);
     }
 }
