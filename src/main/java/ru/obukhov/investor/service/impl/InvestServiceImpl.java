@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -13,6 +12,7 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
+import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetStatisticsRequest;
@@ -52,8 +52,8 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     public Map<LocalTime, BigDecimal> getStatistics(GetStatisticsRequest request) {
-        OffsetDateTime from = request.getFrom();
-        OffsetDateTime to = ObjectUtils.getIfNull(request.getTo(), OffsetDateTime::now);
+        OffsetDateTime from = DateUtils.adjustFrom(request.getFrom());
+        OffsetDateTime to = DateUtils.adjustTo(request.getTo());
 
         if (Duration.between(from, to).toDays() < 1) {
             throw new InvestorException("Date 'to' must be at least 1 day later than date 'from'");
@@ -75,7 +75,6 @@ public class InvestServiceImpl implements InvestService {
 
     }
 
-    @NotNull
     private List<Candle> getCandles(String ticker,
                                     OffsetDateTime from,
                                     OffsetDateTime to,
@@ -92,9 +91,14 @@ public class InvestServiceImpl implements InvestService {
                     interval);
             candles.addAll(currentCandles);
 
+            log.info("Loaded " + currentCandles.size() + " candles in " +
+                    "[" + currentFrom + "; " + currentTo + ") for '" + ticker + "'");
+
             currentFrom = currentTo;
             currentTo = currentFrom.plusDays(1);
         }
+
+        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
 
         return candles;
     }
