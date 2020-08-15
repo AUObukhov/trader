@@ -11,4 +11,10 @@ public class DateUtils {
                 ZoneOffset.UTC);
     }
 
+    public static OffsetDateTime getTime(int hour, int minute, int second) {
+        return OffsetDateTime.of(0, 1, 1,
+                hour, minute, second, 0,
+                ZoneOffset.UTC);
+    }
+
 }
