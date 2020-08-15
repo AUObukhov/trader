@@ -8,7 +8,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import ru.obukhov.investor.exception.InvestorException;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
@@ -55,8 +55,9 @@ public class InvestServiceImpl implements InvestService {
         OffsetDateTime from = request.getFrom();
         OffsetDateTime to = ObjectUtils.getIfNull(request.getTo(), OffsetDateTime::now);
 
-        Assert.isTrue(Duration.between(from, to).toDays() > 0,
-                "Date 'to' must be at least 1 day later than date 'from'");
+        if (Duration.between(from, to).toDays() < 1) {
+            throw new InvestorException("Date 'to' must be at least 1 day later than date 'from'");
+        }
 
         MarketService marketService = getMarketService(request.getToken());
         List<Candle> candles = getCandles(request.getTicker(),
