@@ -11,13 +11,12 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Instrument> getInstruments(TickerType type);
-
     List<Candle> getMarketCandles(@NotNull String ticker,
-                                  @NotNull TickerType type,
                                   @NotNull OffsetDateTime from,
                                   @NotNull OffsetDateTime to,
                                   @NotNull CandleInterval interval);
+
+    List<Instrument> getInstruments(TickerType type);
 
     void closeConnection();
 }

@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
@@ -31,25 +32,12 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public List<Candle> getMarketCandles(@NotNull final String ticker,
-                                         @NotNull final TickerType type,
                                          @NotNull final OffsetDateTime from,
                                          @NotNull final OffsetDateTime to,
                                          @NotNull final CandleInterval interval) {
         validateToken();
 
-        List<Instrument> instruments = getInstruments(type);
-        if (instruments == null) {
-            throw new IllegalArgumentException("Not found instruments for type " + type);
-        }
-
-        Instrument instrument = instruments.stream()
-                .filter(i -> i.ticker.equals(ticker))
-                .findFirst()
-                .orElse(null);
-
-        if (instrument == null) {
-            throw new IllegalArgumentException("Not found ticker " + ticker);
-        }
+        Instrument instrument = getInstrument(ticker);
 
         return getContext()
                 .getMarketCandles(instrument.figi, from, to, interval).join()
@@ -76,6 +64,15 @@ public class MarketServiceImpl implements MarketService {
             default:
                 throw new IllegalArgumentException("Unknown ticker type " + type);
         }
+    }
+
+    private Instrument getInstrument(String ticker) {
+        validateToken();
+
+        List<Instrument> instruments = getContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
+        Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
+
+        return instruments.get(0);
     }
 
     @NotNull

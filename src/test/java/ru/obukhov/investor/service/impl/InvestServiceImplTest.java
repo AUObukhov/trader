@@ -9,7 +9,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.investor.BaseTest;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
@@ -53,7 +52,6 @@ public class InvestServiceImplTest extends BaseTest {
         GetCandlesRequest request = GetCandlesRequest.builder()
                 .token("token")
                 .ticker("ticker")
-                .tickerType(TickerType.ETF)
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 2, 1))
                 .candleInterval(CandleInterval.ONE_MIN)
@@ -62,7 +60,6 @@ public class InvestServiceImplTest extends BaseTest {
         mockMarketService(request.getToken());
         List<Candle> candles = new ArrayList<>();
         mockCandles(request.getTicker(),
-                request.getTickerType(),
                 request.getFrom(),
                 request.getTo(),
                 request.getCandleInterval(),
@@ -80,7 +77,6 @@ public class InvestServiceImplTest extends BaseTest {
                 .ticker("ticker")
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 1, 4))
-                .tickerType(TickerType.ETF)
                 .build();
 
         mockMarketService(request.getToken());
@@ -99,7 +95,6 @@ public class InvestServiceImplTest extends BaseTest {
                 .time(getTime(12, 0, 0))
                 .build());
         mockCandles(request.getTicker(),
-                request.getTickerType(),
                 getDate(2020, 1, 1),
                 getDate(2020, 1, 2),
                 CandleInterval.ONE_MIN,
@@ -115,7 +110,6 @@ public class InvestServiceImplTest extends BaseTest {
                 .time(getTime(12, 0, 0))
                 .build());
         mockCandles(request.getTicker(),
-                request.getTickerType(),
                 getDate(2020, 1, 2),
                 getDate(2020, 1, 3),
                 CandleInterval.ONE_MIN,
@@ -127,7 +121,6 @@ public class InvestServiceImplTest extends BaseTest {
                 .time(getTime(12, 0, 0))
                 .build());
         mockCandles(request.getTicker(),
-                request.getTickerType(),
                 getDate(2020, 1, 3),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN,
@@ -153,13 +146,12 @@ public class InvestServiceImplTest extends BaseTest {
     }
 
     private void mockCandles(String ticker,
-                             TickerType tickerType,
                              OffsetDateTime from,
                              OffsetDateTime to,
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        when(marketService.getMarketCandles(eq(ticker), eq(tickerType), eq(from), eq(to), eq(candleInterval)))
+        when(marketService.getMarketCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
                 .thenReturn(candles);
     }
 
