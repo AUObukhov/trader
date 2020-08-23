@@ -15,7 +15,7 @@ import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
-import ru.obukhov.investor.web.model.GetStatisticsRequest;
+import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -51,7 +51,7 @@ public class InvestServiceImpl implements InvestService {
     }
 
     @Override
-    public Map<LocalTime, BigDecimal> getSaldos(GetStatisticsRequest request) {
+    public Map<LocalTime, BigDecimal> getSaldos(GetSaldosRequest request) {
         OffsetDateTime from = DateUtils.getDefaultFromIfNull(request.getFrom());
         OffsetDateTime to = DateUtils.getDefaultToIfNull(request.getTo());
 

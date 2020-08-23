@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Builder
-public class GetStatisticsRequest {
+public class GetSaldosRequest {
     private String token;
     private String ticker;
     private OffsetDateTime from;

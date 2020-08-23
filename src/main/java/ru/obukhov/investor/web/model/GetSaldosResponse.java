@@ -9,6 +9,6 @@ import java.util.Map;
 
 @Data
 @AllArgsConstructor
-public class GetStatisticsResponse {
+public class GetSaldosResponse {
     private Map<LocalTime, BigDecimal> saldosByTimes;
 }

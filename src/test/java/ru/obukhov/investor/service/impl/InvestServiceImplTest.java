@@ -13,7 +13,7 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
-import ru.obukhov.investor.web.model.GetStatisticsRequest;
+import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -76,7 +76,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getSaldos_unitesSaldosByTime() {
-        GetStatisticsRequest request = GetStatisticsRequest.builder()
+        GetSaldosRequest request = GetSaldosRequest.builder()
                 .token(TOKEN)
                 .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
@@ -132,7 +132,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getSaldos_sortsSaldosByDays() {
-        GetStatisticsRequest request = GetStatisticsRequest.builder()
+        GetSaldosRequest request = GetSaldosRequest.builder()
                 .token(TOKEN)
                 .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
