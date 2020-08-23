@@ -13,5 +13,5 @@ public interface InvestService {
 
     List<Candle> getCandles(GetCandlesRequest request);
 
-    Map<LocalTime, BigDecimal> getStatistics(GetStatisticsRequest request);
+    Map<LocalTime, BigDecimal> getSaldos(GetStatisticsRequest request);
 }

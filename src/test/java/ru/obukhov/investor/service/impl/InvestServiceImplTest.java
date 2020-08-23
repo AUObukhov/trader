@@ -1,5 +1,6 @@
 package ru.obukhov.investor.service.impl;
 
+import com.google.common.collect.Ordering;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +75,7 @@ public class InvestServiceImplTest extends BaseTest {
     }
 
     @Test
-    public void getStatistics() {
+    public void getSaldos_unitesSaldosByTime() {
         GetStatisticsRequest request = GetStatisticsRequest.builder()
                 .token(TOKEN)
                 .ticker(TICKER)
@@ -115,18 +116,67 @@ public class InvestServiceImplTest extends BaseTest {
                 CandleInterval.ONE_MIN,
                 candles);
 
-        Map<LocalTime, BigDecimal> statistics = service.getStatistics(request);
+        Map<LocalTime, BigDecimal> saldos = service.getSaldos(request);
 
-        assertEquals(3, statistics.size());
+        assertEquals(3, saldos.size());
 
-        final BigDecimal average1 = statistics.get(LocalTime.of(10, 0));
+        final BigDecimal average1 = saldos.get(LocalTime.of(10, 0));
         assertTrue(numbersEqual(average1, 100));
 
-        final BigDecimal average2 = statistics.get(LocalTime.of(11, 0));
+        final BigDecimal average2 = saldos.get(LocalTime.of(11, 0));
         assertTrue(numbersEqual(average2, 150));
 
-        final BigDecimal average3 = statistics.get(LocalTime.of(12, 0));
+        final BigDecimal average3 = saldos.get(LocalTime.of(12, 0));
         assertTrue(numbersEqual(average3, 200));
+    }
+
+    @Test
+    public void getSaldos_sortsSaldosByDays() {
+        GetStatisticsRequest request = GetStatisticsRequest.builder()
+                .token(TOKEN)
+                .ticker(TICKER)
+                .from(getDate(2020, 1, 1))
+                .to(getDate(2020, 1, 4))
+                .build();
+
+        mockMarketService(request.getToken());
+
+        List<Candle> candles = new ArrayList<>();
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getTime(12, 0, 0))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(300))
+                .time(getTime(12, 0, 0))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getTime(10, 0, 0))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getTime(11, 0, 0))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getTime(12, 0, 0))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getTime(11, 0, 0))
+                .build());
+        mockCandles(request.getTicker(),
+                getDate(2020, 1, 1),
+                getDate(2020, 1, 4),
+                CandleInterval.ONE_MIN,
+                candles);
+
+        Map<LocalTime, BigDecimal> saldos = service.getSaldos(request);
+
+        assertEquals(3, saldos.size());
+
+        assertTrue(Ordering.<LocalTime>natural().isOrdered(saldos.keySet()));
     }
 
     private void mockMarketService(String token) {

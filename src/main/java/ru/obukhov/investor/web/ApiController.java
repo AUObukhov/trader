@@ -38,7 +38,7 @@ public class ApiController {
     @GetMapping("/statistics")
     public GetStatisticsResponse getStatistics(@RequestBody GetStatisticsRequest request) {
 
-        Map<LocalTime, BigDecimal> saldosByTimes = investService.getStatistics(request);
+        Map<LocalTime, BigDecimal> saldosByTimes = investService.getSaldos(request);
 
         return new GetStatisticsResponse(saldosByTimes);
     }

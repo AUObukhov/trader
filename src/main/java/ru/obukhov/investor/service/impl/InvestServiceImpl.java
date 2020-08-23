@@ -24,6 +24,7 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
 
@@ -50,7 +51,7 @@ public class InvestServiceImpl implements InvestService {
     }
 
     @Override
-    public Map<LocalTime, BigDecimal> getStatistics(GetStatisticsRequest request) {
+    public Map<LocalTime, BigDecimal> getSaldos(GetStatisticsRequest request) {
         OffsetDateTime from = DateUtils.adjustFrom(request.getFrom());
         OffsetDateTime to = DateUtils.adjustTo(request.getTo());
 
@@ -66,7 +67,7 @@ public class InvestServiceImpl implements InvestService {
             saldosByTimes.put(candle.getTime().toLocalTime(), candle.getSaldo());
         }
 
-        return reduceMultimap(saldosByTimes, MathUtils::getAverage);
+        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverage));
 
     }
 
