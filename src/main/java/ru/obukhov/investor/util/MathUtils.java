@@ -1,9 +1,13 @@
 package ru.obukhov.investor.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
 
     public static BigDecimal getAverage(Collection<BigDecimal> numbers) {

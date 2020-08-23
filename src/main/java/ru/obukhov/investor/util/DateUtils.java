@@ -1,11 +1,14 @@
 package ru.obukhov.investor.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
 
     private static final OffsetDateTime START_DATE = getDate(2000, 1, 1);

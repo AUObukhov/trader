@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 
-public class BaseMockedTest {
+public abstract class BaseMockedTest {
 
     private AutoCloseable closeable;
 

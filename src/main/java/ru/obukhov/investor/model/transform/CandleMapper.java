@@ -4,7 +4,6 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import ru.obukhov.investor.model.Candle;
 
@@ -13,12 +12,11 @@ import java.math.RoundingMode;
 
 @Mapper
 public abstract class CandleMapper {
-    @Mappings({
-            @Mapping(target = "openPrice", source = "openPrice", qualifiedByName = "moneyMapper"),
-            @Mapping(target = "closePrice", source = "closePrice", qualifiedByName = "moneyMapper"),
-            @Mapping(target = "highestPrice", source = "highestPrice", qualifiedByName = "moneyMapper"),
-            @Mapping(target = "lowestPrice", source = "lowestPrice", qualifiedByName = "moneyMapper"),
-    })
+
+    @Mapping(target = "openPrice", source = "openPrice", qualifiedByName = "moneyMapper")
+    @Mapping(target = "closePrice", source = "closePrice", qualifiedByName = "moneyMapper")
+    @Mapping(target = "highestPrice", source = "highestPrice", qualifiedByName = "moneyMapper")
+    @Mapping(target = "lowestPrice", source = "lowestPrice", qualifiedByName = "moneyMapper")
     public abstract Candle mapCandle(ru.tinkoff.invest.openapi.models.market.Candle source);
 
     @AfterMapping
