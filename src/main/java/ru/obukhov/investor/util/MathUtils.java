@@ -25,4 +25,8 @@ public class MathUtils {
         return numbersEqual(value1, BigDecimal.valueOf(value2));
     }
 
+    public static boolean numbersEqual(BigDecimal value1, double value2) {
+        return numbersEqual(value1, BigDecimal.valueOf(value2));
+    }
+
 }
