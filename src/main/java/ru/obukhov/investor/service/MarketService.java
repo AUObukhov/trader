@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service;
 
-import org.jetbrains.annotations.NotNull;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -11,10 +10,7 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Candle> getMarketCandles(@NotNull String ticker,
-                                  @NotNull OffsetDateTime from,
-                                  @NotNull OffsetDateTime to,
-                                  @NotNull CandleInterval interval);
+    List<Candle> getCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval);
 
     List<Instrument> getInstruments(TickerType type);
 

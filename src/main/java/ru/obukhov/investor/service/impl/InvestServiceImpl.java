@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public class InvestServiceImpl implements InvestService {
     public List<Candle> getCandles(GetCandlesRequest request) {
         MarketService marketService = getMarketService(request.getToken());
 
-        List<Candle> candles = marketService.getMarketCandles(request.getTicker(),
+        List<Candle> candles = marketService.getCandles(request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
                 request.getCandleInterval());
@@ -60,11 +59,7 @@ public class InvestServiceImpl implements InvestService {
         }
 
         MarketService marketService = getMarketService(request.getToken());
-        List<Candle> candles = getCandles(request.getTicker(),
-                from,
-                to,
-                CandleInterval.ONE_MIN,
-                marketService);
+        List<Candle> candles = marketService.getCandles(request.getTicker(), from, to, CandleInterval.ONE_MIN);
 
         Multimap<LocalTime, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
@@ -73,34 +68,6 @@ public class InvestServiceImpl implements InvestService {
 
         return reduceMultimap(saldosByTimes, MathUtils::getAverage);
 
-    }
-
-    private List<Candle> getCandles(String ticker,
-                                    OffsetDateTime from,
-                                    OffsetDateTime to,
-                                    CandleInterval interval,
-                                    MarketService marketService) {
-        OffsetDateTime currentFrom = from;
-        OffsetDateTime currentTo = currentFrom.plusDays(1);
-
-        List<Candle> candles = new ArrayList<>();
-        while (currentFrom.isBefore(to)) {
-            List<Candle> currentCandles = marketService.getMarketCandles(ticker,
-                    currentFrom,
-                    currentTo,
-                    interval);
-            candles.addAll(currentCandles);
-
-            log.info("Loaded " + currentCandles.size() + " candles in " +
-                    "[" + currentFrom + "; " + currentTo + ") for '" + ticker + "'");
-
-            currentFrom = currentTo;
-            currentTo = currentFrom.plusDays(1);
-        }
-
-        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
-
-        return candles;
     }
 
     @NotNull

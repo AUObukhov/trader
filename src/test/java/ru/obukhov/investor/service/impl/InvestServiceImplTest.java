@@ -33,6 +33,9 @@ import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 @RunWith(MockitoJUnitRunner.class)
 public class InvestServiceImplTest extends BaseTest {
 
+    private static final String TOKEN = "token";
+    private static final String TICKER = "ticker";
+
     @Mock
     private ApplicationContext appContext;
     @Mock
@@ -50,8 +53,8 @@ public class InvestServiceImplTest extends BaseTest {
     @Test
     public void getCandles_returnsCandlesFromMarketService() {
         GetCandlesRequest request = GetCandlesRequest.builder()
-                .token("token")
-                .ticker("ticker")
+                .token(TOKEN)
+                .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 2, 1))
                 .candleInterval(CandleInterval.ONE_MIN)
@@ -73,58 +76,44 @@ public class InvestServiceImplTest extends BaseTest {
     @Test
     public void getStatistics() {
         GetStatisticsRequest request = GetStatisticsRequest.builder()
-                .token("token")
-                .ticker("ticker")
+                .token(TOKEN)
+                .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 1, 4))
                 .build();
 
         mockMarketService(request.getToken());
 
-        List<Candle> candlesDay1 = new ArrayList<>();
-        candlesDay1.add(Candle.builder()
+        List<Candle> candles = new ArrayList<>();
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
                 .time(getTime(10, 0, 0))
                 .build());
-        candlesDay1.add(Candle.builder()
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
                 .time(getTime(11, 0, 0))
                 .build());
-        candlesDay1.add(Candle.builder()
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
                 .time(getTime(12, 0, 0))
                 .build());
-        mockCandles(request.getTicker(),
-                getDate(2020, 1, 1),
-                getDate(2020, 1, 2),
-                CandleInterval.ONE_MIN,
-                candlesDay1);
-
-        List<Candle> candlesDay2 = new ArrayList<>();
-        candlesDay2.add(Candle.builder()
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(200))
                 .time(getTime(11, 0, 0))
                 .build());
-        candlesDay2.add(Candle.builder()
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(200))
                 .time(getTime(12, 0, 0))
                 .build());
-        mockCandles(request.getTicker(),
-                getDate(2020, 1, 2),
-                getDate(2020, 1, 3),
-                CandleInterval.ONE_MIN,
-                candlesDay2);
-
-        List<Candle> candlesDay3 = new ArrayList<>();
-        candlesDay3.add(Candle.builder()
+        candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(300))
                 .time(getTime(12, 0, 0))
                 .build());
         mockCandles(request.getTicker(),
-                getDate(2020, 1, 3),
+                getDate(2020, 1, 1),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN,
-                candlesDay3);
+                candles);
 
         Map<LocalTime, BigDecimal> statistics = service.getStatistics(request);
 
@@ -151,7 +140,7 @@ public class InvestServiceImplTest extends BaseTest {
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        when(marketService.getMarketCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
+        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
                 .thenReturn(candles);
     }
 

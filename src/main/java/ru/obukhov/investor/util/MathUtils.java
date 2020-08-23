@@ -17,8 +17,12 @@ public class MathUtils {
         return dividend.divide(BigDecimal.valueOf(divisor), 2, RoundingMode.HALF_UP);
     }
 
+    public static boolean numbersEqual(BigDecimal value1, BigDecimal value2) {
+        return value1.compareTo(value2) == 0;
+    }
+
     public static boolean numbersEqual(BigDecimal value1, int value2) {
-        return value1.compareTo(BigDecimal.valueOf(value2)) == 0;
+        return numbersEqual(value1, BigDecimal.valueOf(value2));
     }
 
 }

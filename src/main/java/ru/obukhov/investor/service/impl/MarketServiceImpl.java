@@ -1,6 +1,7 @@
 package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,6 +13,7 @@ import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
+import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log
 @Service
 @Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
@@ -31,16 +34,36 @@ public class MarketServiceImpl implements MarketService {
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     @Override
-    public List<Candle> getMarketCandles(@NotNull final String ticker,
-                                         @NotNull final OffsetDateTime from,
-                                         @NotNull final OffsetDateTime to,
-                                         @NotNull final CandleInterval interval) {
+    public List<Candle> getCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
         validateToken();
+
+        OffsetDateTime currentFrom = from;
+        OffsetDateTime currentTo = currentFrom.plusDays(1);
 
         Instrument instrument = getInstrument(ticker);
 
+        List<Candle> candles = new ArrayList<>();
+        while (currentFrom.isBefore(to)) {
+            if (DateUtils.isWorkDay(currentFrom)) {
+                List<Candle> currentCandles = getCandlesShort(instrument.figi, currentFrom, currentTo, interval);
+                candles.addAll(currentCandles);
+
+                log.info("Loaded " + currentCandles.size() + " candles in " +
+                        "[" + currentFrom + "; " + currentTo + ") for '" + ticker + "'");
+            }
+
+            currentFrom = currentTo;
+            currentTo = currentFrom.plusDays(1);
+        }
+
+        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
+
+        return candles;
+    }
+
+    private List<Candle> getCandlesShort(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
         return getContext()
-                .getMarketCandles(instrument.figi, from, to, interval).join()
+                .getMarketCandles(figi, from, to, interval).join()
                 .map(c -> c.candles)
                 .orElse(new ArrayList<>())
                 .stream()
