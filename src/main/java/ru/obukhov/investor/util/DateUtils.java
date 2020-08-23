@@ -11,7 +11,7 @@ import java.time.ZoneOffset;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
 
-    private static final OffsetDateTime START_DATE = getDate(2000, 1, 1);
+    static final OffsetDateTime START_DATE = getDate(2000, 1, 1);
 
     public static OffsetDateTime getDateTime(int year, int month, int dayOfMonth, int hour, int minute, int second) {
         return OffsetDateTime.of(year, month, dayOfMonth,
