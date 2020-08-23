@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
-import ru.obukhov.investor.BaseTest;
+import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
@@ -32,7 +32,7 @@ import static ru.obukhov.investor.util.DateUtils.getTime;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
 @RunWith(MockitoJUnitRunner.class)
-public class InvestServiceImplTest extends BaseTest {
+public class InvestServiceImplTest extends BaseMockedTest {
 
     private static final String TOKEN = "token";
     private static final String TICKER = "ticker";

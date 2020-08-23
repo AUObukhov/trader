@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import ru.obukhov.investor.BaseTest;
+import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
@@ -37,7 +37,7 @@ import static ru.obukhov.investor.util.DateUtils.getDate;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MarketServiceImplTest extends BaseTest {
+public class MarketServiceImplTest extends BaseMockedTest {
 
     private static final String TOKEN = "token";
     private static final String FIGI = "figi";

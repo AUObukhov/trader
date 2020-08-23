@@ -52,8 +52,8 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     public Map<LocalTime, BigDecimal> getSaldos(GetStatisticsRequest request) {
-        OffsetDateTime from = DateUtils.adjustFrom(request.getFrom());
-        OffsetDateTime to = DateUtils.adjustTo(request.getTo());
+        OffsetDateTime from = DateUtils.getDefaultFromIfNull(request.getFrom());
+        OffsetDateTime to = DateUtils.getDefaultToIfNull(request.getTo());
 
         if (Duration.between(from, to).toDays() < 1) {
             throw new InvestorException("Date 'to' must be at least 1 day later than date 'from'");

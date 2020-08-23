@@ -1,5 +1,7 @@
 package ru.obukhov.investor.util;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -22,12 +24,12 @@ public class DateUtils {
         return getDateTime(0, 1, 1, hour, minute, second);
     }
 
-    public static OffsetDateTime adjustFrom(OffsetDateTime from) {
-        return from == null ? START_DATE : from;
+    public static OffsetDateTime getDefaultFromIfNull(OffsetDateTime from) {
+        return ObjectUtils.defaultIfNull(from, START_DATE);
     }
 
-    public static OffsetDateTime adjustTo(OffsetDateTime to) {
-        return to == null ? OffsetDateTime.now() : to;
+    public static OffsetDateTime getDefaultToIfNull(OffsetDateTime to) {
+        return ObjectUtils.defaultIfNull(to, OffsetDateTime.now());
     }
 
     public static boolean isWorkDay(OffsetDateTime date) {
