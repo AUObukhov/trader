@@ -10,5 +10,5 @@ public enum TickerType {
     @JsonProperty("bond")
     BOND,
     @JsonProperty("currency")
-    CURRENCY;
+    CURRENCY
 }
