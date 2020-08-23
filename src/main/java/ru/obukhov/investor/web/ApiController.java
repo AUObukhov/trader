@@ -13,6 +13,7 @@ import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.obukhov.investor.web.model.GetSaldosResponse;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ApiController {
     }
 
     @GetMapping("/saldos")
-    public GetSaldosResponse getSaldos(@RequestBody GetSaldosRequest request) {
+    public GetSaldosResponse getSaldos(@Valid @RequestBody GetSaldosRequest request) {
 
         Map<LocalTime, BigDecimal> saldosByTimes = investService.getSaldos(request);
 

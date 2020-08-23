@@ -81,6 +81,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 1, 4))
+                .candleInterval(CandleInterval.ONE_MIN)
                 .build();
 
         mockMarketService(request.getToken());
@@ -137,6 +138,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 .ticker(TICKER)
                 .from(getDate(2020, 1, 1))
                 .to(getDate(2020, 1, 4))
+                .candleInterval(CandleInterval.ONE_MIN)
                 .build();
 
         mockMarketService(request.getToken());

@@ -7,7 +7,6 @@ import lombok.extern.java.Log;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import ru.obukhov.investor.exception.InvestorException;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
@@ -16,10 +15,8 @@ import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetSaldosRequest;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -55,12 +52,8 @@ public class InvestServiceImpl implements InvestService {
         OffsetDateTime from = DateUtils.getDefaultFromIfNull(request.getFrom());
         OffsetDateTime to = DateUtils.getDefaultToIfNull(request.getTo());
 
-        if (Duration.between(from, to).toDays() < 1) {
-            throw new InvestorException("Date 'to' must be at least 1 day later than date 'from'");
-        }
-
         MarketService marketService = getMarketService(request.getToken());
-        List<Candle> candles = marketService.getCandles(request.getTicker(), from, to, CandleInterval.ONE_MIN);
+        List<Candle> candles = marketService.getCandles(request.getTicker(), from, to, request.getCandleInterval());
 
         Multimap<LocalTime, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
