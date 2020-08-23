@@ -10,7 +10,7 @@ import java.util.Collection;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
 
-    public static BigDecimal getAverage(Collection<BigDecimal> numbers) {
+    public static BigDecimal getAverageMoney(Collection<BigDecimal> numbers) {
         return numbers.stream()
                 .reduce(BigDecimal::add)
                 .map(s -> divideMoney(s, numbers.size()))

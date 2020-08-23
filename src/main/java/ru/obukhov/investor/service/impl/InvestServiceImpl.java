@@ -67,7 +67,7 @@ public class InvestServiceImpl implements InvestService {
             saldosByTimes.put(candle.getTime().toLocalTime(), candle.getSaldo());
         }
 
-        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverage));
+        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverageMoney));
 
     }
 
