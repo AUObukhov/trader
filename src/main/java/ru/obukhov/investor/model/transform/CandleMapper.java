@@ -17,7 +17,7 @@ public abstract class CandleMapper {
     @Mapping(target = "closePrice", source = "closePrice", qualifiedByName = "moneyMapper")
     @Mapping(target = "highestPrice", source = "highestPrice", qualifiedByName = "moneyMapper")
     @Mapping(target = "lowestPrice", source = "lowestPrice", qualifiedByName = "moneyMapper")
-    public abstract Candle mapCandle(ru.tinkoff.invest.openapi.models.market.Candle source);
+    public abstract Candle map(ru.tinkoff.invest.openapi.models.market.Candle source);
 
     @AfterMapping
     protected void calculateSaldo(@MappingTarget Candle.CandleBuilder candle,

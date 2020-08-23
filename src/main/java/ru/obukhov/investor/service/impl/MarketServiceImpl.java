@@ -67,7 +67,7 @@ public class MarketServiceImpl implements MarketService {
                 .map(c -> c.candles)
                 .orElse(new ArrayList<>())
                 .stream()
-                .map(candleMapper::mapCandle)
+                .map(candleMapper::map)
                 .collect(Collectors.toList());
     }
 
