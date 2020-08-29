@@ -30,7 +30,12 @@ public class ApiController {
     @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
-        List<Candle> candles = investService.getCandles(request);
+        List<Candle> candles = investService.getCandles(
+                request.getToken(),
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo(),
+                request.getCandleInterval());
 
         return new GetCandlesResponse(candles);
 

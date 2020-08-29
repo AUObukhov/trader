@@ -12,7 +12,6 @@ import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
-import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -53,23 +52,17 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getCandles_returnsCandlesFromMarketService() {
-        GetCandlesRequest request = GetCandlesRequest.builder()
-                .token(TOKEN)
-                .ticker(TICKER)
-                .from(getDate(2020, 1, 1))
-                .to(getDate(2020, 2, 1))
-                .candleInterval(CandleInterval.ONE_MIN)
-                .build();
+        String token = TOKEN;
+        String ticker = TICKER;
+        OffsetDateTime from = getDate(2020, 1, 1);
+        OffsetDateTime to = getDate(2020, 2, 1);
+        CandleInterval candleInterval = CandleInterval.ONE_MIN;
 
-        mockMarketService(request.getToken());
+        mockMarketService(token);
         List<Candle> candles = new ArrayList<>();
-        mockCandles(request.getTicker(),
-                request.getFrom(),
-                request.getTo(),
-                request.getCandleInterval(),
-                candles);
+        mockCandles(ticker, from, to, candleInterval, candles);
 
-        List<Candle> candlesResponse = service.getCandles(request);
+        List<Candle> candlesResponse = service.getCandles(token, ticker, from, to, candleInterval);
 
         Assert.assertSame(candles, candlesResponse);
     }

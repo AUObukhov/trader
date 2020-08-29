@@ -13,8 +13,8 @@ import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
-import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetSaldosRequest;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -34,13 +34,18 @@ public class InvestServiceImpl implements InvestService {
     private final ConnectionService connectionService;
 
     @Override
-    public List<Candle> getCandles(GetCandlesRequest request) {
-        MarketService marketService = getMarketService(request.getToken());
+    public List<Candle> getCandles(String token,
+                                   String ticker,
+                                   OffsetDateTime from,
+                                   OffsetDateTime to,
+                                   CandleInterval candleInterval) {
 
-        List<Candle> candles = marketService.getCandles(request.getTicker(),
-                request.getFrom(),
-                request.getTo(),
-                request.getCandleInterval());
+        OffsetDateTime adjustedFrom = DateUtils.getDefaultFromIfNull(from);
+        OffsetDateTime adjustedTo = DateUtils.getDefaultToIfNull(to);
+
+        MarketService marketService = getMarketService(token);
+
+        List<Candle> candles = marketService.getCandles(ticker, adjustedFrom, adjustedTo, candleInterval);
 
         marketService.closeConnection();
 
@@ -49,11 +54,11 @@ public class InvestServiceImpl implements InvestService {
 
     @Override
     public Map<LocalTime, BigDecimal> getSaldos(GetSaldosRequest request) {
-        OffsetDateTime from = DateUtils.getDefaultFromIfNull(request.getFrom());
-        OffsetDateTime to = DateUtils.getDefaultToIfNull(request.getTo());
-
-        MarketService marketService = getMarketService(request.getToken());
-        List<Candle> candles = marketService.getCandles(request.getTicker(), from, to, request.getCandleInterval());
+        List<Candle> candles = getCandles(request.getToken(),
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo(),
+                request.getCandleInterval());
 
         Multimap<LocalTime, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
