@@ -20,17 +20,15 @@ import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static ru.obukhov.investor.util.DateUtils.getDate;
@@ -56,7 +54,6 @@ public class MarketServiceImplTest extends BaseMockedTest {
     public void setUp() {
         when(connectionService.getApi(eq(TOKEN))).thenReturn(openApi);
         when(openApi.getMarketContext()).thenReturn(marketContext);
-        mockEmptyCandles();
 
         this.service = new MarketServiceImpl(connectionService, TOKEN);
     }
@@ -90,7 +87,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         final OffsetDateTime from = getDate(2020, 1, 1);
         final OffsetDateTime to = getDate(2020, 1, 4);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
+        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval, ChronoUnit.DAYS);
 
         assertEquals(6, candles.size());
         assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
@@ -99,58 +96,6 @@ public class MarketServiceImplTest extends BaseMockedTest {
         assertTrue(numbersEqual(BigDecimal.valueOf(3), candles.get(3).getOpenPrice()));
         assertTrue(numbersEqual(BigDecimal.valueOf(4), candles.get(4).getOpenPrice()));
         assertTrue(numbersEqual(BigDecimal.valueOf(5), candles.get(5).getOpenPrice()));
-    }
-
-    @Test
-    public void getCandles_skipsHolyDays() {
-        final String figi = FIGI;
-        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
-        final String ticker = TICKER;
-
-        mockCandlesSimple(figi,
-                getDate(2020, 1, 3),
-                getDate(2020, 1, 4),
-                candleInterval,
-                0);
-
-        mockCandlesSimple(figi,
-                getDate(2020, 1, 4),
-                getDate(2020, 1, 5),
-                candleInterval,
-                1);
-
-        mockCandlesSimple(figi,
-                getDate(2020, 1, 5),
-                getDate(2020, 1, 6),
-                candleInterval,
-                3);
-
-        mockCandlesSimple(figi,
-                getDate(2020, 1, 6),
-                getDate(2020, 1, 7),
-                candleInterval,
-                4);
-
-        mockInstrument(figi, ticker);
-
-        final OffsetDateTime from = getDate(2020, 1, 1);
-        final OffsetDateTime to = getDate(2020, 1, 10);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
-
-        assertEquals(2, candles.size());
-        assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
-        assertTrue(numbersEqual(BigDecimal.valueOf(4), candles.get(1).getOpenPrice()));
-    }
-
-
-    private void mockEmptyCandles() {
-
-        when(marketContext.getMarketCandles(anyString(),
-                any(OffsetDateTime.class),
-                any(OffsetDateTime.class),
-                any(CandleInterval.class)))
-                .thenReturn(createCandlesFuture(null, null, emptyList()));
-
     }
 
     private void mockCandlesSimple(String figi,

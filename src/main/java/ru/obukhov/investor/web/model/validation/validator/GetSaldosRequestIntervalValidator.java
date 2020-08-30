@@ -3,7 +3,7 @@ package ru.obukhov.investor.web.model.validation.validator;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.util.Assert;
 import ru.obukhov.investor.util.DateUtils;
-import ru.obukhov.investor.web.model.GetSaldosRequest;
+import ru.obukhov.investor.web.model.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.validation.constraint.GetSaldosRequestIntervalConstraint;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -14,10 +14,10 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 
 /**
- * Validates that {@link GetSaldosRequest#candleInterval} is less than interval between {@link GetSaldosRequest#from}
- * and {@link GetSaldosRequest#to}
+ * Validates that {@link GetDailySaldosRequest#candleInterval} is less than interval between {@link GetDailySaldosRequest#from}
+ * and {@link GetDailySaldosRequest#to}
  */
-public class GetSaldosRequestIntervalValidator implements ConstraintValidator<GetSaldosRequestIntervalConstraint, GetSaldosRequest> {
+public class GetSaldosRequestIntervalValidator implements ConstraintValidator<GetSaldosRequestIntervalConstraint, GetDailySaldosRequest> {
 
     private static final Map<CandleInterval, Long> CANDLE_INTERVALS_TO_MINUTES =
             ImmutableMap.<CandleInterval, Long>builder()
@@ -37,7 +37,7 @@ public class GetSaldosRequestIntervalValidator implements ConstraintValidator<Ge
                     .build();
 
     @Override
-    public boolean isValid(GetSaldosRequest request, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(GetDailySaldosRequest request, ConstraintValidatorContext constraintValidatorContext) {
         OffsetDateTime from = DateUtils.getDefaultFromIfNull(request.getFrom());
         OffsetDateTime to = DateUtils.getDefaultToIfNull(request.getTo());
 

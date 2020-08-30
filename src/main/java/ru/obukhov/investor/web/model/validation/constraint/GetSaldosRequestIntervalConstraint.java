@@ -1,5 +1,6 @@
 package ru.obukhov.investor.web.model.validation.constraint;
 
+import ru.obukhov.investor.web.model.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.validation.validator.GetSaldosRequestIntervalValidator;
 
 import javax.validation.Constraint;
@@ -11,7 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Type {@link ru.obukhov.investor.web.model.GetSaldosRequest}, annotated by @GetSaldosRequestIntervalConstraint is validated by {@link GetSaldosRequestIntervalValidator}
+ * Type {@link GetDailySaldosRequest}, annotated by @GetSaldosRequestIntervalConstraint is validated by
+ * {@link GetSaldosRequestIntervalValidator}
  */
 @Documented
 @Constraint(validatedBy = GetSaldosRequestIntervalValidator.class)

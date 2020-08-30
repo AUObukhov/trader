@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
 import java.util.Map;
 
 @Data
 @AllArgsConstructor
 public class GetSaldosResponse {
-    private Map<LocalTime, BigDecimal> saldosByTimes;
+    private Map<?, BigDecimal> saldos;
+
 }

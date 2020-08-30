@@ -10,11 +10,13 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
-import ru.obukhov.investor.web.model.GetSaldosRequest;
+import ru.obukhov.investor.web.model.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.GetSaldosResponse;
+import ru.obukhov.investor.web.model.GetWeeklySaldosRequest;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +43,26 @@ public class ApiController {
 
     }
 
-    @GetMapping("/saldos")
-    public GetSaldosResponse getSaldos(@Valid @RequestBody GetSaldosRequest request) {
+    @GetMapping("/saldos/daily")
+    public GetSaldosResponse getDailySaldos(@Valid @RequestBody GetDailySaldosRequest request) {
 
-        Map<LocalTime, BigDecimal> saldosByTimes = investService.getSaldos(request);
+        Map<LocalTime, BigDecimal> saldosByTimes = investService.getDailySaldos(request.getToken(),
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo(),
+                request.getCandleInterval());
 
         return new GetSaldosResponse(saldosByTimes);
+    }
+
+    @GetMapping("/saldos/weekly")
+    public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetWeeklySaldosRequest request) {
+
+        Map<DayOfWeek, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(request.getToken(),
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo());
+
+        return new GetSaldosResponse(saldosByDaysOfWeek);
     }
 }

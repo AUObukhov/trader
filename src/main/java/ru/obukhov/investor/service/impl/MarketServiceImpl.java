@@ -20,6 +20,7 @@ import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,29 +38,34 @@ public class MarketServiceImpl implements MarketService {
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     /**
-     * Load candles by conditions day by day. Skip candles in weekend
+     * Load candles by conditions period by period.
      * {@link MarketServiceImpl#token} expected to be initialised
      *
      * @return list of loaded candles
      */
     @Override
-    public List<Candle> getCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
+    public List<Candle> getCandles(String ticker,
+                                   OffsetDateTime from,
+                                   OffsetDateTime to,
+                                   CandleInterval interval,
+                                   TemporalUnit periodUnit) {
+
         validateToken();
 
         OffsetDateTime currentFrom = from;
-        OffsetDateTime currentTo = currentFrom.plusDays(1);
+        OffsetDateTime currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
 
         Instrument instrument = getInstrument(ticker);
 
         List<CompletableFuture<Optional<HistoricalCandles>>> futures = new ArrayList<>();
         while (currentFrom.isBefore(to)) {
-            if (DateUtils.isWorkDay(currentFrom)) {
-                CompletableFuture<Optional<HistoricalCandles>> currentCandles = getContext().getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
-                futures.add(currentCandles);
-            }
+            CompletableFuture<Optional<HistoricalCandles>> currentCandles =
+                    getContext().getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
+            futures.add(currentCandles);
+
 
             currentFrom = currentTo;
-            currentTo = currentFrom.plusDays(1);
+            currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
         }
 
         List<Candle> candles = futures.stream()
@@ -70,7 +76,7 @@ public class MarketServiceImpl implements MarketService {
                 .map(candleMapper::map)
                 .collect(Collectors.toList());
 
-        log.info("Loaded " + futures.size() + " candles for '" + ticker + "'");
+        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
 
         return candles;
     }

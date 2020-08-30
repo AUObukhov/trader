@@ -12,12 +12,14 @@ import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
-import ru.obukhov.investor.web.model.GetSaldosRequest;
+import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,17 +69,14 @@ public class InvestServiceImplTest extends BaseMockedTest {
         Assert.assertSame(candles, candlesResponse);
     }
 
-    @Test
-    public void getSaldos_unitesSaldosByTime() {
-        GetSaldosRequest request = GetSaldosRequest.builder()
-                .token(TOKEN)
-                .ticker(TICKER)
-                .from(getDate(2020, 1, 1))
-                .to(getDate(2020, 1, 4))
-                .candleInterval(CandleInterval.ONE_MIN)
-                .build();
+    // region getDailySaldos tests
 
-        mockMarketService(request.getToken());
+    @Test
+    public void getDailySaldos_unitesSaldosByTime() {
+        String token = TOKEN;
+        String ticker = TICKER;
+
+        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
@@ -104,13 +103,17 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 .saldo(BigDecimal.valueOf(300))
                 .time(getTime(12, 0, 0))
                 .build());
-        mockCandles(request.getTicker(),
+        mockCandles(ticker,
                 getDate(2020, 1, 1),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN,
                 candles);
 
-        Map<LocalTime, BigDecimal> saldos = service.getSaldos(request);
+        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(token,
+                ticker,
+                getDate(2020, 1, 1),
+                getDate(2020, 1, 4),
+                CandleInterval.ONE_MIN);
 
         assertEquals(3, saldos.size());
 
@@ -125,54 +128,172 @@ public class InvestServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getSaldos_sortsSaldosByDays() {
-        GetSaldosRequest request = GetSaldosRequest.builder()
-                .token(TOKEN)
-                .ticker(TICKER)
-                .from(getDate(2020, 1, 1))
-                .to(getDate(2020, 1, 4))
-                .candleInterval(CandleInterval.ONE_MIN)
-                .build();
+    public void getDailySaldos_sortsSaldosByDays() {
+        String token = TOKEN;
+        String ticker = TICKER;
 
-        mockMarketService(request.getToken());
+        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(10, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(11, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .saldo(BigDecimal.TEN)
                 .time(getTime(11, 0, 0))
                 .build());
-        mockCandles(request.getTicker(),
+        mockCandles(ticker,
                 getDate(2020, 1, 1),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN,
                 candles);
 
-        Map<LocalTime, BigDecimal> saldos = service.getSaldos(request);
+        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(token,
+                ticker,
+                getDate(2020, 1, 1),
+                getDate(2020, 1, 4),
+                CandleInterval.ONE_MIN);
 
         assertEquals(3, saldos.size());
 
         assertTrue(Ordering.<LocalTime>natural().isOrdered(saldos.keySet()));
     }
+
+    // endregion
+
+    // region getWeeklySaldos tests
+
+    @Test
+    public void getWeeklySaldos_unitesSaldosByDayOfWeek() {
+        String token = TOKEN;
+        String ticker = TICKER;
+
+        mockMarketService(token);
+
+        List<Candle> candles = new ArrayList<>();
+
+        // Monday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getDate(2020, 8, 24))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getDate(2020, 8, 24))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(300))
+                .time(getDate(2020, 8, 24))
+                .build());
+
+        // Tuesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getDate(2020, 8, 25))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getDate(2020, 8, 25))
+                .build());
+
+        // Wednesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(300))
+                .time(getDate(2020, 8, 26))
+                .build());
+
+        mockCandles(ticker,
+                getDate(2020, 8, 24),
+                getDate(2020, 8, 30),
+                CandleInterval.DAY,
+                candles);
+
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(token,
+                ticker,
+                getDate(2020, 8, 24),
+                getDate(2020, 8, 30));
+
+        assertEquals(3, saldos.size());
+
+        final BigDecimal mondayAverage = saldos.get(DayOfWeek.MONDAY);
+        assertTrue(numbersEqual(mondayAverage, 200));
+
+        final BigDecimal tuesdatAverage = saldos.get(DayOfWeek.TUESDAY);
+        assertTrue(numbersEqual(tuesdatAverage, 150));
+
+        final BigDecimal wednesdayAverage = saldos.get(DayOfWeek.WEDNESDAY);
+        assertTrue(numbersEqual(wednesdayAverage, 300));
+    }
+
+    @Test
+    public void getWeeklySaldos_sortsSaldosByDays() {
+        String token = TOKEN;
+        String ticker = TICKER;
+
+        mockMarketService(token);
+
+        List<Candle> candles = new ArrayList<>();
+
+        // Tuesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 25))
+                .build());
+
+        // Monday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 24))
+                .build());
+
+        // Friday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 28))
+                .build());
+
+        // Wednesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 26))
+                .build());
+
+        mockCandles(ticker,
+                getDate(2020, 8, 24),
+                getDate(2020, 8, 30),
+                CandleInterval.DAY,
+                candles);
+
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(token,
+                ticker,
+                getDate(2020, 8, 24),
+                getDate(2020, 8, 30));
+
+        assertEquals(4, saldos.size());
+
+        assertTrue(Ordering.<DayOfWeek>natural().isOrdered(saldos.keySet()));
+    }
+
+    // endregion
+
+    // region mocks
 
     private void mockMarketService(String token) {
         when(appContext.getBean(eq(MarketService.class), eq(connectionService), eq(token)))
@@ -185,8 +306,12 @@ public class InvestServiceImplTest extends BaseMockedTest {
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
+        TemporalUnit temporalUnit = DateUtils.getPeriodUnitByCandleInterval(candleInterval);
+
+        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval), eq(temporalUnit)))
                 .thenReturn(candles);
     }
+
+    // endregion
 
 }

@@ -2,6 +2,7 @@ package ru.obukhov.investor.web.model;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.obukhov.investor.web.model.validation.constraint.DayCandleIntervalConstraint;
 import ru.obukhov.investor.web.model.validation.constraint.GetSaldosRequestIntervalConstraint;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 @GetSaldosRequestIntervalConstraint
-public class GetSaldosRequest implements IntervalContainer {
+public class GetDailySaldosRequest implements IntervalContainer {
 
     @NotBlank(message = "token is mandatory")
     private String token;
@@ -28,6 +29,7 @@ public class GetSaldosRequest implements IntervalContainer {
     private OffsetDateTime to;
 
     @NotNull(message = "candleInterval is mandatory")
+    @DayCandleIntervalConstraint
     private CandleInterval candleInterval;
 
 }

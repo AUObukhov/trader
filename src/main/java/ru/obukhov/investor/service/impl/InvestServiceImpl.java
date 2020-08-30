@@ -13,12 +13,13 @@ import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
-import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -52,10 +53,12 @@ public class InvestServiceImpl implements InvestService {
 
         OffsetDateTime adjustedFrom = DateUtils.getDefaultFromIfNull(from);
         OffsetDateTime adjustedTo = DateUtils.getDefaultToIfNull(to);
+        TemporalUnit periodUnit = DateUtils.getPeriodUnitByCandleInterval(candleInterval);
 
         MarketService marketService = getMarketService(token);
 
-        List<Candle> candles = marketService.getCandles(ticker, adjustedFrom, adjustedTo, candleInterval);
+        List<Candle> candles =
+                marketService.getCandles(ticker, adjustedFrom, adjustedTo, candleInterval, periodUnit);
 
         marketService.closeConnection();
 
@@ -63,18 +66,25 @@ public class InvestServiceImpl implements InvestService {
     }
 
     /**
-     * Searches saldos by condition
+     * Searches saldos by conditions and groups then by time
      *
-     * @param request request with candles conditions
+     * @param token          Tinkoff token
+     * @param ticker         ticker of candles
+     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param to             end of search interval, current date and time if null
+     * @param candleInterval candle interval, allowed values:
+     *                       ONE_MIN, TWO_MIN, THREE_MIN, FIVE_MIN, TEN_MIN, QUARTER_HOUR, HALF_HOUR,
+     *                       HOUR, TWO_HOURS, FOUR_HOURS
      * @return {@link Map} time to saldo
      */
     @Override
-    public Map<LocalTime, BigDecimal> getSaldos(GetSaldosRequest request) {
-        List<Candle> candles = getCandles(request.getToken(),
-                request.getTicker(),
-                request.getFrom(),
-                request.getTo(),
-                request.getCandleInterval());
+    public Map<LocalTime, BigDecimal> getDailySaldos(String token,
+                                                     String ticker,
+                                                     OffsetDateTime from,
+                                                     OffsetDateTime to,
+                                                     CandleInterval candleInterval) {
+
+        List<Candle> candles = getCandles(token, ticker, from, to, candleInterval);
 
         Multimap<LocalTime, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
@@ -82,6 +92,32 @@ public class InvestServiceImpl implements InvestService {
         }
 
         return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverageMoney));
+
+    }
+
+    /**
+     * Searches saldos by conditions and groups them by day of week
+     *
+     * @param token  Tinkoff token
+     * @param ticker ticker of candles
+     * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param to     end of search interval, current date and time if null
+     * @return {@link Map} day of week to saldo
+     */
+    @Override
+    public Map<DayOfWeek, BigDecimal> getWeeklySaldos(String token,
+                                                      String ticker,
+                                                      OffsetDateTime from,
+                                                      OffsetDateTime to) {
+
+        List<Candle> candles = getCandles(token, ticker, from, to, CandleInterval.DAY);
+
+        Multimap<DayOfWeek, BigDecimal> saldosByDaysOfWeek = MultimapBuilder.treeKeys().linkedListValues().build();
+        for (Candle candle : candles) {
+            saldosByDaysOfWeek.put(candle.getTime().getDayOfWeek(), candle.getSaldo());
+        }
+
+        return new TreeMap<>(reduceMultimap(saldosByDaysOfWeek, MathUtils::getAverageMoney));
 
     }
 
