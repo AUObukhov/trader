@@ -2,9 +2,11 @@ package ru.obukhov.investor.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -237,6 +239,26 @@ public class DateUtilsTest {
         OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.MONTHS, maxDateTime);
 
         Assert.assertSame(maxDateTime, result);
+    }
+
+    // endregion
+
+    // region getPeriodUnitByCandleInterval tests
+
+    @Test
+    public void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
+
+        TemporalUnit unit = DateUtils.getPeriodUnitByCandleInterval(CandleInterval.HOUR);
+
+        Assert.assertEquals(ChronoUnit.DAYS, unit);
+    }
+
+    @Test
+    public void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
+
+        TemporalUnit unit = DateUtils.getPeriodUnitByCandleInterval(CandleInterval.DAY);
+
+        Assert.assertEquals(ChronoUnit.YEARS, unit);
     }
 
     // endregion

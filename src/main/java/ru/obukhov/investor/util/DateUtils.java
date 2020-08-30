@@ -3,10 +3,12 @@ package ru.obukhov.investor.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -84,6 +86,23 @@ public class DateUtils {
                                              TemporalUnit temporalUnit,
                                              OffsetDateTime maxDateTime) {
         return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
+    }
+
+    /**
+     * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
+     */
+    public static TemporalUnit getPeriodUnitByCandleInterval(CandleInterval candleInterval) {
+        boolean intervalIsInDay = candleInterval == CandleInterval.ONE_MIN
+                || candleInterval == CandleInterval.TWO_MIN
+                || candleInterval == CandleInterval.THREE_MIN
+                || candleInterval == CandleInterval.FIVE_MIN
+                || candleInterval == CandleInterval.TEN_MIN
+                || candleInterval == CandleInterval.QUARTER_HOUR
+                || candleInterval == CandleInterval.HALF_HOUR
+                || candleInterval == CandleInterval.HOUR
+                || candleInterval == CandleInterval.TWO_HOURS
+                || candleInterval == CandleInterval.FOUR_HOURS;
+        return intervalIsInDay ? ChronoUnit.DAYS : ChronoUnit.YEARS;
     }
 
 }
