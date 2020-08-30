@@ -16,11 +16,14 @@ import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Log
@@ -48,33 +51,28 @@ public class MarketServiceImpl implements MarketService {
 
         Instrument instrument = getInstrument(ticker);
 
-        List<Candle> candles = new ArrayList<>();
+        List<CompletableFuture<Optional<HistoricalCandles>>> futures = new ArrayList<>();
         while (currentFrom.isBefore(to)) {
             if (DateUtils.isWorkDay(currentFrom)) {
-                List<Candle> currentCandles = getCandlesShort(instrument.figi, currentFrom, currentTo, interval);
-                candles.addAll(currentCandles);
-
-                log.info("Loaded " + currentCandles.size() + " candles in " +
-                        "[" + currentFrom + "; " + currentTo + ") for '" + ticker + "'");
+                CompletableFuture<Optional<HistoricalCandles>> currentCandles = getContext().getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
+                futures.add(currentCandles);
             }
 
             currentFrom = currentTo;
             currentTo = currentFrom.plusDays(1);
         }
 
-        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
-
-        return candles;
-    }
-
-    private List<Candle> getCandlesShort(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        return getContext()
-                .getMarketCandles(figi, from, to, interval).join()
-                .map(c -> c.candles)
-                .orElse(new ArrayList<>())
-                .stream()
+        List<Candle> candles = futures.stream()
+                .map(CompletableFuture::join)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .flatMap(historicalCandles -> historicalCandles.candles.stream())
                 .map(candleMapper::map)
                 .collect(Collectors.toList());
+
+        log.info("Loaded " + futures.size() + " candles for '" + ticker + "'");
+
+        return candles;
     }
 
     /**
