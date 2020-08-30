@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.TemporalUnit;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
@@ -73,6 +74,16 @@ public class DateUtils {
         } else {
             return dateTime1.isAfter(dateTime2) ? dateTime2 : dateTime1;
         }
+    }
+
+    /**
+     * Same as {@link OffsetDateTime#plus}, but if result is after {@code maxDateTime}, then returns {@code maxDateTime}
+     */
+    public static OffsetDateTime plusLimited(OffsetDateTime dateTime,
+                                             long amountToAdd,
+                                             TemporalUnit temporalUnit,
+                                             OffsetDateTime maxDateTime) {
+        return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
     }
 
 }

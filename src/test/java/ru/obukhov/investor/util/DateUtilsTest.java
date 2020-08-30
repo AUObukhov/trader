@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -213,4 +214,31 @@ public class DateUtilsTest {
     }
 
     // endregion
+
+    // region getLatestDateTime tests
+
+    @Test
+    public void plusLimited_returnsIncrementedDateTime_whenMaxDateTimeIsAfterThanIncrementedDateTime() {
+        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
+        OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
+
+        OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.DAYS, maxDateTime);
+
+        Assert.assertNotSame(maxDateTime, result);
+        Assert.assertTrue(dateTime.isBefore(result));
+        Assert.assertTrue(maxDateTime.isAfter(result));
+    }
+
+    @Test
+    public void plusLimited_returnsMaxDateTime_whenMaxDateTimeIsBeforeThanIncrementedDateTime() {
+        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
+        OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
+
+        OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.MONTHS, maxDateTime);
+
+        Assert.assertSame(maxDateTime, result);
+    }
+
+    // endregion
+
 }
