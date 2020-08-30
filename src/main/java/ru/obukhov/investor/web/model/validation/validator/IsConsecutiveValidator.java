@@ -7,6 +7,9 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.OffsetDateTime;
 
+/**
+ * Validates that {@link IntervalContainer.to} is after {@link IntervalContainer.to}
+ */
 public class IsConsecutiveValidator implements ConstraintValidator<IsConsecutive, IntervalContainer> {
 
     @Override

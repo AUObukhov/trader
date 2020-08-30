@@ -23,6 +23,12 @@ public class ConnectionServiceImpl implements ConnectionService {
     private final TradingProperties tradingProperties;
     private final Map<String, OpenApi> apis = new HashMap<>();
 
+    /**
+     * Gets opened {@link OpenApi}  by {@code token} if it exists, or creates and opens new one
+     *
+     * @param token Tinkoff token
+     * @return opened {@link OpenApi}
+     */
     @Override
     public OpenApi getApi(String token) {
         OpenApi api = this.apis.get(token);
@@ -34,6 +40,12 @@ public class ConnectionServiceImpl implements ConnectionService {
         return api;
     }
 
+    /**
+     * Creates and opens {@link OpenApi} by {@code token}
+     * Subscribes listener to events of created api
+     *
+     * @param token Tinkoff token
+     */
     protected void refreshApi(String token) {
         final OkHttpOpenApiFactory factory = new OkHttpOpenApiFactory(token, log);
         OpenApi api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
@@ -47,6 +59,11 @@ public class ConnectionServiceImpl implements ConnectionService {
         apis.put(token, api);
     }
 
+    /**
+     * Created and subscribes listener to events of {@code api}
+     *
+     * @return created listener
+     */
     protected StreamingApiSubscriber subscribeListener(OpenApi api) {
         final StreamingApiSubscriber listener = new StreamingApiSubscriber(Executors.newSingleThreadExecutor());
 
@@ -55,6 +72,11 @@ public class ConnectionServiceImpl implements ConnectionService {
         return listener;
     }
 
+    /**
+     * Close api, opened by {@code token} if it exists
+     *
+     * @param token Tinkoff token
+     */
     @Override
     public void closeConnection(String token) {
         try {

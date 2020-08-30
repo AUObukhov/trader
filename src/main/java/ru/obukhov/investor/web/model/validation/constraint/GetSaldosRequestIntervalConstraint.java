@@ -10,6 +10,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Type {@link ru.obukhov.investor.web.model.GetSaldosRequest}, annotated by @GetSaldosRequestIntervalConstraint is validated by {@link GetSaldosRequestIntervalValidator}
+ */
 @Documented
 @Constraint(validatedBy = GetSaldosRequestIntervalValidator.class)
 @Target(ElementType.TYPE)

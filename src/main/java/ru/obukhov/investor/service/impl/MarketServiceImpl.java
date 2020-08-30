@@ -33,6 +33,12 @@ public class MarketServiceImpl implements MarketService {
     private final String token;
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
+    /**
+     * Load candles by conditions day by day. Skip candles in weekend
+     * {@link MarketServiceImpl#token} expected to be initialised
+     *
+     * @return list of loaded candles
+     */
     @Override
     public List<Candle> getCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
         validateToken();
@@ -71,6 +77,11 @@ public class MarketServiceImpl implements MarketService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * {@link MarketServiceImpl#token} expected to be initialised
+     *
+     * @return list of available instruments of {@code type}
+     */
     @Override
     public List<Instrument> getInstruments(TickerType type) {
         validateToken();

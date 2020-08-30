@@ -33,6 +33,16 @@ public class InvestServiceImpl implements InvestService {
     private final ApplicationContext appContext;
     private final ConnectionService connectionService;
 
+    /**
+     * Searches candles by conditions
+     *
+     * @param token          Tinkoff token
+     * @param ticker         ticker of candles
+     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param to             end of search interval, current date and time if null
+     * @param candleInterval candle interval
+     * @return list of found candles
+     */
     @Override
     public List<Candle> getCandles(String token,
                                    String ticker,
@@ -52,6 +62,12 @@ public class InvestServiceImpl implements InvestService {
         return candles;
     }
 
+    /**
+     * Searches saldos by condition
+     *
+     * @param request request with candles conditions
+     * @return {@link Map} time to saldo
+     */
     @Override
     public Map<LocalTime, BigDecimal> getSaldos(GetSaldosRequest request) {
         List<Candle> candles = getCandles(request.getToken(),
@@ -69,6 +85,10 @@ public class InvestServiceImpl implements InvestService {
 
     }
 
+    /**
+     * @param token Tinkoff token
+     * @return {@link MarketService} bean, initialized by {@code token} and {@link InvestServiceImpl#connectionService}
+     */
     @NotNull
     private MarketService getMarketService(String token) {
         return appContext.getBean(MarketService.class, connectionService, token);

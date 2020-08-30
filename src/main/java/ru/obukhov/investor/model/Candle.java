@@ -11,10 +11,18 @@ import java.time.OffsetDateTime;
 public class Candle {
 
     private BigDecimal openPrice;
+
     private BigDecimal closePrice;
+
+    /**
+     * equals closePrice - openPrice
+     */
     private BigDecimal saldo;
+
     private BigDecimal highestPrice;
+
     private BigDecimal lowestPrice;
+
     private OffsetDateTime time;
 
 }

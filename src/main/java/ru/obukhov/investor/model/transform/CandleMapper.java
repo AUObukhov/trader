@@ -10,6 +10,9 @@ import ru.obukhov.investor.model.Candle;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Maps {@link ru.tinkoff.invest.openapi.models.market.Candle} to {@link ru.obukhov.investor.model.Candle}
+ */
 @Mapper
 public abstract class CandleMapper {
 

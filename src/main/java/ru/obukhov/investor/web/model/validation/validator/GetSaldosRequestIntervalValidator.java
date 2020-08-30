@@ -13,6 +13,10 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
+/**
+ * Validates that {@link GetSaldosRequest#candleInterval} is less than interval between {@link GetSaldosRequest#from}
+ * and {@link GetSaldosRequest#to}
+ */
 public class GetSaldosRequestIntervalValidator implements ConstraintValidator<GetSaldosRequestIntervalConstraint, GetSaldosRequest> {
 
     private static final Map<CandleInterval, Long> CANDLE_INTERVALS_TO_MINUTES =
