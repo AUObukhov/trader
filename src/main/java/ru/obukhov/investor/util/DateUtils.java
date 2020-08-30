@@ -61,4 +61,18 @@ public class DateUtils {
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
 
+    /**
+     * @return earliest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.
+     * If one of parameters is null, returns another.
+     */
+    public static OffsetDateTime getEarliestDateTime(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        if (dateTime1 == null) {
+            return dateTime2;
+        } else if (dateTime2 == null) {
+            return dateTime1;
+        } else {
+            return dateTime1.isAfter(dateTime2) ? dateTime2 : dateTime1;
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package ru.obukhov.investor.util;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.OffsetDateTime;
@@ -65,6 +66,8 @@ public class DateUtilsTest {
         assertEquals(0, dateTime.getNano());
     }
 
+    // region getDefaultFromIfNull tests
+
     @Test
     public void getDefaultFromIfNull_returnsValue_whenNotNull() {
         OffsetDateTime from = OffsetDateTime.now();
@@ -80,6 +83,10 @@ public class DateUtilsTest {
 
         assertEquals(START_DATE, result);
     }
+
+    // endregion
+
+    // region getDefaultToIfNull tests
 
     @Test
     public void getDefaultToIfNull_returnsValue_whenNotNull() {
@@ -100,6 +107,10 @@ public class DateUtilsTest {
 
         assertTrue(!start.isAfter(result) && !end.isBefore(result));
     }
+
+    // endregion
+
+    // region isWorkDay tests
 
     @Test
     public void isWorkDay_returnsTrue_whenMonday() {
@@ -137,4 +148,69 @@ public class DateUtilsTest {
         assertFalse(result);
     }
 
+    // endregion
+
+    // region getLatestDateTime tests
+
+    @Test
+    public void getLatestDateTime_returnsFirst_whenEquals() {
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertSame(dateTime1, result);
+    }
+
+    @Test
+    public void getLatestDateTime_returnsFirst_whenSecondIsNull() {
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        OffsetDateTime dateTime2 = null;
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertSame(dateTime1, result);
+    }
+
+    @Test
+    public void getLatestDateTime_returnsSecond_whenFirstIsNull() {
+        OffsetDateTime dateTime1 = null;
+        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertSame(dateTime2, result);
+    }
+
+    @Test
+    public void getLatestDateTime_returnsNull_whenBothAreNull() {
+        OffsetDateTime dateTime1 = null;
+        OffsetDateTime dateTime2 = null;
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void getLatestDateTime_returnsFirst_whenFirstIsEarlier() {
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 2);
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertSame(dateTime1, result);
+    }
+
+    @Test
+    public void getLatestDateTime_returnsSecond_whenFirstIsLater() {
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 2);
+        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+
+        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+
+        Assert.assertSame(dateTime2, result);
+    }
+
+    // endregion
 }
