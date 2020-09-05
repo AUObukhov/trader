@@ -6,14 +6,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -119,6 +122,22 @@ public class InvestServiceImpl implements InvestService {
 
         return new TreeMap<>(reduceMultimap(saldosByDaysOfWeek, MathUtils::getAverageMoney));
 
+    }
+
+    /**
+     * @param token Tinkoff token
+     * @param type  nullable ticker type
+     * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
+     */
+    @Override
+    public List<Instrument> getInstruments(String token, @Nullable TickerType type) {
+        MarketService marketService = getMarketService(token);
+
+        List<Instrument> instruments = marketService.getInstruments(type);
+
+        marketService.closeConnection();
+
+        return instruments;
     }
 
     /**

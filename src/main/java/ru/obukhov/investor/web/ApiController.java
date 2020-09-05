@@ -11,8 +11,11 @@ import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetDailySaldosRequest;
+import ru.obukhov.investor.web.model.GetInstrumentsRequest;
+import ru.obukhov.investor.web.model.GetInstrumentsResponse;
 import ru.obukhov.investor.web.model.GetSaldosResponse;
 import ru.obukhov.investor.web.model.GetWeeklySaldosRequest;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -64,5 +67,12 @@ public class ApiController {
                 request.getTo());
 
         return new GetSaldosResponse(saldosByDaysOfWeek);
+    }
+
+    @GetMapping("/instruments")
+    public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
+        List<Instrument> instruments = investService.getInstruments(request.getToken(), request.getTickerType());
+
+        return new GetInstrumentsResponse(instruments);
     }
 }

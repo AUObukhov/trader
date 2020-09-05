@@ -1,7 +1,10 @@
 package ru.obukhov.investor.service;
 
+import org.springframework.lang.Nullable;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.TickerType;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -28,4 +31,6 @@ public interface InvestService {
                                                String ticker,
                                                OffsetDateTime from,
                                                OffsetDateTime to);
+
+    List<Instrument> getInstruments(String token, @Nullable TickerType type);
 }

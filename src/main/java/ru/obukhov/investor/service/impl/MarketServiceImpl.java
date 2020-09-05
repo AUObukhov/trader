@@ -18,6 +18,7 @@ import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
@@ -84,11 +85,15 @@ public class MarketServiceImpl implements MarketService {
     /**
      * {@link MarketServiceImpl#token} expected to be initialised
      *
-     * @return list of available instruments of {@code type}
+     * @return list of available instruments of given {@code type}
      */
     @Override
     public List<Instrument> getInstruments(TickerType type) {
         validateToken();
+
+        if (type == null) {
+            return getAllInstruments();
+        }
 
         switch (type) {
             case ETF:
@@ -102,6 +107,21 @@ public class MarketServiceImpl implements MarketService {
             default:
                 throw new IllegalArgumentException("Unknown ticker type " + type);
         }
+    }
+
+    private List<Instrument> getAllInstruments() {
+        CompletableFuture<InstrumentsList> etfs = getContext().getMarketEtfs();
+        CompletableFuture<InstrumentsList> stocks = getContext().getMarketStocks();
+        CompletableFuture<InstrumentsList> bonds = getContext().getMarketBonds();
+        CompletableFuture<InstrumentsList> currencies = getContext().getMarketCurrencies();
+
+        List<Instrument> result = new ArrayList<>();
+        result.addAll(etfs.join().instruments);
+        result.addAll(stocks.join().instruments);
+        result.addAll(bonds.join().instruments);
+        result.addAll(currencies.join().instruments);
+
+        return result;
     }
 
     private Instrument getInstrument(String ticker) {
