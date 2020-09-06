@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -35,13 +35,10 @@ import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 @RunWith(MockitoJUnitRunner.class)
 public class InvestServiceImplTest extends BaseMockedTest {
 
-    private static final String TOKEN = "token";
     private static final String TICKER = "ticker";
 
     @Mock
     private ApplicationContext appContext;
-    @Mock
-    private ConnectionService connectionService;
     @Mock
     private MarketService marketService;
 
@@ -49,22 +46,21 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
-        service = new InvestServiceImpl(appContext, connectionService);
+        TokenHolder.setToken("token");
+        service = new InvestServiceImpl(appContext, marketService);
     }
 
     @Test
     public void getCandles_returnsCandlesFromMarketService() {
-        String token = TOKEN;
         String ticker = TICKER;
         OffsetDateTime from = getDate(2020, 1, 1);
         OffsetDateTime to = getDate(2020, 2, 1);
         CandleInterval candleInterval = CandleInterval.ONE_MIN;
 
-        mockMarketService(token);
         List<Candle> candles = new ArrayList<>();
         mockCandles(ticker, from, to, candleInterval, candles);
 
-        List<Candle> candlesResponse = service.getCandles(token, ticker, from, to, candleInterval);
+        List<Candle> candlesResponse = service.getCandles(ticker, from, to, candleInterval);
 
         Assert.assertSame(candles, candlesResponse);
     }
@@ -73,10 +69,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getDailySaldos_unitesSaldosByTime() {
-        String token = TOKEN;
         String ticker = TICKER;
-
-        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
@@ -109,8 +102,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 CandleInterval.ONE_MIN,
                 candles);
 
-        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(token,
-                ticker,
+        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(ticker,
                 getDate(2020, 1, 1),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN);
@@ -129,10 +121,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getDailySaldos_sortsSaldosByDays() {
-        String token = TOKEN;
         String ticker = TICKER;
-
-        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
@@ -165,8 +154,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 CandleInterval.ONE_MIN,
                 candles);
 
-        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(token,
-                ticker,
+        Map<LocalTime, BigDecimal> saldos = service.getDailySaldos(ticker,
                 getDate(2020, 1, 1),
                 getDate(2020, 1, 4),
                 CandleInterval.ONE_MIN);
@@ -182,10 +170,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getWeeklySaldos_unitesSaldosByDayOfWeek() {
-        String token = TOKEN;
         String ticker = TICKER;
-
-        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
 
@@ -225,8 +210,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 CandleInterval.DAY,
                 candles);
 
-        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(token,
-                ticker,
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker,
                 getDate(2020, 8, 24),
                 getDate(2020, 8, 30));
 
@@ -244,10 +228,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getWeeklySaldos_sortsSaldosByDays() {
-        String token = TOKEN;
         String ticker = TICKER;
-
-        mockMarketService(token);
 
         List<Candle> candles = new ArrayList<>();
 
@@ -281,8 +262,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 CandleInterval.DAY,
                 candles);
 
-        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(token,
-                ticker,
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker,
                 getDate(2020, 8, 24),
                 getDate(2020, 8, 30));
 
@@ -294,11 +274,6 @@ public class InvestServiceImplTest extends BaseMockedTest {
     // endregion
 
     // region mocks
-
-    private void mockMarketService(String token) {
-        when(appContext.getBean(eq(MarketService.class), eq(connectionService), eq(token)))
-                .thenReturn(marketService);
-    }
 
     private void mockCandles(String ticker,
                              OffsetDateTime from,

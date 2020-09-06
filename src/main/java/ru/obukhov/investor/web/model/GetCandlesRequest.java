@@ -9,7 +9,6 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 public class GetCandlesRequest {
-    private String token;
     private String ticker;
     private OffsetDateTime from;
     private OffsetDateTime to;

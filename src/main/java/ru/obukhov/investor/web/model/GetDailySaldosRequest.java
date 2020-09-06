@@ -16,9 +16,6 @@ import java.time.OffsetDateTime;
 @GetSaldosRequestIntervalConstraint
 public class GetDailySaldosRequest implements IntervalContainer {
 
-    @NotBlank(message = "token is mandatory")
-    private String token;
-
     @NotBlank(message = "ticker is mandatory")
     private String ticker;
 

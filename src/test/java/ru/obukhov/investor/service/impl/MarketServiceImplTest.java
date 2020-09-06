@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
@@ -52,10 +53,11 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
+        TokenHolder.setToken(TOKEN);
         when(connectionService.getApi(eq(TOKEN))).thenReturn(openApi);
         when(openApi.getMarketContext()).thenReturn(marketContext);
 
-        this.service = new MarketServiceImpl(connectionService, TOKEN);
+        this.service = new MarketServiceImpl(connectionService);
     }
 
     @Test

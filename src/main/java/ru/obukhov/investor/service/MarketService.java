@@ -19,5 +19,4 @@ public interface MarketService {
 
     List<Instrument> getInstruments(TickerType type);
 
-    void closeConnection();
 }

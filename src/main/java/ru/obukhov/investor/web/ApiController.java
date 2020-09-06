@@ -36,7 +36,6 @@ public class ApiController {
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
         List<Candle> candles = investService.getCandles(
-                request.getToken(),
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
@@ -49,7 +48,7 @@ public class ApiController {
     @GetMapping("/saldos/daily")
     public GetSaldosResponse getDailySaldos(@Valid @RequestBody GetDailySaldosRequest request) {
 
-        Map<LocalTime, BigDecimal> saldosByTimes = investService.getDailySaldos(request.getToken(),
+        Map<LocalTime, BigDecimal> saldosByTimes = investService.getDailySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
@@ -61,7 +60,7 @@ public class ApiController {
     @GetMapping("/saldos/weekly")
     public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetWeeklySaldosRequest request) {
 
-        Map<DayOfWeek, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(request.getToken(),
+        Map<DayOfWeek, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
@@ -71,7 +70,7 @@ public class ApiController {
 
     @GetMapping("/instruments")
     public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
-        List<Instrument> instruments = investService.getInstruments(request.getToken(), request.getTickerType());
+        List<Instrument> instruments = investService.getInstruments(request.getTickerType());
 
         return new GetInstrumentsResponse(instruments);
     }

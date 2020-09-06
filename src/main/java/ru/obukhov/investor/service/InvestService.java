@@ -15,22 +15,17 @@ import java.util.Map;
 
 public interface InvestService {
 
-    List<Candle> getCandles(String token,
-                            String ticker,
+    List<Candle> getCandles(String ticker,
                             OffsetDateTime from,
                             OffsetDateTime to,
                             CandleInterval candleInterval);
 
-    Map<LocalTime, BigDecimal> getDailySaldos(String token,
-                                              String ticker,
+    Map<LocalTime, BigDecimal> getDailySaldos(String ticker,
                                               OffsetDateTime from,
                                               OffsetDateTime to,
                                               CandleInterval candleInterval);
 
-    Map<DayOfWeek, BigDecimal> getWeeklySaldos(String token,
-                                               String ticker,
-                                               OffsetDateTime from,
-                                               OffsetDateTime to);
+    Map<DayOfWeek, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
 
-    List<Instrument> getInstruments(String token, @Nullable TickerType type);
+    List<Instrument> getInstruments(@Nullable TickerType type);
 }

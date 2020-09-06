@@ -11,9 +11,6 @@ import java.time.OffsetDateTime;
 @Builder
 public class GetWeeklySaldosRequest implements IntervalContainer {
 
-    @NotBlank(message = "token is mandatory")
-    private String token;
-
     @NotBlank(message = "ticker is mandatory")
     private String ticker;
 

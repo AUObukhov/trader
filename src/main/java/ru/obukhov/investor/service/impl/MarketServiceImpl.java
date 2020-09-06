@@ -1,13 +1,11 @@
 package ru.obukhov.investor.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
@@ -20,6 +18,7 @@ import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
+import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
@@ -30,17 +29,18 @@ import java.util.stream.Collectors;
 
 @Log
 @Service
-@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@RequiredArgsConstructor
-public class MarketServiceImpl implements MarketService {
+public class MarketServiceImpl implements MarketService, DisposableBean {
 
     private final ConnectionService connectionService;
-    private final String token;
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
+    private MarketContext context;
+
+    public MarketServiceImpl(ConnectionService connectionService) {
+        this.connectionService = connectionService;
+    }
 
     /**
      * Load candles by conditions period by period.
-     * {@link MarketServiceImpl#token} expected to be initialised
      *
      * @return list of loaded candles
      */
@@ -50,8 +50,6 @@ public class MarketServiceImpl implements MarketService {
                                    OffsetDateTime to,
                                    CandleInterval interval,
                                    TemporalUnit periodUnit) {
-
-        validateToken();
 
         OffsetDateTime currentFrom = from;
         OffsetDateTime currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
@@ -63,7 +61,6 @@ public class MarketServiceImpl implements MarketService {
             CompletableFuture<Optional<HistoricalCandles>> currentCandles =
                     getContext().getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
             futures.add(currentCandles);
-
 
             currentFrom = currentTo;
             currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
@@ -83,14 +80,10 @@ public class MarketServiceImpl implements MarketService {
     }
 
     /**
-     * {@link MarketServiceImpl#token} expected to be initialised
-     *
      * @return list of available instruments of given {@code type}
      */
     @Override
     public List<Instrument> getInstruments(TickerType type) {
-        validateToken();
-
         if (type == null) {
             return getAllInstruments();
         }
@@ -125,8 +118,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private Instrument getInstrument(String ticker) {
-        validateToken();
-
         List<Instrument> instruments = getContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
         Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
 
@@ -135,20 +126,15 @@ public class MarketServiceImpl implements MarketService {
 
     @NotNull
     private MarketContext getContext() {
-        return connectionService.getApi(this.token).getMarketContext();
+        if (this.context == null) {
+            this.context = connectionService.getApi(TokenHolder.getToken()).getMarketContext();
+        }
+
+        return this.context;
     }
 
     @Override
-    public void closeConnection() {
-        validateToken();
-
-        connectionService.closeConnection(token);
+    public void destroy() {
+        connectionService.closeConnection(TokenHolder.getToken());
     }
-
-    private void validateToken() {
-        if (this.token == null) {
-            throw new IllegalStateException("Token expected to be initialized");
-        }
-    }
-
 }
