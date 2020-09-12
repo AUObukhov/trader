@@ -1,7 +1,7 @@
 package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@Log
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService, DisposableBean {

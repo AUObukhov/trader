@@ -3,7 +3,7 @@ package ru.obukhov.investor.service.impl;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.TreeMap;
 
 import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
 
-@Log
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InvestServiceImpl implements InvestService {
