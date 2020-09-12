@@ -1,7 +1,10 @@
 package ru.obukhov.investor.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
+import ru.obukhov.investor.config.TokenHolder;
+import ru.obukhov.investor.service.aop.Throttled;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
@@ -13,62 +16,81 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-@AllArgsConstructor
-public class MarketContextRestrictedProxy implements MarketContext {
+@Component
+@RequiredArgsConstructor
+public class ThrottledMarketContext implements MarketContext {
 
+    private final ConnectionService connectionService;
     private MarketContext innerContext;
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<InstrumentsList> getMarketStocks() {
-        return innerContext.getMarketStocks();
+        return getContext().getMarketStocks();
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<InstrumentsList> getMarketBonds() {
-        return innerContext.getMarketBonds();
+        return getContext().getMarketBonds();
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<InstrumentsList> getMarketEtfs() {
-        return innerContext.getMarketEtfs();
+        return getContext().getMarketEtfs();
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<InstrumentsList> getMarketCurrencies() {
-        return innerContext.getMarketCurrencies();
+        return getContext().getMarketCurrencies();
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<Optional<Orderbook>> getMarketOrderbook(@NotNull String figi, int depth) {
-        return innerContext.getMarketOrderbook(figi, depth);
+        return getContext().getMarketOrderbook(figi, depth);
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<Optional<HistoricalCandles>> getMarketCandles(@NotNull String figi, @NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull CandleInterval interval) {
-        return innerContext.getMarketCandles(figi, from, to, interval);
+        return getContext().getMarketCandles(figi, from, to, interval);
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<InstrumentsList> searchMarketInstrumentsByTicker(@NotNull String ticker) {
-        return innerContext.searchMarketInstrumentsByTicker(ticker);
+        return getContext().searchMarketInstrumentsByTicker(ticker);
     }
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<Optional<Instrument>> searchMarketInstrumentByFigi(@NotNull String figi) {
-        return innerContext.searchMarketInstrumentByFigi(figi);
+        return getContext().searchMarketInstrumentByFigi(figi);
     }
 
+    @Throttled
     @NotNull
     @Override
     public String getPath() {
-        return innerContext.getPath();
+        return getContext().getPath();
+    }
+
+    private MarketContext getContext() {
+        if (this.innerContext == null) {
+            this.innerContext = connectionService.getApi(TokenHolder.getToken()).getMarketContext();
+        }
+
+        return this.innerContext;
     }
 }

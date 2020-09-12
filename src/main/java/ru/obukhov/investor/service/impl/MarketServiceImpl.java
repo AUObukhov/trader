@@ -1,5 +1,6 @@
 package ru.obukhov.investor.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
@@ -18,7 +19,6 @@ import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
-import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
@@ -29,15 +29,13 @@ import java.util.stream.Collectors;
 
 @Log
 @Service
+@RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService, DisposableBean {
 
     private final ConnectionService connectionService;
-    private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
-    private MarketContext context;
+    private final MarketContext marketContext;
 
-    public MarketServiceImpl(ConnectionService connectionService) {
-        this.connectionService = connectionService;
-    }
+    private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     /**
      * Load candles by conditions period by period.
@@ -59,7 +57,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
         List<CompletableFuture<Optional<HistoricalCandles>>> futures = new ArrayList<>();
         while (currentFrom.isBefore(to)) {
             CompletableFuture<Optional<HistoricalCandles>> currentCandles =
-                    getContext().getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
+                    marketContext.getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
             futures.add(currentCandles);
 
             currentFrom = currentTo;
@@ -90,23 +88,23 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
 
         switch (type) {
             case ETF:
-                return getContext().getMarketEtfs().join().instruments;
+                return marketContext.getMarketEtfs().join().instruments;
             case STOCK:
-                return getContext().getMarketStocks().join().instruments;
+                return marketContext.getMarketStocks().join().instruments;
             case BOND:
-                return getContext().getMarketBonds().join().instruments;
+                return marketContext.getMarketBonds().join().instruments;
             case CURRENCY:
-                return getContext().getMarketCurrencies().join().instruments;
+                return marketContext.getMarketCurrencies().join().instruments;
             default:
                 throw new IllegalArgumentException("Unknown ticker type " + type);
         }
     }
 
     private List<Instrument> getAllInstruments() {
-        CompletableFuture<InstrumentsList> etfs = getContext().getMarketEtfs();
-        CompletableFuture<InstrumentsList> stocks = getContext().getMarketStocks();
-        CompletableFuture<InstrumentsList> bonds = getContext().getMarketBonds();
-        CompletableFuture<InstrumentsList> currencies = getContext().getMarketCurrencies();
+        CompletableFuture<InstrumentsList> etfs = marketContext.getMarketEtfs();
+        CompletableFuture<InstrumentsList> stocks = marketContext.getMarketStocks();
+        CompletableFuture<InstrumentsList> bonds = marketContext.getMarketBonds();
+        CompletableFuture<InstrumentsList> currencies = marketContext.getMarketCurrencies();
 
         List<Instrument> result = new ArrayList<>();
         result.addAll(etfs.join().instruments);
@@ -118,19 +116,10 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     }
 
     private Instrument getInstrument(String ticker) {
-        List<Instrument> instruments = getContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
+        List<Instrument> instruments = marketContext.searchMarketInstrumentsByTicker(ticker).join().instruments;
         Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
 
         return instruments.get(0);
-    }
-
-    @NotNull
-    private MarketContext getContext() {
-        if (this.context == null) {
-            this.context = connectionService.getApi(TokenHolder.getToken()).getMarketContext();
-        }
-
-        return this.context;
     }
 
     @Override

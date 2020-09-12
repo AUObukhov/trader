@@ -7,12 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
-import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.MarketService;
 import ru.tinkoff.invest.openapi.MarketContext;
-import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
@@ -38,14 +35,9 @@ import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 @RunWith(MockitoJUnitRunner.class)
 public class MarketServiceImplTest extends BaseMockedTest {
 
-    private static final String TOKEN = "token";
     private static final String FIGI = "figi";
     private static final String TICKER = "ticker";
 
-    @Mock
-    private ConnectionService connectionService;
-    @Mock
-    private OpenApi openApi;
     @Mock
     private MarketContext marketContext;
 
@@ -53,11 +45,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
-        TokenHolder.setToken(TOKEN);
-        when(connectionService.getApi(eq(TOKEN))).thenReturn(openApi);
-        when(openApi.getMarketContext()).thenReturn(marketContext);
-
-        this.service = new MarketServiceImpl(connectionService);
+        this.service = new MarketServiceImpl(null, marketContext);
     }
 
     @Test

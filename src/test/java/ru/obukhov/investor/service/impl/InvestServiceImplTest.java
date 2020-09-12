@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.investor.BaseMockedTest;
-import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
@@ -46,7 +45,6 @@ public class InvestServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
-        TokenHolder.setToken("token");
         service = new InvestServiceImpl(appContext, marketService);
     }
 
