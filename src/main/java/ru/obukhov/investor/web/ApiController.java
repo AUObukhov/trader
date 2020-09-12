@@ -13,14 +13,12 @@ import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.GetInstrumentsRequest;
 import ru.obukhov.investor.web.model.GetInstrumentsResponse;
+import ru.obukhov.investor.web.model.GetSaldosRequest;
 import ru.obukhov.investor.web.model.GetSaldosResponse;
-import ru.obukhov.investor.web.model.GetWeeklySaldosRequest;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public class ApiController {
     @GetMapping("/saldos/daily")
     public GetSaldosResponse getDailySaldos(@Valid @RequestBody GetDailySaldosRequest request) {
 
-        Map<LocalTime, BigDecimal> saldosByTimes = investService.getDailySaldos(
+        Map<Object, BigDecimal> saldosByTimes = investService.getDailySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
@@ -58,9 +56,9 @@ public class ApiController {
     }
 
     @GetMapping("/saldos/weekly")
-    public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetWeeklySaldosRequest request) {
+    public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<DayOfWeek, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(
+        Map<Object, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
@@ -69,14 +67,25 @@ public class ApiController {
     }
 
     @GetMapping("/saldos/monthly")
-    public GetSaldosResponse getMonthlySaldos(@Valid @RequestBody GetWeeklySaldosRequest request) {
+    public GetSaldosResponse getMonthlySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Integer, BigDecimal> saldosByDaysOfMonth = investService.getMonthlySaldos(
+        Map<Object, BigDecimal> saldosByDaysOfMonth = investService.getMonthlySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
 
         return new GetSaldosResponse(saldosByDaysOfMonth);
+    }
+
+    @GetMapping("/saldos/yearly")
+    public GetSaldosResponse getYearlySaldos(@Valid @RequestBody GetSaldosRequest request) {
+
+        Map<Object, BigDecimal> saldosByYear = investService.getYearlySaldos(
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo());
+
+        return new GetSaldosResponse(saldosByYear);
     }
 
     @GetMapping("/instruments")

@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Builder
-public class GetWeeklySaldosRequest implements IntervalContainer {
+public class GetSaldosRequest implements IntervalContainer {
 
     @NotBlank(message = "ticker is mandatory")
     private String ticker;

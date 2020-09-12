@@ -7,8 +7,6 @@ import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -20,14 +18,17 @@ public interface InvestService {
                             OffsetDateTime to,
                             CandleInterval candleInterval);
 
-    Map<LocalTime, BigDecimal> getDailySaldos(String ticker,
-                                              OffsetDateTime from,
-                                              OffsetDateTime to,
-                                              CandleInterval candleInterval);
+    Map<Object, BigDecimal> getDailySaldos(String ticker,
+                                           OffsetDateTime from,
+                                           OffsetDateTime to,
+                                           CandleInterval candleInterval);
 
-    Map<DayOfWeek, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
+    Map<Object, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
+
+    Map<Object, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
+
+    Map<Object, BigDecimal> getYearlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
 
     List<Instrument> getInstruments(@Nullable TickerType type);
 
-    Map<Integer, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
 }

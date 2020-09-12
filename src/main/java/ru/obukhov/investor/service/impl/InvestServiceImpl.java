@@ -16,13 +16,12 @@ import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
 
@@ -64,23 +63,15 @@ public class InvestServiceImpl implements InvestService {
      * @param candleInterval candle interval, allowed values:
      *                       ONE_MIN, TWO_MIN, THREE_MIN, FIVE_MIN, TEN_MIN, QUARTER_HOUR, HALF_HOUR,
      *                       HOUR, TWO_HOURS, FOUR_HOURS
-     * @return {@link Map} time to saldo
+     * @return Map time to saldo
      */
     @Override
-    public Map<LocalTime, BigDecimal> getDailySaldos(String ticker,
-                                                     OffsetDateTime from,
-                                                     OffsetDateTime to,
-                                                     CandleInterval candleInterval) {
+    public Map<Object, BigDecimal> getDailySaldos(String ticker,
+                                                  OffsetDateTime from,
+                                                  OffsetDateTime to,
+                                                  CandleInterval candleInterval) {
 
-        List<Candle> candles = getCandles(ticker, from, to, candleInterval);
-
-        Multimap<LocalTime, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
-        for (Candle candle : candles) {
-            saldosByTimes.put(candle.getTime().toLocalTime(), candle.getSaldo());
-        }
-
-        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverageMoney));
-
+        return getSaldos(ticker, from, to, candleInterval, OffsetDateTime::toLocalTime);
     }
 
     /**
@@ -89,19 +80,12 @@ public class InvestServiceImpl implements InvestService {
      * @param ticker ticker of candles
      * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
      * @param to     end of search interval, current date and time if null
-     * @return {@link Map} day of week to saldo
+     * @return Map day of week to saldo
      */
     @Override
-    public Map<DayOfWeek, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+    public Map<Object, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
 
-        List<Candle> candles = getCandles(ticker, from, to, CandleInterval.DAY);
-
-        Multimap<DayOfWeek, BigDecimal> saldosByDaysOfWeek = MultimapBuilder.treeKeys().linkedListValues().build();
-        for (Candle candle : candles) {
-            saldosByDaysOfWeek.put(candle.getTime().getDayOfWeek(), candle.getSaldo());
-        }
-
-        return new TreeMap<>(reduceMultimap(saldosByDaysOfWeek, MathUtils::getAverageMoney));
+        return getSaldos(ticker, from, to, CandleInterval.DAY, OffsetDateTime::getDayOfWeek);
 
     }
 
@@ -111,18 +95,47 @@ public class InvestServiceImpl implements InvestService {
      * @param ticker ticker of candles
      * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
      * @param to     end of search interval, current date and time if null
-     * @return {@link Map} day of month to saldo
+     * @return Map day of month to saldo
      */
     @Override
-    public Map<Integer, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
-        List<Candle> candles = getCandles(ticker, from, to, CandleInterval.DAY);
+    public Map<Object, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
 
-        Multimap<Integer, BigDecimal> saldosByDaysOfMonth = MultimapBuilder.treeKeys().linkedListValues().build();
+        return getSaldos(ticker, from, to, CandleInterval.DAY, OffsetDateTime::getDayOfMonth);
+
+    }
+
+    @Override
+    public Map<Object, BigDecimal> getYearlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+
+        return getSaldos(ticker, from, to, CandleInterval.MONTH, OffsetDateTime::getMonth);
+
+    }
+
+    /**
+     * Searches saldos by conditions and groups them by time unit provided by {@code keyExtractor}
+     *
+     * @param ticker         ticker of candles
+     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param to             end of search interval, current date and time if null
+     * @param candleInterval candle interval
+     * @param keyExtractor   function getting of Map key from {@code OffsetDateTime}
+     * @return ordered Map with saldos as values
+     */
+    private Map<Object, BigDecimal> getSaldos(String ticker,
+                                              OffsetDateTime from,
+                                              OffsetDateTime to,
+                                              CandleInterval candleInterval,
+                                              Function<OffsetDateTime, Comparable> keyExtractor) {
+
+        List<Candle> candles = getCandles(ticker, from, to, candleInterval);
+
+        Multimap<Comparable, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
-            saldosByDaysOfMonth.put(candle.getTime().getDayOfMonth(), candle.getSaldo());
+            saldosByTimes.put(keyExtractor.apply(candle.getTime()), candle.getSaldo());
         }
 
-        return new TreeMap<>(reduceMultimap(saldosByDaysOfMonth, MathUtils::getAverageMoney));
+        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverageMoney));
+
     }
 
     /**
