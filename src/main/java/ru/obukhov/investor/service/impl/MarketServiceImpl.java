@@ -6,7 +6,6 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import ru.obukhov.investor.config.TokenHolder;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
@@ -124,6 +123,6 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
 
     @Override
     public void destroy() {
-        connectionService.closeConnection(TokenHolder.getToken());
+        connectionService.closeConnection();
     }
 }

@@ -25,7 +25,7 @@ public class ThrottledAspect {
     @Around("@annotation(Throttled)")
     public Object throttle(ProceedingJoinPoint joinPoint) throws Throwable {
         Duration throttled = throttledCounter.increment();
-        log.info("Throttled {} ms", throttled.toMillis());
+        log.trace("Throttled {} ms", throttled.toMillis());
         return joinPoint.proceed();
     }
 

@@ -1,10 +1,12 @@
 package ru.obukhov.investor.service;
 
-import ru.tinkoff.invest.openapi.OpenApi;
+import ru.tinkoff.invest.openapi.MarketContext;
 
 public interface ConnectionService {
 
-    OpenApi getApi(String token);
+    void setToken(String token);
 
-    void closeConnection(String token);
+    MarketContext getMarketContext();
+
+    void closeConnection();
 }
