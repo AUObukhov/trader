@@ -4,26 +4,28 @@ import com.google.common.base.Stopwatch;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
+
 public class ThrottledCounterTest {
 
     @Test
-    public void test() throws InterruptedException {
+    public void test_decrementingValue_whenIntervalPassed() throws InterruptedException {
 
         ThrottledCounter counter = new ThrottledCounter(1000, 3);
         counter.increment();
         int value1 = counter.getValue();
 
-        Thread.sleep(500);
+        TimeUnit.MILLISECONDS.sleep(500);
         int value2 = counter.getValue();
 
         counter.increment();
         counter.increment();
         int value3 = counter.getValue();
 
-        Thread.sleep(750);
+        TimeUnit.MILLISECONDS.sleep(750);
         int value4 = counter.getValue();
 
-        Thread.sleep(500);
+        TimeUnit.MILLISECONDS.sleep(500);
         int value5 = counter.getValue();
 
         Assert.assertEquals(1, value1);
@@ -42,24 +44,24 @@ public class ThrottledCounterTest {
         counter.increment();
         int value1 = counter.getValue();
 
-        Thread.sleep(250);
+        TimeUnit.MILLISECONDS.sleep(250);
         counter.increment();
         int value2 = counter.getValue();
 
-        Thread.sleep(250);
+        TimeUnit.MILLISECONDS.sleep(250);
         counter.increment();
         int value3 = counter.getValue();
 
         counter.increment(); // waits for 500 milliseconds
         int value4 = counter.getValue();
 
-        Thread.sleep(500);
+        TimeUnit.MILLISECONDS.sleep(500);
         int value5 = counter.getValue();
 
-        Thread.sleep(250);
+        TimeUnit.MILLISECONDS.sleep(250);
         int value6 = counter.getValue();
 
-        Thread.sleep(500);
+        TimeUnit.MILLISECONDS.sleep(500);
         int value7 = counter.getValue();
 
         stopwatch.stop();

@@ -125,11 +125,11 @@ public class InvestServiceImpl implements InvestService {
                                               OffsetDateTime from,
                                               OffsetDateTime to,
                                               CandleInterval candleInterval,
-                                              Function<OffsetDateTime, Comparable> keyExtractor) {
+                                              Function<OffsetDateTime, Object> keyExtractor) {
 
         List<Candle> candles = getCandles(ticker, from, to, candleInterval);
 
-        Multimap<Comparable, BigDecimal> saldosByTimes = MultimapBuilder.treeKeys().linkedListValues().build();
+        Multimap<Object, BigDecimal> saldosByTimes = (Multimap) MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
             saldosByTimes.put(keyExtractor.apply(candle.getTime()), candle.getSaldo());
         }

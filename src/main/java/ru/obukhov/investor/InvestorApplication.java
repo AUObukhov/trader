@@ -1,7 +1,6 @@
 package ru.obukhov.investor;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +29,7 @@ public class InvestorApplication implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         ConnectionService connectionService = applicationContext.getBean(ConnectionService.class);
         connectionService.setToken(token);
         MarketContext marketContext = connectionService.getMarketContext();

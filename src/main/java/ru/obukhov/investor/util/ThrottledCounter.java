@@ -71,7 +71,7 @@ public class ThrottledCounter {
         private synchronized void decrement() {
             int previousValue = value.getAndDecrement();
             if (previousValue == maxValue) {
-                notify();
+                notifyAll();
             }
         }
 
