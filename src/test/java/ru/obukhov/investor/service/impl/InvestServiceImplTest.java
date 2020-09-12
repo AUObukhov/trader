@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.context.ApplicationContext;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.MarketService;
@@ -37,15 +36,13 @@ public class InvestServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
-    private ApplicationContext appContext;
-    @Mock
     private MarketService marketService;
 
     private InvestServiceImpl service;
 
     @Before
     public void setUp() {
-        service = new InvestServiceImpl(appContext, marketService);
+        service = new InvestServiceImpl(marketService);
     }
 
     @Test

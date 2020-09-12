@@ -32,7 +32,6 @@ import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
 @RequiredArgsConstructor
 public class InvestServiceImpl implements InvestService {
 
-    private final ApplicationContext appContext;
     private final MarketService marketService;
 
     /**
