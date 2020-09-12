@@ -28,4 +28,6 @@ public interface InvestService {
     Map<DayOfWeek, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
 
     List<Instrument> getInstruments(@Nullable TickerType type);
+
+    Map<Integer, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to);
 }

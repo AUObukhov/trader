@@ -199,23 +199,20 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 8, 26))
                 .build());
 
-        mockCandles(ticker,
-                getDate(2020, 8, 24),
-                getDate(2020, 8, 30),
-                CandleInterval.DAY,
-                candles);
+        OffsetDateTime from = getDate(2020, 8, 24);
+        OffsetDateTime to = getDate(2020, 8, 30);
 
-        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker,
-                getDate(2020, 8, 24),
-                getDate(2020, 8, 30));
+        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
+
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker, from, to);
 
         assertEquals(3, saldos.size());
 
         final BigDecimal mondayAverage = saldos.get(DayOfWeek.MONDAY);
         assertTrue(numbersEqual(mondayAverage, 200));
 
-        final BigDecimal tuesdatAverage = saldos.get(DayOfWeek.TUESDAY);
-        assertTrue(numbersEqual(tuesdatAverage, 150));
+        final BigDecimal tuesdayAverage = saldos.get(DayOfWeek.TUESDAY);
+        assertTrue(numbersEqual(tuesdayAverage, 150));
 
         final BigDecimal wednesdayAverage = saldos.get(DayOfWeek.WEDNESDAY);
         assertTrue(numbersEqual(wednesdayAverage, 300));
@@ -251,19 +248,114 @@ public class InvestServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 8, 26))
                 .build());
 
-        mockCandles(ticker,
-                getDate(2020, 8, 24),
-                getDate(2020, 8, 30),
-                CandleInterval.DAY,
-                candles);
+        OffsetDateTime from = getDate(2020, 8, 24);
+        OffsetDateTime to = getDate(2020, 8, 30);
 
-        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker,
-                getDate(2020, 8, 24),
-                getDate(2020, 8, 30));
+        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
+
+        Map<DayOfWeek, BigDecimal> saldos = service.getWeeklySaldos(ticker, from, to);
 
         assertEquals(4, saldos.size());
 
         assertTrue(Ordering.<DayOfWeek>natural().isOrdered(saldos.keySet()));
+    }
+
+    // endregion
+
+    // region getMonthlySaldos
+
+    @Test
+    public void getMonthlySaldos_unitesSaldosByDayOfMonth() {
+        String ticker = TICKER;
+
+        List<Candle> candles = new ArrayList<>();
+
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getDate(2020, 8, 1))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getDate(2020, 8, 1))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(300))
+                .time(getDate(2020, 8, 1))
+                .build());
+
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(100))
+                .time(getDate(2020, 8, 2))
+                .build());
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(200))
+                .time(getDate(2020, 8, 2))
+                .build());
+
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.valueOf(300))
+                .time(getDate(2020, 8, 3))
+                .build());
+
+        OffsetDateTime from = getDate(2020, 8, 1);
+        OffsetDateTime to = getDate(2020, 8, 3);
+
+        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
+
+        Map<Integer, BigDecimal> saldos = service.getMonthlySaldos(ticker, from, to);
+
+        assertEquals(3, saldos.size());
+
+        final BigDecimal average1 = saldos.get(1);
+        assertTrue(numbersEqual(average1, 200));
+
+        final BigDecimal average2 = saldos.get(2);
+        assertTrue(numbersEqual(average2, 150));
+
+        final BigDecimal average3 = saldos.get(3);
+        assertTrue(numbersEqual(average3, 300));
+    }
+
+    @Test
+    public void getMonthlySaldos_sortsSaldosByDays() {
+        String ticker = TICKER;
+
+        List<Candle> candles = new ArrayList<>();
+
+        // Tuesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 2))
+                .build());
+
+        // Monday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 1))
+                .build());
+
+        // Friday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 4))
+                .build());
+
+        // Wednesday
+        candles.add(Candle.builder()
+                .saldo(BigDecimal.TEN)
+                .time(getDate(2020, 8, 3))
+                .build());
+
+        OffsetDateTime from = getDate(2020, 8, 1);
+        OffsetDateTime to = getDate(2020, 8, 4);
+
+        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
+
+        Map<Integer, BigDecimal> saldos = service.getMonthlySaldos(ticker, from, to);
+
+        assertEquals(4, saldos.size());
+
+        assertTrue(Ordering.<Integer>natural().isOrdered(saldos.keySet()));
     }
 
     // endregion

@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.model.Candle;
@@ -104,6 +103,26 @@ public class InvestServiceImpl implements InvestService {
 
         return new TreeMap<>(reduceMultimap(saldosByDaysOfWeek, MathUtils::getAverageMoney));
 
+    }
+
+    /**
+     * Searches saldos by conditions and groups them by day of month
+     *
+     * @param ticker ticker of candles
+     * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param to     end of search interval, current date and time if null
+     * @return {@link Map} day of month to saldo
+     */
+    @Override
+    public Map<Integer, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+        List<Candle> candles = getCandles(ticker, from, to, CandleInterval.DAY);
+
+        Multimap<Integer, BigDecimal> saldosByDaysOfMonth = MultimapBuilder.treeKeys().linkedListValues().build();
+        for (Candle candle : candles) {
+            saldosByDaysOfMonth.put(candle.getTime().getDayOfMonth(), candle.getSaldo());
+        }
+
+        return new TreeMap<>(reduceMultimap(saldosByDaysOfMonth, MathUtils::getAverageMoney));
     }
 
     /**

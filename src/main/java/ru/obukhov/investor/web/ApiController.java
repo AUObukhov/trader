@@ -68,6 +68,17 @@ public class ApiController {
         return new GetSaldosResponse(saldosByDaysOfWeek);
     }
 
+    @GetMapping("/saldos/monthly")
+    public GetSaldosResponse getMonthlySaldos(@Valid @RequestBody GetWeeklySaldosRequest request) {
+
+        Map<Integer, BigDecimal> saldosByDaysOfMonth = investService.getMonthlySaldos(
+                request.getTicker(),
+                request.getFrom(),
+                request.getTo());
+
+        return new GetSaldosResponse(saldosByDaysOfMonth);
+    }
+
     @GetMapping("/instruments")
     public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
         List<Instrument> instruments = investService.getInstruments(request.getTickerType());
