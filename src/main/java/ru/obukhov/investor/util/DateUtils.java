@@ -3,6 +3,7 @@ package ru.obukhov.investor.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.lang.Nullable;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.DayOfWeek;
@@ -79,19 +80,43 @@ public class DateUtils {
     }
 
     /**
+     * @return latest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.
+     * If one of parameters is null, returns another.
+     */
+    public static OffsetDateTime getLatestDateTime(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        if (dateTime1 == null) {
+            return dateTime2;
+        } else if (dateTime2 == null) {
+            return dateTime1;
+        } else {
+            return dateTime1.isBefore(dateTime2) ? dateTime2 : dateTime1;
+        }
+    }
+
+    /**
      * Same as {@link OffsetDateTime#plus}, but if result is after {@code maxDateTime}, then returns {@code maxDateTime}
      */
     public static OffsetDateTime plusLimited(OffsetDateTime dateTime,
                                              long amountToAdd,
                                              TemporalUnit temporalUnit,
-                                             OffsetDateTime maxDateTime) {
+                                             @Nullable OffsetDateTime maxDateTime) {
         return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
+    }
+
+    /**
+     * Same as {@link OffsetDateTime#minus}, but if result is before {@code minDateTime}, then returns {@code minDateTime}
+     */
+    public static OffsetDateTime minusLimited(OffsetDateTime dateTime,
+                                              long amountToSubstract,
+                                              TemporalUnit temporalUnit,
+                                              @Nullable OffsetDateTime minDateTime) {
+        return DateUtils.getLatestDateTime(dateTime.minus(amountToSubstract, temporalUnit), minDateTime);
     }
 
     /**
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
-    public static TemporalUnit getPeriodUnitByCandleInterval(CandleInterval candleInterval) {
+    public static ChronoUnit getPeriodByCandleInterval(CandleInterval candleInterval) {
         boolean intervalIsInDay = candleInterval == CandleInterval.ONE_MIN
                 || candleInterval == CandleInterval.TWO_MIN
                 || candleInterval == CandleInterval.THREE_MIN
@@ -103,6 +128,15 @@ public class DateUtils {
                 || candleInterval == CandleInterval.TWO_HOURS
                 || candleInterval == CandleInterval.FOUR_HOURS;
         return intervalIsInDay ? ChronoUnit.DAYS : ChronoUnit.YEARS;
+    }
+
+    /**
+     * Null safe extention of {@link OffsetDateTime#isAfter}
+     *
+     * @return true, if {@code dateTime2} is null, or else result of {@link OffsetDateTime#isAfter}
+     */
+    public static boolean isAfter(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
 }
