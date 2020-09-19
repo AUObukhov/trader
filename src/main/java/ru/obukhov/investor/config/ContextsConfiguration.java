@@ -8,11 +8,13 @@ import org.springframework.context.annotation.Configuration;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.ThrottledMarketContext;
 import ru.obukhov.investor.service.ThrottledOperationsContext;
+import ru.obukhov.investor.service.ThrottledOrdersContext;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OperationsContext;
+import ru.tinkoff.invest.openapi.OrdersContext;
 
 /**
- * Bean for post initializing contexts
+ * Bean for post initializing of contexts
  */
 @Configuration
 @AllArgsConstructor
@@ -21,6 +23,7 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
     private final ConnectionService connectionService;
     private final ThrottledMarketContext throttledMarketContext;
     private final ThrottledOperationsContext throttledOperationsContext;
+    private final ThrottledOrdersContext throttledOrdersContext;
 
     @Override
     public void onApplicationEvent(@NotNull final ApplicationReadyEvent event) {
@@ -30,6 +33,9 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
 
         OperationsContext operationsContext = connectionService.getOperationsContext();
         throttledOperationsContext.setInnerContext(operationsContext);
+
+        OrdersContext ordersContext = connectionService.getOrdersContext();
+        throttledOrdersContext.setInnerContext(ordersContext);
 
     }
 

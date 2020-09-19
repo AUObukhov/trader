@@ -4,6 +4,7 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
+import ru.obukhov.investor.service.aop.Throttled;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.models.operations.OperationsList;
 
@@ -16,6 +17,7 @@ public class ThrottledOperationsContext implements OperationsContext {
     @Setter
     private OperationsContext innerContext;
 
+    @Throttled
     @NotNull
     @Override
     public CompletableFuture<OperationsList> getOperations(@NotNull OffsetDateTime from,
