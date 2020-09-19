@@ -50,7 +50,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
                                    @Nullable OffsetDateTime to,
                                    CandleInterval interval) {
 
-        String figi = getInstrument(ticker).figi;
+        String figi = getFigi(ticker);
         ChronoUnit period = DateUtils.getPeriodByCandleInterval(interval);
 
         List<Candle> candles = period == ChronoUnit.DAYS
@@ -161,11 +161,12 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
         return result;
     }
 
-    private Instrument getInstrument(String ticker) {
+    @Override
+    public String getFigi(String ticker) {
         List<Instrument> instruments = marketContext.searchMarketInstrumentsByTicker(ticker).join().instruments;
         Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
 
-        return instruments.get(0);
+        return instruments.get(0).figi;
     }
 
     @Override

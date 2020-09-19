@@ -11,7 +11,9 @@ import org.springframework.util.Assert;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.ThrottledMarketContext;
+import ru.obukhov.investor.service.ThrottledOperationsContext;
 import ru.tinkoff.invest.openapi.MarketContext;
+import ru.tinkoff.invest.openapi.OperationsContext;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
@@ -32,10 +34,15 @@ public class InvestorApplication implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) {
         ConnectionService connectionService = applicationContext.getBean(ConnectionService.class);
         connectionService.setToken(token);
-        MarketContext marketContext = connectionService.getMarketContext();
 
+        MarketContext marketContext = connectionService.getMarketContext();
         ThrottledMarketContext throttledMarketContext = applicationContext.getBean(ThrottledMarketContext.class);
         throttledMarketContext.setInnerContext(marketContext);
+
+        OperationsContext operationsContext = connectionService.getOperationsContext();
+        ThrottledOperationsContext throttledOperationsContext =
+                applicationContext.getBean(ThrottledOperationsContext.class);
+        throttledOperationsContext.setInnerContext(operationsContext);
     }
 
 }

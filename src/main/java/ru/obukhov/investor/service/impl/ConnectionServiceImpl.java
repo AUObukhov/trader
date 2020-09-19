@@ -9,7 +9,12 @@ import ru.obukhov.investor.service.ConnectionService;
 import ru.obukhov.investor.service.StreamingApiSubscriber;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OpenApi;
+import ru.tinkoff.invest.openapi.OperationsContext;
+import ru.tinkoff.invest.openapi.OrdersContext;
+import ru.tinkoff.invest.openapi.PortfolioContext;
 import ru.tinkoff.invest.openapi.SandboxOpenApi;
+import ru.tinkoff.invest.openapi.StreamingContext;
+import ru.tinkoff.invest.openapi.UserContext;
 import ru.tinkoff.invest.openapi.okhttp.OkHttpOpenApiFactory;
 
 import java.util.concurrent.Executors;
@@ -27,11 +32,50 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public MarketContext getMarketContext() {
+        softRefreshApi();
+
+        return api.getMarketContext();
+    }
+
+    @Override
+    public OperationsContext getOperationsContext() {
+        softRefreshApi();
+
+        return api.getOperationsContext();
+    }
+
+    @Override
+    public OrdersContext getOrdersContext() {
+        softRefreshApi();
+
+        return api.getOrdersContext();
+    }
+
+    @Override
+    public PortfolioContext getPortfolioContext() {
+        softRefreshApi();
+
+        return api.getPortfolioContext();
+    }
+
+    @Override
+    public UserContext getUserContext() {
+        softRefreshApi();
+
+        return api.getUserContext();
+    }
+
+    @Override
+    public StreamingContext getStreamingContext() {
+        softRefreshApi();
+
+        return api.getStreamingContext();
+    }
+
+    private void softRefreshApi() {
         if (this.api == null || this.api.hasClosed()) {
             refreshApi();
         }
-
-        return api.getMarketContext();
     }
 
     /**

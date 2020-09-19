@@ -18,4 +18,5 @@ public interface MarketService {
 
     List<Instrument> getInstruments(TickerType type);
 
+    String getFigi(String ticker);
 }
