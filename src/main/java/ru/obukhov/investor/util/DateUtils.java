@@ -133,4 +133,28 @@ public class DateUtils {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
+    public static OffsetDateTime roundUpToDay(OffsetDateTime dateTime) {
+        OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
+        if (!date.equals(dateTime)) {
+            date = date.plusDays(1);
+        }
+
+        return date;
+    }
+
+    /**
+     * Moves given {@code dateTime} to start of next year.
+     * If given {@code dateTime} is already start of year, not changes it
+     *
+     * @return moved date
+     */
+    public static OffsetDateTime roundUpToYear(OffsetDateTime dateTime) {
+        OffsetDateTime date = dateTime.withDayOfYear(1).truncatedTo(ChronoUnit.DAYS);
+        if (!date.equals(dateTime)) {
+            date = date.plusYears(1);
+        }
+
+        return date;
+    }
+
 }

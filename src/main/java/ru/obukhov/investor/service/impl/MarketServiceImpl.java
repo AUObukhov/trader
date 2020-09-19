@@ -2,10 +2,8 @@ package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -54,11 +52,10 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
 
         String figi = getInstrument(ticker).figi;
         ChronoUnit period = DateUtils.getPeriodByCandleInterval(interval);
-        OffsetDateTime actualTo = ObjectUtils.defaultIfNull(to, OffsetDateTime.now());
 
         List<Candle> candles = period == ChronoUnit.DAYS
-                ? getAllCandlesByDays(figi, from, actualTo, interval)
-                : getAllCandlesByYears(figi, from, actualTo, interval);
+                ? getAllCandlesByDays(figi, from, to, interval)
+                : getAllCandlesByYears(figi, from, to, interval);
 
         log.info("Loaded " + candles.size() + " candles for ticker '" + ticker + "'");
 
@@ -69,10 +66,10 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
 
     private List<Candle> getAllCandlesByDays(String figi,
                                              @Nullable OffsetDateTime from,
-                                             @NonNull OffsetDateTime to,
+                                             @Nullable OffsetDateTime to,
                                              CandleInterval interval) {
 
-        OffsetDateTime currentFrom = to;
+        OffsetDateTime currentFrom = DateUtils.roundUpToDay(to == null ? OffsetDateTime.now() : to);
         OffsetDateTime currentTo;
 
         List<Candle> allCandles = new ArrayList<>();
@@ -97,11 +94,11 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     }
 
     private List<Candle> getAllCandlesByYears(String figi,
-                                              OffsetDateTime from,
-                                              OffsetDateTime to,
+                                              @Nullable OffsetDateTime from,
+                                              @Nullable OffsetDateTime to,
                                               CandleInterval interval) {
 
-        OffsetDateTime currentFrom = to;
+        OffsetDateTime currentFrom = DateUtils.roundUpToYear(to == null ? OffsetDateTime.now() : to);
         OffsetDateTime currentTo;
 
         List<Candle> allCandles = new ArrayList<>();

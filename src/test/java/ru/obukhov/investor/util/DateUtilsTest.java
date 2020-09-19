@@ -416,4 +416,64 @@ public class DateUtilsTest {
     }
 
     // endregion
+
+    // region roundUpToDay tests
+
+    @Test
+    public void roundUpToDay_doesNotChangesDateTime_whenDateTimeIsStartOfDay() {
+        OffsetDateTime dateTime = DateUtils.getDate(2019, 1, 1);
+
+        OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2019, 1, 1);
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void roundUpToDay_movesDateTimeToNextDay_whenDateTimeIsAfterStartOfDay() {
+        OffsetDateTime dateTime =
+                DateUtils.getDateTime(2020, 5, 5, 4, 6, 7);
+
+        OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2020, 5, 6);
+        Assert.assertEquals(expected, result);
+    }
+
+    // endregion
+
+    // region roundUpToYear tests
+
+    @Test
+    public void roundUpToYear_doesNotChangesDateTime_whenDateTimeIsStartOfYear() {
+        OffsetDateTime dateTime = DateUtils.getDate(2019, 1, 1);
+
+        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2019, 1, 1);
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void roundUpToYear_movesDateTimeToNextYear_whenDateTimeIsAfterStartOfYear() {
+        OffsetDateTime dateTime = DateUtils.getDate(2019, 5, 5);
+
+        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2020, 1, 1);
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void roundUpToYear_movesDateTimeToNextYear_whenDateTimeIsAfterStartOfYearForFewTime() {
+        OffsetDateTime dateTime =
+                DateUtils.getDateTime(2019, 1, 5, 0, 0, 1);
+
+        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2020, 1, 1);
+        Assert.assertEquals(expected, result);
+    }
+
+    // endregion
 }
