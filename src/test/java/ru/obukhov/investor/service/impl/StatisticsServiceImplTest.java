@@ -29,18 +29,18 @@ import static ru.obukhov.investor.util.DateUtils.getTime;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
 @RunWith(MockitoJUnitRunner.class)
-public class InvestServiceImplTest extends BaseMockedTest {
+public class StatisticsServiceImplTest extends BaseMockedTest {
 
     private static final String TICKER = "ticker";
 
     @Mock
     private MarketService marketService;
 
-    private InvestServiceImpl service;
+    private StatisticsServiceImpl service;
 
     @Before
     public void setUp() {
-        service = new InvestServiceImpl(marketService);
+        service = new StatisticsServiceImpl(marketService);
     }
 
     @Test

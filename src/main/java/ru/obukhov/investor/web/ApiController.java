@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.InvestService;
+import ru.obukhov.investor.service.StatisticsService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetDailySaldosRequest;
@@ -28,12 +28,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ApiController {
 
-    private final InvestService investService;
+    private final StatisticsService statisticsService;
 
     @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
-        List<Candle> candles = investService.getCandles(
+        List<Candle> candles = statisticsService.getCandles(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
@@ -46,7 +46,7 @@ public class ApiController {
     @GetMapping("/saldos/daily")
     public GetSaldosResponse getDailySaldos(@Valid @RequestBody GetDailySaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByTimes = investService.getDailySaldos(
+        Map<Object, BigDecimal> saldosByTimes = statisticsService.getDailySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo(),
@@ -58,7 +58,7 @@ public class ApiController {
     @GetMapping("/saldos/weekly")
     public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByDaysOfWeek = investService.getWeeklySaldos(
+        Map<Object, BigDecimal> saldosByDaysOfWeek = statisticsService.getWeeklySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
@@ -69,7 +69,7 @@ public class ApiController {
     @GetMapping("/saldos/monthly")
     public GetSaldosResponse getMonthlySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByDaysOfMonth = investService.getMonthlySaldos(
+        Map<Object, BigDecimal> saldosByDaysOfMonth = statisticsService.getMonthlySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
@@ -80,7 +80,7 @@ public class ApiController {
     @GetMapping("/saldos/yearly")
     public GetSaldosResponse getYearlySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByYear = investService.getYearlySaldos(
+        Map<Object, BigDecimal> saldosByYear = statisticsService.getYearlySaldos(
                 request.getTicker(),
                 request.getFrom(),
                 request.getTo());
@@ -90,7 +90,7 @@ public class ApiController {
 
     @GetMapping("/instruments")
     public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
-        List<Instrument> instruments = investService.getInstruments(request.getTickerType());
+        List<Instrument> instruments = statisticsService.getInstruments(request.getTickerType());
 
         return new GetInstrumentsResponse(instruments);
     }

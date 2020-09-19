@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
-public interface InvestService {
+public interface StatisticsService {
 
     List<Candle> getCandles(String ticker,
                             OffsetDateTime from,

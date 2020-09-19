@@ -8,8 +8,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
-import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
+import ru.obukhov.investor.service.StatisticsService;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
@@ -26,7 +26,7 @@ import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InvestServiceImpl implements InvestService {
+public class StatisticsServiceImpl implements StatisticsService {
 
     private final MarketService marketService;
 
