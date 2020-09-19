@@ -6,12 +6,19 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import ru.obukhov.investor.model.Candle;
+import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Maps {@link ru.tinkoff.invest.openapi.models.market.Candle} to {@link ru.obukhov.investor.model.Candle}
+ * Maps:
+ * <br/>
+ * - {@link ru.tinkoff.invest.openapi.models.market.Candle} to {@link ru.obukhov.investor.model.Candle}
+ * <br/>
+ * - {@link ru.tinkoff.invest.openapi.models.market.HistoricalCandles} to list of  {@link ru.obukhov.investor.model.Candle}
  */
 @Mapper
 public abstract class CandleMapper {
@@ -21,6 +28,12 @@ public abstract class CandleMapper {
     @Mapping(target = "highestPrice", source = "highestPrice", qualifiedByName = "moneyMapper")
     @Mapping(target = "lowestPrice", source = "lowestPrice", qualifiedByName = "moneyMapper")
     public abstract Candle map(ru.tinkoff.invest.openapi.models.market.Candle source);
+
+    public List<Candle> map(HistoricalCandles source) {
+        return source.candles.stream()
+                .map(this::map)
+                .collect(Collectors.toList());
+    }
 
     @AfterMapping
     protected void calculateSaldo(@MappingTarget Candle.CandleBuilder candle,
