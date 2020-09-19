@@ -17,7 +17,6 @@ import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,11 +46,7 @@ public class InvestServiceImpl implements InvestService {
                                    OffsetDateTime to,
                                    CandleInterval candleInterval) {
 
-        OffsetDateTime adjustedFrom = DateUtils.getDefaultFromIfNull(from);
-        OffsetDateTime adjustedTo = DateUtils.getDefaultToIfNull(to);
-        TemporalUnit periodUnit = DateUtils.getPeriodUnitByCandleInterval(candleInterval);
-
-        return marketService.getCandles(ticker, adjustedFrom, adjustedTo, candleInterval, periodUnit);
+        return marketService.getCandles(ticker, from, to, candleInterval);
     }
 
     /**

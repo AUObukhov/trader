@@ -10,14 +10,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.MarketService;
-import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -458,9 +456,7 @@ public class InvestServiceImplTest extends BaseMockedTest {
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        TemporalUnit temporalUnit = DateUtils.getPeriodUnitByCandleInterval(candleInterval);
-
-        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval), eq(temporalUnit)))
+        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
                 .thenReturn(candles);
     }
 

@@ -2,8 +2,11 @@ package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.investor.model.Candle;
@@ -14,15 +17,15 @@ import ru.obukhov.investor.service.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalUnit;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService, DisposableBean {
+
+    static final int MAX_EMPTY_DAYS_COUNT = 5;
 
     private final ConnectionService connectionService;
     private final MarketContext marketContext;
@@ -39,40 +44,85 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     /**
      * Load candles by conditions period by period.
      *
-     * @return list of loaded candles
+     * @return sorted by time list of loaded candles
      */
     @Override
     public List<Candle> getCandles(String ticker,
-                                   OffsetDateTime from,
-                                   OffsetDateTime to,
-                                   CandleInterval interval,
-                                   TemporalUnit periodUnit) {
+                                   @Nullable OffsetDateTime from,
+                                   @Nullable OffsetDateTime to,
+                                   CandleInterval interval) {
 
-        OffsetDateTime currentFrom = from;
-        OffsetDateTime currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
+        String figi = getInstrument(ticker).figi;
+        ChronoUnit period = DateUtils.getPeriodByCandleInterval(interval);
+        OffsetDateTime actualTo = ObjectUtils.defaultIfNull(to, OffsetDateTime.now());
 
-        Instrument instrument = getInstrument(ticker);
+        List<Candle> candles = period == ChronoUnit.DAYS
+                ? getAllCandlesByDays(figi, from, actualTo, interval)
+                : getAllCandlesByYears(figi, from, actualTo, interval);
 
-        List<CompletableFuture<Optional<HistoricalCandles>>> futures = new ArrayList<>();
-        while (currentFrom.isBefore(to)) {
-            CompletableFuture<Optional<HistoricalCandles>> currentCandles =
-                    marketContext.getMarketCandles(instrument.figi, currentFrom, currentTo, interval);
-            futures.add(currentCandles);
+        log.info("Loaded " + candles.size() + " candles for ticker '" + ticker + "'");
 
-            currentFrom = currentTo;
-            currentTo = DateUtils.plusLimited(currentFrom, 1, periodUnit, to);
-        }
-
-        List<Candle> candles = futures.stream()
-                .map(CompletableFuture::join)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .flatMap(historicalCandles -> historicalCandles.candles.stream())
-                .map(candleMapper::map)
+        return candles.stream()
+                .sorted(Comparator.comparing(Candle::getTime))
                 .collect(Collectors.toList());
+    }
 
-        log.info("Loaded " + candles.size() + " candles for '" + ticker + "'");
+    private List<Candle> getAllCandlesByDays(String figi,
+                                             @Nullable OffsetDateTime from,
+                                             @NonNull OffsetDateTime to,
+                                             CandleInterval interval) {
 
+        OffsetDateTime currentFrom = to;
+        OffsetDateTime currentTo;
+
+        List<Candle> allCandles = new ArrayList<>();
+        List<Candle> currentCandles;
+        int emptyDaysCount = 0;
+        do {
+            currentTo = currentFrom;
+            currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.DAYS, from);
+
+            currentCandles = loadCandles(figi, currentFrom, currentTo, interval);
+            if (currentCandles.isEmpty()) {
+                emptyDaysCount++;
+            } else {
+                emptyDaysCount = 0;
+                allCandles.addAll(currentCandles);
+            }
+        } while (DateUtils.isAfter(currentFrom, from)
+                && (!currentCandles.isEmpty() || emptyDaysCount <= MAX_EMPTY_DAYS_COUNT));
+
+        return allCandles;
+
+    }
+
+    private List<Candle> getAllCandlesByYears(String figi,
+                                              OffsetDateTime from,
+                                              OffsetDateTime to,
+                                              CandleInterval interval) {
+
+        OffsetDateTime currentFrom = to;
+        OffsetDateTime currentTo;
+
+        List<Candle> allCandles = new ArrayList<>();
+        List<Candle> currentCandles;
+        do {
+            currentTo = currentFrom;
+            currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.YEARS, from);
+
+            currentCandles = loadCandles(figi, currentFrom, currentTo, interval);
+            allCandles.addAll(currentCandles);
+        } while (DateUtils.isAfter(currentFrom, from) && !currentCandles.isEmpty());
+
+        return allCandles;
+
+    }
+
+    private List<Candle> loadCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
+        List<Candle> candles = marketContext.getMarketCandles(figi, from, to, interval).join()
+                .map(candleMapper::map)
+                .orElse(Collections.emptyList());
+        log.debug("Loaded " + candles.size() + " candles for figi '" + figi + "' in interval " + from + " - " + to);
         return candles;
     }
 
