@@ -10,7 +10,6 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.InvestService;
 import ru.obukhov.investor.service.MarketService;
-import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
@@ -35,7 +34,7 @@ public class InvestServiceImpl implements InvestService {
      * Searches candles by conditions
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param from           beginning of search interval, start of trading if null
      * @param to             end of search interval, current date and time if null
      * @param candleInterval candle interval
      * @return list of found candles
@@ -53,7 +52,7 @@ public class InvestServiceImpl implements InvestService {
      * Searches saldos by conditions and groups then by time
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param from           beginning of search interval, start of trading if null
      * @param to             end of search interval, current date and time if null
      * @param candleInterval candle interval, allowed values:
      *                       ONE_MIN, TWO_MIN, THREE_MIN, FIVE_MIN, TEN_MIN, QUARTER_HOUR, HALF_HOUR,
@@ -73,7 +72,7 @@ public class InvestServiceImpl implements InvestService {
      * Searches saldos by conditions and groups them by day of week
      *
      * @param ticker ticker of candles
-     * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param from   beginning of search interval, start of trading if null
      * @param to     end of search interval, current date and time if null
      * @return Map day of week to saldo
      */
@@ -88,7 +87,7 @@ public class InvestServiceImpl implements InvestService {
      * Searches saldos by conditions and groups them by day of month
      *
      * @param ticker ticker of candles
-     * @param from   beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param from   beginning of search interval, start of trading if null
      * @param to     end of search interval, current date and time if null
      * @return Map day of month to saldo
      */
@@ -99,6 +98,14 @@ public class InvestServiceImpl implements InvestService {
 
     }
 
+    /**
+     * Searches saldos by conditions and groups them by year
+     *
+     * @param ticker ticker of candles
+     * @param from   beginning of search interval, start of trading if null
+     * @param to     end of search interval, current date and time if null
+     * @return Map year to saldo
+     */
     @Override
     public Map<Object, BigDecimal> getYearlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
 
@@ -110,7 +117,7 @@ public class InvestServiceImpl implements InvestService {
      * Searches saldos by conditions and groups them by time unit provided by {@code keyExtractor}
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, {@link DateUtils#START_DATE} if null
+     * @param from           beginning of search interval, start of trading if null
      * @param to             end of search interval, current date and time if null
      * @param candleInterval candle interval
      * @param keyExtractor   function getting of Map key from {@code OffsetDateTime}
