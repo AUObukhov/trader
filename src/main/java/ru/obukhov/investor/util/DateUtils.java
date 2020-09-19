@@ -117,17 +117,11 @@ public class DateUtils {
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
     public static ChronoUnit getPeriodByCandleInterval(CandleInterval candleInterval) {
-        boolean intervalIsInDay = candleInterval == CandleInterval.ONE_MIN
-                || candleInterval == CandleInterval.TWO_MIN
-                || candleInterval == CandleInterval.THREE_MIN
-                || candleInterval == CandleInterval.FIVE_MIN
-                || candleInterval == CandleInterval.TEN_MIN
-                || candleInterval == CandleInterval.QUARTER_HOUR
-                || candleInterval == CandleInterval.HALF_HOUR
-                || candleInterval == CandleInterval.HOUR
-                || candleInterval == CandleInterval.TWO_HOURS
-                || candleInterval == CandleInterval.FOUR_HOURS;
-        return intervalIsInDay ? ChronoUnit.DAYS : ChronoUnit.YEARS;
+        return candleInterval == CandleInterval.DAY
+                || candleInterval == CandleInterval.WEEK
+                || candleInterval == CandleInterval.MONTH
+                ? ChronoUnit.YEARS
+                : ChronoUnit.DAYS;
     }
 
     /**
