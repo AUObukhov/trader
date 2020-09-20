@@ -10,6 +10,7 @@
     </parent>
     <groupId>ru.obukhov.investor</groupId>
     <artifactId>investor</artifactId>
+    <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>investor</name>
     <description>Project for using Tinkoff Invests API</description>
@@ -157,6 +158,12 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
             </plugin>
         </plugins>
     </build>
