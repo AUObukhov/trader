@@ -77,7 +77,6 @@ public class ThrottledMarketContext implements MarketContext {
         return innerContext.searchMarketInstrumentByFigi(figi);
     }
 
-    @Throttled
     @NotNull
     @Override
     public String getPath() {

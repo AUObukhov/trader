@@ -12,6 +12,7 @@ import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.OrdersContext;
 import ru.tinkoff.invest.openapi.PortfolioContext;
+import ru.tinkoff.invest.openapi.SandboxContext;
 import ru.tinkoff.invest.openapi.SandboxOpenApi;
 import ru.tinkoff.invest.openapi.StreamingContext;
 import ru.tinkoff.invest.openapi.UserContext;
@@ -70,6 +71,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         softRefreshApi();
 
         return api.getStreamingContext();
+    }
+
+    @Override
+    public SandboxContext getSandboxContext() {
+        if (!tradingProperties.getSandbox()) {
+            throw new IllegalStateException("Not sandbox mode");
+        }
+
+        softRefreshApi();
+
+        return ((SandboxOpenApi) api).getSandboxContext();
     }
 
     private void softRefreshApi() {
