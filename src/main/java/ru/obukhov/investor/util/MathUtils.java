@@ -21,7 +21,7 @@ public class MathUtils {
     }
 
     /**
-     * @return resualt of division if  {@code dividend} by {@code divisor} with scale = 2 and rounding mode = Half Up
+     * @return result of division if {@code dividend} by {@code divisor} with scale = 2 and rounding mode = Half Up
      */
     public static BigDecimal divideMoney(BigDecimal dividend, int divisor) {
         return dividend.divide(BigDecimal.valueOf(divisor), 2, RoundingMode.HALF_UP);
