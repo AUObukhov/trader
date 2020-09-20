@@ -1,4 +1,4 @@
-package ru.obukhov.investor.web;
+package ru.obukhov.investor.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.StatisticsService;
+import ru.obukhov.investor.service.interfaces.StatisticsService;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetDailySaldosRequest;

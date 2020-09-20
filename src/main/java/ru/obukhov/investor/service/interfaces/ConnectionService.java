@@ -1,4 +1,4 @@
-package ru.obukhov.investor.service;
+package ru.obukhov.investor.service.interfaces;
 
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OperationsContext;

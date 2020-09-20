@@ -1,4 +1,4 @@
-package ru.obukhov.investor.service;
+package ru.obukhov.investor.service.interfaces;
 
 import org.springframework.lang.Nullable;
 import ru.obukhov.investor.model.Candle;

@@ -5,7 +5,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import ru.obukhov.investor.service.ConnectionService;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 
 /**
  * Bean for passing token from application args to connectionService bean

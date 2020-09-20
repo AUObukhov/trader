@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.MarketService;
+import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;

@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
-import ru.obukhov.investor.service.MarketService;
-import ru.obukhov.investor.service.OperationsService;
+import ru.obukhov.investor.service.interfaces.MarketService;
+import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 

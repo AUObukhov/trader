@@ -9,7 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.MarketService;
+import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;

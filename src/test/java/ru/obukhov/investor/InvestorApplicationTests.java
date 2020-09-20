@@ -3,7 +3,7 @@ package ru.obukhov.investor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.obukhov.investor.service.ConnectionService;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 
 @SpringBootTest
 class InvestorApplicationTests {

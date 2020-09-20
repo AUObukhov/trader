@@ -1,4 +1,4 @@
-package ru.obukhov.investor.service;
+package ru.obukhov.investor.service.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
