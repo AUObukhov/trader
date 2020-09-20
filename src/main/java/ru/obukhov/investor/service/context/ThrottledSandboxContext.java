@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service.context;
 
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,10 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-public class ThrottledSandboxContext implements SandboxContext {
-
-    @Setter
-    private SandboxContext innerContext;
+public class ThrottledSandboxContext extends ContextProxy<SandboxContext> implements SandboxContext {
 
     @Throttled
     @NotNull
@@ -46,12 +42,6 @@ public class ThrottledSandboxContext implements SandboxContext {
     @Override
     public CompletableFuture<Void> clearAll(@Nullable String brokerAccountId) {
         return innerContext.clearAll(brokerAccountId);
-    }
-
-    @NotNull
-    @Override
-    public String getPath() {
-        return innerContext.getPath();
     }
 
 }

@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service.context;
 
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -15,10 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class ThrottledOrdersContext implements OrdersContext {
-
-    @Setter
-    private OrdersContext innerContext;
+public class ThrottledOrdersContext extends ContextProxy<OrdersContext> implements OrdersContext {
 
     @Throttled
     @NotNull
@@ -50,12 +46,6 @@ public class ThrottledOrdersContext implements OrdersContext {
     @Override
     public CompletableFuture<Void> cancelOrder(@NotNull String orderId, @Nullable String brokerAccountId) {
         return innerContext.cancelOrder(orderId, brokerAccountId);
-    }
-
-    @NotNull
-    @Override
-    public String getPath() {
-        return innerContext.getPath();
     }
 
 }

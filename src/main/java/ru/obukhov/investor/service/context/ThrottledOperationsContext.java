@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service.context;
 
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -12,10 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class ThrottledOperationsContext implements OperationsContext {
-
-    @Setter
-    private OperationsContext innerContext;
+public class ThrottledOperationsContext extends ContextProxy<OperationsContext> implements OperationsContext {
 
     @Throttled
     @NotNull
@@ -27,9 +23,4 @@ public class ThrottledOperationsContext implements OperationsContext {
         return innerContext.getOperations(from, to, figi, brokerAccountId);
     }
 
-    @NotNull
-    @Override
-    public String getPath() {
-        return innerContext.getPath();
-    }
 }

@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service.context;
 
-import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import ru.obukhov.investor.service.aop.Throttled;
@@ -16,10 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class ThrottledMarketContext implements MarketContext {
-
-    @Setter
-    private MarketContext innerContext;
+public class ThrottledMarketContext extends ContextProxy<MarketContext> implements MarketContext {
 
     @Throttled
     @NotNull
@@ -59,7 +55,10 @@ public class ThrottledMarketContext implements MarketContext {
     @Throttled
     @NotNull
     @Override
-    public CompletableFuture<Optional<HistoricalCandles>> getMarketCandles(@NotNull String figi, @NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull CandleInterval interval) {
+    public CompletableFuture<Optional<HistoricalCandles>> getMarketCandles(@NotNull String figi,
+                                                                           @NotNull OffsetDateTime from,
+                                                                           @NotNull OffsetDateTime to,
+                                                                           @NotNull CandleInterval interval) {
         return innerContext.getMarketCandles(figi, from, to, interval);
     }
 
@@ -75,12 +74,6 @@ public class ThrottledMarketContext implements MarketContext {
     @Override
     public CompletableFuture<Optional<Instrument>> searchMarketInstrumentByFigi(@NotNull String figi) {
         return innerContext.searchMarketInstrumentByFigi(figi);
-    }
-
-    @NotNull
-    @Override
-    public String getPath() {
-        return innerContext.getPath();
     }
 
 }
