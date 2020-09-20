@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import ru.obukhov.investor.service.context.ThrottledMarketContext;
 import ru.obukhov.investor.service.context.ThrottledOperationsContext;
 import ru.obukhov.investor.service.context.ThrottledOrdersContext;
+import ru.obukhov.investor.service.context.ThrottledPortfolioContext;
 import ru.obukhov.investor.service.context.ThrottledSandboxContext;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
 
@@ -21,6 +22,7 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
     private final ThrottledMarketContext throttledMarketContext;
     private final ThrottledOperationsContext throttledOperationsContext;
     private final ThrottledOrdersContext throttledOrdersContext;
+    private final ThrottledPortfolioContext throttledPortfolioContext;
     private final ThrottledSandboxContext throttledSandboxContext;
 
     @Autowired
@@ -28,12 +30,14 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
                                  ThrottledMarketContext throttledMarketContext,
                                  ThrottledOperationsContext throttledOperationsContext,
                                  ThrottledOrdersContext throttledOrdersContext,
+                                 ThrottledPortfolioContext throttledPortfolioContext,
                                  @Autowired(required = false) ThrottledSandboxContext throttledSandboxContext) {
 
         this.connectionService = connectionService;
         this.throttledMarketContext = throttledMarketContext;
         this.throttledOperationsContext = throttledOperationsContext;
         this.throttledOrdersContext = throttledOrdersContext;
+        this.throttledPortfolioContext = throttledPortfolioContext;
         this.throttledSandboxContext = throttledSandboxContext;
     }
 
@@ -43,6 +47,7 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
         throttledMarketContext.setInnerContext(connectionService.getMarketContext());
         throttledOperationsContext.setInnerContext(connectionService.getOperationsContext());
         throttledOrdersContext.setInnerContext(connectionService.getOrdersContext());
+        throttledPortfolioContext.setInnerContext(connectionService.getPortfolioContext());
 
         if (throttledSandboxContext != null) {
             throttledSandboxContext.setInnerContext(connectionService.getSandboxContext());
