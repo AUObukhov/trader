@@ -24,9 +24,9 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/investor/v1")
+@RequestMapping("/investor/statistics")
 @RequiredArgsConstructor
-public class ApiController {
+public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
