@@ -49,6 +49,13 @@ public class MathUtilsTest {
     }
 
     @Test
+    public void subtractMoney() {
+        BigDecimal result = MathUtils.subtractMoney(BigDecimal.valueOf(100), BigDecimal.valueOf(10.555555));
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(89.44), result));
+    }
+
+    @Test
     public void divideMoney() {
         BigDecimal result = MathUtils.divideMoney(BigDecimal.valueOf(100), 3);
 

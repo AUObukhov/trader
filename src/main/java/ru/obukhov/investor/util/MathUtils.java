@@ -21,6 +21,13 @@ public class MathUtils {
     }
 
     /**
+     * @return result of subtraction of subtrahend from minuend with scale = 2 and rounding mode = Half Up
+     */
+    public static BigDecimal subtractMoney(BigDecimal minuend, BigDecimal subtrahend) {
+        return minuend.subtract(subtrahend).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
      * @return result of division if {@code dividend} by {@code divisor} with scale = 2 and rounding mode = Half Up
      */
     public static BigDecimal divideMoney(BigDecimal dividend, int divisor) {
