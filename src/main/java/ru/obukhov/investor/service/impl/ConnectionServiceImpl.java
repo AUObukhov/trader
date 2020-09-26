@@ -96,10 +96,12 @@ public class ConnectionServiceImpl implements ConnectionService {
      */
     private void refreshApi() {
         final OkHttpOpenApiFactory factory = new OkHttpOpenApiFactory(this.token, log);
-        this.api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
 
         if (tradingProperties.getSandbox()) {
+            this.api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
             ((SandboxOpenApi) api).getSandboxContext().performRegistration(null).join();
+        } else {
+            this.api = factory.createOpenApiClient(Executors.newSingleThreadExecutor());
         }
 
         subscribeListener();
