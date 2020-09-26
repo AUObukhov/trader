@@ -16,6 +16,8 @@ public interface MarketService {
                             @Nullable OffsetDateTime to,
                             CandleInterval interval);
 
+    Candle getLastCandle(String ticker);
+
     List<Instrument> getInstruments(TickerType type);
 
     String getFigi(String ticker);

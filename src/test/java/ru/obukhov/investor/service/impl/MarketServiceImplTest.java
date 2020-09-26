@@ -10,6 +10,8 @@ import org.mockito.stubbing.Answer;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
+import ru.obukhov.investor.util.DateUtils;
+import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
@@ -27,10 +29,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static ru.obukhov.investor.service.impl.MarketServiceImpl.MAX_EMPTY_DAYS_COUNT;
 import static ru.obukhov.investor.util.DateUtils.getDate;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
@@ -51,6 +55,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         mockAnyCandles();
     }
+
+    // region getCandles tests
 
     @Test
     public void getCandles_skipsCandlesByDays_whenFromIsReached() {
@@ -232,6 +238,53 @@ public class MarketServiceImplTest extends BaseMockedTest {
         assertTrue(numbersEqual(BigDecimal.valueOf(5), candles.get(5).getOpenPrice()));
     }
 
+    // endregion
+
+    // region getLastCandle tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
+        final String ticker = TICKER;
+
+        mockInstrument(FIGI, ticker);
+
+        service.getLastCandle(ticker);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+        final String figi = FIGI;
+        final String ticker = TICKER;
+        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(MAX_EMPTY_DAYS_COUNT + 1);
+        final OffsetDateTime to = from.plusDays(1);
+
+        mockInstrument(figi, ticker);
+        mockCandlesSimple(figi, from, to, CandleInterval.ONE_MIN, 10);
+
+        service.getLastCandle(ticker);
+    }
+
+    @Test
+    public void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+        final String figi = FIGI;
+        final String ticker = TICKER;
+        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(MAX_EMPTY_DAYS_COUNT);
+        final OffsetDateTime to = from.plusDays(1);
+        final int openPrice = 10;
+
+        mockInstrument(figi, ticker);
+        mockCandlesSimple(figi, from, to, CandleInterval.ONE_MIN, openPrice);
+
+        Candle candle = service.getLastCandle(ticker);
+
+        assertNotNull(candle);
+        assertTrue(MathUtils.numbersEqual(candle.getOpenPrice(), openPrice));
+    }
+
+    // endregion
+
+    // region mocks
+
     private void mockAnyCandles() {
         Answer<CompletableFuture<Optional<HistoricalCandles>>> answer = invocation ->
                 createCandlesFuture(invocation.getArgument(0, String.class),
@@ -308,5 +361,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
         when(marketContext.searchMarketInstrumentsByTicker(eq(ticker))).thenReturn(completableFuture);
 
     }
+
+    // endregion
 
 }

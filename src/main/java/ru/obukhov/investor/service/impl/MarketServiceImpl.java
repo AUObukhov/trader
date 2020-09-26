@@ -7,6 +7,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
@@ -121,6 +122,30 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
                 .orElse(Collections.emptyList());
         log.debug("Loaded " + candles.size() + " candles for figi '" + figi + "' in interval " + from + " - " + to);
         return candles;
+    }
+
+    @Override
+    public Candle getLastCandle(String ticker) {
+        String figi = getFigi(ticker);
+        OffsetDateTime from = DateUtils.getLastWorkDay();
+        OffsetDateTime to = from.plusDays(1);
+
+        List<Candle> currentCandles;
+        int emptyDaysCount = 0;
+        do {
+            currentCandles = loadCandles(figi, from, to, CandleInterval.ONE_MIN);
+            if (currentCandles.isEmpty()) {
+                emptyDaysCount++;
+            }
+
+            to = from;
+            from = from.minusDays(1);
+        } while (currentCandles.isEmpty() && emptyDaysCount <= MAX_EMPTY_DAYS_COUNT);
+
+        Candle lastCandle = CollectionUtils.lastElement(currentCandles);
+        Assert.isTrue(lastCandle != null, "Not found last candle for ticker '" + ticker + "'");
+
+        return lastCandle;
     }
 
     /**
