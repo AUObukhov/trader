@@ -15,6 +15,7 @@ import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +23,15 @@ public class OrdersServiceImpl implements OrdersService {
 
     private final MarketService marketService;
     private final OrdersContext ordersContext;
+
+    @Override
+    public List<Order> getOrders(String ticker) {
+        String figi = marketService.getFigi(ticker);
+        List<Order> orders = ordersContext.getOrders(null).join();
+        return orders.stream()
+                .filter(order -> figi.equals(order.figi))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<Order> getOrders() {
