@@ -66,6 +66,17 @@ public class DateUtils {
     }
 
     /**
+     * @return last work day not after today
+     */
+    public static OffsetDateTime getLastWorkDay() {
+        OffsetDateTime date = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        while (!isWorkDay(date)) {
+            date = date.minusDays(1);
+        }
+        return date;
+    }
+
+    /**
      * @return earliest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.
      * If one of parameters is null, returns another.
      */

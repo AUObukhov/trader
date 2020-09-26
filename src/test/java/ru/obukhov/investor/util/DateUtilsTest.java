@@ -2,6 +2,10 @@ package ru.obukhov.investor.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.OffsetDateTime;
@@ -11,8 +15,10 @@ import java.time.temporal.TemporalUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static ru.obukhov.investor.util.DateUtils.START_DATE;
+import static org.powermock.api.mockito.PowerMockito.when;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DateUtils.class)
 public class DateUtilsTest {
 
     @Test
@@ -84,7 +90,7 @@ public class DateUtilsTest {
     public void getDefaultFromIfNull_returnsStartDate_whenNull() {
         OffsetDateTime result = DateUtils.getDefaultFromIfNull(null);
 
-        assertEquals(START_DATE, result);
+        assertEquals(DateUtils.START_DATE, result);
     }
 
     // endregion
@@ -149,6 +155,33 @@ public class DateUtilsTest {
         boolean result = DateUtils.isWorkDay(date);
 
         assertFalse(result);
+    }
+
+    // endregion
+
+    // region getLastWorkDay tests
+
+    @Test
+    public void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
+        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
+        PowerMockito.mockStatic(OffsetDateTime.class);
+        when(OffsetDateTime.now()).thenReturn(mockedNow);
+
+        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
+
+        assertEquals(mockedNow, lastWorkDay);
+    }
+
+    @Test
+    public void getLastWorkDay_returnsNow_whenTodayIsWeekend() {
+        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
+        OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
+        PowerMockito.mockStatic(OffsetDateTime.class);
+        when(OffsetDateTime.now()).thenReturn(mockedNow);
+
+        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
+
+        assertEquals(expected, lastWorkDay);
     }
 
     // endregion
