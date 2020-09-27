@@ -12,6 +12,7 @@ import ru.obukhov.investor.service.context.ThrottledOrdersContext;
 import ru.obukhov.investor.service.context.ThrottledPortfolioContext;
 import ru.obukhov.investor.service.context.ThrottledSandboxContext;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
+import ru.tinkoff.invest.openapi.models.user.BrokerAccountType;
 
 /**
  * Bean for post initializing of contexts
@@ -55,6 +56,7 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
 
         if (throttledSandboxContext != null) {
             throttledSandboxContext.setInnerContext(connectionService.getSandboxContext());
+            throttledSandboxContext.performRegistration(BrokerAccountType.Tinkoff).join();
         }
 
         event.getApplicationContext()

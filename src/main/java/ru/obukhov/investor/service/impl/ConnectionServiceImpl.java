@@ -99,7 +99,6 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         if (tradingProperties.isSandbox()) {
             this.api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
-            ((SandboxOpenApi) api).getSandboxContext().performRegistration(null).join();
         } else {
             this.api = factory.createOpenApiClient(Executors.newSingleThreadExecutor());
         }
