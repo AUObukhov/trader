@@ -75,7 +75,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public SandboxContext getSandboxContext() {
-        if (!tradingProperties.getSandbox()) {
+        if (!tradingProperties.isSandbox()) {
             throw new IllegalStateException("Not sandbox mode");
         }
 
@@ -97,7 +97,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     private void refreshApi() {
         final OkHttpOpenApiFactory factory = new OkHttpOpenApiFactory(this.token, log);
 
-        if (tradingProperties.getSandbox()) {
+        if (tradingProperties.isSandbox()) {
             this.api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
             ((SandboxOpenApi) api).getSandboxContext().performRegistration(null).join();
         } else {

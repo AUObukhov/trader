@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "trading")
 public class TradingProperties {
 
-    private Boolean sandbox;
+    private boolean sandbox;
     private String token;
 
 }
