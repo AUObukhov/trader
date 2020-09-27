@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrdersService {
+    List<Order> getOrders(String ticker);
+
     List<Order> getOrders();
 
     PlacedOrder placeOrder(@NotNull String ticker,
