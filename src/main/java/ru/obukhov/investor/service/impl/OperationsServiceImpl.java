@@ -22,9 +22,16 @@ public class OperationsServiceImpl implements OperationsService {
     @Override
     public List<Operation> getOperations(@NotNull OffsetDateTime from,
                                          @NotNull OffsetDateTime to,
+                                         @Nullable String ticker) {
+        return getOperations(from, to, ticker, null);
+    }
+
+    @Override
+    public List<Operation> getOperations(@NotNull OffsetDateTime from,
+                                         @NotNull OffsetDateTime to,
                                          @Nullable String ticker,
                                          @Nullable String brokerAccountId) {
-        String figi = marketService.getFigi(ticker);
+        String figi = ticker == null ? null : marketService.getFigi(ticker);
         return operationsContext.getOperations(from, to, figi, brokerAccountId).join().operations;
     }
 
