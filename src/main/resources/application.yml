@@ -9,5 +9,3 @@ query.throttle:
 bot:
   delay: 1000
   tickers: SBER
-
-logging.level.ru.obukhov: debug
