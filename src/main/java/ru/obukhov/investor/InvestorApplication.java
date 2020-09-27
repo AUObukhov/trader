@@ -6,11 +6,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import ru.obukhov.investor.config.BotProperties;
 import ru.obukhov.investor.config.TradingProperties;
 
 @SpringBootApplication
 @EnableAspectJAutoProxy
-@EnableConfigurationProperties(TradingProperties.class)
+@EnableScheduling
+@EnableConfigurationProperties({TradingProperties.class, BotProperties.class})
 public class InvestorApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
