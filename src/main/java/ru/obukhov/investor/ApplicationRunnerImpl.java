@@ -1,7 +1,6 @@
 package ru.obukhov.investor;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -22,9 +21,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         String token = tradingProperties.getToken();
-        if (StringUtils.isEmpty(token)) {
-            token = args.getSourceArgs()[0];
-        }
+
         Assert.notNull(token, "token expected");
         connectionService.setToken(token);
     }
