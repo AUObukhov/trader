@@ -7,7 +7,10 @@ import org.springframework.lang.Nullable;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -19,6 +22,10 @@ public class DateUtils {
      * Earliest date for requesting candles
      */
     static final OffsetDateTime START_DATE = getDate(2000, 1, 1);
+    static final ZoneOffset ZONE_OFFSET = ZoneId.of("Europe/Moscow").getRules().getOffset(Instant.now());
+    static final OffsetTime START_TIME = OffsetTime.of(10, 0, 0, 0, ZONE_OFFSET);
+    static final OffsetTime END_TIME = OffsetTime.of(0, 0, 0, 0, ZONE_OFFSET)
+            .minusNanos(1);
 
     /**
      * @return OffsetDateTime with by params, 0 nanoseconds and UTC zone
@@ -166,6 +173,20 @@ public class DateUtils {
         }
 
         return date;
+    }
+
+    /**
+     * @return true if today is work day and current time is work time at market
+     */
+    public static boolean isWorkTimeNow() {
+        OffsetDateTime now = OffsetDateTime.now();
+        if (!isWorkDay(now)) {
+            return false;
+        }
+
+        OffsetTime nowTime = now.toOffsetTime();
+
+        return nowTime.isAfter(START_TIME) && nowTime.isBefore(END_TIME);
     }
 
 }
