@@ -35,6 +35,14 @@ public class MathUtils {
     }
 
     /**
+     * @return result of expression sum - sum * commission rounded up to two digits after comma
+     */
+    public static BigDecimal subtractCommission(BigDecimal sum, double commission) {
+        return subtractMoney(sum, sum.multiply(BigDecimal.valueOf(commission)))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
      * @return true if @code value1} equals {@code value2}, or else false
      */
     public static boolean numbersEqual(BigDecimal value1, BigDecimal value2) {
@@ -53,6 +61,20 @@ public class MathUtils {
      */
     public static boolean numbersEqual(BigDecimal value1, double value2) {
         return numbersEqual(value1, BigDecimal.valueOf(value2));
+    }
+
+    /**
+     * @return true if @code value1} is greater than {@code value2}, or else false
+     */
+    public static boolean isGreater(BigDecimal value1, long value2) {
+        return isGreater(value1, BigDecimal.valueOf(value2));
+    }
+
+    /**
+     * @return true if @code value1} is greater than {@code value2}, or else false
+     */
+    public static boolean isGreater(BigDecimal value1, BigDecimal value2) {
+        return value1.compareTo(value2) > 0;
     }
 
 }

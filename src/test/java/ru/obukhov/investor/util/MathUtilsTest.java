@@ -11,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 
 public class MathUtilsTest {
 
+    // region getAverageMoney tests
+
     @Test
     public void getAverageMoney_returnsZero_whenCollectionIsEmpty() {
 
@@ -48,6 +50,8 @@ public class MathUtilsTest {
 
     }
 
+    // endregion
+
     @Test
     public void subtractMoney() {
         BigDecimal result = MathUtils.subtractMoney(BigDecimal.valueOf(100), BigDecimal.valueOf(10.555555));
@@ -61,6 +65,15 @@ public class MathUtilsTest {
 
         assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.33), result));
     }
+
+    @Test
+    public void subtractCommission() {
+        BigDecimal result = MathUtils.subtractCommission(BigDecimal.valueOf(99), 0.05);
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(94.05), result));
+    }
+
+    // region numbersEqual tests
 
     @Test
     public void numbersEqual_returnTrue_whenEqualsBigDecimal() {
@@ -103,4 +116,40 @@ public class MathUtilsTest {
 
         assertFalse(result);
     }
+
+    // endregion
+
+    // region isGreater tests
+
+    @Test
+    public void isGreater_returnsFalse_whenLower() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 151L;
+
+        boolean result = MathUtils.isGreater(value1, value2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isGreater_returnsFalse_whenEquals() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 150L;
+
+        boolean result = MathUtils.isGreater(value1, value2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isGreater_returnsTrue_whenGreater() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 149L;
+
+        boolean result = MathUtils.isGreater(value1, value2);
+
+        assertTrue(result);
+    }
+
+    // endregion
 }
