@@ -29,7 +29,7 @@ public class SchedulerImpl implements Scheduler {
     @Scheduled(fixedDelayString = "${bot.delay}")
     public void tick() {
         if (!DateUtils.isWorkTimeNow()) {
-            log.error("Not work time. Do nothing");
+            log.debug("Not work time. Do nothing");
             return;
         }
 
