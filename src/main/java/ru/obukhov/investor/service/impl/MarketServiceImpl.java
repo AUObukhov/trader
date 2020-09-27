@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -152,6 +153,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
      * @return list of available instruments of given {@code type}
      */
     @Override
+    @Cacheable("instruments")
     public List<Instrument> getInstruments(TickerType type) {
         if (type == null) {
             return getAllInstruments();
@@ -187,6 +189,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     }
 
     @Override
+    @Cacheable("figi")
     public String getFigi(String ticker) {
         List<Instrument> instruments = marketContext.searchMarketInstrumentsByTicker(ticker).join().instruments;
         Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
