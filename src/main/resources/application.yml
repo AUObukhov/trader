@@ -3,9 +3,9 @@ trading:
   token: t.Kl5LYourgdH0sikBMvtbR-vhY4DCiwhexYK7kUED3L-_pirHWJ3qg2upAR2MJm5i1YGS6loyGWX7UZVPaFaqjQ
 
 query.throttle:
-  limit: 120
+  limit: 119
   interval: 60000
 
 bot:
-  delay: 5000
+  delay: 60000
   tickers: SBER
