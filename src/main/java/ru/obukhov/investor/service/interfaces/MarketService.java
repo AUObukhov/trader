@@ -19,6 +19,8 @@ public interface MarketService {
 
     Candle getLastCandle(String ticker);
 
+    Candle getLastCandle(String ticker, OffsetDateTime to);
+
     @Cacheable("instrument")
     Instrument getInstrument(String ticker);
 

@@ -283,6 +283,52 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     // endregion
 
+    // region getLastCandle with to tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandles() {
+        final String ticker = TICKER;
+        final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
+
+        mockInstrument(FIGI, ticker);
+
+        service.getLastCandle(ticker, to);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+        final String figi = FIGI;
+        final String ticker = TICKER;
+        final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
+        final OffsetDateTime candlesTo = to.minusDays(MAX_EMPTY_DAYS_COUNT + 1);
+        final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
+
+        mockInstrument(figi, ticker);
+        mockCandlesSimple(figi, candlesFrom, candlesTo, CandleInterval.ONE_MIN, 10);
+
+        service.getLastCandle(ticker, to);
+    }
+
+    @Test
+    public void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+        final String figi = FIGI;
+        final String ticker = TICKER;
+        final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
+        final OffsetDateTime candlesTo = to.minusDays(MAX_EMPTY_DAYS_COUNT);
+        final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
+        final int openPrice = 10;
+
+        mockInstrument(figi, ticker);
+        mockCandlesSimple(figi, candlesFrom, candlesTo, CandleInterval.ONE_MIN, openPrice);
+
+        Candle candle = service.getLastCandle(ticker, to);
+
+        assertNotNull(candle);
+        assertTrue(MathUtils.numbersEqual(candle.getOpenPrice(), openPrice));
+    }
+
+    // endregion
+
     // region mocks
 
     private void mockAnyCandles() {

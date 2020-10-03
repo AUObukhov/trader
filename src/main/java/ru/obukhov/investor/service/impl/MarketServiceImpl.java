@@ -125,22 +125,40 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
         return candles;
     }
 
+    /**
+     * Searches last candle by {@code ticker} within last {@link MarketServiceImpl#MAX_EMPTY_DAYS_COUNT} days
+     *
+     * @return found candle
+     * @throws IllegalArgumentException if candle not found
+     */
     @Override
     public Candle getLastCandle(String ticker) {
+        return getLastCandle(ticker, DateUtils.getLastWorkDay().plusDays(1));
+    }
+
+    /**
+     * Searches last candle by {@code ticker} within last {@link MarketServiceImpl#MAX_EMPTY_DAYS_COUNT} days
+     * before {@code to}
+     *
+     * @return found candle
+     * @throws IllegalArgumentException if candle not found
+     */
+    @Override
+    public Candle getLastCandle(String ticker, OffsetDateTime to) {
         String figi = getFigi(ticker);
-        OffsetDateTime from = DateUtils.getLastWorkDay();
-        OffsetDateTime to = from.plusDays(1);
+        OffsetDateTime candlesFrom = to.minusDays(1);
+        OffsetDateTime candlesTo = to;
 
         List<Candle> currentCandles;
         int emptyDaysCount = 0;
         do {
-            currentCandles = loadCandles(figi, from, to, CandleInterval.ONE_MIN);
+            currentCandles = loadCandles(figi, candlesFrom, candlesTo, CandleInterval.ONE_MIN);
             if (currentCandles.isEmpty()) {
                 emptyDaysCount++;
             }
 
-            to = from;
-            from = from.minusDays(1);
+            candlesTo = candlesFrom;
+            candlesFrom = candlesFrom.minusDays(1);
         } while (currentCandles.isEmpty() && emptyDaysCount <= MAX_EMPTY_DAYS_COUNT);
 
         Candle lastCandle = CollectionUtils.lastElement(currentCandles);
