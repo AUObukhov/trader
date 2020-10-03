@@ -11,32 +11,32 @@ import static org.junit.Assert.assertTrue;
 
 public class MathUtilsTest {
 
-    // region getAverageMoney tests
+    // region getAverage tests
 
     @Test
-    public void getAverageMoney_returnsZero_whenCollectionIsEmpty() {
+    public void getAverage_returnsZero_whenCollectionIsEmpty() {
 
         List<BigDecimal> numbers = ImmutableList.of();
 
-        BigDecimal average = MathUtils.getAverageMoney(numbers);
+        BigDecimal average = MathUtils.getAverage(numbers);
 
         assertTrue(MathUtils.numbersEqual(BigDecimal.ZERO, average));
 
     }
 
     @Test
-    public void getAverageMoney_returnsNumber_whenItIsSingleInCollection() {
+    public void getAverage_returnsNumber_whenItIsSingleInCollection() {
 
         List<BigDecimal> numbers = ImmutableList.of(BigDecimal.TEN);
 
-        BigDecimal average = MathUtils.getAverageMoney(numbers);
+        BigDecimal average = MathUtils.getAverage(numbers);
 
         assertTrue(MathUtils.numbersEqual(BigDecimal.TEN, average));
 
     }
 
     @Test
-    public void getAverageMoney_returnsAverage_whenMultipleNumbersInCollection() {
+    public void getAverage_returnsAverage_whenMultipleNumbersInCollection() {
 
         List<BigDecimal> numbers = ImmutableList.of(
                 BigDecimal.valueOf(100),
@@ -44,33 +44,47 @@ public class MathUtilsTest {
                 BigDecimal.valueOf(1000)
         );
 
-        BigDecimal average = MathUtils.getAverageMoney(numbers);
+        BigDecimal average = MathUtils.getAverage(numbers);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.33), average));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.3333), average));
 
     }
 
     // endregion
 
     @Test
-    public void subtractMoney() {
-        BigDecimal result = MathUtils.subtractMoney(BigDecimal.valueOf(100), BigDecimal.valueOf(10.555555));
+    public void multiply() {
+        BigDecimal result = MathUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(89.44), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(150.15), result));
     }
 
     @Test
-    public void divideMoney() {
-        BigDecimal result = MathUtils.divideMoney(BigDecimal.valueOf(100), 3);
+    public void divide() {
+        BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), 3);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.33), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
     }
 
     @Test
-    public void subtractCommission() {
-        BigDecimal result = MathUtils.subtractCommission(BigDecimal.valueOf(99), 0.05);
+    public void addFraction() {
+        BigDecimal result = MathUtils.addFraction(BigDecimal.valueOf(765), 0.003);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(94.05), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(767.295), result));
+    }
+
+    @Test
+    public void subtractFraction() {
+        BigDecimal result = MathUtils.subtractFraction(BigDecimal.valueOf(765), 0.003);
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(762.705), result));
+    }
+
+    @Test
+    public void getFractionDifference() {
+        BigDecimal result = MathUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(0.003), result));
     }
 
     // region numbersEqual tests

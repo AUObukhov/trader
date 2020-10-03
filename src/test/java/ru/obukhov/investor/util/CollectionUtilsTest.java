@@ -23,7 +23,7 @@ public class CollectionUtilsTest {
         multimap.put("key2", BigDecimal.valueOf(3));
         multimap.put("key2", BigDecimal.valueOf(4));
 
-        Map<String, BigDecimal> result = CollectionUtils.reduceMultimap(multimap, MathUtils::getAverageMoney);
+        Map<String, BigDecimal> result = CollectionUtils.reduceMultimap(multimap, MathUtils::getAverage);
 
         assertTrue(numbersEqual(result.get("key1"), 10));
         assertTrue(numbersEqual(result.get("key2"), 2.5));

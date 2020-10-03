@@ -136,7 +136,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             saldosByTimes.put(keyExtractor.apply(candle.getTime()), candle.getSaldo());
         }
 
-        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverageMoney));
+        return new TreeMap<>(reduceMultimap(saldosByTimes, MathUtils::getAverage));
 
     }
 

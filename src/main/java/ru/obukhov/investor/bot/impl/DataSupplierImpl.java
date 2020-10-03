@@ -27,7 +27,8 @@ public class DataSupplierImpl implements DataSupplier {
         return new DecisionData(portfolioService.getAvailableBalance(Currency.RUB),
                 portfolioService.getPosition(ticker),
                 getCurrentPrice(ticker),
-                getLastWeekOperations(ticker));
+                getLastWeekOperations(ticker),
+                marketService.getInstrument(ticker));
     }
 
     private BigDecimal getCurrentPrice(String ticker) {

@@ -2,6 +2,7 @@ package ru.obukhov.investor.bot.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
@@ -16,5 +17,6 @@ public class DecisionData {
     private Portfolio.PortfolioPosition position;
     private BigDecimal currentPrice;
     private List<Operation> lastOperations;
+    private Instrument instrument;
 
 }

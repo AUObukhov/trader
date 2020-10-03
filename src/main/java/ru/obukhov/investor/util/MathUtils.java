@@ -10,71 +10,108 @@ import java.util.Collection;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
 
+    private static final int SCALE = 4;
+
+    // region arithmetics
+
     /**
-     * @return average value of passed collection with scale = 2 and rounding mode = Half Up
+     * @return average value of passed collection with scale = 5 and rounding mode = Half Up
      */
-    public static BigDecimal getAverageMoney(Collection<BigDecimal> numbers) {
+    public static BigDecimal getAverage(Collection<BigDecimal> numbers) {
         return numbers.stream()
                 .reduce(BigDecimal::add)
-                .map(s -> divideMoney(s, numbers.size()))
+                .map(sum -> divide(sum, numbers.size()))
                 .orElse(BigDecimal.ZERO);
     }
 
     /**
-     * @return result of subtraction of subtrahend from minuend with scale = 2 and rounding mode = Half Up
+     * @return multiplier * multiplicand
      */
-    public static BigDecimal subtractMoney(BigDecimal minuend, BigDecimal subtrahend) {
-        return minuend.subtract(subtrahend).setScale(2, RoundingMode.HALF_UP);
+    public static BigDecimal multiply(BigDecimal multiplier, double multiplicand) {
+        return multiplier.multiply(BigDecimal.valueOf(multiplicand));
     }
 
     /**
-     * @return result of division if {@code dividend} by {@code divisor} with scale = 2 and rounding mode = Half Up
+     * @return result of division if {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
      */
-    public static BigDecimal divideMoney(BigDecimal dividend, int divisor) {
-        return dividend.divide(BigDecimal.valueOf(divisor), 2, RoundingMode.HALF_UP);
+    public static BigDecimal divide(BigDecimal dividend, int divisor) {
+        return divide(dividend, BigDecimal.valueOf(divisor));
     }
 
     /**
-     * @return result of expression sum - sum * commission rounded up to two digits after comma
+     * @return result of division if {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
      */
-    public static BigDecimal subtractCommission(BigDecimal sum, double commission) {
-        return subtractMoney(sum, sum.multiply(BigDecimal.valueOf(commission)))
-                .setScale(2, RoundingMode.HALF_UP);
+    public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
+        return dividend.divide(divisor, SCALE, RoundingMode.HALF_UP);
     }
 
     /**
-     * @return true if @code value1} equals {@code value2}, or else false
+     * @return {@code number} * (1 + {@code fraction})
+     */
+    public static BigDecimal addFraction(BigDecimal number, double fraction) {
+        return multiply(number, 1 + fraction);
+    }
+
+    /**
+     * @return {@code number} * (1 - {@code fraction})
+     */
+    public static BigDecimal subtractFraction(BigDecimal number, double fraction) {
+        return multiply(number, 1 - fraction);
+    }
+
+    /**
+     * @return {@code number1} / {@code number2} - 1
+     */
+    public static BigDecimal getFractionDifference(BigDecimal number1, BigDecimal number2) {
+        return divide(number1, number2).subtract(BigDecimal.ONE);
+    }
+
+    // endregion
+
+    // region comparisons
+
+    /**
+     * @return true if {@code value1} equals {@code value2}, or else false
      */
     public static boolean numbersEqual(BigDecimal value1, BigDecimal value2) {
         return value1.compareTo(value2) == 0;
     }
 
     /**
-     * @return true if @code value1} equals {@code value2}, or else false
+     * @return true if {@code value1} equals {@code value2}, or else false
      */
     public static boolean numbersEqual(BigDecimal value1, int value2) {
         return numbersEqual(value1, BigDecimal.valueOf(value2));
     }
 
     /**
-     * @return true if @code value1} equals {@code value2}, or else false
+     * @return true if {@code value1} equals {@code value2}, or else false
      */
     public static boolean numbersEqual(BigDecimal value1, double value2) {
         return numbersEqual(value1, BigDecimal.valueOf(value2));
     }
 
     /**
-     * @return true if @code value1} is greater than {@code value2}, or else false
+     * @return true if {@code value1} is greater than {@code value2}, or else false
      */
     public static boolean isGreater(BigDecimal value1, long value2) {
         return isGreater(value1, BigDecimal.valueOf(value2));
     }
 
     /**
-     * @return true if @code value1} is greater than {@code value2}, or else false
+     * @return true if {@code value1} is greater than {@code value2}, or else false
+     */
+    public static boolean isGreater(BigDecimal value1, double value2) {
+        return isGreater(value1, BigDecimal.valueOf(value2));
+    }
+
+    /**
+     * @return true if {@code value1} is greater than {@code value2}, or else false
      */
     public static boolean isGreater(BigDecimal value1, BigDecimal value2) {
         return value1.compareTo(value2) > 0;
     }
+
+    // endregion
 
 }

@@ -149,6 +149,15 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
         return lastCandle;
     }
 
+    @Override
+    @Cacheable("instrument")
+    public Instrument getInstrument(String ticker) {
+        return getAllInstruments().stream()
+                .filter(instrument -> instrument.ticker.equals(ticker))
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * @return list of available instruments of given {@code type}
      */

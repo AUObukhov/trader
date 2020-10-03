@@ -2,7 +2,6 @@ package ru.obukhov.investor.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
@@ -16,8 +15,8 @@ import java.math.BigDecimal;
 @Service
 public class DeciderImpl implements Decider {
 
-    private static final long MINIMUM_YIELD = 1L;
-    private static final double COMMISSION = 0.05;
+    private static final double MINIMUM_PROFIT = 0.01;
+    private static final double COMMISSION = 0.003;
 
     @Override
     public Decision decide(DecisionData data) {
@@ -26,30 +25,35 @@ public class DeciderImpl implements Decider {
             return Decision.WAIT;
         }
 
-        if (MathUtils.isGreater(data.getCurrentPrice(), data.getBalance())) {
-            log.debug("Current price + " + data.getCurrentPrice() + " is greater than balance + " + data.getBalance()
-                    + ". Decision is Wait");
-            return Decision.WAIT;
-        }
-
         final Portfolio.PortfolioPosition position = data.getPosition();
         if (position == null) {
-            log.debug("No position. Decision is Buy");
-            return Decision.BUY;
+            if (MathUtils.isGreater(data.getCurrentPrice(), data.getBalance())) {
+                log.debug("Current price + " + data.getCurrentPrice() + " is greater than balance + "
+                        + data.getBalance() + ". Decision is Wait");
+                return Decision.WAIT;
+            } else {
+                log.debug("No position. Decision is Buy");
+                return Decision.BUY;
+            }
         }
 
-        Assert.notNull(position.expectedYield, "expectedYield must be not null");
+        double lot = data.getInstrument().lot;
 
-        BigDecimal yield = MathUtils.subtractCommission(position.expectedYield.value, COMMISSION);
+        BigDecimal buyLotPrice = MathUtils.multiply(position.averagePositionPrice.value, lot);
+        BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, COMMISSION);
 
-        if (MathUtils.isGreater(yield, MINIMUM_YIELD)) {
-            log.debug("Expected yield " + yield + " is greater than minimum " + MINIMUM_YIELD + ". Decision is Sell");
-            return Decision.SELL;
-        } else {
-            log.debug("Expected yield " + yield + " is not greater than minimum " + MINIMUM_YIELD
-                    + ". Decision is Wait");
-            return Decision.WAIT;
-        }
+        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), lot);
+        BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(currentLotPrice, COMMISSION);
+
+        BigDecimal profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission);
+
+        Decision decision = MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
+
+        log.debug("buyLotPrice = " + buyLotPrice + ", buyPricePlusCommission = " + buyPricePlusCommission
+                + "\ncurrentLotPrice = " + currentLotPrice + ", sellPriceMinusCommission = " + sellPriceMinusCommission
+                + "\nprofit = " + profit + ", decision = " + decision);
+
+        return decision;
     }
 
     private boolean existsOperationInProgress(DecisionData data) {

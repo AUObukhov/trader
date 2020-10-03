@@ -1,5 +1,6 @@
 package ru.obukhov.investor.service.interfaces;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
@@ -17,6 +18,9 @@ public interface MarketService {
                             CandleInterval interval);
 
     Candle getLastCandle(String ticker);
+
+    @Cacheable("instrument")
+    Instrument getInstrument(String ticker);
 
     List<Instrument> getInstruments(TickerType type);
 
