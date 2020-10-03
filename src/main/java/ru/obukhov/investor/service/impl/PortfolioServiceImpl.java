@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.service.interfaces.PortfolioService;
-import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.PortfolioContext;
 import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
@@ -50,7 +49,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     private BigDecimal getAvailableBalance(PortfolioCurrencies.PortfolioCurrency currency) {
         return currency.blocked == null
                 ? currency.balance
-                : MathUtils.subtractMoney(currency.balance, currency.blocked);
+                : currency.balance.subtract(currency.blocked);
     }
 
     @Override
