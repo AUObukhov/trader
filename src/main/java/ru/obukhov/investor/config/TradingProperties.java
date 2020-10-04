@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 public class TradingProperties {
 
     private boolean sandbox;
+
     private String token;
 
+    private double commission;
 }

@@ -1,10 +1,12 @@
 package ru.obukhov.investor.bot.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
@@ -13,10 +15,12 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class DeciderImpl implements Decider {
 
     private static final double MINIMUM_PROFIT = 0.01;
-    private static final double COMMISSION = 0.003;
+
+    private final TradingProperties tradingProperties;
 
     @Override
     public Decision decide(DecisionData data) {
@@ -40,10 +44,11 @@ public class DeciderImpl implements Decider {
         double lot = data.getInstrument().lot;
 
         BigDecimal buyLotPrice = MathUtils.multiply(position.averagePositionPrice.value, lot);
-        BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, COMMISSION);
+        BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
 
         BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), lot);
-        BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(currentLotPrice, COMMISSION);
+        BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(
+                currentLotPrice, tradingProperties.getCommission());
 
         BigDecimal profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission);
 
