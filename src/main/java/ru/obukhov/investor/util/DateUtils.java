@@ -181,23 +181,36 @@ public class DateUtils {
     }
 
     /**
-     * @param startTime start time of work
-     * @param duration  duration or work period
-     * @return true if date in given {@code dateTime} is work day
-     * and time is between {@code startTime} included and {@code startTime + duration} excluded
+     * Checks if given {@code dateTime} is work time, which means than it is between {@code workStartTime} included and
+     * {@code workStartTime + workTimeDuration} and not at weekend except Saturday, when
+     * {@code workStartTime + workTimeDuration} is after midnight
+     *
+     * @param dateTime         checked dateTime
+     * @param workStartTime    start time of work
+     * @param workTimeDuration duration of work period, must be positive and less than 1 day
+     * @return true if given {@code dateTime} is work time, or else false
+     * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
-    public static boolean isWorkTime(OffsetDateTime dateTime, OffsetTime startTime, Duration duration) {
-        Assert.isTrue(duration.toNanos() > 0, "duration must be positive");
+    public static boolean isWorkTime(OffsetDateTime dateTime, OffsetTime workStartTime, Duration workTimeDuration) {
+        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
+        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0,
+                "workTimeDuration must be less than 1 day");
 
-        if (!isWorkDay(dateTime)) {
-            return false;
-        }
-
+        OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
+        boolean livingAfterMidnight = workStartTime.isAfter(workEndTime);
         OffsetTime time = dateTime.toOffsetTime();
 
-        OffsetTime endTime = startTime.plus(duration);
+        if (!isWorkDay(dateTime)) {
+            return livingAfterMidnight
+                    && DayOfWeek.SATURDAY == dateTime.getDayOfWeek()
+                    && time.isBefore(workEndTime);
+        }
 
-        return !time.isBefore(startTime) && time.isBefore(endTime);
+        if (livingAfterMidnight) {
+            return !time.isBefore(workStartTime) || time.isBefore(workEndTime);
+        } else {
+            return !time.isBefore(workStartTime) && time.isBefore(workEndTime);
+        }
     }
 
 }

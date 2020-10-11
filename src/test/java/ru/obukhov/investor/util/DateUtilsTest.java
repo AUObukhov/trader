@@ -536,11 +536,51 @@ public class DateUtilsTest {
         DateUtils.isWorkTime(dateTime, startTime, duration);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void isWorkTime_throwsIllegalArgumentException_whenDurationIsOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofDays(1);
+
+        DateUtils.isWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void isWorkTime_throwsIllegalArgumentException_whenDurationIsMoreThanOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(25);
+
+        DateUtils.isWorkTime(dateTime, startTime, duration);
+    }
+
     @Test
     public void isWorkTime_returnsTrue_whenWorkTime() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsTrue_whenTimeIsBeforeMidnight_andEndWorkTimeIsAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 23, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsTrue_whenTimeIsAfterMidnight_andEndWorkTimeIsAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 1, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
 
         boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
 
@@ -559,7 +599,29 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void isWorkTime_returnsFalse_whenWeekendAndWorkTime() {
+    public void isWorkTime_returnsTrue_whenStartTime_andEndWorkTimeAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsTrue_whenSaturday_andBeforeEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 1, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWeekend_andWorkTime() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(9);
@@ -570,7 +632,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void isWorkTime_returnsFalse_whenWeekendAndNotWorkTime() {
+    public void isWorkTime_returnsFalse_whenWeekend_andNotWorkTime() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 4, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(9);
@@ -581,7 +643,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void isWorkTime_returnsFalse_whenWorkDayAndNotWorkTime() {
+    public void isWorkTime_returnsFalse_whenWorkDay_andNotWorkTime() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 4, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(9);
@@ -592,8 +654,118 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void isWorkTime_returnsFalse_whenWorkDayAndEndOfWorkTime() {
+    public void isWorkTime_returnsFalse_whenWorkDay_andEndOfWorkTime() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWorkDayAndEndOfWorkTime_andBothAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 2, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenAfterEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 5, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSaturday_andAfterEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 4, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSaturday_andBeforeEndOfWorkTime_andBothAreBeforeMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 13, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSaturday_andEqualsEndOfWorkTime_andBothAreBeforeMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSunday_andBeforeEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 1, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSunday_andAfterEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 4, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSunday_andTimeEqualsEndOfWorkTime_andBothAreAfterMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 2, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(16);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSunday_andBeforeEndOfWorkTime_andBothAreBeforeMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 13, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenSunday_andEqualsEndOfWorkTime_andBothAreBeforeMidnight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 19, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(9);
 
