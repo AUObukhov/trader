@@ -8,7 +8,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
@@ -20,6 +22,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DateUtils.class)
 public class DateUtilsTest {
+
+    // region getDate tests
 
     @Test
     public void getDateTime() {
@@ -57,6 +61,8 @@ public class DateUtilsTest {
         assertEquals(0, dateTime.getSecond());
         assertEquals(0, dateTime.getNano());
     }
+
+    // endregion
 
     @Test
     public void getTime_fillsTimeOnly() {
@@ -509,4 +515,93 @@ public class DateUtilsTest {
     }
 
     // endregion
+
+    // region isWorkTime tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void isWorkTime_throwsIllegalArgumentException_whenDurationIsNegative() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(-1);
+
+        DateUtils.isWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void isWorkTime_throwsIllegalArgumentException_whenDurationIsZero() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(0);
+
+        DateUtils.isWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test
+    public void isWorkTime_returnsTrue_whenWorkTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsTrue_whenStartTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWeekendAndWorkTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWeekendAndNotWorkTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 4, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWorkDayAndNotWorkTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 4, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isWorkTime_returnsFalse_whenWorkDayAndEndOfWorkTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+
+        assertFalse(result);
+    }
+
+    // endregion
+
 }

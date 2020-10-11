@@ -9,6 +9,7 @@ import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.interfaces.Scheduler;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.BotProperties;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
@@ -25,10 +26,11 @@ public class SchedulerImpl implements Scheduler {
     private final DataSupplier dataSupplier;
     private final BotProperties botProperties;
     private final OrdersService ordersService;
+    private final TradingProperties tradingProperties;
 
     @Scheduled(fixedDelayString = "${bot.delay}")
     public void tick() {
-        if (!DateUtils.isWorkTimeNow()) {
+        if (!DateUtils.isWorkTimeNow(tradingProperties.getWorkStartTime(), tradingProperties.getWorkDuration())) {
             log.debug("Not work time. Do nothing");
             return;
         }
