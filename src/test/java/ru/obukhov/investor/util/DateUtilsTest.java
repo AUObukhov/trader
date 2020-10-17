@@ -819,6 +819,117 @@ public class DateUtilsTest {
 
     // endregion
 
+    // region getNearestWorkTime tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(0);
+
+        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(-1);
+
+        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(24);
+
+        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(25);
+
+        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsCurrentMinute_whenMiddleOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        Assert.assertEquals(dateTime, nextWorkMinute);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsStartOfNextDay_whenAtEndOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsStartOfNextWeek_whenEndOfWorkWeek() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsStartOfNextWeek_whenAtWeekend() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNearestWorkTime_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    // endregion
+
     // region getNextWorkMinute tests
 
     @Test(expected = IllegalArgumentException.class)
@@ -902,6 +1013,18 @@ public class DateUtilsTest {
         OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsStartOfNextWeek_whenAtWeekend() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
         Assert.assertEquals(expected, nextWorkMinute);
     }
 

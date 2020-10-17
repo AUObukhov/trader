@@ -238,12 +238,34 @@ public class DateUtils {
     }
 
     /**
+     * @param dateTime
+     * @param workStartTime    start time of work
+     * @param workTimeDuration duration of work period
+     * @return first minute of work time not before {@code dateTime}
+     */
+    public static OffsetDateTime getNearestWorkTime(OffsetDateTime dateTime,
+                                                    OffsetTime workStartTime,
+                                                    Duration workTimeDuration) {
+
+        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
+        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) >= 0,
+                "workTimeDuration must be less than 1 day");
+
+        if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
+            return dateTime;
+        }
+
+        return toWorkStartTime(dateTime, workStartTime);
+    }
+
+    /**
      * @param workStartTime    start time of work
      * @param workTimeDuration duration of work period
      * @return next minute of work time after {@code dateTime}
      */
-    public static OffsetDateTime getNextWorkMinute(
-            OffsetDateTime dateTime, OffsetTime workStartTime, Duration workTimeDuration) {
+    public static OffsetDateTime getNextWorkMinute(OffsetDateTime dateTime,
+                                                   OffsetTime workStartTime,
+                                                   Duration workTimeDuration) {
         Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
         Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) >= 0,
                 "workTimeDuration must be less than 1 day");
@@ -253,7 +275,13 @@ public class DateUtils {
             if (isWorkTime(nextDateTime, workStartTime, workTimeDuration)) {
                 return nextDateTime;
             }
-        } else if (dateTime.toOffsetTime().isBefore(workStartTime)) {
+        }
+
+        return toWorkStartTime(dateTime, workStartTime);
+    }
+
+    private static OffsetDateTime toWorkStartTime(OffsetDateTime dateTime, OffsetTime workStartTime) {
+        if (dateTime.toOffsetTime().isBefore(workStartTime)) {
             return setTime(dateTime, workStartTime);
         }
 

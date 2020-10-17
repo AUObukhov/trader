@@ -38,7 +38,9 @@ public class MarketMockImpl implements MarketMock {
 
     @Override
     public void setCurrentDateTime(OffsetDateTime currentDateTime) {
-        this.currentDateTime = currentDateTime;
+        this.currentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
+                tradingProperties.getWorkStartTime(),
+                tradingProperties.getWorkDuration());
     }
 
     /**
