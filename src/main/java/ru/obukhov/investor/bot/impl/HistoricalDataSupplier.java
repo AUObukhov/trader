@@ -5,8 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.investor.bot.interfaces.DataSupplier;
 import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.bot.model.DecisionData;
+import ru.obukhov.investor.bot.model.PricesHolder;
+import ru.obukhov.investor.config.TradingProperties;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
+import ru.obukhov.investor.util.DateUtils;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
@@ -23,6 +28,9 @@ public class HistoricalDataSupplier implements DataSupplier {
     private final MarketService marketService;
     private final OperationsService operationsService;
     private final MarketMock marketMock;
+    private final TradingProperties tradingProperties;
+
+    private final PricesHolder pricesHolder = new PricesHolder();
 
     @Override
     public DecisionData getData(String ticker) {
@@ -38,7 +46,22 @@ public class HistoricalDataSupplier implements DataSupplier {
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
-        return marketService.getLastCandle(ticker, marketMock.getCurrentDateTime()).getClosePrice();
+        BigDecimal price = pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
+        if (price == null) {
+            updatePrices(ticker);
+            price = pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
+        }
+
+        return price;
+    }
+
+    private void updatePrices(String ticker) {
+        OffsetDateTime from = DateUtils.setTime(marketMock.getCurrentDateTime(), tradingProperties.getWorkStartTime());
+        OffsetDateTime to = from.plus(tradingProperties.getWorkDuration());
+        List<Candle> candles = marketService.getCandles(ticker, from, to, CandleInterval.ONE_MIN);
+        for (Candle candle : candles) {
+            pricesHolder.addPrice(ticker, candle.getTime(), candle.getClosePrice());
+        }
     }
 
     private List<Operation> getLastWeekOperations(String ticker) {
