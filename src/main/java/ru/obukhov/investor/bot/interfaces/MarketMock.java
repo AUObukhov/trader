@@ -10,6 +10,8 @@ public interface MarketMock {
 
     OffsetDateTime getCurrentDateTime();
 
+    void init(OffsetDateTime currentDateTime, BigDecimal balance);
+
     void setCurrentDateTime(OffsetDateTime currentDateTime);
 
     BigDecimal getBalance();

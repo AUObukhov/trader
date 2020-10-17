@@ -1,14 +1,18 @@
 package ru.obukhov.investor.web.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class SimulateResponse {
 
     private BigDecimal balance;
+
+    private List<Portfolio.PortfolioPosition> positions;
 
 }

@@ -11,7 +11,6 @@ import ru.obukhov.investor.web.model.SimulateRequest;
 import ru.obukhov.investor.web.model.SimulateResponse;
 
 import javax.validation.Valid;
-import java.math.BigDecimal;
 
 @Slf4j
 @RestController
@@ -24,12 +23,10 @@ public class BotController {
     @PostMapping("/simulate")
     public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
 
-        BigDecimal balance = simulator.simulate(request.getTicker(),
+        return simulator.simulate(request.getTicker(),
                 request.getBalance(),
                 request.getFrom(),
                 request.getTo());
-
-        return new SimulateResponse(balance);
 
     }
 

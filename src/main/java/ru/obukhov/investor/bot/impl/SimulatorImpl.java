@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.web.model.SimulateResponse;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Simulates trading by bot
@@ -27,12 +30,13 @@ public class SimulatorImpl implements Simulator {
      * @return balance after simulation
      */
     @Override
-    public BigDecimal simulate(String ticker, BigDecimal balance, OffsetDateTime from, OffsetDateTime to) {
+    public SimulateResponse simulate(String ticker, BigDecimal balance, OffsetDateTime from, OffsetDateTime to) {
+
+        log.info("Simulation for ticker = '" + ticker + "' started");
 
         OffsetDateTime innerTo = to == null ? OffsetDateTime.now() : to;
 
-        marketMock.setBalance(balance);
-        marketMock.setCurrentDateTime(from);
+        marketMock.init(from, balance);
 
         do {
 
@@ -41,7 +45,12 @@ public class SimulatorImpl implements Simulator {
             marketMock.nextMinute();
         } while (marketMock.getCurrentDateTime().isBefore(innerTo));
 
-        return marketMock.getBalance();
+        log.info("Simulation for ticker = '" + ticker + "' ended");
+
+        return SimulateResponse.builder()
+                .balance(marketMock.getBalance())
+                .positions(newArrayList(marketMock.getPosition(ticker)))
+                .build();
     }
 
 }
