@@ -13,6 +13,8 @@ public class SimulateResponse {
 
     private BigDecimal balance;
 
+    private BigDecimal fullBalance;
+
     private List<Portfolio.PortfolioPosition> positions;
 
 }

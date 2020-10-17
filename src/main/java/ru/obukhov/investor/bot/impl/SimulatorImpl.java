@@ -6,9 +6,11 @@ import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.web.model.SimulateResponse;
+import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -47,10 +49,20 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '" + ticker + "' ended");
 
+        List<Portfolio.PortfolioPosition> positions = newArrayList(marketMock.getPosition(ticker));
         return SimulateResponse.builder()
                 .balance(marketMock.getBalance())
-                .positions(newArrayList(marketMock.getPosition(ticker)))
+                .fullBalance(getFullBalance(positions))
+                .positions(positions)
                 .build();
+    }
+
+    private BigDecimal getFullBalance(List<Portfolio.PortfolioPosition> positions) {
+        BigDecimal fullBalance = marketMock.getBalance();
+        for (Portfolio.PortfolioPosition position : positions) {
+            fullBalance = fullBalance.add(position.balance);
+        }
+        return fullBalance;
     }
 
 }
