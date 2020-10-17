@@ -17,7 +17,7 @@ import java.time.temporal.TemporalUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DateUtils.class)
@@ -161,6 +161,34 @@ public class DateUtilsTest {
         boolean result = DateUtils.isWorkDay(date);
 
         assertFalse(result);
+    }
+
+    // endregion
+
+    // region getNextWorkDay tests
+
+    @Test
+    public void getNextWorkDay_returnsNextDay_whenMonday() {
+        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 12);
+        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
+
+        Assert.assertEquals(dateTime.plusDays(1), nextWorkDay);
+    }
+
+    @Test
+    public void getNextWorkDay_returnsNextMonday_whenFriday() {
+        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 16);
+        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
+
+        Assert.assertEquals(dateTime.plusDays(3), nextWorkDay);
+    }
+
+    @Test
+    public void getNextWorkDay_returnsNextMonday_whenSaturday() {
+        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 17);
+        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
+
+        Assert.assertEquals(dateTime.plusDays(2), nextWorkDay);
     }
 
     // endregion
@@ -391,6 +419,21 @@ public class DateUtilsTest {
     }
 
     // endregion
+
+    @Test
+    public void setTime_setsTime() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 10, 10, 10);
+        OffsetTime time = DateUtils.getTime(5, 30, 0).toOffsetTime();
+        OffsetDateTime result = DateUtils.setTime(dateTime, time);
+
+        assertEquals(dateTime.getYear(), result.getYear());
+        assertEquals(dateTime.getMonth(), result.getMonth());
+        assertEquals(dateTime.getDayOfMonth(), result.getDayOfMonth());
+        assertEquals(time.getHour(), result.getHour());
+        assertEquals(time.getMinute(), result.getMinute());
+        assertEquals(time.getSecond(), result.getSecond());
+        assertEquals(time.getNano(), result.getNano());
+    }
 
     // region getPeriodUnitByCandleInterval tests
 
@@ -772,6 +815,106 @@ public class DateUtilsTest {
         boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
 
         assertFalse(result);
+    }
+
+    // endregion
+
+    // region getNextWorkMinute tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(0);
+
+        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(-1);
+
+        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(24);
+
+        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(25);
+
+        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsNextMinute_whenMiddleOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = dateTime.plusMinutes(1);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsStartOfNextDay_whenAtEndOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsStartOfNextWeek_whenEndOfWorkWeek() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
+    }
+
+    @Test
+    public void getNextWorkMinute_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(9);
+
+        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+
+        OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
+        Assert.assertEquals(expected, nextWorkMinute);
     }
 
     // endregion

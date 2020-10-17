@@ -69,6 +69,18 @@ public class DateUtils {
     }
 
     /**
+     * @return next work day after given {@code dateTime}
+     */
+    public static OffsetDateTime getNextWorkDay(OffsetDateTime dateTime) {
+        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
+        int daysAfterLastWorkDay = dayOfWeek.getValue() - DayOfWeek.FRIDAY.getValue();
+        int adjustment = daysAfterLastWorkDay < 0
+                ? 1
+                : 3 - daysAfterLastWorkDay;
+        return dateTime.plusDays(adjustment);
+    }
+
+    /**
      * @return last work day not after today
      */
     public static OffsetDateTime getLastWorkDay() {
@@ -125,6 +137,18 @@ public class DateUtils {
                                               TemporalUnit temporalUnit,
                                               @Nullable OffsetDateTime minDateTime) {
         return DateUtils.getLatestDateTime(dateTime.minus(amountToSubstract, temporalUnit), minDateTime);
+    }
+
+    /**
+     * Sets values of time fields of given {@code time} to time fields of given {@code dateTime}
+     *
+     * @return dateTime with updated time fields values
+     */
+    public static OffsetDateTime setTime(OffsetDateTime dateTime, OffsetTime time) {
+        return dateTime.withHour(time.getHour())
+                .withMinute(time.getMinute())
+                .withSecond(time.getSecond())
+                .withNano(time.getNano());
     }
 
     /**
@@ -211,6 +235,29 @@ public class DateUtils {
         } else {
             return !time.isBefore(workStartTime) && time.isBefore(workEndTime);
         }
+    }
+
+    /**
+     * @param workStartTime    start time of work
+     * @param workTimeDuration duration of work period
+     * @return next minute of work time after {@code dateTime}
+     */
+    public static OffsetDateTime getNextWorkMinute(
+            OffsetDateTime dateTime, OffsetTime workStartTime, Duration workTimeDuration) {
+        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
+        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) >= 0,
+                "workTimeDuration must be less than 1 day");
+
+        if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
+            OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
+            if (isWorkTime(nextDateTime, workStartTime, workTimeDuration)) {
+                return nextDateTime;
+            }
+        } else if (dateTime.toOffsetTime().isBefore(workStartTime)) {
+            return setTime(dateTime, workStartTime);
+        }
+
+        return setTime(getNextWorkDay(dateTime), workStartTime);
     }
 
 }
