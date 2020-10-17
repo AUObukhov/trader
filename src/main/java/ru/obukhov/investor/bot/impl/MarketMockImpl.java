@@ -36,6 +36,11 @@ public class MarketMockImpl implements MarketMock {
     @Setter
     private BigDecimal balance;
 
+    /**
+     * sets current dateTime, but moves it to nearest work time
+     *
+     * @param currentDateTime
+     */
     @Override
     public void setCurrentDateTime(OffsetDateTime currentDateTime) {
         this.currentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
