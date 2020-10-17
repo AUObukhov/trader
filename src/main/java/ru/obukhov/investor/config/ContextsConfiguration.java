@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.investor.bot.impl.SchedulerImpl;
 import ru.obukhov.investor.service.context.ThrottledMarketContext;
 import ru.obukhov.investor.service.context.ThrottledOperationsContext;
 import ru.obukhov.investor.service.context.ThrottledOrdersContext;
@@ -16,9 +15,6 @@ import ru.tinkoff.invest.openapi.models.user.BrokerAccountType;
 
 /**
  * Bean for post initializing of contexts
- * <br/>
- * Also creates {@link ru.obukhov.investor.bot.interfaces.Scheduler} bean, because if to create it with other beans,
- * it will start schedule before context initialization
  */
 @Configuration
 public class ContextsConfiguration implements ApplicationListener<ApplicationReadyEvent> {
@@ -59,9 +55,6 @@ public class ContextsConfiguration implements ApplicationListener<ApplicationRea
             throttledSandboxContext.performRegistration(BrokerAccountType.Tinkoff).join();
         }
 
-        event.getApplicationContext()
-                .getBeanFactory()
-                .createBean(SchedulerImpl.class);
     }
 
 }

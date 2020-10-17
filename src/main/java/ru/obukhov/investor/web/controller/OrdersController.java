@@ -1,7 +1,7 @@
 package ru.obukhov.investor.web.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +19,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/investor/orders")
-@RequiredArgsConstructor
 public class OrdersController {
 
     private final OrdersService ordersService;
+
+    public OrdersController(@Qualifier("ordersServiceImpl") OrdersService ordersService) {
+        this.ordersService = ordersService;
+    }
 
     @GetMapping("/get")
     public GetOrdersResponse getOrders() {

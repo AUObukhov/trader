@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrdersService {
+
     List<Order> getOrders(String ticker);
 
     List<Order> getOrders();
@@ -20,4 +21,5 @@ public interface OrdersService {
                            @Nullable BigDecimal price);
 
     void cancelOrder(@NotNull String orderId);
+
 }

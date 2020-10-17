@@ -14,9 +14,12 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Service
+/**
+ * Class for getting real portfolio and current market situation data for bot
+ */
+@Service("realDataSupplier")
 @RequiredArgsConstructor
-public class DataSupplierImpl implements DataSupplier {
+public class RealDataSupplier implements DataSupplier {
 
     private final MarketService marketService;
     private final PortfolioService portfolioService;
@@ -24,11 +27,15 @@ public class DataSupplierImpl implements DataSupplier {
 
     @Override
     public DecisionData getData(String ticker) {
-        return new DecisionData(portfolioService.getAvailableBalance(Currency.RUB),
-                portfolioService.getPosition(ticker),
-                getCurrentPrice(ticker),
-                getLastWeekOperations(ticker),
-                marketService.getInstrument(ticker));
+
+        return DecisionData.builder()
+                .balance(portfolioService.getAvailableBalance(Currency.RUB))
+                .position(portfolioService.getPosition(ticker))
+                .currentPrice(getCurrentPrice(ticker))
+                .lastOperations(getLastWeekOperations(ticker))
+                .instrument(marketService.getInstrument(ticker))
+                .build();
+
     }
 
     private BigDecimal getCurrentPrice(String ticker) {

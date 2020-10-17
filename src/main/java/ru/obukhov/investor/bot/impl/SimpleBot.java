@@ -1,44 +1,36 @@
 package ru.obukhov.investor.bot.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.investor.Decision;
+import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.DataSupplier;
 import ru.obukhov.investor.bot.interfaces.Decider;
-import ru.obukhov.investor.bot.interfaces.Scheduler;
 import ru.obukhov.investor.bot.model.DecisionData;
-import ru.obukhov.investor.config.BotProperties;
-import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.service.interfaces.OrdersService;
-import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
-@AllArgsConstructor
-public class SchedulerImpl implements Scheduler {
+public class SimpleBot implements Bot {
 
-    private final Decider decider;
-    private final DataSupplier dataSupplier;
-    private final BotProperties botProperties;
-    private final OrdersService ordersService;
-    private final TradingProperties tradingProperties;
+    protected final DataSupplier dataSupplier;
+    protected final Decider decider;
+    protected final OrdersService ordersService;
 
-    @Scheduled(fixedDelayString = "${bot.delay}")
-    public void tick() {
-        if (!DateUtils.isWorkTimeNow(tradingProperties.getWorkStartTime(), tradingProperties.getWorkDuration())) {
-            log.debug("Not work time. Do nothing");
-            return;
-        }
-
-        botProperties.getTickers().forEach(this::processTicker);
+    public SimpleBot(DataSupplier dataSupplier,
+                     Decider decider,
+                     OrdersService ordersService) {
+        this.dataSupplier = dataSupplier;
+        this.decider = decider;
+        this.ordersService = ordersService;
     }
 
-    private void processTicker(String ticker) {
+    @Override
+    public void processTicker(String ticker) {
         try {
             List<Order> orders = ordersService.getOrders(ticker);
             if (!orders.isEmpty()) {
@@ -48,20 +40,20 @@ public class SchedulerImpl implements Scheduler {
 
             DecisionData data = dataSupplier.getData(ticker);
             Decision decision = decider.decide(data);
-            performOperation(ticker, decision);
+            performOperation(ticker, decision, data.getCurrentPrice());
         } catch (Exception ex) {
             log.error("Exception while process ticker " + ticker + ". Do nothing", ex);
         }
     }
 
-    private void performOperation(String ticker, Decision decision) {
+    protected void performOperation(String ticker, Decision decision, BigDecimal currentPrice) {
         if (decision == Decision.WAIT) {
             log.info("Decision is wait. Do nothing");
             return;
         }
 
         Operation operation = decision == Decision.BUY ? Operation.Buy : Operation.Sell;
-        PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, null);
+        PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, currentPrice);
         log.info("Placed order " + order);
     }
 
