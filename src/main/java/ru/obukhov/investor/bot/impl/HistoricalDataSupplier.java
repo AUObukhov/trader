@@ -9,13 +9,12 @@ import ru.obukhov.investor.bot.model.PricesHolder;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
-import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,7 +25,6 @@ import java.util.List;
 public class HistoricalDataSupplier implements DataSupplier {
 
     private final MarketService marketService;
-    private final OperationsService operationsService;
     private final MarketMock marketMock;
     private final TradingProperties tradingProperties;
 
@@ -39,7 +37,7 @@ public class HistoricalDataSupplier implements DataSupplier {
                 .balance(marketMock.getBalance())
                 .position(marketMock.getPosition(ticker))
                 .currentPrice(getCurrentPrice(ticker))
-                .lastOperations(getLastWeekOperations(ticker))
+                .lastOperations(Collections.emptyList())
                 .instrument(marketService.getInstrument(ticker))
                 .build();
 
@@ -62,12 +60,6 @@ public class HistoricalDataSupplier implements DataSupplier {
         for (Candle candle : candles) {
             pricesHolder.addPrice(ticker, candle.getTime(), candle.getClosePrice());
         }
-    }
-
-    private List<Operation> getLastWeekOperations(String ticker) {
-        OffsetDateTime to = OffsetDateTime.now();
-        OffsetDateTime from = to.minusWeeks(1);
-        return operationsService.getOperations(from, to, ticker);
     }
 
 }
