@@ -34,11 +34,16 @@ public class SimpleBot implements Bot {
         try {
             List<Order> orders = ordersService.getOrders(ticker);
             if (!orders.isEmpty()) {
-                log.info("There are not completed orders by ticker " + ticker + ". Do nothing");
+                log.info("There are not completed orders by ticker '" + ticker + "'. Do nothing");
                 return;
             }
 
             DecisionData data = dataSupplier.getData(ticker);
+            if (data.getCurrentPrice() == null) {
+                log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
+                return;
+            }
+
             Decision decision = decider.decide(data);
             performOperation(ticker, decision, data.getCurrentPrice());
         } catch (Exception ex) {

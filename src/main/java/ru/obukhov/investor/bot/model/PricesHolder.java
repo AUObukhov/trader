@@ -15,6 +15,11 @@ public class PricesHolder {
 
     private final Table<String, OffsetDateTime, TreeMap<OffsetDateTime, BigDecimal>> data = HashBasedTable.create();
 
+    public boolean dataExists(String ticker, OffsetDateTime dateTime) {
+        OffsetDateTime dateKey = dateTime.truncatedTo(ChronoUnit.DAYS);
+        return data.get(ticker, dateKey) != null;
+    }
+
     public void addPrice(String ticker, OffsetDateTime dateTime, BigDecimal price) {
         OffsetDateTime dateKey = dateTime.truncatedTo(ChronoUnit.DAYS);
         TreeMap<OffsetDateTime, BigDecimal> datePrices = data.get(ticker, dateKey);

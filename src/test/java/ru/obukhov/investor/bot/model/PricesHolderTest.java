@@ -11,6 +11,53 @@ public class PricesHolderTest {
 
     private static final String TICKER = "ticker";
 
+    // region dataExists tests
+
+    @Test
+    public void dataExists_returnsFalse_whenNoData() {
+        PricesHolder pricesHolder = new PricesHolder();
+        OffsetDateTime writeDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 0, 0);
+        BigDecimal writePrice = BigDecimal.valueOf(100);
+        pricesHolder.addPrice(TICKER, writeDateTime, writePrice);
+
+        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 11, 10, 0, 0);
+        boolean result = pricesHolder.dataExists(TICKER, readDateTime);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void dataExists_returnTrue_whenDataExists() {
+        PricesHolder pricesHolder = new PricesHolder();
+
+        OffsetDateTime writeDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 5, 0);
+        BigDecimal writePrice = BigDecimal.valueOf(100);
+        pricesHolder.addPrice(TICKER, writeDateTime, writePrice);
+
+        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 10, 9, 10, 15);
+        boolean result = pricesHolder.dataExists(TICKER, readDateTime);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void dataExists_returnTrue_whenDataExists_andPriceIsNull() {
+        PricesHolder pricesHolder = new PricesHolder();
+
+        OffsetDateTime writeDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 5, 0);
+        BigDecimal writePrice = null;
+        pricesHolder.addPrice(TICKER, writeDateTime, writePrice);
+
+        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 10, 9, 10, 15);
+        boolean result = pricesHolder.dataExists(TICKER, readDateTime);
+
+        Assert.assertTrue(result);
+    }
+
+    // endregion
+
+    // region getPrice tests
+
     @Test
     public void getPrice_returnsNull_whenNoPricesOnDate() {
         PricesHolder pricesHolder = new PricesHolder();
@@ -72,5 +119,7 @@ public class PricesHolderTest {
 
         Assert.assertEquals(writePrice1, readPrice);
     }
+
+    // endregion
 
 }

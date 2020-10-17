@@ -44,21 +44,25 @@ public class HistoricalDataSupplier implements DataSupplier {
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
-        BigDecimal price = pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
-        if (price == null) {
-            updatePrices(ticker);
-            price = pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
+        if (pricesHolder.dataExists(ticker, marketMock.getCurrentDateTime())) {
+            return pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
         }
 
-        return price;
+        updatePrices(ticker);
+        return pricesHolder.getPrice(ticker, marketMock.getCurrentDateTime());
+
     }
 
     private void updatePrices(String ticker) {
         OffsetDateTime from = DateUtils.setTime(marketMock.getCurrentDateTime(), tradingProperties.getWorkStartTime());
         OffsetDateTime to = from.plus(tradingProperties.getWorkDuration());
         List<Candle> candles = marketService.getCandles(ticker, from, to, CandleInterval.ONE_MIN);
-        for (Candle candle : candles) {
-            pricesHolder.addPrice(ticker, candle.getTime(), candle.getClosePrice());
+        if (candles.isEmpty()) {
+            pricesHolder.addPrice(ticker, from, null); // to prevent reloading of candles when no candles on date
+        } else {
+            for (Candle candle : candles) {
+                pricesHolder.addPrice(ticker, candle.getTime(), candle.getClosePrice());
+            }
         }
     }
 
