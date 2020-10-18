@@ -1,10 +1,12 @@
 package ru.obukhov.investor.bot.interfaces;
 
 import org.jetbrains.annotations.NotNull;
+import ru.tinkoff.invest.openapi.models.operations.Operation;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public interface MarketMock {
 
@@ -19,6 +21,8 @@ public interface MarketMock {
     void setBalance(BigDecimal balance);
 
     Portfolio.PortfolioPosition getPosition(String ticker);
+
+    List<Operation> getOperations();
 
     void nextMinute();
 

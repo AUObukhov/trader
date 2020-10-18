@@ -54,6 +54,7 @@ public class SimulatorImpl implements Simulator {
                 .balance(marketMock.getBalance())
                 .fullBalance(getFullBalance(positions))
                 .positions(positions)
+                .operations(marketMock.getOperations())
                 .build();
     }
 

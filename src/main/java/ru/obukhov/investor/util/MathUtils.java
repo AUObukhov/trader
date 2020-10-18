@@ -46,6 +46,13 @@ public class MathUtils {
     }
 
     /**
+     * @return {@code number} * {@code fraction}
+     */
+    public static BigDecimal getFraction(BigDecimal number, double fraction) {
+        return multiply(number, fraction);
+    }
+
+    /**
      * @return {@code number} * (1 + {@code fraction})
      */
     public static BigDecimal addFraction(BigDecimal number, double fraction) {

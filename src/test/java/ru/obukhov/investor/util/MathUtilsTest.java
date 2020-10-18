@@ -67,6 +67,13 @@ public class MathUtilsTest {
     }
 
     @Test
+    public void getFraction() {
+        BigDecimal result = MathUtils.getFraction(BigDecimal.valueOf(765), 0.003);
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(2.295), result));
+    }
+
+    @Test
     public void addFraction() {
         BigDecimal result = MathUtils.addFraction(BigDecimal.valueOf(765), 0.003);
 
