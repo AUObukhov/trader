@@ -71,14 +71,15 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
                                              @Nullable OffsetDateTime to,
                                              CandleInterval interval) {
 
-        OffsetDateTime currentFrom = DateUtils.roundUpToDay(to == null ? OffsetDateTime.now() : to);
+        OffsetDateTime innerTo = to == null ? OffsetDateTime.now() : to;
+        OffsetDateTime currentFrom = DateUtils.roundUpToDay(innerTo);
         OffsetDateTime currentTo;
 
         List<Candle> allCandles = new ArrayList<>();
         List<Candle> currentCandles;
         int emptyDaysCount = 0;
         do {
-            currentTo = currentFrom;
+            currentTo = DateUtils.getEarliestDateTime(currentFrom, innerTo);
             currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.DAYS, from);
 
             currentCandles = loadCandles(figi, currentFrom, currentTo, interval);
