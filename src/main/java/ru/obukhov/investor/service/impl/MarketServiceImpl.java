@@ -1,6 +1,5 @@
 package ru.obukhov.investor.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.DisposableBean;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService, DisposableBean {
 
     static final int MAX_EMPTY_DAYS_COUNT = 5;
@@ -40,6 +38,11 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     private final MarketContext marketContext;
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
+
+    public MarketServiceImpl(ConnectionService connectionService) {
+        this.connectionService = connectionService;
+        this.marketContext = connectionService.getMarketContext();
+    }
 
     /**
      * Load candles by conditions period by period.

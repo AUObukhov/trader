@@ -1,10 +1,10 @@
 package ru.obukhov.investor.service.impl;
 
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.SandboxService;
 import ru.tinkoff.invest.openapi.SandboxContext;
@@ -15,11 +15,16 @@ import ru.tinkoff.invest.openapi.models.sandbox.PositionBalance;
 import java.math.BigDecimal;
 
 @Service
-@AllArgsConstructor
 @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
 public class SandboxServiceImpl implements SandboxService {
+
     private final MarketService marketService;
     private final SandboxContext sandboxContext;
+
+    public SandboxServiceImpl(ConnectionService connectionService, MarketService marketService) {
+        this.marketService = marketService;
+        this.sandboxContext = connectionService.getSandboxContext();
+    }
 
     @Override
     public void setCurrencyBalance(@NotNull Currency currency,

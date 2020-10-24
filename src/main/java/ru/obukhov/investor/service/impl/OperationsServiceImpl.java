@@ -1,9 +1,9 @@
 package ru.obukhov.investor.service.impl;
 
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.tinkoff.invest.openapi.OperationsContext;
@@ -13,11 +13,15 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class OperationsServiceImpl implements OperationsService {
 
     private final MarketService marketService;
     private final OperationsContext operationsContext;
+
+    public OperationsServiceImpl(ConnectionService connectionService, MarketService marketService) {
+        this.marketService = marketService;
+        this.operationsContext = connectionService.getOperationsContext();
+    }
 
     @Override
     public List<Operation> getOperations(@NotNull OffsetDateTime from,

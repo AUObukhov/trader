@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.tinkoff.invest.openapi.OrdersContext;
@@ -31,6 +32,8 @@ public class OrdersServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
+    private ConnectionService connectionService;
+    @Mock
     private MarketService marketService;
     @Mock
     private OrdersContext ordersContext;
@@ -39,7 +42,9 @@ public class OrdersServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
-        this.service = new OrdersServiceImpl(marketService, ordersContext);
+        when(connectionService.getOrdersContext()).thenReturn(ordersContext);
+
+        this.service = new OrdersServiceImpl(connectionService, marketService);
     }
 
     @Test

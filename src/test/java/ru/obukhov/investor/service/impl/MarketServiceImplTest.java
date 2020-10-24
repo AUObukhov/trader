@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
@@ -45,13 +46,17 @@ public class MarketServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
+    private ConnectionService connectionService;
+    @Mock
     private MarketContext marketContext;
 
     private MarketService service;
 
     @Before
     public void setUp() {
-        this.service = new MarketServiceImpl(null, marketContext);
+        when(connectionService.getMarketContext()).thenReturn(marketContext);
+
+        this.service = new MarketServiceImpl(connectionService);
 
         mockAnyCandles();
     }

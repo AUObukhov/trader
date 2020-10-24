@@ -10,8 +10,6 @@ import ru.tinkoff.invest.openapi.UserContext;
 
 public interface ConnectionService {
 
-    void setToken(String token);
-
     MarketContext getMarketContext();
 
     OperationsContext getOperationsContext();

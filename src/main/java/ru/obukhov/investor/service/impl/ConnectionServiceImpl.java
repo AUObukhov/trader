@@ -1,8 +1,7 @@
 package ru.obukhov.investor.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.service.StreamingApiSubscriber;
@@ -19,16 +18,14 @@ import ru.tinkoff.invest.openapi.UserContext;
 import ru.tinkoff.invest.openapi.okhttp.OkHttpOpenApiFactory;
 
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
 
-@Log
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ConnectionServiceImpl implements ConnectionService {
 
     private final TradingProperties tradingProperties;
-    @Setter
-    private String token;
+    private final OkHttpOpenApiFactory okHttpOpenApiFactory;
     private OpenApi api;
 
     @Override
@@ -95,12 +92,10 @@ public class ConnectionServiceImpl implements ConnectionService {
      * Subscribes listener to events of created api
      */
     private void refreshApi() {
-        final OkHttpOpenApiFactory factory = new OkHttpOpenApiFactory(this.token, log);
-
         if (tradingProperties.isSandbox()) {
-            this.api = factory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
+            this.api = okHttpOpenApiFactory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
         } else {
-            this.api = factory.createOpenApiClient(Executors.newSingleThreadExecutor());
+            this.api = okHttpOpenApiFactory.createOpenApiClient(Executors.newSingleThreadExecutor());
         }
 
         subscribeListener();
@@ -120,7 +115,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     /**
-     * Close api, opened by {@code token} if it exists
+     * Close opened api if it exists
      */
     @Override
     public void closeConnection() {
@@ -134,7 +129,7 @@ public class ConnectionServiceImpl implements ConnectionService {
                 this.api.close();
             }
         } catch (final Exception e) {
-            log.log(Level.SEVERE, "Exception while closing connection", e);
+            log.error("Exception while closing connection", e);
         }
     }
 

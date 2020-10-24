@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.PortfolioService;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.PortfolioContext;
@@ -33,13 +34,17 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
+    private ConnectionService connectionService;
+    @Mock
     private PortfolioContext portfolioContext;
 
     private PortfolioService service;
 
     @Before
     public void setUp() {
-        this.service = new PortfolioServiceImpl(portfolioContext);
+        when(connectionService.getPortfolioContext()).thenReturn(portfolioContext);
+
+        this.service = new PortfolioServiceImpl(connectionService);
     }
 
     // region getPosition tests
