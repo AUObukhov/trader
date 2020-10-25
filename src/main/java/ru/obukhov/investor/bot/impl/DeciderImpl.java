@@ -55,8 +55,8 @@ public class DeciderImpl implements Decider {
         Decision decision = MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
 
         log.debug("buyLotPrice = " + buyLotPrice + ", buyPricePlusCommission = " + buyPricePlusCommission
-                + "\ncurrentLotPrice = " + currentLotPrice + ", sellPriceMinusCommission = " + sellPriceMinusCommission
-                + "\nprofit = " + profit + ", decision = " + decision);
+                + ", currentLotPrice = " + currentLotPrice + ", sellPriceMinusCommission = " + sellPriceMinusCommission
+                + ", profit = " + profit + ", decision = " + decision);
 
         return decision;
     }
