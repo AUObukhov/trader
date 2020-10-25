@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import ru.obukhov.investor.exception.TickerNotFoundException;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
@@ -223,6 +224,9 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     @Cacheable("figi")
     public String getFigi(String ticker) {
         List<Instrument> instruments = marketContext.searchMarketInstrumentsByTicker(ticker).join().instruments;
+        if (instruments.isEmpty()) {
+            throw new TickerNotFoundException(ticker);
+        }
         Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
 
         return instruments.get(0).figi;

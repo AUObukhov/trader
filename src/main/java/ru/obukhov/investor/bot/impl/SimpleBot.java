@@ -6,6 +6,7 @@ import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.DataSupplier;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
+import ru.obukhov.investor.exception.TickerNotFoundException;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.orders.Order;
@@ -46,6 +47,8 @@ public class SimpleBot implements Bot {
 
             Decision decision = decider.decide(data);
             performOperation(ticker, decision, data.getCurrentPrice());
+        } catch (TickerNotFoundException ex) {
+            throw ex;
         } catch (Exception ex) {
             log.error("Exception while process ticker " + ticker + ". Do nothing", ex);
         }

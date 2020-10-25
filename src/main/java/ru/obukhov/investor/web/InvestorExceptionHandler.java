@@ -8,7 +8,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.obukhov.investor.exception.InvestorException;
+import ru.obukhov.investor.exception.TickerNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class InvestorExceptionHandler {
 
-    @ExceptionHandler(InvestorException.class)
-    public ResponseEntity<Map<String, Object>> handleInvestorException(InvestorException ex) {
+    @ExceptionHandler(TickerNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleInvestorException(TickerNotFoundException ex) {
         log.error("Investor exception", ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
