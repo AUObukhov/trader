@@ -10,9 +10,9 @@ import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
+import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.MoneyAmount;
-import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
 import ru.tinkoff.invest.openapi.models.operations.OperationType;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Class for keeping fake market and portfolio data, such as current dateTime, balance and positions
@@ -45,7 +43,7 @@ public class MarketMockImpl implements MarketMock {
     private BigDecimal balance;
 
     @Getter
-    private List<ru.tinkoff.invest.openapi.models.operations.Operation> operations;
+    private List<SimulatedOperation> operations;
 
     @Override
     public void init(OffsetDateTime currentDateTime, BigDecimal balance) {
@@ -90,26 +88,29 @@ public class MarketMockImpl implements MarketMock {
     }
 
     @Override
-    public void performOperation(@NotNull String ticker, int lots, @NotNull Operation operation, BigDecimal price) {
+    public void performOperation(@NotNull String ticker, int quantity, @NotNull Operation operation, BigDecimal price) {
+        BigDecimal totalAmount = MathUtils.multiply(price, quantity);
+        BigDecimal commission = MathUtils.getFraction(totalAmount, tradingProperties.getCommission());
+        BigDecimal balanceChange;
+        OperationType operationType;
+
         if (operation == Operation.Buy) {
-            Portfolio.PortfolioPosition position = createPosition(ticker, lots, price);
-            addPosition(position);
+            addPosition(createPosition(ticker, quantity, price));
 
-            BigDecimal balanceChange = MathUtils.addFraction(price, tradingProperties.getCommission()).negate();
-            addToBalance(balanceChange);
-
-            addOperation(lots, price, OperationType.Buy);
+            balanceChange = totalAmount.add(commission).negate();
+            operationType = OperationType.Buy;
         } else {
             removePosition(ticker);
 
-            BigDecimal balanceChange = MathUtils.subtractFraction(price, tradingProperties.getCommission());
-            addToBalance(balanceChange);
-
-            addOperation(lots, price, OperationType.Sell);
+            balanceChange = totalAmount.subtract(commission);
+            operationType = OperationType.Sell;
         }
+
+        addToBalance(balanceChange);
+        addOperation(totalAmount, commission, operationType);
     }
 
-    private Portfolio.PortfolioPosition createPosition(@NotNull String ticker, int lots, BigDecimal price) {
+    private Portfolio.PortfolioPosition createPosition(@NotNull String ticker, int quantity, BigDecimal price) {
         MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, price);
         return new Portfolio.PortfolioPosition(
                 null,
@@ -119,7 +120,7 @@ public class MarketMockImpl implements MarketMock {
                 price,
                 null,
                 null,
-                lots,
+                quantity,
                 averagePositionPrice,
                 null,
                 null);
@@ -163,40 +164,13 @@ public class MarketMockImpl implements MarketMock {
     /**
      * adds operation to {@code operations}
      */
-    private void addOperation(int lots, BigDecimal price, OperationType operationType) {
-        ru.tinkoff.invest.openapi.models.operations.Operation historyOperation
-                = new ru.tinkoff.invest.openapi.models.operations.Operation(
-                "no id",
-                OperationStatus.Done,
-                createTrades(lots, price),
-                createCommission(price),
-                Currency.RUB,
-                MathUtils.multiply(price, lots),
-                price,
-                lots,
-                null,
-                null,
-                false,
-                currentDateTime,
-                operationType
-        );
+    private void addOperation(BigDecimal totalAmount,
+                              BigDecimal commission,
+                              OperationType operationType) {
 
-        operations.add(historyOperation);
-    }
-
-    private List<ru.tinkoff.invest.openapi.models.operations.Operation.Trade> createTrades(int lots, BigDecimal price) {
-        ru.tinkoff.invest.openapi.models.operations.Operation.Trade trade =
-                new ru.tinkoff.invest.openapi.models.operations.Operation.Trade(
-                        "no id",
-                        currentDateTime,
-                        price,
-                        lots
-                );
-        return newArrayList(trade);
-    }
-
-    private MoneyAmount createCommission(BigDecimal price) {
-        return new MoneyAmount(Currency.RUB, MathUtils.getFraction(price, tradingProperties.getCommission()));
+        SimulatedOperation operation
+                = new SimulatedOperation(this.currentDateTime, operationType, totalAmount, commission);
+        operations.add(operation);
     }
 
     @Override
