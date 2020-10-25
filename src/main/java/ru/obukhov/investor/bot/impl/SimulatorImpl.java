@@ -52,18 +52,10 @@ public class SimulatorImpl implements Simulator {
         List<Portfolio.PortfolioPosition> positions = newArrayList(marketMock.getPosition(ticker));
         return SimulateResponse.builder()
                 .balance(marketMock.getBalance())
-                .fullBalance(getFullBalance(positions))
+                .fullBalance(marketMock.getFullBalance())
                 .positions(positions)
                 .operations(marketMock.getOperations())
                 .build();
-    }
-
-    private BigDecimal getFullBalance(List<Portfolio.PortfolioPosition> positions) {
-        BigDecimal fullBalance = marketMock.getBalance();
-        for (Portfolio.PortfolioPosition position : positions) {
-            fullBalance = fullBalance.add(position.balance);
-        }
-        return fullBalance;
     }
 
 }

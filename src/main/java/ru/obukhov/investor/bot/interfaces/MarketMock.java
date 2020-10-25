@@ -27,4 +27,6 @@ public interface MarketMock {
     void nextMinute();
 
     void performOperation(@NotNull String ticker, int lots, @NotNull ru.tinkoff.invest.openapi.models.orders.Operation operation, BigDecimal price);
+
+    BigDecimal getFullBalance();
 }

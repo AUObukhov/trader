@@ -57,8 +57,6 @@ public class MarketMockImpl implements MarketMock {
 
     /**
      * sets current dateTime, but moves it to nearest work time
-     *
-     * @param currentDateTime
      */
     @Override
     public void setCurrentDateTime(OffsetDateTime currentDateTime) {
@@ -200,4 +198,14 @@ public class MarketMockImpl implements MarketMock {
     private MoneyAmount createCommission(BigDecimal price) {
         return new MoneyAmount(Currency.RUB, MathUtils.getFraction(price, tradingProperties.getCommission()));
     }
+
+    @Override
+    public BigDecimal getFullBalance() {
+        BigDecimal fullBalance = this.balance;
+        for (Portfolio.PortfolioPosition position : this.positions) {
+            fullBalance = fullBalance.add(position.balance);
+        }
+        return fullBalance;
+    }
+
 }
