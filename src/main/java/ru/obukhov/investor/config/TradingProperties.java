@@ -16,8 +16,6 @@ import java.time.temporal.ChronoUnit;
 @ConfigurationProperties(prefix = "trading")
 public class TradingProperties {
 
-    private boolean sandbox;
-
     @NotBlank
     private String token;
 
