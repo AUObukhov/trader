@@ -2,6 +2,7 @@ trading:
   commission: 0.003
   work-start-time: "10:00:00+03:00"
   work-duration: 540
+  bot-enabled: false
 
 query.throttle:
   limit: 119

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.web.model.SimulateRequest;
 import ru.obukhov.investor.web.model.SimulateResponse;
 
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 public class BotController {
 
     private final Simulator simulator;
+    private final TradingProperties tradingProperties;
 
     @PostMapping("/simulate")
     public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
@@ -30,4 +32,13 @@ public class BotController {
 
     }
 
+    @PostMapping("/enable")
+    public void enable() {
+        tradingProperties.setBotEnabled(true);
+    }
+
+    @PostMapping("/disable")
+    public void disable() {
+        tradingProperties.setBotEnabled(false);
+    }
 }

@@ -30,6 +30,11 @@ public class ScheduledBot extends SimpleBot implements Bot {
 
     @Scheduled(fixedDelayString = "${bot.delay}")
     public void tick() {
+        if (!tradingProperties.isBotEnabled()) {
+            log.trace("Bot is disabled. Do nothing");
+            return;
+        }
+
         if (!DateUtils.isWorkTimeNow(tradingProperties.getWorkStartTime(), tradingProperties.getWorkDuration())) {
             log.debug("Not work time. Do nothing");
             return;
