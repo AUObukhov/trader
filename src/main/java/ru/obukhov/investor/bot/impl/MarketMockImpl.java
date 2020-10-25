@@ -11,11 +11,9 @@ import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
+import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.tinkoff.invest.openapi.models.operations.OperationType;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -33,7 +31,7 @@ public class MarketMockImpl implements MarketMock {
 
     private final TradingProperties tradingProperties;
 
-    private final Set<Portfolio.PortfolioPosition> positions = new HashSet<>();
+    private final Set<SimulatedPosition> positions = new HashSet<>();
 
     @Getter
     private OffsetDateTime currentDateTime;
@@ -67,9 +65,9 @@ public class MarketMockImpl implements MarketMock {
      * @return position by {@code ticker} if it is exists, or null other ways
      */
     @Override
-    public Portfolio.PortfolioPosition getPosition(String ticker) {
+    public SimulatedPosition getPosition(String ticker) {
         return this.positions.stream()
-                .filter(position -> ticker.equals(position.ticker))
+                .filter(position -> ticker.equals(position.getTicker()))
                 .findFirst()
                 .orElse(null);
     }
@@ -110,20 +108,8 @@ public class MarketMockImpl implements MarketMock {
         addOperation(totalAmount, commission, operationType);
     }
 
-    private Portfolio.PortfolioPosition createPosition(@NotNull String ticker, int quantity, BigDecimal price) {
-        MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, price);
-        return new Portfolio.PortfolioPosition(
-                null,
-                ticker,
-                null,
-                null,
-                price,
-                null,
-                null,
-                quantity,
-                averagePositionPrice,
-                null,
-                null);
+    private SimulatedPosition createPosition(@NotNull String ticker, int quantity, BigDecimal price) {
+        return new SimulatedPosition(ticker, price, quantity);
     }
 
     /**
@@ -131,9 +117,9 @@ public class MarketMockImpl implements MarketMock {
      *
      * @throws IllegalArgumentException when position with same ticker already exists
      */
-    private void addPosition(Portfolio.PortfolioPosition position) {
-        Assert.isNull(getPosition(position.ticker),
-                "Position with ticker " + position.ticker + " already exists");
+    private void addPosition(SimulatedPosition position) {
+        Assert.isNull(getPosition(position.getTicker()),
+                "Position with ticker " + position.getTicker() + " already exists");
 
         this.positions.add(position);
     }
@@ -144,7 +130,7 @@ public class MarketMockImpl implements MarketMock {
      * @throws IllegalArgumentException when position with given {@code ticker} doesn't exists
      */
     private void removePosition(String ticker) {
-        boolean result = this.positions.removeIf(position -> ticker.equals(position.ticker));
+        boolean result = this.positions.removeIf(position -> ticker.equals(position.getTicker()));
         Assert.isTrue(result, "Position for ticker '" + ticker + "' doesn't exist");
     }
 
@@ -176,8 +162,8 @@ public class MarketMockImpl implements MarketMock {
     @Override
     public BigDecimal getFullBalance() {
         BigDecimal fullBalance = this.balance;
-        for (Portfolio.PortfolioPosition position : this.positions) {
-            fullBalance = fullBalance.add(position.balance);
+        for (SimulatedPosition position : this.positions) {
+            fullBalance = fullBalance.add(position.getPrice());
         }
         return fullBalance;
     }

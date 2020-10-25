@@ -2,7 +2,7 @@ package ru.obukhov.investor.bot.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.investor.web.model.SimulatedOperation;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
+import ru.obukhov.investor.web.model.SimulatedPosition;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -20,7 +20,7 @@ public interface MarketMock {
 
     void setBalance(BigDecimal balance);
 
-    Portfolio.PortfolioPosition getPosition(String ticker);
+    SimulatedPosition getPosition(String ticker);
 
     List<SimulatedOperation> getOperations();
 

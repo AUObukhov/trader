@@ -2,7 +2,6 @@ package ru.obukhov.investor.web.model;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,11 +10,11 @@ import java.util.List;
 @Builder
 public class SimulateResponse {
 
-    private BigDecimal balance;
+    private BigDecimal totalBalance;
 
-    private BigDecimal fullBalance;
+    private BigDecimal currencyBalance;
 
-    private List<Portfolio.PortfolioPosition> positions;
+    private List<SimulatedPosition> positions;
 
     private List<SimulatedOperation> operations;
 

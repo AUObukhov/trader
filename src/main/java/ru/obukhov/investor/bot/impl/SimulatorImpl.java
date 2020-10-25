@@ -6,7 +6,7 @@ import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.web.model.SimulateResponse;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
+import ru.obukhov.investor.web.model.SimulatedPosition;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -49,10 +49,10 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '" + ticker + "' ended");
 
-        List<Portfolio.PortfolioPosition> positions = newArrayList(marketMock.getPosition(ticker));
+        List<SimulatedPosition> positions = newArrayList(marketMock.getPosition(ticker));
         return SimulateResponse.builder()
-                .balance(marketMock.getBalance())
-                .fullBalance(marketMock.getFullBalance())
+                .currencyBalance(marketMock.getBalance())
+                .totalBalance(marketMock.getFullBalance())
                 .positions(positions)
                 .operations(marketMock.getOperations())
                 .build();

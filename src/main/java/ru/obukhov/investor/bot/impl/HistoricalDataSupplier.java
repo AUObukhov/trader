@@ -11,7 +11,11 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
+import ru.obukhov.investor.web.model.SimulatedPosition;
+import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.models.MoneyAmount;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
@@ -57,25 +61,26 @@ public class HistoricalDataSupplier implements DataSupplier {
     }
 
     private Portfolio.PortfolioPosition getPosition(String ticker, BigDecimal currentPrice) {
-        Portfolio.PortfolioPosition position = marketMock.getPosition(ticker);
+        SimulatedPosition position = marketMock.getPosition(ticker);
         if (position == null) {
             return null;
         }
 
-        BigDecimal balance = MathUtils.multiply(currentPrice, position.lots);
+        BigDecimal balance = MathUtils.multiply(currentPrice, position.getQuantity());
+        MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, position.getPrice());
 
         return new Portfolio.PortfolioPosition(
-                position.figi,
-                position.ticker,
-                position.isin,
-                position.instrumentType,
+                "figi",
+                position.getTicker(),
+                null,
+                InstrumentType.Bond,
                 balance,
-                position.blocked,
-                position.expectedYield,
-                position.lots,
-                position.averagePositionPrice,
-                position.averagePositionPriceNoNkd,
-                position.name);
+                null,
+                null,
+                position.getQuantity(),
+                averagePositionPrice,
+                null,
+                "simulated position");
     }
 
     private void updatePrices(String ticker) {
