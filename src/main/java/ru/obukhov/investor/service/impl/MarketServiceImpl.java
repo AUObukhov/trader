@@ -2,7 +2,6 @@ package ru.obukhov.investor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -12,10 +11,10 @@ import ru.obukhov.investor.exception.TickerNotFoundException;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.model.transform.CandleMapper;
+import ru.obukhov.investor.service.TinkoffContextsAware;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
-import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
@@ -31,18 +30,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class MarketServiceImpl implements MarketService, DisposableBean {
+public class MarketServiceImpl extends TinkoffContextsAware implements MarketService {
 
     static final int MAX_EMPTY_DAYS_COUNT = 5;
-
-    private final ConnectionService connectionService;
-    private final MarketContext marketContext;
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     public MarketServiceImpl(ConnectionService connectionService) {
-        this.connectionService = connectionService;
-        this.marketContext = connectionService.getMarketContext();
+        super(connectionService);
     }
 
     /**
@@ -123,7 +118,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     }
 
     private List<Candle> loadCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        List<Candle> candles = marketContext.getMarketCandles(figi, from, to, interval).join()
+        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, interval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
         log.debug("Loaded " + candles.size() + " candles for figi '" + figi + "' in interval " + from + " - " + to);
@@ -193,23 +188,23 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
 
         switch (type) {
             case ETF:
-                return marketContext.getMarketEtfs().join().instruments;
+                return getMarketContext().getMarketEtfs().join().instruments;
             case STOCK:
-                return marketContext.getMarketStocks().join().instruments;
+                return getMarketContext().getMarketStocks().join().instruments;
             case BOND:
-                return marketContext.getMarketBonds().join().instruments;
+                return getMarketContext().getMarketBonds().join().instruments;
             case CURRENCY:
-                return marketContext.getMarketCurrencies().join().instruments;
+                return getMarketContext().getMarketCurrencies().join().instruments;
             default:
                 throw new IllegalArgumentException("Unknown ticker type " + type);
         }
     }
 
     private List<Instrument> getAllInstruments() {
-        CompletableFuture<InstrumentsList> etfs = marketContext.getMarketEtfs();
-        CompletableFuture<InstrumentsList> stocks = marketContext.getMarketStocks();
-        CompletableFuture<InstrumentsList> bonds = marketContext.getMarketBonds();
-        CompletableFuture<InstrumentsList> currencies = marketContext.getMarketCurrencies();
+        CompletableFuture<InstrumentsList> etfs = getMarketContext().getMarketEtfs();
+        CompletableFuture<InstrumentsList> stocks = getMarketContext().getMarketStocks();
+        CompletableFuture<InstrumentsList> bonds = getMarketContext().getMarketBonds();
+        CompletableFuture<InstrumentsList> currencies = getMarketContext().getMarketCurrencies();
 
         List<Instrument> result = new ArrayList<>();
         result.addAll(etfs.join().instruments);
@@ -223,7 +218,7 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
     @Override
     @Cacheable("figi")
     public String getFigi(String ticker) {
-        List<Instrument> instruments = marketContext.searchMarketInstrumentsByTicker(ticker).join().instruments;
+        List<Instrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
         if (instruments.isEmpty()) {
             throw new TickerNotFoundException(ticker);
         }
@@ -232,8 +227,4 @@ public class MarketServiceImpl implements MarketService, DisposableBean {
         return instruments.get(0).figi;
     }
 
-    @Override
-    public void destroy() {
-        connectionService.closeConnection();
-    }
 }
