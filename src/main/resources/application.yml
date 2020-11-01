@@ -11,3 +11,7 @@ query.throttle:
 bot:
   delay: 60000
   tickers: SBER
+
+spring.cache:
+  cache-names: candles, last-candle, last-candle-to
+  scaffeine.spec: maximumSize=1000,expireAfterAccess=1h

@@ -46,10 +46,13 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
      * @return sorted by time list of loaded candles
      */
     @Override
+    @Cacheable("candles")
     public List<Candle> getCandles(String ticker,
                                    @Nullable OffsetDateTime from,
                                    @Nullable OffsetDateTime to,
                                    CandleInterval interval) {
+
+        Assert.isTrue(to == null || !to.isAfter(OffsetDateTime.now()), "'to' can't be in future");
 
         String figi = getFigi(ticker);
         ChronoUnit period = DateUtils.getPeriodByCandleInterval(interval);
@@ -132,6 +135,7 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
      * @throws IllegalArgumentException if candle not found
      */
     @Override
+    @Cacheable("last-candle")
     public Candle getLastCandle(String ticker) {
         return getLastCandle(ticker, DateUtils.getLastWorkDay().plusDays(1));
     }
@@ -144,6 +148,7 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
      * @throws IllegalArgumentException if candle not found
      */
     @Override
+    @Cacheable("last-candle-to")
     public Candle getLastCandle(String ticker, OffsetDateTime to) {
         String figi = getFigi(ticker);
         OffsetDateTime candlesFrom = to.minusDays(1);
