@@ -110,11 +110,29 @@ public class PricesHolderTest {
         BigDecimal writePrice1 = BigDecimal.valueOf(100);
         pricesHolder.addPrice(TICKER, writeDateTime1, writePrice1);
 
-        OffsetDateTime writeDateTime2 = DateUtils.getDateTime(2020, 10, 10, 11, 10, 15);
+        OffsetDateTime writeDateTime2 = DateUtils.getDateTime(2020, 10, 10, 11, 10, 0);
         BigDecimal writePrice2 = BigDecimal.valueOf(100);
         pricesHolder.addPrice(TICKER, writeDateTime2, writePrice2);
 
-        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 10, 15);
+        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 10, 0);
+        BigDecimal readPrice = pricesHolder.getPrice(TICKER, readDateTime);
+
+        Assert.assertEquals(writePrice1, readPrice);
+    }
+
+    @Test
+    public void getPrice_returnsPreviousDayPrice_whenExistPriceOnSameDateButLaterThanTime() {
+        PricesHolder pricesHolder = new PricesHolder();
+
+        OffsetDateTime writeDateTime1 = DateUtils.getDateTime(2020, 10, 9, 15, 0, 0);
+        BigDecimal writePrice1 = BigDecimal.valueOf(100);
+        pricesHolder.addPrice(TICKER, writeDateTime1, writePrice1);
+
+        OffsetDateTime writeDateTime2 = DateUtils.getDateTime(2020, 10, 10, 11, 00, 0);
+        BigDecimal writePrice2 = BigDecimal.valueOf(100);
+        pricesHolder.addPrice(TICKER, writeDateTime2, writePrice2);
+
+        OffsetDateTime readDateTime = DateUtils.getDateTime(2020, 10, 10, 10, 0, 0);
         BigDecimal readPrice = pricesHolder.getPrice(TICKER, readDateTime);
 
         Assert.assertEquals(writePrice1, readPrice);

@@ -10,11 +10,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Class to keep and get prices by tickers and dateTime
+ */
 @Slf4j
 public class PricesHolder {
 
     private final Table<String, OffsetDateTime, TreeMap<OffsetDateTime, BigDecimal>> data = HashBasedTable.create();
 
+    /**
+     * @return true, if this has price for given {@code ticker} at given {@code dateTime} or earlier
+     */
     public boolean dataExists(String ticker, OffsetDateTime dateTime) {
         OffsetDateTime dateKey = dateTime.truncatedTo(ChronoUnit.DAYS);
         return data.get(ticker, dateKey) != null;
