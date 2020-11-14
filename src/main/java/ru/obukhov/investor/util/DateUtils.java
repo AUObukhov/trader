@@ -216,9 +216,8 @@ public class DateUtils {
      * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
     public static boolean isWorkTime(OffsetDateTime dateTime, OffsetTime workStartTime, Duration workTimeDuration) {
-        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0,
-                "workTimeDuration must be less than 1 day");
+
+        validateWorkTimeDuration(workTimeDuration);
 
         OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
         boolean livingAfterMidnight = workStartTime.isAfter(workEndTime);
@@ -247,9 +246,7 @@ public class DateUtils {
                                                     OffsetTime workStartTime,
                                                     Duration workTimeDuration) {
 
-        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) >= 0,
-                "workTimeDuration must be less than 1 day");
+        validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
             return dateTime;
@@ -266,9 +263,7 @@ public class DateUtils {
     public static OffsetDateTime getNextWorkMinute(OffsetDateTime dateTime,
                                                    OffsetTime workStartTime,
                                                    Duration workTimeDuration) {
-        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) >= 0,
-                "workTimeDuration must be less than 1 day");
+        validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
             OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
@@ -286,6 +281,12 @@ public class DateUtils {
         }
 
         return setTime(getNextWorkDay(dateTime), workStartTime);
+    }
+
+    private static void validateWorkTimeDuration(Duration workTimeDuration) {
+        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
+        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0,
+                "workTimeDuration must be less than 1 day");
     }
 
 }
