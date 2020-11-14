@@ -1,44 +1,35 @@
 package ru.obukhov.investor.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import ru.obukhov.investor.exception.TickerNotFoundException;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
-import ru.obukhov.investor.model.transform.CandleMapper;
-import ru.obukhov.investor.service.TinkoffContextsAware;
-import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class MarketServiceImpl extends TinkoffContextsAware implements MarketService {
+@RequiredArgsConstructor
+public class MarketServiceImpl implements MarketService {
 
     static final int MAX_EMPTY_DAYS_COUNT = 5;
 
-    private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
-
-    public MarketServiceImpl(ConnectionService connectionService) {
-        super(connectionService);
-    }
+    private final TinkoffService tinkoffService;
 
     /**
      * Load candles by conditions period by period.
@@ -121,9 +112,7 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
     }
 
     private List<Candle> loadCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, interval).join()
-                .map(candleMapper::map)
-                .orElse(Collections.emptyList());
+        List<Candle> candles = tinkoffService.getMarketCandles(figi, from, to, interval);
         log.debug("Loaded " + candles.size() + " candles for figi '" + figi + "' in interval " + from + " - " + to);
         return candles;
     }
@@ -193,29 +182,25 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
 
         switch (type) {
             case ETF:
-                return getMarketContext().getMarketEtfs().join().instruments;
+                return tinkoffService.getMarketEtfs();
             case STOCK:
-                return getMarketContext().getMarketStocks().join().instruments;
+                return tinkoffService.getMarketStocks();
             case BOND:
-                return getMarketContext().getMarketBonds().join().instruments;
+                return tinkoffService.getMarketBonds();
             case CURRENCY:
-                return getMarketContext().getMarketCurrencies().join().instruments;
+                return tinkoffService.getMarketCurrencies();
             default:
                 throw new IllegalArgumentException("Unknown ticker type " + type);
         }
     }
 
     private List<Instrument> getAllInstruments() {
-        CompletableFuture<InstrumentsList> etfs = getMarketContext().getMarketEtfs();
-        CompletableFuture<InstrumentsList> stocks = getMarketContext().getMarketStocks();
-        CompletableFuture<InstrumentsList> bonds = getMarketContext().getMarketBonds();
-        CompletableFuture<InstrumentsList> currencies = getMarketContext().getMarketCurrencies();
 
         List<Instrument> result = new ArrayList<>();
-        result.addAll(etfs.join().instruments);
-        result.addAll(stocks.join().instruments);
-        result.addAll(bonds.join().instruments);
-        result.addAll(currencies.join().instruments);
+        result.addAll(tinkoffService.getMarketEtfs());
+        result.addAll(tinkoffService.getMarketStocks());
+        result.addAll(tinkoffService.getMarketBonds());
+        result.addAll(tinkoffService.getMarketCurrencies());
 
         return result;
     }
@@ -223,13 +208,7 @@ public class MarketServiceImpl extends TinkoffContextsAware implements MarketSer
     @Override
     @Cacheable("figi")
     public String getFigi(String ticker) {
-        List<Instrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
-        if (instruments.isEmpty()) {
-            throw new TickerNotFoundException(ticker);
-        }
-        Assert.isTrue(instruments.size() == 1, "Expected one instrument by ticker " + ticker);
-
-        return instruments.get(0).figi;
+        return tinkoffService.searchMarketInstrumentByTicker(ticker).figi;
     }
 
 }

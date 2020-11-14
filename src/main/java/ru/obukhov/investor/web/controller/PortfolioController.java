@@ -24,7 +24,7 @@ public class PortfolioController {
     @GetMapping("/positions")
     public GetPortfolioPositionsResponse getPositions() {
 
-        List<Portfolio.PortfolioPosition> positions = portfolioService.getPositions(null);
+        List<Portfolio.PortfolioPosition> positions = portfolioService.getPositions();
 
         return new GetPortfolioPositionsResponse(positions);
 
@@ -33,7 +33,7 @@ public class PortfolioController {
     @GetMapping("/currencies")
     public GetPortfolioCurrenciesResponse getCurrencies() {
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = portfolioService.getCurrencies(null);
+        List<PortfolioCurrencies.PortfolioCurrency> currencies = portfolioService.getCurrencies();
 
         return new GetPortfolioCurrenciesResponse(currencies);
 

@@ -1,32 +1,25 @@
 package ru.obukhov.investor.service.impl;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
-import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.InstrumentType;
-import ru.tinkoff.invest.openapi.models.market.InstrumentsList;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -46,17 +39,13 @@ public class MarketServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
-    private ConnectionService connectionService;
-    @Mock
-    private MarketContext marketContext;
+    private TinkoffService tinkoffService;
 
     private MarketService service;
 
     @Before
     public void setUp() {
-        when(connectionService.getMarketContext()).thenReturn(marketContext);
-
-        this.service = new MarketServiceImpl(connectionService);
+        this.service = new MarketServiceImpl(tinkoffService);
 
         mockAnyCandles();
     }
@@ -337,15 +326,11 @@ public class MarketServiceImplTest extends BaseMockedTest {
     // region mocks
 
     private void mockAnyCandles() {
-        Answer<CompletableFuture<Optional<HistoricalCandles>>> answer = invocation ->
-                createCandlesFuture(invocation.getArgument(0, String.class),
-                        invocation.getArgument(3, CandleInterval.class),
-                        Collections.emptyList());
-        when(marketContext.getMarketCandles(eq(FIGI),
+        when(tinkoffService.getMarketCandles(eq(FIGI),
                 any(OffsetDateTime.class),
                 any(OffsetDateTime.class),
                 any(CandleInterval.class)))
-                .thenAnswer(answer);
+                .thenReturn(Collections.emptyList());
     }
 
     private void mockCandlesSimple(String figi,
@@ -354,15 +339,14 @@ public class MarketServiceImplTest extends BaseMockedTest {
                                    CandleInterval candleInterval,
                                    Integer... openPrices) {
 
-        List<ru.tinkoff.invest.openapi.models.market.Candle> candles = createCandlesSimple(from, openPrices);
+        List<Candle> candles = createCandlesSimple(from, openPrices);
 
-        when(marketContext.getMarketCandles(eq(figi), eq(from), eq(to), eq(candleInterval)))
-                .thenReturn(createCandlesFuture(figi, candleInterval, candles));
+        when(tinkoffService.getMarketCandles(eq(figi), eq(from), eq(to), eq(candleInterval)))
+                .thenReturn(candles);
 
     }
 
-    private List<ru.tinkoff.invest.openapi.models.market.Candle> createCandlesSimple(OffsetDateTime time,
-                                                                                     Integer... openPrices) {
+    private List<Candle> createCandlesSimple(OffsetDateTime time, Integer... openPrices) {
 
         return Arrays.stream(openPrices)
                 .map(p -> createCandleSimple(p, time))
@@ -370,28 +354,12 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     }
 
-    private ru.tinkoff.invest.openapi.models.market.Candle createCandleSimple(Integer openPrice, OffsetDateTime time) {
+    private Candle createCandleSimple(Integer openPrice, OffsetDateTime time) {
 
-        return new ru.tinkoff.invest.openapi.models.market.Candle(
-                null,
-                null,
-                BigDecimal.valueOf(openPrice),
-                BigDecimal.TEN,
-                BigDecimal.TEN,
-                BigDecimal.ZERO,
-                BigDecimal.ONE,
-                time);
-
-    }
-
-    private CompletableFuture<Optional<HistoricalCandles>> createCandlesFuture(
-            String figi,
-            CandleInterval candleInterval,
-            List<ru.tinkoff.invest.openapi.models.market.Candle> candles) {
-
-        HistoricalCandles historicalCandles = new HistoricalCandles(figi, candleInterval, candles);
-        Optional<HistoricalCandles> optionalHistoricalCandles = Optional.of(historicalCandles);
-        return CompletableFuture.completedFuture(optionalHistoricalCandles);
+        return Candle.builder()
+                .openPrice(BigDecimal.valueOf(openPrice))
+                .time(time)
+                .build();
 
     }
 
@@ -405,11 +373,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
                 null,
                 "testInstrument",
                 InstrumentType.Stock);
-        List<Instrument> instruments = ImmutableList.of(instrument);
-        InstrumentsList instrumentsList = new InstrumentsList(instruments.size(), instruments);
-        CompletableFuture<InstrumentsList> completableFuture = CompletableFuture.completedFuture(instrumentsList);
 
-        when(marketContext.searchMarketInstrumentsByTicker(eq(ticker))).thenReturn(completableFuture);
+        when(tinkoffService.searchMarketInstrumentByTicker(eq(ticker))).thenReturn(instrument);
 
     }
 

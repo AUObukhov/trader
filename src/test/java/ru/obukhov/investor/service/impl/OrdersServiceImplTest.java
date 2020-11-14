@@ -7,10 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
-import ru.obukhov.investor.service.interfaces.ConnectionService;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
-import ru.tinkoff.invest.openapi.OrdersContext;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.OrderType;
@@ -18,11 +17,9 @@ import ru.tinkoff.invest.openapi.models.orders.Status;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,19 +29,15 @@ public class OrdersServiceImplTest extends BaseMockedTest {
     private static final String TICKER = "ticker";
 
     @Mock
-    private ConnectionService connectionService;
+    private TinkoffService tinkoffService;
     @Mock
     private MarketService marketService;
-    @Mock
-    private OrdersContext ordersContext;
 
     private OrdersService service;
 
     @Before
     public void setUp() {
-        when(connectionService.getOrdersContext()).thenReturn(ordersContext);
-
-        this.service = new OrdersServiceImpl(connectionService, marketService);
+        this.service = new OrdersServiceImpl(tinkoffService, marketService);
     }
 
     @Test
@@ -74,8 +67,7 @@ public class OrdersServiceImplTest extends BaseMockedTest {
     }
 
     private void mockOrders(List<Order> orders) {
-        CompletableFuture<List<Order>> future = CompletableFuture.completedFuture(orders);
-        when(ordersContext.getOrders(isNull())).thenReturn(future);
+        when(tinkoffService.getOrders()).thenReturn(orders);
     }
 
     private Order createOrder(String id, String figi) {

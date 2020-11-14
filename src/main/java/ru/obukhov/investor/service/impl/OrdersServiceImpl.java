@@ -3,8 +3,7 @@ package ru.obukhov.investor.service.impl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import ru.obukhov.investor.service.TinkoffContextsAware;
-import ru.obukhov.investor.service.interfaces.ConnectionService;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
@@ -18,27 +17,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("ordersServiceImpl")
-public class OrdersServiceImpl extends TinkoffContextsAware implements OrdersService {
+public class OrdersServiceImpl implements OrdersService {
 
+    private final TinkoffService tinkoffService;
     private final MarketService marketService;
 
-    public OrdersServiceImpl(ConnectionService connectionService, MarketService marketService) {
-        super(connectionService);
+    public OrdersServiceImpl(TinkoffService tinkoffService, MarketService marketService) {
+        this.tinkoffService = tinkoffService;
         this.marketService = marketService;
     }
 
     @Override
     public List<Order> getOrders(String ticker) {
         String figi = marketService.getFigi(ticker);
-        List<Order> orders = getOrdersContext().getOrders(null).join();
-        return orders.stream()
+        return getOrders().stream()
                 .filter(order -> figi.equals(order.figi))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getOrders() {
-        return getOrdersContext().getOrders(null).join();
+        return tinkoffService.getOrders();
     }
 
     @Override
@@ -49,15 +48,16 @@ public class OrdersServiceImpl extends TinkoffContextsAware implements OrdersSer
         String figi = marketService.getFigi(ticker);
         if (price == null) {
             MarketOrder marketOrder = new MarketOrder(lots, operation);
-            return getOrdersContext().placeMarketOrder(figi, marketOrder, null).join();
+            return tinkoffService.placeMarketOrder(figi, marketOrder);
         } else {
             LimitOrder limitOrder = new LimitOrder(lots, operation, price);
-            return getOrdersContext().placeLimitOrder(figi, limitOrder, null).join();
+            return tinkoffService.placeLimitOrder(figi, limitOrder);
         }
     }
 
     @Override
     public void cancelOrder(@NotNull String orderId) {
-        getOrdersContext().cancelOrder(orderId, null).join();
+        tinkoffService.cancelOrder(orderId);
     }
+
 }

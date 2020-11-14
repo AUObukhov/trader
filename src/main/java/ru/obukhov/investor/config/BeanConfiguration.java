@@ -11,6 +11,9 @@ import ru.obukhov.investor.bot.interfaces.DataSupplier;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.interfaces.MarketMock;
 import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
+import ru.obukhov.investor.service.impl.RealTinkoffService;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 
 /**
@@ -42,6 +45,11 @@ public class BeanConfiguration {
     @Bean
     public Simulator simulatorImpl(@Qualifier("simpleBot") Bot bot, MarketMock marketMock) {
         return new SimulatorImpl(bot, marketMock);
+    }
+
+    @Bean
+    public TinkoffService realTinkoffService(ConnectionService connectionService) {
+        return new RealTinkoffService(connectionService);
     }
 
 }

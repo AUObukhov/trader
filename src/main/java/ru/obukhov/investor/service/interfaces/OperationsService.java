@@ -13,9 +13,4 @@ public interface OperationsService {
                                   @NotNull OffsetDateTime to,
                                   @Nullable String ticker);
 
-    List<Operation> getOperations(@NotNull OffsetDateTime from,
-                                  @NotNull OffsetDateTime to,
-                                  @Nullable String ticker,
-                                  @Nullable String brokerAccountId);
-
 }
