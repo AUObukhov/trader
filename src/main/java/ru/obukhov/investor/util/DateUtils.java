@@ -178,6 +178,14 @@ public class DateUtils {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
+    /**
+     * @return true if {@code dateTime} is in range {@code [left; right]}
+     */
+    public static boolean isBetween(OffsetDateTime dateTime, OffsetDateTime left, OffsetDateTime right) {
+        Assert.isTrue(!left.isAfter(right), "left can't be after right");
+        return !dateTime.isBefore(left) && !dateTime.isAfter(right);
+    }
+
     public static OffsetDateTime roundUpToDay(OffsetDateTime dateTime) {
         OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         if (!date.equals(dateTime)) {

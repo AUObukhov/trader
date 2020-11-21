@@ -522,6 +522,74 @@ public class DateUtilsTest {
 
     // endregion
 
+    // region isBetween tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void isBetween_throwsIllegalArgumentException_whenLeftIsAfterRight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+    }
+
+    @Test
+    public void isBetween_returnsFalse_whenDateTimeBeforeLeft() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 5);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void isBetween_returnsTrue_whenDateTimeEqualsLeft() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isBetween_returnsTrue_whenDateTimeBetweenLeftAndRight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 12, 5, 10);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isBetween_returnsTrue_whenDateTimeEqualsRight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void isBetween_returnsFalse_whenDateTimeAfterRight() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 2, 10, 5, 15);
+        OffsetDateTime left = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
+        OffsetDateTime right = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
+
+        boolean result = DateUtils.isBetween(dateTime, left, right);
+
+        Assert.assertFalse(result);
+    }
+
+    // endregion
+
     // region roundUpToDay tests
 
     @Test
