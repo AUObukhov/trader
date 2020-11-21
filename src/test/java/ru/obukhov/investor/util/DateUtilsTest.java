@@ -1,5 +1,6 @@
 package ru.obukhov.investor.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -1133,4 +1135,162 @@ public class DateUtilsTest {
 
     // endregion
 
+    // region atEndOfDay tests
+
+    @Test
+    public void atEndOfDay() {
+
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+
+        OffsetDateTime endOfDay = DateUtils.atEndOfDay(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+
+        Assert.assertEquals(expected, endOfDay);
+    }
+
+    // endregion
+
+    // region splitIntervalIntoDays tests
+
+    @Test(expected = IllegalArgumentException.class)
+    public void splitIntervalIntoDays_throwsIllegalArgumentException_whenFromIsAfterTo() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 30, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+
+        DateUtils.splitIntervalIntoDays(from, to);
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsOnePair_whenFromAndToAreEqual() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(1, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        Assert.assertEquals(to, intervals.get(0).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsOnePair_whenFromAndToInOneDay() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 12, 20, 30);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(1, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        Assert.assertEquals(to, intervals.get(0).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsOnePair_whenFromAndToInOneWholeDay() {
+
+        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(1, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        Assert.assertEquals(to, intervals.get(0).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsTwoPairs_whenFromAndToDiffersInOneDay() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 12, 20, 30);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(2, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        Assert.assertEquals(expectedRight0, intervals.get(0).getRight());
+
+        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        Assert.assertEquals(expectedLeft1, intervals.get(1).getLeft());
+        Assert.assertEquals(to, intervals.get(1).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsTwoPairs_whenFromAndToAreAtStartOfNeighbourDays() {
+
+        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime to = DateUtils.getDate(2020, 10, 6);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(2, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        Assert.assertEquals(expectedRight0, intervals.get(0).getRight());
+
+        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        Assert.assertEquals(expectedLeft1, intervals.get(1).getLeft());
+        Assert.assertEquals(to, intervals.get(1).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourDays() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(2, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        Assert.assertEquals(from, intervals.get(0).getRight());
+
+        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        Assert.assertEquals(expectedLeft1, intervals.get(1).getLeft());
+        Assert.assertEquals(to, intervals.get(1).getRight());
+
+    }
+
+    @Test
+    public void splitIntervalIntoDays_returnsThreePairs_whenFromAndToDiffersInTwoDay() {
+
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+
+        List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(from, to);
+
+        Assert.assertEquals(3, intervals.size());
+
+        Assert.assertEquals(from, intervals.get(0).getLeft());
+        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        Assert.assertEquals(expectedRight0, intervals.get(0).getRight());
+
+        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        Assert.assertEquals(expectedLeft1, intervals.get(1).getLeft());
+        OffsetDateTime expectedRight1 = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+        Assert.assertEquals(expectedRight1, intervals.get(1).getRight());
+
+        OffsetDateTime expectedLeft2 = DateUtils.getDate(2020, 10, 7);
+        Assert.assertEquals(expectedLeft2, intervals.get(2).getLeft());
+        Assert.assertEquals(to, intervals.get(2).getRight());
+
+    }
+
+    // endregion
 }
