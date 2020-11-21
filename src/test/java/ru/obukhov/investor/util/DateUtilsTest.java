@@ -193,7 +193,7 @@ public class DateUtilsTest {
 
     // endregion
 
-    // region getLastWorkDay tests
+    // region getLastWorkDay without arguments tests
 
     @Test
     public void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
@@ -214,6 +214,29 @@ public class DateUtilsTest {
         when(OffsetDateTime.now()).thenReturn(mockedNow);
 
         OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
+
+        assertEquals(expected, lastWorkDay);
+    }
+
+    // endregion
+
+    // region getLastWorkDay with dateTime argument tests
+
+    @Test
+    public void getLastWorkDayDateTime_returnsNow_whenWorkDay() {
+        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
+
+        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
+
+        assertEquals(mockedNow, lastWorkDay);
+    }
+
+    @Test
+    public void getLastWorkDayDateTime_returnsNow_whenWeekend() {
+        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
+        OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
+
+        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
 
         assertEquals(expected, lastWorkDay);
     }

@@ -84,7 +84,14 @@ public class DateUtils {
      * @return last work day not after today
      */
     public static OffsetDateTime getLastWorkDay() {
-        OffsetDateTime date = OffsetDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        return getLastWorkDay(OffsetDateTime.now());
+    }
+
+    /**
+     * @return last work day not after given {@code dateTime}
+     */
+    public static OffsetDateTime getLastWorkDay(OffsetDateTime dateTime) {
+        OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         while (!isWorkDay(date)) {
             date = date.minusDays(1);
         }
