@@ -170,7 +170,7 @@ public class DateUtils {
     }
 
     /**
-     * Null safe extention of {@link OffsetDateTime#isAfter}
+     * Null safe extension of {@link OffsetDateTime#isAfter}
      *
      * @return true, if {@code dateTime2} is null, or else result of {@link OffsetDateTime#isAfter}
      */

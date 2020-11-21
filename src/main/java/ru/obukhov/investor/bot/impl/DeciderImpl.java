@@ -32,7 +32,7 @@ public class DeciderImpl implements Decider {
         final Portfolio.PortfolioPosition position = data.getPosition();
         if (position == null) {
             if (MathUtils.isGreater(data.getCurrentPrice(), data.getBalance())) {
-                log.debug("Current price + " + data.getCurrentPrice() + " is greater than balance + "
+                log.debug("Current price = " + data.getCurrentPrice() + " is greater than balance + "
                         + data.getBalance() + ". Decision is Wait");
                 return Decision.WAIT;
             } else {
