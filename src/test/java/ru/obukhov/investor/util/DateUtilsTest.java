@@ -1309,4 +1309,45 @@ public class DateUtilsTest {
     }
 
     // endregion
+
+    // region equalDates tests
+
+    @Test
+    public void equalDates_returnsTrue_whenDatesAreEquals() {
+
+        OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50);
+
+        boolean result = DateUtils.equalDates(dateTime1, dateTime2);
+
+        Assert.assertTrue(result);
+
+    }
+
+    @Test
+    public void equalDates_returnsTrue_whenDatesAreEqual2() {
+
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+
+        boolean result = DateUtils.equalDates(dateTime1, dateTime2);
+
+        Assert.assertTrue(result);
+
+    }
+
+    @Test
+    public void equalDates_returnsFalse_whenDatesAreNotEqual() {
+
+        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime dateTime2 = dateTime1.minusNanos(1);
+
+        boolean result = DateUtils.equalDates(dateTime1, dateTime2);
+
+        Assert.assertFalse(result);
+
+    }
+
+    // endregion
+
 }

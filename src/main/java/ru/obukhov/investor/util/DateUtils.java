@@ -361,4 +361,11 @@ public class DateUtils {
         return result;
     }
 
+    /**
+     * @return true, if days of year of {@code dateTime1} and {@code dateTime2} are equal, or else false
+     */
+    public static boolean equalDates(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        return atStartOfDay(dateTime1).equals(atStartOfDay(dateTime2));
+    }
+
 }
