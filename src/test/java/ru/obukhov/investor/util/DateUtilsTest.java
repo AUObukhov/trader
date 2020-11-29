@@ -1135,6 +1135,22 @@ public class DateUtilsTest {
 
     // endregion
 
+    // region atStartOfDay tests
+
+    @Test
+    public void atStartOfDay() {
+
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+
+        OffsetDateTime startOfDay = DateUtils.atStartOfDay(dateTime);
+
+        OffsetDateTime expected = DateUtils.getDate(2020, 10, 5);
+
+        Assert.assertEquals(expected, startOfDay);
+    }
+
+    // endregion
+
     // region atEndOfDay tests
 
     @Test

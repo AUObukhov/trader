@@ -318,13 +318,21 @@ public class DateUtils {
     }
 
     /**
+     * @return value of given {@code dateTime} with minimum hours, minutes, seconds and nanos of this date
+     */
+    public static OffsetDateTime atStartOfDay(OffsetDateTime dateTime) {
+        return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+                OffsetTime.MIN.getHour(), OffsetTime.MIN.getMinute(), OffsetTime.MIN.getSecond(),
+                OffsetTime.MIN.getNano(), dateTime.getOffset());
+    }
+
+    /**
      * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
      */
     public static OffsetDateTime atEndOfDay(OffsetDateTime dateTime) {
-        return dateTime.withHour(OffsetTime.MAX.getHour())
-                .withMinute(OffsetTime.MAX.getMinute())
-                .withSecond(OffsetTime.MAX.getSecond())
-                .withNano(OffsetTime.MAX.getNano());
+        return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+                OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
+                OffsetTime.MAX.getNano(), dateTime.getOffset());
     }
 
     /**
