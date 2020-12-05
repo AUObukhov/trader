@@ -43,13 +43,12 @@ public class OrdersServiceImpl implements OrdersService {
                                   int lots,
                                   @NotNull Operation operation,
                                   @Nullable BigDecimal price) {
-        String figi = marketService.getFigi(ticker);
         if (price == null) {
             MarketOrder marketOrder = new MarketOrder(lots, operation);
-            return tinkoffService.placeMarketOrder(figi, marketOrder);
+            return tinkoffService.placeMarketOrder(ticker, marketOrder);
         } else {
             LimitOrder limitOrder = new LimitOrder(lots, operation, price);
-            return tinkoffService.placeLimitOrder(figi, limitOrder);
+            return tinkoffService.placeLimitOrder(ticker, limitOrder);
         }
     }
 

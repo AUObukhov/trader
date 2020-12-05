@@ -94,12 +94,12 @@ public class BeanConfiguration {
 
     @Bean
     public OperationsService realOperationsService(TinkoffService realTinkoffService, MarketService realMarketService) {
-        return new OperationsServiceImpl(realTinkoffService, realMarketService);
+        return new OperationsServiceImpl(realTinkoffService);
     }
 
     @Bean
     public OperationsService fakeOperationsService(TinkoffService fakeTinkoffService, MarketService fakeMarketService) {
-        return new OperationsServiceImpl(fakeTinkoffService, fakeMarketService);
+        return new OperationsServiceImpl(fakeTinkoffService);
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package ru.obukhov.investor.model.transform;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.model.Candle;
@@ -17,8 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
 public class CandleMapperTest {
-
-    private static final String FIGI = "figi";
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
@@ -100,7 +99,7 @@ public class CandleMapperTest {
         );
 
         List<ru.tinkoff.invest.openapi.models.market.Candle> candles = newArrayList(tinkoffCandle1, tinkoffCandle2);
-        HistoricalCandles source = new HistoricalCandles(FIGI, CandleInterval.DAY, candles);
+        HistoricalCandles source = new HistoricalCandles(StringUtils.EMPTY, CandleInterval.DAY, candles);
 
         List<Candle> result = candleMapper.map(source);
         assertEquals(2, result.size());
@@ -126,7 +125,7 @@ public class CandleMapperTest {
                                                                                BigDecimal highestPrice,
                                                                                BigDecimal lowestPrice) {
         return new ru.tinkoff.invest.openapi.models.market.Candle(
-                FIGI,
+                StringUtils.EMPTY,
                 CandleInterval.DAY,
                 openPrice,
                 closePrice,

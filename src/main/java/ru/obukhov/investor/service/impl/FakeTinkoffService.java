@@ -9,18 +9,17 @@ import org.springframework.util.Assert;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.model.transform.OperationTypeMapper;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
+import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.MoneyAmount;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.Orderbook;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
 import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
 import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
 import ru.tinkoff.invest.openapi.models.orders.Order;
@@ -48,9 +47,12 @@ public class FakeTinkoffService implements TinkoffService {
     private final TradingProperties tradingProperties;
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
-    private final List<Operation> operations;
+    private final List<SimulatedOperation> operations;
     private final Multimap<String, Portfolio.PortfolioPosition> tickersToPositions;
+
+    private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final OperationTypeMapper operationTypeMapper = Mappers.getMapper(OperationTypeMapper.class);
+
     @Getter
     private OffsetDateTime currentDateTime;
     @Getter
@@ -117,13 +119,13 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public Orderbook getMarketOrderbook(String figi, int depth) {
+    public Orderbook getMarketOrderbook(String ticker, int depth) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Candle> getMarketCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        return realTinkoffService.getMarketCandles(figi, from, to, interval);
+    public List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
+        return realTinkoffService.getMarketCandles(ticker, from, to, interval);
     }
 
     @Override
@@ -131,24 +133,22 @@ public class FakeTinkoffService implements TinkoffService {
         return realTinkoffService.searchMarketInstrumentByTicker(ticker);
     }
 
-    @Override
-    public Instrument searchMarketInstrumentByFigi(String figi) {
-        throw new UnsupportedOperationException();
-    }
-
     // endregion
 
     // region OperationsContext proxy
 
     @Override
-    public List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String figi) {
-        Stream<Operation> operationsStream = operations.stream()
-                .filter(operation -> DateUtils.isBetween(operation.date, from, to));
-        if (figi != null) {
-            operationsStream = operationsStream.filter(operation -> figi.equals(operation.figi));
+    public List<ru.tinkoff.invest.openapi.models.operations.Operation> getOperations(OffsetDateTime from,
+                                                                                     OffsetDateTime to,
+                                                                                     String ticker) {
+        Stream<SimulatedOperation> operationsStream = operations.stream()
+                .filter(operation -> DateUtils.isBetween(operation.getDateTime(), from, to));
+        if (ticker != null) {
+            operationsStream = operationsStream.filter(operation -> ticker.equals(operation.getTicker()));
         }
 
-        return operationsStream.sorted(Comparator.comparing(operation -> operation.date))
+        return operationsStream.sorted(Comparator.comparing(SimulatedOperation::getDateTime))
+                .map(operationMapper::map)
                 .collect(Collectors.toList());
     }
 
@@ -162,17 +162,16 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public PlacedOrder placeLimitOrder(String figi, LimitOrder limitOrder) {
+    public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PlacedOrder placeMarketOrder(String figi, MarketOrder marketOrder) {
-        BigDecimal currentPrice = getCurrentPrice(figi);
+    public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
+        BigDecimal currentPrice = getCurrentPrice(ticker);
         BigDecimal totalPrice = MathUtils.multiply(currentPrice, marketOrder.lots);
         BigDecimal commissionAmount = MathUtils.getFraction(totalPrice, tradingProperties.getCommission());
         MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
-        String ticker = realTinkoffService.searchMarketInstrumentByFigi(figi).ticker;
 
         if (marketOrder.operation == ru.tinkoff.invest.openapi.models.orders.Operation.Buy) {
             addPosition(ticker, currentPrice, marketOrder.lots, totalPrice);
@@ -182,35 +181,28 @@ public class FakeTinkoffService implements TinkoffService {
             updateBalance(totalPrice, commissionAmount);
         }
 
-        addOperation(figi, marketOrder, totalPrice, currentPrice, commission);
+        addOperation(ticker, currentPrice, commission, marketOrder);
         return createOrder(marketOrder, commission);
     }
 
-    private void addOperation(String figi,
-                              MarketOrder marketOrder,
-                              BigDecimal totalPrice,
-                              BigDecimal currentPrice,
-                              MoneyAmount commission) {
+    private void addOperation(String ticker,
+                              BigDecimal price,
+                              MoneyAmount commission,
+                              MarketOrder marketOrder) {
 
-        final OperationType operationType = operationTypeMapper.map(marketOrder.operation);
-        Operation operation = new Operation(StringUtils.EMPTY,
-                OperationStatus.Done,
-                null,
-                commission,
-                Currency.RUB,
-                totalPrice,
-                currentPrice,
-                marketOrder.lots,
-                figi,
-                InstrumentType.Stock,
-                false,
-                this.currentDateTime,
-                operationType);
+        final SimulatedOperation operation = SimulatedOperation.builder()
+                .ticker(ticker)
+                .price(price)
+                .quantity(marketOrder.lots)
+                .commission(commission.value)
+                .dateTime(this.currentDateTime)
+                .operationType(operationTypeMapper.map(marketOrder.operation))
+                .build();
         operations.add(operation);
     }
 
-    private BigDecimal getCurrentPrice(String figi) {
-        return marketService.getLastCandleByFigi(figi, currentDateTime).getClosePrice();
+    private BigDecimal getCurrentPrice(String ticker) {
+        return marketService.getLastCandle(ticker, currentDateTime).getClosePrice();
     }
 
     private void addPosition(String ticker, BigDecimal currentPrice, int lots, BigDecimal balance) {

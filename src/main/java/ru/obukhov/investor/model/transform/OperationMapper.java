@@ -1,28 +1,44 @@
 package ru.obukhov.investor.model.transform;
 
-import org.mapstruct.AfterMapping;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
+import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.models.MoneyAmount;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
+import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
+import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
+
+import java.math.BigDecimal;
 
 /**
  * Maps {@link Operation} to {@link SimulatedOperation}
  */
 @Mapper
-public abstract class OperationMapper {
+public interface OperationMapper {
 
     @Mapping(target = "dateTime", source = "date")
     @Mapping(target = "commission", source = "commission.value")
-    public abstract SimulatedOperation map(Operation source);
+    SimulatedOperation map(Operation source);
 
-    @AfterMapping
-    protected void calculateAmount(@MappingTarget SimulatedOperation target, Operation source) {
-        if (source.price != null && source.quantity != null) {
-            target.setAmount(MathUtils.multiply(source.price, source.quantity));
-        }
+    default Operation map(SimulatedOperation source) {
+        BigDecimal totalPrice = MathUtils.multiply(source.getPrice(), source.getQuantity());
+        MoneyAmount commission = new MoneyAmount(Currency.RUB, source.getCommission());
+        return new Operation(StringUtils.EMPTY,
+                OperationStatus.Done,
+                null,
+                commission,
+                Currency.RUB,
+                totalPrice,
+                source.getPrice(),
+                source.getQuantity(),
+                StringUtils.EMPTY,
+                InstrumentType.Stock,
+                false,
+                source.getDateTime(),
+                source.getOperationType());
     }
 
 }

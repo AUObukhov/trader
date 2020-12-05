@@ -66,7 +66,7 @@ public abstract class SimpleBot implements Bot {
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
-        return marketService.getLastCandleByTicker(ticker).getClosePrice();
+        return marketService.getLastCandle(ticker).getClosePrice();
     }
 
     private List<ru.tinkoff.invest.openapi.models.operations.Operation> getLastWeekOperations(String ticker) {

@@ -42,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                                    OffsetDateTime to,
                                    CandleInterval candleInterval) {
 
-        return marketService.getCandlesByTicker(ticker, from, to, candleInterval);
+        return marketService.getCandles(ticker, from, to, candleInterval);
     }
 
     /**

@@ -456,7 +456,7 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        when(marketService.getCandlesByTicker(eq(ticker), eq(from), eq(to), eq(candleInterval)))
+        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
                 .thenReturn(candles);
     }
 

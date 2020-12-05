@@ -28,21 +28,19 @@ public interface TinkoffService {
 
     List<Instrument> getMarketCurrencies();
 
-    Orderbook getMarketOrderbook(String figi, int depth);
+    Orderbook getMarketOrderbook(String ticker, int depth);
 
-    List<Candle> getMarketCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval);
+    List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval);
 
     Instrument searchMarketInstrumentByTicker(String ticker);
 
-    Instrument searchMarketInstrumentByFigi(String figi);
-
-    List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String figi);
+    List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker);
 
     List<Order> getOrders();
 
-    PlacedOrder placeLimitOrder(String figi, LimitOrder limitOrder);
+    PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder);
 
-    PlacedOrder placeMarketOrder(String figi, MarketOrder marketOrder);
+    PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder);
 
     void cancelOrder(String orderId);
 

@@ -41,11 +41,11 @@ public class MarketServiceImpl implements MarketService {
      * @return sorted by time list of loaded candles
      */
     @Override
-    @Cacheable("candlesByFigi")
-    public List<Candle> getCandlesByFigi(String figi,
-                                         @Nullable OffsetDateTime from,
-                                         @Nullable OffsetDateTime to,
-                                         CandleInterval interval) {
+    @Cacheable("candles")
+    public List<Candle> getCandles(String ticker,
+                                   @Nullable OffsetDateTime from,
+                                   @Nullable OffsetDateTime to,
+                                   CandleInterval interval) {
 
         Assert.isTrue(to == null || !to.isAfter(tinkoffService.getCurrentDateTime()),
                 "'to' can't be in future");
@@ -53,32 +53,18 @@ public class MarketServiceImpl implements MarketService {
         ChronoUnit period = DateUtils.getPeriodByCandleInterval(interval);
 
         List<Candle> candles = period == ChronoUnit.DAYS
-                ? getAllCandlesByDays(figi, from, to, interval)
-                : getAllCandlesByYears(figi, from, to, interval);
+                ? getAllCandlesByDays(ticker, from, to, interval)
+                : getAllCandlesByYears(ticker, from, to, interval);
 
-        log.info("Loaded " + candles.size() + " candles for figi '" + figi + "'");
+        log.info("Loaded " + candles.size() + " candles for ticker '" + ticker + "'");
 
         return candles.stream()
                 .sorted(Comparator.comparing(Candle::getTime))
                 .collect(Collectors.toList());
+
     }
 
-    /**
-     * Load candles by conditions period by period.
-     *
-     * @return sorted by time list of loaded candles
-     */
-    @Override
-    @Cacheable("candlesByTicker")
-    public List<Candle> getCandlesByTicker(String ticker,
-                                           @Nullable OffsetDateTime from,
-                                           @Nullable OffsetDateTime to,
-                                           CandleInterval interval) {
-
-        return getCandlesByFigi(getFigi(ticker), from, to, interval);
-    }
-
-    private List<Candle> getAllCandlesByDays(String figi,
+    private List<Candle> getAllCandlesByDays(String ticker,
                                              @Nullable OffsetDateTime from,
                                              @Nullable OffsetDateTime to,
                                              CandleInterval candleInterval) {
@@ -93,7 +79,7 @@ public class MarketServiceImpl implements MarketService {
         int emptyDaysCount = 0;
         while (listIterator.hasPrevious() && emptyDaysCount <= CONSECUTIVE_EMPTY_DAYS_LIMIT) {
             Pair<OffsetDateTime, OffsetDateTime> interval = listIterator.previous();
-            List<Candle> currentCandles = loadDayCandles(figi, interval, candleInterval);
+            List<Candle> currentCandles = loadDayCandles(ticker, interval, candleInterval);
             if (currentCandles.isEmpty()) {
                 emptyDaysCount++;
             } else {
@@ -107,7 +93,7 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> getAllCandlesByYears(String figi,
+    private List<Candle> getAllCandlesByYears(String ticker,
                                               @Nullable OffsetDateTime from,
                                               @Nullable OffsetDateTime to,
                                               CandleInterval interval) {
@@ -122,7 +108,7 @@ public class MarketServiceImpl implements MarketService {
             currentTo = currentFrom;
             currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.YEARS, from);
 
-            currentCandles = loadCandles(figi, currentFrom, currentTo, interval);
+            currentCandles = loadCandles(ticker, currentFrom, currentTo, interval);
             allCandles.addAll(currentCandles);
         } while (DateUtils.isAfter(currentFrom, from) && !currentCandles.isEmpty());
 
@@ -130,18 +116,18 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> loadCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
+    private List<Candle> loadCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
         OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, OffsetDateTime.now());
-        return tinkoffService.getMarketCandles(figi, from, innerTo, interval);
+        return tinkoffService.getMarketCandles(ticker, from, innerTo, interval);
     }
 
-    private List<Candle> loadDayCandles(String figi,
+    private List<Candle> loadDayCandles(String ticker,
                                         Pair<OffsetDateTime, OffsetDateTime> interval,
                                         CandleInterval candleInterval) {
-        return loadDayCandles(figi, interval.getLeft(), interval.getRight(), candleInterval);
+        return loadDayCandles(ticker, interval.getLeft(), interval.getRight(), candleInterval);
     }
 
-    private List<Candle> loadDayCandles(String figi,
+    private List<Candle> loadDayCandles(String ticker,
                                         OffsetDateTime from,
                                         OffsetDateTime to,
                                         CandleInterval candleInterval) {
@@ -151,7 +137,7 @@ public class MarketServiceImpl implements MarketService {
         final OffsetDateTime extendedFrom = DateUtils.atStartOfDay(from);
         final OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.atEndOfDay(to), OffsetDateTime.now());
 
-        return tinkoffService.getMarketCandles(figi, extendedFrom, extendedTo, candleInterval)
+        return tinkoffService.getMarketCandles(ticker, extendedFrom, extendedTo, candleInterval)
                 .stream()
                 .filter(candle -> DateUtils.isBetween(candle.getTime(), from, to))
                 .collect(Collectors.toList());
@@ -165,20 +151,9 @@ public class MarketServiceImpl implements MarketService {
      * @throws IllegalArgumentException if candle not found
      */
     @Override
-    public Candle getLastCandleByTicker(String ticker) {
-        return getLastCandleByFigi(getFigi(ticker));
-    }
-
-    /**
-     * Searches last candle by {@code figi} within last {@link MarketServiceImpl#CONSECUTIVE_EMPTY_DAYS_LIMIT} days
-     *
-     * @return found candle
-     * @throws IllegalArgumentException if candle not found
-     */
-    @Override
-    public Candle getLastCandleByFigi(String figi) {
+    public Candle getLastCandle(String ticker) {
         OffsetDateTime to = tinkoffService.getCurrentDateTime();
-        return getLastCandleByFigi(figi, to);
+        return getLastCandle(ticker, to);
     }
 
     /**
@@ -189,19 +164,7 @@ public class MarketServiceImpl implements MarketService {
      * @throws IllegalArgumentException if candle not found
      */
     @Override
-    public Candle getLastCandleByTicker(String ticker, OffsetDateTime to) {
-        return getLastCandleByFigi(getFigi(ticker), to);
-    }
-
-    /**
-     * Searches last candle by {@code figi} within last {@link MarketServiceImpl#CONSECUTIVE_EMPTY_DAYS_LIMIT} days
-     * before {@code to}. Candle interval is 1 min.
-     *
-     * @return found candle
-     * @throws IllegalArgumentException if candle not found
-     */
-    @Override
-    public Candle getLastCandleByFigi(String figi, OffsetDateTime to) {
+    public Candle getLastCandle(String ticker, OffsetDateTime to) {
         OffsetDateTime candlesFrom = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT);
 
         List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(candlesFrom, to);
@@ -209,13 +172,13 @@ public class MarketServiceImpl implements MarketService {
         ListIterator<Pair<OffsetDateTime, OffsetDateTime>> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             Pair<OffsetDateTime, OffsetDateTime> interval = listIterator.previous();
-            List<Candle> candles = loadDayCandles(figi, interval, CandleInterval.ONE_MIN);
+            List<Candle> candles = loadDayCandles(ticker, interval, CandleInterval.ONE_MIN);
             if (!candles.isEmpty()) {
                 return CollectionUtils.lastElement(candles);
             }
         }
 
-        throw new IllegalArgumentException("Not found last candle for figi '" + figi + "'");
+        throw new IllegalArgumentException("Not found last candle for ticker '" + ticker + "'");
     }
 
     @Override
