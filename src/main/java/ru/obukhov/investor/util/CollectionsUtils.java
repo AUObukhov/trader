@@ -6,11 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CollectionUtils {
+public class CollectionsUtils {
 
     /**
      * Collapses {@code multimap} values collection to single value by {@code valueMapper}
@@ -31,6 +32,17 @@ public class CollectionUtils {
 
         return result;
 
+    }
+
+    /**
+     * @return list with last {@code size} elements of given {@code list}
+     */
+    public static <T> List<T> getTail(List<T> list, int size) {
+        if (size >= list.size()) {
+            return list;
+        }
+
+        return list.subList(list.size() - size, list.size());
     }
 
 }
