@@ -2,7 +2,6 @@ package ru.obukhov.investor.service.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.stereotype.Service;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
@@ -11,7 +10,6 @@ import ru.tinkoff.invest.openapi.models.operations.Operation;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-@Service
 public class OperationsServiceImpl implements OperationsService {
 
     private final MarketService marketService;

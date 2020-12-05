@@ -1,6 +1,8 @@
 package ru.obukhov.investor.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
@@ -30,6 +32,7 @@ import java.util.List;
  * - replaces some Tinkoff types by more useful custom types<br/>
  * - replaces some unnecessary parameters by hardcoded values
  */
+@Slf4j
 public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService {
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
@@ -66,19 +69,24 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
+    @Cacheable("marketCandles")
     public List<Candle> getMarketCandles(String figi, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        return getMarketContext().getMarketCandles(figi, from, to, interval).join()
+        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, interval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
+        log.debug("Loaded " + candles.size() + " candles for figi '" + figi + "' in interval " + from + " - " + to);
+        return candles;
     }
 
     @Override
+    @Cacheable("marketInstrumentByTicker")
     public Instrument searchMarketInstrumentByTicker(String ticker) {
         List<Instrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
         return CollectionUtils.firstElement(instruments);
     }
 
     @Override
+    @Cacheable("marketInstrumentByFigi")
     public Instrument searchMarketInstrumentByFigi(String figi) {
         return getMarketContext().searchMarketInstrumentByFigi(figi).join().orElse(null);
     }
@@ -131,5 +139,10 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     // endregion
+
+    @Override
+    public OffsetDateTime getCurrentDateTime() {
+        return OffsetDateTime.now();
+    }
 
 }

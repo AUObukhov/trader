@@ -2,7 +2,6 @@ package ru.obukhov.investor.service.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
@@ -16,7 +15,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service("ordersServiceImpl")
 public class OrdersServiceImpl implements OrdersService {
 
     private final TinkoffService tinkoffService;

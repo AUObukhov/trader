@@ -23,7 +23,7 @@ public class OrdersController {
 
     private final OrdersService ordersService;
 
-    public OrdersController(@Qualifier("ordersServiceImpl") OrdersService ordersService) {
+    public OrdersController(@Qualifier("realOrdersService") OrdersService ordersService) {
         this.ordersService = ordersService;
     }
 

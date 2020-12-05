@@ -1,14 +1,14 @@
 package ru.obukhov.investor.web.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.tinkoff.invest.openapi.models.operations.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class SimulatedOperation {
 
     private OffsetDateTime dateTime;

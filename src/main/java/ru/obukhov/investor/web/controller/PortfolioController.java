@@ -1,7 +1,7 @@
 package ru.obukhov.investor.web.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +16,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/investor/portfolio")
-@RequiredArgsConstructor
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+
+    public PortfolioController(@Qualifier("realPortfolioService") PortfolioService portfolioService) {
+        this.portfolioService = portfolioService;
+    }
 
     @GetMapping("/positions")
     public GetPortfolioPositionsResponse getPositions() {

@@ -1,34 +1,34 @@
 package ru.obukhov.investor.bot.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Bot;
-import ru.obukhov.investor.bot.interfaces.DataSupplier;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.exception.TickerNotFoundException;
+import ru.obukhov.investor.service.interfaces.MarketService;
+import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
+import ru.obukhov.investor.service.interfaces.PortfolioService;
+import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Slf4j
-public class SimpleBot implements Bot {
+@RequiredArgsConstructor
+public abstract class SimpleBot implements Bot {
 
-    protected final DataSupplier dataSupplier;
     protected final Decider decider;
+    protected final MarketService marketService;
+    protected final OperationsService operationsService;
     protected final OrdersService ordersService;
-
-    public SimpleBot(DataSupplier dataSupplier,
-                     Decider decider,
-                     OrdersService ordersService) {
-        this.dataSupplier = dataSupplier;
-        this.decider = decider;
-        this.ordersService = ordersService;
-    }
+    protected final PortfolioService portfolioService;
 
     @Override
     public void processTicker(String ticker) {
@@ -38,15 +38,14 @@ public class SimpleBot implements Bot {
                 log.info("There are not completed orders by ticker '" + ticker + "'. Do nothing");
                 return;
             }
-
-            DecisionData data = dataSupplier.getData(ticker);
+            DecisionData data = getData(ticker);
             if (data.getCurrentPrice() == null) {
                 log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
                 return;
             }
 
             Decision decision = decider.decide(data);
-            performOperation(ticker, decision, data.getCurrentPrice());
+            performOperation(ticker, decision);
         } catch (TickerNotFoundException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -54,14 +53,36 @@ public class SimpleBot implements Bot {
         }
     }
 
-    protected void performOperation(String ticker, Decision decision, BigDecimal currentPrice) {
+    private DecisionData getData(String ticker) {
+
+        return DecisionData.builder()
+                .balance(portfolioService.getAvailableBalance(Currency.RUB))
+                .position(portfolioService.getPosition(ticker))
+                .currentPrice(getCurrentPrice(ticker))
+                .lastOperations(getLastWeekOperations(ticker))
+                .instrument(marketService.getInstrument(ticker))
+                .build();
+
+    }
+
+    private BigDecimal getCurrentPrice(String ticker) {
+        return marketService.getLastCandleByTicker(ticker).getClosePrice();
+    }
+
+    private List<ru.tinkoff.invest.openapi.models.operations.Operation> getLastWeekOperations(String ticker) {
+        OffsetDateTime to = OffsetDateTime.now();
+        OffsetDateTime from = to.minusWeeks(1);
+        return operationsService.getOperations(from, to, ticker);
+    }
+
+    protected void performOperation(String ticker, Decision decision) {
         if (decision == Decision.WAIT) {
             log.info("Decision is wait. Do nothing");
             return;
         }
 
         Operation operation = decision == Decision.BUY ? Operation.Buy : Operation.Sell;
-        PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, currentPrice);
+        PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, null);
         log.info("Placed order " + order);
     }
 

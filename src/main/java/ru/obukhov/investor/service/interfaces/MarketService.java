@@ -12,14 +12,24 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Candle> getCandles(String ticker,
-                            @Nullable OffsetDateTime from,
-                            @Nullable OffsetDateTime to,
-                            CandleInterval interval);
+    @Cacheable("candles")
+    List<Candle> getCandlesByFigi(String figi,
+                                  @Nullable OffsetDateTime from,
+                                  @Nullable OffsetDateTime to,
+                                  CandleInterval interval);
 
-    Candle getLastCandle(String ticker);
+    List<Candle> getCandlesByTicker(String ticker,
+                                    @Nullable OffsetDateTime from,
+                                    @Nullable OffsetDateTime to,
+                                    CandleInterval interval);
 
-    Candle getLastCandle(String ticker, OffsetDateTime to);
+    Candle getLastCandleByTicker(String ticker);
+
+    Candle getLastCandleByFigi(String figi);
+
+    Candle getLastCandleByTicker(String ticker, OffsetDateTime to);
+
+    Candle getLastCandleByFigi(String ticker, OffsetDateTime to);
 
     @Cacheable("instrument")
     Instrument getInstrument(String ticker);

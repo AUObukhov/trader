@@ -5,11 +5,11 @@ import com.google.common.collect.MultimapBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.StatisticsService;
+import ru.obukhov.investor.util.CollectionsUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
@@ -21,10 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import static ru.obukhov.investor.util.CollectionUtils.reduceMultimap;
-
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
@@ -45,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                                    OffsetDateTime to,
                                    CandleInterval candleInterval) {
 
-        return marketService.getCandles(ticker, from, to, candleInterval);
+        return marketService.getCandlesByTicker(ticker, from, to, candleInterval);
     }
 
     /**

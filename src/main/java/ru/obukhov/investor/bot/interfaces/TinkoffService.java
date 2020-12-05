@@ -50,4 +50,6 @@ public interface TinkoffService {
 
     List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies();
 
+    OffsetDateTime getCurrentDateTime();
+
 }

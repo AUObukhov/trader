@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.util.Assert;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
@@ -17,10 +18,10 @@ import ru.tinkoff.invest.openapi.models.market.InstrumentType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static ru.obukhov.investor.service.impl.MarketServiceImpl.MAX_EMPTY_DAYS_COUNT;
+import static ru.obukhov.investor.service.impl.MarketServiceImpl.CONSECUTIVE_EMPTY_DAYS_LIMIT;
 import static ru.obukhov.investor.util.DateUtils.getDate;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
@@ -47,6 +48,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
     public void setUp() {
         this.service = new MarketServiceImpl(tinkoffService);
 
+        when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+
         mockAnyCandles();
     }
 
@@ -59,34 +62,30 @@ public class MarketServiceImplTest extends BaseMockedTest {
         final String ticker = TICKER;
 
         mockCandlesSimple(figi,
-                getDate(2020, 1, 4),
                 getDate(2020, 1, 5),
                 candleInterval,
                 10);
 
         mockCandlesSimple(figi,
-                getDate(2020, 1, 5),
-                getDate(2020, 1, 6),
+                getDate(2020, 1, 7),
                 candleInterval,
                 0, 1, 2);
 
         mockCandlesSimple(figi,
                 getDate(2020, 1, 11),
-                getDate(2020, 1, 12),
                 candleInterval,
                 3, 4);
 
         mockCandlesSimple(figi,
                 getDate(2020, 1, 12),
-                getDate(2020, 1, 13),
                 candleInterval,
                 5);
 
         mockInstrument(figi, ticker);
 
-        final OffsetDateTime from = getDate(2020, 1, 5);
+        final OffsetDateTime from = getDate(2020, 1, 6);
         final OffsetDateTime to = getDate(2020, 1, 13);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
+        List<Candle> candles = service.getCandlesByTicker(ticker, from, to, candleInterval);
 
         assertEquals(6, candles.size());
         assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
@@ -104,34 +103,30 @@ public class MarketServiceImplTest extends BaseMockedTest {
         final String ticker = TICKER;
 
         mockCandlesSimple(figi,
-                getDate(2020, 1, 3),
-                getDate(2020, 1, 4),
+                getDate(2020, 1, 1),
                 candleInterval,
                 10);
 
         mockCandlesSimple(figi,
                 getDate(2020, 1, 10),
-                getDate(2020, 1, 11),
                 candleInterval,
                 0, 1, 2);
 
         mockCandlesSimple(figi,
-                getDate(2020, 1, 11),
-                getDate(2020, 1, 12),
+                getDate(2020, 1, 18),
                 candleInterval,
                 3, 4);
 
         mockCandlesSimple(figi,
-                getDate(2020, 1, 12),
-                getDate(2020, 1, 13),
+                getDate(2020, 1, 19),
                 candleInterval,
                 5);
 
         mockInstrument(figi, ticker);
 
         final OffsetDateTime from = getDate(2020, 1, 1);
-        final OffsetDateTime to = getDate(2020, 1, 15);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
+        final OffsetDateTime to = getDate(2020, 1, 21);
+        List<Candle> candles = service.getCandlesByTicker(ticker, from, to, candleInterval);
 
         assertEquals(6, candles.size());
         assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
@@ -176,7 +171,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         final OffsetDateTime from = getDate(2017, 1, 1);
         final OffsetDateTime to = getDate(2020, 1, 1);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
+        List<Candle> candles = service.getCandlesByTicker(ticker, from, to, candleInterval);
 
         assertEquals(6, candles.size());
         assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
@@ -221,7 +216,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         final OffsetDateTime from = getDate(2010, 1, 1);
         final OffsetDateTime to = getDate(2020, 1, 1);
-        List<Candle> candles = service.getCandles(ticker, from, to, candleInterval);
+        List<Candle> candles = service.getCandlesByTicker(ticker, from, to, candleInterval);
 
         assertEquals(6, candles.size());
         assertTrue(numbersEqual(BigDecimal.valueOf(0), candles.get(0).getOpenPrice()));
@@ -242,34 +237,35 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         mockInstrument(FIGI, ticker);
 
-        service.getLastCandle(ticker);
+        service.getLastCandleByTicker(ticker);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String figi = FIGI;
         final String ticker = TICKER;
-        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(MAX_EMPTY_DAYS_COUNT + 1);
+        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT + 1);
         final OffsetDateTime to = from.plusDays(1);
 
         mockInstrument(figi, ticker);
         mockCandlesSimple(figi, from, to, CandleInterval.ONE_MIN, 10);
 
-        service.getLastCandle(ticker);
+        service.getLastCandleByTicker(ticker);
     }
 
     @Test
     public void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String figi = FIGI;
         final String ticker = TICKER;
-        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(MAX_EMPTY_DAYS_COUNT);
-        final OffsetDateTime to = from.plusDays(1);
+        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now().minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT);
+        final OffsetDateTime from = DateUtils.atStartOfDay(earliestDayToSearch);
+        final OffsetDateTime to = DateUtils.atEndOfDay(earliestDayToSearch);
         final int openPrice = 10;
 
         mockInstrument(figi, ticker);
-        mockCandlesSimple(figi, from, to, CandleInterval.ONE_MIN, openPrice);
+        mockCandlesSimple(figi, from, to, CandleInterval.ONE_MIN, openPrice, earliestDayToSearch);
 
-        Candle candle = service.getLastCandle(ticker);
+        Candle candle = service.getLastCandleByTicker(ticker);
 
         assertNotNull(candle);
         assertTrue(MathUtils.numbersEqual(candle.getOpenPrice(), openPrice));
@@ -286,7 +282,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         mockInstrument(FIGI, ticker);
 
-        service.getLastCandle(ticker, to);
+        service.getLastCandleByFigi(ticker, to);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -294,28 +290,28 @@ public class MarketServiceImplTest extends BaseMockedTest {
         final String figi = FIGI;
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
-        final OffsetDateTime candlesTo = to.minusDays(MAX_EMPTY_DAYS_COUNT + 1);
+        final OffsetDateTime candlesTo = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT + 1);
         final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
 
         mockInstrument(figi, ticker);
         mockCandlesSimple(figi, candlesFrom, candlesTo, CandleInterval.ONE_MIN, 10);
 
-        service.getLastCandle(ticker, to);
+        service.getLastCandleByFigi(ticker, to);
     }
 
     @Test
     public void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String figi = FIGI;
         final String ticker = TICKER;
-        final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
-        final OffsetDateTime candlesTo = to.minusDays(MAX_EMPTY_DAYS_COUNT);
-        final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
+        final OffsetDateTime to = DateUtils.atEndOfDay(DateUtils.getDate(2020, 1, 10));
+        final OffsetDateTime candlesTo = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT - 1);
+        final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
         final int openPrice = 10;
 
         mockInstrument(figi, ticker);
-        mockCandlesSimple(figi, candlesFrom, candlesTo, CandleInterval.ONE_MIN, openPrice);
+        mockCandlesSimple(figi, candlesFrom, CandleInterval.ONE_MIN, openPrice);
 
-        Candle candle = service.getLastCandle(ticker, to);
+        Candle candle = service.getLastCandleByFigi(figi, to);
 
         assertNotNull(candle);
         assertTrue(MathUtils.numbersEqual(candle.getOpenPrice(), openPrice));
@@ -339,19 +335,66 @@ public class MarketServiceImplTest extends BaseMockedTest {
                                    CandleInterval candleInterval,
                                    Integer... openPrices) {
 
-        List<Candle> candles = createCandlesSimple(from, openPrices);
+        List<Integer> prices = Arrays.asList(openPrices);
+        List<OffsetDateTime> times = Collections.nCopies(openPrices.length, from);
+
+        mockCandlesSimple(figi, from, to, candleInterval, prices, times);
+
+    }
+
+    private void mockCandlesSimple(String figi,
+                                   OffsetDateTime date,
+                                   CandleInterval candleInterval,
+                                   Integer... openPrices) {
+
+        OffsetDateTime from = DateUtils.atStartOfDay(date);
+        OffsetDateTime to = DateUtils.atEndOfDay(date);
+
+        List<Integer> prices = Arrays.asList(openPrices);
+        List<OffsetDateTime> times = Collections.nCopies(openPrices.length, from);
+
+        mockCandlesSimple(figi, from, to, candleInterval, prices, times);
+
+    }
+
+    private void mockCandlesSimple(String figi,
+                                   OffsetDateTime from,
+                                   OffsetDateTime to,
+                                   CandleInterval candleInterval,
+                                   Integer openPrice,
+                                   OffsetDateTime time) {
+
+        final List<Integer> openPrices = Collections.singletonList(openPrice);
+        final List<OffsetDateTime> times = Collections.singletonList(time);
+
+        mockCandlesSimple(figi, from, to, candleInterval, openPrices, times);
+
+    }
+
+    private void mockCandlesSimple(String figi,
+                                   OffsetDateTime from,
+                                   OffsetDateTime to,
+                                   CandleInterval candleInterval,
+                                   List<Integer> openPrices,
+                                   List<OffsetDateTime> times) {
+
+        List<Candle> candles = createCandlesSimple(openPrices, times);
 
         when(tinkoffService.getMarketCandles(eq(figi), eq(from), eq(to), eq(candleInterval)))
                 .thenReturn(candles);
 
     }
 
-    private List<Candle> createCandlesSimple(OffsetDateTime time, Integer... openPrices) {
+    private List<Candle> createCandlesSimple(List<Integer> openPrices, List<OffsetDateTime> times) {
+        Assert.isTrue(openPrices.size() == times.size(),
+                "times and openPrices must have same size");
 
-        return Arrays.stream(openPrices)
-                .map(p -> createCandleSimple(p, time))
-                .collect(Collectors.toList());
+        List<Candle> candles = new ArrayList<>(openPrices.size());
+        for (int i = 0; i < openPrices.size(); i++) {
+            candles.add(createCandleSimple(openPrices.get(i), times.get(i)));
+        }
 
+        return candles;
     }
 
     private Candle createCandleSimple(Integer openPrice, OffsetDateTime time) {

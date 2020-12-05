@@ -13,5 +13,5 @@ bot:
   tickers: SBER
 
 spring.cache:
-  cache-names: candles, last-candle, last-candle-to
+  cache-names: marketCandles, figi, instrument, instruments, marketInstrumentByTicker, marketInstrumentByFigi
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
