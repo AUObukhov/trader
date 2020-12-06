@@ -32,8 +32,8 @@ public class DeciderImpl implements Decider {
         final Portfolio.PortfolioPosition position = data.getPosition();
         if (position == null) {
             if (MathUtils.isGreater(data.getCurrentPrice(), data.getBalance())) {
-                log.debug("Current price = " + data.getCurrentPrice() + " is greater than balance + "
-                        + data.getBalance() + ". Decision is Wait");
+                log.debug("Current price = {} is greater than balance + {}. Decision is Wait",
+                        data.getCurrentPrice(), data.getBalance());
                 return Decision.WAIT;
             } else {
                 log.debug("No position. Decision is Buy");
@@ -54,9 +54,13 @@ public class DeciderImpl implements Decider {
 
         Decision decision = MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
 
-        log.debug("buyLotPrice = " + buyLotPrice + ", buyPricePlusCommission = " + buyPricePlusCommission
-                + ", currentLotPrice = " + currentLotPrice + ", sellPriceMinusCommission = " + sellPriceMinusCommission
-                + ", profit = " + profit + ", decision = " + decision);
+        log.debug("buyLotPrice = {}, "
+                        + "buyPricePlusCommission = {}, "
+                        + "currentLotPrice = {}, "
+                        + "sellPriceMinusCommission = {}, "
+                        + "profit = {}, "
+                        + "decision = {}",
+                buyLotPrice, buyPricePlusCommission, currentLotPrice, sellPriceMinusCommission, profit, decision);
 
         return decision;
     }
