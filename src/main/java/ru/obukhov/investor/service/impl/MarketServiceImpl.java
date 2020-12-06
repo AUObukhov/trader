@@ -184,6 +184,36 @@ public class MarketServiceImpl implements MarketService {
         throw new IllegalArgumentException("Not found last candle for ticker '" + ticker + "'");
     }
 
+    /**
+     * @return last {@code limit} candles by {@code ticker}.
+     * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
+     * within {@value CONSECUTIVE_EMPTY_DAYS_LIMIT} days.
+     */
+    @Override
+    public List<Candle> getLastCandles(String ticker, int limit) {
+
+        OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        OffsetDateTime from = DateUtils.atStartOfDay(to);
+        int consecutiveEmptyDaysCount = 0;
+        List<Candle> candles = new ArrayList<>();
+
+        do {
+            List<Candle> currentCandles = loadDayCandles(ticker, from, to, CandleInterval.ONE_MIN);
+            if (currentCandles.isEmpty()) {
+                consecutiveEmptyDaysCount++;
+            } else {
+                consecutiveEmptyDaysCount = 0;
+                candles.addAll(currentCandles);
+            }
+
+            from = from.minusDays(1);
+            to = DateUtils.atEndOfDay(from);
+        } while (candles.size() < limit && consecutiveEmptyDaysCount <= CONSECUTIVE_EMPTY_DAYS_LIMIT);
+
+        candles.sort(Comparator.comparing(Candle::getTime));
+        return CollectionsUtils.getTail(candles, limit);
+    }
+
     @Override
     public Instrument getInstrument(String ticker) {
         return getAllInstruments().stream()
