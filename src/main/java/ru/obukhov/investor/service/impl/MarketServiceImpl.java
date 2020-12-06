@@ -116,9 +116,12 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> loadCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
+    private List<Candle> loadCandles(String ticker,
+                                     OffsetDateTime from,
+                                     OffsetDateTime to,
+                                     CandleInterval candleInterval) {
         OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, OffsetDateTime.now());
-        return tinkoffService.getMarketCandles(ticker, from, innerTo, interval);
+        return tinkoffService.getMarketCandles(ticker, from, innerTo, candleInterval);
     }
 
     private List<Candle> loadDayCandles(String ticker,

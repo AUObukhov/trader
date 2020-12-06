@@ -30,7 +30,7 @@ public interface TinkoffService {
 
     Orderbook getMarketOrderbook(String ticker, int depth);
 
-    List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval);
+    List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval candleInterval);
 
     Instrument searchMarketInstrument(String ticker);
 

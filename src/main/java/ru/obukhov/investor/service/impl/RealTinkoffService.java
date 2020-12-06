@@ -78,12 +78,12 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     public List<Candle> getMarketCandles(String ticker,
                                          OffsetDateTime from,
                                          OffsetDateTime to,
-                                         CandleInterval interval) {
+                                         CandleInterval candleInterval) {
         String figi = searchMarketInstrument(ticker).figi;
-        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, interval).join()
+        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, candleInterval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
-        log.debug("Loaded " + candles.size() + " candles for ticker '" + ticker + "' in interval " + from + " - " + to);
+        log.debug("Loaded {} candles for ticker '{}' in interval {} - {}", candles.size(), ticker, from, to);
         return candles;
     }
 

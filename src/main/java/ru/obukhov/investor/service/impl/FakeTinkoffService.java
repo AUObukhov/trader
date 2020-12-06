@@ -124,8 +124,11 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval) {
-        return realTinkoffService.getMarketCandles(ticker, from, to, interval);
+    public List<Candle> getMarketCandles(String ticker,
+                                         OffsetDateTime from,
+                                         OffsetDateTime to,
+                                         CandleInterval candleInterval) {
+        return realTinkoffService.getMarketCandles(ticker, from, to, candleInterval);
     }
 
     @Override
