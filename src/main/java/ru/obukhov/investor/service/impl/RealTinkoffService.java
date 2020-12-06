@@ -1,8 +1,12 @@
 package ru.obukhov.investor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
@@ -33,9 +37,10 @@ import java.util.List;
  * - replaces some unnecessary parameters by hardcoded values
  */
 @Slf4j
-public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService {
+public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService, ApplicationContextAware {
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
+    private ApplicationContext applicationContext;
 
     public RealTinkoffService(ConnectionService connectionService) {
         super(connectionService);
@@ -69,7 +74,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public Orderbook getMarketOrderbook(String ticker, int depth) {
-        String figi = searchMarketInstrument(ticker).figi;
+        String figi = getSelf().searchMarketInstrument(ticker).figi;
         return getMarketContext().getMarketOrderbook(figi, depth).join().orElse(null);
     }
 
@@ -79,7 +84,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
                                          OffsetDateTime from,
                                          OffsetDateTime to,
                                          CandleInterval candleInterval) {
-        String figi = searchMarketInstrument(ticker).figi;
+        String figi = getSelf().searchMarketInstrument(ticker).figi;
         List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, candleInterval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
@@ -100,7 +105,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker) {
-        String figi = searchMarketInstrument(ticker).figi;
+        String figi = getSelf().searchMarketInstrument(ticker).figi;
         return getOperationsContext().getOperations(from, to, figi, null).join().operations;
     }
 
@@ -115,13 +120,13 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
-        String figi = searchMarketInstrument(ticker).figi;
+        String figi = getSelf().searchMarketInstrument(ticker).figi;
         return getOrdersContext().placeLimitOrder(figi, limitOrder, null).join();
     }
 
     @Override
     public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
-        String figi = searchMarketInstrument(ticker).figi;
+        String figi = getSelf().searchMarketInstrument(ticker).figi;
         return getOrdersContext().placeMarketOrder(figi, marketOrder, null).join();
     }
 
@@ -149,6 +154,15 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     @Override
     public OffsetDateTime getCurrentDateTime() {
         return OffsetDateTime.now();
+    }
+
+    private TinkoffService getSelf() {
+        return applicationContext.getBean(RealTinkoffService.class);
+    }
+
+    @Override
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }
