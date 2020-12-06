@@ -41,7 +41,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
         super(connectionService);
     }
 
-    // region MarketContext proxy
+    // region MarketContext
 
     @Override
     @Cacheable("marketStocks")
@@ -96,7 +96,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     // endregion
 
-    // region OperationsContext proxy
+    // region OperationsContext
 
     @Override
     public List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker) {
@@ -106,7 +106,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     // endregion
 
-    // region OrdersContext proxy
+    // region OrdersContext
 
     @Override
     public List<Order> getOrders() {
@@ -132,7 +132,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     // endregion
 
-    // region PortfolioContext proxy
+    // region PortfolioContext
 
     @Override
     public List<Portfolio.PortfolioPosition> getPortfolioPositions() {
