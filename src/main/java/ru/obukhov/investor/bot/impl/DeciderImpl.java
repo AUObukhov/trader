@@ -1,5 +1,6 @@
 package ru.obukhov.investor.bot.impl;
 
+import com.google.common.collect.Iterables;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,11 @@ public class DeciderImpl implements Decider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
+        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
         if (position == null) {
-            if (MathUtils.isGreater(data.getCurrentPrice(), data.getBalance())) {
+            if (MathUtils.isGreater(currentPrice, data.getBalance())) {
                 log.debug("Current price = {} is greater than balance + {}. Decision is Wait",
-                        data.getCurrentPrice(), data.getBalance());
+                        currentPrice, data.getBalance());
                 return Decision.WAIT;
             } else {
                 log.debug("No position. Decision is Buy");
@@ -46,7 +48,7 @@ public class DeciderImpl implements Decider {
         BigDecimal buyLotPrice = MathUtils.multiply(position.averagePositionPrice.value, lot);
         BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
 
-        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), lot);
+        BigDecimal currentLotPrice = MathUtils.multiply(currentPrice, lot);
         BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(
                 currentLotPrice, tradingProperties.getCommission());
 

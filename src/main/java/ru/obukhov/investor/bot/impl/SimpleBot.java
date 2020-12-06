@@ -2,11 +2,13 @@ package ru.obukhov.investor.bot.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.exception.TickerNotFoundException;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
@@ -19,6 +21,7 @@ import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public abstract class SimpleBot implements Bot {
                 return;
             }
             DecisionData data = getData(ticker);
-            if (data.getCurrentPrice() == null) {
+            if (CollectionUtils.isEmpty(data.getCurrentPrices())) {
                 log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
                 return;
             }
@@ -58,15 +61,17 @@ public abstract class SimpleBot implements Bot {
         return DecisionData.builder()
                 .balance(portfolioService.getAvailableBalance(Currency.RUB))
                 .position(portfolioService.getPosition(ticker))
-                .currentPrice(getCurrentPrice(ticker))
+                .currentPrices(getCurrentPrices(ticker))
                 .lastOperations(getLastWeekOperations(ticker))
                 .instrument(marketService.getInstrument(ticker))
                 .build();
 
     }
 
-    private BigDecimal getCurrentPrice(String ticker) {
-        return marketService.getLastCandle(ticker).getClosePrice();
+    private List<BigDecimal> getCurrentPrices(String ticker) {
+        return marketService.getLastCandles(ticker, 100).stream()
+                .map(Candle::getClosePrice)
+                .collect(Collectors.toList());
     }
 
     private List<ru.tinkoff.invest.openapi.models.operations.Operation> getLastWeekOperations(String ticker) {

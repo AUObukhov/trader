@@ -17,7 +17,7 @@ public class DecisionData {
 
     private BigDecimal balance;
     private Portfolio.PortfolioPosition position;
-    private BigDecimal currentPrice;
+    private List<BigDecimal> currentPrices;
     private List<Operation> lastOperations;
     private Instrument instrument;
 
