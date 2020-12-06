@@ -65,7 +65,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public Orderbook getMarketOrderbook(String ticker, int depth) {
-        String figi = searchMarketInstrumentByTicker(ticker).figi;
+        String figi = searchMarketInstrument(ticker).figi;
         return getMarketContext().getMarketOrderbook(figi, depth).join().orElse(null);
     }
 
@@ -75,7 +75,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
                                          OffsetDateTime from,
                                          OffsetDateTime to,
                                          CandleInterval interval) {
-        String figi = searchMarketInstrumentByTicker(ticker).figi;
+        String figi = searchMarketInstrument(ticker).figi;
         List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, interval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
@@ -84,8 +84,8 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    @Cacheable("marketInstrumentByTicker")
-    public Instrument searchMarketInstrumentByTicker(String ticker) {
+    @Cacheable("marketInstrument")
+    public Instrument searchMarketInstrument(String ticker) {
         List<Instrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker).join().instruments;
         return CollectionUtils.firstElement(instruments);
     }
@@ -96,7 +96,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker) {
-        String figi = searchMarketInstrumentByTicker(ticker).figi;
+        String figi = searchMarketInstrument(ticker).figi;
         return getOperationsContext().getOperations(from, to, figi, null).join().operations;
     }
 
@@ -111,13 +111,13 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
-        String figi = searchMarketInstrumentByTicker(ticker).figi;
+        String figi = searchMarketInstrument(ticker).figi;
         return getOrdersContext().placeLimitOrder(figi, limitOrder, null).join();
     }
 
     @Override
     public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
-        String figi = searchMarketInstrumentByTicker(ticker).figi;
+        String figi = searchMarketInstrument(ticker).figi;
         return getOrdersContext().placeMarketOrder(figi, marketOrder, null).join();
     }
 

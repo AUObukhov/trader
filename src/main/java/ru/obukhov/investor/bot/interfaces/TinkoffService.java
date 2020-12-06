@@ -32,7 +32,7 @@ public interface TinkoffService {
 
     List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval interval);
 
-    Instrument searchMarketInstrumentByTicker(String ticker);
+    Instrument searchMarketInstrument(String ticker);
 
     List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker);
 

@@ -227,7 +227,7 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public String getFigi(String ticker) {
-        return tinkoffService.searchMarketInstrumentByTicker(ticker).figi;
+        return tinkoffService.searchMarketInstrument(ticker).figi;
     }
 
 }

@@ -129,8 +129,8 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public Instrument searchMarketInstrumentByTicker(String ticker) {
-        return realTinkoffService.searchMarketInstrumentByTicker(ticker);
+    public Instrument searchMarketInstrument(String ticker) {
+        return realTinkoffService.searchMarketInstrument(ticker);
     }
 
     // endregion
