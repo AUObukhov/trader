@@ -44,21 +44,25 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region MarketContext proxy
 
     @Override
+    @Cacheable("marketStocks")
     public List<Instrument> getMarketStocks() {
         return getMarketContext().getMarketStocks().join().instruments;
     }
 
     @Override
+    @Cacheable("marketBonds")
     public List<Instrument> getMarketBonds() {
         return getMarketContext().getMarketBonds().join().instruments;
     }
 
     @Override
+    @Cacheable("marketEtfs")
     public List<Instrument> getMarketEtfs() {
         return getMarketContext().getMarketEtfs().join().instruments;
     }
 
     @Override
+    @Cacheable("marketCurrencies")
     public List<Instrument> getMarketCurrencies() {
         return getMarketContext().getMarketCurrencies().join().instruments;
     }

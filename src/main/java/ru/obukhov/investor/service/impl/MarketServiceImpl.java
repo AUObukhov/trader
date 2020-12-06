@@ -182,7 +182,6 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    @Cacheable("instrument")
     public Instrument getInstrument(String ticker) {
         return getAllInstruments().stream()
                 .filter(instrument -> instrument.ticker.equals(ticker))
@@ -194,7 +193,6 @@ public class MarketServiceImpl implements MarketService {
      * @return list of available instruments of given {@code type}
      */
     @Override
-    @Cacheable("instruments")
     public List<Instrument> getInstruments(TickerType type) {
         if (type == null) {
             return getAllInstruments();
