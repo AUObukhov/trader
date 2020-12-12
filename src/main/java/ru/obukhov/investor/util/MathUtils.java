@@ -119,6 +119,27 @@ public class MathUtils {
         return value1.compareTo(value2) > 0;
     }
 
+    /**
+     * @return true if {@code value1} is lower than {@code value2}, or else false
+     */
+    public static boolean isLower(BigDecimal value1, long value2) {
+        return isLower(value1, BigDecimal.valueOf(value2));
+    }
+
+    /**
+     * @return true if {@code value1} is lower than {@code value2}, or else false
+     */
+    public static boolean isLower(BigDecimal value1, double value2) {
+        return isLower(value1, BigDecimal.valueOf(value2));
+    }
+
+    /**
+     * @return true if {@code value1} is lower than {@code value2}, or else false
+     */
+    public static boolean isLower(BigDecimal value1, BigDecimal value2) {
+        return value1.compareTo(value2) < 0;
+    }
+
     // endregion
 
 }

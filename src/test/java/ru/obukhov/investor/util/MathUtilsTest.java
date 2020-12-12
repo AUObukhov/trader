@@ -173,4 +173,38 @@ public class MathUtilsTest {
     }
 
     // endregion
+
+    // region isLower tests
+
+    @Test
+    public void isLower_returnsFalse_whenGreater() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 149L;
+
+        boolean result = MathUtils.isLower(value1, value2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isLower_returnsFalse_whenEquals() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 150L;
+
+        boolean result = MathUtils.isLower(value1, value2);
+
+        assertFalse(result);
+    }
+
+    @Test
+    public void isLower_returnsTrue_whenGreater() {
+        BigDecimal value1 = BigDecimal.valueOf(150);
+        long value2 = 151L;
+
+        boolean result = MathUtils.isLower(value1, value2);
+
+        assertTrue(result);
+    }
+
+    // endregion
 }
