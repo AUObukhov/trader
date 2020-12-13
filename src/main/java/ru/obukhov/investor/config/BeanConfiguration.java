@@ -4,7 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.obukhov.investor.bot.impl.FakeBot;
 import ru.obukhov.investor.bot.impl.ScheduledBot;
+import ru.obukhov.investor.bot.impl.SimpleDecider;
 import ru.obukhov.investor.bot.impl.SimulatorImpl;
+import ru.obukhov.investor.bot.impl.TrendReversalDecider;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.interfaces.Simulator;
@@ -30,14 +32,25 @@ import ru.obukhov.investor.service.interfaces.StatisticsService;
 public class BeanConfiguration {
 
     @Bean
-    public Bot fakeBot(Decider decider,
-                       MarketService fakeMarketService,
-                       OperationsService fakeOperationsService,
-                       OrdersService fakeOrdersService,
-                       PortfolioService fakePortfolioService,
-                       FakeTinkoffService fakeTinkoffService) {
+    public Decider simpleDecider(TradingProperties tradingProperties) {
+        return new SimpleDecider(tradingProperties);
+    }
 
-        return new FakeBot(decider,
+    @Bean
+    public Decider trendReversalDecider(TradingProperties tradingProperties,
+                                        TrendReversalDeciderProperties deciderProperties) {
+        return new TrendReversalDecider(tradingProperties, deciderProperties);
+    }
+
+    @Bean
+    public Bot simpleFakeBot(Decider simpleDecider,
+                             MarketService fakeMarketService,
+                             OperationsService fakeOperationsService,
+                             OrdersService fakeOrdersService,
+                             PortfolioService fakePortfolioService,
+                             FakeTinkoffService fakeTinkoffService) {
+
+        return new FakeBot(simpleDecider,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
@@ -47,7 +60,24 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Bot scheduledBot(Decider decider,
+    public Bot trendReversalFakeBot(Decider trendReversalDecider,
+                                    MarketService fakeMarketService,
+                                    OperationsService fakeOperationsService,
+                                    OrdersService fakeOrdersService,
+                                    PortfolioService fakePortfolioService,
+                                    FakeTinkoffService fakeTinkoffService) {
+
+        return new FakeBot(trendReversalDecider,
+                fakeMarketService,
+                fakeOperationsService,
+                fakeOrdersService,
+                fakePortfolioService,
+                fakeTinkoffService);
+
+    }
+
+    @Bean
+    public Bot scheduledBot(Decider simpleDecider,
                             MarketService realMarketService,
                             OperationsService realOperationsService,
                             OrdersService realOrdersService,
@@ -55,7 +85,7 @@ public class BeanConfiguration {
                             BotProperties botProperties,
                             TradingProperties tradingProperties) {
 
-        return new ScheduledBot(decider,
+        return new ScheduledBot(simpleDecider,
                 realMarketService,
                 realOperationsService,
                 realOrdersService,
@@ -66,8 +96,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Simulator simulatorImpl(Bot fakeBot, FakeTinkoffService fakeTinkoffService) {
-        return new SimulatorImpl(fakeBot, fakeTinkoffService);
+    public Simulator simulatorImpl(Bot trendReversalFakeBot, FakeTinkoffService fakeTinkoffService) {
+        return new SimulatorImpl(trendReversalFakeBot, fakeTinkoffService);
     }
 
     @Bean

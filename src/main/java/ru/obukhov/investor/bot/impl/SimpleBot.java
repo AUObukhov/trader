@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public abstract class SimpleBot implements Bot {
 
+    private static final int LAST_PRICES_COUNT = 1000;
+
     protected final Decider decider;
     protected final MarketService marketService;
     protected final OperationsService operationsService;
@@ -69,7 +71,7 @@ public abstract class SimpleBot implements Bot {
     }
 
     private List<BigDecimal> getCurrentPrices(String ticker) {
-        return marketService.getLastCandles(ticker, 100).stream()
+        return marketService.getLastCandles(ticker, LAST_PRICES_COUNT).stream()
                 .map(Candle::getClosePrice)
                 .collect(Collectors.toList());
     }

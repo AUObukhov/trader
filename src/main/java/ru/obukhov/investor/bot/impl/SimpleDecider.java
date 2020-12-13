@@ -3,7 +3,6 @@ package ru.obukhov.investor.bot.impl;
 import com.google.common.collect.Iterables;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
@@ -15,11 +14,10 @@ import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import java.math.BigDecimal;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
-public class DeciderImpl implements Decider {
+public class SimpleDecider implements Decider {
 
-    private static final double MINIMUM_PROFIT = 0.01;
+    protected static final double MINIMUM_PROFIT = 0.01;
 
     private final TradingProperties tradingProperties;
 
@@ -34,7 +32,7 @@ public class DeciderImpl implements Decider {
         final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
         if (position == null) {
             if (MathUtils.isGreater(currentPrice, data.getBalance())) {
-                log.debug("Current price = {} is greater than balance + {}. Decision is Wait",
+                log.debug("Current price = {} is greater than balance {}. Decision is Wait",
                         currentPrice, data.getBalance());
                 return Decision.WAIT;
             } else {
@@ -43,9 +41,13 @@ public class DeciderImpl implements Decider {
             }
         }
 
-        double lot = data.getInstrument().lot;
+        BigDecimal profit = getProfit(position.averagePositionPrice.value, data.getInstrument().lot, currentPrice);
 
-        BigDecimal buyLotPrice = MathUtils.multiply(position.averagePositionPrice.value, lot);
+        return MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
+    }
+
+    protected BigDecimal getProfit(BigDecimal buyPrice, double lot, BigDecimal currentPrice) {
+        BigDecimal buyLotPrice = MathUtils.multiply(buyPrice, lot);
         BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
 
         BigDecimal currentLotPrice = MathUtils.multiply(currentPrice, lot);
@@ -54,20 +56,17 @@ public class DeciderImpl implements Decider {
 
         BigDecimal profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission);
 
-        Decision decision = MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
-
         log.debug("buyLotPrice = {}, "
                         + "buyPricePlusCommission = {}, "
                         + "currentLotPrice = {}, "
                         + "sellPriceMinusCommission = {}, "
-                        + "profit = {}, "
-                        + "decision = {}",
-                buyLotPrice, buyPricePlusCommission, currentLotPrice, sellPriceMinusCommission, profit, decision);
+                        + "profit = {}, ",
+                buyLotPrice, buyPricePlusCommission, currentLotPrice, sellPriceMinusCommission, profit);
 
-        return decision;
+        return profit;
     }
 
-    private boolean existsOperationInProgress(DecisionData data) {
+    protected boolean existsOperationInProgress(DecisionData data) {
         return data.getLastOperations().stream()
                 .anyMatch(operation -> operation.status == OperationStatus.Progress);
     }

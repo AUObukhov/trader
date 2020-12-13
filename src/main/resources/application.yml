@@ -4,6 +4,10 @@ trading:
   work-duration: 540
   bot-enabled: false
 
+trend-reversal-decider:
+  last-prices-count: 100
+  extremum-price-index: 95
+
 query.throttle:
   limit: 119
   interval: 60000
