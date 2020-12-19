@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.model.transform.OperationTypeMapper;
 import ru.obukhov.investor.service.interfaces.MarketService;
@@ -124,11 +125,8 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(String ticker,
-                                         OffsetDateTime from,
-                                         OffsetDateTime to,
-                                         CandleInterval candleInterval) {
-        return realTinkoffService.getMarketCandles(ticker, from, to, candleInterval);
+    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+        return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
     }
 
     @Override
@@ -141,11 +139,9 @@ public class FakeTinkoffService implements TinkoffService {
     // region OperationsContext proxy
 
     @Override
-    public List<ru.tinkoff.invest.openapi.models.operations.Operation> getOperations(OffsetDateTime from,
-                                                                                     OffsetDateTime to,
-                                                                                     String ticker) {
+    public List<ru.tinkoff.invest.openapi.models.operations.Operation> getOperations(Interval interval, String ticker) {
         Stream<SimulatedOperation> operationsStream = operations.stream()
-                .filter(operation -> DateUtils.isBetween(operation.getDateTime(), from, to));
+                .filter(operation -> interval.contains(operation.getDateTime()));
         if (ticker != null) {
             operationsStream = operationsStream.filter(operation -> ticker.equals(operation.getTicker()));
         }

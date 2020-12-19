@@ -9,6 +9,7 @@ import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.exception.TickerNotFoundException;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
@@ -79,7 +80,7 @@ public abstract class SimpleBot implements Bot {
     private List<ru.tinkoff.invest.openapi.models.operations.Operation> getLastWeekOperations(String ticker) {
         OffsetDateTime to = OffsetDateTime.now();
         OffsetDateTime from = to.minusWeeks(1);
-        return operationsService.getOperations(from, to, ticker);
+        return operationsService.getOperations(Interval.of(from, to), ticker);
     }
 
     protected void performOperation(String ticker, Decision decision) {

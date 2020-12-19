@@ -3,7 +3,6 @@ package ru.obukhov.investor.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -15,8 +14,6 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
@@ -191,14 +188,6 @@ public class DateUtils {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
-    /**
-     * @return true if {@code dateTime} is in range {@code [left; right]}
-     */
-    public static boolean isBetween(OffsetDateTime dateTime, OffsetDateTime left, OffsetDateTime right) {
-        Assert.isTrue(!left.isAfter(right), "left can't be after right");
-        return !dateTime.isBefore(left) && !dateTime.isAfter(right);
-    }
-
     public static OffsetDateTime roundUpToDay(OffsetDateTime dateTime) {
         OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         if (!date.equals(dateTime)) {
@@ -333,39 +322,6 @@ public class DateUtils {
         return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
                 OffsetTime.MAX.getNano(), dateTime.getOffset());
-    }
-
-    /**
-     * @return list of consecutive dateTime intervals starting with {@code from} and ending with {@code to}.
-     * Every interval is in one day.
-     * Start of first interval equals {@code from}. Starts of other intervals are at start of day.
-     * End of last interval equals {@code to}. Ends of other intervals are at end of day.
-     */
-    public static List<Pair<OffsetDateTime, OffsetDateTime>> splitIntervalIntoDays(OffsetDateTime from,
-                                                                                   OffsetDateTime to) {
-        Assert.isTrue(!from.isAfter(to), "'from' can't be after 'to'");
-
-        List<Pair<OffsetDateTime, OffsetDateTime>> result = new ArrayList<>();
-
-        OffsetDateTime currentFrom = from;
-        OffsetDateTime endOfDay = atEndOfDay(from);
-
-        while (endOfDay.isBefore(to)) {
-            result.add(Pair.of(currentFrom, endOfDay));
-
-            currentFrom = endOfDay.plusNanos(1);
-            endOfDay = endOfDay.plusDays(1);
-        }
-        result.add(Pair.of(currentFrom, to));
-
-        return result;
-    }
-
-    /**
-     * @return true, if days of year of {@code dateTime1} and {@code dateTime2} are equal, or else false
-     */
-    public static boolean equalDates(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
-        return atStartOfDay(dateTime1).equals(atStartOfDay(dateTime2));
     }
 
 }

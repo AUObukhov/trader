@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.StatisticsService;
@@ -31,82 +32,70 @@ public class StatisticsServiceImpl implements StatisticsService {
      * Searches candles by conditions
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, start of trading if null
-     * @param to             end of search interval, current date and time if null
+     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
      * @param candleInterval candle interval
      * @return list of found candles
      */
     @Override
-    public List<Candle> getCandles(String ticker,
-                                   OffsetDateTime from,
-                                   OffsetDateTime to,
-                                   CandleInterval candleInterval) {
-
-        return marketService.getCandles(ticker, from, to, candleInterval);
+    public List<Candle> getCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+        return marketService.getCandles(ticker, interval, candleInterval);
     }
 
     /**
      * Searches saldos by conditions and groups then by time
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, start of trading if null
-     * @param to             end of search interval, current date and time if null
+     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
      * @param candleInterval candle interval, allowed values:
      *                       ONE_MIN, TWO_MIN, THREE_MIN, FIVE_MIN, TEN_MIN, QUARTER_HOUR, HALF_HOUR,
      *                       HOUR, TWO_HOURS, FOUR_HOURS
      * @return Map time to saldo
      */
     @Override
-    public Map<Object, BigDecimal> getDailySaldos(String ticker,
-                                                  OffsetDateTime from,
-                                                  OffsetDateTime to,
-                                                  CandleInterval candleInterval) {
+    public Map<Object, BigDecimal> getDailySaldos(String ticker, Interval interval, CandleInterval candleInterval) {
 
-        return getSaldos(ticker, from, to, candleInterval, OffsetDateTime::toLocalTime);
+        return getSaldos(ticker, interval, candleInterval, OffsetDateTime::toLocalTime);
     }
 
     /**
      * Searches saldos by conditions and groups them by day of week
      *
-     * @param ticker ticker of candles
-     * @param from   beginning of search interval, start of trading if null
-     * @param to     end of search interval, current date and time if null
+     * @param ticker   ticker of candles
+     * @param interval search interval, default interval.from is start of trading, default interval.to is now
      * @return Map day of week to saldo
      */
     @Override
-    public Map<Object, BigDecimal> getWeeklySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+    public Map<Object, BigDecimal> getWeeklySaldos(String ticker, Interval interval) {
 
-        return getSaldos(ticker, from, to, CandleInterval.DAY, OffsetDateTime::getDayOfWeek);
+        return getSaldos(ticker, interval, CandleInterval.DAY, OffsetDateTime::getDayOfWeek);
 
     }
 
     /**
      * Searches saldos by conditions and groups them by day of month
      *
-     * @param ticker ticker of candles
-     * @param from   beginning of search interval, start of trading if null
-     * @param to     end of search interval, current date and time if null
+     * @param ticker   ticker of candles
+     * @param interval search interval, default interval.from is start of trading, default interval.to is now
      * @return Map day of month to saldo
      */
     @Override
-    public Map<Object, BigDecimal> getMonthlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+    public Map<Object, BigDecimal> getMonthlySaldos(String ticker, Interval interval) {
 
-        return getSaldos(ticker, from, to, CandleInterval.DAY, OffsetDateTime::getDayOfMonth);
+        return getSaldos(ticker, interval, CandleInterval.DAY, OffsetDateTime::getDayOfMonth);
 
     }
 
     /**
      * Searches saldos by conditions and groups them by year
      *
-     * @param ticker ticker of candles
-     * @param from   beginning of search interval, start of trading if null
-     * @param to     end of search interval, current date and time if null
+     * @param ticker   ticker of candles
+     * @param interval search interval, default interval.from is start of trading, default interval.to is now
      * @return Map year to saldo
      */
     @Override
-    public Map<Object, BigDecimal> getYearlySaldos(String ticker, OffsetDateTime from, OffsetDateTime to) {
+    public Map<Object, BigDecimal> getYearlySaldos(String ticker, Interval interval) {
 
-        return getSaldos(ticker, from, to, CandleInterval.MONTH, OffsetDateTime::getMonth);
+        return getSaldos(ticker, interval, CandleInterval.MONTH, OffsetDateTime::getMonth);
 
     }
 
@@ -114,19 +103,17 @@ public class StatisticsServiceImpl implements StatisticsService {
      * Searches saldos by conditions and groups them by time unit provided by {@code keyExtractor}
      *
      * @param ticker         ticker of candles
-     * @param from           beginning of search interval, start of trading if null
-     * @param to             end of search interval, current date and time if null
+     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
      * @param candleInterval candle interval
      * @param keyExtractor   function getting of Map key from {@code OffsetDateTime}
      * @return ordered Map with saldos as values
      */
     private Map<Object, BigDecimal> getSaldos(String ticker,
-                                              OffsetDateTime from,
-                                              OffsetDateTime to,
+                                              Interval interval,
                                               CandleInterval candleInterval,
                                               Function<OffsetDateTime, Object> keyExtractor) {
 
-        List<Candle> candles = getCandles(ticker, from, to, candleInterval);
+        List<Candle> candles = getCandles(ticker, interval, candleInterval);
 
         Multimap<Object, BigDecimal> saldosByTimes = (Multimap) MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {

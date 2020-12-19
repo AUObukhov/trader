@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -45,15 +46,19 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getCandles_returnsCandlesFromMarketService() {
-        String ticker = TICKER;
-        OffsetDateTime from = getDate(2020, 1, 1);
-        OffsetDateTime to = getDate(2020, 2, 1);
-        CandleInterval candleInterval = CandleInterval.ONE_MIN;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
-        mockCandles(ticker, from, to, candleInterval, candles);
+        final OffsetDateTime from = getDate(2020, 1, 1);
+        final OffsetDateTime to = getDate(2020, 2, 1);
+        final Interval interval = Interval.of(from, to);
 
-        List<Candle> candlesResponse = service.getCandles(ticker, from, to, candleInterval);
+        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+
+        final List<Candle> candles = new ArrayList<>();
+
+        mockCandles(ticker, interval, candleInterval, candles);
+
+        final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleInterval);
 
         Assert.assertSame(candles, candlesResponse);
     }
@@ -62,9 +67,15 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getDailySaldos_unitesSaldosByTime() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 1, 1);
+        final OffsetDateTime to = getDate(2020, 1, 4);
+        final Interval interval = Interval.of(from, to);
+
+        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+
+        final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
                 .time(getTime(10, 0, 0))
@@ -89,16 +100,10 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .saldo(BigDecimal.valueOf(300))
                 .time(getTime(12, 0, 0))
                 .build());
-        mockCandles(ticker,
-                getDate(2020, 1, 1),
-                getDate(2020, 1, 4),
-                CandleInterval.ONE_MIN,
-                candles);
 
-        Map<LocalTime, BigDecimal> saldos = (Map) service.getDailySaldos(ticker,
-                getDate(2020, 1, 1),
-                getDate(2020, 1, 4),
-                CandleInterval.ONE_MIN);
+        mockCandles(ticker, interval, candleInterval, candles);
+
+        final Map<LocalTime, BigDecimal> saldos = (Map) service.getDailySaldos(ticker, interval, candleInterval);
 
         assertEquals(3, saldos.size());
 
@@ -114,9 +119,15 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getDailySaldos_sortsSaldosByDays() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 1, 1);
+        final OffsetDateTime to = getDate(2020, 1, 4);
+        final Interval interval = Interval.of(from, to);
+
+        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+
+        final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
                 .time(getTime(12, 0, 0))
@@ -141,16 +152,10 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .saldo(BigDecimal.TEN)
                 .time(getTime(11, 0, 0))
                 .build());
-        mockCandles(ticker,
-                getDate(2020, 1, 1),
-                getDate(2020, 1, 4),
-                CandleInterval.ONE_MIN,
-                candles);
 
-        Map<LocalTime, BigDecimal> saldos = (Map) service.getDailySaldos(ticker,
-                getDate(2020, 1, 1),
-                getDate(2020, 1, 4),
-                CandleInterval.ONE_MIN);
+        mockCandles(ticker, interval, candleInterval, candles);
+
+        final Map<LocalTime, BigDecimal> saldos = (Map) service.getDailySaldos(ticker, interval, candleInterval);
 
         assertEquals(3, saldos.size());
 
@@ -163,9 +168,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getWeeklySaldos_unitesSaldosByDayOfWeek() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 24);
+        final OffsetDateTime to = getDate(2020, 8, 30);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = new ArrayList<>();
 
         // Monday
         candles.add(Candle.builder()
@@ -197,12 +206,9 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 8, 26))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 24);
-        OffsetDateTime to = getDate(2020, 8, 30);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<DayOfWeek, BigDecimal> saldos = (Map) service.getWeeklySaldos(ticker, from, to);
+        final Map<DayOfWeek, BigDecimal> saldos = (Map) service.getWeeklySaldos(ticker, interval);
 
         assertEquals(3, saldos.size());
 
@@ -218,9 +224,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getWeeklySaldos_sortsSaldosByDays() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 24);
+        final OffsetDateTime to = getDate(2020, 8, 30);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = new ArrayList<>();
 
         // Tuesday
         candles.add(Candle.builder()
@@ -246,12 +256,9 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 8, 26))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 24);
-        OffsetDateTime to = getDate(2020, 8, 30);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<DayOfWeek, BigDecimal> saldos = (Map) service.getWeeklySaldos(ticker, from, to);
+        final Map<DayOfWeek, BigDecimal> saldos = (Map) service.getWeeklySaldos(ticker, interval);
 
         assertEquals(4, saldos.size());
 
@@ -264,9 +271,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getMonthlySaldos_unitesSaldosByDayOfMonth() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 1);
+        final OffsetDateTime to = getDate(2020, 8, 3);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
@@ -295,12 +306,9 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 8, 3))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 1);
-        OffsetDateTime to = getDate(2020, 8, 3);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, from, to);
+        final Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, interval);
 
         assertEquals(3, saldos.size());
 
@@ -316,36 +324,33 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getMonthlySaldos_sortsSaldosByDays() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 1);
+        final OffsetDateTime to = getDate(2020, 8, 4);
+        final Interval interval = Interval.of(from, to);
 
+        final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
                 .time(getDate(2020, 8, 2))
                 .build());
-
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
                 .time(getDate(2020, 8, 1))
                 .build());
-
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
                 .time(getDate(2020, 8, 4))
                 .build());
-
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
                 .time(getDate(2020, 8, 3))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 1);
-        OffsetDateTime to = getDate(2020, 8, 4);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, from, to);
+        final Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, interval);
 
         assertEquals(4, saldos.size());
 
@@ -358,9 +363,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getYearlySaldos_unitesSaldosMonth() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 1);
+        final OffsetDateTime to = getDate(2020, 8, 3);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
                 .saldo(BigDecimal.valueOf(100))
@@ -389,12 +398,9 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 10, 3))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 1);
-        OffsetDateTime to = getDate(2020, 8, 3);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, from, to);
+        final Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, interval);
 
         assertEquals(3, saldos.size());
 
@@ -410,9 +416,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     @Test
     public void getYearlySaldos_sortsSaldosByMonths() {
-        String ticker = TICKER;
+        final String ticker = TICKER;
 
-        List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime from = getDate(2020, 8, 1);
+        final OffsetDateTime to = getDate(2020, 8, 4);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
                 .saldo(BigDecimal.TEN)
@@ -434,12 +444,9 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
                 .time(getDate(2020, 10, 3))
                 .build());
 
-        OffsetDateTime from = getDate(2020, 8, 1);
-        OffsetDateTime to = getDate(2020, 8, 4);
+        mockCandles(ticker, interval, CandleInterval.DAY, candles);
 
-        mockCandles(ticker, from, to, CandleInterval.DAY, candles);
-
-        Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, from, to);
+        final Map<Integer, BigDecimal> saldos = (Map) service.getMonthlySaldos(ticker, interval);
 
         assertEquals(4, saldos.size());
 
@@ -451,12 +458,11 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
     // region mocks
 
     private void mockCandles(String ticker,
-                             OffsetDateTime from,
-                             OffsetDateTime to,
+                             Interval interval,
                              CandleInterval candleInterval,
                              List<Candle> candles) {
 
-        when(marketService.getCandles(eq(ticker), eq(from), eq(to), eq(candleInterval)))
+        when(marketService.getCandles(eq(ticker), eq(interval), eq(candleInterval)))
                 .thenReturn(candles);
     }
 

@@ -1,6 +1,7 @@
 package ru.obukhov.investor.bot.interfaces;
 
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.Orderbook;
@@ -30,11 +31,11 @@ public interface TinkoffService {
 
     Orderbook getMarketOrderbook(String ticker, int depth);
 
-    List<Candle> getMarketCandles(String ticker, OffsetDateTime from, OffsetDateTime to, CandleInterval candleInterval);
+    List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval);
 
     Instrument searchMarketInstrument(String ticker);
 
-    List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker);
+    List<Operation> getOperations(Interval interval, String ticker);
 
     List<Order> getOrders();
 

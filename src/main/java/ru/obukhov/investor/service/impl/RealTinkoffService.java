@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.CandleMapper;
 import ru.obukhov.investor.service.TinkoffContextsAware;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
@@ -80,15 +81,12 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     @Cacheable("marketCandles")
-    public List<Candle> getMarketCandles(String ticker,
-                                         OffsetDateTime from,
-                                         OffsetDateTime to,
-                                         CandleInterval candleInterval) {
+    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval) {
         String figi = getSelf().searchMarketInstrument(ticker).figi;
-        List<Candle> candles = getMarketContext().getMarketCandles(figi, from, to, candleInterval).join()
+        List<Candle> candles = getMarketContext().getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval).join()
                 .map(candleMapper::map)
                 .orElse(Collections.emptyList());
-        log.debug("Loaded {} candles for ticker '{}' in interval {} - {}", candles.size(), ticker, from, to);
+        log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
         return candles;
     }
 
@@ -104,9 +102,10 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region OperationsContext
 
     @Override
-    public List<Operation> getOperations(OffsetDateTime from, OffsetDateTime to, String ticker) {
+    public List<Operation> getOperations(Interval interval, String ticker) {
         String figi = getSelf().searchMarketInstrument(ticker).figi;
-        return getOperationsContext().getOperations(from, to, figi, null).join().operations;
+        return getOperationsContext().getOperations(interval.getFrom(), interval.getTo(), figi, null)
+                .join().operations;
     }
 
     // endregion
