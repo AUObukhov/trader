@@ -8,6 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.util.Assert;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static ru.obukhov.investor.service.impl.MarketServiceImpl.CONSECUTIVE_EMPTY_DAYS_LIMIT;
 import static ru.obukhov.investor.util.DateUtils.getDate;
 import static ru.obukhov.investor.util.MathUtils.numbersEqual;
 
@@ -36,6 +36,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     private static final String TICKER = "ticker";
 
+    private TradingProperties tradingProperties;
     @Mock
     private TinkoffService tinkoffService;
 
@@ -43,11 +44,13 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     @Before
     public void setUp() {
-        this.service = new MarketServiceImpl(tinkoffService);
-
+        this.tradingProperties = new TradingProperties();
+        this.tradingProperties.setConsecutiveEmptyDaysLimit(7);
         when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         mockAnyCandles();
+
+        this.service = new MarketServiceImpl(tradingProperties, tinkoffService);
     }
 
     // region getCandles tests
@@ -224,7 +227,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
     @Test(expected = IllegalArgumentException.class)
     public void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
-        final OffsetDateTime from = DateUtils.getLastWorkDay().minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT + 1);
+        final OffsetDateTime from = DateUtils.getLastWorkDay()
+                .minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime to = from.plusDays(1);
 
         mockCandlesSimple(ticker, from, to, CandleInterval.ONE_MIN, 10);
@@ -235,7 +239,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
     @Test
     public void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String ticker = TICKER;
-        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now().minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT);
+        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now()
+                .minusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
         final OffsetDateTime from = DateUtils.atStartOfDay(earliestDayToSearch);
         final OffsetDateTime to = DateUtils.atEndOfDay(earliestDayToSearch);
         final int openPrice = 10;
@@ -263,7 +268,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
-        final OffsetDateTime candlesTo = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT + 1);
+        final OffsetDateTime candlesTo = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
 
         mockCandlesSimple(ticker, candlesFrom, candlesTo, CandleInterval.ONE_MIN, 10);
@@ -275,7 +280,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     public void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateUtils.getDate(2020, 1, 10));
-        final OffsetDateTime candlesTo = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT - 1);
+        final OffsetDateTime candlesTo = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() - 1);
         final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
         final int openPrice = 10;
 
@@ -400,7 +405,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
         List<OffsetDateTime> times3 = Collections.singletonList(from3.withHour(1));
         mockCandlesSimple(ticker, from3, to3, CandleInterval.ONE_MIN, prices3, times3);
 
-        when(tinkoffService.getCurrentDateTime()).thenReturn(to3.plusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT + 1));
+        when(tinkoffService.getCurrentDateTime())
+                .thenReturn(to3.plusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1));
 
         List<Candle> candles = service.getLastCandles(ticker, limit);
 
@@ -430,7 +436,8 @@ public class MarketServiceImplTest extends BaseMockedTest {
         List<OffsetDateTime> times3 = Collections.singletonList(from3.withHour(1));
         mockCandlesSimple(ticker, from3, to3, CandleInterval.ONE_MIN, prices3, times3);
 
-        when(tinkoffService.getCurrentDateTime()).thenReturn(to3.plusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT));
+        when(tinkoffService.getCurrentDateTime())
+                .thenReturn(to3.plusDays(tradingProperties.getConsecutiveEmptyDaysLimit()));
 
         List<Candle> candles = service.getLastCandles(ticker, limit);
 

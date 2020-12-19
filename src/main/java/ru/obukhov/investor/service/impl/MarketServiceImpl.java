@@ -9,6 +9,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.TickerType;
 import ru.obukhov.investor.service.interfaces.MarketService;
@@ -31,8 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService {
 
-    static final int CONSECUTIVE_EMPTY_DAYS_LIMIT = 7;
-
+    private final TradingProperties tradingProperties;
     private final TinkoffService tinkoffService;
 
     /**
@@ -77,7 +77,7 @@ public class MarketServiceImpl implements MarketService {
 
         List<List<Candle>> candles = new ArrayList<>();
         int emptyDaysCount = 0;
-        while (listIterator.hasPrevious() && emptyDaysCount <= CONSECUTIVE_EMPTY_DAYS_LIMIT) {
+        while (listIterator.hasPrevious() && emptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit()) {
             Pair<OffsetDateTime, OffsetDateTime> interval = listIterator.previous();
             List<Candle> currentCandles = loadDayCandles(ticker, interval, candleInterval);
             if (currentCandles.isEmpty()) {
@@ -148,7 +148,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     /**
-     * Searches last candle by {@code ticker} within last {@link MarketServiceImpl#CONSECUTIVE_EMPTY_DAYS_LIMIT} days
+     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
@@ -160,7 +160,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     /**
-     * Searches last candle by {@code ticker} within last {@link MarketServiceImpl#CONSECUTIVE_EMPTY_DAYS_LIMIT} days
+     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
      * before {@code to}
      *
      * @return found candle
@@ -168,10 +168,10 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Candle getLastCandle(String ticker, OffsetDateTime to) {
-        OffsetDateTime candlesFrom = to.minusDays(CONSECUTIVE_EMPTY_DAYS_LIMIT);
+        OffsetDateTime candlesFrom = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
 
         List<Pair<OffsetDateTime, OffsetDateTime>> intervals = DateUtils.splitIntervalIntoDays(candlesFrom, to);
-        intervals = CollectionsUtils.getTail(intervals, CONSECUTIVE_EMPTY_DAYS_LIMIT + 1);
+        intervals = CollectionsUtils.getTail(intervals, tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
         ListIterator<Pair<OffsetDateTime, OffsetDateTime>> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             Pair<OffsetDateTime, OffsetDateTime> interval = listIterator.previous();
@@ -187,7 +187,7 @@ public class MarketServiceImpl implements MarketService {
     /**
      * @return last {@code limit} candles by {@code ticker}.
      * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
-     * within {@value CONSECUTIVE_EMPTY_DAYS_LIMIT} days.
+     * within {@code trading.consecutive-empty-days-limit} days.
      */
     @Override
     public List<Candle> getLastCandles(String ticker, int limit) {
@@ -208,7 +208,8 @@ public class MarketServiceImpl implements MarketService {
 
             from = from.minusDays(1);
             to = DateUtils.atEndOfDay(from);
-        } while (candles.size() < limit && consecutiveEmptyDaysCount <= CONSECUTIVE_EMPTY_DAYS_LIMIT);
+        } while (candles.size() < limit
+                && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);

@@ -30,4 +30,7 @@ public class TradingProperties {
 
     private boolean botEnabled;
 
+    @NotNull
+    private int consecutiveEmptyDaysLimit;
+
 }

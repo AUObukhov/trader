@@ -3,6 +3,7 @@ trading:
   work-start-time: "10:00:00+03:00"
   work-duration: 540
   bot-enabled: false
+  consecutive-empty-days-limit: 7
 
 trend-reversal-decider:
   last-prices-count: 100

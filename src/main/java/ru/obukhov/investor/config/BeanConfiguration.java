@@ -113,13 +113,13 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketService realMarketService(TinkoffService realTinkoffService) {
-        return new MarketServiceImpl(realTinkoffService);
+    public MarketService realMarketService(TradingProperties tradingProperties, TinkoffService realTinkoffService) {
+        return new MarketServiceImpl(tradingProperties, realTinkoffService);
     }
 
     @Bean
-    public MarketService fakeMarketService(TinkoffService fakeTinkoffService) {
-        return new MarketServiceImpl(fakeTinkoffService);
+    public MarketService fakeMarketService(TradingProperties tradingProperties, TinkoffService fakeTinkoffService) {
+        return new MarketServiceImpl(tradingProperties, fakeTinkoffService);
     }
 
     @Bean
