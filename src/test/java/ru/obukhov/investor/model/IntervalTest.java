@@ -71,13 +71,12 @@ public class IntervalTest {
 
     @Test
     public void ofDay_withDateTime_returnsProperInterval() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 10, 11, 12, 13);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 10, 12, 12, 13);
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 11, 12, 13);
 
-        Interval interval = Interval.ofDay(2020, 10, 10);
+        Interval interval = Interval.ofDay(dateTime);
 
-        OffsetDateTime expectedFrom = DateUtils.atStartOfDay(from);
-        OffsetDateTime expectedToo = DateUtils.atEndOfDay(to);
+        OffsetDateTime expectedFrom = DateUtils.atStartOfDay(dateTime);
+        OffsetDateTime expectedToo = DateUtils.atEndOfDay(dateTime);
         Assert.assertEquals(expectedFrom, interval.getFrom());
         Assert.assertEquals(expectedToo, interval.getTo());
 
