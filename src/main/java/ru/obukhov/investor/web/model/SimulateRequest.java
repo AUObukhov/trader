@@ -21,4 +21,6 @@ public class SimulateRequest {
 
     private OffsetDateTime to;
 
+    private Boolean saveToFile;
+
 }

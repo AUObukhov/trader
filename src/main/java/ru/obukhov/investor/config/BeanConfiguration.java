@@ -19,6 +19,7 @@ import ru.obukhov.investor.service.impl.PortfolioServiceImpl;
 import ru.obukhov.investor.service.impl.RealTinkoffService;
 import ru.obukhov.investor.service.impl.StatisticsServiceImpl;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
+import ru.obukhov.investor.service.interfaces.ExcelService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
@@ -96,8 +97,10 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Simulator simulatorImpl(Bot trendReversalFakeBot, FakeTinkoffService fakeTinkoffService) {
-        return new SimulatorImpl(trendReversalFakeBot, fakeTinkoffService);
+    public Simulator simulatorImpl(Bot trendReversalFakeBot,
+                                   FakeTinkoffService fakeTinkoffService,
+                                   ExcelService excelService) {
+        return new SimulatorImpl(trendReversalFakeBot, fakeTinkoffService, excelService);
     }
 
     @Bean

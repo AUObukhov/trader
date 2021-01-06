@@ -9,9 +9,10 @@ import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.model.transform.PositionMapper;
 import ru.obukhov.investor.service.impl.FakeTinkoffService;
-import ru.obukhov.investor.web.model.SimulateResponse;
+import ru.obukhov.investor.service.interfaces.ExcelService;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
+import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -30,6 +31,7 @@ public class SimulatorImpl implements Simulator {
 
     private final Bot bot;
     private final FakeTinkoffService fakeTinkoffService;
+    private final ExcelService excelService;
 
     /**
      * @param ticker   simulated ticker
@@ -38,7 +40,7 @@ public class SimulatorImpl implements Simulator {
      * @return balance after simulation
      */
     @Override
-    public SimulateResponse simulate(String ticker, BigDecimal balance, Interval interval) {
+    public SimulationResult simulate(String ticker, BigDecimal balance, Interval interval) {
 
         log.info("Simulation for ticker = '" + ticker + "' started");
 
@@ -56,11 +58,15 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '" + ticker + "' ended");
 
-        return createSimulateResponse(innerInterval, ticker);
+        SimulationResult result = createResult(innerInterval, ticker);
+
+        excelService.saveSimulationResult(result);
+
+        return result;
     }
 
-    private SimulateResponse createSimulateResponse(Interval interval, String ticker) {
-        return SimulateResponse.builder()
+    private SimulationResult createResult(Interval interval, String ticker) {
+        return SimulationResult.builder()
                 .currencyBalance(fakeTinkoffService.getBalance())
                 .totalBalance(getFullBalance())
                 .positions(getPositions())

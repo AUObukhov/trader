@@ -8,12 +8,14 @@ import java.util.List;
 
 @Data
 @Builder
-public class SimulateResponse {
+public class SimulationResult {
 
     private BigDecimal totalBalance;
 
     private BigDecimal currencyBalance;
 
     private List<SimulatedPosition> positions;
+
+    private List<SimulatedOperation> operations;
 
 }

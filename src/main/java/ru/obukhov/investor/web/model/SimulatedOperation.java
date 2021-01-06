@@ -1,6 +1,7 @@
 package ru.obukhov.investor.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import ru.tinkoff.invest.openapi.models.operations.OperationType;
@@ -10,6 +11,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class SimulatedOperation {
 
     @JsonIgnore
