@@ -18,6 +18,8 @@ import java.time.temporal.TemporalUnit;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
 
+    private static final ZoneOffset DEFAULT_OFFSET = OffsetDateTime.now().getOffset();
+
     /**
      * Earliest date for requesting candles
      */
@@ -29,7 +31,7 @@ public class DateUtils {
     public static OffsetDateTime getDateTime(int year, int month, int dayOfMonth, int hour, int minute, int second) {
         return OffsetDateTime.of(year, month, dayOfMonth,
                 hour, minute, second, 0,
-                ZoneOffset.UTC);
+                DEFAULT_OFFSET);
     }
 
     /**
@@ -39,7 +41,7 @@ public class DateUtils {
                                              int hour, int minute, int second, int nanoOfSecond) {
         return OffsetDateTime.of(year, month, dayOfMonth,
                 hour, minute, second, nanoOfSecond,
-                ZoneOffset.UTC);
+                DEFAULT_OFFSET);
     }
 
     /**
@@ -254,7 +256,6 @@ public class DateUtils {
     }
 
     /**
-     * @param dateTime
      * @param workStartTime    start time of work
      * @param workTimeDuration duration of work period
      * @return first minute of work time not before {@code dateTime}
