@@ -4,9 +4,10 @@ import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface Simulator {
 
-    SimulationResult simulate(String ticker, BigDecimal balance, Interval interval);
+    List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval);
 
 }

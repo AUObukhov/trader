@@ -19,6 +19,7 @@ import ru.tinkoff.invest.openapi.models.operations.OperationType;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,13 +44,13 @@ public class ExcelServiceImplTest extends BaseMockedTest {
 
         SimulationResult result = createSimulationResult();
 
-        excelService.saveSimulationResult(result);
+        excelService.saveSimulationResults(Collections.singletonList(result));
 
         verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), anyString());
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assert.assertEquals(1, workbook.getNumberOfSheets());
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
         int expectedRowCount = 8 + result.getPositions().size() + result.getOperations().size();
         Assert.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -126,6 +127,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
         );
 
         return SimulationResult.builder()
+                .botName("bot")
                 .totalBalance(totalBalance)
                 .currencyBalance(currencyBalance)
                 .positions(positions)

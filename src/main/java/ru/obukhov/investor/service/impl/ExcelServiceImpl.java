@@ -16,6 +16,7 @@ import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -27,9 +28,11 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResult(SimulationResult result) {
+    public void saveSimulationResults(Collection<SimulationResult> results) {
         ExtendedWorkbook workBook = createWorkBook();
-        createSheet(workBook, result);
+        for (SimulationResult result : results) {
+            createSheet(workBook, result);
+        }
         excelFileService.saveToFile(workBook, "SimulationResult");
     }
 
@@ -51,7 +54,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void createSheet(ExtendedWorkbook workbook, SimulationResult result) {
-        ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet("Simulation result");
+        ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
 
         putTotalBalance(sheet, result.getTotalBalance());
         putCurrencyBalance(sheet, result.getCurrencyBalance());

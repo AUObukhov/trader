@@ -2,13 +2,14 @@ package ru.obukhov.investor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.investor.bot.impl.FakeBot;
 import ru.obukhov.investor.bot.impl.ScheduledBot;
 import ru.obukhov.investor.bot.impl.SimpleDecider;
+import ru.obukhov.investor.bot.impl.SimpleFakeBot;
 import ru.obukhov.investor.bot.impl.SimulatorImpl;
 import ru.obukhov.investor.bot.impl.TrendReversalDecider;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.Decider;
+import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.service.impl.FakeTinkoffService;
@@ -25,6 +26,8 @@ import ru.obukhov.investor.service.interfaces.OperationsService;
 import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.obukhov.investor.service.interfaces.PortfolioService;
 import ru.obukhov.investor.service.interfaces.StatisticsService;
+
+import java.util.Set;
 
 /**
  * Configuration of beans, which need qualifying of dependencies
@@ -44,14 +47,15 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Bot simpleFakeBot(Decider simpleDecider,
-                             MarketService fakeMarketService,
-                             OperationsService fakeOperationsService,
-                             OrdersService fakeOrdersService,
-                             PortfolioService fakePortfolioService,
-                             FakeTinkoffService fakeTinkoffService) {
+    public FakeBot simpleFakeBot(Decider simpleDecider,
+                                 MarketService fakeMarketService,
+                                 OperationsService fakeOperationsService,
+                                 OrdersService fakeOrdersService,
+                                 PortfolioService fakePortfolioService,
+                                 FakeTinkoffService fakeTinkoffService) {
 
-        return new FakeBot(simpleDecider,
+        return new SimpleFakeBot("Simple bot",
+                simpleDecider,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
@@ -61,14 +65,15 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Bot trendReversalFakeBot(Decider trendReversalDecider,
-                                    MarketService fakeMarketService,
-                                    OperationsService fakeOperationsService,
-                                    OrdersService fakeOrdersService,
-                                    PortfolioService fakePortfolioService,
-                                    FakeTinkoffService fakeTinkoffService) {
+    public FakeBot trendReversalFakeBot(Decider trendReversalDecider,
+                                        MarketService fakeMarketService,
+                                        OperationsService fakeOperationsService,
+                                        OrdersService fakeOrdersService,
+                                        PortfolioService fakePortfolioService,
+                                        FakeTinkoffService fakeTinkoffService) {
 
-        return new FakeBot(trendReversalDecider,
+        return new SimpleFakeBot("Trend reversal bot",
+                trendReversalDecider,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
@@ -97,10 +102,11 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Simulator simulatorImpl(Bot trendReversalFakeBot,
-                                   FakeTinkoffService fakeTinkoffService,
+    public Simulator simulatorImpl(Set<FakeBot> fakeBots,
+                                   TinkoffService fakeTinkoffService,
                                    ExcelService excelService) {
-        return new SimulatorImpl(trendReversalFakeBot, fakeTinkoffService, excelService);
+
+        return new SimulatorImpl(fakeBots, (FakeTinkoffService) fakeTinkoffService, excelService);
     }
 
     @Bean

@@ -3,7 +3,7 @@ package ru.obukhov.investor.bot.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.investor.bot.interfaces.Bot;
+import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.OperationMapper;
@@ -15,7 +15,7 @@ import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +29,7 @@ public class SimulatorImpl implements Simulator {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
-    private final Bot bot;
+    private final Collection<FakeBot> bots;
     private final FakeTinkoffService fakeTinkoffService;
     private final ExcelService excelService;
 
@@ -40,12 +40,25 @@ public class SimulatorImpl implements Simulator {
      * @return balance after simulation
      */
     @Override
-    public SimulationResult simulate(String ticker, BigDecimal balance, Interval interval) {
+    public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval) {
 
         log.info("Simulation for ticker = '" + ticker + "' started");
 
-        OffsetDateTime innerTo = interval.getTo() == null ? OffsetDateTime.now() : interval.getTo();
-        Interval innerInterval = Interval.of(interval.getFrom(), innerTo);
+        final Interval finiteInterval = interval.limitByNowIfNull();
+
+        List<SimulationResult> simulationResults = bots.stream()
+                .map(bot -> simulate(bot, ticker, balance, finiteInterval))
+                .collect(Collectors.toList());
+
+        log.info("Simulation for ticker = '" + ticker + "' ended");
+
+        excelService.saveSimulationResults(simulationResults);
+
+        return simulationResults;
+    }
+
+    public SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
+        log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' started");
 
         fakeTinkoffService.init(interval.getFrom(), balance);
 
@@ -54,19 +67,18 @@ public class SimulatorImpl implements Simulator {
             bot.processTicker(ticker);
 
             fakeTinkoffService.nextMinute();
-        } while (fakeTinkoffService.getCurrentDateTime().isBefore(innerTo));
 
-        log.info("Simulation for ticker = '" + ticker + "' ended");
+        } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        SimulationResult result = createResult(innerInterval, ticker);
+        log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' ended");
 
-        excelService.saveSimulationResult(result);
-
-        return result;
+        return createResult(bot.getName(), interval, ticker);
     }
 
-    private SimulationResult createResult(Interval interval, String ticker) {
+
+    private SimulationResult createResult(String botName, Interval interval, String ticker) {
         return SimulationResult.builder()
+                .botName(botName)
                 .currencyBalance(fakeTinkoffService.getBalance())
                 .totalBalance(getFullBalance())
                 .positions(getPositions())

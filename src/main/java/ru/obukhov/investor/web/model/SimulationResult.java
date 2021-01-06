@@ -10,6 +10,8 @@ import java.util.List;
 @Builder
 public class SimulationResult {
 
+    private String botName;
+
     private BigDecimal totalBalance;
 
     private BigDecimal currencyBalance;

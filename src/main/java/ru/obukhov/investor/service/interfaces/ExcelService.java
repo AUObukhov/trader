@@ -2,6 +2,10 @@ package ru.obukhov.investor.service.interfaces;
 
 import ru.obukhov.investor.web.model.SimulationResult;
 
+import java.util.Collection;
+
 public interface ExcelService {
-    void saveSimulationResult(SimulationResult result);
+
+    void saveSimulationResults(Collection<SimulationResult> results);
+
 }

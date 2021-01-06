@@ -1,19 +1,14 @@
 package ru.obukhov.investor.web.model;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.util.List;
+import java.util.Collection;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class SimulateResponse {
 
-    private BigDecimal totalBalance;
-
-    private BigDecimal currencyBalance;
-
-    private List<SimulatedPosition> positions;
+    private Collection<SimulationResult> results;
 
 }
