@@ -56,6 +56,16 @@ public class Interval {
     }
 
     /**
+     * @return new Interval where {@code from} is equals to current {@code from} and
+     * {@code to} is equal to:<br/>
+     * {@code now} if current {@code to} is null;<br/>
+     * equals to current {@code to} otherwise;
+     */
+    public Interval limitByNowIfNull() {
+        return Interval.of(from, to == null ? OffsetDateTime.now() : to);
+    }
+
+    /**
      * @return new Interval where {@code from} is at start of current {@code from} and
      * {@code to} is earliest dateTime between end of day of current {@code to} and current dateTime
      * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day

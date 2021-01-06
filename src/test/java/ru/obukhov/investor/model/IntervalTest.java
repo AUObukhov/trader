@@ -84,6 +84,35 @@ public class IntervalTest {
 
     // endregion
 
+    // region limitByNowIfNull tests
+
+    @Test
+    public void limitByNowIfNull_setToToNow_whenToIsNull() {
+        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime to = null;
+
+        Interval interval = Interval.of(from, to);
+        Interval newInterval = interval.limitByNowIfNull();
+
+        Assert.assertEquals(interval.getFrom(), newInterval.getFrom());
+        Assert.assertNotNull(newInterval.getTo());
+    }
+
+    @Test
+    public void limitByNowIfNull_notChangesTo_whenToIsNotNull() {
+        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
+
+        Interval interval = Interval.of(from, to);
+        Interval newInterval = interval.limitByNowIfNull();
+
+        Assert.assertEquals(interval.getFrom(), newInterval.getFrom());
+        Assert.assertEquals(interval.getTo(), newInterval.getTo());
+    }
+
+
+    // endregion
+
     // region extendToWholeDay tests
 
     @Test(expected = IllegalArgumentException.class)
