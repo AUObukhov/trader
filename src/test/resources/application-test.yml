@@ -1,0 +1,23 @@
+trading:
+  token: i identify myself as token
+  commission: 0.1
+  work-start-time: 12:00:00+03:00
+  work-duration: 480
+  bot-enabled: true
+  consecutive-empty-days-limit: 5
+
+trend-reversal-decider:
+  last-prices-count: 100
+  extremum-price-index: 95
+
+query.throttle:
+  limit: 119
+  interval: 60000
+
+bot:
+  delay: 60000
+  tickers: SBER
+
+spring.cache:
+  cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
+  scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
