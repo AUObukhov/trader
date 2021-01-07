@@ -3,7 +3,7 @@ package ru.obukhov.investor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(args = "i identify myself as token")
+@SpringBootTest(args = "--trading.token=i identify myself as token")
 class InvestorApplicationTests {
 
     @Test
