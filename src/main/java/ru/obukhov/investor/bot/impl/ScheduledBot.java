@@ -12,7 +12,7 @@ import ru.obukhov.investor.service.interfaces.PortfolioService;
 import ru.obukhov.investor.util.DateUtils;
 
 @Slf4j
-public class ScheduledBot extends SimpleBot {
+public class ScheduledBot extends AbstractBot {
 
     private final BotProperties botProperties;
     private final TradingProperties tradingProperties;

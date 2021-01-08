@@ -3,8 +3,8 @@ package ru.obukhov.investor.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.obukhov.investor.bot.impl.DumbDecider;
+import ru.obukhov.investor.bot.impl.FakeBotImpl;
 import ru.obukhov.investor.bot.impl.ScheduledBot;
-import ru.obukhov.investor.bot.impl.SimpleFakeBot;
 import ru.obukhov.investor.bot.impl.SimulatorImpl;
 import ru.obukhov.investor.bot.impl.TrendReversalDecider;
 import ru.obukhov.investor.bot.interfaces.Bot;
@@ -47,14 +47,14 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public FakeBot simpleFakeBot(Decider dumbDecider,
-                                 MarketService fakeMarketService,
-                                 OperationsService fakeOperationsService,
-                                 OrdersService fakeOrdersService,
-                                 PortfolioService fakePortfolioService,
-                                 FakeTinkoffService fakeTinkoffService) {
+    public FakeBot dumbFakeBot(Decider dumbDecider,
+                               MarketService fakeMarketService,
+                               OperationsService fakeOperationsService,
+                               OrdersService fakeOrdersService,
+                               PortfolioService fakePortfolioService,
+                               FakeTinkoffService fakeTinkoffService) {
 
-        return new SimpleFakeBot("Dumb bot",
+        return new FakeBotImpl("Dumb bot",
                 dumbDecider,
                 fakeMarketService,
                 fakeOperationsService,
@@ -72,7 +72,7 @@ public class BeanConfiguration {
                                         PortfolioService fakePortfolioService,
                                         FakeTinkoffService fakeTinkoffService) {
 
-        return new SimpleFakeBot("Trend reversal bot",
+        return new FakeBotImpl("Trend reversal bot",
                 trendReversalDecider,
                 fakeMarketService,
                 fakeOperationsService,

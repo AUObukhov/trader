@@ -11,19 +11,19 @@ import ru.obukhov.investor.service.interfaces.OrdersService;
 import ru.obukhov.investor.service.interfaces.PortfolioService;
 
 @Slf4j
-public class SimpleFakeBot extends SimpleBot implements FakeBot {
+public class FakeBotImpl extends AbstractBot implements FakeBot {
 
     protected final FakeTinkoffService fakeTinkoffService;
     @Getter
     private final String name;
 
-    public SimpleFakeBot(String name,
-                         Decider decider,
-                         MarketService marketService,
-                         OperationsService operationsService,
-                         OrdersService ordersService,
-                         PortfolioService portfolioService,
-                         FakeTinkoffService fakeTinkoffService) {
+    public FakeBotImpl(String name,
+                       Decider decider,
+                       MarketService marketService,
+                       OperationsService operationsService,
+                       OrdersService ordersService,
+                       PortfolioService portfolioService,
+                       FakeTinkoffService fakeTinkoffService) {
 
         super(decider, marketService, operationsService, ordersService, portfolioService);
 

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class SimpleBot implements Bot {
+public abstract class AbstractBot implements Bot {
 
     private static final int LAST_PRICES_COUNT = 1000;
 
