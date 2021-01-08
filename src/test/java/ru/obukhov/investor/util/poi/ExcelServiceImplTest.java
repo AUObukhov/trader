@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 public class ExcelServiceImplTest extends BaseMockedTest {
 
     @Captor
-    ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
+    private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
     @Mock
     private ExcelFileService excelFileService;
     private ExcelServiceImpl excelService;
@@ -100,6 +100,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(150))
                 .quantity(1)
+                .commission(BigDecimal.valueOf(0.45))
                 .build();
         SimulatedOperation operation2 = SimulatedOperation.builder()
                 .ticker(ticker1)
@@ -107,6 +108,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .operationType(OperationType.Sell)
                 .price(BigDecimal.valueOf(180))
                 .quantity(1)
+                .commission(BigDecimal.valueOf(0.54))
                 .build();
         SimulatedOperation operation3 = SimulatedOperation.builder()
                 .ticker(ticker1)
@@ -114,6 +116,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(160))
                 .quantity(3)
+                .commission(BigDecimal.valueOf(0.48))
                 .build();
         SimulatedOperation operation4 = SimulatedOperation.builder()
                 .ticker(ticker2)
@@ -121,6 +124,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(120))
                 .quantity(2)
+                .commission(BigDecimal.valueOf(0.36))
                 .build();
         List<SimulatedOperation> operations = Arrays.asList(
                 operation1, operation2, operation3, operation4
