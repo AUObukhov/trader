@@ -30,7 +30,7 @@ public class BotController {
 
         Interval interval = Interval.of(request.getFrom(), request.getTo());
 
-        Collection<SimulationResult> results = simulator.simulate(request.getTicker(), request.getBalance(), interval);
+        Collection<SimulationResult> results = simulator.simulate(request.getTicker(), interval);
 
         return new SimulateResponse(results);
 

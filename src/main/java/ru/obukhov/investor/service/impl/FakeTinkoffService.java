@@ -3,6 +3,7 @@ package ru.obukhov.investor.service.impl;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
@@ -57,6 +58,7 @@ public class FakeTinkoffService implements TinkoffService {
     @Getter
     private OffsetDateTime currentDateTime;
     @Getter
+    @Setter
     private BigDecimal balance;
 
     public FakeTinkoffService(TradingProperties tradingProperties,
@@ -72,17 +74,20 @@ public class FakeTinkoffService implements TinkoffService {
 
     }
 
+    public void clear() {
+        this.operations.clear();
+        this.tickersToPositions.clear();
+        this.currentDateTime = OffsetDateTime.now();
+        this.balance = BigDecimal.ZERO;
+    }
+
     /**
      * sets current dateTime, but moves it to nearest work time
      */
-    public void init(OffsetDateTime currentDateTime, BigDecimal balance) {
-        this.operations.clear();
-        this.tickersToPositions.clear();
-
+    public void initCurrentDateTime(OffsetDateTime currentDateTime) {
         this.currentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
-        this.balance = balance;
     }
 
     /**
