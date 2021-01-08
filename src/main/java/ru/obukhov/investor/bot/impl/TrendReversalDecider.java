@@ -41,10 +41,13 @@ public class TrendReversalDecider extends AbstractDecider {
 
         final Portfolio.PortfolioPosition position = data.getPosition();
         final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
+        final BigDecimal currentPriceWithCommission =
+                MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
         if (position == null) {
-            if (MathUtils.isGreater(currentPrice, data.getBalance())) {
-                log.debug("Current price = {} is greater than balance {}. Decision is Wait",
-                        currentPrice, data.getBalance());
+            if (MathUtils.isGreater(currentPriceWithCommission, data.getBalance())) {
+                log.debug("No position, but current price with commission = {} is greater than balance {}." +
+                                " Decision is Wait",
+                        currentPriceWithCommission, data.getBalance());
                 return Decision.WAIT;
             } else {
                 final BigDecimal max = data.getCurrentPrices().stream().max(Comparator.naturalOrder()).orElseThrow();
