@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.obukhov.investor.bot.impl.DumbDecider;
 import ru.obukhov.investor.bot.impl.FakeBotImpl;
+import ru.obukhov.investor.bot.impl.GollumDecider;
 import ru.obukhov.investor.bot.impl.ScheduledBot;
 import ru.obukhov.investor.bot.impl.SimulatorImpl;
 import ru.obukhov.investor.bot.impl.TrendReversalDecider;
@@ -36,6 +37,11 @@ import java.util.Set;
 public class BeanConfiguration {
 
     @Bean
+    public Decider gollumDecider(TradingProperties tradingProperties) {
+        return new GollumDecider(tradingProperties);
+    }
+
+    @Bean
     public Decider dumbDecider(TradingProperties tradingProperties) {
         return new DumbDecider(tradingProperties);
     }
@@ -44,6 +50,24 @@ public class BeanConfiguration {
     public Decider trendReversalDecider(TradingProperties tradingProperties,
                                         TrendReversalDeciderProperties deciderProperties) {
         return new TrendReversalDecider(tradingProperties, deciderProperties);
+    }
+
+    @Bean
+    public FakeBot gollumFakeBot(Decider gollumDecider,
+                                 MarketService fakeMarketService,
+                                 OperationsService fakeOperationsService,
+                                 OrdersService fakeOrdersService,
+                                 PortfolioService fakePortfolioService,
+                                 FakeTinkoffService fakeTinkoffService) {
+
+        return new FakeBotImpl("Gollum bot",
+                gollumDecider,
+                fakeMarketService,
+                fakeOperationsService,
+                fakeOrdersService,
+                fakePortfolioService,
+                fakeTinkoffService);
+
     }
 
     @Bean
