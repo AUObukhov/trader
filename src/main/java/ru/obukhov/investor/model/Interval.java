@@ -12,6 +12,7 @@ import ru.obukhov.investor.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,9 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Interval {
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
     private final OffsetDateTime from;
 
@@ -145,6 +149,13 @@ public class Interval {
      */
     public Duration toDuration() {
         return Duration.between(from, to);
+    }
+
+    public String toPrettyString() {
+        String fromString = from == null ? "-∞" : DATE_TIME_FORMATTER.format(from);
+        String toString = to == null ? "∞" : DATE_TIME_FORMATTER.format(to);
+
+        return fromString + " — " + toString;
     }
 
 }

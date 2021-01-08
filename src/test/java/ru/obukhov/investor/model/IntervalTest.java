@@ -521,4 +521,43 @@ public class IntervalTest {
 
     // endregion
 
+    // region toPrettyString tests
+
+    @Test
+    public void toPrettyString_whenFromAndToAreNull() {
+        String prettyString = Interval.of(null, null).toPrettyString();
+
+        Assert.assertEquals("-∞ — ∞", prettyString);
+    }
+
+    @Test
+    public void toPrettyString_whenFromIsNotNull_andToIsNull() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+
+        String prettyString = Interval.of(from, null).toPrettyString();
+
+        Assert.assertEquals("2020.10.05 10:20:30 — ∞", prettyString);
+    }
+
+    @Test
+    public void toPrettyString_whenFromIsNull_andToIsNotNull() {
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+
+        String prettyString = Interval.of(null, to).toPrettyString();
+
+        Assert.assertEquals("-∞ — 2020.10.07 12:20:30", prettyString);
+    }
+
+    @Test
+    public void toPrettyString_whenFromAndToAreNotNull() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+
+        String prettyString = Interval.of(from, to).toPrettyString();
+
+        Assert.assertEquals("2020.10.05 10:20:30 — 2020.10.07 12:20:30", prettyString);
+    }
+
+    // endregion
+
 }
