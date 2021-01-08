@@ -13,8 +13,12 @@ import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Decider which decider to buy and sell paper when some time after trend reversal.<br/>
+ * Delay before decision to buy/sell and trend length are provided via constructor.
+ */
 @Slf4j
-public class TrendReversalDecider extends SimpleDecider {
+public class TrendReversalDecider extends AbstractDecider {
 
     public final TrendReversalDeciderProperties deciderProperties;
 

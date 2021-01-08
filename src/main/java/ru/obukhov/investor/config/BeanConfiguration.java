@@ -2,8 +2,8 @@ package ru.obukhov.investor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.obukhov.investor.bot.impl.DumbDecider;
 import ru.obukhov.investor.bot.impl.ScheduledBot;
-import ru.obukhov.investor.bot.impl.SimpleDecider;
 import ru.obukhov.investor.bot.impl.SimpleFakeBot;
 import ru.obukhov.investor.bot.impl.SimulatorImpl;
 import ru.obukhov.investor.bot.impl.TrendReversalDecider;
@@ -36,8 +36,8 @@ import java.util.Set;
 public class BeanConfiguration {
 
     @Bean
-    public Decider simpleDecider(TradingProperties tradingProperties) {
-        return new SimpleDecider(tradingProperties);
+    public Decider dumbDecider(TradingProperties tradingProperties) {
+        return new DumbDecider(tradingProperties);
     }
 
     @Bean
@@ -47,15 +47,15 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public FakeBot simpleFakeBot(Decider simpleDecider,
+    public FakeBot simpleFakeBot(Decider dumbDecider,
                                  MarketService fakeMarketService,
                                  OperationsService fakeOperationsService,
                                  OrdersService fakeOrdersService,
                                  PortfolioService fakePortfolioService,
                                  FakeTinkoffService fakeTinkoffService) {
 
-        return new SimpleFakeBot("Simple bot",
-                simpleDecider,
+        return new SimpleFakeBot("Dumb bot",
+                dumbDecider,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
@@ -83,7 +83,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Bot scheduledBot(Decider simpleDecider,
+    public Bot scheduledBot(Decider dumbDecider,
                             MarketService realMarketService,
                             OperationsService realOperationsService,
                             OrdersService realOrdersService,
@@ -91,7 +91,7 @@ public class BeanConfiguration {
                             BotProperties botProperties,
                             TradingProperties tradingProperties) {
 
-        return new ScheduledBot(simpleDecider,
+        return new ScheduledBot(dumbDecider,
                 realMarketService,
                 realOperationsService,
                 realOrdersService,
