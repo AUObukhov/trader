@@ -114,6 +114,8 @@ public class ExtendedRow implements Row {
             return createCell(column, (String) value);
         } else if (value instanceof BigDecimal) {
             return createCell(column, (BigDecimal) value);
+        } else if (value instanceof Double) {
+            return createCell(column, (Double) value);
         } else if (value instanceof Integer) {
             return createCell(column, (Integer) value);
         } else if (value instanceof LocalDateTime) {
@@ -149,26 +151,36 @@ public class ExtendedRow implements Row {
      * @return created cell
      */
     public ExtendedCell createCell(int column, BigDecimal value) {
-        ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
-        cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
-        if (value != null) {
-            cell.setCellValue(value.doubleValue());
-        }
-        return cell;
+        Double doubleValue = value == null ? null : value.doubleValue();
+        return createCell(column, doubleValue);
     }
 
     /**
      * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, Integer value) {
+    public ExtendedCell createCell(int column, Double value) {
         ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
         if (value != null) {
             cell.setCellValue(value);
         }
         return cell;
+    }
+
+    /**
+     * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(int column, Integer value) {
+        Double doubleValue = value == null ? null : value.doubleValue();
+        return createCell(column, doubleValue);
     }
 
     /**

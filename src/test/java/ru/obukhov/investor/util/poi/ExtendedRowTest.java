@@ -356,6 +356,42 @@ public class ExtendedRowTest {
 
     // endregion
 
+    // region createCell with Double value tests
+
+    @Test
+    public void createCell_withDoubleValue_whenValueIsNull() {
+        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        int column = 5;
+        Double value = null;
+
+        ExtendedCell cell = extendedRow.createCell(column, value);
+
+        assertCellAttributes(cell,
+                extendedRow,
+                column,
+                CellType.NUMERIC,
+                ExtendedWorkbook.CellStylesNames.NUMERIC,
+                value);
+    }
+
+    @Test
+    public void createCell_withDoubleValue_whenValueIsNotNull() {
+        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        int column = 5;
+        Double value = 10d;
+
+        ExtendedCell cell = extendedRow.createCell(column, value);
+
+        assertCellAttributes(cell,
+                extendedRow,
+                column,
+                CellType.NUMERIC,
+                ExtendedWorkbook.CellStylesNames.NUMERIC,
+                value);
+    }
+
+    // endregion
+
     // region createCell with Integer value tests
 
     @Test

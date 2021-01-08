@@ -1,5 +1,6 @@
 package ru.obukhov.investor.util;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -63,6 +64,8 @@ public class AssertUtils {
                     AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
                 } else if (value instanceof BigDecimal) {
                     assertCellValue(cell, (BigDecimal) value);
+                } else if (value instanceof Double) {
+                    assertCellValue(cell, (Double) value);
                 } else if (value instanceof Integer) {
                     assertCellValue(cell, (Integer) value);
                 } else if (value instanceof LocalDateTime) {
@@ -86,6 +89,11 @@ public class AssertUtils {
 
     public static void assertCellValue(Cell cell, BigDecimal value) {
         double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+        AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
+    }
+
+    public static void assertCellValue(Cell cell, Double value) {
+        double expectedValue = ObjectUtils.defaultIfNull(value, NumberUtils.DOUBLE_ZERO);
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }
 
