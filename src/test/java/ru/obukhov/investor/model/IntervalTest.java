@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.obukhov.investor.util.DateUtils;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -504,4 +505,20 @@ public class IntervalTest {
     }
 
     // endregion
+
+    // region toDuration tests
+
+    @Test
+    public void toDuration_returnsProperDuration() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+
+        Duration duration = Interval.of(from, to).toDuration();
+
+        Duration expectedDuration = Duration.between(from, to);
+        Assert.assertEquals(expectedDuration, duration);
+    }
+
+    // endregion
+
 }

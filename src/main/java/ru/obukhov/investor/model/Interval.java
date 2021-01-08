@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.obukhov.investor.util.DateUtils;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +138,13 @@ public class Interval {
         result.add(Interval.of(currentFrom, to));
 
         return result;
+    }
+
+    /**
+     * @return duration of current interval
+     */
+    public Duration toDuration() {
+        return Duration.between(from, to);
     }
 
 }
