@@ -1,7 +1,9 @@
 package ru.obukhov.investor.bot.interfaces;
 
+import ru.obukhov.investor.bot.model.DecisionData;
+
 public interface Bot {
 
-    void processTicker(String ticker);
+    DecisionData processTicker(String ticker);
 
 }

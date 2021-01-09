@@ -37,37 +37,37 @@ public abstract class AbstractBot implements Bot {
     protected final PortfolioService portfolioService;
 
     @Override
-    public void processTicker(String ticker) {
+    public DecisionData processTicker(String ticker) {
+        DecisionData decisionData = new DecisionData();
         try {
             List<Order> orders = ordersService.getOrders(ticker);
-            if (!orders.isEmpty()) {
+            if (orders.isEmpty()) {
+                fillDecisionData(decisionData, ticker);
+                if (CollectionUtils.isEmpty(decisionData.getCurrentPrices())) {
+                    log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
+                } else {
+                    Decision decision = decider.decide(decisionData);
+                    performOperation(ticker, decision);
+                }
+            } else {
                 log.info("There are not completed orders by ticker '" + ticker + "'. Do nothing");
-                return;
             }
-            DecisionData data = getData(ticker);
-            if (CollectionUtils.isEmpty(data.getCurrentPrices())) {
-                log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
-                return;
-            }
-
-            Decision decision = decider.decide(data);
-            performOperation(ticker, decision);
         } catch (TickerNotFoundException ex) {
             throw ex;
         } catch (Exception ex) {
             log.error("Exception while process ticker " + ticker + ". Do nothing", ex);
         }
+
+        return decisionData;
     }
 
-    private DecisionData getData(String ticker) {
+    private void fillDecisionData(DecisionData decisionData, String ticker) {
 
-        return DecisionData.builder()
-                .balance(portfolioService.getAvailableBalance(Currency.RUB))
-                .position(portfolioService.getPosition(ticker))
-                .currentPrices(getCurrentPrices(ticker))
-                .lastOperations(getLastWeekOperations(ticker))
-                .instrument(marketService.getInstrument(ticker))
-                .build();
+        decisionData.setBalance(portfolioService.getAvailableBalance(Currency.RUB));
+        decisionData.setPosition(portfolioService.getPosition(ticker));
+        decisionData.setCurrentPrices(getCurrentPrices(ticker));
+        decisionData.setLastOperations(getLastWeekOperations(ticker));
+        decisionData.setInstrument(marketService.getInstrument(ticker));
 
     }
 

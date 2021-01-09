@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
@@ -70,7 +71,7 @@ public class SimulatorImpl implements Simulator {
 
         do {
 
-            bot.processTicker(ticker);
+            DecisionData decisionData = bot.processTicker(ticker);
 
             fakeTinkoffService.nextMinute();
 
