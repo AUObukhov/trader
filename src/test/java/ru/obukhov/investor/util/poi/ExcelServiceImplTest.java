@@ -1,16 +1,15 @@
 package ru.obukhov.investor.util.poi;
 
 import org.apache.poi.ss.usermodel.Row;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.impl.ExcelServiceImpl;
 import ru.obukhov.investor.service.interfaces.ExcelFileService;
-import ru.obukhov.investor.util.AssertUtils;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
@@ -18,13 +17,16 @@ import ru.obukhov.investor.web.model.SimulationResult;
 import ru.tinkoff.invest.openapi.models.operations.OperationType;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
+import static ru.obukhov.investor.util.AssertUtils.assertRowValues;
 
 public class ExcelServiceImplTest extends BaseMockedTest {
 
@@ -49,30 +51,37 @@ public class ExcelServiceImplTest extends BaseMockedTest {
         verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), anyString());
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
-        Assert.assertEquals(1, workbook.getNumberOfSheets());
+        assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 8 + result.getPositions().size() + result.getOperations().size();
-        Assert.assertEquals(expectedRowCount, sheet.getRowsCount());
+        int expectedRowCount = 14 + result.getPositions().size() + result.getOperations().size();
+        assertEquals(expectedRowCount, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
-        AssertUtils.assertRowValues(rowIterator.next(), "Общий баланс", result.getTotalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Валютный баланс", result.getCurrencyBalance());
+        assertRowValues(rowIterator.next(), "Общая статистика");
+        assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
+        assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
+        assertRowValues(rowIterator.next(), "Общий баланс", result.getTotalBalance());
+        assertRowValues(rowIterator.next(), "Валютный баланс", result.getCurrencyBalance());
+        assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
+        assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
+        assertRowValues(rowIterator.next(), "Относительный годовой доход",
+                result.getRelativeYearProfit());
 
-        AssertUtils.assertRowValues(rowIterator.next());
-        AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
-        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", "Цена", "Количество");
+        assertRowValues(rowIterator.next());
+        assertRowValues(rowIterator.next(), "Позиции");
+        assertRowValues(rowIterator.next(), "Тикер", "Цена", "Количество");
         for (SimulatedPosition position : result.getPositions()) {
-            AssertUtils.assertRowValues(rowIterator.next(),
+            assertRowValues(rowIterator.next(),
                     position.getTicker(), position.getPrice(), position.getQuantity());
         }
 
-        AssertUtils.assertRowValues(rowIterator.next());
-        AssertUtils.assertRowValues(rowIterator.next(), "Операции");
-        AssertUtils.assertRowValues(rowIterator.next(),
+        assertRowValues(rowIterator.next());
+        assertRowValues(rowIterator.next(), "Операции");
+        assertRowValues(rowIterator.next(),
                 "Тикер", "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
         for (SimulatedOperation operation : result.getOperations()) {
-            AssertUtils.assertRowValues(rowIterator.next(),
+            assertRowValues(rowIterator.next(),
                     operation.getTicker(),
                     operation.getDateTime(),
                     operation.getOperationType().name(),
@@ -83,17 +92,39 @@ public class ExcelServiceImplTest extends BaseMockedTest {
     }
 
     private SimulationResult createSimulationResult() {
+        SimulationResult.SimulationResultBuilder builder = SimulationResult.builder()
+                .botName("bot");
+
         String ticker1 = "ticker1";
         String ticker2 = "ticker2";
 
-        BigDecimal totalBalance = BigDecimal.valueOf(1000);
-        BigDecimal currencyBalance = BigDecimal.valueOf(200);
+        builder.interval(createInterval());
+        builder.initialBalance(BigDecimal.valueOf(700));
+        builder.totalBalance(BigDecimal.valueOf(1000));
+        builder.currencyBalance(BigDecimal.valueOf(200));
+        builder.absoluteProfit(BigDecimal.valueOf(300));
+        builder.relativeProfit(0.25);
+        builder.relativeYearProfit(6d);
+        builder.positions(createPositions(ticker1, ticker2));
+        builder.operations(createSimulatedOperations(ticker1, ticker2));
 
-        List<SimulatedPosition> positions = Arrays.asList(
+        return builder.build();
+    }
+
+    private Interval createInterval() {
+        OffsetDateTime from = DateUtils.getDate(2020, 10, 1);
+        OffsetDateTime to = DateUtils.getDate(2020, 10, 15);
+        return Interval.of(from, to);
+    }
+
+    private List<SimulatedPosition> createPositions(String ticker1, String ticker2) {
+        return Arrays.asList(
                 new SimulatedPosition(ticker1, BigDecimal.valueOf(200), 3),
                 new SimulatedPosition(ticker2, BigDecimal.valueOf(100), 2)
         );
+    }
 
+    private List<SimulatedOperation> createSimulatedOperations(String ticker1, String ticker2) {
         SimulatedOperation operation1 = SimulatedOperation.builder()
                 .ticker(ticker1)
                 .dateTime(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
@@ -126,17 +157,8 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .quantity(2)
                 .commission(BigDecimal.valueOf(0.36))
                 .build();
-        List<SimulatedOperation> operations = Arrays.asList(
-                operation1, operation2, operation3, operation4
-        );
 
-        return SimulationResult.builder()
-                .botName("bot")
-                .totalBalance(totalBalance)
-                .currencyBalance(currencyBalance)
-                .positions(positions)
-                .operations(operations)
-                .build();
+        return Arrays.asList(operation1, operation2, operation3, operation4);
     }
 
 }

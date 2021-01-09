@@ -18,6 +18,8 @@ import java.time.temporal.TemporalUnit;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
 
+    public static final double DAYS_IN_YEAR = 365.25;
+
     private static final ZoneOffset DEFAULT_OFFSET = OffsetDateTime.now().getOffset();
 
     /**

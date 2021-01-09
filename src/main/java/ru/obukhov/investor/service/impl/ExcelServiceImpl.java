@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.interfaces.ExcelFileService;
 import ru.obukhov.investor.service.interfaces.ExcelService;
 import ru.obukhov.investor.util.poi.ExtendedRow;
@@ -56,12 +57,34 @@ public class ExcelServiceImpl implements ExcelService {
     private void createSheet(ExtendedWorkbook workbook, SimulationResult result) {
         ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
 
-        putTotalBalance(sheet, result.getTotalBalance());
-        putCurrencyBalance(sheet, result.getCurrencyBalance());
+        putCommonStatistics(result, sheet);
         putPositions(sheet, result.getPositions());
         putOperations(sheet, result.getOperations());
 
         sheet.autoSizeColumns();
+    }
+
+    private void putCommonStatistics(SimulationResult result, ExtendedSheet sheet) {
+        ExtendedRow labelRow = sheet.addRow();
+        labelRow.createCells("Общая статистика");
+
+        putInterval(sheet, result.getInterval());
+        putInitialBalance(sheet, result.getInitialBalance());
+        putTotalBalance(sheet, result.getTotalBalance());
+        putCurrencyBalance(sheet, result.getCurrencyBalance());
+        putAbsoluteProfit(sheet, result.getAbsoluteProfit());
+        putRelativeProfit(sheet, result.getRelativeProfit());
+        putRelativeYearProfit(sheet, result.getRelativeYearProfit());
+    }
+
+    private void putInterval(ExtendedSheet sheet, Interval interval) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Интервал", interval.toPrettyString());
+    }
+
+    private void putInitialBalance(ExtendedSheet sheet, BigDecimal initialBalance) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Начальный баланс", initialBalance);
     }
 
     private void putTotalBalance(ExtendedSheet sheet, BigDecimal totalBalance) {
@@ -72,6 +95,21 @@ public class ExcelServiceImpl implements ExcelService {
     private void putCurrencyBalance(ExtendedSheet sheet, BigDecimal currencyBalance) {
         ExtendedRow row = sheet.addRow();
         row.createCells("Валютный баланс", currencyBalance);
+    }
+
+    private void putAbsoluteProfit(ExtendedSheet sheet, BigDecimal absoluteProfit) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Абсолютный доход", absoluteProfit);
+    }
+
+    private void putRelativeProfit(ExtendedSheet sheet, double relativeProfit) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Относительный доход", relativeProfit);
+    }
+
+    private void putRelativeYearProfit(ExtendedSheet sheet, double relativeYearProfit) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Относительный годовой доход", relativeYearProfit);
     }
 
     private void putPositions(ExtendedSheet sheet, List<SimulatedPosition> positions) {
