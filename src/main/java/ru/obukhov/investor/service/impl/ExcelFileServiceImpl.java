@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class ExcelFileServiceImpl implements ExcelFileService {
 
     private static final String USER_HOME_FOLDER = System.getProperty("user.home");
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-dd-M--HH-mm-ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     @Override
     @SneakyThrows
