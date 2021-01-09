@@ -1,7 +1,9 @@
 package ru.obukhov.investor.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 
 import java.math.BigDecimal;
@@ -27,8 +29,12 @@ public class SimulationResult {
 
     private Double relativeYearProfit;
 
+    @JsonIgnore
     private List<SimulatedPosition> positions;
 
+    @JsonIgnore
     private List<SimulatedOperation> operations;
 
+    @JsonIgnore
+    private List<Candle> candles;
 }

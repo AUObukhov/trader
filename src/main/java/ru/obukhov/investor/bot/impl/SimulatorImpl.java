@@ -1,5 +1,6 @@
 package ru.obukhov.investor.bot.impl;
 
+import com.google.common.collect.Iterables;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -21,6 +22,7 @@ import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,14 +66,16 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
-    public SimulationResult simulate(FakeBot bot, String ticker, Interval interval) {
+    private SimulationResult simulate(FakeBot bot, String ticker, Interval interval) {
         log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' started");
 
         BigDecimal initialBalance = initSimulation(ticker, interval);
+        List<Candle> candles = new ArrayList<>();
 
         do {
 
             DecisionData decisionData = bot.processTicker(ticker);
+            addLastCandle(candles, decisionData);
 
             fakeTinkoffService.nextMinute();
 
@@ -79,10 +83,18 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' ended");
 
-        return createResult(bot.getName(), initialBalance, interval, ticker);
+        return createResult(bot.getName(), initialBalance, interval, ticker, candles);
     }
 
-    public BigDecimal initSimulation(String ticker, Interval interval) {
+    private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
+        List<Candle> currentCandles = decisionData.getCurrentCandles();
+        Candle candle = Iterables.getLast(currentCandles);
+        if (candle != null) {
+            candles.add(candle);
+        }
+    }
+
+    private BigDecimal initSimulation(String ticker, Interval interval) {
         fakeTinkoffService.clear();
         fakeTinkoffService.initCurrentDateTime(interval.getFrom());
 
@@ -100,7 +112,12 @@ public class SimulatorImpl implements Simulator {
         return MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
     }
 
-    private SimulationResult createResult(String botName, BigDecimal initialBalance, Interval interval, String ticker) {
+    private SimulationResult createResult(String botName,
+                                          BigDecimal initialBalance,
+                                          Interval interval,
+                                          String ticker,
+                                          List<Candle> candles) {
+
         BigDecimal totalBalance = getTotalBalance();
         BigDecimal absoluteProfit = totalBalance.subtract(initialBalance);
         double relativeProfit = MathUtils.divide(absoluteProfit, initialBalance).doubleValue();
@@ -117,6 +134,7 @@ public class SimulatorImpl implements Simulator {
                 .relativeYearProfit(relativeYearProfit)
                 .positions(getPositions())
                 .operations(getOperations(interval, ticker))
+                .candles(candles)
                 .build();
     }
 
