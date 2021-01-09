@@ -28,7 +28,7 @@ public class GollumDecider extends AbstractDecider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
-        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
+        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentCandles()).getClosePrice();
         if (position == null) {
             if (MathUtils.isGreater(currentPrice, data.getBalance())) {
                 log.debug("Current price = {} is greater than balance {}. Decision is Wait",

@@ -6,12 +6,14 @@ import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.config.TrendReversalDeciderProperties;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Decider which decider to buy and sell paper when some time after trend reversal.<br/>
@@ -29,9 +31,9 @@ public class TrendReversalDecider extends AbstractDecider {
 
     @Override
     public Decision decide(DecisionData data) {
-        if (data.getCurrentPrices().size() < deciderProperties.getLastPricesCount()) {
-            log.debug("Need at least " + deciderProperties.getLastPricesCount() + " prices." +
-                    " Got " + data.getCurrentPrices().size() + ". Decision is Wait");
+        if (data.getCurrentCandles().size() < deciderProperties.getLastPricesCount()) {
+            log.debug("Need at least " + deciderProperties.getLastPricesCount() + " candles." +
+                    " Got " + data.getCurrentCandles().size() + ". Decision is Wait");
             return Decision.WAIT;
         }
         if (existsOperationInProgress(data)) {
@@ -40,7 +42,10 @@ public class TrendReversalDecider extends AbstractDecider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
-        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
+        final List<BigDecimal> currentPrices = data.getCurrentCandles().stream()
+                .map(Candle::getClosePrice)
+                .collect(Collectors.toList());
+        final BigDecimal currentPrice = Iterables.getLast(currentPrices);
         final BigDecimal currentPriceWithCommission =
                 MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
         if (position == null) {
@@ -50,8 +55,8 @@ public class TrendReversalDecider extends AbstractDecider {
                         currentPriceWithCommission, data.getBalance());
                 return Decision.WAIT;
             } else {
-                final BigDecimal max = data.getCurrentPrices().stream().max(Comparator.naturalOrder()).orElseThrow();
-                final BigDecimal expectedMax = getExpectedExtremum(data.getCurrentPrices());
+                final BigDecimal max = currentPrices.stream().max(Comparator.naturalOrder()).orElseThrow();
+                final BigDecimal expectedMax = getExpectedExtremum(currentPrices);
                 if (MathUtils.numbersEqual(expectedMax, max)) {
                     log.debug("Expected max " + expectedMax + " is equal to max " + max + ". Decision is Buy");
                     return Decision.BUY;
@@ -68,8 +73,8 @@ public class TrendReversalDecider extends AbstractDecider {
             return Decision.WAIT;
         }
 
-        final BigDecimal min = data.getCurrentPrices().stream().min(Comparator.naturalOrder()).orElseThrow();
-        final BigDecimal expectedMin = getExpectedExtremum(data.getCurrentPrices());
+        final BigDecimal min = currentPrices.stream().min(Comparator.naturalOrder()).orElseThrow();
+        final BigDecimal expectedMin = getExpectedExtremum(currentPrices);
         if (MathUtils.numbersEqual(expectedMin, min)) {
             log.debug("Expected min " + expectedMin + " is equal to min " + min + ". Decision is Sell");
             return Decision.SELL;

@@ -28,7 +28,7 @@ public class DumbDecider extends AbstractDecider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
-        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentPrices());
+        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentCandles()).getClosePrice();
         final BigDecimal currentPriceWithCommission =
                 MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
         if (position == null) {
