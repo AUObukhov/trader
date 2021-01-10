@@ -7,6 +7,7 @@ import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.config.TrendReversalDeciderProperties;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.util.CollectionsUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
@@ -42,9 +43,10 @@ public class TrendReversalDecider extends AbstractDecider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
-        final List<BigDecimal> currentPrices = data.getCurrentCandles().stream()
+        List<BigDecimal> currentPrices = data.getCurrentCandles().stream()
                 .map(Candle::getClosePrice)
                 .collect(Collectors.toList());
+        currentPrices = CollectionsUtils.getTail(currentPrices, deciderProperties.getLastPricesCount());
         final BigDecimal currentPrice = Iterables.getLast(currentPrices);
         final BigDecimal currentPriceWithCommission =
                 MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
@@ -85,8 +87,7 @@ public class TrendReversalDecider extends AbstractDecider {
     }
 
     private BigDecimal getExpectedExtremum(List<BigDecimal> prices) {
-        int index = prices.size() - deciderProperties.getLastPricesCount() + deciderProperties.getExtremumPriceIndex();
-        return prices.get(index);
+        return prices.get(deciderProperties.getExtremumPriceIndex());
     }
 
 }
