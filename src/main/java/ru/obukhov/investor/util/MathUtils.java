@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -25,6 +26,13 @@ public class MathUtils {
                 .reduce(BigDecimal::add)
                 .map(sum -> divide(sum, numbers.size()))
                 .orElse(BigDecimal.ZERO);
+    }
+
+    /**
+     * @return average value of passed {@code numbers} with scale = 5 and rounding mode = Half Up
+     */
+    public static BigDecimal getAverage(BigDecimal... numbers) {
+        return getAverage(Arrays.asList(numbers));
     }
 
     /**

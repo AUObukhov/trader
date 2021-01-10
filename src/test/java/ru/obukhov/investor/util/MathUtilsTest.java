@@ -14,10 +14,10 @@ import static org.junit.Assert.assertTrue;
 
 public class MathUtilsTest {
 
-    // region getAverage tests
+    // region getAverage with collection tests
 
     @Test
-    public void getAverage_returnsZero_whenCollectionIsEmpty() {
+    public void getAverage_withCollection_returnsZero_whenCollectionIsEmpty() {
 
         List<BigDecimal> numbers = ImmutableList.of();
 
@@ -28,18 +28,18 @@ public class MathUtilsTest {
     }
 
     @Test
-    public void getAverage_returnsNumber_whenItIsSingleInCollection() {
+    public void getAverage_withCollection_returnsNumber_whenItIsSingleInCollection() {
 
         List<BigDecimal> numbers = ImmutableList.of(BigDecimal.TEN);
 
         BigDecimal average = MathUtils.getAverage(numbers);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.TEN, average));
+        assertTrue(MathUtils.numbersEqual(numbers.get(0), average));
 
     }
 
     @Test
-    public void getAverage_returnsAverage_whenMultipleNumbersInCollection() {
+    public void getAverage_withCollection_returnsAverage_whenMultipleNumbersInCollection() {
 
         List<BigDecimal> numbers = ImmutableList.of(
                 BigDecimal.valueOf(100),
@@ -48,6 +48,43 @@ public class MathUtilsTest {
         );
 
         BigDecimal average = MathUtils.getAverage(numbers);
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.3333), average));
+
+    }
+
+    // endregion
+
+    // region getAverage with VarArgs tests
+
+    @Test
+    public void getAverage_withVarArgs_returnsZero_whenNoArguments() {
+
+        BigDecimal average = MathUtils.getAverage();
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.ZERO, average));
+
+    }
+
+    @Test
+    public void getAverage_withVarArgs_returnsNumber_whenSingleArguments() {
+
+        BigDecimal number = BigDecimal.TEN;
+
+        BigDecimal average = MathUtils.getAverage(number);
+
+        assertTrue(MathUtils.numbersEqual(number, average));
+
+    }
+
+    @Test
+    public void getAverage_withVarArgs_returnsAverage_whenMultipleNumbersInCollection() {
+
+
+        BigDecimal average = MathUtils.getAverage(
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(200),
+                BigDecimal.valueOf(1000));
 
         assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.3333), average));
 
