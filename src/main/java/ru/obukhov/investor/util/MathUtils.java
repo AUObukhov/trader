@@ -2,10 +2,13 @@ package ru.obukhov.investor.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
@@ -138,6 +141,26 @@ public class MathUtils {
      */
     public static boolean isLower(BigDecimal value1, BigDecimal value2) {
         return value1.compareTo(value2) < 0;
+    }
+
+    /**
+     * @return maximum of given {@code values}, or null if {@code values} is empty
+     */
+    @Nullable
+    public static BigDecimal max(List<BigDecimal> values) {
+        return values.stream()
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+    }
+
+    /**
+     * @return minimum of given {@code values}, or null if {@code values} is empty
+     */
+    @Nullable
+    public static BigDecimal min(List<BigDecimal> values) {
+        return values.stream()
+                .min(Comparator.naturalOrder())
+                .orElse(null);
     }
 
     // endregion

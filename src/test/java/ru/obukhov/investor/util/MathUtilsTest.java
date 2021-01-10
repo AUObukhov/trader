@@ -4,9 +4,12 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class MathUtilsTest {
@@ -207,4 +210,51 @@ public class MathUtilsTest {
     }
 
     // endregion
+
+    // region max tests
+
+    @Test
+    public void max_returnsNull_whenValuesIsEmpty() {
+        BigDecimal max = MathUtils.max(Collections.emptyList());
+
+        assertNull(max);
+    }
+
+    @Test
+    public void max_returnsMaxValue_whenValuesIsNotEmpty() {
+        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(-100),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(20));
+
+        BigDecimal max = MathUtils.max(values);
+
+        assertTrue(MathUtils.numbersEqual(max, 21));
+    }
+
+    // endregion
+
+    // region min tests
+
+    @Test
+    public void min_returnsNull_whenValuesIsEmpty() {
+        BigDecimal min = MathUtils.min(Collections.emptyList());
+
+        assertNull(min);
+    }
+
+    @Test
+    public void min_returnsMaxValue_whenValuesIsNotEmpty() {
+        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100),
+                BigDecimal.valueOf(-21),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(20));
+
+        BigDecimal min = MathUtils.min(values);
+
+        assertTrue(MathUtils.numbersEqual(min, -21));
+    }
+
+    // endregion
+
 }
