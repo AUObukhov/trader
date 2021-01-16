@@ -155,7 +155,7 @@ public class MathUtils {
      * @return maximum of given {@code values}, or null if {@code values} is empty
      */
     @Nullable
-    public static BigDecimal max(List<BigDecimal> values) {
+    public static Double max(List<Double> values) {
         return values.stream()
                 .max(Comparator.naturalOrder())
                 .orElse(null);
@@ -165,7 +165,7 @@ public class MathUtils {
      * @return minimum of given {@code values}, or null if {@code values} is empty
      */
     @Nullable
-    public static BigDecimal min(List<BigDecimal> values) {
+    public static Double min(List<Double> values) {
         return values.stream()
                 .min(Comparator.naturalOrder())
                 .orElse(null);

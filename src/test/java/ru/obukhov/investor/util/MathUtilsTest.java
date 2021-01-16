@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -252,21 +253,18 @@ public class MathUtilsTest {
 
     @Test
     public void max_returnsNull_whenValuesIsEmpty() {
-        BigDecimal max = MathUtils.max(Collections.emptyList());
+        Double max = MathUtils.max(Collections.emptyList());
 
         assertNull(max);
     }
 
     @Test
     public void max_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(-100),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(20));
+        List<Double> values = Arrays.asList(-100d, 21d, 10d, 20d);
 
-        BigDecimal max = MathUtils.max(values);
+        Double max = MathUtils.max(values);
 
-        assertTrue(MathUtils.numbersEqual(max, 21));
+        assertEquals(max, Double.valueOf(21));
     }
 
     // endregion
@@ -275,21 +273,18 @@ public class MathUtilsTest {
 
     @Test
     public void min_returnsNull_whenValuesIsEmpty() {
-        BigDecimal min = MathUtils.min(Collections.emptyList());
+        Double min = MathUtils.min(Collections.emptyList());
 
         assertNull(min);
     }
 
     @Test
     public void min_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100),
-                BigDecimal.valueOf(-21),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(20));
+        List<Double> values = Arrays.asList(100d, -21d, 10d, 20d);
 
-        BigDecimal min = MathUtils.min(values);
+        Double min = MathUtils.min(values);
 
-        assertTrue(MathUtils.numbersEqual(min, -21));
+        assertEquals(min, Double.valueOf(-21));
     }
 
     // endregion
