@@ -2,6 +2,8 @@ package ru.obukhov.investor.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.util.Assert;
+import ru.obukhov.investor.util.DateUtils;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -19,5 +21,27 @@ public class Candle {
     private BigDecimal lowestPrice;
 
     private OffsetDateTime time;
+
+    /**
+     * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
+     */
+    public static Candle createAverage(Candle leftCandle, Candle rightCandle) {
+        Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()),
+                "leftCandle can't be after rightCandle");
+
+        BigDecimal openPrice = leftCandle.getClosePrice();
+        BigDecimal closePrice = rightCandle.getOpenPrice();
+        BigDecimal highestPrice = openPrice.max(closePrice);
+        BigDecimal lowestPrice = openPrice.min(closePrice);
+        OffsetDateTime time = DateUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
+
+        return builder()
+                .openPrice(openPrice)
+                .closePrice(closePrice)
+                .highestPrice(highestPrice)
+                .lowestPrice(lowestPrice)
+                .time(time)
+                .build();
+    }
 
 }
