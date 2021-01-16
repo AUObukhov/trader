@@ -20,6 +20,7 @@ public class IntervalTest {
         Interval.of(from, to);
     }
 
+    @Test
     public void of_returnsInterval_whenFromAndToAreNull() {
         Interval interval = Interval.of(null, null);
 
@@ -27,6 +28,7 @@ public class IntervalTest {
         Assert.assertNull(interval.getTo());
     }
 
+    @Test
     public void of_returnsInterval_whenFromIsNull() {
         OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
 
@@ -36,6 +38,7 @@ public class IntervalTest {
         Assert.assertEquals(to, interval.getTo());
     }
 
+    @Test
     public void of_returnsInterval_whenToIsNull() {
         OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
 
@@ -45,6 +48,7 @@ public class IntervalTest {
         Assert.assertNull(interval.getTo());
     }
 
+    @Test
     public void of_returnsInterval_whenFromAndToAreNotNull() {
         OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
         OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
