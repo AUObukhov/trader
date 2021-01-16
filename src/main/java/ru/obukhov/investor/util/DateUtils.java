@@ -141,6 +141,14 @@ public class DateUtils {
     }
 
     /**
+     * @return average dateTime between given {@code dateTime1} and {@code dateTime2}
+     */
+    public static OffsetDateTime getAverage(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        Duration halfOfDuration = Duration.between(dateTime1, dateTime2).dividedBy(2);
+        return dateTime1.plus(halfOfDuration);
+    }
+
+    /**
      * Same as {@link OffsetDateTime#plus}, but if result is after {@code maxDateTime}, then returns {@code maxDateTime}
      */
     public static OffsetDateTime plusLimited(OffsetDateTime dateTime,

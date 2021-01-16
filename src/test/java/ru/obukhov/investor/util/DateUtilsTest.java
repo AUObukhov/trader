@@ -308,6 +308,31 @@ public class DateUtilsTest {
 
     // endregion
 
+    // region getAverage tests
+
+    @Test
+    public void getAverage_returnsEqualsDate_whenDatesAreEqual() {
+        OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+
+        OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
+
+        Assert.assertEquals(dateTime1, result);
+    }
+
+    @Test
+    public void getAverage_returnsAverageDate_whenDatesAreNotEqual() {
+        OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 2, 10, 30, 0);
+
+        OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
+
+        OffsetDateTime expected = DateUtils.getDateTime(2020, 1, 1, 22, 15, 0);
+        Assert.assertEquals(expected, result);
+    }
+
+    // endregion
+
     // region getEarliestDateTime tests
 
     @Test
