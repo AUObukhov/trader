@@ -14,11 +14,6 @@ public class Candle {
 
     private BigDecimal closePrice;
 
-    /**
-     * equals closePrice - openPrice
-     */
-    private BigDecimal saldo;
-
     private BigDecimal highestPrice;
 
     private BigDecimal lowestPrice;

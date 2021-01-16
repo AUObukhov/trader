@@ -1,9 +1,7 @@
 package ru.obukhov.investor.model.transform;
 
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import ru.obukhov.investor.model.Candle;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
@@ -33,12 +31,6 @@ public abstract class CandleMapper {
         return source.candles.stream()
                 .map(this::map)
                 .collect(Collectors.toList());
-    }
-
-    @AfterMapping
-    protected void calculateSaldo(@MappingTarget Candle.CandleBuilder candle,
-                                  ru.tinkoff.invest.openapi.models.market.Candle source) {
-        candle.saldo(source.closePrice.subtract(source.openPrice).setScale(2, RoundingMode.HALF_UP));
     }
 
     @Named("moneyMapper")

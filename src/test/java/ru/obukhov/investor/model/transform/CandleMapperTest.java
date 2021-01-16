@@ -66,22 +66,6 @@ public class CandleMapperTest {
     }
 
     @Test
-    public void calculatesSingleCandleSaldo() {
-
-        ru.tinkoff.invest.openapi.models.market.Candle source = createTinkoffCandle(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(250),
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(50)
-        );
-
-        Candle result = candleMapper.map(source);
-
-        assertTrue(numbersEqual(result.getSaldo(), BigDecimal.valueOf(150)));
-
-    }
-
-    @Test
     public void mapsHistoricalCandles() {
 
         ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle1 = createTinkoffCandle(

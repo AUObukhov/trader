@@ -77,27 +77,33 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(200))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getTime(10, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getTime(11, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(300))
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getTime(11, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getTime(12, 0, 0))
                 .build());
 
@@ -129,27 +135,33 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(20))
+                .openPrice(BigDecimal.valueOf(10))
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(30))
+                .openPrice(BigDecimal.valueOf(20))
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(40))
+                .openPrice(BigDecimal.valueOf(30))
                 .time(getTime(10, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(50))
+                .openPrice(BigDecimal.valueOf(40))
                 .time(getTime(11, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(60))
+                .openPrice(BigDecimal.valueOf(50))
                 .time(getTime(12, 0, 0))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(70))
+                .openPrice(BigDecimal.valueOf(60))
                 .time(getTime(11, 0, 0))
                 .build());
 
@@ -178,31 +190,37 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         // Monday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(200))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 24))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 8, 24))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 24))
                 .build());
 
         // Tuesday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(300))
                 .time(getDate(2020, 8, 25))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(500))
+                .openPrice(BigDecimal.valueOf(300))
                 .time(getDate(2020, 8, 25))
                 .build());
 
         // Wednesday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(500))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 8, 26))
                 .build());
 
@@ -234,25 +252,29 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         // Tuesday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(20))
+                .openPrice(BigDecimal.valueOf(10))
                 .time(getDate(2020, 8, 25))
                 .build());
 
         // Monday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(30))
+                .openPrice(BigDecimal.valueOf(20))
                 .time(getDate(2020, 8, 24))
                 .build());
 
         // Friday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(40))
+                .openPrice(BigDecimal.valueOf(30))
                 .time(getDate(2020, 8, 28))
                 .build());
 
         // Wednesday
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(50))
+                .openPrice(BigDecimal.valueOf(40))
                 .time(getDate(2020, 8, 26))
                 .build());
 
@@ -280,29 +302,35 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(200))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 8, 2))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 8, 2))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(500))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 8, 3))
                 .build());
 
@@ -332,19 +360,23 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         final List<Candle> candles = new ArrayList<>();
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(20))
+                .openPrice(BigDecimal.valueOf(10))
                 .time(getDate(2020, 8, 2))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(30))
+                .openPrice(BigDecimal.valueOf(20))
                 .time(getDate(2020, 8, 1))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(40))
+                .openPrice(BigDecimal.valueOf(30))
                 .time(getDate(2020, 8, 4))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(50))
+                .openPrice(BigDecimal.valueOf(40))
                 .time(getDate(2020, 8, 3))
                 .build());
 
@@ -372,29 +404,35 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(200))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(100))
                 .time(getDate(2020, 8, 1))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(100))
+                .closePrice(BigDecimal.valueOf(300))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 9, 2))
                 .build());
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(200))
+                .closePrice(BigDecimal.valueOf(400))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 9, 2))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.valueOf(300))
+                .closePrice(BigDecimal.valueOf(500))
+                .openPrice(BigDecimal.valueOf(200))
                 .time(getDate(2020, 10, 3))
                 .build());
 
@@ -425,22 +463,26 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         final List<Candle> candles = new ArrayList<>();
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(20))
+                .openPrice(BigDecimal.valueOf(10))
                 .time(getDate(2020, 9, 2))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(30))
+                .openPrice(BigDecimal.valueOf(20))
                 .time(getDate(2020, 8, 1))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(40))
+                .openPrice(BigDecimal.valueOf(30))
                 .time(getDate(2020, 11, 4))
                 .build());
 
         candles.add(Candle.builder()
-                .saldo(BigDecimal.TEN)
+                .closePrice(BigDecimal.valueOf(50))
+                .openPrice(BigDecimal.valueOf(40))
                 .time(getDate(2020, 10, 3))
                 .build());
 

@@ -16,6 +16,7 @@ import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Multimap<Object, BigDecimal> saldosByTimes = (Multimap) MultimapBuilder.treeKeys().linkedListValues().build();
         for (Candle candle : candles) {
-            saldosByTimes.put(keyExtractor.apply(candle.getTime()), candle.getSaldo());
+            BigDecimal saldo = candle.getClosePrice().subtract(candle.getOpenPrice())
+                    .setScale(2, RoundingMode.HALF_UP);
+            saldosByTimes.put(keyExtractor.apply(candle.getTime()), saldo);
         }
 
         return new TreeMap<>(CollectionsUtils.reduceMultimap(saldosByTimes, MathUtils::getAverage));
