@@ -94,7 +94,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putCommonStatistics(SimulationResult result, ExtendedSheet sheet) {
         ExtendedRow labelRow = sheet.addRow();
-        labelRow.createCells("Общая статистика");
+        labelRow.createUnitedCell("Общая статистика", 2);
 
         putInterval(sheet, result.getInterval());
         putInitialBalance(sheet, result.getInitialBalance());
@@ -153,7 +153,7 @@ public class ExcelServiceImpl implements ExcelService {
         if (CollectionUtils.isEmpty(positions)) {
             labelRow.createCells("Позиции отсутствуют");
         } else {
-            labelRow.createCell(0, "Позиции");
+            labelRow.createUnitedCell("Позиции", 3);
             ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Тикер", "Цена", "Количество");
             for (SimulatedPosition position : positions) {
@@ -170,7 +170,7 @@ public class ExcelServiceImpl implements ExcelService {
         if (CollectionUtils.isEmpty(operations)) {
             labelRow.createCells("Операции отсутствуют");
         } else {
-            labelRow.createCell(0, "Операции");
+            labelRow.createUnitedCell("Операции", 6);
             ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Тикер", "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
             for (SimulatedOperation operation : operations) {

@@ -1,6 +1,7 @@
 package ru.obukhov.investor.util.poi;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
@@ -95,6 +96,9 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                     operation.getQuantity(),
                     operation.getCommission());
         }
+
+        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        assertEquals(3, mergedRegions.size());
 
         assertChartCreated(sheet);
     }

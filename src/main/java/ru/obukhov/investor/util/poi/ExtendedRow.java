@@ -85,6 +85,27 @@ public class ExtendedRow implements Row {
     }
 
     /**
+     * Same as {@link ExtendedRow#createUnitedCell(int, Object, int)} with first parameter = 0
+     */
+    public ExtendedCell createUnitedCell(@Nullable Object value, int width) {
+        return createUnitedCell(0, value, width);
+    }
+
+    /**
+     * Same as {@link ExtendedRow#createCell(int, Object)} with additional behaviour:<br/>
+     * Cells beginning with given {@code column} are united into single cell.
+     *
+     * @param width count of united cells, can't be negative
+     */
+    public ExtendedCell createUnitedCell(int column, @Nullable Object value, int width) {
+        Assert.isTrue(width >= 0, "width can't be negative");
+
+        int rowNum = getRowNum();
+        sheet.addMergedRegion(rowNum, rowNum, column, column + width - 1);
+        return createCell(column, value);
+    }
+
+    /**
      * Creates cell with given {@code value} in given {@code column}.<br/>
      * <p>
      * Differences by type of {@code value}:<br/>

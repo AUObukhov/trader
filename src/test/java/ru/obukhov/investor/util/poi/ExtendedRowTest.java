@@ -3,6 +3,7 @@ package ru.obukhov.investor.util.poi;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -179,6 +180,28 @@ public class ExtendedRowTest {
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
                 values[5]);
+    }
+
+    // endregion
+
+    // region createUnitedCell value tests
+
+    @Test
+    public void createUnitedCell_createsMergedRegion() {
+        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        int column = 5;
+        Object value = "value";
+        int width = 4;
+
+        extendedRow.createUnitedCell(column, value, width);
+
+        List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
+        assertEquals(1, mergedRegions.size());
+        CellRangeAddress mergedRegion = mergedRegions.get(0);
+        assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
+        assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
+        assertEquals(column, mergedRegion.getFirstColumn());
+        assertEquals(column + width - 1, mergedRegion.getLastColumn());
     }
 
     // endregion

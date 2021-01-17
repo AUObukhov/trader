@@ -117,6 +117,14 @@ public class ExtendedSheet implements Sheet {
         return new ExtendedChart(chart);
     }
 
+    /**
+     * Same as {@link Sheet#addMergedRegion(CellRangeAddress)}, but with exact values of cell range address fields
+     */
+    public int addMergedRegion(int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        return addMergedRegion(cellRangeAddress);
+    }
+
     // endregion
 
     // region Sheet implementation
