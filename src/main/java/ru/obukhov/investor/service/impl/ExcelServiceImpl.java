@@ -46,7 +46,7 @@ public class ExcelServiceImpl implements ExcelService {
     private static final String PERCENT_FORMAT = "0.00%";
 
     private static final int CHART_WIDTH = 20;
-    private static final int CHART_HEIGHT = 50;
+    private static final int CHART_HEIGHT = 40;
     private static final short OPERATION_MARKER_SIZE = (short) 10;
 
     private final ExcelFileService excelFileService;
@@ -194,7 +194,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private ExtendedChart createChart(ExtendedSheet sheet) {
         int column1 = sheet.getColumnsCount() + 1;
-        int row1 = 1;
+        int row1 = 0;
         int column2 = column1 + CHART_WIDTH;
         int row2 = row1 + CHART_HEIGHT;
         return sheet.createChart(column1, row1, column2, row2);
