@@ -17,6 +17,7 @@ import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.interfaces.ExcelFileService;
 import ru.obukhov.investor.service.interfaces.ExcelService;
 import ru.obukhov.investor.util.CollectionsUtils;
+import ru.obukhov.investor.util.poi.ExtendedCell;
 import ru.obukhov.investor.util.poi.ExtendedChart;
 import ru.obukhov.investor.util.poi.ExtendedChartData;
 import ru.obukhov.investor.util.poi.ExtendedRow;
@@ -42,6 +43,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private static final String DATE_TIME_FORMAT = "dd.MM.YYYY HH:mm:ss";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+    private static final String PERCENT_FORMAT = "0.00%";
 
     private static final int CHART_WIDTH = 20;
     private static final int CHART_HEIGHT = 50;
@@ -73,6 +75,9 @@ public class ExcelServiceImpl implements ExcelService {
 
         CellStyle dateTimeCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME);
         dateTimeCellStyle.setDataFormat(workbook.createDataFormat().getFormat(DATE_TIME_FORMAT));
+
+        CellStyle percentCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+        percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
     }
 
     private void createSheet(ExtendedWorkbook workbook, SimulationResult result) {
@@ -127,12 +132,18 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putRelativeProfit(ExtendedSheet sheet, double relativeProfit) {
         ExtendedRow row = sheet.addRow();
-        row.createCells("Относительный доход", relativeProfit);
+        List<ExtendedCell> cells = row.createCells("Относительный доход", relativeProfit);
+        ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
+        CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+        cells.get(1).setCellStyle(style);
     }
 
     private void putRelativeYearProfit(ExtendedSheet sheet, double relativeYearProfit) {
         ExtendedRow row = sheet.addRow();
-        row.createCells("Относительный годовой доход", relativeYearProfit);
+        List<ExtendedCell> cells = row.createCells("Относительный годовой доход", relativeYearProfit);
+        ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
+        CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+        cells.get(1).setCellStyle(style);
     }
 
     private void putPositions(ExtendedSheet sheet, List<SimulatedPosition> positions) {

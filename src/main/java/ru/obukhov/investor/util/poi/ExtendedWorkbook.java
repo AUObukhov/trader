@@ -475,6 +475,7 @@ public class ExtendedWorkbook implements Workbook {
         public static final String NUMERIC = "numeric";
         public static final String STRING = "string";
         public static final String DATE_TIME = "dateTime";
+        public static final String PERCENT = "percent";
     }
 
 }
