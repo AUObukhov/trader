@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
+import org.springframework.util.Assert;
 import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.bot.model.DecisionData;
@@ -22,6 +23,7 @@ import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +54,11 @@ public class SimulatorImpl implements Simulator {
     public List<SimulationResult> simulate(String ticker, Interval interval) {
 
         log.info("Simulation for ticker = '" + ticker + "' started");
+
+        OffsetDateTime now = OffsetDateTime.now();
+        Assert.isTrue(!interval.getFrom().isAfter(now), "'from' can't be in future");
+        Assert.isTrue(interval.getTo() == null || !interval.getTo().isAfter(now),
+                "'to' can't be in future");
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
