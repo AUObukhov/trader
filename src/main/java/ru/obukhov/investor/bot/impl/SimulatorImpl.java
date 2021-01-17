@@ -158,9 +158,11 @@ public class SimulatorImpl implements Simulator {
     }
 
     private List<SimulatedOperation> getOperations(Interval interval, String ticker) {
-        return fakeTinkoffService.getOperations(interval, ticker).stream()
+        List<SimulatedOperation> operations = fakeTinkoffService.getOperations(interval, ticker).stream()
                 .map(operationMapper::map)
                 .collect(Collectors.toList());
+        operations.forEach(operation -> operation.setTicker(ticker));
+        return operations;
     }
 
 }
