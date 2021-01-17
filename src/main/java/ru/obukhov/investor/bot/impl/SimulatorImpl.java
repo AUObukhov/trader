@@ -12,7 +12,6 @@ import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.OperationMapper;
-import ru.obukhov.investor.model.transform.PositionMapper;
 import ru.obukhov.investor.service.impl.FakeTinkoffService;
 import ru.obukhov.investor.service.interfaces.ExcelService;
 import ru.obukhov.investor.service.interfaces.MarketService;
@@ -21,6 +20,7 @@ import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
+import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 public class SimulatorImpl implements Simulator {
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
-    private final PositionMapper positionMapper = Mappers.getMapper(PositionMapper.class);
 
     private final Collection<FakeBot> bots;
     private final MarketService fakeMarketService;
@@ -125,10 +124,12 @@ public class SimulatorImpl implements Simulator {
                                           String ticker,
                                           List<Candle> candles) {
 
-        BigDecimal totalBalance = getTotalBalance();
+        List<SimulatedPosition> positions = getPositions();
+        BigDecimal totalBalance = getTotalBalance(positions);
         BigDecimal absoluteProfit = totalBalance.subtract(initialBalance);
         double relativeProfit = MathUtils.divide(absoluteProfit, initialBalance).doubleValue();
         double relativeYearProfit = relativeProfit / (interval.toDuration().toDays() / DateUtils.DAYS_IN_YEAR);
+
 
         return SimulationResult.builder()
                 .botName(botName)
@@ -139,7 +140,7 @@ public class SimulatorImpl implements Simulator {
                 .absoluteProfit(absoluteProfit)
                 .relativeProfit(relativeProfit)
                 .relativeYearProfit(relativeYearProfit)
-                .positions(getPositions())
+                .positions(positions)
                 .operations(getOperations(interval, ticker))
                 .candles(candles)
                 .build();
@@ -147,13 +148,18 @@ public class SimulatorImpl implements Simulator {
 
     private List<SimulatedPosition> getPositions() {
         return fakeTinkoffService.getPortfolioPositions().stream()
-                .map(positionMapper::map)
+                .map(this::createSimulatedPosition)
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal getTotalBalance() {
-        return fakeTinkoffService.getPortfolioPositions().stream()
-                .map(position -> position.balance)
+    private SimulatedPosition createSimulatedPosition(Portfolio.PortfolioPosition portfolioPosition) {
+        BigDecimal price = fakeTinkoffService.getCurrentPrice(portfolioPosition.ticker);
+        return new SimulatedPosition(portfolioPosition.ticker, price, portfolioPosition.lots);
+    }
+
+    private BigDecimal getTotalBalance(List<SimulatedPosition> positions) {
+        return positions.stream()
+                .map(position -> MathUtils.multiply(position.getPrice(), position.getQuantity()))
                 .reduce(fakeTinkoffService.getBalance(), BigDecimal::add);
     }
 
