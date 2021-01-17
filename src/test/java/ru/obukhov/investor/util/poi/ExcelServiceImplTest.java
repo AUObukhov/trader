@@ -1,15 +1,20 @@
 package ru.obukhov.investor.util.poi;
 
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import ru.obukhov.investor.BaseMockedTest;
+import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.impl.ExcelServiceImpl;
 import ru.obukhov.investor.service.interfaces.ExcelFileService;
+import ru.obukhov.investor.util.AssertUtils;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
@@ -24,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static ru.obukhov.investor.util.AssertUtils.assertRowValues;
@@ -89,14 +95,15 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                     operation.getQuantity(),
                     operation.getCommission());
         }
+
+        assertChartCreated(sheet);
     }
 
     private SimulationResult createSimulationResult() {
         SimulationResult.SimulationResultBuilder builder = SimulationResult.builder()
                 .botName("bot");
 
-        String ticker1 = "ticker1";
-        String ticker2 = "ticker2";
+        String ticker = "ticker";
 
         builder.interval(createInterval());
         builder.initialBalance(BigDecimal.valueOf(700));
@@ -105,8 +112,9 @@ public class ExcelServiceImplTest extends BaseMockedTest {
         builder.absoluteProfit(BigDecimal.valueOf(300));
         builder.relativeProfit(0.25);
         builder.relativeYearProfit(6d);
-        builder.positions(createPositions(ticker1, ticker2));
-        builder.operations(createSimulatedOperations(ticker1, ticker2));
+        builder.positions(createPositions(ticker));
+        builder.operations(createSimulatedOperations(ticker));
+        builder.candles(createCandles());
 
         return builder.build();
     }
@@ -117,16 +125,16 @@ public class ExcelServiceImplTest extends BaseMockedTest {
         return Interval.of(from, to);
     }
 
-    private List<SimulatedPosition> createPositions(String ticker1, String ticker2) {
+    private List<SimulatedPosition> createPositions(String ticker) {
         return Arrays.asList(
-                new SimulatedPosition(ticker1, BigDecimal.valueOf(200), 3),
-                new SimulatedPosition(ticker2, BigDecimal.valueOf(100), 2)
+                new SimulatedPosition(ticker, BigDecimal.valueOf(200), 3),
+                new SimulatedPosition(ticker, BigDecimal.valueOf(100), 2)
         );
     }
 
-    private List<SimulatedOperation> createSimulatedOperations(String ticker1, String ticker2) {
+    private List<SimulatedOperation> createSimulatedOperations(String ticker) {
         SimulatedOperation operation1 = SimulatedOperation.builder()
-                .ticker(ticker1)
+                .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(150))
@@ -134,7 +142,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .commission(BigDecimal.valueOf(0.45))
                 .build();
         SimulatedOperation operation2 = SimulatedOperation.builder()
-                .ticker(ticker1)
+                .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
                 .operationType(OperationType.Sell)
                 .price(BigDecimal.valueOf(180))
@@ -142,7 +150,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .commission(BigDecimal.valueOf(0.54))
                 .build();
         SimulatedOperation operation3 = SimulatedOperation.builder()
-                .ticker(ticker1)
+                .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(160))
@@ -150,7 +158,7 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .commission(BigDecimal.valueOf(0.48))
                 .build();
         SimulatedOperation operation4 = SimulatedOperation.builder()
-                .ticker(ticker2)
+                .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
                 .operationType(OperationType.Buy)
                 .price(BigDecimal.valueOf(120))
@@ -159,6 +167,44 @@ public class ExcelServiceImplTest extends BaseMockedTest {
                 .build();
 
         return Arrays.asList(operation1, operation2, operation3, operation4);
+    }
+
+    private List<Candle> createCandles() {
+        Candle candle1 = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
+                .closePrice(BigDecimal.valueOf(150))
+                .build();
+        Candle candle2 = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 1, 11, 0, 0))
+                .closePrice(BigDecimal.valueOf(160))
+                .build();
+        Candle candle3 = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
+                .closePrice(BigDecimal.valueOf(180))
+                .build();
+        Candle candle4 = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
+                .closePrice(BigDecimal.valueOf(160))
+                .build();
+        Candle candle5 = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
+                .closePrice(BigDecimal.valueOf(120))
+                .build();
+
+        return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
+    }
+
+    private void assertChartCreated(ExtendedSheet sheet) {
+        Iterator<?> iterator = sheet.getDrawingPatriarch().iterator();
+        XSSFGraphicFrame frame = (XSSFGraphicFrame) iterator.next();
+        assertFalse(iterator.hasNext());
+        List<XSSFChart> charts = frame.getDrawing().getCharts();
+        assertEquals(1, charts.size());
+        XSSFChart chart = charts.get(0);
+        List<? extends XDDFChartAxis> axes = chart.getAxes();
+        assertEquals(2, axes.size());
+        AssertUtils.assertEquals(120, axes.get(1).getMinimum());
+        AssertUtils.assertEquals(180, axes.get(1).getMaximum());
     }
 
 }

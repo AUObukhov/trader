@@ -4,6 +4,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -25,6 +27,16 @@ public class ExcelTestDataHelper {
     public static XSSFSheet createXSSFSheet() {
         Workbook workbook = new XSSFWorkbook();
         return (XSSFSheet) workbook.createSheet();
+    }
+
+    public static ExtendedChart createExtendedChart() {
+        ExtendedSheet extendedSheet = createExtendedSheet();
+        return extendedSheet.createChart(0, 0, 1, 1);
+    }
+
+    public static ExtendedChartData createExtendedChartData() {
+        ExtendedChart extendedChart = createExtendedChart();
+        return extendedChart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
     }
 
     public static ExtendedRow createExtendedRow() {
@@ -55,4 +67,5 @@ public class ExcelTestDataHelper {
         cell.setCellValue(value);
         return cell;
     }
+
 }

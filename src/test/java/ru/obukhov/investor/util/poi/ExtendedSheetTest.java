@@ -1,12 +1,21 @@
 package ru.obukhov.investor.util.poi;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -136,6 +145,34 @@ public class ExtendedSheetTest {
         assertEquals(5, extendedRow.getRowNum());
         assertEquals(5, extendedSheet.getLastRowNum());
         assertEquals(4, extendedSheet.getRowsCount());
+    }
+
+    @Test
+    public void createChart() {
+        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        int column1 = 1;
+        int row1 = 2;
+        int column2 = 3;
+        int row2 = 4;
+
+        ExtendedChart chart = extendedSheet.createChart(column1, row1, column2, row2);
+
+        assertNotNull(chart);
+
+        Drawing<?> drawing = extendedSheet.getDrawingPatriarch();
+        List<?> frames = IteratorUtils.toList(drawing.iterator());
+        assertEquals(1, frames.size());
+        XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.get(0);
+
+        ClientAnchor anchor = frame.getAnchor();
+        assertEquals(column1, anchor.getCol1());
+        assertEquals(row1, anchor.getRow1());
+        assertEquals(column2, anchor.getCol2());
+        assertEquals(row2, anchor.getRow2());
+
+        List<XSSFChart> charts = ((XSSFDrawing) drawing).getCharts();
+        assertEquals(1, charts.size());
+        assertEquals(chart.getDelegate(), charts.get(0));
     }
 
 }

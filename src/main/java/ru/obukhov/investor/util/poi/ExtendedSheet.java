@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
@@ -21,6 +22,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
@@ -105,6 +108,13 @@ public class ExtendedSheet implements Sheet {
      */
     public ExtendedRow addRow() {
         return (ExtendedRow) createRow(getLastRowNum() + 1);
+    }
+
+    public ExtendedChart createChart(int column1, int row1, int column2, int row2) {
+        XSSFDrawing drawing = (XSSFDrawing) createDrawingPatriarch();
+        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, column1, row1, column2, row2);
+        XSSFChart chart = drawing.createChart(anchor);
+        return new ExtendedChart(chart);
     }
 
     // endregion
