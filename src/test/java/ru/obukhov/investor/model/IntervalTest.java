@@ -131,6 +131,17 @@ public class IntervalTest {
 
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void extendToWholeDay_throwsIllegalArgumentException_whenNotFutureIsTrueAndFromIsInFuture() {
+
+        OffsetDateTime from = OffsetDateTime.now().plusHours(1);
+        OffsetDateTime to = from.plusMinutes(10);
+        Interval interval = Interval.of(from, to);
+
+        interval.extendToWholeDay(true);
+
+    }
+
     @Test
     public void extendToWholeDay_extendsToWholeDay_whenEqualsDates_andNotFuture() {
 
