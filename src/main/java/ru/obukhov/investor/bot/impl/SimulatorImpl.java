@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +64,7 @@ public class SimulatorImpl implements Simulator {
 
         List<SimulationResult> simulationResults = bots.stream()
                 .map(bot -> simulate(bot, ticker, finiteInterval))
+                .sorted(Comparator.comparing(SimulationResult::getTotalBalance).reversed())
                 .collect(Collectors.toList());
 
         log.info("Simulation for ticker = '" + ticker + "' ended");
