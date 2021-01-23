@@ -49,7 +49,9 @@ public class BeanConfiguration {
     @Bean
     public Decider trendReversalDecider(TradingProperties tradingProperties,
                                         TrendReversalDeciderProperties deciderProperties) {
-        return new TrendReversalDecider(tradingProperties, deciderProperties);
+        return new TrendReversalDecider(tradingProperties,
+                deciderProperties.getLastPricesCount(),
+                deciderProperties.getExtremumPriceIndex());
     }
 
     @Bean

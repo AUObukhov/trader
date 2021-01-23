@@ -1,11 +1,11 @@
 package ru.obukhov.investor.bot.impl;
 
 import com.google.common.collect.Iterables;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.config.TrendReversalDeciderProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.util.CollectionsUtils;
 import ru.obukhov.investor.util.MathUtils;
@@ -20,19 +20,24 @@ import java.util.List;
  * Delay before decision to buy/sell and trend length are provided via constructor.
  */
 @Slf4j
+@Getter
 public class TrendReversalDecider extends AbstractDecider {
 
-    public final TrendReversalDeciderProperties deciderProperties;
+    private final Integer lastPricesCount;
+    private final Integer extremumPriceIndex;
 
-    public TrendReversalDecider(TradingProperties tradingProperties, TrendReversalDeciderProperties deciderProperties) {
+    public TrendReversalDecider(TradingProperties tradingProperties,
+                                Integer lastPricesCount,
+                                Integer extremumPriceIndex) {
         super(tradingProperties);
-        this.deciderProperties = deciderProperties;
+        this.lastPricesCount = lastPricesCount;
+        this.extremumPriceIndex = extremumPriceIndex;
     }
 
     @Override
     public Decision decide(DecisionData data) {
-        if (data.getCurrentCandles().size() < deciderProperties.getLastPricesCount()) {
-            log.debug("Need at least " + deciderProperties.getLastPricesCount() + " candles." +
+        if (data.getCurrentCandles().size() < lastPricesCount) {
+            log.debug("Need at least " + lastPricesCount + " candles." +
                     " Got " + data.getCurrentCandles().size() + ". Decision is Wait");
             return Decision.WAIT;
         }
@@ -42,8 +47,7 @@ public class TrendReversalDecider extends AbstractDecider {
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
-        List<Candle> currentCandles =
-                CollectionsUtils.getTail(data.getCurrentCandles(), deciderProperties.getLastPricesCount());
+        List<Candle> currentCandles = CollectionsUtils.getTail(data.getCurrentCandles(), lastPricesCount);
         final BigDecimal currentPrice = Iterables.getLast(currentCandles).getClosePrice();
         final BigDecimal currentPriceWithCommission =
                 MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
@@ -90,7 +94,7 @@ public class TrendReversalDecider extends AbstractDecider {
     }
 
     private Candle getExpectedExtremumCandle(List<Candle> candles) {
-        return candles.get(deciderProperties.getExtremumPriceIndex());
+        return candles.get(extremumPriceIndex);
     }
 
 }
