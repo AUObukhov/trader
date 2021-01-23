@@ -8,13 +8,11 @@ import org.springframework.util.Assert;
 import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.bot.model.DecisionData;
-import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.service.impl.FakeTinkoffService;
 import ru.obukhov.investor.service.interfaces.ExcelService;
-import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
@@ -40,18 +38,17 @@ public class SimulatorImpl implements Simulator {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final Collection<FakeBot> bots;
-    private final MarketService fakeMarketService;
     private final FakeTinkoffService fakeTinkoffService;
     private final ExcelService excelService;
-    private final TradingProperties tradingProperties;
 
     /**
      * @param ticker   simulated ticker
+     * @param balance  balance before simulation
      * @param interval simulation interval
      * @return balance after simulation
      */
     @Override
-    public List<SimulationResult> simulate(String ticker, Interval interval) {
+    public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval) {
 
         log.info("Simulation for ticker = '" + ticker + "' started");
 
@@ -63,7 +60,7 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull();
 
         List<SimulationResult> simulationResults = bots.stream()
-                .map(bot -> simulate(bot, ticker, finiteInterval))
+                .map(bot -> simulate(bot, ticker, balance, finiteInterval))
                 .sorted(Comparator.comparing(SimulationResult::getTotalBalance).reversed())
                 .collect(Collectors.toList());
 
@@ -74,10 +71,10 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
-    private SimulationResult simulate(FakeBot bot, String ticker, Interval interval) {
+    private SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
         log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' started");
 
-        BigDecimal initialBalance = initSimulation(ticker, interval);
+        fakeTinkoffService.init(interval.getFrom(), balance);
         List<Candle> candles = new ArrayList<>();
 
         do {
@@ -91,7 +88,7 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' ended");
 
-        return createResult(bot.getName(), initialBalance, interval, ticker, candles);
+        return createResult(bot.getName(), balance, interval, ticker, candles);
     }
 
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
@@ -100,24 +97,6 @@ public class SimulatorImpl implements Simulator {
         if (candle != null) {
             candles.add(candle);
         }
-    }
-
-    private BigDecimal initSimulation(String ticker, Interval interval) {
-        fakeTinkoffService.clear();
-        fakeTinkoffService.initCurrentDateTime(interval.getFrom());
-
-        BigDecimal initialBalance = getInitialBalance(ticker);
-        fakeTinkoffService.setBalance(initialBalance);
-
-        return initialBalance;
-    }
-
-    private BigDecimal getInitialBalance(String ticker) {
-        BigDecimal currentPrice = fakeMarketService.getLastCandles(ticker, 1).stream()
-                .map(Candle::getClosePrice)
-                .findFirst()
-                .orElseThrow();
-        return MathUtils.addFraction(currentPrice, tradingProperties.getCommission());
     }
 
     private SimulationResult createResult(String botName,

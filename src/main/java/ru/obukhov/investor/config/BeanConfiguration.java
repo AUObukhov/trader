@@ -127,16 +127,10 @@ public class BeanConfiguration {
 
     @Bean
     public Simulator simulatorImpl(Set<FakeBot> fakeBots,
-                                   MarketService fakeMarketService,
                                    TinkoffService fakeTinkoffService,
-                                   ExcelService excelService,
-                                   TradingProperties tradingProperties) {
+                                   ExcelService excelService) {
 
-        return new SimulatorImpl(fakeBots,
-                fakeMarketService,
-                (FakeTinkoffService) fakeTinkoffService,
-                excelService,
-                tradingProperties);
+        return new SimulatorImpl(fakeBots, (FakeTinkoffService) fakeTinkoffService, excelService);
     }
 
     @Bean
