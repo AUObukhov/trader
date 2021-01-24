@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.util.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 
@@ -23,12 +24,8 @@ public class CandleMapperTest {
     @Test
     public void mapsSingleCandleFields() {
 
-        ru.tinkoff.invest.openapi.models.market.Candle source = createTinkoffCandle(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(200),
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(50)
-        );
+        ru.tinkoff.invest.openapi.models.market.Candle source = TestDataHelper.createTinkoffCandle(
+                100, 200, 1000, 50);
 
         Candle result = candleMapper.map(source);
 
@@ -41,21 +38,33 @@ public class CandleMapperTest {
     }
 
     @Test
+    public void updatesOffset() {
+
+        ru.tinkoff.invest.openapi.models.market.Candle source = new ru.tinkoff.invest.openapi.models.market.Candle(
+                StringUtils.EMPTY,
+                CandleInterval.DAY,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                BigDecimal.TEN,
+                OffsetDateTime.now()
+        );
+
+        Candle result = candleMapper.map(source);
+
+        assertEquals(source.time, result.getTime());
+
+    }
+
+    @Test
     public void mapsHistoricalCandles() {
 
-        ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle1 = createTinkoffCandle(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(200),
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(50)
-        );
+        ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle1 = TestDataHelper.createTinkoffCandle(
+                100, 200, 1000, 50);
 
-        ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle2 = createTinkoffCandle(
-                BigDecimal.valueOf(200),
-                BigDecimal.valueOf(400),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(100)
-        );
+        ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle2 = TestDataHelper.createTinkoffCandle(
+                200, 400, 2000, 100);
 
         List<ru.tinkoff.invest.openapi.models.market.Candle> candles = newArrayList(tinkoffCandle1, tinkoffCandle2);
         HistoricalCandles source = new HistoricalCandles(StringUtils.EMPTY, CandleInterval.DAY, candles);
@@ -77,22 +86,6 @@ public class CandleMapperTest {
         assertTrue(numbersEqual(candle2.getLowestPrice(), tinkoffCandle2.lowestPrice));
         assertEquals(tinkoffCandle2.time, candle2.getTime());
 
-    }
-
-    private ru.tinkoff.invest.openapi.models.market.Candle createTinkoffCandle(BigDecimal openPrice,
-                                                                               BigDecimal closePrice,
-                                                                               BigDecimal highestPrice,
-                                                                               BigDecimal lowestPrice) {
-        return new ru.tinkoff.invest.openapi.models.market.Candle(
-                StringUtils.EMPTY,
-                CandleInterval.DAY,
-                openPrice,
-                closePrice,
-                highestPrice,
-                lowestPrice,
-                BigDecimal.TEN,
-                OffsetDateTime.now()
-        );
     }
 
 }

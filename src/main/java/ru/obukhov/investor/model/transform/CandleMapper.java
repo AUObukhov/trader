@@ -2,8 +2,10 @@ package ru.obukhov.investor.model.transform;
 
 import org.mapstruct.Mapper;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,4 +27,7 @@ public abstract class CandleMapper {
                 .collect(Collectors.toList());
     }
 
+    protected OffsetDateTime mapOffsetDateTime(OffsetDateTime source) {
+        return DateUtils.withDefaultOffset(source);
+    }
 }

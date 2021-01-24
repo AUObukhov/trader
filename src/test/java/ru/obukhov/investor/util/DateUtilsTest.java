@@ -11,6 +11,7 @@ import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
@@ -1120,6 +1121,20 @@ public class DateUtilsTest {
         OffsetDateTime expected = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
 
         Assert.assertEquals(expected, endOfDay);
+    }
+
+    // endregion
+
+    // region withDefaultOffset tests
+
+    @Test
+    public void withDefaultOffset() {
+        ZoneOffset testOffset = TestDataHelper.getNotDefaultOffset();
+
+        OffsetDateTime dateTimeWithTestOffset = OffsetDateTime.now().withOffsetSameInstant(testOffset);
+        OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
+
+        assertEquals(DateUtils.DEFAULT_OFFSET, dateTimeWithDefaultOffset.getOffset());
     }
 
     // endregion

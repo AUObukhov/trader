@@ -20,7 +20,7 @@ public class DateUtils {
 
     public static final double DAYS_IN_YEAR = 365.25;
 
-    private static final ZoneOffset DEFAULT_OFFSET = OffsetDateTime.now().getOffset();
+    public static final ZoneOffset DEFAULT_OFFSET = OffsetDateTime.now().getOffset();
 
     /**
      * Earliest date for requesting candles
@@ -333,6 +333,13 @@ public class DateUtils {
         return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
                 OffsetTime.MAX.getNano(), dateTime.getOffset());
+    }
+
+    /**
+     * @return dateTime equals to given {@code dateTime}, but with system default offset
+     */
+    public static OffsetDateTime withDefaultOffset(OffsetDateTime dateTime) {
+        return dateTime.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
     }
 
 }
