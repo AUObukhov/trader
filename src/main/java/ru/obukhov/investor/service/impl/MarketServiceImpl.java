@@ -53,7 +53,7 @@ public class MarketServiceImpl implements MarketService {
                 ? getAllCandlesByDays(ticker, interval, candleInterval)
                 : getAllCandlesByYears(ticker, interval, candleInterval);
 
-        log.info("Loaded " + candles.size() + " candles for ticker '" + ticker + "'");
+        log.info("Loaded {} candles for ticker '{}'", candles.size(), ticker);
 
         return candles.stream()
                 .sorted(Comparator.comparing(Candle::getTime))

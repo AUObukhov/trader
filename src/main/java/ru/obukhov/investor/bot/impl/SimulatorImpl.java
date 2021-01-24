@@ -50,7 +50,7 @@ public class SimulatorImpl implements Simulator {
     @Override
     public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval) {
 
-        log.info("Simulation for ticker = '" + ticker + "' started");
+        log.info("Simulation for ticker = '{}' started", ticker);
 
         OffsetDateTime now = OffsetDateTime.now();
         Assert.isTrue(!interval.getFrom().isAfter(now), "'from' can't be in future");
@@ -64,7 +64,7 @@ public class SimulatorImpl implements Simulator {
                 .sorted(Comparator.comparing(SimulationResult::getTotalBalance).reversed())
                 .collect(Collectors.toList());
 
-        log.info("Simulation for ticker = '" + ticker + "' ended");
+        log.info("Simulation for ticker = '{}' ended", ticker);
 
         excelService.saveSimulationResults(simulationResults);
 
@@ -72,7 +72,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
-        log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' started");
+        log.info("Simulation for ticker = '{}' on bot '{}' started", ticker, bot.getName());
 
         fakeTinkoffService.init(interval.getFrom(), balance);
         List<Candle> candles = new ArrayList<>();
@@ -86,7 +86,7 @@ public class SimulatorImpl implements Simulator {
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        log.info("Simulation for ticker = '" + ticker + "' on bot '" + bot.getName() + "' ended");
+        log.info("Simulation for ticker = '{}' on bot '{}' ended", ticker, bot.getName());
 
         return createResult(bot.getName(), balance, interval, ticker, candles);
     }

@@ -16,7 +16,7 @@ public class StreamingApiSubscriber extends AsyncSubscriber<StreamingEvent> {
 
     @Override
     protected boolean whenNext(final StreamingEvent event) {
-        log.info("Пришло новое событие из Streaming API\n" + event);
+        log.info("Пришло новое событие из Streaming API\n{}", event);
 
         return true;
     }

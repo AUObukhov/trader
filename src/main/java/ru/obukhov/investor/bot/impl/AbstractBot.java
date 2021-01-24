@@ -41,18 +41,19 @@ public abstract class AbstractBot implements Bot {
             if (orders.isEmpty()) {
                 fillDecisionData(decisionData, ticker);
                 if (CollectionUtils.isEmpty(decisionData.getCurrentCandles())) {
-                    log.info("There are no candles by ticker '" + ticker + "'. Do nothing");
+                    log.info("There are no candles by ticker '{}'. Do nothing", ticker);
                 } else {
                     Decision decision = decider.decide(decisionData);
                     performOperation(ticker, decision);
                 }
             } else {
-                log.info("There are not completed orders by ticker '" + ticker + "'. Do nothing");
+                log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
             }
         } catch (TickerNotFoundException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("Exception while process ticker " + ticker + ". Do nothing", ex);
+            String msg = String.format("Exception while process ticker '%s'. Do nothing", ticker);
+            log.error(msg, ex);
         }
 
         return decisionData;
@@ -82,7 +83,7 @@ public abstract class AbstractBot implements Bot {
 
         Operation operation = decision == Decision.BUY ? Operation.Buy : Operation.Sell;
         PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, null);
-        log.info("Placed order " + order);
+        log.info("Placed order {}", order);
     }
 
 }

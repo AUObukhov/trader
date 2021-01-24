@@ -37,8 +37,7 @@ public class TrendReversalDecider extends AbstractDecider {
     @Override
     public Decision decide(DecisionData data) {
         if (data.getCurrentCandles().size() < lastPricesCount) {
-            log.debug("Need at least " + lastPricesCount + " candles." +
-                    " Got " + data.getCurrentCandles().size() + ". Decision is Wait");
+            log.debug("Need at least {} candles. Got {}. Decision is Wait", lastPricesCount, data.getCurrentCandles().size());
             return Decision.WAIT;
         }
         if (existsOperationInProgress(data)) {
@@ -64,10 +63,10 @@ public class TrendReversalDecider extends AbstractDecider {
                         .orElseThrow();
                 final BigDecimal expectedMax = getExpectedExtremumCandle(currentCandles).getHighestPrice();
                 if (MathUtils.numbersEqual(expectedMax, max)) {
-                    log.debug("Expected max " + expectedMax + " is equal to max " + max + ". Decision is Buy");
+                    log.debug("Expected max {} is equal to max {}. Decision is Buy", expectedMax, max);
                     return Decision.BUY;
                 } else {
-                    log.debug("Expected max " + expectedMax + " is not equal to max " + max + ". Decision is Wait");
+                    log.debug("Expected max {} is not equal to max {}. Decision is Wait", expectedMax, max);
                     return Decision.WAIT;
                 }
             }
@@ -75,7 +74,7 @@ public class TrendReversalDecider extends AbstractDecider {
 
         BigDecimal profit = getProfit(position.averagePositionPrice.value, data.getInstrument().lot, currentPrice);
         if (MathUtils.isLower(profit, MINIMUM_PROFIT)) {
-            log.debug("Profit " + profit + " is lower than minimum profit " + profit + ". Decision is Wait");
+            log.debug("Profit {} is lower than minimum profit {}. Decision is Wait", profit, MINIMUM_PROFIT);
             return Decision.WAIT;
         }
 
@@ -85,10 +84,10 @@ public class TrendReversalDecider extends AbstractDecider {
                 .orElseThrow();
         final BigDecimal expectedMin = getExpectedExtremumCandle(currentCandles).getLowestPrice();
         if (MathUtils.numbersEqual(expectedMin, min)) {
-            log.debug("Expected min " + expectedMin + " is equal to min " + min + ". Decision is Sell");
+            log.debug("Expected min {} is equal to min {}. Decision is Sell", expectedMin, min);
             return Decision.SELL;
         } else {
-            log.debug("Expected min " + expectedMin + " is not equal to min " + min + ". Decision is Wait");
+            log.debug("Expected min {} is not equal to min {}. Decision is Wait", expectedMin, min);
             return Decision.WAIT;
         }
     }
