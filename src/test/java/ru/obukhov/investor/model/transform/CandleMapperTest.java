@@ -8,7 +8,6 @@ import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -38,30 +37,6 @@ public class CandleMapperTest {
         assertTrue(numbersEqual(result.getHighestPrice(), source.highestPrice));
         assertTrue(numbersEqual(result.getLowestPrice(), source.lowestPrice));
         assertEquals(source.time, result.getTime());
-
-    }
-
-    @Test
-    public void mapsAndRoundsMoneyFieldsOfSingleCandle() {
-
-        final BigDecimal openPrice = BigDecimal.valueOf(100.111111);
-        final BigDecimal closePrice = BigDecimal.valueOf(200.125);
-        final BigDecimal highestPrice = BigDecimal.valueOf(1000.55555);
-        final BigDecimal lowestPrice = BigDecimal.valueOf(50.99999);
-
-        ru.tinkoff.invest.openapi.models.market.Candle source = createTinkoffCandle(
-                openPrice,
-                closePrice,
-                highestPrice,
-                lowestPrice
-        );
-
-        Candle result = candleMapper.map(source);
-
-        assertTrue(numbersEqual(result.getOpenPrice(), openPrice.setScale(2, RoundingMode.HALF_UP)));
-        assertTrue(numbersEqual(result.getClosePrice(), closePrice.setScale(2, RoundingMode.HALF_UP)));
-        assertTrue(numbersEqual(result.getHighestPrice(), highestPrice.setScale(2, RoundingMode.HALF_UP)));
-        assertTrue(numbersEqual(result.getLowestPrice(), lowestPrice.setScale(2, RoundingMode.HALF_UP)));
 
     }
 
