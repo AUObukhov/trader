@@ -3,7 +3,6 @@ package ru.obukhov.investor.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
@@ -40,7 +39,6 @@ public class MarketServiceImpl implements MarketService {
      * @return sorted by time list of loaded candles
      */
     @Override
-    @Cacheable("candles")
     public List<Candle> getCandles(String ticker, Interval interval, CandleInterval candleInterval) {
 
         Assert.isTrue(interval.getTo() == null
