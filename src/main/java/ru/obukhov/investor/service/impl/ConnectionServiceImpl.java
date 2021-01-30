@@ -3,6 +3,7 @@ package ru.obukhov.investor.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.service.StreamingApiSubscriber;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.tinkoff.invest.openapi.MarketContext;
@@ -10,6 +11,8 @@ import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.OrdersContext;
 import ru.tinkoff.invest.openapi.PortfolioContext;
+import ru.tinkoff.invest.openapi.SandboxContext;
+import ru.tinkoff.invest.openapi.SandboxOpenApi;
 import ru.tinkoff.invest.openapi.StreamingContext;
 import ru.tinkoff.invest.openapi.UserContext;
 import ru.tinkoff.invest.openapi.okhttp.OkHttpOpenApiFactory;
@@ -21,6 +24,7 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class ConnectionServiceImpl implements ConnectionService {
 
+    private final TradingProperties tradingProperties;
     private final OkHttpOpenApiFactory okHttpOpenApiFactory;
     private OpenApi api;
 
@@ -66,6 +70,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         return api.getStreamingContext();
     }
 
+    @Override
+    public SandboxContext getSandboxContext() {
+        if (!tradingProperties.isSandbox()) {
+            throw new IllegalStateException("Not sandbox mode");
+        }
+
+        softRefreshApi();
+
+        return ((SandboxOpenApi) api).getSandboxContext();
+    }
+
     private void softRefreshApi() {
         if (this.api == null || this.api.hasClosed()) {
             refreshApi();
@@ -77,7 +92,11 @@ public class ConnectionServiceImpl implements ConnectionService {
      * Subscribes listener to events of created api
      */
     private void refreshApi() {
-        this.api = okHttpOpenApiFactory.createOpenApiClient(Executors.newSingleThreadExecutor());
+        if (tradingProperties.isSandbox()) {
+            this.api = okHttpOpenApiFactory.createSandboxOpenApiClient(Executors.newSingleThreadExecutor());
+        } else {
+            this.api = okHttpOpenApiFactory.createOpenApiClient(Executors.newSingleThreadExecutor());
+        }
 
         subscribeListener();
     }

@@ -1,4 +1,6 @@
 trading:
+  sandbox: true
+  token: t.Kl5LYourgdH0sikBMvtbR-vhY4DCiwhexYK7kUED3L-_pirHWJ3qg2upAR2MJm5i1YGS6loyGWX7UZVPaFaqjQ
   commission: 0.003
   work-start-time: 10:00:00+03:00
   work-duration: 540

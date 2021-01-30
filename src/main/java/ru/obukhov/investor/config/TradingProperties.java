@@ -18,6 +18,8 @@ import java.time.temporal.ChronoUnit;
 @Validated
 public class TradingProperties {
 
+    private boolean sandbox;
+
     @NotBlank
     private String token;
 
