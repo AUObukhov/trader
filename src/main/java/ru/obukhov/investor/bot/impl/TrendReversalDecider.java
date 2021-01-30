@@ -3,7 +3,8 @@ package ru.obukhov.investor.bot.impl;
 import com.google.common.collect.Iterables;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.investor.Decision;
+import ru.obukhov.investor.bot.model.Decision;
+import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
@@ -38,11 +39,11 @@ public class TrendReversalDecider extends AbstractDecider {
     public Decision decide(DecisionData data) {
         if (data.getCurrentCandles().size() < lastPricesCount) {
             log.debug("Need at least {} candles. Got {}. Decision is Wait", lastPricesCount, data.getCurrentCandles().size());
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
         if (existsOperationInProgress(data)) {
             log.debug("Exists operation in progress. Decision is Wait");
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
@@ -55,7 +56,7 @@ public class TrendReversalDecider extends AbstractDecider {
                 log.debug("No position, but current price with commission = {} is greater than balance {}." +
                                 " Decision is Wait",
                         currentPriceWithCommission, data.getBalance());
-                return Decision.WAIT;
+                return Decision.WAIT_DECISION;
             } else {
                 final BigDecimal max = currentCandles.stream()
                         .map(Candle::getHighestPrice)
@@ -63,11 +64,12 @@ public class TrendReversalDecider extends AbstractDecider {
                         .orElseThrow();
                 final BigDecimal expectedMax = getExpectedExtremumCandle(currentCandles).getHighestPrice();
                 if (MathUtils.numbersEqual(expectedMax, max)) {
-                    log.debug("Expected max {} is equal to max {}. Decision is Buy", expectedMax, max);
-                    return Decision.BUY;
+                    Decision decision = new Decision(DecisionAction.BUY, 1);
+                    log.debug("Expected max {} is equal to max {}. Decision is {}", expectedMax, max, decision);
+                    return decision;
                 } else {
                     log.debug("Expected max {} is not equal to max {}. Decision is Wait", expectedMax, max);
-                    return Decision.WAIT;
+                    return Decision.WAIT_DECISION;
                 }
             }
         }
@@ -75,7 +77,7 @@ public class TrendReversalDecider extends AbstractDecider {
         BigDecimal profit = getProfit(position.averagePositionPrice.value, data.getInstrument().lot, currentPrice);
         if (MathUtils.isLower(profit, MINIMUM_PROFIT)) {
             log.debug("Profit {} is lower than minimum profit {}. Decision is Wait", profit, MINIMUM_PROFIT);
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
 
         final BigDecimal min = currentCandles.stream()
@@ -84,11 +86,12 @@ public class TrendReversalDecider extends AbstractDecider {
                 .orElseThrow();
         final BigDecimal expectedMin = getExpectedExtremumCandle(currentCandles).getLowestPrice();
         if (MathUtils.numbersEqual(expectedMin, min)) {
-            log.debug("Expected min {} is equal to min {}. Decision is Sell", expectedMin, min);
-            return Decision.SELL;
+            Decision decision = new Decision(DecisionAction.SELL, 1);
+            log.debug("Expected min {} is equal to min {}. Decision is {}", expectedMin, min, decision);
+            return decision;
         } else {
             log.debug("Expected min {} is not equal to min {}. Decision is Wait", expectedMin, min);
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
     }
 

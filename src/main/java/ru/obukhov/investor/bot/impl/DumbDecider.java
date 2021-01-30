@@ -2,7 +2,8 @@ package ru.obukhov.investor.bot.impl;
 
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.investor.Decision;
+import ru.obukhov.investor.bot.model.Decision;
+import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.util.MathUtils;
@@ -24,7 +25,7 @@ public class DumbDecider extends AbstractDecider {
     public Decision decide(DecisionData data) {
         if (existsOperationInProgress(data)) {
             log.debug("Exists operation in progress. Decision is Wait");
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
@@ -36,16 +37,27 @@ public class DumbDecider extends AbstractDecider {
                 log.debug("No position, but current price with commission = {} is greater than balance {}." +
                                 " Decision is Wait",
                         currentPriceWithCommission, data.getBalance());
-                return Decision.WAIT;
+                return Decision.WAIT_DECISION;
             } else {
-                log.debug("No position. Decision is Buy");
-                return Decision.BUY;
+                Decision decision = new Decision(DecisionAction.BUY, 1);
+                log.debug("No position. Decision is {}", decision);
+                return decision;
             }
         }
 
         BigDecimal profit = getProfit(position.averagePositionPrice.value, data.getInstrument().lot, currentPrice);
 
-        return MathUtils.isGreater(profit, MINIMUM_PROFIT) ? Decision.SELL : Decision.WAIT;
+        Decision decision;
+        if (MathUtils.isGreater(profit, MINIMUM_PROFIT)) {
+            decision = new Decision(DecisionAction.SELL, 1);
+            log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
+                    profit, MINIMUM_PROFIT, decision);
+        } else {
+            decision = Decision.WAIT_DECISION;
+            log.debug("Potential profit {} is not greater than minimum profit {}. Decision is Wait",
+                    profit, MINIMUM_PROFIT);
+        }
+        return decision;
     }
 
 }

@@ -3,9 +3,10 @@ package ru.obukhov.investor.bot.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import ru.obukhov.investor.Decision;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.Decider;
+import ru.obukhov.investor.bot.model.Decision;
+import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.exception.TickerNotFoundException;
 import ru.obukhov.investor.model.Interval;
@@ -76,13 +77,13 @@ public abstract class AbstractBot implements Bot {
     }
 
     protected void performOperation(String ticker, Decision decision) {
-        if (decision == Decision.WAIT) {
+        if (decision.getAction() == DecisionAction.WAIT) {
             log.info("Decision is wait. Do nothing");
             return;
         }
 
-        Operation operation = decision == Decision.BUY ? Operation.Buy : Operation.Sell;
-        PlacedOrder order = ordersService.placeOrder(ticker, 1, operation, null);
+        Operation operation = decision.getAction() == DecisionAction.BUY ? Operation.Buy : Operation.Sell;
+        PlacedOrder order = ordersService.placeOrder(ticker, decision.getLots(), operation, null);
         log.info("Placed order {}", order);
     }
 

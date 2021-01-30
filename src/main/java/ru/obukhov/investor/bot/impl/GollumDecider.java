@@ -2,7 +2,8 @@ package ru.obukhov.investor.bot.impl;
 
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.investor.Decision;
+import ru.obukhov.investor.bot.model.Decision;
+import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.util.MathUtils;
@@ -24,7 +25,7 @@ public class GollumDecider extends AbstractDecider {
     public Decision decide(DecisionData data) {
         if (existsOperationInProgress(data)) {
             log.debug("Exists operation in progress. Decision is Wait");
-            return Decision.WAIT;
+            return Decision.WAIT_DECISION;
         }
 
         final Portfolio.PortfolioPosition position = data.getPosition();
@@ -33,14 +34,15 @@ public class GollumDecider extends AbstractDecider {
             if (MathUtils.isGreater(currentPrice, data.getBalance())) {
                 log.debug("Current price = {} is greater than balance {}. Decision is Wait",
                         currentPrice, data.getBalance());
-                return Decision.WAIT;
+                return Decision.WAIT_DECISION;
             } else {
-                log.debug("No position. Decision is Buy");
-                return Decision.BUY;
+                Decision decision = new Decision(DecisionAction.BUY, 1);
+                log.debug("No position. Decision is {}", decision);
+                return decision;
             }
         }
 
-        return Decision.WAIT;
+        return Decision.WAIT_DECISION;
     }
 
 }
