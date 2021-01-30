@@ -82,7 +82,7 @@ public class Interval {
         OffsetDateTime extendedTo = DateUtils.atEndOfDay(to);
         if (notFuture) {
             OffsetDateTime now = OffsetDateTime.now();
-            Assert.isTrue(!from.isAfter(now), "From can't be in future when notFuture = true");
+            DateUtils.assertDateTimeNotFuture(from, now, "from");
             extendedTo = DateUtils.getEarliestDateTime(extendedTo, now);
         }
 

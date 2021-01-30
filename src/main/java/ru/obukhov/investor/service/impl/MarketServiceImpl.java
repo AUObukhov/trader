@@ -3,7 +3,6 @@ package ru.obukhov.investor.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.config.TradingProperties;
@@ -41,9 +40,7 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public List<Candle> getCandles(String ticker, Interval interval, CandleInterval candleInterval) {
 
-        Assert.isTrue(interval.getTo() == null
-                        || !interval.getTo().isAfter(tinkoffService.getCurrentDateTime()),
-                "'to' can't be in future");
+        DateUtils.assertDateTimeNotFuture(interval.getTo(), tinkoffService.getCurrentDateTime(), "to");
 
         ChronoUnit period = DateUtils.getPeriodByCandleInterval(candleInterval);
 

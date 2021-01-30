@@ -3,7 +3,7 @@ package ru.obukhov.investor.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.lang.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -340,6 +340,19 @@ public class DateUtils {
      */
     public static OffsetDateTime withDefaultOffset(OffsetDateTime dateTime) {
         return dateTime.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
+    }
+
+    /**
+     * @throws IllegalArgumentException when given {@code dateTime} is not null and after given {@code now}
+     */
+    public static void assertDateTimeNotFuture(@Nullable OffsetDateTime dateTime,
+                                               OffsetDateTime now,
+                                               String name) {
+        if (dateTime != null && dateTime.isAfter(now)) {
+            String message = String.format("'%s' (%s) can't be in future. Now is %s",
+                    name, dateTime.toString(), now.toString());
+            throw new IllegalArgumentException(message);
+        }
     }
 
 }

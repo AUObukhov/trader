@@ -17,6 +17,7 @@ import java.time.temporal.TemporalUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -547,8 +548,6 @@ public class DateUtilsTest {
     }
 
     // endregion
-
-
 
     // region roundUpToDay tests
 
@@ -1135,6 +1134,36 @@ public class DateUtilsTest {
         OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
 
         assertEquals(DateUtils.DEFAULT_OFFSET, dateTimeWithDefaultOffset.getOffset());
+    }
+
+    // endregion
+
+    // region assertDateTimeNotFuture tests
+
+    @Test
+    public void assertDateTimeNotFuture_throwsException_whenDateTimeIsInFuture() {
+        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
+
+        assertThrows("'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00",
+                IllegalArgumentException.class,
+                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"));
+    }
+
+    @Test
+    public void assertDateTimeNotFuture_notThrowsException_whenDateTimeIsInPast() {
+        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
+        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+
+        DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
+    }
+
+    @Test
+    public void assertDateTimeNotFuture_notThrowsException_whenDateTimeIsEqualsToNow() {
+        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+
+        DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
     }
 
     // endregion
