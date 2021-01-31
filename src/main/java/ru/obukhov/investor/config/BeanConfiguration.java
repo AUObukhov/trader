@@ -1,32 +1,12 @@
 package ru.obukhov.investor.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.investor.bot.impl.DumbDecider;
-import ru.obukhov.investor.bot.impl.FakeBotImpl;
-import ru.obukhov.investor.bot.impl.GollumDecider;
-import ru.obukhov.investor.bot.impl.ScheduledBot;
-import ru.obukhov.investor.bot.impl.SimulatorImpl;
-import ru.obukhov.investor.bot.impl.TrendReversalDecider;
-import ru.obukhov.investor.bot.interfaces.Bot;
-import ru.obukhov.investor.bot.interfaces.Decider;
-import ru.obukhov.investor.bot.interfaces.FakeBot;
-import ru.obukhov.investor.bot.interfaces.Simulator;
-import ru.obukhov.investor.bot.interfaces.TinkoffService;
-import ru.obukhov.investor.service.impl.FakeTinkoffService;
-import ru.obukhov.investor.service.impl.MarketServiceImpl;
-import ru.obukhov.investor.service.impl.OperationsServiceImpl;
-import ru.obukhov.investor.service.impl.OrdersServiceImpl;
-import ru.obukhov.investor.service.impl.PortfolioServiceImpl;
-import ru.obukhov.investor.service.impl.RealTinkoffService;
-import ru.obukhov.investor.service.impl.StatisticsServiceImpl;
-import ru.obukhov.investor.service.interfaces.ConnectionService;
-import ru.obukhov.investor.service.interfaces.ExcelService;
-import ru.obukhov.investor.service.interfaces.MarketService;
-import ru.obukhov.investor.service.interfaces.OperationsService;
-import ru.obukhov.investor.service.interfaces.OrdersService;
-import ru.obukhov.investor.service.interfaces.PortfolioService;
-import ru.obukhov.investor.service.interfaces.StatisticsService;
+import ru.obukhov.investor.bot.impl.*;
+import ru.obukhov.investor.bot.interfaces.*;
+import ru.obukhov.investor.service.impl.*;
+import ru.obukhov.investor.service.interfaces.*;
 
 import java.util.Set;
 
@@ -155,6 +135,12 @@ public class BeanConfiguration {
     @Bean
     public MarketService fakeMarketService(TradingProperties tradingProperties, TinkoffService fakeTinkoffService) {
         return new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+    }
+
+    @Bean
+    @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
+    public SandboxService sandboxService(ConnectionService connectionService, MarketService realMarketService) {
+        return new SandboxServiceImpl(connectionService, realMarketService);
     }
 
     @Bean

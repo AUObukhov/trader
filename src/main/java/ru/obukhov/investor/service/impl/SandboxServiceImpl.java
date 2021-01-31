@@ -2,8 +2,6 @@ package ru.obukhov.investor.service.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.obukhov.investor.service.interfaces.MarketService;
 import ru.obukhov.investor.service.interfaces.SandboxService;
@@ -14,8 +12,6 @@ import ru.tinkoff.invest.openapi.models.sandbox.PositionBalance;
 
 import java.math.BigDecimal;
 
-@Service
-@ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
 public class SandboxServiceImpl implements SandboxService {
 
     private final MarketService marketService;
