@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.util.Assert;
 import ru.obukhov.investor.util.DateUtils;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -22,12 +23,16 @@ public class Candle {
 
     private OffsetDateTime time;
 
+    private CandleInterval interval;
+
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
      */
     public static Candle createAverage(Candle leftCandle, Candle rightCandle) {
         Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()),
                 "leftCandle can't be after rightCandle");
+        Assert.isTrue(leftCandle.getInterval() == rightCandle.getInterval(),
+                "Candle intervals must be equal");
 
         BigDecimal openPrice = leftCandle.getClosePrice();
         BigDecimal closePrice = rightCandle.getOpenPrice();

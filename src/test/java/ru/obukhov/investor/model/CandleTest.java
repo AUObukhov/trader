@@ -4,11 +4,46 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
+import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+import static org.junit.Assert.assertThrows;
+
 public class CandleTest {
+
+    @Test
+    public void createAverage_throwsIllegalArgumentException_whenLeftCandleAfterRightCandle() {
+        Candle leftCandle = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 11, 1, 0, 0))
+                .build();
+
+        Candle rightCandle = Candle.builder()
+                .time(DateUtils.getDateTime(2020, 10, 10, 2, 0, 0))
+                .build();
+
+        assertThrows("leftCandle can't be after rightCandle",
+                IllegalArgumentException.class,
+                () -> Candle.createAverage(leftCandle, rightCandle));
+    }
+
+    @Test
+    public void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
+        Candle leftCandle = Candle.builder()
+                .interval(CandleInterval.DAY)
+                .time(DateUtils.getDateTime(2020, 10, 10, 1, 0, 0))
+                .build();
+
+        Candle rightCandle = Candle.builder()
+                .interval(CandleInterval.HOUR)
+                .time(DateUtils.getDateTime(2020, 10, 11, 2, 0, 0))
+                .build();
+
+        assertThrows("Candle intervals must be equal",
+                IllegalArgumentException.class,
+                () -> Candle.createAverage(leftCandle, rightCandle));
+    }
 
     @Test
     public void createAverage() {
