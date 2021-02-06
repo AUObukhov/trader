@@ -23,7 +23,7 @@ public class ThrottledCounter {
      * Creates new instance of {@link ThrottledCounter}
      *
      * @param interval delay before decrement after increment in milliseconds
-     * @param maxValue maximum value if counter
+     * @param maxValue maximum value of counter
      */
     public ThrottledCounter(long interval, int maxValue) {
         this.interval = interval;
