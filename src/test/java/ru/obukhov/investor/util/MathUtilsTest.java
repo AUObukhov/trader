@@ -101,8 +101,15 @@ public class MathUtilsTest {
     }
 
     @Test
-    public void divide() {
+    public void divideByInteger() {
         BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), 3);
+
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
+    }
+
+    @Test
+    public void divideByBigDecimal() {
+        BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3));
 
         assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
     }
