@@ -43,14 +43,14 @@ public class MathUtils {
     }
 
     /**
-     * @return result of division if {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
+     * @return result of division of {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
      */
     public static BigDecimal divide(BigDecimal dividend, int divisor) {
         return divide(dividend, BigDecimal.valueOf(divisor));
     }
 
     /**
-     * @return result of division if {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
+     * @return result of division of {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
      */
     public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
         return dividend.divide(divisor, SCALE, RoundingMode.HALF_UP);
