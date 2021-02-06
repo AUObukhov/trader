@@ -57,6 +57,13 @@ public class MathUtils {
     }
 
     /**
+     * @return integer quotient of division of {@code dividend} by {@code divisor}
+     */
+    public static int getIntegerQuotient(BigDecimal dividend, BigDecimal divisor) {
+        return dividend.divide(divisor, RoundingMode.DOWN).intValue();
+    }
+
+    /**
      * @return {@code number} * {@code fraction}
      */
     public static BigDecimal getFraction(BigDecimal number, double fraction) {

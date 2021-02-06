@@ -114,6 +114,31 @@ public class MathUtilsTest {
         assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
     }
 
+    // region getIntegerQuotient
+
+    @Test
+    public void getIntegerQuotient1() {
+        int result = MathUtils.getIntegerQuotient(BigDecimal.valueOf(7.8), BigDecimal.valueOf(2.6));
+
+        assertEquals(3, result);
+    }
+
+    @Test
+    public void getIntegerQuotient2() {
+        int result = MathUtils.getIntegerQuotient(BigDecimal.valueOf(7.9), BigDecimal.valueOf(2.6));
+
+        assertEquals(3, result);
+    }
+
+    @Test
+    public void getIntegerQuotient3() {
+        int result = MathUtils.getIntegerQuotient(BigDecimal.valueOf(10.3), BigDecimal.valueOf(2.6));
+
+        assertEquals(3, result);
+    }
+
+    // endregion
+
     @Test
     public void getFraction() {
         BigDecimal result = MathUtils.getFraction(BigDecimal.valueOf(765), 0.003);
