@@ -1,11 +1,16 @@
 package ru.obukhov.investor.util;
 
 import com.google.common.base.Stopwatch;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 
 public class ThrottledCounterTest {
 
@@ -45,29 +50,31 @@ public class ThrottledCounterTest {
         Duration duration1 = counter.increment();
         int value1 = counter.getValue();
 
-        TimeUnit.MILLISECONDS.sleep(250);
+        TimeUnit.MILLISECONDS.sleep(250); // not changing
         Duration duration2 = counter.increment();
         int value2 = counter.getValue();
 
-        TimeUnit.MILLISECONDS.sleep(250);
+        TimeUnit.MILLISECONDS.sleep(250); // not changing
         Duration duration3 = counter.increment();
         int value3 = counter.getValue();
 
-        Duration duration4 = counter.increment(); // waits for ~500 milliseconds
+        Duration duration4 = counter.increment(); // waits for ~500 milliseconds until -1, then +1
         int value4 = counter.getValue();
 
-        TimeUnit.MILLISECONDS.sleep(255); // -1
+        TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
+        TimeUnit.MILLISECONDS.sleep(250); // -1
         int value5 = counter.getValue();
 
-        TimeUnit.MILLISECONDS.sleep(255); // -1
+        TimeUnit.MILLISECONDS.sleep(250); // -1
         int value6 = counter.getValue();
 
-        TimeUnit.MILLISECONDS.sleep(505);
+        TimeUnit.MILLISECONDS.sleep(500);
         int value7 = counter.getValue();
 
         stopwatch.stop();
 
-        Assert.assertTrue(stopwatch.elapsed().toMillis() > 2000);
+        MatcherAssert.assertThat(stopwatch.elapsed().toMillis(), allOf(greaterThan(2000L), lessThan(2200L)));
+
         Assert.assertEquals(1, value1);
         Assert.assertEquals(0, duration1.toMillis());
 
@@ -78,10 +85,10 @@ public class ThrottledCounterTest {
         Assert.assertEquals(0, duration3.toMillis());
 
         Assert.assertEquals(3, value4);
-        Assert.assertTrue(duration4.toMillis() > 490);
-
+        MatcherAssert.assertThat(duration4.toMillis(), allOf(greaterThan(450L), lessThan(550L)));
         Assert.assertEquals(2, value5);
         Assert.assertEquals(1, value6);
         Assert.assertEquals(0, value7);
     }
+
 }
