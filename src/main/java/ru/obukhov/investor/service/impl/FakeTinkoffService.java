@@ -1,7 +1,5 @@
 package ru.obukhov.investor.service.impl;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
@@ -35,7 +33,9 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,7 +49,7 @@ public class FakeTinkoffService implements TinkoffService {
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
     private final List<SimulatedOperation> operations;
-    private final Multimap<String, Portfolio.PortfolioPosition> tickersToPositions;
+    private final Map<String, Portfolio.PortfolioPosition> tickersToPositions;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final OperationTypeMapper operationTypeMapper = Mappers.getMapper(OperationTypeMapper.class);
@@ -68,7 +68,7 @@ public class FakeTinkoffService implements TinkoffService {
         this.realTinkoffService = realTinkoffService;
 
         this.operations = new ArrayList<>();
-        this.tickersToPositions = ArrayListMultimap.create();
+        this.tickersToPositions = new HashMap<>();
 
     }
 
@@ -173,10 +173,10 @@ public class FakeTinkoffService implements TinkoffService {
         MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
 
         if (marketOrder.operation == ru.tinkoff.invest.openapi.models.orders.Operation.Buy) {
-            addPosition(ticker, currentPrice, marketOrder.lots, totalPrice);
+            buyPosition(ticker, currentPrice, marketOrder.lots, totalPrice);
             updateBalance(totalPrice.negate(), commissionAmount);
         } else {
-            removePositions(ticker, marketOrder.lots);
+            sellPosition(ticker, marketOrder.lots);
             updateBalance(totalPrice, commissionAmount);
         }
 
@@ -204,28 +204,91 @@ public class FakeTinkoffService implements TinkoffService {
         return marketService.getLastCandle(ticker, currentDateTime).getClosePrice();
     }
 
-    private void addPosition(String ticker, BigDecimal currentPrice, int lots, BigDecimal balance) {
-        MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, currentPrice);
-        Portfolio.PortfolioPosition position = new Portfolio.PortfolioPosition(StringUtils.EMPTY,
+    private void buyPosition(String ticker, BigDecimal currentPrice, int lotsCount, BigDecimal totalPrice) {
+        Portfolio.PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        Portfolio.PortfolioPosition position;
+        if (existingPosition == null) {
+            MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, currentPrice); // todo rid of hardcoded currency
+            position = createNewPosition(ticker, totalPrice, averagePositionPrice, lotsCount);
+        } else {
+            int newLotsCount = existingPosition.lots + lotsCount;
+            BigDecimal newBalance = MathUtils.
+                    multiply(existingPosition.averagePositionPrice.value, existingPosition.lots)
+                    .add(totalPrice);
+            BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
+            position = clonePositionWithNewBalance(existingPosition, totalPrice, newAveragePrice, newLotsCount);
+        }
+
+        this.tickersToPositions.put(ticker, position);
+    }
+
+    private void sellPosition(String ticker, int lotsCount) {
+        Portfolio.PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        int newLotsCount = existingPosition.lots - lotsCount;
+
+        if (newLotsCount == 0) {
+            this.tickersToPositions.remove(ticker);
+        } else if (newLotsCount > 0) {
+            Portfolio.PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
+            this.tickersToPositions.put(ticker, newPosition);
+        } else {
+            final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
+                    + existingPosition.lots;
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    private Portfolio.PortfolioPosition createNewPosition(String ticker,
+                                                          BigDecimal balance,
+                                                          MoneyAmount averagePositionPrice,
+                                                          int lotsCount) {
+        return new Portfolio.PortfolioPosition(
+                StringUtils.EMPTY,
                 ticker,
                 null,
                 InstrumentType.Stock,
                 balance,
                 null,
                 null,
-                lots,
+                lotsCount,
                 averagePositionPrice,
                 null,
                 StringUtils.EMPTY);
-
-        this.tickersToPositions.put(ticker, position);
     }
 
-    private void removePositions(String ticker, int count) {
-        List<Portfolio.PortfolioPosition> tickerPositions = new ArrayList<>(this.tickersToPositions.get(ticker));
-        Assert.isTrue(tickerPositions.size() >= count,
-                "marketOrder.lots can't be greater than existing positions count");
-        this.tickersToPositions.replaceValues(ticker, tickerPositions.subList(0, tickerPositions.size() - count));
+    private Portfolio.PortfolioPosition clonePositionWithNewBalance(Portfolio.PortfolioPosition position,
+                                                                    BigDecimal balance,
+                                                                    BigDecimal averagePrice,
+                                                                    int lotsCount) {
+        MoneyAmount averagePositionPrice = new MoneyAmount(position.averagePositionPrice.currency, averagePrice);
+        return new Portfolio.PortfolioPosition(
+                position.figi,
+                position.ticker,
+                position.isin,
+                position.instrumentType,
+                balance,
+                position.blocked,
+                position.expectedYield,
+                lotsCount,
+                averagePositionPrice,
+                position.averagePositionPriceNoNkd,
+                position.name);
+    }
+
+    private Portfolio.PortfolioPosition clonePositionWithNewLotsCount(Portfolio.PortfolioPosition position,
+                                                                      int lotsCount) {
+        return new Portfolio.PortfolioPosition(
+                position.figi,
+                position.ticker,
+                position.isin,
+                position.instrumentType,
+                position.balance,
+                position.blocked,
+                position.expectedYield,
+                lotsCount,
+                position.averagePositionPrice,
+                position.averagePositionPriceNoNkd,
+                position.name);
     }
 
     private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {

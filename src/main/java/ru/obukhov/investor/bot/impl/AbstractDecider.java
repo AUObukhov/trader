@@ -21,15 +21,18 @@ public abstract class AbstractDecider implements Decider {
 
     protected final TradingProperties tradingProperties;
 
-    protected BigDecimal getProfit(BigDecimal buyPrice, double lot, BigDecimal currentPrice) {
-        BigDecimal buyLotPrice = MathUtils.multiply(buyPrice, lot);
+    /**
+     * @return possible average percent profit of selling all positions in given {@code DecisionData}
+     */
+    protected double getProfit(DecisionData data) {
+        BigDecimal buyLotPrice = MathUtils.multiply(data.getAveragePositionPrice(), data.getLotSize());
         BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
 
-        BigDecimal currentLotPrice = MathUtils.multiply(currentPrice, lot);
+        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), data.getLotSize());
         BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(
                 currentLotPrice, tradingProperties.getCommission());
 
-        BigDecimal profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission);
+        double profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission).doubleValue();
 
         log.debug("buyLotPrice = {}, "
                         + "buyPricePlusCommission = {}, "
@@ -44,6 +47,13 @@ public abstract class AbstractDecider implements Decider {
     protected static boolean existsOperationInProgress(DecisionData data) {
         return data.getLastOperations().stream()
                 .anyMatch(operation -> operation.status == OperationStatus.Progress);
+    }
+
+    protected int getAvailableLots(DecisionData data) {
+        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        BigDecimal currentLotPriceWithCommission =
+                MathUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
+        return MathUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
 }

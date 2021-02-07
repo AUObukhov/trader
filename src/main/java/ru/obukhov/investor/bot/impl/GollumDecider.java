@@ -1,18 +1,13 @@
 package ru.obukhov.investor.bot.impl;
 
-import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.bot.model.Decision;
 import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.util.MathUtils;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
-
-import java.math.BigDecimal;
 
 /**
- * Decider which decides to buy paper as soon as possible and never sell
+ * Decider which decides to buy paper always when possible and never to sell
  */
 @Slf4j
 public class GollumDecider extends AbstractDecider {
@@ -23,26 +18,24 @@ public class GollumDecider extends AbstractDecider {
 
     @Override
     public Decision decide(DecisionData data) {
+        Decision decision;
         if (existsOperationInProgress(data)) {
-            log.debug("Exists operation in progress. Decision is Wait");
-            return Decision.WAIT_DECISION;
-        }
-
-        final Portfolio.PortfolioPosition position = data.getPosition();
-        final BigDecimal currentPrice = Iterables.getLast(data.getCurrentCandles()).getClosePrice();
-        if (position == null) {
-            if (MathUtils.isGreater(currentPrice, data.getBalance())) {
-                log.debug("Current price = {} is greater than balance {}. Decision is Wait",
-                        currentPrice, data.getBalance());
-                return Decision.WAIT_DECISION;
+            decision = Decision.WAIT_DECISION;
+            log.debug("Exists operation in progress. Decision is {}", decision);
+        } else {
+            int availableLots = getAvailableLots(data);
+            if (availableLots > 0) {
+                decision = new Decision(DecisionAction.BUY, availableLots);
+                log.debug("Current balance {} allows to buy {} lots. Decision is {}",
+                        data.getBalance(), availableLots, decision);
             } else {
-                Decision decision = new Decision(DecisionAction.BUY, 1);
-                log.debug("No position. Decision is {}", decision);
-                return decision;
+                decision = Decision.WAIT_DECISION;
+                log.debug("Current balance {} is not enough to buy any lots. Decision is {}",
+                        data.getBalance(), decision);
             }
         }
 
-        return Decision.WAIT_DECISION;
+        return decision;
     }
 
 }
