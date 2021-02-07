@@ -3,10 +3,33 @@ package ru.obukhov.investor.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.investor.bot.impl.*;
-import ru.obukhov.investor.bot.interfaces.*;
-import ru.obukhov.investor.service.impl.*;
-import ru.obukhov.investor.service.interfaces.*;
+import ru.obukhov.investor.bot.impl.ConservativeDecider;
+import ru.obukhov.investor.bot.impl.DumbDecider;
+import ru.obukhov.investor.bot.impl.FakeBotImpl;
+import ru.obukhov.investor.bot.impl.ScheduledBot;
+import ru.obukhov.investor.bot.impl.SimulatorImpl;
+import ru.obukhov.investor.bot.impl.TrendReversalDecider;
+import ru.obukhov.investor.bot.interfaces.Bot;
+import ru.obukhov.investor.bot.interfaces.Decider;
+import ru.obukhov.investor.bot.interfaces.FakeBot;
+import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.bot.interfaces.TinkoffService;
+import ru.obukhov.investor.service.impl.FakeTinkoffService;
+import ru.obukhov.investor.service.impl.MarketServiceImpl;
+import ru.obukhov.investor.service.impl.OperationsServiceImpl;
+import ru.obukhov.investor.service.impl.OrdersServiceImpl;
+import ru.obukhov.investor.service.impl.PortfolioServiceImpl;
+import ru.obukhov.investor.service.impl.RealTinkoffService;
+import ru.obukhov.investor.service.impl.SandboxServiceImpl;
+import ru.obukhov.investor.service.impl.StatisticsServiceImpl;
+import ru.obukhov.investor.service.interfaces.ConnectionService;
+import ru.obukhov.investor.service.interfaces.ExcelService;
+import ru.obukhov.investor.service.interfaces.MarketService;
+import ru.obukhov.investor.service.interfaces.OperationsService;
+import ru.obukhov.investor.service.interfaces.OrdersService;
+import ru.obukhov.investor.service.interfaces.PortfolioService;
+import ru.obukhov.investor.service.interfaces.SandboxService;
+import ru.obukhov.investor.service.interfaces.StatisticsService;
 
 import java.util.Set;
 
@@ -17,8 +40,8 @@ import java.util.Set;
 public class BeanConfiguration {
 
     @Bean
-    public Decider gollumDecider(TradingProperties tradingProperties) {
-        return new GollumDecider(tradingProperties);
+    public Decider conservativeDecider(TradingProperties tradingProperties) {
+        return new ConservativeDecider(tradingProperties);
     }
 
     @Bean
@@ -35,15 +58,15 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public FakeBot gollumFakeBot(Decider gollumDecider,
-                                 MarketService fakeMarketService,
-                                 OperationsService fakeOperationsService,
-                                 OrdersService fakeOrdersService,
-                                 PortfolioService fakePortfolioService,
-                                 FakeTinkoffService fakeTinkoffService) {
+    public FakeBot conservativeFakeBot(Decider conservativeDecider,
+                                       MarketService fakeMarketService,
+                                       OperationsService fakeOperationsService,
+                                       OrdersService fakeOrdersService,
+                                       PortfolioService fakePortfolioService,
+                                       FakeTinkoffService fakeTinkoffService) {
 
-        return new FakeBotImpl("Gollum bot",
-                gollumDecider,
+        return new FakeBotImpl("Conservative bot",
+                conservativeDecider,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,

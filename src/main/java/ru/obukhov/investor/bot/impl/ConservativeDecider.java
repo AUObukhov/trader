@@ -10,9 +10,9 @@ import ru.obukhov.investor.config.TradingProperties;
  * Decider which decides to buy paper always when possible and never to sell
  */
 @Slf4j
-public class GollumDecider extends AbstractDecider {
+public class ConservativeDecider extends AbstractDecider {
 
-    public GollumDecider(TradingProperties tradingProperties) {
+    public ConservativeDecider(TradingProperties tradingProperties) {
         super(tradingProperties);
     }
 
