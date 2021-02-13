@@ -3,9 +3,9 @@ package ru.obukhov.investor.bot.model;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.model.Candle;
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,17 +14,17 @@ import java.util.List;
 public class DecisionData {
 
     private BigDecimal balance;
-    private Portfolio.PortfolioPosition position;
+    private PortfolioPosition position;
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
     private Instrument instrument;
 
     public Integer getPositionLotsCount() {
-        return position.lots;
+        return position.getLotsCount();
     }
 
     public BigDecimal getAveragePositionPrice() {
-        return position.averagePositionPrice.value;
+        return position.getAveragePositionPrice();
     }
 
     public BigDecimal getCurrentPrice() {

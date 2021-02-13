@@ -1,17 +1,18 @@
 package ru.obukhov.investor.service.interfaces;
 
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 public interface PortfolioService {
 
-    List<Portfolio.PortfolioPosition> getPositions();
+    Collection<PortfolioPosition> getPositions();
 
-    Portfolio.PortfolioPosition getPosition(String ticker);
+    PortfolioPosition getPosition(String ticker);
 
     BigDecimal getAvailableBalance(Currency currency);
 

@@ -2,6 +2,7 @@ package ru.obukhov.investor.bot.interfaces;
 
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.Orderbook;
@@ -10,10 +11,10 @@ import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
 import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public interface TinkoffService {
 
     void cancelOrder(String orderId);
 
-    List<Portfolio.PortfolioPosition> getPortfolioPositions();
+    Collection<PortfolioPosition> getPortfolioPositions();
 
     List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies();
 

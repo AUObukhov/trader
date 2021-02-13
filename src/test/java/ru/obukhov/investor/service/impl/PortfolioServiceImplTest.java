@@ -9,11 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.obukhov.investor.service.interfaces.PortfolioService;
 import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.math.BigDecimal;
@@ -48,16 +47,16 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
 
-        List<Portfolio.PortfolioPosition> positions = ImmutableList.of(
+        List<PortfolioPosition> positions = ImmutableList.of(
                 createPortfolioPosition(ticker1),
                 createPortfolioPosition(ticker2),
                 createPortfolioPosition(ticker3)
         );
         when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
-        Portfolio.PortfolioPosition position = service.getPosition(ticker2);
+        PortfolioPosition position = service.getPosition(ticker2);
 
-        assertEquals(ticker2, position.ticker);
+        assertEquals(ticker2, position.getTicker());
     }
 
     @Test
@@ -66,14 +65,14 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
 
-        List<Portfolio.PortfolioPosition> positions = ImmutableList.of(
+        List<PortfolioPosition> positions = ImmutableList.of(
                 createPortfolioPosition(ticker1),
                 createPortfolioPosition(ticker2),
                 createPortfolioPosition(ticker3)
         );
         when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
-        Portfolio.PortfolioPosition position = service.getPosition(TICKER);
+        PortfolioPosition position = service.getPosition(TICKER);
 
         assertNull(position);
     }
@@ -118,13 +117,12 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
 
     // region mocks
 
-    private Portfolio.PortfolioPosition createPortfolioPosition(String ticker) {
-        return new Portfolio.PortfolioPosition(StringUtils.EMPTY,
+    private PortfolioPosition createPortfolioPosition(String ticker) {
+        return new PortfolioPosition(
                 ticker,
-                null,
-                InstrumentType.Bond,
                 BigDecimal.ONE,
                 null,
+                Currency.RUB,
                 null,
                 1,
                 null,

@@ -8,6 +8,9 @@ import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.model.MoneyAmount;
+import ru.obukhov.investor.model.PortfolioPosition;
+import ru.obukhov.investor.model.transform.MoneyAmountMapper;
 import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.model.transform.OperationTypeMapper;
 import ru.obukhov.investor.service.interfaces.MarketService;
@@ -15,7 +18,6 @@ import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.Orderbook;
@@ -24,13 +26,12 @@ import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
 import ru.tinkoff.invest.openapi.models.orders.Status;
-import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -49,11 +50,11 @@ public class FakeTinkoffService implements TinkoffService {
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
     private final List<SimulatedOperation> operations;
-    private final Map<String, Portfolio.PortfolioPosition> tickersToPositions;
+    private final Map<String, PortfolioPosition> tickersToPositions;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final OperationTypeMapper operationTypeMapper = Mappers.getMapper(OperationTypeMapper.class);
-
+    private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
     @Getter
     private OffsetDateTime currentDateTime;
     @Getter
@@ -193,7 +194,7 @@ public class FakeTinkoffService implements TinkoffService {
                 .ticker(ticker)
                 .price(price)
                 .quantity(marketOrder.lots)
-                .commission(commission.value)
+                .commission(commission.getValue())
                 .dateTime(this.currentDateTime)
                 .operationType(operationTypeMapper.map(marketOrder.operation))
                 .build();
@@ -205,15 +206,15 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private void buyPosition(String ticker, BigDecimal currentPrice, int lotsCount, BigDecimal totalPrice) {
-        Portfolio.PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
-        Portfolio.PortfolioPosition position;
+        Instrument instrument = realTinkoffService.searchMarketInstrument(ticker);
+        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        PortfolioPosition position;
         if (existingPosition == null) {
-            MoneyAmount averagePositionPrice = new MoneyAmount(Currency.RUB, currentPrice); // todo rid of hardcoded currency
-            position = createNewPosition(ticker, totalPrice, averagePositionPrice, lotsCount);
+            position = createNewPosition(ticker, totalPrice, instrument.currency, currentPrice, lotsCount);
         } else {
-            int newLotsCount = existingPosition.lots + lotsCount;
+            int newLotsCount = existingPosition.getLotsCount() + lotsCount;
             BigDecimal newBalance = MathUtils.
-                    multiply(existingPosition.averagePositionPrice.value, existingPosition.lots)
+                    multiply(existingPosition.getAveragePositionPrice(), existingPosition.getLotsCount())
                     .add(totalPrice);
             BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
             position = clonePositionWithNewBalance(existingPosition, totalPrice, newAveragePrice, newLotsCount);
@@ -223,32 +224,31 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private void sellPosition(String ticker, int lotsCount) {
-        Portfolio.PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
-        int newLotsCount = existingPosition.lots - lotsCount;
+        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        int newLotsCount = existingPosition.getLotsCount() - lotsCount;
 
         if (newLotsCount == 0) {
             this.tickersToPositions.remove(ticker);
         } else if (newLotsCount > 0) {
-            Portfolio.PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
+            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
             this.tickersToPositions.put(ticker, newPosition);
         } else {
             final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
-                    + existingPosition.lots;
+                    + existingPosition.getLotsCount();
             throw new IllegalArgumentException(message);
         }
     }
 
-    private Portfolio.PortfolioPosition createNewPosition(String ticker,
-                                                          BigDecimal balance,
-                                                          MoneyAmount averagePositionPrice,
-                                                          int lotsCount) {
-        return new Portfolio.PortfolioPosition(
-                StringUtils.EMPTY,
+    private PortfolioPosition createNewPosition(String ticker,
+                                                BigDecimal balance,
+                                                Currency currency,
+                                                BigDecimal averagePositionPrice,
+                                                int lotsCount) {
+        return new PortfolioPosition(
                 ticker,
-                null,
-                InstrumentType.Stock,
                 balance,
                 null,
+                currency,
                 null,
                 lotsCount,
                 averagePositionPrice,
@@ -256,39 +256,33 @@ public class FakeTinkoffService implements TinkoffService {
                 StringUtils.EMPTY);
     }
 
-    private Portfolio.PortfolioPosition clonePositionWithNewBalance(Portfolio.PortfolioPosition position,
-                                                                    BigDecimal balance,
-                                                                    BigDecimal averagePrice,
-                                                                    int lotsCount) {
-        MoneyAmount averagePositionPrice = new MoneyAmount(position.averagePositionPrice.currency, averagePrice);
-        return new Portfolio.PortfolioPosition(
-                position.figi,
-                position.ticker,
-                position.isin,
-                position.instrumentType,
+    private PortfolioPosition clonePositionWithNewBalance(PortfolioPosition position,
+                                                          BigDecimal balance,
+                                                          BigDecimal averagePositionPrice,
+                                                          int lotsCount) {
+        return new PortfolioPosition(
+                position.getTicker(),
                 balance,
-                position.blocked,
-                position.expectedYield,
+                position.getBlocked(),
+                position.getCurrency(),
+                position.getExpectedYield(),
                 lotsCount,
                 averagePositionPrice,
-                position.averagePositionPriceNoNkd,
-                position.name);
+                position.getAveragePositionPriceNoNkd(),
+                position.getName());
     }
 
-    private Portfolio.PortfolioPosition clonePositionWithNewLotsCount(Portfolio.PortfolioPosition position,
-                                                                      int lotsCount) {
-        return new Portfolio.PortfolioPosition(
-                position.figi,
-                position.ticker,
-                position.isin,
-                position.instrumentType,
-                position.balance,
-                position.blocked,
-                position.expectedYield,
+    private PortfolioPosition clonePositionWithNewLotsCount(PortfolioPosition position, int lotsCount) {
+        return new PortfolioPosition(
+                position.getTicker(),
+                position.getBalance(),
+                position.getBlocked(),
+                position.getCurrency(),
+                position.getExpectedYield(),
                 lotsCount,
-                position.averagePositionPrice,
-                position.averagePositionPriceNoNkd,
-                position.name);
+                position.getAveragePositionPrice(),
+                position.getAveragePositionPriceNoNkd(),
+                position.getName());
     }
 
     private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
@@ -306,7 +300,7 @@ public class FakeTinkoffService implements TinkoffService {
                 StringUtils.EMPTY,
                 marketOrder.lots,
                 marketOrder.lots,
-                commission);
+                moneyAmountMapper.map(commission));
     }
 
     @Override
@@ -319,7 +313,7 @@ public class FakeTinkoffService implements TinkoffService {
     // region PortfolioContext proxy
 
     @Override
-    public List<Portfolio.PortfolioPosition> getPortfolioPositions() {
+    public Collection<PortfolioPosition> getPortfolioPositions() {
         return new ArrayList<>(this.tickersToPositions.values());
     }
 

@@ -3,7 +3,6 @@ package ru.obukhov.investor.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.BeansException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -11,7 +10,9 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.investor.bot.interfaces.TinkoffService;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.obukhov.investor.model.transform.CandleMapper;
+import ru.obukhov.investor.model.transform.PortfolioPositionMapper;
 import ru.obukhov.investor.service.TinkoffContextsAware;
 import ru.obukhov.investor.service.interfaces.ConnectionService;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -22,10 +23,10 @@ import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
 import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import java.util.List;
 public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService, ApplicationContextAware {
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
+    private final PortfolioPositionMapper portfolioPositionMapper = Mappers.getMapper(PortfolioPositionMapper.class);
     private ApplicationContext applicationContext;
 
     public RealTinkoffService(ConnectionService connectionService) {
@@ -139,8 +141,8 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region PortfolioContext
 
     @Override
-    public List<Portfolio.PortfolioPosition> getPortfolioPositions() {
-        return getPortfolioContext().getPortfolio(null).join().positions;
+    public Collection<PortfolioPosition> getPortfolioPositions() {
+        return portfolioPositionMapper.map(getPortfolioContext().getPortfolio(null).join().positions);
     }
 
     @Override
@@ -160,7 +162,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

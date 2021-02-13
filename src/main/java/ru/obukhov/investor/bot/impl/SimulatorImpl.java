@@ -9,6 +9,7 @@ import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.bot.model.DecisionData;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.model.PortfolioPosition;
 import ru.obukhov.investor.model.transform.OperationMapper;
 import ru.obukhov.investor.service.impl.FakeTinkoffService;
 import ru.obukhov.investor.service.interfaces.ExcelService;
@@ -17,7 +18,6 @@ import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -131,9 +131,9 @@ public class SimulatorImpl implements Simulator {
                 .collect(Collectors.toList());
     }
 
-    private SimulatedPosition createSimulatedPosition(Portfolio.PortfolioPosition portfolioPosition) {
-        BigDecimal price = fakeTinkoffService.getCurrentPrice(portfolioPosition.ticker);
-        return new SimulatedPosition(portfolioPosition.ticker, price, portfolioPosition.lots);
+    private SimulatedPosition createSimulatedPosition(PortfolioPosition portfolioPosition) {
+        BigDecimal price = fakeTinkoffService.getCurrentPrice(portfolioPosition.getTicker());
+        return new SimulatedPosition(portfolioPosition.getTicker(), price, portfolioPosition.getLotsCount());
     }
 
     private BigDecimal getTotalBalance(List<SimulatedPosition> positions) {
