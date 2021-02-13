@@ -46,6 +46,7 @@ public class Candle {
                 .highestPrice(highestPrice)
                 .lowestPrice(lowestPrice)
                 .time(time)
+                .interval(leftCandle.getInterval())
                 .build();
     }
 
