@@ -50,7 +50,7 @@ public class MathUtilsTest {
 
         BigDecimal average = MathUtils.getAverage(numbers);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.3333), average));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.33333), average));
 
     }
 
@@ -87,7 +87,7 @@ public class MathUtilsTest {
                 BigDecimal.valueOf(200),
                 BigDecimal.valueOf(1000));
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.3333), average));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(433.33333), average));
 
     }
 
@@ -104,14 +104,14 @@ public class MathUtilsTest {
     public void divideByInteger() {
         BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), 3);
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.33333), result));
     }
 
     @Test
     public void divideByBigDecimal() {
         BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3));
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.3333), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(33.33333), result));
     }
 
     // region getIntegerQuotient
@@ -164,8 +164,43 @@ public class MathUtilsTest {
     public void getFractionDifference() {
         BigDecimal result = MathUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
 
-        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(0.003), result));
+        assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(0.00301), result));
     }
+
+    // region setDefaultScale tests
+
+    @Test
+    public void setDefaultScale_returnsNull_whenNumberIsNull() {
+        assertNull(MathUtils.setDefaultScale(null));
+    }
+
+    @Test
+    public void setDefaultScale_setZeroScale_whenNumberScaleIsNegative() {
+        BigDecimal number = BigDecimal.valueOf(10, -1);
+        final BigDecimal result = MathUtils.setDefaultScale(number);
+
+        assertEquals(0, result.scale());
+    }
+
+    @Test
+    public void setDefaultScale_notChangesScale_whenNumberScaleIsLowerThanDefault() {
+        int scale = 2;
+        BigDecimal number = BigDecimal.valueOf(10, scale);
+        final BigDecimal result = MathUtils.setDefaultScale(number);
+
+        assertEquals(scale, result.scale());
+    }
+
+    @Test
+    public void setDefaultScale_setDefaultScaleValue_whenNumberScaleIsGreaterThanDefault() {
+        int scale = 6;
+        BigDecimal number = BigDecimal.valueOf(10, scale);
+        final BigDecimal result = MathUtils.setDefaultScale(number);
+
+        assertEquals(MathUtils.DEFAULT_SCALE, result.scale());
+    }
+
+    // endregion
 
     // region numbersEqual tests
 

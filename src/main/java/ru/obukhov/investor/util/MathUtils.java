@@ -14,12 +14,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
 
-    private static final int SCALE = 4;
+    public static final int DEFAULT_SCALE = 5;
 
     // region arithmetics
 
     /**
-     * @return average value of passed collection with scale = 5 and rounding mode = Half Up
+     * @return average value of passed collection with scale = {@link MathUtils#DEFAULT_SCALE} and rounding mode = Half Up
      */
     public static BigDecimal getAverage(Collection<BigDecimal> numbers) {
         return numbers.stream()
@@ -29,7 +29,7 @@ public class MathUtils {
     }
 
     /**
-     * @return average value of passed {@code numbers} with scale = 5 and rounding mode = Half Up
+     * @return average value of passed {@code numbers} with scale = {@link MathUtils#DEFAULT_SCALE} and rounding mode = Half Up
      */
     public static BigDecimal getAverage(BigDecimal... numbers) {
         return getAverage(Arrays.asList(numbers));
@@ -43,17 +43,17 @@ public class MathUtils {
     }
 
     /**
-     * @return result of division of {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link MathUtils#DEFAULT_SCALE} and rounding mode = Half Up
      */
     public static BigDecimal divide(BigDecimal dividend, int divisor) {
         return divide(dividend, BigDecimal.valueOf(divisor));
     }
 
     /**
-     * @return result of division of {@code dividend} by {@code divisor} with scale = 5 and rounding mode = Half Up
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link MathUtils#DEFAULT_SCALE} and rounding mode = Half Up
      */
     public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
-        return dividend.divide(divisor, SCALE, RoundingMode.HALF_UP);
+        return dividend.divide(divisor, DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     /**
@@ -89,6 +89,19 @@ public class MathUtils {
      */
     public static BigDecimal getFractionDifference(BigDecimal number1, BigDecimal number2) {
         return divide(number1, number2).subtract(BigDecimal.ONE);
+    }
+
+    /**
+     * @return BigDecimal with scale equal to minimum non negative value between scale of given {@code number}, 0 and
+     * {@link MathUtils#DEFAULT_SCALE}. If given {@code number} is null, then return null
+     */
+    public static BigDecimal setDefaultScale(BigDecimal number) {
+        if (number == null) {
+            return null;
+        }
+
+        int scale = Math.min(Math.max(number.scale(), 0), MathUtils.DEFAULT_SCALE);
+        return number.setScale(scale, RoundingMode.HALF_UP);
     }
 
     // endregion
