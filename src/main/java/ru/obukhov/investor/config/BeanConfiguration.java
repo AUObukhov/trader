@@ -1,8 +1,11 @@
 package ru.obukhov.investor.config;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import ru.obukhov.investor.bot.impl.ConservativeDecider;
 import ru.obukhov.investor.bot.impl.DumbDecider;
 import ru.obukhov.investor.bot.impl.FakeBotImpl;
@@ -31,7 +34,10 @@ import ru.obukhov.investor.service.interfaces.PortfolioService;
 import ru.obukhov.investor.service.interfaces.SandboxService;
 import ru.obukhov.investor.service.interfaces.StatisticsService;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Configuration of beans, which need qualifying of dependencies
@@ -50,11 +56,30 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Decider trendReversalDecider(TradingProperties tradingProperties,
-                                        TrendReversalDeciderProperties deciderProperties) {
-        return new TrendReversalDecider(tradingProperties,
-                deciderProperties.getLastPricesCount(),
-                deciderProperties.getExtremumPriceIndex());
+    public Set<Decider> trendReversalDecider(TradingProperties tradingProperties,
+                                             TrendReversalDeciderProperties deciderProperties,
+                                             ConfigurableListableBeanFactory beanFactory) {
+        Set<Decider> deciders = new HashSet<>();
+        int extremumPriceIndex = deciderProperties.getExtremumPriceIndex();
+        int lastPricesCount = deciderProperties.getLastPricesCount();
+        TrendReversalDecider decider = createAndRegisterTrendReversalDecider(beanFactory,
+                tradingProperties,
+                extremumPriceIndex,
+                lastPricesCount);
+        deciders.add(decider);
+
+        return deciders;
+    }
+
+    @NotNull
+    private TrendReversalDecider createAndRegisterTrendReversalDecider(ConfigurableListableBeanFactory beanFactory,
+                                                                       TradingProperties tradingProperties,
+                                                                       int extremumPriceIndex,
+                                                                       int lastPricesCount) {
+        String name = String.format("trendReversalDecider (%s|%s)", extremumPriceIndex, lastPricesCount);
+        TrendReversalDecider decider = new TrendReversalDecider(tradingProperties, lastPricesCount, extremumPriceIndex);
+        beanFactory.registerSingleton(name, decider);
+        return decider;
     }
 
     @Bean
@@ -94,14 +119,38 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public FakeBot trendReversalFakeBot(Decider trendReversalDecider,
-                                        MarketService fakeMarketService,
-                                        OperationsService fakeOperationsService,
-                                        OrdersService fakeOrdersService,
-                                        PortfolioService fakePortfolioService,
-                                        FakeTinkoffService fakeTinkoffService) {
+    @DependsOn("trendReversalDecider")
+    public List<FakeBot> trendReversalFakeBots(Set<TrendReversalDecider> trendReversalDeciders,
+                                               MarketService fakeMarketService,
+                                               OperationsService fakeOperationsService,
+                                               OrdersService fakeOrdersService,
+                                               PortfolioService fakePortfolioService,
+                                               FakeTinkoffService fakeTinkoffService,
+                                               ConfigurableListableBeanFactory beanFactory) {
+        List<FakeBot> fakeBots = trendReversalDeciders.stream()
+                .map(decider -> trendReversalFakeBot(
+                        decider,
+                        fakeMarketService,
+                        fakeOperationsService,
+                        fakeOrdersService,
+                        fakePortfolioService,
+                        fakeTinkoffService)
+                )
+                .collect(Collectors.toList());
+        fakeBots.forEach(bot -> beanFactory.registerSingleton(bot.getName(), bot));
+        return fakeBots;
+    }
 
-        return new FakeBotImpl("Trend reversal bot",
+    private FakeBot trendReversalFakeBot(TrendReversalDecider trendReversalDecider,
+                                         MarketService fakeMarketService,
+                                         OperationsService fakeOperationsService,
+                                         OrdersService fakeOrdersService,
+                                         PortfolioService fakePortfolioService,
+                                         FakeTinkoffService fakeTinkoffService) {
+
+        String name = String.format("Trend reversal bot (%s|%s)",
+                trendReversalDecider.getExtremumPriceIndex(), trendReversalDecider.getLastPricesCount());
+        return new FakeBotImpl(name,
                 trendReversalDecider,
                 fakeMarketService,
                 fakeOperationsService,
@@ -131,6 +180,7 @@ public class BeanConfiguration {
     }
 
     @Bean
+    @DependsOn("trendReversalFakeBots")
     public Simulator simulatorImpl(Set<FakeBot> fakeBots,
                                    TinkoffService fakeTinkoffService,
                                    ExcelService excelService) {
