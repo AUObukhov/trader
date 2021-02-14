@@ -21,17 +21,17 @@ public class ConservativeDecider extends AbstractDecider {
         Decision decision;
         if (existsOperationInProgress(data)) {
             decision = Decision.WAIT_DECISION;
-            log.debug("Exists operation in progress. Decision is {}", decision);
+            log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {
             int availableLots = getAvailableLots(data);
             if (availableLots > 0) {
                 decision = new Decision(DecisionAction.BUY, availableLots);
                 log.debug("Current balance {} allows to buy {} lots. Decision is {}",
-                        data.getBalance(), availableLots, decision);
+                        data.getBalance(), availableLots, decision.toPrettyString());
             } else {
                 decision = Decision.WAIT_DECISION;
                 log.debug("Current balance {} is not enough to buy any lots. Decision is {}",
-                        data.getBalance(), decision);
+                        data.getBalance(), decision.toPrettyString());
             }
         }
 

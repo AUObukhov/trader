@@ -9,8 +9,18 @@ public class Decision {
 
     public static final Decision WAIT_DECISION = new Decision(DecisionAction.WAIT, null);
 
-    DecisionAction action;
+    private final DecisionAction action;
 
-    Integer lots;
+    private final Integer lots;
+
+    public String toPrettyString() {
+        if (action == DecisionAction.WAIT) {
+            return "Wait";
+        } else if (action == DecisionAction.BUY) {
+            return "Buy " + lots + " lots";
+        } else {
+            return "Sell " + lots + " lots";
+        }
+    }
 
 }

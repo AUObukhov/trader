@@ -39,10 +39,10 @@ public class TrendReversalDecider extends AbstractDecider {
         if (data.getCurrentCandles().size() < lastPricesCount) {
             decision = Decision.WAIT_DECISION;
             log.warn("Need at least {} candles. Got {}. Decision is {}",
-                    lastPricesCount, data.getCurrentCandles().size(), decision);
+                    lastPricesCount, data.getCurrentCandles().size(), decision.toPrettyString());
         } else if (existsOperationInProgress(data)) {
             decision = Decision.WAIT_DECISION;
-            log.debug("Exists operation in progress. Decision is {}", decision);
+            log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else if (data.getPosition() == null) {
             decision = getBuyOrWaitDecision(data);
         } else {
@@ -65,16 +65,16 @@ public class TrendReversalDecider extends AbstractDecider {
             if (MathUtils.numbersEqual(expectedMinPrice, minPrice)) {
                 decision = new Decision(DecisionAction.BUY, availableLots);
                 log.debug("expectedMinPrice {} is equal to minPrice {}. Decision is {}",
-                        expectedMinPrice, minPrice, decision);
+                        expectedMinPrice, minPrice, decision.toPrettyString());
             } else {
                 decision = Decision.WAIT_DECISION;
                 log.debug("expectedMinPrice {} is not equal to minPrice {}. Decision is {}",
-                        expectedMinPrice, minPrice, decision);
+                        expectedMinPrice, minPrice, decision.toPrettyString());
             }
         } else {
             decision = Decision.WAIT_DECISION;
             log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
-                    data.getBalance(), decision);
+                    data.getBalance(), decision.toPrettyString());
         }
         return decision;
     }
@@ -84,7 +84,8 @@ public class TrendReversalDecider extends AbstractDecider {
         Decision decision;
         if (profit < MINIMUM_PROFIT) {
             decision = Decision.WAIT_DECISION;
-            log.debug("Profit {} is lower than minimum profit {}. Decision is {}", profit, MINIMUM_PROFIT, decision);
+            log.debug("Profit {} is lower than minimum profit {}. Decision is {}",
+                    profit, MINIMUM_PROFIT, decision.toPrettyString());
         } else {
             List<Candle> currentCandles = CollectionsUtils.getTail(data.getCurrentCandles(), lastPricesCount);
             final BigDecimal maxPrice = getMaxPrice(currentCandles);
@@ -93,12 +94,12 @@ public class TrendReversalDecider extends AbstractDecider {
             if (MathUtils.numbersEqual(expectedMaxPrice, maxPrice)) {
                 decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
                 log.debug("expectedMaxPrice {} is equal to maxPrice {}. Decision is {}",
-                        expectedMaxPrice, maxPrice, decision);
+                        expectedMaxPrice, maxPrice, decision.toPrettyString());
 
             } else {
                 decision = Decision.WAIT_DECISION;
                 log.debug("expectedMaxPrice {} is not equal to maxPrice {}. Decision is {}",
-                        expectedMaxPrice, maxPrice, decision);
+                        expectedMaxPrice, maxPrice, decision.toPrettyString());
             }
         }
 

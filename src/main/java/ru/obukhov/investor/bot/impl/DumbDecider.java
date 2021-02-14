@@ -21,7 +21,7 @@ public class DumbDecider extends AbstractDecider {
         Decision decision;
         if (existsOperationInProgress(data)) {
             decision = Decision.WAIT_DECISION;
-            log.debug("Exists operation in progress. Decision is {}", decision);
+            log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {
             if (data.getPosition() == null) {
                 decision = getBuyOrWaitDecision(data);
@@ -42,12 +42,12 @@ public class DumbDecider extends AbstractDecider {
         if (availableLots > 0) {
             decision = new Decision(DecisionAction.BUY, availableLots);
             log.debug("No position and current balance {} allows to buy {} lots. Decision is {}",
-                    data.getBalance(), availableLots, decision);
+                    data.getBalance(), availableLots, decision.toPrettyString());
 
         } else {
             decision = Decision.WAIT_DECISION;
             log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
-                    data.getBalance(), decision);
+                    data.getBalance(), decision.toPrettyString());
         }
         return decision;
     }
@@ -59,11 +59,11 @@ public class DumbDecider extends AbstractDecider {
         if (profit < MINIMUM_PROFIT) {
             decision = Decision.WAIT_DECISION;
             log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision);
+                    profit, MINIMUM_PROFIT, decision.toPrettyString());
         } else {
             decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
             log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision);
+                    profit, MINIMUM_PROFIT, decision.toPrettyString());
         }
 
         return decision;
