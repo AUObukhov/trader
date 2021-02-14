@@ -103,7 +103,8 @@ public class SimulatorImpl implements Simulator {
                                           String ticker,
                                           List<Candle> candles) {
 
-        List<SimulatedPosition> positions = getPositions();
+        BigDecimal currentPrice = Iterables.getLast(candles).getClosePrice();
+        List<SimulatedPosition> positions = getPositions(currentPrice);
         BigDecimal totalBalance = getTotalBalance(positions);
         BigDecimal absoluteProfit = totalBalance.subtract(initialBalance);
         double relativeProfit = MathUtils.divide(absoluteProfit, initialBalance).doubleValue();
@@ -125,15 +126,14 @@ public class SimulatorImpl implements Simulator {
                 .build();
     }
 
-    private List<SimulatedPosition> getPositions() {
+    private List<SimulatedPosition> getPositions(BigDecimal currentPrice) {
         return fakeTinkoffService.getPortfolioPositions().stream()
-                .map(this::createSimulatedPosition)
+                .map(portfolioPosition -> createSimulatedPosition(portfolioPosition, currentPrice))
                 .collect(Collectors.toList());
     }
 
-    private SimulatedPosition createSimulatedPosition(PortfolioPosition portfolioPosition) {
-        BigDecimal price = fakeTinkoffService.getCurrentPrice(portfolioPosition.getTicker());
-        return new SimulatedPosition(portfolioPosition.getTicker(), price, portfolioPosition.getLotsCount());
+    private SimulatedPosition createSimulatedPosition(PortfolioPosition portfolioPosition, BigDecimal currentPrice) {
+        return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getLotsCount());
     }
 
     private BigDecimal getTotalBalance(List<SimulatedPosition> positions) {
