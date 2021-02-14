@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.interfaces.StatisticsService;
+import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.web.model.GetCandlesRequest;
 import ru.obukhov.investor.web.model.GetCandlesResponse;
 import ru.obukhov.investor.web.model.GetDailySaldosRequest;
@@ -34,10 +35,8 @@ public class StatisticsController {
     @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
-        List<Candle> candles = statisticsService.getCandles(
-                request.getTicker(),
-                Interval.of(request.getFrom(), request.getTo()),
-                request.getCandleInterval());
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        List<Candle> candles = statisticsService.getCandles(request.getTicker(), interval, request.getCandleInterval());
 
         return new GetCandlesResponse(candles);
 
@@ -46,10 +45,9 @@ public class StatisticsController {
     @GetMapping("/saldos/daily")
     public GetSaldosResponse getDailySaldos(@Valid @RequestBody GetDailySaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByTimes = statisticsService.getDailySaldos(
-                request.getTicker(),
-                Interval.of(request.getFrom(), request.getTo()),
-                request.getCandleInterval());
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        Map<Object, BigDecimal> saldosByTimes =
+                statisticsService.getDailySaldos(request.getTicker(), interval, request.getCandleInterval());
 
         return new GetSaldosResponse(saldosByTimes);
 
@@ -58,9 +56,8 @@ public class StatisticsController {
     @GetMapping("/saldos/weekly")
     public GetSaldosResponse getWeeklySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByDaysOfWeek = statisticsService.getWeeklySaldos(
-                request.getTicker(),
-                Interval.of(request.getFrom(), request.getTo()));
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        Map<Object, BigDecimal> saldosByDaysOfWeek = statisticsService.getWeeklySaldos(request.getTicker(), interval);
 
         return new GetSaldosResponse(saldosByDaysOfWeek);
 
@@ -69,9 +66,8 @@ public class StatisticsController {
     @GetMapping("/saldos/monthly")
     public GetSaldosResponse getMonthlySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByDaysOfMonth = statisticsService.getMonthlySaldos(
-                request.getTicker(),
-                Interval.of(request.getFrom(), request.getTo()));
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        Map<Object, BigDecimal> saldosByDaysOfMonth = statisticsService.getMonthlySaldos(request.getTicker(), interval);
 
         return new GetSaldosResponse(saldosByDaysOfMonth);
 
@@ -80,9 +76,8 @@ public class StatisticsController {
     @GetMapping("/saldos/yearly")
     public GetSaldosResponse getYearlySaldos(@Valid @RequestBody GetSaldosRequest request) {
 
-        Map<Object, BigDecimal> saldosByYear = statisticsService.getYearlySaldos(
-                request.getTicker(),
-                Interval.of(request.getFrom(), request.getTo()));
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        Map<Object, BigDecimal> saldosByYear = statisticsService.getYearlySaldos(request.getTicker(), interval);
 
         return new GetSaldosResponse(saldosByYear);
 

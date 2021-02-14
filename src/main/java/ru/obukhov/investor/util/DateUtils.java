@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import ru.obukhov.investor.model.Interval;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.DayOfWeek;
@@ -20,7 +21,7 @@ public class DateUtils {
 
     public static final double DAYS_IN_YEAR = 365.25;
 
-    public static final ZoneOffset DEFAULT_OFFSET = OffsetDateTime.now().getOffset();
+    public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.of("+03:00");
 
     /**
      * Earliest date for requesting candles
@@ -58,6 +59,16 @@ public class DateUtils {
      */
     public static OffsetDateTime getTime(int hour, int minute, int second) {
         return getDateTime(0, 1, 1, hour, minute, second);
+    }
+
+    /**
+     * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
+     */
+    public static Interval getIntervalWithDefaultOffsets(@Nullable OffsetDateTime from, @Nullable OffsetDateTime to) {
+        OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
+        OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
+
+        return Interval.of(innerFrom, innerTo);
     }
 
     /**
@@ -178,6 +189,14 @@ public class DateUtils {
                 .withMinute(time.getMinute())
                 .withSecond(time.getSecond())
                 .withNano(time.getNano());
+    }
+
+    /**
+     * @return dateTime with same instant as in given {@code dateTime},
+     * but with offset equals to {@link DateUtils#DEFAULT_OFFSET}
+     */
+    public static OffsetDateTime setDefaultOffsetSameInstant(OffsetDateTime dateTime) {
+        return dateTime.withOffsetSameInstant(DEFAULT_OFFSET);
     }
 
     /**

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.config.TradingProperties;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.web.model.SimulateRequest;
 import ru.obukhov.investor.web.model.SimulateResponse;
 import ru.obukhov.investor.web.model.SimulationResult;
@@ -28,7 +29,7 @@ public class BotController {
     @PostMapping("/simulate")
     public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
 
-        Interval interval = Interval.of(request.getFrom(), request.getTo());
+        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
 
         Collection<SimulationResult> results = simulator.simulate(request.getTicker(), request.getBalance(), interval);
 

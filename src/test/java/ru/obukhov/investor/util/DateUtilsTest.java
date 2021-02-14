@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import ru.obukhov.investor.model.Interval;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.Duration;
@@ -17,6 +18,7 @@ import java.time.temporal.TemporalUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -82,6 +84,39 @@ public class DateUtilsTest {
         assertEquals(second, dateTime.getSecond());
         assertEquals(0, dateTime.getNano());
     }
+
+    // region getIntervalWithDefaultOffsets tests
+
+    @Test
+    public void getIntervalWithDefaultOffsets_returnsIntervalWithNulls_whenArgumentsAreNull() {
+        Interval result = DateUtils.getIntervalWithDefaultOffsets(null, null);
+
+        assertNull(result.getFrom());
+        assertNull(result.getTo());
+    }
+
+    @Test
+    public void getIntervalWithDefaultOffsets_changesOffsets_whenOffsetsAreNotDefault() {
+        OffsetDateTime from = OffsetDateTime.of(2021, 1, 1,
+                10, 0, 0, 0,
+                ZoneOffset.UTC);
+        OffsetDateTime to = OffsetDateTime.of(2021, 1, 2,
+                11, 0, 0, 0,
+                ZoneOffset.UTC);
+
+        Interval result = DateUtils.getIntervalWithDefaultOffsets(from, to);
+
+        OffsetDateTime expectedFrom = OffsetDateTime.of(2021, 1, 1,
+                13, 0, 0, 0,
+                DateUtils.DEFAULT_OFFSET);
+        OffsetDateTime expectedTo = OffsetDateTime.of(2021, 1, 2,
+                14, 0, 0, 0,
+                DateUtils.DEFAULT_OFFSET);
+        assertEquals(expectedFrom, result.getFrom());
+        assertEquals(expectedTo, result.getTo());
+    }
+
+    // endregion
 
     // region getDefaultFromIfNull tests
 
@@ -483,6 +518,21 @@ public class DateUtilsTest {
         assertEquals(time.getMinute(), result.getMinute());
         assertEquals(time.getSecond(), result.getSecond());
         assertEquals(time.getNano(), result.getNano());
+    }
+
+    @Test
+    public void setDefaultOffsetSameInstant() {
+        OffsetDateTime dateTime = OffsetDateTime.of(2021, 1, 5,
+                10, 0, 0, 0,
+                ZoneOffset.UTC);
+
+        OffsetDateTime result = DateUtils.setDefaultOffsetSameInstant(dateTime);
+
+        OffsetDateTime expected = OffsetDateTime.of(2021, 1, 5,
+                13, 0, 0, 0,
+                DateUtils.DEFAULT_OFFSET);
+
+        assertEquals(expected, result);
     }
 
     // region getPeriodUnitByCandleInterval tests
