@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
@@ -71,6 +72,41 @@ public class CollectionsUtils {
             T value = interpolator.apply(list.get(index - 1), list.get(index));
             list.add(index, value);
         }
+    }
+
+    /**
+     * @return true, when given {@code list} contains all elements of given {@code seachedList} in same order, otherwise false.
+     * Elements compared by {@link Objects#equals(Object, Object)}
+     * @throws IllegalArgumentException when any of given lists is null
+     */
+    public static <T> boolean containsList(List<T> list, List<T> searchedList) {
+        Assert.notNull(list, "list must not be null");
+        Assert.notNull(searchedList, "searchedList must not be null");
+
+        if (searchedList.isEmpty()) {
+            return true;
+        }
+        if (list.isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < list.size() - searchedList.size() + 1; i++) {
+            if (containsList(list, searchedList, i)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static <T> boolean containsList(List<T> list, List<T> searchedList, int searchStartPosition) {
+        for (int j = 0; j < searchedList.size(); j++) {
+            if (!Objects.equals(list.get(searchStartPosition + j), searchedList.get(j))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
