@@ -17,12 +17,12 @@ public interface MarketService {
 
     Candle getLastCandle(String ticker, OffsetDateTime to);
 
-    List<Candle> getLastCandles(String ticker, int limit
-    );
+    List<Candle> getLastCandles(String ticker, int limit);
 
     Instrument getInstrument(String ticker);
 
     List<Instrument> getInstruments(TickerType type);
 
     String getFigi(String ticker);
+
 }
