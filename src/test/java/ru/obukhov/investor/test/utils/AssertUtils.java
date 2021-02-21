@@ -1,4 +1,4 @@
-package ru.obukhov.investor.util;
+package ru.obukhov.investor.test.utils;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

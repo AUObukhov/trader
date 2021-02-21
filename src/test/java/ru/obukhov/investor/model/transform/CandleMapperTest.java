@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.util.TestDataHelper;
+import ru.obukhov.investor.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 

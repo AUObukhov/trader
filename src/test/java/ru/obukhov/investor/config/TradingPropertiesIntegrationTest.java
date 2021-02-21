@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.investor.model.transform.OffsetTimeConverter;
-import ru.obukhov.investor.util.AssertUtils;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.obukhov.investor.util.DateUtils;
 
 import java.time.Duration;

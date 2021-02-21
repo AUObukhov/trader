@@ -13,8 +13,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static ru.obukhov.investor.util.AssertUtils.assertCellAttributes;
-import static ru.obukhov.investor.util.AssertUtils.assertRowValues;
+import static ru.obukhov.investor.test.utils.AssertUtils.assertCellAttributes;
+import static ru.obukhov.investor.test.utils.AssertUtils.assertRowValues;
 
 public class ExtendedRowTest {
 

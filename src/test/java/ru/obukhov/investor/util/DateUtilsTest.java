@@ -7,6 +7,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.obukhov.investor.model.Interval;
+import ru.obukhov.investor.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.Duration;

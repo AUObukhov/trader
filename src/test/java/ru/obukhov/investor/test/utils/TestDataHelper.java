@@ -1,4 +1,4 @@
-package ru.obukhov.investor.util;
+package ru.obukhov.investor.test.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;

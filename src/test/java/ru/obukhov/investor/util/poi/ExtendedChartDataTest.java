@@ -7,7 +7,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.junit.Test;
-import ru.obukhov.investor.util.AssertUtils;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.util.List;
 

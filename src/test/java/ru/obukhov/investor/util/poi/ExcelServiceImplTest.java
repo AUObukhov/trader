@@ -15,7 +15,7 @@ import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
 import ru.obukhov.investor.service.impl.ExcelServiceImpl;
 import ru.obukhov.investor.service.interfaces.ExcelFileService;
-import ru.obukhov.investor.util.AssertUtils;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.obukhov.investor.util.DateUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
@@ -33,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static ru.obukhov.investor.util.AssertUtils.assertRowValues;
+import static ru.obukhov.investor.test.utils.AssertUtils.assertRowValues;
 
 public class ExcelServiceImplTest extends BaseMockedTest {
 
