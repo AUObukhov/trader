@@ -13,7 +13,7 @@ import ru.tinkoff.invest.openapi.models.operations.OperationType;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OperationMapperTest {
 

@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static ru.obukhov.investor.test.utils.AssertUtils.assertCellAttributes;
 import static ru.obukhov.investor.test.utils.AssertUtils.assertRowValues;
 

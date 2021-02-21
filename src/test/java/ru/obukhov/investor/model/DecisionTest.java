@@ -4,7 +4,7 @@ import org.junit.Test;
 import ru.obukhov.investor.bot.model.Decision;
 import ru.obukhov.investor.bot.model.DecisionAction;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DecisionTest {
 

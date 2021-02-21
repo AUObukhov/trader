@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import ru.obukhov.investor.util.poi.ExtendedCell;
 import ru.obukhov.investor.util.poi.ExtendedRow;
 
@@ -20,7 +21,7 @@ import java.util.Date;
 public class AssertUtils {
 
     public static void assertEquals(double expected, double actual) {
-        org.junit.Assert.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
+        Assertions.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
     }
 
     public static void assertRowValues(Row row, Object... values) {

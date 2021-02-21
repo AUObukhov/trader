@@ -17,11 +17,11 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
@@ -1196,9 +1196,9 @@ public class DateUtilsTest {
         OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
         OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
 
-        assertThrows("'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00",
-                IllegalArgumentException.class,
-                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"));
+        assertThrows(IllegalArgumentException.class,
+                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
+                "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00");
     }
 
     @Test
