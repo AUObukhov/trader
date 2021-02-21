@@ -114,4 +114,14 @@ public class AssertUtils {
         Assert.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
+    public static void assertFaster(long expected, long millis) {
+        Assert.assertTrue("Expected execution faster than " + expected + " ms. Actual is " + millis + " ms",
+                millis < expected);
+    }
+
+    public static void assertSlower(long expected, long millis) {
+        Assert.assertTrue("Expected execution slower than " + expected + " ms. Actual is " + millis + " ms",
+                millis > expected);
+    }
+
 }

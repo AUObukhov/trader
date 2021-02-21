@@ -11,8 +11,35 @@ trend-reversal-decider:
   extremum-price-index: 95
 
 query.throttle:
-  limit: 119
   interval: 60000
+  limits:
+    - segments:
+        - sandbox
+      limit: 120
+    - segments:
+        - portfolio
+      limit: 120
+    - segments:
+        - market
+      limit: 120
+    - segments:
+        - orders
+      limit: 100
+    - segments:
+        - orders
+        - limit-order
+      limit: 50
+    - segments:
+        - orders
+        - market-order
+      limit: 50
+    - segments:
+        - orders
+        - cancel
+      limit: 50
+    - segments:
+        - operations
+      limit: 120
 
 bot:
   delay: 60000
