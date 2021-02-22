@@ -9,6 +9,10 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
+import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
+import org.springframework.boot.test.context.runner.ContextConsumer;
+import org.springframework.validation.ObjectError;
 import ru.obukhov.investor.util.poi.ExtendedCell;
 import ru.obukhov.investor.util.poi.ExtendedRow;
 
@@ -17,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.List;
 
 public class AssertUtils {
 
@@ -124,4 +129,20 @@ public class AssertUtils {
                 millis > expected);
     }
 
+    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(String message) {
+        return context -> AssertUtils.assertContextStartupFailedWithMessage(context, message);
+    }
+
+    public static void assertContextStartupFailedWithMessage(AssertableApplicationContext context, String message) {
+        Throwable startupFailure = context.getStartupFailure();
+
+        Assertions.assertNotNull(startupFailure, "context startup not failed as expected");
+
+        BindValidationException bindValidationException =
+                (BindValidationException) startupFailure.getCause().getCause();
+        List<ObjectError> errors = bindValidationException.getValidationErrors().getAllErrors();
+
+        Assertions.assertEquals(1, errors.size());
+        Assertions.assertEquals(message, errors.get(0).getDefaultMessage());
+    }
 }

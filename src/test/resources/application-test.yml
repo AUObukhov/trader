@@ -25,6 +25,7 @@ query.throttle:
       limit: 50
   retry-interval: 5000
   attempts-count: 30
+  default-limit: 120
 
 bot:
   delay: 60000

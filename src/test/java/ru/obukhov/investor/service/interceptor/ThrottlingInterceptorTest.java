@@ -51,7 +51,7 @@ public class ThrottlingInterceptorTest {
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
-                createQueryThrottleProperties(1000, 1, 30);
+                createQueryThrottleProperties(1000, 1, 30, 120);
         queryThrottleProperties.setLimits(Collections.singletonList(
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
@@ -72,7 +72,7 @@ public class ThrottlingInterceptorTest {
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
-                createQueryThrottleProperties(1000, 5000, 30);
+                createQueryThrottleProperties(1000, 5000, 30, 120);
         queryThrottleProperties.setLimits(Collections.singletonList(
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
@@ -95,7 +95,7 @@ public class ThrottlingInterceptorTest {
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
-                createQueryThrottleProperties(1000, 5000, 30);
+                createQueryThrottleProperties(1000, 5000, 30, 120);
         queryThrottleProperties.setLimits(Collections.singletonList(
                 new UrlLimit(Collections.singletonList("market"), 120)
         ));
@@ -121,7 +121,7 @@ public class ThrottlingInterceptorTest {
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
-                createQueryThrottleProperties(1000, 5000, 30);
+                createQueryThrottleProperties(1000, 5000, 30, 120);
         queryThrottleProperties.setLimits(Arrays.asList(
                 new UrlLimit(Collections.singletonList("orders"), 100),
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
@@ -149,7 +149,7 @@ public class ThrottlingInterceptorTest {
         final List<String> marketOrderSegments = Arrays.asList("openapi", "orders", "market-order");
 
         final QueryThrottleProperties queryThrottleProperties =
-                createQueryThrottleProperties(1000, 5000, 30);
+                createQueryThrottleProperties(1000, 5000, 30, 120);
         queryThrottleProperties.setLimits(Arrays.asList(
                 new UrlLimit(Collections.singletonList("orders"), 100),
                 new UrlLimit(Arrays.asList("orders", "limit-order"), 90),
@@ -173,12 +173,44 @@ public class ThrottlingInterceptorTest {
 
     }
 
-    private QueryThrottleProperties createQueryThrottleProperties(long interval, int retryInterval, int attemptsCount) {
+    @Test
+    @SuppressWarnings("java:S2699") // Sonar warning "Tests should include assertions"
+    public void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws Exception {
+
+        when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
+
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 5000, 30, 50);
+        queryThrottleProperties.setLimits(Collections.singletonList(
+                new UrlLimit(Collections.singletonList("portfolio"), 120)
+        ));
+
+        final long maximumNotThrottledTime = 30;
+        final long minimumThrottledTime = queryThrottleProperties.getInterval() - 200;
+
+        final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
+
+        final int limit = queryThrottleProperties.getDefaultLimit();
+        for (int i = 0; i < limit; i++) {
+            TimeTestUtils.executeAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+        }
+
+        TimeTestUtils.executeAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
+
+    }
+
+    private QueryThrottleProperties createQueryThrottleProperties(long interval,
+                                                                  int retryInterval,
+                                                                  int attemptsCount,
+                                                                  int defaultLimit) {
+
         QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
         queryThrottleProperties.setInterval(interval);
         queryThrottleProperties.setRetryInterval(retryInterval);
         queryThrottleProperties.setAttemptsCount(attemptsCount);
+        queryThrottleProperties.setDefaultLimit(defaultLimit);
         return queryThrottleProperties;
+
     }
 
 }

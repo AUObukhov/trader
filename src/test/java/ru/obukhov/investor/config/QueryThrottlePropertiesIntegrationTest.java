@@ -2,155 +2,178 @@ package ru.obukhov.investor.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class QueryThrottlePropertiesIntegrationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class);
+            .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)
+            .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
+            .withInitializer(new ConfigFileApplicationContextInitializer());
 
     @Test
     void beanCreating_whenPropertiesFilled() {
 
-        this.contextRunner
-                .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
-                .withInitializer(new ConfigFileApplicationContextInitializer())
-                .run(context -> {
-                    assertNull(context.getStartupFailure());
+        contextRunner.run(context -> {
+            assertNull(context.getStartupFailure());
 
-                    QueryThrottleProperties queryThrottleProperties = context.getBean(QueryThrottleProperties.class);
+            QueryThrottleProperties queryThrottleProperties = context.getBean(QueryThrottleProperties.class);
 
-                    AssertUtils.assertEquals(60000L, queryThrottleProperties.getInterval());
+            AssertUtils.assertEquals(60000L, queryThrottleProperties.getInterval());
 
-                    List<UrlLimit> limits = queryThrottleProperties.getLimits();
-                    assertEquals(3, limits.size());
+            List<UrlLimit> limits = queryThrottleProperties.getLimits();
+            assertEquals(3, limits.size());
 
-                    UrlLimit urlLimit0 = limits.get(0);
-                    assertEquals(1, urlLimit0.getSegments().size());
-                    assertEquals("market", urlLimit0.getSegments().get(0));
-                    assertEquals(120, urlLimit0.getLimit());
+            UrlLimit urlLimit0 = limits.get(0);
+            assertEquals(1, urlLimit0.getSegments().size());
+            assertEquals("market", urlLimit0.getSegments().get(0));
+            assertEquals(120, urlLimit0.getLimit());
 
-                    UrlLimit urlLimit1 = limits.get(1);
-                    assertEquals(1, urlLimit1.getSegments().size());
-                    assertEquals("orders", urlLimit1.getSegments().get(0));
-                    assertEquals(100, urlLimit1.getLimit());
+            UrlLimit urlLimit1 = limits.get(1);
+            assertEquals(1, urlLimit1.getSegments().size());
+            assertEquals("orders", urlLimit1.getSegments().get(0));
+            assertEquals(100, urlLimit1.getLimit());
 
-                    UrlLimit urlLimit2 = limits.get(2);
-                    assertEquals(2, urlLimit2.getSegments().size());
-                    assertEquals("orders", urlLimit2.getSegments().get(0));
-                    assertEquals("limit-order", urlLimit2.getSegments().get(1));
-                    assertEquals(50, urlLimit2.getLimit());
+            UrlLimit urlLimit2 = limits.get(2);
+            assertEquals(2, urlLimit2.getSegments().size());
+            assertEquals("orders", urlLimit2.getSegments().get(0));
+            assertEquals("limit-order", urlLimit2.getSegments().get(1));
+            assertEquals(50, urlLimit2.getLimit());
 
-                    assertEquals(5000, queryThrottleProperties.getRetryInterval());
+            assertEquals(5000, queryThrottleProperties.getRetryInterval());
 
-                    assertEquals(30, queryThrottleProperties.getAttemptsCount());
-                });
+            assertEquals(30, queryThrottleProperties.getAttemptsCount());
+        });
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenIntervalIsNegative() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.interval: -1")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.interval", "interval must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.interval: -1")
+                .run(AssertUtils.createContextFailureAssertConsumer("interval must be positive"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenIntervalIsZero() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.interval: 0")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.interval", "interval must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.interval: 0")
+                .run(AssertUtils.createContextFailureAssertConsumer("interval must be positive"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenLimitsAreNull() {
+
+        new ApplicationContextRunner()
+                .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)
+                .withPropertyValues("query.throttle.interval: 60000")
+                .withPropertyValues("query.throttle.retry-interval: 5000")
+                .withPropertyValues("query.throttle.attempts-count: 30")
+                .withPropertyValues("query.throttle.default-limit: 120")
+                .run(AssertUtils.createContextFailureAssertConsumer("limits must not be null"));
+
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenLimitsAreEmpty() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.limits:")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.limits", "limits must not be empty")
-                );
+        contextRunner.withPropertyValues("query.throttle.limits:")
+                .run(AssertUtils.createContextFailureAssertConsumer("limits must not be empty"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenRetryIntervalIsNegative() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.retry-interval: -1")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.retry-interval", "retryInterval must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.retry-interval: -1")
+                .run(AssertUtils.createContextFailureAssertConsumer("retryInterval must be positive"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenRetryIntervalIsZero() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.retry-interval: 0")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.retry-interval", "retryInterval must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.retry-interval: 0")
+                .run(AssertUtils.createContextFailureAssertConsumer("retryInterval must be positive"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenAttemptsCountIsNegative() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.attempts-count: -1")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.attempts-count", "attemptsCount must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.attempts-count: -1")
+                .run(AssertUtils.createContextFailureAssertConsumer("attemptsCount must be positive"));
 
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenAttemptsCountIsZero() {
 
-        this.contextRunner
-                .withPropertyValues("query.throttle.attempts-count: 0")
-                .run(context -> assertContextStartupFailed(context,
-                        "query.throttle.attempts-count", "attemptsCount must be positive")
-                );
+        contextRunner.withPropertyValues("query.throttle.attempts-count: 0")
+                .run(AssertUtils.createContextFailureAssertConsumer("attemptsCount must be positive"));
 
     }
 
-    private void assertContextStartupFailed(AssertableApplicationContext context, String... messageSubstrings) {
-        Throwable startupFailure = context.getStartupFailure();
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenSegmentsAreEmpty() {
 
-        assertNotNull(startupFailure);
+        contextRunner.withPropertyValues("query.throttle.limits[0].segments=")
+                .withPropertyValues("query.throttle.limits[0].limit: 1")
+                .run(AssertUtils.createContextFailureAssertConsumer("segments must not be empty"));
 
-        String message = getBindValidationExceptionMessage(startupFailure);
-        for (String substring : messageSubstrings) {
-            assertTrue(message.contains(substring));
-        }
     }
 
-    private String getBindValidationExceptionMessage(Throwable startupFailure) {
-        BindValidationException bindValidationException =
-                (BindValidationException) startupFailure.getCause().getCause();
-        return bindValidationException.getMessage();
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenUrlLimitIsNegative() {
+
+        contextRunner.withPropertyValues("query.throttle.limits[0].segments[0]: market")
+                .withPropertyValues("query.throttle.limits[0].limits=-1")
+                .run(AssertUtils.createContextFailureAssertConsumer("limit must be positive"));
+
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenUrlLimitIsZero() {
+
+        contextRunner.withPropertyValues("query.throttle.interval: 60000")
+                .withPropertyValues("query.throttle.limits[0].segments[0]: market")
+                .withPropertyValues("query.throttle.limits[0].limits=0")
+                .withPropertyValues("query.throttle.retry-interval: 1")
+                .withPropertyValues("query.throttle.attempts-count: 1")
+                .withPropertyValues("query.throttle.default-limit: 1")
+                .run(AssertUtils.createContextFailureAssertConsumer("limit must be positive"));
+
     }
 
     @EnableConfigurationProperties(QueryThrottleProperties.class)

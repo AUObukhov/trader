@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.obukhov.investor.util.ThrottledCounter;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class QueryThrottleProperties {
     /**
      * containing URLs segments and query limits per {@link QueryThrottleProperties#interval} for corresponding URLs
      */
+    @NotNull(message = "limits must not be null")
     @Size(min = 1, message = "limits must not be empty")
     private List<UrlLimit> limits;
 
@@ -40,5 +42,8 @@ public class QueryThrottleProperties {
      */
     @Min(value = 1L, message = "attemptsCount must be positive")
     private int attemptsCount;
+
+    @Min(value = 1L, message = "defaultLimit must be positive")
+    private int defaultLimit;
 
 }

@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -23,10 +24,13 @@ public class ThrottlingInterceptor implements Interceptor {
 
     private final QueryThrottleProperties queryThrottleProperties;
     private final Map<UrlLimit, ThrottledCounter> counters;
+    private final ThrottledCounter defaultCounter;
 
     public ThrottlingInterceptor(QueryThrottleProperties queryThrottleProperties) {
         this.queryThrottleProperties = queryThrottleProperties;
         this.counters = createCounters(queryThrottleProperties);
+        this.defaultCounter =
+                new ThrottledCounter(queryThrottleProperties.getInterval(), queryThrottleProperties.getDefaultLimit());
     }
 
     private Map<UrlLimit, ThrottledCounter> createCounters(QueryThrottleProperties queryThrottleProperties) {
@@ -82,12 +86,24 @@ public class ThrottlingInterceptor implements Interceptor {
     }
 
     private void incrementCounters(HttpUrl url) {
-        for (Map.Entry<UrlLimit, ThrottledCounter> entry : counters.entrySet()) {
-            if (entry.getKey().matchesUrl(url)) {
-                Duration throttled = entry.getValue().increment();
-                log.trace("Counter \"{}\" throttled {} ms", entry.getKey(), throttled.toMillis());
+        Map<UrlLimit, ThrottledCounter> matchingCounters = counters.entrySet().stream()
+                .filter(entry -> entry.getKey().matchesUrl(url))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (matchingCounters.isEmpty()) {
+            incrementCounter(defaultCounter, "default counter");
+        } else {
+            for (Map.Entry<UrlLimit, ThrottledCounter> entry : matchingCounters.entrySet()) {
+                if (entry.getKey().matchesUrl(url)) {
+                    incrementCounter(entry.getValue(), entry.getKey().getUrl());
+                }
             }
         }
+    }
+
+    private void incrementCounter(ThrottledCounter counter, String counterName) {
+        Duration throttled = counter.increment();
+        log.trace("Counter \"{}\" throttled {} ms", counterName, throttled.toMillis());
     }
 
 }
