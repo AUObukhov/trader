@@ -4,8 +4,10 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import ru.obukhov.investor.util.ThrottledCounter;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -14,9 +16,29 @@ import java.util.List;
 @Validated
 public class QueryThrottleProperties {
 
-    @NotNull
-    private Long interval;
+    /**
+     * Delay before decrement after increment of counter (in milliseconds).
+     * To put into {@link ThrottledCounter} constructor
+     */
+    @Min(value = 1L, message = "interval must be positive")
+    private long interval;
 
+    /**
+     * containing URLs segments and query limits per {@link QueryThrottleProperties#interval} for corresponding URLs
+     */
+    @Size(min = 1, message = "limits must not be empty")
     private List<UrlLimit> limits;
+
+    /**
+     * Interval between reattempts to perform request (in milliseconds)
+     */
+    @Min(value = 1L, message = "retryInterval must be positive")
+    private long retryInterval;
+
+    /**
+     * Limit of attempts to perform request
+     */
+    @Min(value = 1L, message = "attemptsCount must be positive")
+    private int attemptsCount;
 
 }

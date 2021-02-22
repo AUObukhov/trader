@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -45,13 +46,33 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
+    public void intercept_throwIllegalStateException_whenAttemptsCountExceeds() throws Exception {
+
+        when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
+
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 1, 30);
+        queryThrottleProperties.setLimits(Collections.singletonList(
+                new UrlLimit(Arrays.asList("orders", "market-order"), 50)
+        ));
+
+        PowerMockito.when(chain.proceed(any(Request.class))).thenThrow(new RuntimeException("exception for test"));
+        final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
+
+        assertThrows(IllegalStateException.class,
+                () -> interceptor.intercept(chain),
+                "Failed to retry for 30 times");
+
+    }
+
+    @Test
     @SuppressWarnings("java:S2699") // Sonar warning "Tests should include assertions"
     public void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
-        final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
-        queryThrottleProperties.setInterval(1000L);
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 5000, 30);
         queryThrottleProperties.setLimits(Collections.singletonList(
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
@@ -73,8 +94,8 @@ public class ThrottlingInterceptorTest {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
-        final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
-        queryThrottleProperties.setInterval(1000L);
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 5000, 30);
         queryThrottleProperties.setLimits(Collections.singletonList(
                 new UrlLimit(Collections.singletonList("market"), 120)
         ));
@@ -99,8 +120,8 @@ public class ThrottlingInterceptorTest {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
 
-        final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
-        queryThrottleProperties.setInterval(1000L);
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 5000, 30);
         queryThrottleProperties.setLimits(Arrays.asList(
                 new UrlLimit(Collections.singletonList("orders"), 100),
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
@@ -127,8 +148,8 @@ public class ThrottlingInterceptorTest {
         final List<String> limitOrderSegments = Arrays.asList("openapi", "orders", "limit-order");
         final List<String> marketOrderSegments = Arrays.asList("openapi", "orders", "market-order");
 
-        final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
-        queryThrottleProperties.setInterval(1000L);
+        final QueryThrottleProperties queryThrottleProperties =
+                createQueryThrottleProperties(1000, 5000, 30);
         queryThrottleProperties.setLimits(Arrays.asList(
                 new UrlLimit(Collections.singletonList("orders"), 100),
                 new UrlLimit(Arrays.asList("orders", "limit-order"), 90),
@@ -150,6 +171,14 @@ public class ThrottlingInterceptorTest {
 
         TimeTestUtils.executeAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
 
+    }
+
+    private QueryThrottleProperties createQueryThrottleProperties(long interval, int retryInterval, int attemptsCount) {
+        QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
+        queryThrottleProperties.setInterval(interval);
+        queryThrottleProperties.setRetryInterval(retryInterval);
+        queryThrottleProperties.setAttemptsCount(attemptsCount);
+        return queryThrottleProperties;
     }
 
 }

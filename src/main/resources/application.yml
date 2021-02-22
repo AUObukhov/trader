@@ -40,6 +40,8 @@ query.throttle:
     - segments:
         - operations
       limit: 120
+  retry-interval: 5000
+  attempts-count: 30
 
 bot:
   delay: 60000
