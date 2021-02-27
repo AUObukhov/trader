@@ -37,4 +37,6 @@ public class SimulationResult {
 
     @JsonIgnore
     private List<Candle> candles;
+
+    private String error;
 }

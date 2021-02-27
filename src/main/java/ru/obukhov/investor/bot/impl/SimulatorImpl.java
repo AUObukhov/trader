@@ -1,8 +1,10 @@
 package ru.obukhov.investor.bot.impl;
 
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
@@ -18,13 +20,19 @@ import ru.obukhov.investor.util.MathUtils;
 import ru.obukhov.investor.web.model.SimulatedOperation;
 import ru.obukhov.investor.web.model.SimulatedPosition;
 import ru.obukhov.investor.web.model.SimulationResult;
+import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -37,8 +45,10 @@ public class SimulatorImpl implements Simulator {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final Collection<FakeBot> bots;
-    private final FakeTinkoffService fakeTinkoffService;
     private final ExcelService excelService;
+    private final ThreadFactory simulationThreadFactory =
+            new ThreadFactoryBuilder().setNameFormat("simulation-thread-%d").build();
+    private final ExecutorService executor = Executors.newFixedThreadPool(1, simulationThreadFactory);
 
     /**
      * @param ticker   simulated ticker
@@ -51,27 +61,52 @@ public class SimulatorImpl implements Simulator {
 
         log.info("Simulation for ticker = '{}' started", ticker);
 
-        OffsetDateTime now = OffsetDateTime.now();
-        DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
-        DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
+        OffsetDateTime startTime = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(interval.getFrom(), startTime, "from");
+        DateUtils.assertDateTimeNotFuture(interval.getTo(), startTime, "to");
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
-        List<SimulationResult> simulationResults = bots.stream()
-                .map(bot -> simulate(bot, ticker, balance, finiteInterval))
+        List<CompletableFuture<SimulationResult>> simulationFutures = bots.stream()
+                .map(bot -> startSimulation(bot, ticker, balance, finiteInterval))
+                .collect(Collectors.toList());
+        List<SimulationResult> simulationResults = simulationFutures.stream()
+                .map(CompletableFuture::join)
                 .sorted(Comparator.comparing(SimulationResult::getTotalBalance).reversed())
                 .collect(Collectors.toList());
 
-        log.info("Simulation for ticker = '{}' ended", ticker);
+        Duration simulationDuration = Duration.between(startTime, OffsetDateTime.now());
+        String simulationDurationString = DurationFormatUtils.formatDurationHMS(simulationDuration.toMillis());
+        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
 
         excelService.saveSimulationResults(simulationResults);
 
         return simulationResults;
     }
 
-    private SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
-        log.info("Simulation for ticker = '{}' on bot '{}' started", ticker, bot.getName());
+    private CompletableFuture<SimulationResult> startSimulation(FakeBot bot,
+                                                                String ticker,
+                                                                BigDecimal balance,
+                                                                Interval interval) {
+        return CompletableFuture.supplyAsync(() -> simulateSafe(bot, ticker, balance, interval), executor);
+    }
 
+    private SimulationResult simulateSafe(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
+        try {
+            log.info("Simulation for bot '{}' with ticker = '{}' started", bot.getName(), ticker);
+            SimulationResult result = simulate(bot, ticker, balance, interval);
+            log.info("Simulation for bot '{}' with ticker = '{}' ended", bot.getName(), ticker);
+            return result;
+        } catch (Exception ex) {
+            String message = String.format("Simulation for bot '%s' with ticker '%s' failed", bot.getName(), ticker);
+            log.error(message, ex);
+            return SimulationResult.builder().error(message).build();
+        }
+    }
+
+    private SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
+
+        FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
         fakeTinkoffService.init(interval.getFrom(), balance);
         List<Candle> candles = new ArrayList<>();
 
@@ -84,9 +119,7 @@ public class SimulatorImpl implements Simulator {
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        log.info("Simulation for ticker = '{}' on bot '{}' ended", ticker, bot.getName());
-
-        return createResult(bot.getName(), balance, interval, ticker, candles);
+        return createResult(bot, balance, interval, ticker, candles);
     }
 
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
@@ -97,22 +130,24 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private SimulationResult createResult(String botName,
+    private SimulationResult createResult(FakeBot bot,
                                           BigDecimal initialBalance,
                                           Interval interval,
                                           String ticker,
                                           List<Candle> candles) {
 
+        FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
+
         BigDecimal currentPrice = Iterables.getLast(candles).getClosePrice();
-        List<SimulatedPosition> positions = getPositions(currentPrice);
-        BigDecimal totalBalance = getTotalBalance(positions);
+        List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), currentPrice);
+        BigDecimal totalBalance = getTotalBalance(fakeTinkoffService.getBalance(), positions);
         BigDecimal absoluteProfit = totalBalance.subtract(initialBalance);
         double relativeProfit = MathUtils.divide(absoluteProfit, initialBalance).doubleValue();
         double relativeYearProfit = relativeProfit / (interval.toDuration().toDays() / DateUtils.DAYS_IN_YEAR);
-
+        List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()
-                .botName(botName)
+                .botName(bot.getName())
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .totalBalance(totalBalance)
@@ -121,13 +156,14 @@ public class SimulatorImpl implements Simulator {
                 .relativeProfit(relativeProfit)
                 .relativeYearProfit(relativeYearProfit)
                 .positions(positions)
-                .operations(getOperations(interval, ticker))
+                .operations(getOperations(operations, ticker))
                 .candles(candles)
                 .build();
     }
 
-    private List<SimulatedPosition> getPositions(BigDecimal currentPrice) {
-        return fakeTinkoffService.getPortfolioPositions().stream()
+    private List<SimulatedPosition> getPositions(Collection<PortfolioPosition> portfolioPositions,
+                                                 BigDecimal currentPrice) {
+        return portfolioPositions.stream()
                 .map(portfolioPosition -> createSimulatedPosition(portfolioPosition, currentPrice))
                 .collect(Collectors.toList());
     }
@@ -136,18 +172,18 @@ public class SimulatorImpl implements Simulator {
         return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getLotsCount());
     }
 
-    private BigDecimal getTotalBalance(List<SimulatedPosition> positions) {
+    private BigDecimal getTotalBalance(BigDecimal balance, List<SimulatedPosition> positions) {
         return positions.stream()
                 .map(position -> MathUtils.multiply(position.getPrice(), position.getQuantity()))
-                .reduce(fakeTinkoffService.getBalance(), BigDecimal::add);
+                .reduce(balance, BigDecimal::add);
     }
 
-    private List<SimulatedOperation> getOperations(Interval interval, String ticker) {
-        List<SimulatedOperation> operations = fakeTinkoffService.getOperations(interval, ticker).stream()
+    private List<SimulatedOperation> getOperations(List<Operation> operations, String ticker) {
+        List<SimulatedOperation> simulatedOperations = operations.stream()
                 .map(operationMapper::map)
                 .collect(Collectors.toList());
-        operations.forEach(operation -> operation.setTicker(ticker));
-        return operations;
+        simulatedOperations.forEach(operation -> operation.setTicker(ticker));
+        return simulatedOperations;
     }
 
 }

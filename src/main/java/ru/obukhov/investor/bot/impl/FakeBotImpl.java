@@ -13,9 +13,10 @@ import ru.obukhov.investor.service.interfaces.PortfolioService;
 @Slf4j
 public class FakeBotImpl extends AbstractBot implements FakeBot {
 
-    protected final FakeTinkoffService fakeTinkoffService;
     @Getter
     private final String name;
+    @Getter
+    private final FakeTinkoffService fakeTinkoffService;
 
     public FakeBotImpl(String name,
                        Decider decider,

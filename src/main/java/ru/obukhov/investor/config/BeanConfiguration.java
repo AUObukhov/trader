@@ -84,11 +84,16 @@ public class BeanConfiguration {
 
     @Bean
     public FakeBot conservativeFakeBot(Decider conservativeDecider,
-                                       MarketService fakeMarketService,
-                                       OperationsService fakeOperationsService,
-                                       OrdersService fakeOrdersService,
-                                       PortfolioService fakePortfolioService,
-                                       FakeTinkoffService fakeTinkoffService) {
+                                       TradingProperties tradingProperties,
+                                       MarketService realMarketService,
+                                       RealTinkoffService realTinkoffService) {
+
+        FakeTinkoffService fakeTinkoffService =
+                new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
+        MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+        OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
+        OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
+        PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         return new FakeBotImpl("Conservative bot",
                 conservativeDecider,
@@ -102,11 +107,16 @@ public class BeanConfiguration {
 
     @Bean
     public FakeBot dumbFakeBot(Decider dumbDecider,
-                               MarketService fakeMarketService,
-                               OperationsService fakeOperationsService,
-                               OrdersService fakeOrdersService,
-                               PortfolioService fakePortfolioService,
-                               FakeTinkoffService fakeTinkoffService) {
+                               TradingProperties tradingProperties,
+                               MarketService realMarketService,
+                               RealTinkoffService realTinkoffService) {
+
+        FakeTinkoffService fakeTinkoffService =
+                new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
+        MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+        OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
+        OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
+        PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         return new FakeBotImpl("Dumb bot",
                 dumbDecider,
@@ -121,32 +131,33 @@ public class BeanConfiguration {
     @Bean
     @DependsOn("trendReversalDecider")
     public List<FakeBot> trendReversalFakeBots(Set<TrendReversalDecider> trendReversalDeciders,
-                                               MarketService fakeMarketService,
-                                               OperationsService fakeOperationsService,
-                                               OrdersService fakeOrdersService,
-                                               PortfolioService fakePortfolioService,
-                                               FakeTinkoffService fakeTinkoffService,
+                                               TradingProperties tradingProperties,
+                                               MarketService realMarketService,
+                                               RealTinkoffService realTinkoffService,
                                                ConfigurableListableBeanFactory beanFactory) {
         List<FakeBot> fakeBots = trendReversalDeciders.stream()
                 .map(decider -> trendReversalFakeBot(
                         decider,
-                        fakeMarketService,
-                        fakeOperationsService,
-                        fakeOrdersService,
-                        fakePortfolioService,
-                        fakeTinkoffService)
-                )
+                        tradingProperties,
+                        realMarketService,
+                        realTinkoffService))
                 .collect(Collectors.toList());
         fakeBots.forEach(bot -> beanFactory.registerSingleton(bot.getName(), bot));
         return fakeBots;
     }
 
     private FakeBot trendReversalFakeBot(TrendReversalDecider trendReversalDecider,
-                                         MarketService fakeMarketService,
-                                         OperationsService fakeOperationsService,
-                                         OrdersService fakeOrdersService,
-                                         PortfolioService fakePortfolioService,
-                                         FakeTinkoffService fakeTinkoffService) {
+                                         TradingProperties tradingProperties,
+                                         MarketService realMarketService,
+                                         RealTinkoffService realTinkoffService) {
+
+
+        FakeTinkoffService fakeTinkoffService =
+                new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
+        MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+        OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
+        OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
+        PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         String name = String.format("Trend reversal bot (%s|%s)",
                 trendReversalDecider.getExtremumPriceIndex(), trendReversalDecider.getLastPricesCount());
@@ -182,10 +193,9 @@ public class BeanConfiguration {
     @Bean
     @DependsOn("trendReversalFakeBots")
     public Simulator simulatorImpl(Set<FakeBot> fakeBots,
-                                   TinkoffService fakeTinkoffService,
                                    ExcelService excelService) {
 
-        return new SimulatorImpl(fakeBots, (FakeTinkoffService) fakeTinkoffService, excelService);
+        return new SimulatorImpl(fakeBots, excelService);
     }
 
     @Bean
@@ -194,20 +204,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TinkoffService fakeTinkoffService(TradingProperties tradingProperties,
-                                             MarketService realMarketService,
-                                             RealTinkoffService realTinkoffService) {
-        return new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
-    }
-
-    @Bean
     public MarketService realMarketService(TradingProperties tradingProperties, TinkoffService realTinkoffService) {
         return new MarketServiceImpl(tradingProperties, realTinkoffService);
-    }
-
-    @Bean
-    public MarketService fakeMarketService(TradingProperties tradingProperties, TinkoffService fakeTinkoffService) {
-        return new MarketServiceImpl(tradingProperties, fakeTinkoffService);
     }
 
     @Bean
@@ -222,28 +220,13 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public OperationsService fakeOperationsService(TinkoffService fakeTinkoffService, MarketService fakeMarketService) {
-        return new OperationsServiceImpl(fakeTinkoffService);
-    }
-
-    @Bean
     public OrdersService realOrdersService(TinkoffService realTinkoffService, MarketService realMarketService) {
         return new OrdersServiceImpl(realTinkoffService, realMarketService);
     }
 
     @Bean
-    public OrdersService fakeOrdersService(TinkoffService fakeTinkoffService, MarketService fakeMarketService) {
-        return new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
-    }
-
-    @Bean
     public PortfolioService realPortfolioService(TinkoffService realTinkoffService) {
         return new PortfolioServiceImpl(realTinkoffService);
-    }
-
-    @Bean
-    public PortfolioService fakePortfolioService(TinkoffService fakeTinkoffService) {
-        return new PortfolioServiceImpl(fakeTinkoffService);
     }
 
     @Bean
