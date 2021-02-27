@@ -72,8 +72,8 @@ public class ThrottlingInterceptor implements Interceptor {
             return chain.proceed(chain.request());
         } catch (Exception exception) {
             final String path = chain.request().url().encodedPath();
-            log.warn("Request to {} failed. Retry after {} milliseconds", path, queryThrottleProperties.getRetryInterval(),
-                    exception);
+            log.warn("Request to {} failed. Retry after {} milliseconds",
+                    path, queryThrottleProperties.getRetryInterval(), exception);
             try {
                 TimeUnit.MILLISECONDS.sleep(queryThrottleProperties.getRetryInterval());
                 return proceed(chain, attemptNumber + 1);
