@@ -46,7 +46,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_throwIllegalStateException_whenAttemptsCountExceeds() throws Exception {
+    public void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
