@@ -1,7 +1,7 @@
 trading:
   sandbox: false
   commission: 0.003
-  work-start-time: 10:00:00+03:00
+  work-start-time: 7:00:00+03:00
   work-duration: 540
   bot-enabled: false
   consecutive-empty-days-limit: 7
