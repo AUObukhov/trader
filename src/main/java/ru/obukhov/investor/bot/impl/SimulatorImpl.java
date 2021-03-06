@@ -48,7 +48,7 @@ public class SimulatorImpl implements Simulator {
     private final ExcelService excelService;
     private final ThreadFactory simulationThreadFactory =
             new ThreadFactoryBuilder().setNameFormat("simulation-thread-%d").build();
-    private final ExecutorService executor = Executors.newFixedThreadPool(1, simulationThreadFactory);
+    private final ExecutorService executor = Executors.newFixedThreadPool(10, simulationThreadFactory);
 
     /**
      * @param ticker   simulated ticker
