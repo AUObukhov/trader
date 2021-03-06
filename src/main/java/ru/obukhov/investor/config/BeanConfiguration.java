@@ -57,16 +57,14 @@ public class BeanConfiguration {
 
     @Bean
     public Set<Decider> trendReversalDecider(TradingProperties tradingProperties,
-                                             TrendReversalDeciderProperties deciderProperties,
                                              ConfigurableListableBeanFactory beanFactory) {
         Set<Decider> deciders = new HashSet<>();
-        int extremumPriceIndex = deciderProperties.getExtremumPriceIndex();
-        int lastPricesCount = deciderProperties.getLastPricesCount();
-        TrendReversalDecider decider = createAndRegisterTrendReversalDecider(beanFactory,
-                tradingProperties,
-                extremumPriceIndex,
-                lastPricesCount);
-        deciders.add(decider);
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 47, 50));
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 95, 100));
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 180, 200));
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 275, 300));
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 475, 500));
+        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 950, 1000));
 
         return deciders;
     }
