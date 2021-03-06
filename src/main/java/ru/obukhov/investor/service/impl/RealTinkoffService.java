@@ -53,25 +53,25 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region MarketContext
 
     @Override
-    @Cacheable("marketStocks")
+    @Cacheable(value = "marketStocks", sync = true)
     public List<Instrument> getMarketStocks() {
         return getMarketContext().getMarketStocks().join().instruments;
     }
 
     @Override
-    @Cacheable("marketBonds")
+    @Cacheable(value = "marketBonds", sync = true)
     public List<Instrument> getMarketBonds() {
         return getMarketContext().getMarketBonds().join().instruments;
     }
 
     @Override
-    @Cacheable("marketEtfs")
+    @Cacheable(value = "marketEtfs", sync = true)
     public List<Instrument> getMarketEtfs() {
         return getMarketContext().getMarketEtfs().join().instruments;
     }
 
     @Override
-    @Cacheable("marketCurrencies")
+    @Cacheable(value = "marketCurrencies", sync = true)
     public List<Instrument> getMarketCurrencies() {
         return getMarketContext().getMarketCurrencies().join().instruments;
     }
@@ -86,7 +86,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    @Cacheable("marketCandles")
+    @Cacheable(value = "marketCandles", sync = true)
     public List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval) {
         String figi = self.searchMarketInstrument(ticker).figi;
         List<Candle> candles = getMarketContext()
@@ -99,7 +99,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    @Cacheable("marketInstrument")
+    @Cacheable(value = "marketInstrument", sync = true)
     public Instrument searchMarketInstrument(String ticker) {
         List<Instrument> instruments = getMarketContext()
                 .searchMarketInstrumentsByTicker(ticker)
