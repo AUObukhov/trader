@@ -40,6 +40,10 @@ query.throttle:
     - segments:
         - operations
       limit: 120
+    - segments:
+        - md-openapi
+        - ws
+      limit: 1
   retry-interval: 5000
   attempts-count: 30
   default-limit: 120
