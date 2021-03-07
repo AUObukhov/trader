@@ -6,6 +6,6 @@ import java.util.Collection;
 
 public interface ExcelService {
 
-    void saveSimulationResults(Collection<SimulationResult> results);
+    void saveSimulationResults(String ticker, Collection<SimulationResult> results);
 
 }

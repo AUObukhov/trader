@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import ru.obukhov.investor.BaseMockedTest;
 import ru.obukhov.investor.model.Candle;
 import ru.obukhov.investor.model.Interval;
@@ -31,7 +32,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static ru.obukhov.investor.test.utils.AssertUtils.assertRowValues;
 
@@ -53,43 +53,42 @@ public class ExcelServiceImplTest extends BaseMockedTest {
 
         SimulationResult result = createSimulationResult();
 
-        excelService.saveSimulationResults(Collections.singletonList(result));
+        final String ticker = "ticker";
+        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
 
-        verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), anyString());
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 14 + result.getPositions().size() + result.getOperations().size();
+        int expectedRowCount = 15 + result.getPositions().size() + result.getOperations().size();
         assertEquals(expectedRowCount, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
         assertRowValues(rowIterator.next(), "Общая статистика");
+        assertRowValues(rowIterator.next(), "Тикер", ticker);
         assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
         assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
         assertRowValues(rowIterator.next(), "Общий баланс", result.getTotalBalance());
         assertRowValues(rowIterator.next(), "Валютный баланс", result.getCurrencyBalance());
         assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
         assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
-        assertRowValues(rowIterator.next(), "Относительный годовой доход",
-                result.getRelativeYearProfit());
+        assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
 
         assertRowValues(rowIterator.next());
         assertRowValues(rowIterator.next(), "Позиции");
-        assertRowValues(rowIterator.next(), "Тикер", "Цена", "Количество");
+        assertRowValues(rowIterator.next(), "Цена", "Количество");
         for (SimulatedPosition position : result.getPositions()) {
-            assertRowValues(rowIterator.next(),
-                    position.getTicker(), position.getPrice(), position.getQuantity());
+            assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
         }
 
         assertRowValues(rowIterator.next());
         assertRowValues(rowIterator.next(), "Операции");
-        assertRowValues(rowIterator.next(),
-                "Тикер", "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+        assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
         for (SimulatedOperation operation : result.getOperations()) {
             assertRowValues(rowIterator.next(),
-                    operation.getTicker(),
                     operation.getDateTime(),
                     operation.getOperationType().name(),
                     operation.getPrice(),

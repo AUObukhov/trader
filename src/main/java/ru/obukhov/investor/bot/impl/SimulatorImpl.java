@@ -82,7 +82,7 @@ public class SimulatorImpl implements Simulator {
 
         if (saveToFile) {
             log.debug("Saving simulation for ticker {} result to file", ticker);
-            excelService.saveSimulationResults(simulationResults);
+            excelService.saveSimulationResults(ticker, simulationResults);
         }
 
         return simulationResults;

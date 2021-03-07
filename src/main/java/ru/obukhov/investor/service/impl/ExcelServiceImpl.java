@@ -52,12 +52,13 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResults(Collection<SimulationResult> results) {
+    public void saveSimulationResults(String ticker, Collection<SimulationResult> results) {
         ExtendedWorkbook workBook = createWorkBook();
         for (SimulationResult result : results) {
-            createSheet(workBook, result);
+            createSheet(workBook, ticker, result);
         }
-        excelFileService.saveToFile(workBook, "SimulationResult");
+
+        excelFileService.saveToFile(workBook, "SimulationResult for '" + ticker + "'");
     }
 
     @NotNull
@@ -80,10 +81,10 @@ public class ExcelServiceImpl implements ExcelService {
         percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
     }
 
-    private void createSheet(ExtendedWorkbook workbook, SimulationResult result) {
+    private void createSheet(ExtendedWorkbook workbook, String ticker, SimulationResult result) {
         ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
 
-        putCommonStatistics(result, sheet);
+        putCommonStatistics(sheet, ticker, result);
         putPositions(sheet, result.getPositions());
         putOperations(sheet, result.getOperations());
 
@@ -92,10 +93,11 @@ public class ExcelServiceImpl implements ExcelService {
         putChart(sheet, result.getCandles(), result.getOperations());
     }
 
-    private void putCommonStatistics(SimulationResult result, ExtendedSheet sheet) {
+    private void putCommonStatistics(ExtendedSheet sheet, String ticker, SimulationResult result) {
         ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
+        putTicker(sheet, ticker);
         putInterval(sheet, result.getInterval());
         putInitialBalance(sheet, result.getInitialBalance());
         putTotalBalance(sheet, result.getTotalBalance());
@@ -103,6 +105,11 @@ public class ExcelServiceImpl implements ExcelService {
         putAbsoluteProfit(sheet, result.getAbsoluteProfit());
         putRelativeProfit(sheet, result.getRelativeProfit());
         putRelativeYearProfit(sheet, result.getRelativeYearProfit());
+    }
+
+    private void putTicker(ExtendedSheet sheet, String ticker) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Тикер", ticker);
     }
 
     private void putInterval(ExtendedSheet sheet, Interval interval) {
@@ -155,10 +162,10 @@ public class ExcelServiceImpl implements ExcelService {
         } else {
             labelRow.createUnitedCell("Позиции", 3);
             ExtendedRow headersRow = sheet.addRow();
-            headersRow.createCells("Тикер", "Цена", "Количество");
+            headersRow.createCells("Цена", "Количество");
             for (SimulatedPosition position : positions) {
                 ExtendedRow row = sheet.addRow();
-                row.createCells(position.getTicker(), position.getPrice(), position.getQuantity());
+                row.createCells(position.getPrice(), position.getQuantity());
             }
         }
     }
@@ -172,11 +179,10 @@ public class ExcelServiceImpl implements ExcelService {
         } else {
             labelRow.createUnitedCell("Операции", 6);
             ExtendedRow headersRow = sheet.addRow();
-            headersRow.createCells("Тикер", "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+            headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
             for (SimulatedOperation operation : operations) {
                 ExtendedRow row = sheet.addRow();
-                row.createCells(operation.getTicker(),
-                        operation.getDateTime(),
+                row.createCells(operation.getDateTime(),
                         operation.getOperationType().name(),
                         operation.getPrice(),
                         operation.getQuantity(),
