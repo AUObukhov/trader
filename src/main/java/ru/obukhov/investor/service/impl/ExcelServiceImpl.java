@@ -41,7 +41,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExcelServiceImpl implements ExcelService {
 
-    private static final String DATE_TIME_FORMAT = "dd.MM.YYYY HH:mm:ss";
+    private static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private static final String PERCENT_FORMAT = "0.00%";
 
