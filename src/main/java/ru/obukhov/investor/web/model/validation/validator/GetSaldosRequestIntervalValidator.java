@@ -14,8 +14,8 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 
 /**
- * Validates that {@link GetDailySaldosRequest#candleInterval} is less than interval between {@link GetDailySaldosRequest#from}
- * and {@link GetDailySaldosRequest#to}
+ * Validates that {@link GetDailySaldosRequest#getCandleInterval()} is less than interval between
+ * {@link GetDailySaldosRequest#getFrom()} and {@link GetDailySaldosRequest#getTo()}
  */
 public class GetSaldosRequestIntervalValidator implements ConstraintValidator<GetSaldosRequestIntervalConstraint, GetDailySaldosRequest> {
 
