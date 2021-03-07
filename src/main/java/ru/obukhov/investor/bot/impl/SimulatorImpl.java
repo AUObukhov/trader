@@ -51,13 +51,14 @@ public class SimulatorImpl implements Simulator {
     private final ExecutorService executor = Executors.newFixedThreadPool(10, simulationThreadFactory);
 
     /**
-     * @param ticker   simulated ticker
-     * @param balance  balance before simulation
-     * @param interval simulation interval
+     * @param ticker     simulated ticker
+     * @param balance    balance before simulation
+     * @param interval   simulation interval
+     * @param saveToFile flag to save simulation result to file
      * @return balance after simulation
      */
     @Override
-    public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval) {
+    public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile) {
 
         log.info("Simulation for ticker = '{}' started", ticker);
 
@@ -79,7 +80,10 @@ public class SimulatorImpl implements Simulator {
         String simulationDurationString = DurationFormatUtils.formatDurationHMS(simulationDuration.toMillis());
         log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
 
-        excelService.saveSimulationResults(simulationResults);
+        if (saveToFile) {
+            log.debug("Saving simulation for ticker {} result to file", ticker);
+            excelService.saveSimulationResults(simulationResults);
+        }
 
         return simulationResults;
     }

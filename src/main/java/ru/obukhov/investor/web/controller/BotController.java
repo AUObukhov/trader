@@ -2,6 +2,7 @@ package ru.obukhov.investor.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +31,13 @@ public class BotController {
     public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
 
         Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        boolean saveToFile = BooleanUtils.isTrue(request.getSaveToFile());
 
-        Collection<SimulationResult> results = simulator.simulate(request.getTicker(), request.getBalance(), interval);
+        Collection<SimulationResult> results = simulator.simulate(
+                request.getTicker(),
+                request.getBalance(),
+                interval,
+                saveToFile);
 
         return new SimulateResponse(results);
 

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface Simulator {
 
-    List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval);
+    List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile);
 
 }
