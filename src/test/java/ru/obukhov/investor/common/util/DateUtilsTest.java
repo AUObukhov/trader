@@ -119,26 +119,6 @@ public class DateUtilsTest {
 
     // endregion
 
-    // region getDefaultFromIfNull tests
-
-    @Test
-    public void getDefaultFromIfNull_returnsValue_whenNotNull() {
-        OffsetDateTime from = OffsetDateTime.now();
-
-        OffsetDateTime result = DateUtils.getDefaultFromIfNull(from);
-
-        assertEquals(from, result);
-    }
-
-    @Test
-    public void getDefaultFromIfNull_returnsStartDate_whenNull() {
-        OffsetDateTime result = DateUtils.getDefaultFromIfNull(null);
-
-        assertEquals(DateUtils.START_DATE, result);
-    }
-
-    // endregion
-
     // region getDefaultToIfNull tests
 
     @Test

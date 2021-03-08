@@ -77,6 +77,7 @@ class TradingPropertiesIntegrationTest {
                 .withPropertyValues("trading.token: i identify myself as token")
                 .withPropertyValues("trading.work-duration: 480")
                 .withPropertyValues("trading.consecutive-empty-days-limit: 5")
+                .withPropertyValues("start-date: 2000-01-01T00:00:00+03:00")
                 .run(context -> assertContextStartupFailed(context,
                         "trading.workStartTime", "не должно равняться null")
                 );
@@ -90,6 +91,7 @@ class TradingPropertiesIntegrationTest {
                 .withPropertyValues("trading.token: i identify myself as token")
                 .withPropertyValues("trading.work-start-time: 12:00:00+03:00")
                 .withPropertyValues("trading.consecutive-empty-days-limit: 5")
+                .withPropertyValues("start-date: 2000-01-01T00:00:00+03:00")
                 .run(context -> assertContextStartupFailed(context,
                         "trading.workDuration", "не должно равняться null")
                 );
@@ -103,8 +105,23 @@ class TradingPropertiesIntegrationTest {
                 .withPropertyValues("trading.token: i identify myself as token")
                 .withPropertyValues("trading.work-start-time: 12:00:00+03:00")
                 .withPropertyValues("trading.work-duration: 480")
+                .withPropertyValues("start-date: 2000-01-01T00:00:00+03:00")
                 .run(context -> assertContextStartupFailed(context,
                         "trading.consecutiveEmptyDaysLimit", "не должно равняться null")
+                );
+
+    }
+
+    @Test
+    void beanCreationFails_whenStartDateIsNull() {
+
+        this.contextRunner
+                .withPropertyValues("trading.token: i identify myself as token")
+                .withPropertyValues("trading.work-start-time: 12:00:00+03:00")
+                .withPropertyValues("trading.work-duration: 480")
+                .withPropertyValues("trading.consecutive-empty-days-limit: 5")
+                .run(context -> assertContextStartupFailed(context,
+                        "trading.startDate", "не должно равняться null")
                 );
 
     }

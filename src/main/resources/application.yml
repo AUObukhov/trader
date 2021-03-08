@@ -5,6 +5,7 @@ trading:
   work-duration: 540
   bot-enabled: false
   consecutive-empty-days-limit: 7
+  start-date: 2000-01-01T00:00:00+03:00
 
 trend-reversal-decider:
   last-prices-count: 100

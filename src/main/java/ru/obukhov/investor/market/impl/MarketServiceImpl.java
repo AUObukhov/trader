@@ -58,7 +58,7 @@ public class MarketServiceImpl implements MarketService {
 
     private List<Candle> getAllCandlesByDays(String ticker, Interval interval, CandleInterval candleInterval) {
 
-        OffsetDateTime innerFrom = DateUtils.getDefaultFromIfNull(interval.getFrom());
+        OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), tradingProperties.getStartDate());
         OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
 
         List<Interval> subIntervals = Interval.of(innerFrom, innerTo).splitIntoDailyIntervals();

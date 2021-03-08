@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 
@@ -36,5 +37,8 @@ public class TradingProperties {
 
     @NotNull
     private Integer consecutiveEmptyDaysLimit;
+
+    @NotNull
+    private OffsetDateTime startDate;
 
 }

@@ -24,11 +24,6 @@ public class DateUtils {
     public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.of("+03:00");
 
     /**
-     * Earliest date for requesting candles
-     */
-    static final OffsetDateTime START_DATE = getDate(2000, 1, 1);
-
-    /**
      * @return OffsetDateTime with by params, 0 nanoseconds and UTC zone
      */
     public static OffsetDateTime getDateTime(int year, int month, int dayOfMonth, int hour, int minute, int second) {
@@ -69,13 +64,6 @@ public class DateUtils {
         OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
 
         return Interval.of(innerFrom, innerTo);
-    }
-
-    /**
-     * @return passed value if it is not null or else the earliest date for requesting candles
-     */
-    public static OffsetDateTime getDefaultFromIfNull(OffsetDateTime from) {
-        return ObjectUtils.defaultIfNull(from, START_DATE);
     }
 
     /**
