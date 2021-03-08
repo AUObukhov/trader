@@ -87,7 +87,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     /**
-     * Adds one minute to current dataTime
+     * changes currentDateTime to nearest work time after it
      */
     public void nextMinute() {
 
