@@ -157,7 +157,7 @@ public class ThrottlingInterceptorTest {
         ));
 
         final long maximumNotThrottledTime = 30;
-        final long minimumThrottledTime = queryThrottleProperties.getInterval() - 200;
+        final long minimumThrottledTime = queryThrottleProperties.getInterval() - 250;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
