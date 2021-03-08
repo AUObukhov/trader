@@ -217,7 +217,7 @@ public class FakeTinkoffService implements TinkoffService {
                     multiply(existingPosition.getAveragePositionPrice(), existingPosition.getLotsCount())
                     .add(totalPrice);
             BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
-            position = clonePositionWithNewBalance(existingPosition, totalPrice, newAveragePrice, newLotsCount);
+            position = clonePositionWithNewBalance(existingPosition, newBalance, newAveragePrice, newLotsCount);
         }
 
         this.tickersToPositions.put(ticker, position);
