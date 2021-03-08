@@ -185,23 +185,7 @@ public class FakeTinkoffService implements TinkoffService {
         return createOrder(marketOrder, commission);
     }
 
-    private void addOperation(String ticker,
-                              BigDecimal price,
-                              MoneyAmount commission,
-                              MarketOrder marketOrder) {
-
-        final SimulatedOperation operation = SimulatedOperation.builder()
-                .ticker(ticker)
-                .price(price)
-                .quantity(marketOrder.lots)
-                .commission(commission.getValue())
-                .dateTime(this.currentDateTime)
-                .operationType(operationTypeMapper.map(marketOrder.operation))
-                .build();
-        operations.add(operation);
-    }
-
-    public BigDecimal getCurrentPrice(String ticker) {
+    private BigDecimal getCurrentPrice(String ticker) {
         return marketService.getLastCandle(ticker, currentDateTime).getClosePrice();
     }
 
@@ -212,31 +196,10 @@ public class FakeTinkoffService implements TinkoffService {
         if (existingPosition == null) {
             position = createNewPosition(ticker, totalPrice, instrument.currency, currentPrice, lotsCount);
         } else {
-            int newLotsCount = existingPosition.getLotsCount() + lotsCount;
-            BigDecimal newBalance = MathUtils.
-                    multiply(existingPosition.getAveragePositionPrice(), existingPosition.getLotsCount())
-                    .add(totalPrice);
-            BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
-            position = clonePositionWithNewBalance(existingPosition, newBalance, newAveragePrice, newLotsCount);
+            position = addValuesToPosition(existingPosition, lotsCount, totalPrice);
         }
 
         this.tickersToPositions.put(ticker, position);
-    }
-
-    private void sellPosition(String ticker, int lotsCount) {
-        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
-        int newLotsCount = existingPosition.getLotsCount() - lotsCount;
-
-        if (newLotsCount == 0) {
-            this.tickersToPositions.remove(ticker);
-        } else if (newLotsCount > 0) {
-            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
-            this.tickersToPositions.put(ticker, newPosition);
-        } else {
-            final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
-                    + existingPosition.getLotsCount();
-            throw new IllegalArgumentException(message);
-        }
     }
 
     private PortfolioPosition createNewPosition(String ticker,
@@ -256,10 +219,19 @@ public class FakeTinkoffService implements TinkoffService {
                 StringUtils.EMPTY);
     }
 
-    private PortfolioPosition clonePositionWithNewBalance(PortfolioPosition position,
-                                                          BigDecimal balance,
-                                                          BigDecimal averagePositionPrice,
-                                                          int lotsCount) {
+    private PortfolioPosition addValuesToPosition(PortfolioPosition existingPosition,
+                                                  int lotsCount,
+                                                  BigDecimal totalPrice) {
+        BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
+        int newLotsCount = existingPosition.getLotsCount() + lotsCount;
+        BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
+        return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
+    }
+
+    private PortfolioPosition clonePositionWithNewValues(PortfolioPosition position,
+                                                         BigDecimal balance,
+                                                         int lotsCount,
+                                                         BigDecimal averagePositionPrice) {
         return new PortfolioPosition(
                 position.getTicker(),
                 balance,
@@ -270,6 +242,29 @@ public class FakeTinkoffService implements TinkoffService {
                 averagePositionPrice,
                 position.getAveragePositionPriceNoNkd(),
                 position.getName());
+    }
+
+    private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
+        BigDecimal newBalance = this.balance.add(totalPrice).subtract(commissionAmount);
+        Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
+
+        this.balance = newBalance;
+    }
+
+    private void sellPosition(String ticker, int lotsCount) {
+        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        int newLotsCount = existingPosition.getLotsCount() - lotsCount;
+
+        if (newLotsCount == 0) {
+            this.tickersToPositions.remove(ticker);
+        } else if (newLotsCount > 0) {
+            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
+            this.tickersToPositions.put(ticker, newPosition);
+        } else {
+            final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
+                    + existingPosition.getLotsCount();
+            throw new IllegalArgumentException(message);
+        }
     }
 
     private PortfolioPosition clonePositionWithNewLotsCount(PortfolioPosition position, int lotsCount) {
@@ -285,11 +280,20 @@ public class FakeTinkoffService implements TinkoffService {
                 position.getName());
     }
 
-    private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
-        BigDecimal newBalance = this.balance.add(totalPrice).subtract(commissionAmount);
-        Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
+    private void addOperation(String ticker,
+                              BigDecimal price,
+                              MoneyAmount commission,
+                              MarketOrder marketOrder) {
 
-        this.balance = newBalance;
+        final SimulatedOperation operation = SimulatedOperation.builder()
+                .ticker(ticker)
+                .price(price)
+                .quantity(marketOrder.lots)
+                .commission(commission.getValue())
+                .dateTime(this.currentDateTime)
+                .operationType(operationTypeMapper.map(marketOrder.operation))
+                .build();
+        operations.add(operation);
     }
 
     private PlacedOrder createOrder(MarketOrder marketOrder, MoneyAmount commission) {
