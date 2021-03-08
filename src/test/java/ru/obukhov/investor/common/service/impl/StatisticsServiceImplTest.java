@@ -17,7 +17,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static ru.obukhov.investor.common.util.DateUtils.getDate;
 
@@ -48,24 +47,11 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         final List<Candle> candles = new ArrayList<>();
 
-        mockCandles(ticker, interval, candleInterval, candles);
+        when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleInterval);
 
         Assert.assertSame(candles, candlesResponse);
     }
-
-    // region mocks
-
-    private void mockCandles(String ticker,
-                             Interval interval,
-                             CandleInterval candleInterval,
-                             List<Candle> candles) {
-
-        when(marketService.getCandles(eq(ticker), eq(interval), eq(candleInterval)))
-                .thenReturn(candles);
-    }
-
-    // endregion
 
 }

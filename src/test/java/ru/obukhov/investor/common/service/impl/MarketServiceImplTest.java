@@ -522,8 +522,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         List<Candle> candles = createCandlesSimple(openPrices, times);
 
-        when(tinkoffService.getMarketCandles(eq(ticker), eq(interval), eq(candleInterval)))
-                .thenReturn(candles);
+        when(tinkoffService.getMarketCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
     }
 

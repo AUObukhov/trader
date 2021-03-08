@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -64,7 +63,7 @@ public class OrdersServiceImplTest extends BaseMockedTest {
     }
 
     private void mockFigi(String ticker, String figi) {
-        when(marketService.getFigi(eq(ticker))).thenReturn(figi);
+        when(marketService.getFigi(ticker)).thenReturn(figi);
     }
 
     private void mockOrders(List<Order> orders) {
