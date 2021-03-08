@@ -185,7 +185,7 @@ public class ThrottlingInterceptorTest {
                 new UrlLimit(Collections.singletonList("portfolio"), 120)
         ));
 
-        final long maximumNotThrottledTime = 30;
+        final long maximumNotThrottledTime = 45;
         final long minimumThrottledTime = queryThrottleProperties.getInterval() - 200;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
