@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
+import ru.obukhov.investor.bot.interfaces.Bot;
+import ru.obukhov.investor.bot.interfaces.BotFactory;
 import ru.obukhov.investor.bot.interfaces.FakeBot;
 import ru.obukhov.investor.bot.interfaces.Simulator;
 import ru.obukhov.investor.bot.model.DecisionData;
@@ -28,7 +31,9 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,13 +44,14 @@ import java.util.stream.Collectors;
  * Simulates trading by bot
  */
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class SimulatorImpl implements Simulator {
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
-    private final Collection<FakeBot> bots;
     private final ExcelService excelService;
+    private final BotFactory fakeBotFactory;
     private final ThreadFactory simulationThreadFactory =
             new ThreadFactoryBuilder().setNameFormat("simulation-thread-%d").build();
     private final ExecutorService executor = Executors.newFixedThreadPool(10, simulationThreadFactory);
@@ -68,7 +74,7 @@ public class SimulatorImpl implements Simulator {
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
-        List<CompletableFuture<SimulationResult>> simulationFutures = bots.stream()
+        List<CompletableFuture<SimulationResult>> simulationFutures = createFakeBots().stream()
                 .map(bot -> startSimulation(bot, ticker, balance, finiteInterval))
                 .collect(Collectors.toList());
         List<SimulationResult> simulationResults = simulationFutures.stream()
@@ -86,6 +92,16 @@ public class SimulatorImpl implements Simulator {
         }
 
         return simulationResults;
+    }
+
+    private Set<FakeBot> createFakeBots() {
+        Set<FakeBot> fakeBots = new HashSet<>();
+        fakeBots.add((FakeBot) fakeBotFactory.createConservativeBot());
+        fakeBots.add((FakeBot) fakeBotFactory.createDumbBot());
+        for (Bot bot : fakeBotFactory.createTrendReversalBots()) {
+            fakeBots.add((FakeBot) bot);
+        }
+        return fakeBots;
     }
 
     private CompletableFuture<SimulationResult> startSimulation(FakeBot bot,
