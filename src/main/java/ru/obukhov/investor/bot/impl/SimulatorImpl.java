@@ -23,6 +23,7 @@ import ru.obukhov.investor.market.model.transform.OperationMapper;
 import ru.obukhov.investor.web.model.pojo.SimulatedOperation;
 import ru.obukhov.investor.web.model.pojo.SimulatedPosition;
 import ru.obukhov.investor.web.model.pojo.SimulationResult;
+import ru.obukhov.investor.web.model.pojo.SimulationUnit;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -57,14 +59,38 @@ public class SimulatorImpl implements Simulator {
     private final ExecutorService executor = Executors.newFixedThreadPool(10, simulationThreadFactory);
 
     /**
-     * @param ticker     simulated ticker
-     * @param balance    balance before simulation
-     * @param interval   simulation interval
-     * @param saveToFile flag to save simulation result to file
-     * @return balance after simulation
+     * @param simulationUnits list of simulated tickers and corresponding initial balances
+     * @param interval        all simulations interval
+     * @param saveToFiles     flag to save simulations results to file
+     * @return map of simulations results by tickers
      */
     @Override
-    public List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile) {
+    public Map<String, List<SimulationResult>> simulate(List<SimulationUnit> simulationUnits,
+                                                        Interval interval,
+                                                        boolean saveToFiles) {
+
+        Map<String, CompletableFuture<List<SimulationResult>>> tickersToSimulationResults = simulationUnits.stream()
+                .collect(Collectors.toMap(
+                        SimulationUnit::getTicker,
+                        simulationUnit -> startSimulations(simulationUnit, interval, saveToFiles)
+                ));
+
+        return tickersToSimulationResults.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().join()
+                ));
+    }
+
+    private CompletableFuture<List<SimulationResult>> startSimulations(SimulationUnit simulationUnit,
+                                                                       Interval interval,
+                                                                       boolean saveToFile) {
+        return CompletableFuture.supplyAsync(
+                () -> simulate(simulationUnit.getTicker(), simulationUnit.getBalance(), interval, saveToFile),
+                executor);
+    }
+
+    private List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile) {
 
         log.info("Simulation for ticker = '{}' started", ticker);
 
@@ -87,8 +113,7 @@ public class SimulatorImpl implements Simulator {
         log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
 
         if (saveToFile) {
-            log.debug("Saving simulation for ticker {} result to file", ticker);
-            excelService.saveSimulationResults(ticker, simulationResults);
+            saveSimulationResultsSafe(ticker, simulationResults);
         }
 
         return simulationResults;
@@ -204,6 +229,15 @@ public class SimulatorImpl implements Simulator {
                 .collect(Collectors.toList());
         simulatedOperations.forEach(operation -> operation.setTicker(ticker));
         return simulatedOperations;
+    }
+
+    private void saveSimulationResultsSafe(String ticker, List<SimulationResult> simulationResults) {
+        try {
+            log.debug("Saving simulation for ticker {} result to file", ticker);
+            excelService.saveSimulationResults(ticker, simulationResults);
+        } catch (Exception ex) {
+            log.error("Failed to save simulation for ticker {} result to file", ticker, ex);
+        }
     }
 
 }

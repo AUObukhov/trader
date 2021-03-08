@@ -2,12 +2,12 @@ package ru.obukhov.investor.bot.interfaces;
 
 import ru.obukhov.investor.common.model.Interval;
 import ru.obukhov.investor.web.model.pojo.SimulationResult;
+import ru.obukhov.investor.web.model.pojo.SimulationUnit;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface Simulator {
 
-    List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile);
-
+    Map<String, List<SimulationResult>> simulate(List<SimulationUnit> simulationUnits, Interval interval, boolean saveToFiles);
 }
