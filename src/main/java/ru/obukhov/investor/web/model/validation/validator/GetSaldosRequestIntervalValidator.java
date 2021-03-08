@@ -2,8 +2,8 @@ package ru.obukhov.investor.web.model.validation.validator;
 
 import com.google.common.collect.ImmutableMap;
 import org.springframework.util.Assert;
-import ru.obukhov.investor.util.DateUtils;
-import ru.obukhov.investor.web.model.GetDailySaldosRequest;
+import ru.obukhov.investor.common.util.DateUtils;
+import ru.obukhov.investor.web.model.exchange.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.validation.constraint.GetSaldosRequestIntervalConstraint;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 

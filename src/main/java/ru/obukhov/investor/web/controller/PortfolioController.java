@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.investor.model.PortfolioPosition;
-import ru.obukhov.investor.service.interfaces.PortfolioService;
-import ru.obukhov.investor.web.model.GetPortfolioCurrenciesResponse;
-import ru.obukhov.investor.web.model.GetPortfolioPositionsResponse;
+import ru.obukhov.investor.market.interfaces.PortfolioService;
+import ru.obukhov.investor.market.model.PortfolioPosition;
+import ru.obukhov.investor.web.model.exchange.GetPortfolioCurrenciesResponse;
+import ru.obukhov.investor.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.util.Collection;

@@ -3,13 +3,13 @@ package ru.obukhov.investor.bot.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.investor.bot.interfaces.Decider;
+import ru.obukhov.investor.common.util.DateUtils;
 import ru.obukhov.investor.config.BotProperties;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.service.interfaces.MarketService;
-import ru.obukhov.investor.service.interfaces.OperationsService;
-import ru.obukhov.investor.service.interfaces.OrdersService;
-import ru.obukhov.investor.service.interfaces.PortfolioService;
-import ru.obukhov.investor.util.DateUtils;
+import ru.obukhov.investor.market.interfaces.MarketService;
+import ru.obukhov.investor.market.interfaces.OperationsService;
+import ru.obukhov.investor.market.interfaces.OrdersService;
+import ru.obukhov.investor.market.interfaces.PortfolioService;
 
 @Slf4j
 public class ScheduledBot extends AbstractBot {

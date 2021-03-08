@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.investor.test.utils.AssertUtils;
+import ru.obukhov.investor.web.model.exchange.SimulateRequest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

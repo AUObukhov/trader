@@ -1,6 +1,6 @@
 package ru.obukhov.investor.bot.interfaces;
 
-import ru.obukhov.investor.service.impl.FakeTinkoffService;
+import ru.obukhov.investor.market.impl.FakeTinkoffService;
 
 public interface FakeBot extends Bot {
 

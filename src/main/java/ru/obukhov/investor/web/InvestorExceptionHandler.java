@@ -8,7 +8,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.obukhov.investor.exception.TickerNotFoundException;
+import ru.obukhov.investor.market.exception.TickerNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

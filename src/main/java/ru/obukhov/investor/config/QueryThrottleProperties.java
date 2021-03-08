@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-import ru.obukhov.investor.util.ThrottledCounter;
+import ru.obukhov.investor.common.util.ThrottledCounter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

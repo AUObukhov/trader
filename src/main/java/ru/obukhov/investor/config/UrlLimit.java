@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import okhttp3.HttpUrl;
 import org.springframework.validation.annotation.Validated;
-import ru.obukhov.investor.util.CollectionsUtils;
+import ru.obukhov.investor.common.util.CollectionsUtils;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;

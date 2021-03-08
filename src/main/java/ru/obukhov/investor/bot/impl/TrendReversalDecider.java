@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.bot.model.Decision;
 import ru.obukhov.investor.bot.model.DecisionAction;
 import ru.obukhov.investor.bot.model.DecisionData;
+import ru.obukhov.investor.common.util.CollectionsUtils;
+import ru.obukhov.investor.common.util.MathUtils;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.util.CollectionsUtils;
-import ru.obukhov.investor.util.MathUtils;
+import ru.obukhov.investor.market.model.Candle;
 
 import java.math.BigDecimal;
 import java.util.Comparator;

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.investor.bot.interfaces.Decider;
 import ru.obukhov.investor.bot.model.DecisionData;
+import ru.obukhov.investor.common.util.MathUtils;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.util.MathUtils;
 import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
 
 import java.math.BigDecimal;

@@ -2,8 +2,8 @@ package ru.obukhov.investor.bot.model;
 
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
-import ru.obukhov.investor.model.Candle;
-import ru.obukhov.investor.model.PortfolioPosition;
+import ru.obukhov.investor.market.model.Candle;
+import ru.obukhov.investor.market.model.PortfolioPosition;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 

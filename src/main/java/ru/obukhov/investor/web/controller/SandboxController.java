@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.investor.service.interfaces.SandboxService;
-import ru.obukhov.investor.web.model.ClearAllRequest;
-import ru.obukhov.investor.web.model.SetCurrencyBalanceRequest;
-import ru.obukhov.investor.web.model.SetPositionBalanceRequest;
+import ru.obukhov.investor.market.interfaces.SandboxService;
+import ru.obukhov.investor.web.model.exchange.ClearAllRequest;
+import ru.obukhov.investor.web.model.exchange.SetCurrencyBalanceRequest;
+import ru.obukhov.investor.web.model.exchange.SetPositionBalanceRequest;
 
 @Slf4j
 @RestController

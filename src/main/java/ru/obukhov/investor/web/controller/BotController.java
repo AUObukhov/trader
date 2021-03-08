@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.investor.bot.interfaces.Simulator;
+import ru.obukhov.investor.common.model.Interval;
+import ru.obukhov.investor.common.util.DateUtils;
 import ru.obukhov.investor.config.TradingProperties;
-import ru.obukhov.investor.model.Interval;
-import ru.obukhov.investor.util.DateUtils;
-import ru.obukhov.investor.web.model.SimulateRequest;
-import ru.obukhov.investor.web.model.SimulateResponse;
-import ru.obukhov.investor.web.model.SimulationResult;
+import ru.obukhov.investor.web.model.exchange.SimulateRequest;
+import ru.obukhov.investor.web.model.exchange.SimulateResponse;
+import ru.obukhov.investor.web.model.pojo.SimulationResult;
 
 import javax.validation.Valid;
 import java.util.Collection;

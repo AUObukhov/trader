@@ -1,6 +1,6 @@
 package ru.obukhov.investor.web.model.validation.constraint;
 
-import ru.obukhov.investor.web.model.GetDailySaldosRequest;
+import ru.obukhov.investor.web.model.exchange.GetDailySaldosRequest;
 import ru.obukhov.investor.web.model.validation.validator.GetSaldosRequestIntervalValidator;
 
 import javax.validation.Constraint;

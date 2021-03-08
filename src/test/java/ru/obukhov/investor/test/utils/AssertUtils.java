@@ -13,8 +13,8 @@ import org.springframework.boot.context.properties.bind.validation.BindValidatio
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ContextConsumer;
 import org.springframework.validation.ObjectError;
-import ru.obukhov.investor.util.poi.ExtendedCell;
-import ru.obukhov.investor.util.poi.ExtendedRow;
+import ru.obukhov.investor.common.model.poi.ExtendedCell;
+import ru.obukhov.investor.common.model.poi.ExtendedRow;
 
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
