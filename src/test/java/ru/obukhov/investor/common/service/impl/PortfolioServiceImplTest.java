@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.investor.BaseMockedTest;
-import ru.obukhov.investor.common.util.MathUtils;
 import ru.obukhov.investor.market.impl.PortfolioServiceImpl;
 import ru.obukhov.investor.market.interfaces.PortfolioService;
 import ru.obukhov.investor.market.interfaces.TinkoffService;
@@ -23,7 +22,6 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -98,7 +96,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
 
         BigDecimal balance = service.getAvailableBalance(Currency.RUB);
 
-        assertTrue(MathUtils.numbersEqual(balance, rubBalance - rubBlocked));
+        AssertUtils.assertEquals(rubBalance - rubBlocked, balance);
 
     }
 

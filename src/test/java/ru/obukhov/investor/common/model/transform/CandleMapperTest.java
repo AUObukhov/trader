@@ -2,21 +2,19 @@ package ru.obukhov.investor.common.model.transform;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.investor.market.model.Candle;
 import ru.obukhov.investor.market.model.transform.CandleMapper;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.obukhov.investor.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.HistoricalCandles;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.obukhov.investor.common.util.MathUtils.numbersEqual;
 
 public class CandleMapperTest {
 
@@ -30,11 +28,11 @@ public class CandleMapperTest {
 
         Candle result = candleMapper.map(source);
 
-        assertTrue(numbersEqual(result.getOpenPrice(), source.openPrice));
-        assertTrue(numbersEqual(result.getClosePrice(), source.closePrice));
-        assertTrue(numbersEqual(result.getHighestPrice(), source.highestPrice));
-        assertTrue(numbersEqual(result.getLowestPrice(), source.lowestPrice));
-        assertEquals(source.time, result.getTime());
+        AssertUtils.assertEquals(source.openPrice, result.getOpenPrice());
+        AssertUtils.assertEquals(source.closePrice, result.getClosePrice());
+        AssertUtils.assertEquals(source.highestPrice, result.getHighestPrice());
+        AssertUtils.assertEquals(source.lowestPrice, result.getLowestPrice());
+        Assertions.assertEquals(source.time, result.getTime());
 
     }
 
@@ -54,7 +52,7 @@ public class CandleMapperTest {
 
         Candle result = candleMapper.map(source);
 
-        assertEquals(source.time, result.getTime());
+        Assertions.assertEquals(source.time, result.getTime());
 
     }
 
@@ -67,25 +65,25 @@ public class CandleMapperTest {
         ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle2 = TestDataHelper.createTinkoffCandle(
                 200, 400, 2000, 100);
 
-        List<ru.tinkoff.invest.openapi.models.market.Candle> candles = newArrayList(tinkoffCandle1, tinkoffCandle2);
+        List<ru.tinkoff.invest.openapi.models.market.Candle> candles = Arrays.asList(tinkoffCandle1, tinkoffCandle2);
         HistoricalCandles source = new HistoricalCandles(StringUtils.EMPTY, CandleInterval.DAY, candles);
 
         List<Candle> result = candleMapper.map(source);
-        assertEquals(2, result.size());
+        Assertions.assertEquals(2, result.size());
 
         Candle candle1 = result.get(0);
-        assertTrue(numbersEqual(candle1.getOpenPrice(), tinkoffCandle1.openPrice));
-        assertTrue(numbersEqual(candle1.getClosePrice(), tinkoffCandle1.closePrice));
-        assertTrue(numbersEqual(candle1.getHighestPrice(), tinkoffCandle1.highestPrice));
-        assertTrue(numbersEqual(candle1.getLowestPrice(), tinkoffCandle1.lowestPrice));
-        assertEquals(tinkoffCandle1.time, candle1.getTime());
+        AssertUtils.assertEquals(tinkoffCandle1.openPrice, candle1.getOpenPrice());
+        AssertUtils.assertEquals(tinkoffCandle1.closePrice, candle1.getClosePrice());
+        AssertUtils.assertEquals(tinkoffCandle1.highestPrice, candle1.getHighestPrice());
+        AssertUtils.assertEquals(tinkoffCandle1.lowestPrice, candle1.getLowestPrice());
+        Assertions.assertEquals(tinkoffCandle1.time, candle1.getTime());
 
         Candle candle2 = result.get(1);
-        assertTrue(numbersEqual(candle2.getOpenPrice(), tinkoffCandle2.openPrice));
-        assertTrue(numbersEqual(candle2.getClosePrice(), tinkoffCandle2.closePrice));
-        assertTrue(numbersEqual(candle2.getHighestPrice(), tinkoffCandle2.highestPrice));
-        assertTrue(numbersEqual(candle2.getLowestPrice(), tinkoffCandle2.lowestPrice));
-        assertEquals(tinkoffCandle2.time, candle2.getTime());
+        AssertUtils.assertEquals(tinkoffCandle2.openPrice, candle2.getOpenPrice());
+        AssertUtils.assertEquals(tinkoffCandle2.closePrice, candle2.getClosePrice());
+        AssertUtils.assertEquals(tinkoffCandle2.highestPrice, candle2.getHighestPrice());
+        AssertUtils.assertEquals(tinkoffCandle2.lowestPrice, candle2.getLowestPrice());
+        Assertions.assertEquals(tinkoffCandle2.time, candle2.getTime());
 
     }
 

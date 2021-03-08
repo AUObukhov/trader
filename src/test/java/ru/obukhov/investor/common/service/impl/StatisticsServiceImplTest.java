@@ -12,6 +12,7 @@ import ru.obukhov.investor.common.model.Interval;
 import ru.obukhov.investor.market.impl.StatisticsServiceImpl;
 import ru.obukhov.investor.market.interfaces.MarketService;
 import ru.obukhov.investor.market.model.Candle;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -28,7 +29,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static ru.obukhov.investor.common.util.DateUtils.getDate;
 import static ru.obukhov.investor.common.util.DateUtils.getTime;
-import static ru.obukhov.investor.common.util.MathUtils.numbersEqual;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StatisticsServiceImplTest extends BaseMockedTest {
@@ -115,13 +115,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         assertEquals(3, saldos.size());
 
         final BigDecimal average1 = saldos.get(LocalTime.of(10, 0));
-        assertTrue(numbersEqual(average1, 100));
+        AssertUtils.assertEquals(100, average1);
 
         final BigDecimal average2 = saldos.get(LocalTime.of(11, 0));
-        assertTrue(numbersEqual(average2, 150));
+        AssertUtils.assertEquals(150, average2);
 
         final BigDecimal average3 = saldos.get(LocalTime.of(12, 0));
-        assertTrue(numbersEqual(average3, 200));
+        AssertUtils.assertEquals(200, average3);
     }
 
     @Test
@@ -232,13 +232,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         assertEquals(3, saldos.size());
 
         final BigDecimal mondayAverage = saldos.get(DayOfWeek.MONDAY);
-        assertTrue(numbersEqual(mondayAverage, 200));
+        AssertUtils.assertEquals(200, mondayAverage);
 
         final BigDecimal tuesdayAverage = saldos.get(DayOfWeek.TUESDAY);
-        assertTrue(numbersEqual(tuesdayAverage, 150));
+        AssertUtils.assertEquals(150, tuesdayAverage);
 
         final BigDecimal wednesdayAverage = saldos.get(DayOfWeek.WEDNESDAY);
-        assertTrue(numbersEqual(wednesdayAverage, 300));
+        AssertUtils.assertEquals(300, wednesdayAverage);
     }
 
     @Test
@@ -342,13 +342,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         assertEquals(3, saldos.size());
 
         final BigDecimal average1 = saldos.get(1);
-        assertTrue(numbersEqual(average1, 200));
+        AssertUtils.assertEquals(200, average1);
 
         final BigDecimal average2 = saldos.get(2);
-        assertTrue(numbersEqual(average2, 150));
+        AssertUtils.assertEquals(150, average2);
 
         final BigDecimal average3 = saldos.get(3);
-        assertTrue(numbersEqual(average3, 300));
+        AssertUtils.assertEquals(300, average3);
     }
 
     @Test
@@ -444,13 +444,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
         assertEquals(3, saldos.size());
 
         final BigDecimal average1 = saldos.get(1);
-        assertTrue(numbersEqual(average1, 200));
+        AssertUtils.assertEquals(200, average1);
 
         final BigDecimal average2 = saldos.get(2);
-        assertTrue(numbersEqual(average2, 150));
+        AssertUtils.assertEquals(150, average2);
 
         final BigDecimal average3 = saldos.get(3);
-        assertTrue(numbersEqual(average3, 300));
+        AssertUtils.assertEquals(300, average3);
     }
 
     @Test

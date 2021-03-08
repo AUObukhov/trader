@@ -3,7 +3,6 @@ package ru.obukhov.investor.common.model;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.obukhov.investor.common.util.DateUtils;
-import ru.obukhov.investor.common.util.MathUtils;
 import ru.obukhov.investor.market.model.Candle;
 import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -59,10 +58,10 @@ public class CandleTest {
 
         Candle averageCandle = Candle.createAverage(candle1, candle2);
 
-        Assert.assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(100), averageCandle.getOpenPrice()));
-        Assert.assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(200), averageCandle.getClosePrice()));
-        Assert.assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(200), averageCandle.getHighestPrice()));
-        Assert.assertTrue(MathUtils.numbersEqual(BigDecimal.valueOf(100), averageCandle.getLowestPrice()));
+        AssertUtils.assertEquals(BigDecimal.valueOf(100), averageCandle.getOpenPrice());
+        AssertUtils.assertEquals(BigDecimal.valueOf(200), averageCandle.getClosePrice());
+        AssertUtils.assertEquals(BigDecimal.valueOf(200), averageCandle.getHighestPrice());
+        AssertUtils.assertEquals(BigDecimal.valueOf(100), averageCandle.getLowestPrice());
 
         OffsetDateTime expectedTime = DateUtils.getDateTime(2020, 10, 10, 13, 30, 0);
         Assert.assertEquals(expectedTime, averageCandle.getTime());

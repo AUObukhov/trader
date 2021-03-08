@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.runner.ContextConsumer;
 import org.springframework.validation.ObjectError;
 import ru.obukhov.investor.common.model.poi.ExtendedCell;
 import ru.obukhov.investor.common.model.poi.ExtendedRow;
+import ru.obukhov.investor.common.util.MathUtils;
 
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
@@ -30,6 +31,27 @@ public class AssertUtils {
 
     public static void assertEquals(double expected, double actual) {
         Assertions.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
+    }
+
+    public static void assertEquals(BigDecimal expected, BigDecimal actual) {
+        if (!MathUtils.numbersEqual(actual, expected)) {
+            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            Assertions.fail(message);
+        }
+    }
+
+    public static void assertEquals(int expected, BigDecimal actual) {
+        if (!MathUtils.numbersEqual(actual, expected)) {
+            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            Assertions.fail(message);
+        }
+    }
+
+    public static void assertEquals(double expected, BigDecimal actual) {
+        if (!MathUtils.numbersEqual(actual, expected)) {
+            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            Assertions.fail(message);
+        }
     }
 
     public static void assertRowValues(Row row, Object... values) {

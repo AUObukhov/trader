@@ -16,7 +16,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.obukhov.investor.common.util.MathUtils.numbersEqual;
 
 public class CollectionsUtilsTest {
 
@@ -33,8 +32,8 @@ public class CollectionsUtilsTest {
 
         Map<String, BigDecimal> result = CollectionsUtils.reduceMultimap(multimap, MathUtils::getAverage);
 
-        assertTrue(numbersEqual(result.get("key1"), 10));
-        assertTrue(numbersEqual(result.get("key2"), 2.5));
+        AssertUtils.assertEquals(10, result.get("key1"));
+        AssertUtils.assertEquals(2.5, result.get("key2"));
     }
 
     // region getTail tests
@@ -129,9 +128,9 @@ public class CollectionsUtilsTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         assertEquals(3, list.size());
-        assertTrue(MathUtils.numbersEqual(list.get(0), 5));
-        assertTrue(MathUtils.numbersEqual(list.get(1), 5));
-        assertTrue(MathUtils.numbersEqual(list.get(2), 10));
+        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(5, list.get(1));
+        AssertUtils.assertEquals(10, list.get(2));
     }
 
     @Test
@@ -142,9 +141,9 @@ public class CollectionsUtilsTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         assertEquals(3, list.size());
-        assertTrue(MathUtils.numbersEqual(list.get(0), 5));
-        assertTrue(MathUtils.numbersEqual(list.get(1), 10));
-        assertTrue(MathUtils.numbersEqual(list.get(2), 10));
+        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(10, list.get(1));
+        AssertUtils.assertEquals(10, list.get(2));
     }
 
     @Test
@@ -155,10 +154,10 @@ public class CollectionsUtilsTest {
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
         assertEquals(4, list.size());
-        assertTrue(MathUtils.numbersEqual(list.get(0), 5));
-        assertTrue(MathUtils.numbersEqual(list.get(1), 7.5));
-        assertTrue(MathUtils.numbersEqual(list.get(2), 10));
-        assertTrue(MathUtils.numbersEqual(list.get(3), 0));
+        AssertUtils.assertEquals(5, list.get(0));
+        AssertUtils.assertEquals(7.5, list.get(1));
+        AssertUtils.assertEquals(10, list.get(2));
+        AssertUtils.assertEquals(0, list.get(3));
     }
 
     // endregion
