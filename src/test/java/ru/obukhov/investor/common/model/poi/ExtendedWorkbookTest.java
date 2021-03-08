@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.util.List;
 
@@ -16,16 +17,20 @@ public class ExtendedWorkbookTest {
 
     // region constructor tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        new ExtendedWorkbook(null);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedWorkbook(null),
+                IllegalArgumentException.class,
+                "delegate can't be null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
-        new ExtendedWorkbook(extendedWorkbook);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedWorkbook(extendedWorkbook),
+                IllegalArgumentException.class,
+                "delegate can't be ExtendedWorkbook");
     }
 
     @Test
@@ -62,13 +67,15 @@ public class ExtendedWorkbookTest {
 
     // region createCellStyle with name tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         String cellStyleName = "cellStyle";
         extendedWorkbook.createCellStyle(cellStyleName);
 
-        extendedWorkbook.createCellStyle(cellStyleName);
+        AssertUtils.assertThrowsWithMessage(() -> extendedWorkbook.createCellStyle(cellStyleName),
+                IllegalArgumentException.class,
+                "Cell style 'cellStyle' already exists");
     }
 
     @Test

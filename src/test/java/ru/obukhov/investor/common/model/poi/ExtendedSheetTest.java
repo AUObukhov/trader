@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.mockito.Mockito;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.util.List;
 
@@ -24,27 +25,33 @@ public class ExtendedSheetTest {
 
     // region constructor tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenWorkbookIsNull() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         Sheet sheet = extendedWorkbook.createSheet();
 
-        new ExtendedSheet(null, sheet);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(null, sheet),
+                IllegalArgumentException.class,
+                "workbook can't be null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
-        new ExtendedSheet(extendedWorkbook, null);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(extendedWorkbook, null),
+                IllegalArgumentException.class,
+                "delegate can't be null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedSheet() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         Sheet sheet = extendedWorkbook.createSheet();
 
-        new ExtendedSheet(extendedWorkbook, sheet);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(extendedWorkbook, sheet),
+                IllegalArgumentException.class,
+                "delegate can't be ExtendedSheet");
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,27 +21,33 @@ public class ExtendedRowTest {
 
     // region constructor tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenSheetIsNull() {
         Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
         Row row = sheet.createRow(0);
 
-        new ExtendedRow(null, row);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(null, row),
+                IllegalArgumentException.class,
+                "sheet can't be null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
 
-        new ExtendedRow(extendedSheet, null);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(extendedSheet, null),
+                IllegalArgumentException.class,
+                "delegate can't be null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedRow() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExtendedRow extendedRow = extendedSheet.addRow();
 
-        new ExtendedRow(extendedSheet, extendedRow);
+        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(extendedSheet, extendedRow),
+                IllegalArgumentException.class,
+                "delegate can't be ExtendedRow");
     }
 
     @Test

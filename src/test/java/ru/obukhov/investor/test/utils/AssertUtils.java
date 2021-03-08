@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ContextConsumer;
@@ -151,6 +152,14 @@ public class AssertUtils {
     public static <T> void assertViolation(Set<ConstraintViolation<T>> violations, String expectedMessage) {
         Assertions.assertEquals(1, violations.size(), "expected single violation");
         Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
+    }
+
+    public static <T extends Throwable> void assertThrowsWithMessage(Executable executable,
+                                                                     Class<T> expectedType,
+                                                                     String expectedMessage) {
+
+        Throwable throwable = Assertions.assertThrows(expectedType, executable);
+        Assertions.assertEquals(expectedMessage, throwable.getMessage());
     }
 
 }

@@ -13,6 +13,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.obukhov.investor.config.QueryThrottleProperties;
 import ru.obukhov.investor.config.UrlLimit;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.obukhov.investor.test.utils.TimeTestUtils;
 
 import java.io.IOException;
@@ -20,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -59,8 +59,8 @@ public class ThrottlingInterceptorTest {
         PowerMockito.when(chain.proceed(any(Request.class))).thenThrow(new RuntimeException("exception for test"));
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
-        assertThrows(IllegalStateException.class,
-                () -> interceptor.intercept(chain),
+        AssertUtils.assertThrowsWithMessage(() -> interceptor.intercept(chain),
+                IllegalStateException.class,
                 "Failed to retry for 30 times");
 
     }

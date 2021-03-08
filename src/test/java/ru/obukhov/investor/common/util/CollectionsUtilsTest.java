@@ -3,6 +3,7 @@ package ru.obukhov.investor.common.util;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import org.junit.Test;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import java.util.Map;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.obukhov.investor.common.util.MathUtils.numbersEqual;
 
@@ -88,28 +88,37 @@ public class CollectionsUtilsTest {
 
     // region insertInterpolated tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
         List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
         int index = -1;
 
-        CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(
+                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
+                IllegalArgumentException.class,
+                "index can't be negative");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
         List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
         int index = 3;
 
-        CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(
+                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
+                IllegalArgumentException.class,
+                "index can't be greater than size of list");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void insertInterpolated_throwsIllegalArgumentException_whenListIsEmpty() {
         List<BigDecimal> list = new ArrayList<>();
         int index = 0;
 
-        CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(
+                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
+                IllegalArgumentException.class,
+                "list can't be empty");
     }
 
     @Test
@@ -161,8 +170,8 @@ public class CollectionsUtilsTest {
         List<String> list = null;
         List<String> searchedList = Arrays.asList("0", "1");
 
-        assertThrows(IllegalArgumentException.class,
-                () -> CollectionsUtils.containsList(list, searchedList),
+        AssertUtils.assertThrowsWithMessage(() -> CollectionsUtils.containsList(list, searchedList),
+                IllegalArgumentException.class,
                 "list must not be null");
     }
 
@@ -171,8 +180,8 @@ public class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = null;
 
-        assertThrows(IllegalArgumentException.class,
-                () -> CollectionsUtils.containsList(list, searchedList),
+        AssertUtils.assertThrowsWithMessage(() -> CollectionsUtils.containsList(list, searchedList),
+                IllegalArgumentException.class,
                 "searchedList must not be null");
     }
 

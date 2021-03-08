@@ -15,6 +15,7 @@ import ru.obukhov.investor.market.impl.MarketServiceImpl;
 import ru.obukhov.investor.market.interfaces.MarketService;
 import ru.obukhov.investor.market.interfaces.TinkoffService;
 import ru.obukhov.investor.market.model.Candle;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -221,12 +222,15 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     // region getLastCandle tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
-        service.getLastCandle(TICKER);
+        final String ticker = TICKER;
+        AssertUtils.assertThrowsWithMessage(() -> service.getLastCandle(ticker),
+                IllegalArgumentException.class,
+                "Not found last candle for ticker '" + ticker + "'");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime from = DateUtils.getLastWorkDay()
@@ -235,7 +239,9 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         mockCandlesSimple(ticker, Interval.of(from, to), CandleInterval.ONE_MIN, 10);
 
-        service.getLastCandle(ticker);
+        AssertUtils.assertThrowsWithMessage(() -> service.getLastCandle(ticker),
+                IllegalArgumentException.class,
+                "Not found last candle for ticker '" + ticker + "'");
     }
 
     @Test
@@ -258,14 +264,17 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     // region getLastCandle with to tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandles() {
+        final String ticker = TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
-        service.getLastCandle(TICKER, to);
+        AssertUtils.assertThrowsWithMessage(() -> service.getLastCandle(ticker, to),
+                IllegalArgumentException.class,
+                "Not found last candle for ticker '" + ticker + "'");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
@@ -274,7 +283,9 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
         mockCandlesSimple(ticker, Interval.of(candlesFrom, candlesTo), CandleInterval.ONE_MIN, 10);
 
-        service.getLastCandle(ticker, to);
+        AssertUtils.assertThrowsWithMessage(() -> service.getLastCandle(ticker, to),
+                IllegalArgumentException.class,
+                "Not found last candle for ticker '" + ticker + "'");
     }
 
     @Test

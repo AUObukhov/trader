@@ -13,6 +13,7 @@ import ru.obukhov.investor.market.impl.PortfolioServiceImpl;
 import ru.obukhov.investor.market.interfaces.PortfolioService;
 import ru.obukhov.investor.market.interfaces.TinkoffService;
 import ru.obukhov.investor.market.model.PortfolioPosition;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
@@ -101,7 +102,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
 
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
 
         List<PortfolioCurrencies.PortfolioCurrency> currencies = ImmutableList.of(
@@ -110,7 +111,9 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
         );
         when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
-        service.getAvailableBalance(Currency.RUB);
+        AssertUtils.assertThrowsWithMessage(() -> service.getAvailableBalance(Currency.RUB),
+                NoSuchElementException.class,
+                "No value present");
 
     }
 

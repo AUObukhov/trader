@@ -5,12 +5,11 @@ import org.junit.Test;
 import ru.obukhov.investor.common.util.DateUtils;
 import ru.obukhov.investor.common.util.MathUtils;
 import ru.obukhov.investor.market.model.Candle;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CandleTest {
 
@@ -24,8 +23,8 @@ public class CandleTest {
                 .time(DateUtils.getDateTime(2020, 10, 10, 2, 0, 0))
                 .build();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> Candle.createAverage(leftCandle, rightCandle),
+        AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
+                IllegalArgumentException.class,
                 "leftCandle can't be after rightCandle");
     }
 
@@ -41,8 +40,8 @@ public class CandleTest {
                 .time(DateUtils.getDateTime(2020, 10, 11, 2, 0, 0))
                 .build();
 
-        assertThrows(IllegalArgumentException.class,
-                () -> Candle.createAverage(leftCandle, rightCandle),
+        AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
+                IllegalArgumentException.class,
                 "Candle intervals must be equal");
     }
 

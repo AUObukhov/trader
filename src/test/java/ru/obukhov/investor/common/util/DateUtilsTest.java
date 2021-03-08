@@ -7,6 +7,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import ru.obukhov.investor.common.model.Interval;
+import ru.obukhov.investor.test.utils.AssertUtils;
 import ru.obukhov.investor.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
@@ -20,7 +21,6 @@ import java.time.temporal.TemporalUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -662,40 +662,48 @@ public class DateUtilsTest {
 
     // region isWorkTime tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void isWorkTime_throwsIllegalArgumentException_whenDurationIsNegative() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(-1);
 
-        DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void isWorkTime_throwsIllegalArgumentException_whenDurationIsZero() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(0);
 
-        DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void isWorkTime_throwsIllegalArgumentException_whenDurationIsOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofDays(1);
 
-        DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void isWorkTime_throwsIllegalArgumentException_whenDurationIsMoreThanOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(25);
 
-        DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
     @Test
@@ -922,40 +930,48 @@ public class DateUtilsTest {
 
     // region getNearestWorkTime tests
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(0);
-
-        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(-1);
 
-        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
+    public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(0);
+
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
+    }
+
+    @Test
     public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(24);
 
-        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(25);
 
-        DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
     @Test
@@ -1033,40 +1049,48 @@ public class DateUtilsTest {
 
     // region getNextWorkMinute tests
 
-    @Test(expected = IllegalArgumentException.class)
-    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(0);
-
-        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(-1);
 
-        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
+    public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
+        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        Duration duration = Duration.ofHours(0);
+
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be positive");
+    }
+
+    @Test
     public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(24);
 
-        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
         OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
         Duration duration = Duration.ofHours(25);
 
-        DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+                IllegalArgumentException.class,
+                "workTimeDuration must be less than 1 day");
     }
 
     @Test
@@ -1196,8 +1220,8 @@ public class DateUtilsTest {
         OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
         OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
+                IllegalArgumentException.class,
                 "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00");
     }
 

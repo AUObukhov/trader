@@ -2,22 +2,33 @@ package ru.obukhov.investor.common.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import ru.obukhov.investor.common.util.DateUtils;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(Interval.class)
 public class IntervalTest {
 
     // region of tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void of_throwsIllegalArgumentException_whenFromIsAfterTo() {
         OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
         OffsetDateTime to = DateUtils.getDate(2020, 10, 5);
 
-        Interval.of(from, to);
+        AssertUtils.assertThrowsWithMessage(() -> Interval.of(from, to),
+                IllegalArgumentException.class,
+                "from can't be after to");
     }
 
     @Test
@@ -120,26 +131,35 @@ public class IntervalTest {
 
     // region extendToWholeDay tests
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void extendToWholeDay_throwsIllegalArgumentException_whenNotEqualsDates() {
 
         OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
         OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 11, 30, 40);
         Interval interval = Interval.of(from, to);
 
-        interval.extendToWholeDay(false);
-
+        AssertUtils.assertThrowsWithMessage(() -> interval.extendToWholeDay(false),
+                IllegalArgumentException.class,
+                "'from' and 'to' must be at same day");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void extendToWholeDay_throwsIllegalArgumentException_whenNotFutureIsTrueAndFromIsInFuture() {
 
-        OffsetDateTime from = OffsetDateTime.now().plusHours(1);
+        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
+
+        OffsetDateTime from = mockedNow.plusHours(1);
         OffsetDateTime to = from.plusMinutes(10);
         Interval interval = Interval.of(from, to);
 
-        interval.extendToWholeDay(true);
+        PowerMockito.mockStatic(OffsetDateTime.class);
+        when(OffsetDateTime.now()).thenReturn(mockedNow);
 
+        String expectedMessage =
+                "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
+        AssertUtils.assertThrowsWithMessage(() -> interval.extendToWholeDay(true),
+                IllegalArgumentException.class,
+                expectedMessage);
     }
 
     @Test
@@ -251,17 +271,6 @@ public class IntervalTest {
     // endregion
 
     // region contains tests
-
-    @Test(expected = IllegalArgumentException.class)
-    public void contains_throwsIllegalArgumentException_whenFromIsAfterTo() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-
-        Interval.of(from, to).contains(dateTime);
-
-    }
 
     @Test
     public void contains_returnsFalse_whenDateTimeBeforeFrom() {
