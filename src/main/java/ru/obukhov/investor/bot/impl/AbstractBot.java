@@ -78,7 +78,7 @@ public abstract class AbstractBot implements Bot {
 
     protected void performOperation(String ticker, Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
-            log.info("Decision is {}. Do nothing", decision.toPrettyString());
+            log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
         }
 
