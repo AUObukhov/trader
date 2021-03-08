@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 /**
  * Field fo type {@link ru.tinkoff.invest.openapi.models.market.CandleInterval}, annotated
- * by @GetSaldosRequestIntervalConstraint is validated by {@link DayCandleIntervalValidator}
+ * by @DayCandleIntervalConstraint is validated by {@link DayCandleIntervalValidator}
  */
 @Documented
 @Constraint(validatedBy = DayCandleIntervalValidator.class)
