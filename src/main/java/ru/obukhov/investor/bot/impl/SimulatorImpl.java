@@ -2,10 +2,10 @@ package ru.obukhov.investor.bot.impl;
 
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.obukhov.investor.bot.interfaces.Bot;
 import ru.obukhov.investor.bot.interfaces.BotFactory;
@@ -47,16 +47,30 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class SimulatorImpl implements Simulator {
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final ExcelService excelService;
     private final BotFactory fakeBotFactory;
-    private final ThreadFactory simulationThreadFactory =
-            new ThreadFactoryBuilder().setNameFormat("simulation-thread-%d").build();
-    private final ExecutorService executor = Executors.newFixedThreadPool(10, simulationThreadFactory);
+    private final ExecutorService executor;
+
+    public SimulatorImpl(ExcelService excelService,
+                         BotFactory fakeBotFactory,
+                         @Value("${simulation.thread-count:10}") Integer simulationThreadCount) {
+
+        this.excelService = excelService;
+        this.fakeBotFactory = fakeBotFactory;
+        this.executor = createExecutor(simulationThreadCount);
+
+    }
+
+    private ExecutorService createExecutor(Integer simulationThreadCount) {
+        ThreadFactory simulationThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("simulation-thread-%d")
+                .build();
+        return Executors.newFixedThreadPool(simulationThreadCount, simulationThreadFactory);
+    }
 
     /**
      * @param simulationUnits list of simulated tickers and corresponding initial balances

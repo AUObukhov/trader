@@ -10,6 +10,9 @@ trend-reversal-decider:
   last-prices-count: 100
   extremum-price-index: 95
 
+simulation:
+  thread-count: 100
+
 query.throttle:
   interval: 60000
   limits:
