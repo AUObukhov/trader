@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.investor.test.utils.AssertUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -35,8 +36,7 @@ class SimulateRequestValidationTest {
         request.setTicker(null);
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("ticker is mandatory", violations.iterator().next().getMessage());
+        AssertUtils.assertViolation(violations, "ticker is mandatory");
     }
 
     @Test
@@ -45,8 +45,7 @@ class SimulateRequestValidationTest {
         request.setTicker(StringUtils.EMPTY);
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("ticker is mandatory", violations.iterator().next().getMessage());
+        AssertUtils.assertViolation(violations, "ticker is mandatory");
     }
 
     @Test
@@ -55,8 +54,7 @@ class SimulateRequestValidationTest {
         request.setTicker("     ");
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("ticker is mandatory", violations.iterator().next().getMessage());
+        AssertUtils.assertViolation(violations, "ticker is mandatory");
     }
 
     @Test
@@ -65,8 +63,7 @@ class SimulateRequestValidationTest {
         request.setBalance(null);
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("balance is mandatory", violations.iterator().next().getMessage());
+        AssertUtils.assertViolation(violations, "balance is mandatory");
     }
 
     @Test
@@ -75,8 +72,7 @@ class SimulateRequestValidationTest {
         request.setFrom(null);
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertEquals(1, violations.size());
-        Assertions.assertEquals("from is mandatory", violations.iterator().next().getMessage());
+        AssertUtils.assertViolation(violations, "from is mandatory");
     }
 
     private SimulateRequest createValidSimulationRequest() {

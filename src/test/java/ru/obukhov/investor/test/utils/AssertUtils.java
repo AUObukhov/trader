@@ -16,12 +16,14 @@ import org.springframework.validation.ObjectError;
 import ru.obukhov.investor.util.poi.ExtendedCell;
 import ru.obukhov.investor.util.poi.ExtendedRow;
 
+import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class AssertUtils {
 
@@ -145,4 +147,10 @@ public class AssertUtils {
         Assertions.assertEquals(1, errors.size());
         Assertions.assertEquals(message, errors.get(0).getDefaultMessage());
     }
+
+    public static <T> void assertViolation(Set<ConstraintViolation<T>> violations, String expectedMessage) {
+        Assertions.assertEquals(1, violations.size(), "expected single violation");
+        Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
+    }
+
 }
