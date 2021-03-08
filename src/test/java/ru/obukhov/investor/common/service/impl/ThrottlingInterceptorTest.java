@@ -127,7 +127,7 @@ public class ThrottlingInterceptorTest {
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
 
-        final long maximumNotThrottledTime = 30;
+        final long maximumNotThrottledTime = 75;
         final long minimumThrottledTime = queryThrottleProperties.getInterval() - 200;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
@@ -156,7 +156,7 @@ public class ThrottlingInterceptorTest {
                 new UrlLimit(Arrays.asList("orders", "market-order"), 90)
         ));
 
-        final long maximumNotThrottledTime = 30;
+        final long maximumNotThrottledTime = 75;
         final long minimumThrottledTime = queryThrottleProperties.getInterval() - 250;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
