@@ -1,5 +1,6 @@
 package ru.obukhov.investor.test.utils;
 
+import com.google.common.base.Stopwatch;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -144,14 +145,24 @@ public class AssertUtils {
         Assert.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
-    public static void assertFaster(long expected, long millis) {
-        Assert.assertTrue("Expected execution faster than " + expected + " ms. Actual is " + millis + " ms",
-                millis < expected);
+    public static void assertFaster(CheckedRunnable runnable, long time) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        runnable.run();
+        stopwatch.stop();
+        long elapsed = stopwatch.elapsed().toMillis();
+        if (elapsed >= time) {
+            Assertions.fail("Expected execution faster than " + time + " ms. Actual is " + elapsed + " ms");
+        }
     }
 
-    public static void assertSlower(long expected, long millis) {
-        Assert.assertTrue("Expected execution slower than " + expected + " ms. Actual is " + millis + " ms",
-                millis > expected);
+    public static void assertSlower(CheckedRunnable runnable, long time) throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        runnable.run();
+        stopwatch.stop();
+        long elapsed = stopwatch.elapsed().toMillis();
+        if (elapsed < time) {
+            Assertions.fail("Expected execution slower than " + time + " ms. Actual is " + elapsed + " ms");
+        }
     }
 
     public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(String message) {
