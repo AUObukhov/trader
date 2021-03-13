@@ -1,0 +1,30 @@
+package ru.obukhov.trader.web.model.pojo;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import ru.tinkoff.invest.openapi.models.operations.OperationType;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+
+@Data
+@Builder
+@AllArgsConstructor
+public class SimulatedOperation {
+
+    @JsonIgnore
+    private String ticker;
+
+    private OffsetDateTime dateTime;
+
+    private OperationType operationType;
+
+    private BigDecimal price;
+
+    private Integer quantity;
+
+    private BigDecimal commission;
+
+}
