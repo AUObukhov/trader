@@ -1,20 +1,20 @@
 package ru.obukhov.trader.common.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DecisionTest {
+class DecisionTest {
 
     @Test
-    public void toPrettyString_whenDecisionIsWait() {
+    void toPrettyString_whenDecisionIsWait() {
         assertEquals("Wait", Decision.WAIT_DECISION.toPrettyString());
     }
 
     @Test
-    public void toPrettyString_whenDecisionIsBuy() {
+    void toPrettyString_whenDecisionIsBuy() {
 
         String prettyString = new Decision(DecisionAction.BUY, 100).toPrettyString();
 
@@ -23,7 +23,7 @@ public class DecisionTest {
     }
 
     @Test
-    public void toPrettyString_whenDecisionIsSell() {
+    void toPrettyString_whenDecisionIsSell() {
 
         String prettyString = new Decision(DecisionAction.SELL, 100).toPrettyString();
 

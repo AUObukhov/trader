@@ -1,8 +1,8 @@
 package ru.obukhov.trader.common.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OrdersServiceImplTest extends BaseMockedTest {
+class OrdersServiceImplTest extends BaseMockedTest {
 
     private static final String FIGI = "figi";
     private static final String TICKER = "ticker";
@@ -35,13 +35,13 @@ public class OrdersServiceImplTest extends BaseMockedTest {
 
     private OrdersService service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.service = new OrdersServiceImpl(tinkoffService, marketService);
     }
 
     @Test
-    public void getOrders_filtersOrdersByFigi() {
+    void getOrders_filtersOrdersByFigi() {
         String ticker = TICKER;
         String figi = FIGI;
 

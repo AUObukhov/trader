@@ -5,8 +5,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.verify;
 import static ru.obukhov.trader.test.utils.AssertUtils.assertRowValues;
 
-public class ExcelServiceImplTest extends BaseMockedTest {
+class ExcelServiceImplTest extends BaseMockedTest {
 
     @Captor
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
@@ -43,13 +43,13 @@ public class ExcelServiceImplTest extends BaseMockedTest {
     private ExcelFileService excelFileService;
     private ExcelServiceImpl excelService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.excelService = new ExcelServiceImpl(excelFileService);
     }
 
     @Test
-    public void saveSimulationResult() {
+    void saveSimulationResult() {
 
         SimulationResult result = createSimulationResult();
 

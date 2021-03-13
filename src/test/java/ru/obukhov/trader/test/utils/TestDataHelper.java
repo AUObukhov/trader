@@ -1,6 +1,8 @@
 package ru.obukhov.trader.test.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -32,6 +34,13 @@ public class TestDataHelper {
         ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
         int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
         return ZoneOffset.ofTotalSeconds(totalSeconds);
+    }
+
+    public static MockedStatic<OffsetDateTime> mockNow(OffsetDateTime mockedNow) {
+        MockedStatic<OffsetDateTime> OffsetDateTimeStaticMock =
+                Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
+        OffsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
+        return OffsetDateTimeStaticMock;
     }
 
 }

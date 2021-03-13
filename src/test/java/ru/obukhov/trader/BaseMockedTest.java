@@ -1,14 +1,14 @@
 package ru.obukhov.trader;
 
 import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
 public abstract class BaseMockedTest {
 
     private AutoCloseable closeable;
 
-    @Before
+    @BeforeEach
     public void openMocks() {
         closeable = MockitoAnnotations.openMocks(this);
     }

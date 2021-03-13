@@ -2,7 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CollectionsUtilsTest {
+class CollectionsUtilsTest {
 
     @Test
-    public void reduceMultimap_average() {
+    void reduceMultimap_average() {
         Multimap<String, BigDecimal> multimap = MultimapBuilder.hashKeys().arrayListValues().build();
 
         multimap.put("key1", BigDecimal.valueOf(10));
@@ -39,7 +39,7 @@ public class CollectionsUtilsTest {
     // region getTail tests
 
     @Test
-    public void getTail_returnsEmptyList_whenSizeIsZero() {
+    void getTail_returnsEmptyList_whenSizeIsZero() {
         List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
 
         List<Integer> result = CollectionsUtils.getTail(list, 0);
@@ -48,7 +48,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void getTail_returnsTail_whenSizeIsLowerThanListSize() {
+    void getTail_returnsTail_whenSizeIsLowerThanListSize() {
         List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
         int size = 3;
         List<Integer> result = CollectionsUtils.getTail(list, size);
@@ -60,7 +60,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void getTail_returnsEqualList_whenSizeIsEqualToListSize() {
+    void getTail_returnsEqualList_whenSizeIsEqualToListSize() {
         List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
         int size = 5;
         List<Integer> result = CollectionsUtils.getTail(list, size);
@@ -72,7 +72,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void getTail_returnsEqualList_whenSizeIsGreaterThanListSize() {
+    void getTail_returnsEqualList_whenSizeIsGreaterThanListSize() {
         List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
         int size = 6;
         List<Integer> result = CollectionsUtils.getTail(list, size);
@@ -88,7 +88,7 @@ public class CollectionsUtilsTest {
     // region insertInterpolated tests
 
     @Test
-    public void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
+    void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
         List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
         int index = -1;
 
@@ -99,7 +99,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
+    void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
         List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
         int index = 3;
 
@@ -110,7 +110,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void insertInterpolated_throwsIllegalArgumentException_whenListIsEmpty() {
+    void insertInterpolated_throwsIllegalArgumentException_whenListIsEmpty() {
         List<BigDecimal> list = new ArrayList<>();
         int index = 0;
 
@@ -121,7 +121,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
+    void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
         List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
         int index = 0;
 
@@ -134,7 +134,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
+    void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
         List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
         int index = 2;
 
@@ -147,7 +147,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
+    void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
         List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN, BigDecimal.ZERO);
         int index = 1;
 
@@ -165,7 +165,7 @@ public class CollectionsUtilsTest {
     // region containsList tests
 
     @Test
-    public void containsList_throwsIllegalArgumentException_whenListIsNull() {
+    void containsList_throwsIllegalArgumentException_whenListIsNull() {
         List<String> list = null;
         List<String> searchedList = Arrays.asList("0", "1");
 
@@ -175,7 +175,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
+    void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = null;
 
@@ -185,7 +185,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenSearchedListIsEmpty() {
+    void containsList_returnTrue_whenSearchedListIsEmpty() {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = Collections.emptyList();
 
@@ -193,7 +193,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenBothListsAreEmpty() {
+    void containsList_returnTrue_whenBothListsAreEmpty() {
         List<String> list = Collections.emptyList();
         List<String> searchedList = Collections.emptyList();
 
@@ -201,7 +201,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnFalse_whenListIsEmpty() {
+    void containsList_returnFalse_whenListIsEmpty() {
         List<String> list = Collections.emptyList();
         List<String> searchedList = Collections.singletonList("0");
 
@@ -209,7 +209,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenListsAreEqual() {
+    void containsList_returnTrue_whenListsAreEqual() {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = Arrays.asList("0", "1");
 
@@ -217,7 +217,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenListContainsSearchedListFromTheBeginning() {
+    void containsList_returnTrue_whenListContainsSearchedListFromTheBeginning() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("0", "1");
 
@@ -225,7 +225,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenListContainsSearchedListInTheMiddle() {
+    void containsList_returnTrue_whenListContainsSearchedListInTheMiddle() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("1", "2");
 
@@ -233,7 +233,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnTrue_whenListContainsSearchedListInTheEnd() {
+    void containsList_returnTrue_whenListContainsSearchedListInTheEnd() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "3");
 
@@ -241,7 +241,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnFalse_whenListDoesNotContainsSearchedList() {
+    void containsList_returnFalse_whenListDoesNotContainsSearchedList() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("5", "6");
 
@@ -249,7 +249,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnFalse_whenListContainsOnlyPartOfSearchedList() {
+    void containsList_returnFalse_whenListContainsOnlyPartOfSearchedList() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "3", "4");
 
@@ -257,7 +257,7 @@ public class CollectionsUtilsTest {
     }
 
     @Test
-    public void containsList_returnFalse_whenListContainsSearchedListButInAnotherOrder() {
+    void containsList_returnFalse_whenListContainsSearchedListButInAnotherOrder() {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "1");
 

@@ -1,8 +1,8 @@
 package ru.obukhov.trader.common.model.transform;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -16,12 +16,12 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public class CandleMapperTest {
+class CandleMapperTest {
 
     private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
 
     @Test
-    public void mapsSingleCandleFields() {
+    void mapsSingleCandleFields() {
 
         ru.tinkoff.invest.openapi.models.market.Candle source = TestDataHelper.createTinkoffCandle(
                 100, 200, 1000, 50);
@@ -37,7 +37,7 @@ public class CandleMapperTest {
     }
 
     @Test
-    public void updatesOffset() {
+    void updatesOffset() {
 
         ru.tinkoff.invest.openapi.models.market.Candle source = new ru.tinkoff.invest.openapi.models.market.Candle(
                 StringUtils.EMPTY,
@@ -57,7 +57,7 @@ public class CandleMapperTest {
     }
 
     @Test
-    public void mapsHistoricalCandles() {
+    void mapsHistoricalCandles() {
 
         ru.tinkoff.invest.openapi.models.market.Candle tinkoffCandle1 = TestDataHelper.createTinkoffCandle(
                 100, 200, 1000, 50);

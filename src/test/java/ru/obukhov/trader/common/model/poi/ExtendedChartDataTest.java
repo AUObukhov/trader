@@ -6,7 +6,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ExtendedChartDataTest {
+class ExtendedChartDataTest {
 
     @Test
-    public void addSeries() {
+    void addSeries() {
         ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         String[] category = new String[]{"s1", "s2", "s3"};
@@ -37,7 +37,7 @@ public class ExtendedChartDataTest {
     // region stretchChart tests
 
     @Test
-    public void stretchChart_doesNothing_whenNoValues() {
+    void stretchChart_doesNothing_whenNoValues() {
         ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         String[] category = new String[0];
@@ -56,7 +56,7 @@ public class ExtendedChartDataTest {
     }
 
     @Test
-    public void stretchChart_doesNothing_whenAllValuesAreNull() {
+    void stretchChart_doesNothing_whenAllValuesAreNull() {
         ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         String[] category = new String[]{"s1", "s2", "s3"};
@@ -75,7 +75,7 @@ public class ExtendedChartDataTest {
     }
 
     @Test
-    public void stretchChart_stretchesChart_whenValuesAreNotEmpty() {
+    void stretchChart_stretchesChart_whenValuesAreNotEmpty() {
         ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         String[] category = new String[]{"s1", "s2", "s3", "s4", "s5"};

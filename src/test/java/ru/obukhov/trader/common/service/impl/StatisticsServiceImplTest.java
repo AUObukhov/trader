@@ -1,8 +1,8 @@
 package ru.obukhov.trader.common.service.impl;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 import static ru.obukhov.trader.common.util.DateUtils.getDate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StatisticsServiceImplTest extends BaseMockedTest {
+class StatisticsServiceImplTest extends BaseMockedTest {
 
     private static final String TICKER = "ticker";
 
@@ -30,13 +30,13 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
     private StatisticsServiceImpl service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         service = new StatisticsServiceImpl(marketService);
     }
 
     @Test
-    public void getCandles_returnsCandlesFromMarketService() {
+    void getCandles_returnsCandlesFromMarketService() {
         final String ticker = TICKER;
 
         final OffsetDateTime from = getDate(2020, 1, 1);
@@ -51,7 +51,7 @@ public class StatisticsServiceImplTest extends BaseMockedTest {
 
         final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleInterval);
 
-        Assert.assertSame(candles, candlesResponse);
+        Assertions.assertSame(candles, candlesResponse);
     }
 
 }

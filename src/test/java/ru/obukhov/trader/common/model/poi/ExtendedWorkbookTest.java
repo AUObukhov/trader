@@ -4,7 +4,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
@@ -13,19 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ExtendedWorkbookTest {
+class ExtendedWorkbookTest {
 
     // region constructor tests
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         AssertUtils.assertThrowsWithMessage(() -> new ExtendedWorkbook(null),
                 IllegalArgumentException.class,
                 "delegate can't be null");
     }
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
         AssertUtils.assertThrowsWithMessage(() -> new ExtendedWorkbook(extendedWorkbook),
@@ -34,7 +34,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void constructor_CopiesSheets() {
+    void constructor_CopiesSheets() {
         Workbook workbook = new XSSFWorkbook();
         String sheetName0 = "sheet0";
         String sheetName1 = "sheet1";
@@ -50,7 +50,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void constructor_CopiesCellStyles() {
+    void constructor_CopiesCellStyles() {
         Workbook workbook = new XSSFWorkbook();
         workbook.createCellStyle();
         workbook.createCellStyle();
@@ -68,7 +68,7 @@ public class ExtendedWorkbookTest {
     // region createCellStyle with name tests
 
     @Test
-    public void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() {
+    void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         String cellStyleName = "cellStyle";
         extendedWorkbook.createCellStyle(cellStyleName);
@@ -79,7 +79,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void createCellStyle_withName_createsCellStyle() {
+    void createCellStyle_withName_createsCellStyle() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
         int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
@@ -92,7 +92,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void createCellStyle_withNoName_createsCellStyle() {
+    void createCellStyle_withNoName_createsCellStyle() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
         int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
@@ -109,7 +109,7 @@ public class ExtendedWorkbookTest {
     // region getCellStyle tests
 
     @Test
-    public void getCellStyle_returnsCreatedCellStyle() {
+    void getCellStyle_returnsCreatedCellStyle() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
         String cellStyleName = "cellStyle";
@@ -125,7 +125,7 @@ public class ExtendedWorkbookTest {
     // region getOrCreateCellStyle tests
 
     @Test
-    public void getOrCreateCellStyle_returnsExistingCellStyle_whenCellStyleWithGivenNameExists() {
+    void getOrCreateCellStyle_returnsExistingCellStyle_whenCellStyleWithGivenNameExists() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
         String cellStyleName = "cellStyle";
@@ -137,7 +137,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void getOrCreateCellStyle_notAddsCellStyle_whenCellStyleWithGivenNameExists() {
+    void getOrCreateCellStyle_notAddsCellStyle_whenCellStyleWithGivenNameExists() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
         String cellStyleName = "cellStyle";
@@ -150,7 +150,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void getOrCreateCellStyle_addsCellStyle_whenCellStyleWithGivenNameNotExists() {
+    void getOrCreateCellStyle_addsCellStyle_whenCellStyleWithGivenNameNotExists() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
 
@@ -164,7 +164,7 @@ public class ExtendedWorkbookTest {
     // region setSheetOrder tests
 
     @Test
-    public void setSheetOrder_changesOrder_whenSheetMovedAfterCurrentPosition() {
+    void setSheetOrder_changesOrder_whenSheetMovedAfterCurrentPosition() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
@@ -184,7 +184,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void setSheetOrder_changesOrder_whenSheetMovedBeforeCurrentPosition() {
+    void setSheetOrder_changesOrder_whenSheetMovedBeforeCurrentPosition() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
@@ -204,7 +204,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void setSheetOrder_notChangesOrder_whenSheetMovedOnCurrentPosition() {
+    void setSheetOrder_notChangesOrder_whenSheetMovedOnCurrentPosition() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
@@ -228,7 +228,7 @@ public class ExtendedWorkbookTest {
     // region createSheet tests
 
     @Test
-    public void createSheet_withNoName_createsSheet() {
+    void createSheet_withNoName_createsSheet() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
@@ -242,7 +242,7 @@ public class ExtendedWorkbookTest {
     }
 
     @Test
-    public void createSheet_withName_createsSheet() {
+    void createSheet_withName_createsSheet() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
@@ -261,7 +261,7 @@ public class ExtendedWorkbookTest {
     // region cloneSheet tests
 
     @Test
-    public void cloneSheet_createsSheet() {
+    void cloneSheet_createsSheet() {
         Workbook workbook = new XSSFWorkbook();
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
         String sheetName = "sheet";

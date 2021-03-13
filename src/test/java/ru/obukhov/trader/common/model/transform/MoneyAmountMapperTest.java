@@ -1,6 +1,6 @@
 package ru.obukhov.trader.common.model.transform;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.tinkoff.invest.openapi.models.Currency;
@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MoneyAmountMapperTest {
+class MoneyAmountMapperTest {
 
     private final MoneyAmountMapper mapper = Mappers.getMapper(MoneyAmountMapper.class);
 
     @Test
-    public void mapsTinkoffToCustom() {
+    void mapsTinkoffToCustom() {
         Currency currency = Currency.RUB;
         BigDecimal value = BigDecimal.valueOf(100);
 
@@ -28,7 +28,7 @@ public class MoneyAmountMapperTest {
     }
 
     @Test
-    public void mapsCustomToTinkoff() {
+    void mapsCustomToTinkoff() {
         Currency currency = Currency.RUB;
         BigDecimal value = BigDecimal.valueOf(100);
 

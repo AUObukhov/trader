@@ -3,17 +3,17 @@ package ru.obukhov.trader.common.model.poi;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ExtendedCellTest {
+class ExtendedCellTest {
 
     // region constructor tests
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenRowIsNull() {
+    void constructor_throwsIllegalArgumentException_whenRowIsNull() {
         Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
@@ -24,7 +24,7 @@ public class ExtendedCellTest {
     }
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExtendedRow extendedRow = extendedSheet.addRow();
 
@@ -34,7 +34,7 @@ public class ExtendedCellTest {
     }
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExtendedRow extendedRow = extendedSheet.addRow();
         Cell extendedCell = extendedRow.createCell(0);
@@ -49,7 +49,7 @@ public class ExtendedCellTest {
     // region getWorkbook tests
 
     @Test
-    public void getWorkbook_returnsParentWorkbook() {
+    void getWorkbook_returnsParentWorkbook() {
         ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         ExtendedSheet extendedSheet = (ExtendedSheet) parentExtendedWorkbook.createSheet();
         ExtendedCell extendedCell = (ExtendedCell) extendedSheet.addRow().createCell(0);

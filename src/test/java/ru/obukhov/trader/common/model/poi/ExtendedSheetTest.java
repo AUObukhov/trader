@@ -9,7 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -21,12 +21,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-public class ExtendedSheetTest {
+class ExtendedSheetTest {
 
     // region constructor tests
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenWorkbookIsNull() {
+    void constructor_throwsIllegalArgumentException_whenWorkbookIsNull() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         Sheet sheet = extendedWorkbook.createSheet();
 
@@ -36,7 +36,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
         AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(extendedWorkbook, null),
@@ -45,7 +45,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedSheet() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedSheet() {
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         Sheet sheet = extendedWorkbook.createSheet();
 
@@ -55,7 +55,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void constructor_CopiesRows() {
+    void constructor_CopiesRows() {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
         String value0 = "row0cell";
@@ -77,7 +77,7 @@ public class ExtendedSheetTest {
     // region getRowsCount tests
 
     @Test
-    public void getRowsCount_returnProperRowsCount_whenThereIsNoGapBetweenRows() {
+    void getRowsCount_returnProperRowsCount_whenThereIsNoGapBetweenRows() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 3);
 
@@ -85,7 +85,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void getRowsCount_returnProperRowsCount_whenThereIsGapBetweenRows() {
+    void getRowsCount_returnProperRowsCount_whenThereIsGapBetweenRows() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 10);
 
@@ -95,7 +95,7 @@ public class ExtendedSheetTest {
     // endregion
 
     @Test
-    public void autoSizeColumns_callsAutoSizeColumnOfDelegate() {
+    void autoSizeColumns_callsAutoSizeColumnOfDelegate() {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet();
         ExcelTestDataHelper.addRow(sheet, 2);
@@ -118,7 +118,7 @@ public class ExtendedSheetTest {
     // region getColumnsCount tests
 
     @Test
-    public void getColumnsCount_returnsZero_whenNoRows() {
+    void getColumnsCount_returnsZero_whenNoRows() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
 
         int columnsCount = extendedSheet.getColumnsCount();
@@ -127,7 +127,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void getColumnsCount_returnsMaxColumnsCountBetweenRows() {
+    void getColumnsCount_returnsMaxColumnsCountBetweenRows() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRow(extendedSheet, 2);
         ExcelTestDataHelper.addRow(extendedSheet, 3);
@@ -141,7 +141,7 @@ public class ExtendedSheetTest {
     // endregion
 
     @Test
-    public void addRow_addsRowAfterLastRow() {
+    void addRow_addsRowAfterLastRow() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         extendedSheet.createRow(0);
         extendedSheet.createRow(1);
@@ -155,7 +155,7 @@ public class ExtendedSheetTest {
     }
 
     @Test
-    public void createChart() {
+    void createChart() {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         int column1 = 1;
         int row1 = 2;

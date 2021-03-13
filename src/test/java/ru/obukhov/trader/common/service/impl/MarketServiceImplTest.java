@@ -1,12 +1,11 @@
 package ru.obukhov.trader.common.service.impl;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.util.Assert;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -31,7 +30,7 @@ import static org.mockito.Mockito.when;
 import static ru.obukhov.trader.common.util.DateUtils.getDate;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MarketServiceImplTest extends BaseMockedTest {
+class MarketServiceImplTest extends BaseMockedTest {
 
     private static final String TICKER = "ticker";
 
@@ -41,7 +40,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
 
     private MarketService service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.tradingProperties = new TradingProperties();
         this.tradingProperties.setConsecutiveEmptyDaysLimit(7);
@@ -55,7 +54,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     // region getCandles tests
 
     @Test
-    public void getCandles_skipsCandlesByDays_whenFromIsReached() {
+    void getCandles_skipsCandlesByDays_whenFromIsReached() {
         final CandleInterval candleInterval = CandleInterval.ONE_MIN;
         final String ticker = TICKER;
 
@@ -93,7 +92,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
+    void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
         final CandleInterval candleInterval = CandleInterval.ONE_MIN;
         final String ticker = TICKER;
 
@@ -131,7 +130,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getCandles_skipsCandlesByYears_whenFromIsReached() {
+    void getCandles_skipsCandlesByYears_whenFromIsReached() {
         final CandleInterval candleInterval = CandleInterval.MONTH;
         final String ticker = TICKER;
 
@@ -173,7 +172,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getCandles_skipsCandlesByYears_whenNoCandles() {
+    void getCandles_skipsCandlesByYears_whenNoCandles() {
         final CandleInterval candleInterval = CandleInterval.MONTH;
         final String ticker = TICKER;
 
@@ -219,7 +218,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     // region getLastCandle tests
 
     @Test
-    public void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
+    void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
         final String ticker = TICKER;
         AssertUtils.assertThrowsWithMessage(() -> service.getLastCandle(ticker),
                 IllegalArgumentException.class,
@@ -227,7 +226,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+    void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime from = DateUtils.getLastWorkDay()
                 .minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
@@ -241,7 +240,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime earliestDayToSearch = OffsetDateTime.now()
                 .minusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
@@ -261,7 +260,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     // region getLastCandle with to tests
 
     @Test
-    public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandles() {
+    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandles() {
         final String ticker = TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
@@ -271,7 +270,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.getDate(2020, 1, 10);
         final OffsetDateTime candlesTo = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
@@ -285,7 +284,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String ticker = TICKER;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateUtils.getDate(2020, 1, 10));
         final OffsetDateTime candlesTo = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() - 1);
@@ -305,7 +304,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     // region getLastCandles tests
 
     @Test
-    public void getLastCandles_returnsNoCandles_whenThereAreNoCandles() {
+    void getLastCandles_returnsNoCandles_whenThereAreNoCandles() {
         final String ticker = TICKER;
         int limit = 5;
 
@@ -318,7 +317,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandles_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
+    void getLastCandles_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String ticker = TICKER;
         int limit = 5;
 
@@ -354,7 +353,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandles_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
+    void getLastCandles_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String ticker = TICKER;
         int limit = 10;
 
@@ -391,7 +390,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandles_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
+    void getLastCandles_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
         final String ticker = TICKER;
         int limit = 5;
 
@@ -423,7 +422,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getLastCandles_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
+    void getLastCandles_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
         final String ticker = TICKER;
         int limit = 5;
 
@@ -527,8 +526,7 @@ public class MarketServiceImplTest extends BaseMockedTest {
     }
 
     private List<Candle> createCandlesSimple(List<Integer> openPrices, List<OffsetDateTime> times) {
-        Assert.isTrue(openPrices.size() == times.size(),
-                "times and openPrices must have same size");
+        Assertions.assertEquals(times.size(), openPrices.size(), "times and openPrices must have same size");
 
         List<Candle> candles = new ArrayList<>(openPrices.size());
         for (int i = 0; i < openPrices.size(); i++) {

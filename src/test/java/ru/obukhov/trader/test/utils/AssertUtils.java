@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
@@ -56,7 +55,7 @@ public class AssertUtils {
     }
 
     public static void assertRowValues(Row row, Object... values) {
-        Assert.assertEquals(values.length, row.getPhysicalNumberOfCells());
+        Assertions.assertEquals(values.length, row.getPhysicalNumberOfCells());
         for (int index = 0; index < values.length; index++) {
             assertCellValue(row.getCell(index), values[index]);
         }
@@ -69,12 +68,12 @@ public class AssertUtils {
                                             String cellStyleName,
                                             Object value) {
 
-        Assert.assertSame(extendedRow, cell.getRow());
-        Assert.assertEquals(column, cell.getColumnIndex());
-        Assert.assertEquals(cellType, cell.getCellType());
+        Assertions.assertSame(extendedRow, cell.getRow());
+        Assertions.assertEquals(column, cell.getColumnIndex());
+        Assertions.assertEquals(cellType, cell.getCellType());
 
         CellStyle expectedCellStyle = extendedRow.getWorkbook().getCellStyle(cellStyleName);
-        Assert.assertEquals(expectedCellStyle, cell.getCellStyle());
+        Assertions.assertEquals(expectedCellStyle, cell.getCellStyle());
 
         assertCellValue(cell, value);
     }
@@ -82,9 +81,9 @@ public class AssertUtils {
     public static void assertCellValue(Cell cell, Object value) {
         switch (cell.getCellType()) {
             case BLANK:
-                Assert.assertEquals(StringUtils.EMPTY, cell.getStringCellValue());
+                Assertions.assertEquals(StringUtils.EMPTY, cell.getStringCellValue());
                 AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
-                Assert.assertNull(cell.getDateCellValue());
+                Assertions.assertNull(cell.getDateCellValue());
                 break;
 
             case STRING:
@@ -116,7 +115,7 @@ public class AssertUtils {
 
     public static void assertCellValue(Cell cell, String value) {
         String exceptedValue = value == null ? StringUtils.EMPTY : value;
-        Assert.assertEquals(exceptedValue, cell.getStringCellValue());
+        Assertions.assertEquals(exceptedValue, cell.getStringCellValue());
     }
 
     public static void assertCellValue(Cell cell, BigDecimal value) {
@@ -137,12 +136,12 @@ public class AssertUtils {
     private static void assetCellValue(Cell cell, LocalDateTime value) {
         ZoneOffset offset = OffsetDateTime.now().getOffset();
         Date expectedValue = Date.from(value.toInstant(offset));
-        Assert.assertEquals(expectedValue, cell.getDateCellValue());
+        Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
     public static void assertCellValue(Cell cell, OffsetDateTime value) {
         Date expectedValue = Date.from(value.toInstant());
-        Assert.assertEquals(expectedValue, cell.getDateCellValue());
+        Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
     public static void assertFaster(CheckedRunnable runnable, long time) throws Exception {

@@ -2,8 +2,8 @@ package ru.obukhov.trader.common.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PortfolioServiceImplTest extends BaseMockedTest {
+class PortfolioServiceImplTest extends BaseMockedTest {
 
     private static final String TICKER = "ticker";
 
@@ -34,7 +34,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
 
     private PortfolioService service;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.service = new PortfolioServiceImpl(tinkoffService);
     }
@@ -42,7 +42,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
     // region getPosition tests
 
     @Test
-    public void getPosition_returnsPositionByTicker_whenItExists() {
+    void getPosition_returnsPositionByTicker_whenItExists() {
         String ticker1 = "ticker1";
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
@@ -60,7 +60,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getPosition_returnsNull_whenNoPositionWithTicker() {
+    void getPosition_returnsNull_whenNoPositionWithTicker() {
         String ticker1 = "ticker1";
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
@@ -82,7 +82,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
     // region getAvailableBalance tests
 
     @Test
-    public void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
+    void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
 
         int rubBalance = 1000;
         int rubBlocked = 100;
@@ -101,7 +101,7 @@ public class PortfolioServiceImplTest extends BaseMockedTest {
     }
 
     @Test
-    public void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
+    void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
 
         List<PortfolioCurrencies.PortfolioCurrency> currencies = ImmutableList.of(
                 createPortfolioCurrency(Currency.USD, 100, 0),

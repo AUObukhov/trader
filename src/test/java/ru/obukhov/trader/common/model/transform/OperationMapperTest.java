@@ -1,7 +1,7 @@
 package ru.obukhov.trader.common.model.transform;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
@@ -16,12 +16,12 @@ import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OperationMapperTest {
+class OperationMapperTest {
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     @Test
-    public void mapsOperationToSimulatedOperation() {
+    void mapsOperationToSimulatedOperation() {
         OffsetDateTime date = OffsetDateTime.now();
         BigDecimal commission = BigDecimal.TEN;
         MoneyAmount commissionMoneyAmount = new MoneyAmount(Currency.RUB, commission);
@@ -50,7 +50,7 @@ public class OperationMapperTest {
     }
 
     @Test
-    public void mapsSimulatedOperationToOperation() {
+    void mapsSimulatedOperationToOperation() {
         SimulatedOperation source = SimulatedOperation.builder()
                 .dateTime(OffsetDateTime.now())
                 .operationType(OperationType.Buy)

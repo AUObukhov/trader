@@ -4,13 +4,11 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.config.QueryThrottleProperties;
 import ru.obukhov.trader.config.UrlLimit;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -23,29 +21,26 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({HttpUrl.class, Request.class, Response.class, Interceptor.Chain.class})
-// https://github.com/mockito/mockito/issues/1562
-@PowerMockIgnore({"com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*"})
-public class ThrottlingInterceptorTest {
+class ThrottlingInterceptorTest extends BaseMockedTest {
 
+    @Mock
     private HttpUrl url;
+    @Mock
+    private Request request;
+    @Mock
+    private Response response;
+    @Mock
     private Interceptor.Chain chain;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        this.url = PowerMockito.mock(HttpUrl.class);
-        Request request = PowerMockito.mock(Request.class);
-        Response response = PowerMockito.mock(Response.class);
-        this.chain = PowerMockito.mock(Interceptor.Chain.class);
-
-        PowerMockito.when(request.url()).thenReturn(url);
-        PowerMockito.when(chain.request()).thenReturn(request);
-        PowerMockito.when(chain.proceed(any(Request.class))).thenReturn(response);
+        Mockito.when(request.url()).thenReturn(url);
+        Mockito.when(chain.request()).thenReturn(request);
+        Mockito.when(chain.proceed(any(Request.class))).thenReturn(response);
     }
 
     @Test
-    public void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws Exception {
+    void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
@@ -55,7 +50,7 @@ public class ThrottlingInterceptorTest {
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
 
-        PowerMockito.when(chain.proceed(any(Request.class))).thenThrow(new RuntimeException("exception for test"));
+        when(chain.proceed(any(Request.class))).thenThrow(new RuntimeException("exception for test"));
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
         AssertUtils.assertThrowsWithMessage(() -> interceptor.intercept(chain),
@@ -65,7 +60,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws Exception {
+    void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
@@ -87,7 +82,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_throttles_onlyWhenLimitIsReached() throws Exception {
+    void intercept_throttles_onlyWhenLimitIsReached() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
@@ -112,7 +107,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_throttlesByLowestLimit() throws Exception {
+    void intercept_throttlesByLowestLimit() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
 
@@ -138,7 +133,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_throttlesByCommonLimit() throws Exception {
+    void intercept_throttlesByCommonLimit() throws Exception {
 
         final List<String> limitOrderSegments = Arrays.asList("openapi", "orders", "limit-order");
         final List<String> marketOrderSegments = Arrays.asList("openapi", "orders", "market-order");
@@ -169,7 +164,7 @@ public class ThrottlingInterceptorTest {
     }
 
     @Test
-    public void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws Exception {
+    void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws Exception {
 
         when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 

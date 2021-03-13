@@ -1,6 +1,6 @@
 package ru.obukhov.trader.common.model.transform;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.PortfolioPositionMapper;
@@ -17,12 +17,12 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class PortfolioPositionMapperTest {
+class PortfolioPositionMapperTest {
 
     private final PortfolioPositionMapper mapper = Mappers.getMapper(PortfolioPositionMapper.class);
 
     @Test
-    public void mapsSinglePosition() {
+    void mapsSinglePosition() {
         final String ticker = "ticker";
         final BigDecimal balance = BigDecimal.valueOf(1000);
         final BigDecimal blocked = BigDecimal.valueOf(500);
@@ -57,7 +57,7 @@ public class PortfolioPositionMapperTest {
     }
 
     @Test
-    public void mapCollection() {
+    void mapCollection() {
         final String ticker1 = "ticker1";
         final BigDecimal balance1 = BigDecimal.valueOf(1000);
         final BigDecimal blocked1 = BigDecimal.valueOf(500);
