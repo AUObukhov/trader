@@ -4,17 +4,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
+import java.text.ParseException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Date;
 
 class DateUtilsTest {
 
@@ -1213,6 +1216,101 @@ class DateUtilsTest {
         OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
 
         DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
+    }
+
+    // endregion
+
+    // region toDate tests
+
+    @Test
+    void toDate_returnsNull_whenDateTimeIsNull() {
+        OffsetDateTime dateTime = null;
+
+        Date date = DateUtils.toDate(dateTime);
+
+        Assertions.assertNull(date);
+    }
+
+    @Test
+    void toDate_returnsEqualDate_whenDateTimeIsNotNull() {
+        final int FIRST_YEAR = 1900;
+
+        final int year = 2021;
+        final int month = 10;
+        final int dayOfMonth = 11;
+        final int hour = 12;
+        final int minute = 13;
+        final int second = 14;
+
+        OffsetDateTime dateTime = DateUtils.getDateTime(year, month, dayOfMonth, hour, minute, second);
+
+        Date date = DateUtils.toDate(dateTime);
+
+        Assertions.assertEquals(year, date.getYear() + FIRST_YEAR);
+        Assertions.assertEquals(month, date.getMonth() + 1);
+        Assertions.assertEquals(dayOfMonth, date.getDate());
+        Assertions.assertEquals(hour, date.getHours());
+        Assertions.assertEquals(minute, date.getMinutes());
+        Assertions.assertEquals(second, date.getSeconds());
+    }
+
+    // endregion
+
+    // region getCronHitsBetweenDates tests
+
+    @Test
+    void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsEqualToTo() throws ParseException {
+        CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getCronHitsBetweenDates(expression, from, to),
+                IllegalArgumentException.class,
+                "from must be before to");
+    }
+
+    @Test
+    void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsAfterTo() throws ParseException {
+        CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 15);
+        OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+
+        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getCronHitsBetweenDates(expression, from, to),
+                IllegalArgumentException.class,
+                "from must be before to");
+    }
+
+    @Test
+    void getCronHitsBetweenDates_returnsProperCount_whenValidDatesAreBetweenFromAndTo() throws ParseException {
+        CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
+
+        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+
+        Assertions.assertEquals(2, count);
+    }
+
+    @Test
+    void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToFrom() throws ParseException {
+        CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 1, 0, 0, 0);
+        OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
+
+        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+
+        Assertions.assertEquals(2, count);
+    }
+
+    @Test
+    void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToTo() throws ParseException {
+        CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        OffsetDateTime to = DateUtils.getDateTime(2022, 1, 1, 0, 0, 0);
+
+        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+
+        Assertions.assertEquals(3, count);
     }
 
     // endregion

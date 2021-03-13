@@ -4,17 +4,20 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
+import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Date;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateUtils {
@@ -360,6 +363,37 @@ public class DateUtils {
                     name, dateTime.toString(), now.toString());
             throw new IllegalArgumentException(message);
         }
+    }
+
+    public static Date toDate(OffsetDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+
+        ZoneOffset zoneOffset = ZoneOffset.of(dateTime.getOffset().getId());
+        Instant instant = dateTime.toLocalDateTime().toInstant(zoneOffset);
+        return Date.from(instant);
+    }
+
+    /**
+     * @return number of dates which match given {@code expression} and between given {@code from} exclusively and {@code to}
+     * inclusively
+     */
+    public static int getCronHitsBetweenDates(CronExpression expression, OffsetDateTime from, OffsetDateTime to) {
+        Assert.isTrue(from.isBefore(to), "from must be before to");
+
+        final Date dateFrom = DateUtils.toDate(from);
+        final Date dateTo = DateUtils.toDate(to);
+        final Date finalValidDate = expression.getNextValidTimeAfter(dateTo);
+
+        int count = 0;
+        Date currentValidDate = expression.getNextValidTimeAfter(dateFrom);
+        while (!currentValidDate.equals(finalValidDate)) {
+            count++;
+            currentValidDate = expression.getNextValidTimeAfter(currentValidDate);
+        }
+
+        return count;
     }
 
 }
