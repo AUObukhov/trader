@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
@@ -13,6 +12,7 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.SimulatedPortfolio;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
@@ -34,9 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,16 +47,12 @@ public class FakeTinkoffService implements TinkoffService {
     private final TradingProperties tradingProperties;
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
-    private final List<SimulatedOperation> operations;
-    private final Map<String, PortfolioPosition> tickersToPositions;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final OperationTypeMapper operationTypeMapper = Mappers.getMapper(OperationTypeMapper.class);
     private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
-    @Getter
-    private OffsetDateTime currentDateTime;
-    @Getter
-    private BigDecimal balance;
+
+    private SimulatedPortfolio portfolio;
 
     public FakeTinkoffService(TradingProperties tradingProperties,
                               MarketService marketService,
@@ -68,22 +62,17 @@ public class FakeTinkoffService implements TinkoffService {
         this.marketService = marketService;
         this.realTinkoffService = realTinkoffService;
 
-        this.operations = new ArrayList<>();
-        this.tickersToPositions = new HashMap<>();
-
     }
 
     /**
      * sets current dateTime, but moves it to nearest work time
      */
     public void init(OffsetDateTime currentDateTime, BigDecimal balance) {
-        this.operations.clear();
-        this.tickersToPositions.clear();
-
-        this.currentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
+        OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
-        this.balance = balance;
+
+        this.portfolio = new SimulatedPortfolio(shiftedCurrentDateTime, balance);
     }
 
     /**
@@ -91,10 +80,11 @@ public class FakeTinkoffService implements TinkoffService {
      */
     public void nextMinute() {
 
-        this.currentDateTime = DateUtils.getNextWorkMinute(
-                this.currentDateTime,
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(
+                portfolio.getCurrentDateTime(),
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
+        portfolio.setCurrentDateTime(nextWorkMinute);
 
     }
 
@@ -141,13 +131,14 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public List<ru.tinkoff.invest.openapi.models.operations.Operation> getOperations(Interval interval, String ticker) {
-        Stream<SimulatedOperation> operationsStream = operations.stream()
+        Stream<SimulatedOperation> operationsStream = portfolio.getOperations().stream()
                 .filter(operation -> interval.contains(operation.getDateTime()));
         if (ticker != null) {
             operationsStream = operationsStream.filter(operation -> ticker.equals(operation.getTicker()));
         }
 
-        return operationsStream.sorted(Comparator.comparing(SimulatedOperation::getDateTime))
+        return operationsStream
+                .sorted(Comparator.comparing(SimulatedOperation::getDateTime))
                 .map(operationMapper::map)
                 .collect(Collectors.toList());
     }
@@ -186,12 +177,12 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
-        return marketService.getLastCandle(ticker, currentDateTime).getClosePrice();
+        return marketService.getLastCandle(ticker, portfolio.getCurrentDateTime()).getClosePrice();
     }
 
     private void buyPosition(String ticker, BigDecimal currentPrice, int lotsCount, BigDecimal totalPrice) {
         Instrument instrument = realTinkoffService.searchMarketInstrument(ticker);
-        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        PortfolioPosition existingPosition = portfolio.getPosition(ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
             position = createNewPosition(ticker, totalPrice, instrument.currency, currentPrice, lotsCount);
@@ -199,7 +190,7 @@ public class FakeTinkoffService implements TinkoffService {
             position = addValuesToPosition(existingPosition, lotsCount, totalPrice);
         }
 
-        this.tickersToPositions.put(ticker, position);
+        portfolio.addPosition(ticker, position);
     }
 
     private PortfolioPosition createNewPosition(String ticker,
@@ -245,21 +236,21 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
-        BigDecimal newBalance = this.balance.add(totalPrice).subtract(commissionAmount);
+        BigDecimal newBalance = portfolio.getBalance().add(totalPrice).subtract(commissionAmount);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        this.balance = newBalance;
+        portfolio.setBalance(newBalance);
     }
 
     private void sellPosition(String ticker, int lotsCount) {
-        PortfolioPosition existingPosition = this.tickersToPositions.get(ticker);
+        PortfolioPosition existingPosition = portfolio.getPosition(ticker);
         int newLotsCount = existingPosition.getLotsCount() - lotsCount;
 
         if (newLotsCount == 0) {
-            this.tickersToPositions.remove(ticker);
+            portfolio.removePosition(ticker);
         } else if (newLotsCount > 0) {
             PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
-            this.tickersToPositions.put(ticker, newPosition);
+            portfolio.addPosition(ticker, newPosition);
         } else {
             final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
                     + existingPosition.getLotsCount();
@@ -290,10 +281,10 @@ public class FakeTinkoffService implements TinkoffService {
                 .price(price)
                 .quantity(marketOrder.lots)
                 .commission(commission.getValue())
-                .dateTime(this.currentDateTime)
+                .dateTime(portfolio.getCurrentDateTime())
                 .operationType(operationTypeMapper.map(marketOrder.operation))
                 .build();
-        operations.add(operation);
+        portfolio.addOperation(operation);
     }
 
     private PlacedOrder createOrder(MarketOrder marketOrder, MoneyAmount commission) {
@@ -318,16 +309,25 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public Collection<PortfolioPosition> getPortfolioPositions() {
-        return new ArrayList<>(this.tickersToPositions.values());
+        return new ArrayList<>(portfolio.getTickersToPositions().values());
     }
 
     @Override
     public List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies() {
         PortfolioCurrencies.PortfolioCurrency currency
-                = new PortfolioCurrencies.PortfolioCurrency(Currency.RUB, this.balance, null);
+                = new PortfolioCurrencies.PortfolioCurrency(Currency.RUB, portfolio.getBalance(), null);
         return Collections.singletonList(currency);
     }
 
     // endregion
+
+    @Override
+    public OffsetDateTime getCurrentDateTime() {
+        return portfolio.getCurrentDateTime();
+    }
+
+    public BigDecimal getBalance() {
+        return portfolio.getBalance();
+    }
 
 }
