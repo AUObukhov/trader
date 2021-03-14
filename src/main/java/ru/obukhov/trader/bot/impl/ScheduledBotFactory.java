@@ -3,7 +3,7 @@ package ru.obukhov.trader.bot.impl;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.Decider;
-import ru.obukhov.trader.config.BotProperties;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -20,7 +20,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
     private final OperationsService realOperationsService;
     private final OrdersService realOrdersService;
     private final PortfolioService realPortfolioService;
-    private final BotProperties botProperties;
+    private final BotConfig botConfig;
 
     public ScheduledBotFactory(TradingProperties tradingProperties,
                                MarketService realMarketService,
@@ -31,7 +31,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
                                OperationsService realOperationsService,
                                OrdersService realOrdersService,
                                PortfolioService realPortfolioService,
-                               BotProperties botProperties) {
+                               BotConfig botConfig) {
 
         super(tradingProperties,
                 realMarketService,
@@ -43,7 +43,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
         this.realOperationsService = realOperationsService;
         this.realOrdersService = realOrdersService;
         this.realPortfolioService = realPortfolioService;
-        this.botProperties = botProperties;
+        this.botConfig = botConfig;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,
-                botProperties,
+                botConfig,
                 tradingProperties);
 
     }

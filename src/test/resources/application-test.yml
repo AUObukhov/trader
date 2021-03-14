@@ -3,7 +3,6 @@ trading:
   commission: 0.1
   work-start-time: 12:00:00+03:00
   work-duration: 480
-  bot-enabled: true
   consecutive-empty-days-limit: 5
   start-date: 2000-01-01T00:00:00+03:00
 
@@ -29,6 +28,7 @@ query.throttle:
   default-limit: 120
 
 bot:
+  enabled: false
   delay: 60000
   tickers: SBER
 

@@ -8,14 +8,14 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import ru.obukhov.trader.config.BotProperties;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
 
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
 @EnableAspectJAutoProxy
-@EnableConfigurationProperties({TradingProperties.class, BotProperties.class})
+@EnableConfigurationProperties({TradingProperties.class, BotConfig.class})
 public class InvestorApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

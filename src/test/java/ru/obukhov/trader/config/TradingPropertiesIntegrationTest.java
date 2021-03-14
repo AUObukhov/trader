@@ -42,8 +42,6 @@ class TradingPropertiesIntegrationTest {
 
                     assertEquals(Duration.ofMinutes(480), tradingProperties.getWorkDuration());
 
-                    assertTrue(tradingProperties.isBotEnabled());
-
                     assertEquals(Integer.valueOf(5), tradingProperties.getConsecutiveEmptyDaysLimit());
                 });
 

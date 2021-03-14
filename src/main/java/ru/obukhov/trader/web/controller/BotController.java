@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.bot.interfaces.Simulator;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateResponse;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import java.util.Map;
 public class BotController {
 
     private final Simulator simulator;
-    private final TradingProperties tradingProperties;
+    private final BotConfig botConfig;
 
     @PostMapping("/simulate")
     public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
@@ -41,12 +42,18 @@ public class BotController {
     }
 
     @PostMapping("/enable")
-    public void enable() {
-        tradingProperties.setBotEnabled(true);
+    public void enableScheduling() {
+        botConfig.setEnabled(true);
     }
 
     @PostMapping("/disable")
-    public void disable() {
-        tradingProperties.setBotEnabled(false);
+    public void disableScheduling() {
+        botConfig.setEnabled(false);
     }
+
+    @PostMapping("/tickers")
+    public void setTickers(@RequestBody Collection<String> tickers) {
+        botConfig.setTickers(tickers);
+    }
+
 }

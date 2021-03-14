@@ -33,8 +33,6 @@ public class TradingProperties {
     @DurationUnit(ChronoUnit.MINUTES)
     private Duration workDuration;
 
-    private boolean botEnabled;
-
     @NotNull
     private Integer consecutiveEmptyDaysLimit;
 
