@@ -109,10 +109,17 @@ class MathUtilsTest {
     }
 
     @Test
-    void divideByBigDecimal() {
-        BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3));
+    void divideByDouble() {
+        BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), 3.5);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(33.33333), result);
+        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
+    }
+
+    @Test
+    void divideByBigDecimal() {
+        BigDecimal result = MathUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
+
+        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
     }
 
     // region getIntegerQuotient
