@@ -7,8 +7,19 @@ trading:
   start-date: 2000-01-01T00:00:00+03:00
 
 trend-reversal-decider:
-  last-prices-count: 100
-  extremum-price-index: 95
+  configs:
+    - extremum-price-index: 47
+      last-prices-count: 50
+    - extremum-price-index: 95
+      last-prices-count: 100
+    - extremum-price-index: 180
+      last-prices-count: 200
+    - extremum-price-index: 275
+      last-prices-count: 300
+    - extremum-price-index: 475
+      last-prices-count: 500
+    - extremum-price-index: 950
+      last-prices-count: 1000
 
 simulation:
   thread-count: 100

@@ -24,8 +24,8 @@ import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Configuration of beans, which need qualifying of dependencies
@@ -45,25 +45,26 @@ public class BeanConfiguration {
 
     @Bean
     public Set<Decider> trendReversalDecider(TradingProperties tradingProperties,
+                                             TrendReversalDeciderProperties trendReversalDeciderProperties,
                                              ConfigurableListableBeanFactory beanFactory) {
 
-        Set<Decider> deciders = new HashSet<>();
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 47, 50));
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 95, 100));
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 180, 200));
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 275, 300));
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 475, 500));
-        deciders.add(createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, 950, 1000));
-
-        return deciders;
+        return trendReversalDeciderProperties.getConfigs().stream()
+                .map(config -> createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, config))
+                .collect(Collectors.toSet());
     }
 
     private TrendReversalDecider createAndRegisterTrendReversalDecider(ConfigurableListableBeanFactory beanFactory,
                                                                        TradingProperties tradingProperties,
-                                                                       int extremumPriceIndex,
-                                                                       int lastPricesCount) {
-        String name = String.format("trendReversalDecider (%s|%s)", extremumPriceIndex, lastPricesCount);
-        TrendReversalDecider decider = new TrendReversalDecider(tradingProperties, lastPricesCount, extremumPriceIndex);
+                                                                       TrendReversalDeciderProperties.DeciderConfig config) {
+
+        String name = String.format("trendReversalDecider (%s|%s)",
+                config.getExtremumPriceIndex(), config.getLastPricesCount());
+
+        TrendReversalDecider decider = new TrendReversalDecider(
+                tradingProperties,
+                config.getLastPricesCount(),
+                config.getExtremumPriceIndex());
+
         beanFactory.registerSingleton(name, decider);
         return decider;
     }
