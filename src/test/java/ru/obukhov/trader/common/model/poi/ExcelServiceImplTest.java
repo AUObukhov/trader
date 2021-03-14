@@ -63,7 +63,7 @@ class ExcelServiceImplTest extends BaseMockedTest {
         assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 15 + result.getPositions().size() + result.getOperations().size();
+        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         assertEquals(expectedRowCount, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
@@ -71,8 +71,10 @@ class ExcelServiceImplTest extends BaseMockedTest {
         assertRowValues(rowIterator.next(), "Тикер", ticker);
         assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
         assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
-        assertRowValues(rowIterator.next(), "Общий баланс", result.getTotalBalance());
-        assertRowValues(rowIterator.next(), "Валютный баланс", result.getCurrencyBalance());
+        assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
+        assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
+        assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
+        assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getWeightedAverageInvestment());
         assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
         assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
         assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
@@ -103,23 +105,23 @@ class ExcelServiceImplTest extends BaseMockedTest {
     }
 
     private SimulationResult createSimulationResult() {
-        SimulationResult.SimulationResultBuilder builder = SimulationResult.builder()
-                .botName("bot");
-
         String ticker = "ticker";
 
-        builder.interval(createInterval());
-        builder.initialBalance(BigDecimal.valueOf(700));
-        builder.totalBalance(BigDecimal.valueOf(1000));
-        builder.currencyBalance(BigDecimal.valueOf(200));
-        builder.absoluteProfit(BigDecimal.valueOf(300));
-        builder.relativeProfit(0.25);
-        builder.relativeYearProfit(6d);
-        builder.positions(createPositions(ticker));
-        builder.operations(createSimulatedOperations(ticker));
-        builder.candles(createCandles());
-
-        return builder.build();
+        return SimulationResult.builder()
+                .botName("bot")
+                .interval(createInterval())
+                .initialBalance(BigDecimal.valueOf(700))
+                .finalTotalBalance(BigDecimal.valueOf(1000))
+                .finalBalance(BigDecimal.valueOf(200))
+                .totalInvestment(BigDecimal.valueOf(800))
+                .weightedAverageInvestment(BigDecimal.valueOf(750))
+                .absoluteProfit(BigDecimal.valueOf(300))
+                .relativeProfit(0.25)
+                .relativeYearProfit(6d)
+                .positions(createPositions(ticker))
+                .operations(createSimulatedOperations(ticker))
+                .candles(createCandles())
+                .build();
     }
 
     private Interval createInterval() {

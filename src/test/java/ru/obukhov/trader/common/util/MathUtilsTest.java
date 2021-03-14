@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -90,6 +93,42 @@ class MathUtilsTest {
 
         AssertUtils.assertEquals(BigDecimal.valueOf(433.33333), average);
 
+    }
+
+    // endregion
+
+    // region getWeightedAverage tests
+
+    @Test
+    void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
+        SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
+        OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 11, 12, 13);
+
+        BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+
+        AssertUtils.assertEquals(BigDecimal.ZERO, weightedAverage);
+    }
+
+    @Test
+    void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
+        SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
+        dateTimesToAmounts.put(
+                DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
+                BigDecimal.valueOf(100000)
+        );
+        dateTimesToAmounts.put(
+                DateUtils.getDateTime(2021, 2, 1, 10, 0, 0),
+                BigDecimal.valueOf(110000)
+        );
+        dateTimesToAmounts.put(
+                DateUtils.getDateTime(2021, 3, 1, 10, 0, 0),
+                BigDecimal.valueOf(120000)
+        );
+        OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 10, 0, 0);
+
+        BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+
+        AssertUtils.assertEquals(BigDecimal.valueOf(106764.70588), weightedAverage);
     }
 
     // endregion

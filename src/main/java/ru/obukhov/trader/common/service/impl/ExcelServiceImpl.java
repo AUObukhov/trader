@@ -100,8 +100,11 @@ public class ExcelServiceImpl implements ExcelService {
         putTicker(sheet, ticker);
         putInterval(sheet, result.getInterval());
         putInitialBalance(sheet, result.getInitialBalance());
-        putTotalBalance(sheet, result.getTotalBalance());
-        putCurrencyBalance(sheet, result.getCurrencyBalance());
+        putTotalInvestment(sheet, result.getTotalInvestment());
+        putFinalTotalBalance(sheet, result.getFinalTotalBalance());
+        putFinalBalance(sheet, result.getFinalBalance());
+
+        putWeightedAverageInvestment(sheet, result.getWeightedAverageInvestment());
         putAbsoluteProfit(sheet, result.getAbsoluteProfit());
         putRelativeProfit(sheet, result.getRelativeProfit());
         putRelativeYearProfit(sheet, result.getRelativeYearProfit());
@@ -122,14 +125,24 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Начальный баланс", initialBalance);
     }
 
-    private void putTotalBalance(ExtendedSheet sheet, BigDecimal totalBalance) {
+    private void putTotalInvestment(ExtendedSheet sheet, BigDecimal totalInvestment) {
         ExtendedRow row = sheet.addRow();
-        row.createCells("Общий баланс", totalBalance);
+        row.createCells("Вложения", totalInvestment);
     }
 
-    private void putCurrencyBalance(ExtendedSheet sheet, BigDecimal currencyBalance) {
+    private void putFinalTotalBalance(ExtendedSheet sheet, BigDecimal totalBalance) {
         ExtendedRow row = sheet.addRow();
-        row.createCells("Валютный баланс", currencyBalance);
+        row.createCells("Итоговый общий баланс", totalBalance);
+    }
+
+    private void putWeightedAverageInvestment(ExtendedSheet sheet, BigDecimal weightedAverageInvestment) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Средневзвешенные вложения", weightedAverageInvestment);
+    }
+
+    private void putFinalBalance(ExtendedSheet sheet, BigDecimal currencyBalance) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells("Итоговый валютный баланс", currencyBalance);
     }
 
     private void putAbsoluteProfit(ExtendedSheet sheet, BigDecimal absoluteProfit) {

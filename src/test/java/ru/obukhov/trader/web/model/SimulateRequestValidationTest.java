@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
@@ -12,6 +13,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Set;
@@ -26,7 +28,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationSucceeds_whenEverythingIsValid() {
+    void validationSucceeds_whenEverythingIsValid() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
@@ -34,7 +36,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenSimulationsUnitsAreNull() {
+    void validationFails_whenSimulationsUnitsAreNull() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.setSimulationUnits(null);
 
@@ -43,7 +45,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenSimulationsUnitsAreEmpty() {
+    void validationFails_whenSimulationsUnitsAreEmpty() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.setSimulationUnits(Collections.emptyList());
 
@@ -52,7 +54,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenTickerIsNull() {
+    void validationFails_whenTickerIsNull() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.getSimulationUnits().get(0).setTicker(null);
 
@@ -61,7 +63,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenTickerIsEmpty() {
+    void validationFails_whenTickerIsEmpty() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.getSimulationUnits().get(0).setTicker(StringUtils.EMPTY);
 
@@ -70,7 +72,7 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenTickerIsBlank() {
+    void validationFails_whenTickerIsBlank() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.getSimulationUnits().get(0).setTicker("     ");
 
@@ -79,16 +81,36 @@ class SimulateRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenBalanceIsNull() {
+    void validationFails_whenInitialBalanceIsNull() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
-        request.getSimulationUnits().get(0).setBalance(null);
+        request.getSimulationUnits().get(0).setInitialBalance(null);
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "balance in simulation unit is mandatory");
+        AssertUtils.assertViolation(violations, "initial balance in simulation unit is mandatory");
     }
 
     @Test
-    void validationFails_whenFromIsNull() {
+    void validationFails_whenBalanceIncrementIsNullAndBalanceIncrementCronIsNotNull() throws ParseException {
+        SimulateRequest request = createValidSimulationRequest();
+        request.getSimulationUnits().get(0).setBalanceIncrement(null);
+
+        Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
+        AssertUtils.assertViolation(violations,
+                "balanceIncrement and balanceIncrementCron must be both null or not null");
+    }
+
+    @Test
+    void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() throws ParseException {
+        SimulateRequest request = createValidSimulationRequest();
+        request.getSimulationUnits().get(0).setBalanceIncrementCron(null);
+
+        Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
+        AssertUtils.assertViolation(violations,
+                "balanceIncrement and balanceIncrementCron must be both null or not null");
+    }
+
+    @Test
+    void validationFails_whenFromIsNull() throws ParseException {
         SimulateRequest request = createValidSimulationRequest();
         request.setFrom(null);
 
@@ -96,12 +118,14 @@ class SimulateRequestValidationTest {
         AssertUtils.assertViolation(violations, "from is mandatory");
     }
 
-    private SimulateRequest createValidSimulationRequest() {
+    private SimulateRequest createValidSimulationRequest() throws ParseException {
         SimulateRequest request = new SimulateRequest();
 
         SimulationUnit simulationUnit = new SimulationUnit();
         simulationUnit.setTicker("ticker");
-        simulationUnit.setBalance(BigDecimal.TEN);
+        simulationUnit.setInitialBalance(BigDecimal.TEN);
+        simulationUnit.setBalanceIncrement(BigDecimal.ONE);
+        simulationUnit.setBalanceIncrementCron(new CronExpression("0 0 0 1 * ?"));
         request.setSimulationUnits(Collections.singletonList(simulationUnit));
 
         request.setFrom(OffsetDateTime.now());

@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -77,14 +78,18 @@ public class FakeTinkoffService implements TinkoffService {
 
     /**
      * changes currentDateTime to nearest work time after it
+     *
+     * @return new value of currentDateTime
      */
-    public void nextMinute() {
+    public OffsetDateTime nextMinute() {
 
         final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(
                 portfolio.getCurrentDateTime(),
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
         portfolio.setCurrentDateTime(nextWorkMinute);
+
+        return nextWorkMinute;
 
     }
 
@@ -236,10 +241,10 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
-        BigDecimal newBalance = portfolio.getBalance().add(totalPrice).subtract(commissionAmount);
+        BigDecimal newBalance = portfolio.getCurrentBalance().add(totalPrice).subtract(commissionAmount);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        portfolio.setBalance(newBalance);
+        portfolio.setCurrentBalance(newBalance);
     }
 
     private void sellPosition(String ticker, int lotsCount) {
@@ -315,19 +320,30 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies() {
         PortfolioCurrencies.PortfolioCurrency currency
-                = new PortfolioCurrencies.PortfolioCurrency(Currency.RUB, portfolio.getBalance(), null);
+                = new PortfolioCurrencies.PortfolioCurrency(Currency.RUB, portfolio.getCurrentBalance(), null);
         return Collections.singletonList(currency);
     }
 
     // endregion
+
+    // region methods for simulation
 
     @Override
     public OffsetDateTime getCurrentDateTime() {
         return portfolio.getCurrentDateTime();
     }
 
-    public BigDecimal getBalance() {
-        return portfolio.getBalance();
+    public BigDecimal getCurrentBalance() {
+        return portfolio.getCurrentBalance();
     }
 
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments() {
+        return portfolio.getInvestments();
+    }
+
+    public void incrementBalance(BigDecimal increment) {
+        portfolio.addInvestment(increment);
+    }
+
+    // endregion
 }

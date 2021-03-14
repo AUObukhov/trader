@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,14 +101,12 @@ public class SimulatorImpl implements Simulator {
     private CompletableFuture<List<SimulationResult>> startSimulations(SimulationUnit simulationUnit,
                                                                        Interval interval,
                                                                        boolean saveToFile) {
-        return CompletableFuture.supplyAsync(
-                () -> simulate(simulationUnit.getTicker(), simulationUnit.getBalance(), interval, saveToFile),
-                executor);
+        return CompletableFuture.supplyAsync(() -> simulate(simulationUnit, interval, saveToFile), executor);
     }
 
-    private List<SimulationResult> simulate(String ticker, BigDecimal balance, Interval interval, boolean saveToFile) {
+    private List<SimulationResult> simulate(SimulationUnit simulationUnit, Interval interval, boolean saveToFile) {
 
-        log.info("Simulation for ticker = '{}' started", ticker);
+        log.info("Simulation for ticker = '{}' started", simulationUnit.getTicker());
 
         OffsetDateTime startTime = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), startTime, "from");
@@ -115,19 +115,19 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull();
 
         List<CompletableFuture<SimulationResult>> simulationFutures = createFakeBots().stream()
-                .map(bot -> startSimulation(bot, ticker, balance, finiteInterval))
+                .map(bot -> startSimulation(bot, simulationUnit, finiteInterval))
                 .collect(Collectors.toList());
         List<SimulationResult> simulationResults = simulationFutures.stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(SimulationResult::getTotalBalance).reversed())
+                .sorted(Comparator.comparing(SimulationResult::getFinalTotalBalance).reversed())
                 .collect(Collectors.toList());
 
         Duration simulationDuration = Duration.between(startTime, OffsetDateTime.now());
         String simulationDurationString = DurationFormatUtils.formatDurationHMS(simulationDuration.toMillis());
-        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
+        log.info("Simulation for ticker = '{}' ended within {}", simulationUnit.getTicker(), simulationDurationString);
 
         if (saveToFile) {
-            saveSimulationResultsSafe(ticker, simulationResults);
+            saveSimulationResultsSafe(simulationUnit.getTicker(), simulationResults);
         }
 
         return simulationResults;
@@ -144,41 +144,58 @@ public class SimulatorImpl implements Simulator {
     }
 
     private CompletableFuture<SimulationResult> startSimulation(FakeBot bot,
-                                                                String ticker,
-                                                                BigDecimal balance,
+                                                                SimulationUnit simulationUnit,
                                                                 Interval interval) {
-        return CompletableFuture.supplyAsync(() -> simulateSafe(bot, ticker, balance, interval), executor);
+        return CompletableFuture.supplyAsync(() -> simulateSafe(bot, simulationUnit, interval), executor);
     }
 
-    private SimulationResult simulateSafe(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
+    private SimulationResult simulateSafe(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
         try {
-            log.info("Simulation for bot '{}' with ticker = '{}' started", bot.getName(), ticker);
-            SimulationResult result = simulate(bot, ticker, balance, interval);
-            log.info("Simulation for bot '{}' with ticker = '{}' ended", bot.getName(), ticker);
+            log.info("Simulation for bot '{}' with ticker = '{}' started", bot.getName(), simulationUnit.getTicker());
+            SimulationResult result = simulate(bot, simulationUnit, interval);
+            log.info("Simulation for bot '{}' with ticker = '{}' ended", bot.getName(), simulationUnit.getTicker());
             return result;
         } catch (Exception ex) {
-            String message = String.format("Simulation for bot '%s' with ticker '%s' failed", bot.getName(), ticker);
+            String message = String.format("Simulation for bot '%s' with ticker '%s' failed",
+                    bot.getName(), simulationUnit.getTicker());
             log.error(message, ex);
             return SimulationResult.builder().error(message).build();
         }
     }
 
-    private SimulationResult simulate(FakeBot bot, String ticker, BigDecimal balance, Interval interval) {
+    private SimulationResult simulate(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
 
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
-        fakeTinkoffService.init(interval.getFrom(), balance);
+        fakeTinkoffService.init(interval.getFrom(), simulationUnit.getInitialBalance());
         List<Candle> candles = new ArrayList<>();
 
         do {
 
-            DecisionData decisionData = bot.processTicker(ticker);
+            DecisionData decisionData = bot.processTicker(simulationUnit.getTicker());
             addLastCandle(candles, decisionData);
 
-            fakeTinkoffService.nextMinute();
+            moveToNextMinute(simulationUnit, fakeTinkoffService);
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(bot, balance, interval, ticker, candles);
+        return createResult(bot, fakeTinkoffService.getInvestments(), interval, simulationUnit.getTicker(), candles);
+    }
+
+    private void moveToNextMinute(SimulationUnit simulationUnit, FakeTinkoffService fakeTinkoffService) {
+        if (simulationUnit.isBalanceIncremented()) {
+            OffsetDateTime previousDate = fakeTinkoffService.getCurrentDateTime();
+            OffsetDateTime nextDate = fakeTinkoffService.nextMinute();
+
+            int incrementsCount =
+                    DateUtils.getCronHitsBetweenDates(simulationUnit.getBalanceIncrementCron(), previousDate, nextDate);
+            if (incrementsCount > 0) {
+                BigDecimal balanceIncrement = MathUtils.multiply(simulationUnit.getBalanceIncrement(), incrementsCount);
+                log.debug("Incrementing balance {} by {}", fakeTinkoffService.getCurrentBalance(), balanceIncrement);
+                fakeTinkoffService.incrementBalance(balanceIncrement);
+            }
+        } else {
+            fakeTinkoffService.nextMinute();
+        }
     }
 
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
@@ -190,7 +207,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult createResult(FakeBot bot,
-                                          BigDecimal initialBalance,
+                                          SortedMap<OffsetDateTime, BigDecimal> investments,
                                           Interval interval,
                                           String ticker,
                                           List<Candle> candles) {
@@ -199,18 +216,24 @@ public class SimulatorImpl implements Simulator {
 
         BigDecimal currentPrice = Iterables.getLast(candles).getClosePrice();
         List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), currentPrice);
-        BigDecimal totalBalance = getTotalBalance(fakeTinkoffService.getBalance(), positions);
-        BigDecimal absoluteProfit = totalBalance.subtract(initialBalance);
-        double relativeProfit = MathUtils.divide(absoluteProfit, initialBalance).doubleValue();
+        BigDecimal initialBalance = investments.get(investments.firstKey());
+        BigDecimal totalBalance = getTotalBalance(fakeTinkoffService.getCurrentBalance(), positions);
+        BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
+        BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
+        double relativeProfit = MathUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
         double relativeYearProfit = relativeProfit / (interval.toDuration().toDays() / DateUtils.DAYS_IN_YEAR);
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
+
 
         return SimulationResult.builder()
                 .botName(bot.getName())
                 .interval(interval)
                 .initialBalance(initialBalance)
-                .totalBalance(totalBalance)
-                .currencyBalance(fakeTinkoffService.getBalance())
+                .finalTotalBalance(totalBalance)
+                .finalBalance(fakeTinkoffService.getCurrentBalance())
+                .totalInvestment(totalInvestment)
+                .weightedAverageInvestment(weightedAverageInvestment)
                 .absoluteProfit(absoluteProfit)
                 .relativeProfit(relativeProfit)
                 .relativeYearProfit(relativeYearProfit)
@@ -235,6 +258,22 @@ public class SimulatorImpl implements Simulator {
         return positions.stream()
                 .map(position -> MathUtils.multiply(position.getPrice(), position.getQuantity()))
                 .reduce(balance, BigDecimal::add);
+    }
+
+    private BigDecimal getWeightedAverage(SortedMap<OffsetDateTime, BigDecimal> investments,
+                                          OffsetDateTime endDateTime) {
+        SortedMap<OffsetDateTime, BigDecimal> totalInvestments = getTotalInvestments(investments);
+        return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
+    }
+
+    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(SortedMap<OffsetDateTime, BigDecimal> investments) {
+        SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
+        BigDecimal currentBalance = BigDecimal.ZERO;
+        for (Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
+            currentBalance = currentBalance.add(entry.getValue());
+            balances.put(entry.getKey(), currentBalance);
+        }
+        return balances;
     }
 
     private List<SimulatedOperation> getOperations(List<Operation> operations, String ticker) {
