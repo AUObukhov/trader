@@ -17,7 +17,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -110,9 +109,9 @@ class ExtendedSheetTest {
 
         extendedSheet.autoSizeColumns();
 
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(eq(0));
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(eq(1));
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(eq(2));
+        Mockito.verify(sheetMock, times(1)).autoSizeColumn(0);
+        Mockito.verify(sheetMock, times(1)).autoSizeColumn(1);
+        Mockito.verify(sheetMock, times(1)).autoSizeColumn(2);
     }
 
     // region getColumnsCount tests
