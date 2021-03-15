@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/investor/orders")
+@RequestMapping("/trader/orders")
 public class OrdersController {
 
     private final OrdersService ordersService;

@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/investor/bot")
+@RequestMapping("/trader/bot")
 @RequiredArgsConstructor
 public class BotController {
 

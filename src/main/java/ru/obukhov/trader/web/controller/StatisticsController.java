@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/investor/statistics")
+@RequestMapping("/trader/statistics")
 @RequiredArgsConstructor
 public class StatisticsController {
 

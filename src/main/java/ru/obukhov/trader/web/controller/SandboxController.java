@@ -14,7 +14,7 @@ import ru.obukhov.trader.web.model.exchange.SetPositionBalanceRequest;
 
 @Slf4j
 @RestController
-@RequestMapping("/investor/sandbox")
+@RequestMapping("/trader/sandbox")
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
 public class SandboxController {
