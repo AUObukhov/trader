@@ -292,7 +292,7 @@ class DateUtilsTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    public void getLatestDateTime_returnsNull_whenBothAreNull() {
+    void getLatestDateTime_returnsNull_whenBothAreNull() {
         OffsetDateTime dateTime1 = null;
         OffsetDateTime dateTime2 = null;
 
@@ -382,7 +382,7 @@ class DateUtilsTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    public void getEarliestDateTime_returnsNull_whenBothAreNull() {
+    void getEarliestDateTime_returnsNull_whenBothAreNull() {
         OffsetDateTime dateTime1 = null;
         OffsetDateTime dateTime2 = null;
 
@@ -537,7 +537,7 @@ class DateUtilsTest {
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    public void isAfter_returnsTrue_whenDateTime2IsNull() {
+    void isAfter_returnsTrue_whenDateTime2IsNull() {
         OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 5);
 
         boolean result = DateUtils.isAfter(dateTime1, null);
