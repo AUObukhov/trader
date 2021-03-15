@@ -8,11 +8,11 @@
         <version>2.3.2.RELEASE</version>
         <relativePath/>
     </parent>
-    <groupId>ru.obukhov.investor</groupId>
-    <artifactId>investor</artifactId>
+    <groupId>ru.obukhov.trader</groupId>
+    <artifactId>trader</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>investor</name>
+    <name>trader</name>
     <description>Project for using Tinkoff Invests API</description>
 
     <properties>
