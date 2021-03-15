@@ -1,7 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +17,7 @@ public class OrdersController {
 
     private final OrdersService ordersService;
 
-    public OrdersController(@Qualifier("realOrdersService") OrdersService ordersService) {
+    public OrdersController(OrdersService ordersService) {
         this.ordersService = ordersService;
     }
 
