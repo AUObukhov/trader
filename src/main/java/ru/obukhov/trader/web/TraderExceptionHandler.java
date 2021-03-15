@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
-public class InvestorExceptionHandler {
+public class TraderExceptionHandler {
 
     @ExceptionHandler(TickerNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleInvestorException(TickerNotFoundException ex) {
