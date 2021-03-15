@@ -9,7 +9,6 @@ import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.exception.TickerNotFoundException;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
@@ -50,8 +49,6 @@ public abstract class AbstractBot implements Bot {
             } else {
                 log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
             }
-        } catch (TickerNotFoundException ex) {
-            throw ex;
         } catch (Exception ex) {
             String msg = String.format("Exception while process ticker '%s'. Do nothing", ticker);
             log.error(msg, ex);

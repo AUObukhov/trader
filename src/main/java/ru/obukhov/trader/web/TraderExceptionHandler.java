@@ -8,7 +8,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.obukhov.trader.market.exception.TickerNotFoundException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,14 +20,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @ControllerAdvice
 public class TraderExceptionHandler {
-
-    @ExceptionHandler(TickerNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleInvestorException(TickerNotFoundException ex) {
-        log.error("Investor exception", ex);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(createResponseMap(ex.getMessage(), null));
-    }
 
     @ExceptionHandler(CompletionException.class)
     public ResponseEntity<Map<String, Object>> handleCompletionException(Exception ex) {
