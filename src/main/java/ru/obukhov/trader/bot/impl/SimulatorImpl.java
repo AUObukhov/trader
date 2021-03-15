@@ -7,7 +7,6 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.interfaces.Simulator;
@@ -32,7 +31,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,14 +131,9 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
+    @SuppressWarnings("unchecked")
     private Set<FakeBot> createFakeBots() {
-        Set<FakeBot> fakeBots = new HashSet<>();
-        fakeBots.add((FakeBot) fakeBotFactory.createConservativeBot());
-        fakeBots.add((FakeBot) fakeBotFactory.createDumbBot());
-        for (Bot bot : fakeBotFactory.createTrendReversalBots()) {
-            fakeBots.add((FakeBot) bot);
-        }
-        return fakeBots;
+        return (Set<FakeBot>) (Set<?>) fakeBotFactory.createBots();
     }
 
     private CompletableFuture<SimulationResult> startSimulation(FakeBot bot,

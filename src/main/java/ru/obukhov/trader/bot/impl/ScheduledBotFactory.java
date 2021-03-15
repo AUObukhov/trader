@@ -1,6 +1,5 @@
 package ru.obukhov.trader.bot.impl;
 
-import org.springframework.stereotype.Service;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.Decider;
 import ru.obukhov.trader.config.BotConfig;
@@ -11,10 +10,11 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
 public class ScheduledBotFactory extends AbstractBotFactory {
 
     private final OperationsService realOperationsService;
@@ -25,20 +25,13 @@ public class ScheduledBotFactory extends AbstractBotFactory {
     public ScheduledBotFactory(TradingProperties tradingProperties,
                                MarketService realMarketService,
                                RealTinkoffService realTinkoffService,
-                               Decider conservativeDecider,
-                               Decider dumbDecider,
-                               Set<TrendReversalDecider> trendReversalDeciders,
+                               Collection<Decider> deciders,
                                OperationsService realOperationsService,
                                OrdersService realOrdersService,
                                PortfolioService realPortfolioService,
                                BotConfig botConfig) {
 
-        super(tradingProperties,
-                realMarketService,
-                realTinkoffService,
-                conservativeDecider,
-                dumbDecider,
-                trendReversalDeciders);
+        super(tradingProperties, realMarketService, realTinkoffService, new HashSet<>(deciders));
 
         this.realOperationsService = realOperationsService;
         this.realOrdersService = realOrdersService;
@@ -47,18 +40,8 @@ public class ScheduledBotFactory extends AbstractBotFactory {
     }
 
     @Override
-    public Bot createConservativeBot() {
-        return createScheduledBot(conservativeDecider);
-    }
-
-    @Override
-    public Bot createDumbBot() {
-        return createScheduledBot(dumbDecider);
-    }
-
-    @Override
-    public Set<Bot> createTrendReversalBots() {
-        return trendReversalDeciders.stream()
+    public Set<Bot> createBots() {
+        return deciders.stream()
                 .map(this::createScheduledBot)
                 .collect(Collectors.toSet());
     }

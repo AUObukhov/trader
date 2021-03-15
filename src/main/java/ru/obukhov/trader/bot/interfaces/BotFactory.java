@@ -4,10 +4,6 @@ import java.util.Set;
 
 public interface BotFactory {
 
-    Bot createConservativeBot();
-
-    Bot createDumbBot();
-
-    Set<Bot> createTrendReversalBots();
+    Set<Bot> createBots();
 
 }

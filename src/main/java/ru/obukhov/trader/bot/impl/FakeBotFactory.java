@@ -4,7 +4,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.Decider;
-import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
@@ -27,44 +26,24 @@ public class FakeBotFactory extends AbstractBotFactory {
     public FakeBotFactory(TradingProperties tradingProperties,
                           MarketService realMarketService,
                           RealTinkoffService realTinkoffService,
-                          Decider conservativeDecider,
-                          Decider dumbDecider,
-                          Set<TrendReversalDecider> trendReversalDeciders) {
+                          Set<Decider> deciders) {
 
         super(tradingProperties,
                 realMarketService,
                 realTinkoffService,
-                conservativeDecider,
-                dumbDecider,
-                trendReversalDeciders);
+                deciders);
 
     }
 
     @Override
-    public Bot createConservativeBot() {
-        return createFakeBot("Conservative bot", conservativeDecider);
-    }
-
-    @Override
-    public Bot createDumbBot() {
-        return createFakeBot("Dumb bot", dumbDecider);
-    }
-
-    @Override
-    public Set<Bot> createTrendReversalBots() {
-        return trendReversalDeciders.stream()
-                .map(this::createTrendReversalBot)
+    public Set<Bot> createBots() {
+        return deciders.stream()
+                .map(this::createBot)
                 .collect(Collectors.toSet());
     }
 
-    private Bot createTrendReversalBot(TrendReversalDecider trendReversalDecider) {
-        String name = String.format("Trend reversal bot (%s|%s)",
-                trendReversalDecider.getExtremumPriceIndex(), trendReversalDecider.getLastPricesCount());
-
-        return createFakeBot(name, trendReversalDecider);
-    }
-
-    private FakeBot createFakeBot(String name, Decider decider) {
+    private Bot createBot(Decider decider) {
+        String name = getBotName(decider);
         FakeTinkoffService fakeTinkoffService =
                 new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
         MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
@@ -80,4 +59,19 @@ public class FakeBotFactory extends AbstractBotFactory {
                 fakePortfolioService,
                 fakeTinkoffService);
     }
+
+    private String getBotName(Decider decider) {
+        if (decider instanceof ConservativeDecider) {
+            return "Conservative bot";
+        } else if (decider instanceof DumbDecider) {
+            return "Dumb bot";
+        } else if (decider instanceof TrendReversalDecider) {
+            TrendReversalDecider trendReversalDecider = (TrendReversalDecider) decider;
+            return String.format("Trend reversal bot (%s|%s)",
+                    trendReversalDecider.getExtremumPriceIndex(), trendReversalDecider.getLastPricesCount());
+        } else {
+            throw new IllegalArgumentException("Unknown decider class: " + decider.getClass());
+        }
+    }
+
 }

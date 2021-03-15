@@ -18,10 +18,6 @@ public abstract class AbstractBotFactory implements BotFactory {
 
     protected RealTinkoffService realTinkoffService;
 
-    protected Decider conservativeDecider;
-
-    protected Decider dumbDecider;
-
-    protected Set<TrendReversalDecider> trendReversalDeciders;
+    protected Set<Decider> deciders;
 
 }
