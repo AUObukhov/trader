@@ -2,7 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.TradingProperties;
@@ -11,11 +11,11 @@ import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
 import java.math.BigDecimal;
 
 /**
- * Abstract decider with some common methods
+ * Abstract strategy with some common methods
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractDecider implements Decider {
+public abstract class AbstractStrategy implements Strategy {
 
     protected static final double MINIMUM_PROFIT = 0.01;
 

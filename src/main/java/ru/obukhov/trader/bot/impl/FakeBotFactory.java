@@ -3,7 +3,7 @@ package ru.obukhov.trader.bot.impl;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
@@ -20,30 +20,30 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@DependsOn("trendReversalDecider")
+@DependsOn("trendReversalStrategy")
 public class FakeBotFactory extends AbstractBotFactory {
 
     public FakeBotFactory(TradingProperties tradingProperties,
                           MarketService realMarketService,
                           RealTinkoffService realTinkoffService,
-                          Set<Decider> deciders) {
+                          Set<Strategy> strategies) {
 
         super(tradingProperties,
                 realMarketService,
                 realTinkoffService,
-                deciders);
+                strategies);
 
     }
 
     @Override
     public Set<Bot> createBots() {
-        return deciders.stream()
+        return strategies.stream()
                 .map(this::createBot)
                 .collect(Collectors.toSet());
     }
 
-    private Bot createBot(Decider decider) {
-        String name = getBotName(decider);
+    private Bot createBot(Strategy strategy) {
+        String name = getBotName(strategy);
         FakeTinkoffService fakeTinkoffService =
                 new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
         MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
@@ -52,7 +52,7 @@ public class FakeBotFactory extends AbstractBotFactory {
         PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         return new FakeBotImpl(name,
-                decider,
+                strategy,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
@@ -60,17 +60,17 @@ public class FakeBotFactory extends AbstractBotFactory {
                 fakeTinkoffService);
     }
 
-    private String getBotName(Decider decider) {
-        if (decider instanceof ConservativeDecider) {
+    private String getBotName(Strategy strategy) {
+        if (strategy instanceof ConservativeStrategy) {
             return "Conservative bot";
-        } else if (decider instanceof DumbDecider) {
+        } else if (strategy instanceof DumbStrategy) {
             return "Dumb bot";
-        } else if (decider instanceof TrendReversalDecider) {
-            TrendReversalDecider trendReversalDecider = (TrendReversalDecider) decider;
+        } else if (strategy instanceof TrendReversalStrategy) {
+            TrendReversalStrategy trendReversalStrategy = (TrendReversalStrategy) strategy;
             return String.format("Trend reversal bot (%s|%s)",
-                    trendReversalDecider.getExtremumPriceIndex(), trendReversalDecider.getLastPricesCount());
+                    trendReversalStrategy.getExtremumPriceIndex(), trendReversalStrategy.getLastPricesCount());
         } else {
-            throw new IllegalArgumentException("Unknown decider class: " + decider.getClass());
+            throw new IllegalArgumentException("Unknownstrategy class: " + strategy.getClass());
         }
     }
 

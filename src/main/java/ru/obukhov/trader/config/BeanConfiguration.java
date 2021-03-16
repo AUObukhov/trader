@@ -4,10 +4,10 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.trader.bot.impl.ConservativeDecider;
-import ru.obukhov.trader.bot.impl.DumbDecider;
-import ru.obukhov.trader.bot.impl.TrendReversalDecider;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.impl.ConservativeStrategy;
+import ru.obukhov.trader.bot.impl.DumbStrategy;
+import ru.obukhov.trader.bot.impl.TrendReversalStrategy;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -34,39 +34,39 @@ import java.util.stream.Collectors;
 public class BeanConfiguration {
 
     @Bean
-    public Decider conservativeDecider(TradingProperties tradingProperties) {
-        return new ConservativeDecider(tradingProperties);
+    public Strategy conservativeStrategy(TradingProperties tradingProperties) {
+        return new ConservativeStrategy(tradingProperties);
     }
 
     @Bean
-    public Decider dumbDecider(TradingProperties tradingProperties) {
-        return new DumbDecider(tradingProperties);
+    public Strategy dumbStrategy(TradingProperties tradingProperties) {
+        return new DumbStrategy(tradingProperties);
     }
 
     @Bean
-    public Set<Decider> trendReversalDecider(TradingProperties tradingProperties,
-                                             TrendReversalDeciderProperties trendReversalDeciderProperties,
-                                             ConfigurableListableBeanFactory beanFactory) {
+    public Set<Strategy> trendReversalStrategy(TradingProperties tradingProperties,
+                                               TrendReversalStrategyProperties trendReversalStrategyProperties,
+                                               ConfigurableListableBeanFactory beanFactory) {
 
-        return trendReversalDeciderProperties.getConfigs().stream()
-                .map(config -> createAndRegisterTrendReversalDecider(beanFactory, tradingProperties, config))
+        return trendReversalStrategyProperties.getConfigs().stream()
+                .map(config -> createAndRegisterTrendReversalStrategy(beanFactory, tradingProperties, config))
                 .collect(Collectors.toSet());
     }
 
-    private TrendReversalDecider createAndRegisterTrendReversalDecider(ConfigurableListableBeanFactory beanFactory,
-                                                                       TradingProperties tradingProperties,
-                                                                       TrendReversalDeciderProperties.DeciderConfig config) {
+    private TrendReversalStrategy createAndRegisterTrendReversalStrategy(ConfigurableListableBeanFactory beanFactory,
+                                                                         TradingProperties tradingProperties,
+                                                                         TrendReversalStrategyProperties.StrategyConfig config) {
 
-        String name = String.format("trendReversalDecider (%s|%s)",
+        String name = String.format("trendReversalStrategy (%s|%s)",
                 config.getExtremumPriceIndex(), config.getLastPricesCount());
 
-        TrendReversalDecider decider = new TrendReversalDecider(
+        TrendReversalStrategy strategy = new TrendReversalStrategy(
                 tradingProperties,
                 config.getLastPricesCount(),
                 config.getExtremumPriceIndex());
 
-        beanFactory.registerSingleton(name, decider);
-        return decider;
+        beanFactory.registerSingleton(name, strategy);
+        return strategy;
     }
 
     @Bean

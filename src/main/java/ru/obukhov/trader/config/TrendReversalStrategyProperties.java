@@ -10,18 +10,18 @@ import java.util.Set;
 
 @Data
 @ConstructorBinding
-@ConfigurationProperties(prefix = "trend-reversal-decider")
-public class TrendReversalDeciderProperties {
+@ConfigurationProperties(prefix = "trend-reversal-strategy")
+public class TrendReversalStrategyProperties {
 
     @Getter
-    private final Set<DeciderConfig> configs;
+    private final Set<StrategyConfig> configs;
 
-    public TrendReversalDeciderProperties(Set<DeciderConfig> configs) {
+    public TrendReversalStrategyProperties(Set<StrategyConfig> configs) {
         this.configs = ImmutableSet.copyOf(configs);
     }
 
     @Data
-    public static class DeciderConfig {
+    public static class StrategyConfig {
         private final Integer lastPricesCount;
         private final Integer extremumPriceIndex;
     }

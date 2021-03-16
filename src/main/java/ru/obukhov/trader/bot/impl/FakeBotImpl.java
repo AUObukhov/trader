@@ -2,8 +2,8 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.trader.bot.interfaces.Decider;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -19,14 +19,14 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     private final FakeTinkoffService fakeTinkoffService;
 
     public FakeBotImpl(String name,
-                       Decider decider,
+                       Strategy strategy,
                        MarketService marketService,
                        OperationsService operationsService,
                        OrdersService ordersService,
                        PortfolioService portfolioService,
                        FakeTinkoffService fakeTinkoffService) {
 
-        super(decider, marketService, operationsService, ordersService, portfolioService);
+        super(strategy, marketService, operationsService, ordersService, portfolioService);
 
         this.name = name;
         this.fakeTinkoffService = fakeTinkoffService;

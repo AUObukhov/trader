@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.util.Assert;
-import ru.obukhov.trader.bot.impl.DumbDecider;
+import ru.obukhov.trader.bot.impl.DumbStrategy;
 import ru.obukhov.trader.bot.impl.ScheduledBotFactory;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
@@ -32,7 +32,7 @@ public class BotConfiguration {
     public BotFactory scheduledBotFactory(TradingProperties tradingProperties,
                                           MarketService realMarketService,
                                           RealTinkoffService realTinkoffService,
-                                          DumbDecider decider,
+                                          DumbStrategy strategy,
                                           OperationsService realOperationsService,
                                           OrdersService realOrdersService,
                                           PortfolioService realPortfolioService,
@@ -41,7 +41,7 @@ public class BotConfiguration {
         return new ScheduledBotFactory(tradingProperties,
                 realMarketService,
                 realTinkoffService,
-                Sets.newHashSet(decider),
+                Sets.newHashSet(strategy),
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,

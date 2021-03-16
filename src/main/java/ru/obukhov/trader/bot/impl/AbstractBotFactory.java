@@ -2,7 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.AllArgsConstructor;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -18,6 +18,6 @@ public abstract class AbstractBotFactory implements BotFactory {
 
     protected RealTinkoffService realTinkoffService;
 
-    protected Set<Decider> deciders;
+    protected Set<Strategy> strategies;
 
 }

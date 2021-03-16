@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
@@ -27,7 +27,7 @@ public abstract class AbstractBot implements Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
 
-    protected final Decider decider;
+    protected final Strategy strategy;
     protected final MarketService marketService;
     protected final OperationsService operationsService;
     protected final OrdersService ordersService;
@@ -43,7 +43,7 @@ public abstract class AbstractBot implements Bot {
                 if (CollectionUtils.isEmpty(decisionData.getCurrentCandles())) {
                     log.info("There are no candles by ticker '{}'. Do nothing", ticker);
                 } else {
-                    Decision decision = decider.decide(decisionData);
+                    Decision decision = strategy.decide(decisionData);
                     performOperation(ticker, decision);
                 }
             } else {

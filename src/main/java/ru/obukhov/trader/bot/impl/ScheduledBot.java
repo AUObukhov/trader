@@ -2,7 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import ru.obukhov.trader.bot.interfaces.Decider;
+import ru.obukhov.trader.bot.interfaces.Strategy;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
@@ -19,7 +19,7 @@ public class ScheduledBot extends AbstractBot {
     private final BotConfig botConfig;
     private final TradingProperties tradingProperties;
 
-    public ScheduledBot(Decider decider,
+    public ScheduledBot(Strategy strategy,
                         MarketService marketService,
                         OperationsService operationsService,
                         OrdersService ordersService,
@@ -27,7 +27,7 @@ public class ScheduledBot extends AbstractBot {
                         BotConfig botConfig,
                         TradingProperties tradingProperties) {
 
-        super(decider, marketService, operationsService, ordersService, portfolioService);
+        super(strategy, marketService, operationsService, ordersService, portfolioService);
 
         this.botConfig = botConfig;
         this.tradingProperties = tradingProperties;

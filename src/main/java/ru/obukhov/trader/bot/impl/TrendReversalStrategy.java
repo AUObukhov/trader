@@ -15,19 +15,19 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Decider which decides to buy and sell paper in some time after trend reversal.<br/>
+ * Strategy which decides to buy and sell paper in some time after trend reversal.<br/>
  * Delay before decision to buy/sell and size of analysed trend are provided via constructor.
  */
 @Slf4j
 @Getter
-public class TrendReversalDecider extends AbstractDecider {
+public class TrendReversalStrategy extends AbstractStrategy {
 
     private final Integer lastPricesCount;
     private final Integer extremumPriceIndex;
 
-    public TrendReversalDecider(TradingProperties tradingProperties,
-                                Integer lastPricesCount,
-                                Integer extremumPriceIndex) {
+    public TrendReversalStrategy(TradingProperties tradingProperties,
+                                 Integer lastPricesCount,
+                                 Integer extremumPriceIndex) {
         super(tradingProperties);
         this.lastPricesCount = lastPricesCount;
         this.extremumPriceIndex = extremumPriceIndex;

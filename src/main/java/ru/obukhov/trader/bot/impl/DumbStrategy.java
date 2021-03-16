@@ -7,12 +7,12 @@ import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.config.TradingProperties;
 
 /**
- * Decider which decides to buy paper when possible and sell when {@link AbstractDecider#MINIMUM_PROFIT} achieved
+ * Strategy which decides to buy paper when possible and sell when {@link AbstractStrategy#MINIMUM_PROFIT} achieved
  */
 @Slf4j
-public class DumbDecider extends AbstractDecider {
+public class DumbStrategy extends AbstractStrategy {
 
-    public DumbDecider(TradingProperties tradingProperties) {
+    public DumbStrategy(TradingProperties tradingProperties) {
         super(tradingProperties);
     }
 

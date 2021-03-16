@@ -7,12 +7,12 @@ import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.config.TradingProperties;
 
 /**
- * Decider which decides to buy paper always when possible and never to sell
+ * Strategy which decides to buy paper always when possible and never to sell
  */
 @Slf4j
-public class ConservativeDecider extends AbstractDecider {
+public class ConservativeStrategy extends AbstractStrategy {
 
-    public ConservativeDecider(TradingProperties tradingProperties) {
+    public ConservativeStrategy(TradingProperties tradingProperties) {
         super(tradingProperties);
     }
 

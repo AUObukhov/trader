@@ -6,7 +6,7 @@ trading:
   consecutive-empty-days-limit: 7
   start-date: 2000-01-01T00:00:00+03:00
 
-trend-reversal-decider:
+trend-reversal-strategy:
   configs:
     - extremum-price-index: 47
       last-prices-count: 50
