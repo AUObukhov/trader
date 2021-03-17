@@ -1,9 +1,11 @@
 package ru.obukhov.trader.common.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
+import ru.obukhov.trader.config.ReportProperties;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,10 +17,12 @@ import java.time.format.DateTimeFormatter;
  * Service for saving data to excel files
  */
 @Service
+@RequiredArgsConstructor
 public class ExcelFileServiceImpl implements ExcelFileService {
 
-    private static final String USER_HOME_FOLDER = System.getProperty("user.home");
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
+
+    private final ReportProperties reportProperties;
 
     @Override
     @SneakyThrows
@@ -31,9 +35,9 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 
     private FileOutputStream createFileOutputStream(String fileName) throws IOException {
         String extendedFileName = getFileName(fileName);
-        final File file = new File(USER_HOME_FOLDER, extendedFileName);
+        final File file = new File(reportProperties.getSaveDirectory(), extendedFileName);
         if (!file.createNewFile()) {
-            throw new IllegalStateException("Failed to create file " + USER_HOME_FOLDER + "\\" + extendedFileName);
+            throw new IllegalStateException("Failed to create file " + file.getAbsolutePath());
         }
 
         return new FileOutputStream(file);

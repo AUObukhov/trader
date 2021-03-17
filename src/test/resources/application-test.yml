@@ -35,3 +35,6 @@ bot:
 spring.cache:
   cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
+
+report:
+  save-directory: D:\test
