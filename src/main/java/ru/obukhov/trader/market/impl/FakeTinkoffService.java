@@ -30,7 +30,6 @@ import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -314,7 +313,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public Collection<PortfolioPosition> getPortfolioPositions() {
-        return new ArrayList<>(portfolio.getTickersToPositions().values());
+        return portfolio.getPositions();
     }
 
     @Override
