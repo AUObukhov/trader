@@ -16,19 +16,15 @@ import java.util.Set;
 class FakeContextTest {
 
     @Test
-    void constructor_initializesPortfolio() {
+    void constructor_initializesFields() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
-        BigDecimal balance = BigDecimal.valueOf(100);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
 
         Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
-
-        Assertions.assertEquals(balance, fakeContext.getCurrentBalance());
-
-        Assertions.assertEquals(1, fakeContext.getInvestments().size());
-        Assertions.assertEquals(balance, fakeContext.getInvestments().get(currentDateTime));
-
+        for (Currency currency : Currency.values()) {
+            Assertions.assertEquals(0, fakeContext.getInvestments(currency).size());
+        }
         Assertions.assertTrue(fakeContext.getOperations().isEmpty());
         Assertions.assertTrue(fakeContext.getPositions().isEmpty());
     }
@@ -38,15 +34,17 @@ class FakeContextTest {
     @Test
     void addInvestment_throwsIllegalArgumentException_whenAmountIsNegative() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
         BigDecimal investment = BigDecimal.valueOf(-20);
         OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(currency, investment),
                 IllegalArgumentException.class,
                 "expected positive investment amount");
     }
@@ -54,15 +52,17 @@ class FakeContextTest {
     @Test
     void addInvestment_throwsIllegalArgumentException_whenAmountIsZero() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
         BigDecimal investment = BigDecimal.ZERO;
         OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(currency, investment),
                 IllegalArgumentException.class,
                 "expected positive investment amount");
     }
@@ -70,12 +70,14 @@ class FakeContextTest {
     @Test
     void addInvestment_throwsIllegalArgumentException_whenInvestmentWithCurrentDateTimeAlreadyExists() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
         BigDecimal investment = BigDecimal.valueOf(20);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.addInvestment(currency, balance);
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(currency, investment),
                 IllegalArgumentException.class,
                 "investment at " + currentDateTime + " alreadyExists");
     }
@@ -83,26 +85,27 @@ class FakeContextTest {
     @Test
     void addInvestment_changesInvestmentsAndCurrentBalance() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
         BigDecimal investment1 = BigDecimal.valueOf(20);
         BigDecimal investment2 = BigDecimal.valueOf(50);
         OffsetDateTime investment1DateTime = currentDateTime.plusHours(1);
         OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         fakeContext.setCurrentDateTime(investment1DateTime);
-        fakeContext.addInvestment(investment1);
+        fakeContext.addInvestment(currency, investment1);
 
         fakeContext.setCurrentDateTime(investment2DateTime);
-        fakeContext.addInvestment(investment2);
+        fakeContext.addInvestment(currency, investment2);
 
-        Assertions.assertEquals(3, fakeContext.getInvestments().size());
-        Assertions.assertEquals(balance, fakeContext.getInvestments().get(currentDateTime));
-        Assertions.assertEquals(investment1, fakeContext.getInvestments().get(investment1DateTime));
-        Assertions.assertEquals(investment2, fakeContext.getInvestments().get(investment2DateTime));
+        Assertions.assertEquals(2, fakeContext.getInvestments(currency).size());
+        Assertions.assertEquals(investment1, fakeContext.getInvestments(currency).get(investment1DateTime));
+        Assertions.assertEquals(investment2, fakeContext.getInvestments(currency).get(investment2DateTime));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(170), fakeContext.getCurrentBalance());
+        AssertUtils.assertEquals(BigDecimal.valueOf(170), fakeContext.getBalance(currency));
     }
 
     // endregion
@@ -110,9 +113,11 @@ class FakeContextTest {
     @Test
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         SimulatedOperation operation = new SimulatedOperation(null,
                 DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
@@ -130,9 +135,11 @@ class FakeContextTest {
     @Test
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         String ticker = "ticker";
         PortfolioPosition position = createPosition();
@@ -146,9 +153,11 @@ class FakeContextTest {
     @Test
     void removePosition_removesPosition() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Currency currency = Currency.RUB;
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
 
         String ticker = "ticker";
         PortfolioPosition position = createPosition();
@@ -170,6 +179,5 @@ class FakeContextTest {
                 null,
                 StringUtils.EMPTY);
     }
-
 
 }

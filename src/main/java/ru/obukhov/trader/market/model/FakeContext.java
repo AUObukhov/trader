@@ -2,19 +2,21 @@ package ru.obukhov.trader.market.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.Assert;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
+import ru.tinkoff.invest.openapi.models.Currency;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Class, containing in memory data about simulated portfolio and current market dateTime
@@ -25,37 +27,42 @@ public class FakeContext {
     @Setter
     private OffsetDateTime currentDateTime;
 
-    @Getter
-    @Setter
-    private BigDecimal currentBalance;
-
+    private final EnumMap<Currency, FakeBalance> balances;
     private final Map<String, PortfolioPosition> tickersToPositions;
-    private final SortedMap<OffsetDateTime, BigDecimal> investments;
     private final Set<SimulatedOperation> operations;
 
-    public FakeContext(OffsetDateTime currentDateTime, BigDecimal balance) {
+    public FakeContext(OffsetDateTime currentDateTime) {
         this.currentDateTime = currentDateTime;
-        this.currentBalance = balance;
 
-        this.investments = new TreeMap<>();
-        this.investments.put(currentDateTime, balance);
+        this.balances = new EnumMap<>(Currency.class);
 
         this.operations = new HashSet<>();
         this.tickersToPositions = new HashMap<>();
     }
 
-    public void addInvestment(BigDecimal amount) {
-        Assert.isTrue(amount.signum() > 0, "expected positive investment amount");
-        if (investments.containsKey(currentDateTime)) {
-            throw new IllegalArgumentException("investment at " + currentDateTime + " alreadyExists");
-        }
-
-        investments.put(currentDateTime, amount);
-        currentBalance = currentBalance.add(amount);
+    /**
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current
+     * dateTime
+     */
+    public void addInvestment(Currency currency, BigDecimal amount) {
+        computeIfAbsentFakeBalance(currency).addInvestment(currentDateTime, amount);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments() {
-        return new TreeMap<>(investments);
+    public BigDecimal getBalance(Currency currency) {
+        return computeIfAbsentFakeBalance(currency).getCurrentAmount();
+    }
+
+    public Map<Currency, BigDecimal> getBalances() {
+        return Stream.of(Currency.values())
+                .collect(Collectors.toMap(currency -> currency, this::getBalance));
+    }
+
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(Currency currency) {
+        return computeIfAbsentFakeBalance(currency).getInvestments();
+    }
+
+    public void setCurrentBalance(Currency currency, BigDecimal amount) {
+        computeIfAbsentFakeBalance(currency).setCurrentAmount(amount);
     }
 
     public void addOperation(SimulatedOperation operation) {
@@ -80,6 +87,10 @@ public class FakeContext {
 
     public List<PortfolioPosition> getPositions() {
         return new ArrayList<>(tickersToPositions.values());
+    }
+
+    private FakeBalance computeIfAbsentFakeBalance(Currency currency) {
+        return balances.computeIfAbsent(currency, currencyKey -> new FakeBalance());
     }
 
 }

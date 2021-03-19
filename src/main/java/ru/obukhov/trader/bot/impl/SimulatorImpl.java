@@ -23,6 +23,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
+import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
@@ -159,7 +160,8 @@ public class SimulatorImpl implements Simulator {
     private SimulationResult simulate(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
 
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
-        fakeTinkoffService.init(interval.getFrom(), simulationUnit.getInitialBalance());
+        Currency currency = getCurrency(fakeTinkoffService, simulationUnit.getTicker());
+        fakeTinkoffService.init(interval.getFrom(), currency, simulationUnit.getInitialBalance());
         List<Candle> candles = new ArrayList<>();
 
         do {
@@ -171,7 +173,7 @@ public class SimulatorImpl implements Simulator {
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(bot, fakeTinkoffService.getInvestments(), interval, simulationUnit.getTicker(), candles);
+        return createResult(bot, interval, simulationUnit.getTicker(), candles);
     }
 
     private void moveToNextMinute(SimulationUnit simulationUnit, FakeTinkoffService fakeTinkoffService) {
@@ -183,8 +185,10 @@ public class SimulatorImpl implements Simulator {
                     DateUtils.getCronHitsBetweenDates(simulationUnit.getBalanceIncrementCron(), previousDate, nextDate);
             if (incrementsCount > 0) {
                 BigDecimal balanceIncrement = MathUtils.multiply(simulationUnit.getBalanceIncrement(), incrementsCount);
-                log.debug("Incrementing balance {} by {}", fakeTinkoffService.getCurrentBalance(), balanceIncrement);
-                fakeTinkoffService.incrementBalance(balanceIncrement);
+                Currency currency = getCurrency(fakeTinkoffService, simulationUnit.getTicker());
+                BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
+                log.debug("Incrementing balance {} by {}", currentBalance, balanceIncrement);
+                fakeTinkoffService.incrementBalance(currency, balanceIncrement);
             }
         } else {
             fakeTinkoffService.nextMinute();
@@ -200,7 +204,6 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult createResult(FakeBot bot,
-                                          SortedMap<OffsetDateTime, BigDecimal> investments,
                                           Interval interval,
                                           String ticker,
                                           List<Candle> candles) {
@@ -209,22 +212,28 @@ public class SimulatorImpl implements Simulator {
 
         BigDecimal currentPrice = Iterables.getLast(candles).getClosePrice();
         List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), currentPrice);
+        Currency currency = getCurrency(fakeTinkoffService, ticker);
+
+        SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
+
         BigDecimal initialBalance = investments.get(investments.firstKey());
-        BigDecimal totalBalance = getTotalBalance(fakeTinkoffService.getCurrentBalance(), positions);
+        BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
+        BigDecimal totalBalance = getTotalBalance(currentBalance, positions);
+
         BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
+
         BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         double relativeProfit = MathUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
         double relativeYearProfit = relativeProfit / (interval.toDuration().toDays() / DateUtils.DAYS_IN_YEAR);
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
-
 
         return SimulationResult.builder()
                 .botName(bot.getName())
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .finalTotalBalance(totalBalance)
-                .finalBalance(fakeTinkoffService.getCurrentBalance())
+                .finalBalance(currentBalance)
                 .totalInvestment(totalInvestment)
                 .weightedAverageInvestment(weightedAverageInvestment)
                 .absoluteProfit(absoluteProfit)
@@ -234,6 +243,10 @@ public class SimulatorImpl implements Simulator {
                 .operations(getOperations(operations, ticker))
                 .candles(candles)
                 .build();
+    }
+
+    private Currency getCurrency(FakeTinkoffService fakeTinkoffService, String ticker) {
+        return fakeTinkoffService.searchMarketInstrument(ticker).currency;
     }
 
     private List<SimulatedPosition> getPositions(Collection<PortfolioPosition> portfolioPositions,

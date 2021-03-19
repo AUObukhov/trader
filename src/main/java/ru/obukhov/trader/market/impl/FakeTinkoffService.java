@@ -69,12 +69,13 @@ public class FakeTinkoffService implements TinkoffService {
     /**
      * sets current dateTime, but moves it to nearest work time
      */
-    public void init(OffsetDateTime currentDateTime, BigDecimal balance) {
+    public void init(OffsetDateTime currentDateTime, Currency currency, BigDecimal balance) {
         OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
 
-        this.fakeContext = new FakeContext(shiftedCurrentDateTime, balance);
+        this.fakeContext = new FakeContext(shiftedCurrentDateTime);
+        this.fakeContext.addInvestment(currency, balance);
     }
 
     /**
@@ -204,8 +205,10 @@ public class FakeTinkoffService implements TinkoffService {
                              BigDecimal totalPrice,
                              BigDecimal commissionAmount) {
 
-        updateBalance(totalPrice.negate().subtract(commissionAmount));
-        Instrument instrument = realTinkoffService.searchMarketInstrument(ticker);
+        Instrument instrument = searchMarketInstrument(ticker);
+
+        updateBalance(instrument.currency, totalPrice.negate().subtract(commissionAmount));
+
         PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
@@ -259,11 +262,11 @@ public class FakeTinkoffService implements TinkoffService {
                 position.getName());
     }
 
-    private void updateBalance(BigDecimal increment) {
-        BigDecimal newBalance = fakeContext.getCurrentBalance().add(increment);
+    private void updateBalance(Currency currency, BigDecimal increment) {
+        BigDecimal newBalance = fakeContext.getBalance(currency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        fakeContext.setCurrentBalance(newBalance);
+        fakeContext.setCurrentBalance(currency, newBalance);
     }
 
     private void sellPosition(String ticker, int lotsCount, BigDecimal totalPrice, BigDecimal commissionAmount) {
@@ -275,7 +278,9 @@ public class FakeTinkoffService implements TinkoffService {
             throw new IllegalArgumentException(message);
         }
 
-        updateBalance(totalPrice.subtract(commissionAmount));
+        Instrument instrument = searchMarketInstrument(ticker);
+
+        updateBalance(instrument.currency, totalPrice.subtract(commissionAmount));
         if (newLotsCount == 0) {
             fakeContext.removePosition(ticker);
         } else {
@@ -341,9 +346,9 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies() {
-        PortfolioCurrencies.PortfolioCurrency currency
-                = new PortfolioCurrencies.PortfolioCurrency(Currency.RUB, fakeContext.getCurrentBalance(), null);
-        return Collections.singletonList(currency);
+        return fakeContext.getBalances().entrySet().stream()
+                .map(entry -> new PortfolioCurrencies.PortfolioCurrency(entry.getKey(), entry.getValue(), null))
+                .collect(Collectors.toList());
     }
 
     // endregion
@@ -355,16 +360,16 @@ public class FakeTinkoffService implements TinkoffService {
         return fakeContext.getCurrentDateTime();
     }
 
-    public BigDecimal getCurrentBalance() {
-        return fakeContext.getCurrentBalance();
+    public BigDecimal getCurrentBalance(Currency currency) {
+        return fakeContext.getBalance(currency);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments() {
-        return fakeContext.getInvestments();
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(Currency currency) {
+        return fakeContext.getInvestments(currency);
     }
 
-    public void incrementBalance(BigDecimal increment) {
-        fakeContext.addInvestment(increment);
+    public void incrementBalance(Currency currency, BigDecimal increment) {
+        fakeContext.addInvestment(currency, increment);
     }
 
     // endregion

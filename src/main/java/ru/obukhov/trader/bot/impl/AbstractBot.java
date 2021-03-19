@@ -13,7 +13,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
-import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.orders.Operation;
 import ru.tinkoff.invest.openapi.models.orders.Order;
 import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
@@ -58,12 +58,13 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(DecisionData decisionData, String ticker) {
+        Instrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(Currency.RUB));
+        decisionData.setBalance(portfolioService.getAvailableBalance(instrument.currency));
         decisionData.setPosition(portfolioService.getPosition(ticker));
         decisionData.setCurrentCandles(marketService.getLastCandles(ticker, LAST_CANDLES_COUNT));
         decisionData.setLastOperations(getLastWeekOperations(ticker));
-        decisionData.setInstrument(marketService.getInstrument(ticker));
+        decisionData.setInstrument(instrument);
 
     }
 
