@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
@@ -21,6 +22,7 @@ import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 import ru.tinkoff.invest.openapi.models.market.Instrument;
 import ru.tinkoff.invest.openapi.models.market.Orderbook;
+import ru.tinkoff.invest.openapi.models.operations.Operation;
 import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
 import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
 import ru.tinkoff.invest.openapi.models.orders.Order;
@@ -133,8 +135,15 @@ public class FakeTinkoffService implements TinkoffService {
 
     // region OperationsContext proxy
 
+    /**
+     * Searches operations which satisfy given conditions
+     *
+     * @param interval interval of dateTime of searchable operations, including extreme values
+     * @param ticker   ticker of searchable operations, if operations with any ticker are satisfying
+     * @return found operations in natural order of their dateTime
+     */
     @Override
-    public List<ru.tinkoff.invest.openapi.models.operations.Operation> getOperations(Interval interval, String ticker) {
+    public List<Operation> getOperations(Interval interval, @Nullable String ticker) {
         Stream<SimulatedOperation> operationsStream = fakeContext.getOperations().stream()
                 .filter(operation -> interval.contains(operation.getDateTime()));
         if (ticker != null) {
@@ -158,9 +167,16 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Only market orders supported in simulation");
     }
 
+    /**
+     * Performs market order with fake portfolio
+     *
+     * @param ticker      ticker of executed order
+     * @param marketOrder model of executed order
+     * @return result of order execution
+     */
     @Override
     public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
         BigDecimal currentPrice = getCurrentPrice(ticker);
@@ -256,7 +272,7 @@ public class FakeTinkoffService implements TinkoffService {
             PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
             fakeContext.addPosition(ticker, newPosition);
         } else {
-            final String message = "lotsCount " + lotsCount + "can't be greater than existing position lots count "
+            final String message = "lotsCount " + lotsCount + " can't be greater than existing position lots count "
                     + existingPosition.getLotsCount();
             throw new IllegalArgumentException(message);
         }
