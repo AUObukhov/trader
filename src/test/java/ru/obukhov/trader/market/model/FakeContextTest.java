@@ -13,24 +13,24 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Set;
 
-class SimulatedPortfolioTest {
+class FakeContextTest {
 
     @Test
     void constructor_initializesPortfolio() {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
-        Assertions.assertEquals(currentDateTime, portfolio.getCurrentDateTime());
+        Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
 
-        Assertions.assertEquals(balance, portfolio.getCurrentBalance());
+        Assertions.assertEquals(balance, fakeContext.getCurrentBalance());
 
-        Assertions.assertEquals(1, portfolio.getInvestments().size());
-        Assertions.assertEquals(balance, portfolio.getInvestments().get(currentDateTime));
+        Assertions.assertEquals(1, fakeContext.getInvestments().size());
+        Assertions.assertEquals(balance, fakeContext.getInvestments().get(currentDateTime));
 
-        Assertions.assertTrue(portfolio.getOperations().isEmpty());
-        Assertions.assertTrue(portfolio.getPositions().isEmpty());
+        Assertions.assertTrue(fakeContext.getOperations().isEmpty());
+        Assertions.assertTrue(fakeContext.getPositions().isEmpty());
     }
 
     // region addInvestment tests
@@ -42,11 +42,11 @@ class SimulatedPortfolioTest {
         BigDecimal investment = BigDecimal.valueOf(-20);
         OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
-        portfolio.setCurrentDateTime(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
-        AssertUtils.assertThrowsWithMessage(() -> portfolio.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
                 IllegalArgumentException.class,
                 "expected positive investment amount");
     }
@@ -58,11 +58,11 @@ class SimulatedPortfolioTest {
         BigDecimal investment = BigDecimal.ZERO;
         OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
-        portfolio.setCurrentDateTime(investmentDateTime);
+        fakeContext.setCurrentDateTime(investmentDateTime);
 
-        AssertUtils.assertThrowsWithMessage(() -> portfolio.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
                 IllegalArgumentException.class,
                 "expected positive investment amount");
     }
@@ -73,9 +73,9 @@ class SimulatedPortfolioTest {
         BigDecimal balance = BigDecimal.valueOf(100);
         BigDecimal investment = BigDecimal.valueOf(20);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
-        AssertUtils.assertThrowsWithMessage(() -> portfolio.addInvestment(investment),
+        AssertUtils.assertThrowsWithMessage(() -> fakeContext.addInvestment(investment),
                 IllegalArgumentException.class,
                 "investment at " + currentDateTime + " alreadyExists");
     }
@@ -89,20 +89,20 @@ class SimulatedPortfolioTest {
         OffsetDateTime investment1DateTime = currentDateTime.plusHours(1);
         OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
-        portfolio.setCurrentDateTime(investment1DateTime);
-        portfolio.addInvestment(investment1);
+        fakeContext.setCurrentDateTime(investment1DateTime);
+        fakeContext.addInvestment(investment1);
 
-        portfolio.setCurrentDateTime(investment2DateTime);
-        portfolio.addInvestment(investment2);
+        fakeContext.setCurrentDateTime(investment2DateTime);
+        fakeContext.addInvestment(investment2);
 
-        Assertions.assertEquals(3, portfolio.getInvestments().size());
-        Assertions.assertEquals(balance, portfolio.getInvestments().get(currentDateTime));
-        Assertions.assertEquals(investment1, portfolio.getInvestments().get(investment1DateTime));
-        Assertions.assertEquals(investment2, portfolio.getInvestments().get(investment2DateTime));
+        Assertions.assertEquals(3, fakeContext.getInvestments().size());
+        Assertions.assertEquals(balance, fakeContext.getInvestments().get(currentDateTime));
+        Assertions.assertEquals(investment1, fakeContext.getInvestments().get(investment1DateTime));
+        Assertions.assertEquals(investment2, fakeContext.getInvestments().get(investment2DateTime));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(170), portfolio.getCurrentBalance());
+        AssertUtils.assertEquals(BigDecimal.valueOf(170), fakeContext.getCurrentBalance());
     }
 
     // endregion
@@ -112,7 +112,7 @@ class SimulatedPortfolioTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
         SimulatedOperation operation = new SimulatedOperation(null,
                 DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
@@ -120,9 +120,9 @@ class SimulatedPortfolioTest {
                 null,
                 null,
                 null);
-        portfolio.addOperation(operation);
+        fakeContext.addOperation(operation);
 
-        Set<SimulatedOperation> operations = portfolio.getOperations();
+        Set<SimulatedOperation> operations = fakeContext.getOperations();
         Assertions.assertEquals(1, operations.size());
         Assertions.assertSame(operation, operations.iterator().next());
     }
@@ -132,13 +132,13 @@ class SimulatedPortfolioTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
         String ticker = "ticker";
         PortfolioPosition position = createPosition();
 
-        portfolio.addPosition(ticker, position);
-        PortfolioPosition readPosition = portfolio.getPosition(ticker);
+        fakeContext.addPosition(ticker, position);
+        PortfolioPosition readPosition = fakeContext.getPosition(ticker);
 
         Assertions.assertSame(position, readPosition);
     }
@@ -148,14 +148,14 @@ class SimulatedPortfolioTest {
         OffsetDateTime currentDateTime = OffsetDateTime.now();
         BigDecimal balance = BigDecimal.valueOf(100);
 
-        SimulatedPortfolio portfolio = new SimulatedPortfolio(currentDateTime, balance);
+        FakeContext fakeContext = new FakeContext(currentDateTime, balance);
 
         String ticker = "ticker";
         PortfolioPosition position = createPosition();
 
-        portfolio.addPosition(ticker, position);
-        portfolio.removePosition(ticker);
-        Assertions.assertTrue(portfolio.getPositions().isEmpty());
+        fakeContext.addPosition(ticker, position);
+        fakeContext.removePosition(ticker);
+        Assertions.assertTrue(fakeContext.getPositions().isEmpty());
     }
 
     @NotNull

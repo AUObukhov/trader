@@ -17,9 +17,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Class, containing in memory data about portfolio and simulated current market dateTime
+ * Class, containing in memory data about simulated portfolio and current market dateTime
  */
-public class SimulatedPortfolio {
+public class FakeContext {
 
     @Getter
     @Setter
@@ -33,7 +33,7 @@ public class SimulatedPortfolio {
     private final SortedMap<OffsetDateTime, BigDecimal> investments;
     private final Set<SimulatedOperation> operations;
 
-    public SimulatedPortfolio(OffsetDateTime currentDateTime, BigDecimal balance) {
+    public FakeContext(OffsetDateTime currentDateTime, BigDecimal balance) {
         this.currentDateTime = currentDateTime;
         this.currentBalance = balance;
 
