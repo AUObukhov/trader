@@ -133,7 +133,7 @@ public class MarketServiceImpl implements MarketService {
 
     /**
      * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
-     * before {@code to}
+     * not after {@code to}
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
