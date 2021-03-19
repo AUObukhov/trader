@@ -185,11 +185,9 @@ public class FakeTinkoffService implements TinkoffService {
         MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
 
         if (marketOrder.operation == ru.tinkoff.invest.openapi.models.orders.Operation.Buy) {
-            buyPosition(ticker, currentPrice, marketOrder.lots, totalPrice);
-            updateBalance(totalPrice.negate(), commissionAmount);
+            buyPosition(ticker, currentPrice, marketOrder.lots, totalPrice, commissionAmount);
         } else {
-            sellPosition(ticker, marketOrder.lots);
-            updateBalance(totalPrice, commissionAmount);
+            sellPosition(ticker, marketOrder.lots, totalPrice, commissionAmount);
         }
 
         addOperation(ticker, currentPrice, commission, marketOrder);
@@ -200,7 +198,13 @@ public class FakeTinkoffService implements TinkoffService {
         return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getOpenPrice();
     }
 
-    private void buyPosition(String ticker, BigDecimal currentPrice, int lotsCount, BigDecimal totalPrice) {
+    private void buyPosition(String ticker,
+                             BigDecimal currentPrice,
+                             int lotsCount,
+                             BigDecimal totalPrice,
+                             BigDecimal commissionAmount) {
+
+        updateBalance(totalPrice.negate().subtract(commissionAmount));
         Instrument instrument = realTinkoffService.searchMarketInstrument(ticker);
         PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
         PortfolioPosition position;
@@ -255,27 +259,30 @@ public class FakeTinkoffService implements TinkoffService {
                 position.getName());
     }
 
-    private void updateBalance(BigDecimal totalPrice, BigDecimal commissionAmount) {
-        BigDecimal newBalance = fakeContext.getCurrentBalance().add(totalPrice).subtract(commissionAmount);
+    private void updateBalance(BigDecimal increment) {
+        BigDecimal newBalance = fakeContext.getCurrentBalance().add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
         fakeContext.setCurrentBalance(newBalance);
     }
 
-    private void sellPosition(String ticker, int lotsCount) {
+    private void sellPosition(String ticker, int lotsCount, BigDecimal totalPrice, BigDecimal commissionAmount) {
         PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
         int newLotsCount = existingPosition.getLotsCount() - lotsCount;
-
-        if (newLotsCount == 0) {
-            fakeContext.removePosition(ticker);
-        } else if (newLotsCount > 0) {
-            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
-            fakeContext.addPosition(ticker, newPosition);
-        } else {
+        if (newLotsCount < 0) {
             final String message = "lotsCount " + lotsCount + " can't be greater than existing position lots count "
                     + existingPosition.getLotsCount();
             throw new IllegalArgumentException(message);
         }
+
+        updateBalance(totalPrice.subtract(commissionAmount));
+        if (newLotsCount == 0) {
+            fakeContext.removePosition(ticker);
+        } else {
+            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
+            fakeContext.addPosition(ticker, newPosition);
+        }
+
     }
 
     private PortfolioPosition clonePositionWithNewLotsCount(PortfolioPosition position, int lotsCount) {
