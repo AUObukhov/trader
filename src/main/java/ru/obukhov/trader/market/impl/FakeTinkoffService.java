@@ -181,7 +181,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
-        return marketService.getLastCandle(ticker, portfolio.getCurrentDateTime()).getClosePrice();
+        return marketService.getLastCandle(ticker, portfolio.getCurrentDateTime()).getOpenPrice();
     }
 
     private void buyPosition(String ticker, BigDecimal currentPrice, int lotsCount, BigDecimal totalPrice) {
