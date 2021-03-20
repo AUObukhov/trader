@@ -228,7 +228,7 @@ public class SimulatorImpl implements Simulator {
 
         BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         double relativeProfit = MathUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
-        double relativeYearProfit = relativeProfit / (interval.toDuration().toDays() / DateUtils.DAYS_IN_YEAR);
+        double relativeYearProfit = relativeProfit / (interval.toDays() / DateUtils.DAYS_IN_YEAR);
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()

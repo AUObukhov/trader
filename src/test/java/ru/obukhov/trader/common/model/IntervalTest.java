@@ -578,4 +578,34 @@ class IntervalTest {
 
     // endregion
 
+    // region toDays tests
+
+    @Test
+    void toDays1() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 15, 10, 20, 30);
+        Interval interval = Interval.of(from, to);
+
+        AssertUtils.assertEquals(10, interval.toDays());
+    }
+
+    @Test
+    void toDays2() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 10, 20, 30);
+        Interval interval = Interval.of(from, to);
+
+        AssertUtils.assertEquals(1, interval.toDays());
+    }
+
+    @Test
+    void toDays3() {
+        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 10, 30, 30);
+        Interval interval = Interval.of(from, to);
+
+        AssertUtils.assertEquals(0.006944444444444444, interval.toDays());
+    }
+
+    // endregion
 }

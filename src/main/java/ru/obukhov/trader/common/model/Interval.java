@@ -25,6 +25,8 @@ public class Interval {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
+    private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
+
     private final OffsetDateTime from;
 
     private final OffsetDateTime to;
@@ -151,6 +153,13 @@ public class Interval {
      */
     public Duration toDuration() {
         return Duration.between(from, to);
+    }
+
+    /**
+     * @return double count of days in current interval
+     */
+    public double toDays() {
+        return toDuration().toNanos() / NANOSECONDS_IN_DAY;
     }
 
     public String toPrettyString() {
