@@ -7,6 +7,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.interfaces.Simulator;
@@ -59,6 +60,8 @@ public class SimulatorImpl implements Simulator {
     public SimulatorImpl(ExcelService excelService,
                          BotFactory fakeBotFactory,
                          @Value("${simulation.thread-count:10}") Integer simulationThreadCount) {
+
+        Assert.isTrue(simulationThreadCount > 1, "simulationThreadCount must be greater than 1");
 
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
