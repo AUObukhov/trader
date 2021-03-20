@@ -92,7 +92,7 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
                 new UrlLimit(Collections.singletonList("market"), 120)
         ));
 
-        final long maximumNotThrottledTime = 50;
+        final long maximumNotThrottledTime = 60;
         final long minimumThrottledTime = queryThrottleProperties.getInterval() - 250;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
