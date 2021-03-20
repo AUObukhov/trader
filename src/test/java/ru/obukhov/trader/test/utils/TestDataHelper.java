@@ -3,7 +3,11 @@ package ru.obukhov.trader.test.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.models.market.InstrumentType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -28,6 +32,19 @@ public class TestDataHelper {
                 OffsetDateTime.now()
         );
 
+    }
+
+    public static void createAndMockInstrument(TinkoffService tinkoffService, String ticker) {
+        Instrument instrument = new Instrument(StringUtils.EMPTY,
+                ticker,
+                null,
+                null,
+                0,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.Stock);
+
+        Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
     }
 
     public static ZoneOffset getNotDefaultOffset() {
