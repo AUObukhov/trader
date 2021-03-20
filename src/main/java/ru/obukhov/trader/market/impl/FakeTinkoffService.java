@@ -69,13 +69,28 @@ public class FakeTinkoffService implements TinkoffService {
     /**
      * sets current dateTime, but moves it to nearest work time
      */
-    public void init(OffsetDateTime currentDateTime, Currency currency, BigDecimal balance) {
+    public void init(OffsetDateTime currentDateTime) {
+        init(currentDateTime, null, null);
+    }
+
+    /**
+     * Initializes current dateTime and one currency.
+     * current dateTime is initialized by nearest work time to given {@code currentDateTime}
+     *
+     * @param currentDateTime start dateTime for search dateTime to set as current
+     * @param currency        currency which balance is initialized not by zero.
+     * @param balance         initial balance of {@code currency}. When null {@code currency} is not initialized.
+     *                        {@code currency} and {@code balance} must be both null or both not null.
+     */
+    public void init(OffsetDateTime currentDateTime, @Nullable Currency currency, @Nullable BigDecimal balance) {
         OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
                 tradingProperties.getWorkStartTime(),
                 tradingProperties.getWorkDuration());
 
         this.fakeContext = new FakeContext(shiftedCurrentDateTime);
-        this.fakeContext.addInvestment(currency, balance);
+        if (balance != null) {
+            this.fakeContext.addInvestment(currency, balance);
+        }
     }
 
     /**
