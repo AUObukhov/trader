@@ -1,4 +1,4 @@
-package ru.obukhov.trader.bot.interfaces;
+package ru.obukhov.trader.bot.strategy;
 
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionData;

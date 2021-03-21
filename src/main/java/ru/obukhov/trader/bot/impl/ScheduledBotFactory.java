@@ -1,7 +1,7 @@
 package ru.obukhov.trader.bot.impl;
 
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.interfaces.Strategy;
+import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;

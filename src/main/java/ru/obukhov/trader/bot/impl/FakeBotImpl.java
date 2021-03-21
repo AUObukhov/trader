@@ -3,7 +3,7 @@ package ru.obukhov.trader.bot.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
-import ru.obukhov.trader.bot.interfaces.Strategy;
+import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;

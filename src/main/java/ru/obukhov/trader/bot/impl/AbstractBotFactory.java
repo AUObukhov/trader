@@ -2,7 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.AllArgsConstructor;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
-import ru.obukhov.trader.bot.interfaces.Strategy;
+import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;

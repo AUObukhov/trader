@@ -1,9 +1,10 @@
-package ru.obukhov.trader.bot.impl;
+package ru.obukhov.trader.bot.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
+import ru.obukhov.trader.bot.strategy.AbstractStrategy;
 import ru.obukhov.trader.config.TradingProperties;
 
 /**

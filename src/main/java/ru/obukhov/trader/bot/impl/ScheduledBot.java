@@ -2,7 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import ru.obukhov.trader.bot.interfaces.Strategy;
+import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
