@@ -28,6 +28,7 @@ import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.operations.Operation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -228,7 +229,7 @@ public class SimulatorImpl implements Simulator {
 
         BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         double relativeProfit = MathUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
-        double relativeYearProfit = relativeProfit / (interval.toDays() / DateUtils.DAYS_IN_YEAR);
+        double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()
@@ -283,6 +284,11 @@ public class SimulatorImpl implements Simulator {
             balances.put(entry.getKey(), currentBalance);
         }
         return balances;
+    }
+
+    private double getRelativeYearProfit(Interval interval, double relativeProfit) {
+        BigDecimal partOfYear = BigDecimal.valueOf(interval.toDays() / DateUtils.DAYS_IN_YEAR);
+        return BigDecimal.valueOf(relativeProfit).divide(partOfYear, RoundingMode.HALF_UP).doubleValue();
     }
 
     private List<SimulatedOperation> getOperations(List<Operation> operations, String ticker) {
