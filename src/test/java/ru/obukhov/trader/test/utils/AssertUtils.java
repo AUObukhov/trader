@@ -26,6 +26,8 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AssertUtils {
 
@@ -192,6 +194,20 @@ public class AssertUtils {
 
         Throwable throwable = Assertions.assertThrows(expectedType, executable);
         Assertions.assertEquals(expectedMessage, throwable.getMessage());
+    }
+
+    public static <T extends Throwable> void assertThrowsWithMessagePattern(Executable executable,
+                                                                            Class<T> expectedType,
+                                                                            String expectedMessagePattern) {
+
+        Throwable throwable = Assertions.assertThrows(expectedType, executable);
+        Pattern pattern = Pattern.compile(expectedMessagePattern);
+        Matcher matcher = pattern.matcher(throwable.getMessage());
+
+        if (!matcher.matches()) {
+            String message = String.format("pattern:\n%s\nactual:\n%s", expectedMessagePattern, throwable.getMessage());
+            Assertions.fail(message);
+        }
     }
 
 }
