@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 @Valid
 public class SetCurrencyBalanceRequest {
 
-    @NotNull
+    @NotNull(message = "currency is mandatory")
     private Currency currency;
 
-    @NotNull
+    @NotNull(message = "balance is mandatory")
     private BigDecimal balance;
 
     @Nullable
