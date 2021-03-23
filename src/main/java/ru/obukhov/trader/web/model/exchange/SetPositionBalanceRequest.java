@@ -4,6 +4,7 @@ import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
@@ -11,10 +12,10 @@ import java.math.BigDecimal;
 @Valid
 public class SetPositionBalanceRequest {
 
-    @NotNull
+    @NotEmpty(message = "ticker is mandatory")
     private String ticker;
 
-    @NotNull
+    @NotNull(message = "balance is mandatory")
     private BigDecimal balance;
 
     @Nullable
