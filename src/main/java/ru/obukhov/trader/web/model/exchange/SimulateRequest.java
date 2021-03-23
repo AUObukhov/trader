@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Data;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
+import ru.obukhov.trader.web.model.validation.constraint.SimulationUnitsAreDistinct;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -15,6 +16,7 @@ public class SimulateRequest {
 
     @Valid
     @NotEmpty(message = "simulationUnits are mandatory")
+    @SimulationUnitsAreDistinct
     private List<SimulationUnit> simulationUnits;
 
     @NotNull(message = "from is mandatory")

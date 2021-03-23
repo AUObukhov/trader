@@ -15,6 +15,7 @@ import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -116,6 +117,29 @@ class SimulateRequestValidationTest {
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
         AssertUtils.assertViolation(violations, "from is mandatory");
+    }
+
+    @Test
+    void validationFails_whenSimulationUnitsContainNotUniqueTickers() throws ParseException {
+        SimulateRequest request = createValidSimulationRequest();
+
+        SimulationUnit simulationUnit1 = new SimulationUnit();
+        simulationUnit1.setTicker("ticker");
+        simulationUnit1.setInitialBalance(BigDecimal.valueOf(100));
+        simulationUnit1.setBalanceIncrement(BigDecimal.valueOf(10));
+        simulationUnit1.setBalanceIncrementCron(new CronExpression("0 0 0 1 * ?"));
+
+        SimulationUnit simulationUnit2 = new SimulationUnit();
+        simulationUnit2.setTicker("ticker");
+        simulationUnit2.setInitialBalance(BigDecimal.valueOf(200));
+        simulationUnit2.setBalanceIncrement(BigDecimal.valueOf(20));
+        simulationUnit2.setBalanceIncrementCron(new CronExpression("0 0 0 2 * ?"));
+
+        request.setSimulationUnits(Arrays.asList(simulationUnit1, simulationUnit2));
+
+        Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
+        AssertUtils.assertViolation(violations,
+                "simulation units in collection must contain different tickers");
     }
 
     private SimulateRequest createValidSimulationRequest() throws ParseException {
