@@ -3,7 +3,7 @@ package ru.obukhov.trader.bot.strategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.model.DecisionData;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
 
@@ -24,14 +24,15 @@ public abstract class AbstractStrategy implements Strategy {
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
     protected double getProfit(DecisionData data) {
-        BigDecimal buyLotPrice = MathUtils.multiply(data.getAveragePositionPrice(), data.getLotSize());
-        BigDecimal buyPricePlusCommission = MathUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
+        BigDecimal buyLotPrice = DecimalUtils.multiply(data.getAveragePositionPrice(), data.getLotSize());
+        BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
 
-        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        BigDecimal sellPriceMinusCommission = MathUtils.subtractFraction(
+        BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(
                 currentLotPrice, tradingProperties.getCommission());
 
-        double profit = MathUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission).doubleValue();
+        double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
+                .doubleValue();
 
         log.debug("buyLotPrice = {}, "
                         + "buyPricePlusCommission = {}, "
@@ -49,10 +50,10 @@ public abstract class AbstractStrategy implements Strategy {
     }
 
     protected int getAvailableLots(DecisionData data) {
-        BigDecimal currentLotPrice = MathUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
         BigDecimal currentLotPriceWithCommission =
-                MathUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
-        return MathUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
+                DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
+        return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
 }

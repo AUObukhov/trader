@@ -7,7 +7,7 @@ import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.bot.strategy.AbstractStrategy;
 import ru.obukhov.trader.common.util.CollectionsUtils;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
 
@@ -63,7 +63,7 @@ public class TrendReversalStrategy extends AbstractStrategy {
         if (availableLots > 0) {
             final BigDecimal minPrice = getMinPrice(currentCandles);
             final BigDecimal expectedMinPrice = getExpectedExtremumCandle(currentCandles).getLowestPrice();
-            if (MathUtils.numbersEqual(expectedMinPrice, minPrice)) {
+            if (DecimalUtils.numbersEqual(expectedMinPrice, minPrice)) {
                 decision = new Decision(DecisionAction.BUY, availableLots);
                 log.debug("expectedMinPrice {} is equal to minPrice {}. Decision is {}",
                         expectedMinPrice, minPrice, decision.toPrettyString());
@@ -92,7 +92,7 @@ public class TrendReversalStrategy extends AbstractStrategy {
             final BigDecimal maxPrice = getMaxPrice(currentCandles);
             final BigDecimal expectedMaxPrice = getExpectedExtremumCandle(currentCandles).getHighestPrice();
 
-            if (MathUtils.numbersEqual(expectedMaxPrice, maxPrice)) {
+            if (DecimalUtils.numbersEqual(expectedMaxPrice, maxPrice)) {
                 decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
                 log.debug("expectedMaxPrice {} is equal to maxPrice {}. Decision is {}",
                         expectedMaxPrice, maxPrice, decision.toPrettyString());

@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.mockito.ArgumentMatcher;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,7 @@ public class BigDecimalMatcher implements ArgumentMatcher<BigDecimal> {
 
     @Override
     public boolean matches(BigDecimal otherValue) {
-        return MathUtils.numbersEqual(value, otherValue);
+        return DecimalUtils.numbersEqual(value, otherValue);
     }
 
 }

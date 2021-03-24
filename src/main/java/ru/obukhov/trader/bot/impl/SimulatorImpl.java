@@ -15,6 +15,7 @@ import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -188,7 +189,8 @@ public class SimulatorImpl implements Simulator {
             int incrementsCount =
                     DateUtils.getCronHitsBetweenDates(simulationUnit.getBalanceIncrementCron(), previousDate, nextDate);
             if (incrementsCount > 0) {
-                BigDecimal balanceIncrement = MathUtils.multiply(simulationUnit.getBalanceIncrement(), incrementsCount);
+                BigDecimal balanceIncrement =
+                        DecimalUtils.multiply(simulationUnit.getBalanceIncrement(), incrementsCount);
                 Currency currency = getCurrency(fakeTinkoffService, simulationUnit.getTicker());
                 BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
                 log.debug("Incrementing balance {} by {}", currentBalance, balanceIncrement);
@@ -228,7 +230,7 @@ public class SimulatorImpl implements Simulator {
         BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
         BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
-        double relativeProfit = MathUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
+        double relativeProfit = DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
         double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
@@ -266,7 +268,7 @@ public class SimulatorImpl implements Simulator {
 
     private BigDecimal getTotalBalance(BigDecimal balance, List<SimulatedPosition> positions) {
         return positions.stream()
-                .map(position -> MathUtils.multiply(position.getPrice(), position.getQuantity()))
+                .map(position -> DecimalUtils.multiply(position.getPrice(), position.getQuantity()))
                 .reduce(balance, BigDecimal::add);
     }
 

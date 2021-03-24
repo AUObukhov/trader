@@ -14,7 +14,7 @@ import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -198,7 +198,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
 
-        final BigDecimal positionsPrice = MathUtils.multiply(candle4.getClosePrice(), positionLotsCount);
+        final BigDecimal positionsPrice = DecimalUtils.multiply(candle4.getClosePrice(), positionLotsCount);
         final BigDecimal expectedFinalTotalBalance = currentBalance.add(positionsPrice);
         AssertUtils.assertEquals(expectedFinalTotalBalance, simulationResult.getFinalTotalBalance());
 

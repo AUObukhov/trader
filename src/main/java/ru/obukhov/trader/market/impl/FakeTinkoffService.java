@@ -6,7 +6,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -196,8 +196,8 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
         BigDecimal currentPrice = getCurrentPrice(ticker);
-        BigDecimal totalPrice = MathUtils.multiply(currentPrice, marketOrder.lots);
-        BigDecimal commissionAmount = MathUtils.getFraction(totalPrice, tradingProperties.getCommission());
+        BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, marketOrder.lots);
+        BigDecimal commissionAmount = DecimalUtils.getFraction(totalPrice, tradingProperties.getCommission());
         MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
 
         if (marketOrder.operation == ru.tinkoff.invest.openapi.models.orders.Operation.Buy) {
@@ -257,7 +257,7 @@ public class FakeTinkoffService implements TinkoffService {
                                                   BigDecimal totalPrice) {
         BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
         int newLotsCount = existingPosition.getLotsCount() + lotsCount;
-        BigDecimal newAveragePrice = MathUtils.divide(newBalance, newLotsCount);
+        BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
         return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
     }
 
