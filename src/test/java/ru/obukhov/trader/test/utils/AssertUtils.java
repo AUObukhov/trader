@@ -56,6 +56,13 @@ public class AssertUtils {
         }
     }
 
+    public static void assertListsAreEqual(List<BigDecimal> expected, List<BigDecimal> actual) {
+        Assertions.assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            AssertUtils.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
+
     public static void assertRowValues(Row row, Object... values) {
         Assertions.assertEquals(values.length, row.getPhysicalNumberOfCells());
         for (int index = 0; index < values.length; index++) {

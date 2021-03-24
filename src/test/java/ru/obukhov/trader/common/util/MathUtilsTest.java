@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.util;
 
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -167,6 +168,156 @@ class MathUtilsTest {
         Double min = MathUtils.min(values);
 
         assertEquals(min, Double.valueOf(-21));
+    }
+
+    // endregion
+
+    // region getSimpleMovingAverages tests
+
+    @Test
+    void getSimpleMovingAverages_returnsEmptyList_whenPeriodIsLowerThanZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        int period = -1;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getSimpleMovingAverages(values, period),
+                IllegalArgumentException.class,
+                "period must be greater than zero");
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsEmptyList_whenPeriodIsZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        int period = 0;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getSimpleMovingAverages(values, period),
+                IllegalArgumentException.class,
+                "period must be greater than zero");
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsEmptyList_whenValuesAreEmpty() {
+        List<BigDecimal> values = Collections.emptyList();
+        int period = 4;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        Assertions.assertTrue(movingAverages.isEmpty());
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsEqualList_whenExistsSingleValue_andPeriodIsGreaterThanOne() {
+        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        int period = 4;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsEqualList_whenPeriodIsEqualToValuesCount_andExistsSingleValue() {
+        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        int period = 1;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsAveragesList_whenPeriodIsEqualToValuesCount() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000)
+        );
+        int period = 4;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1500),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(2500)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsAveragesList_whenPeriodIsGreaterThanValuesCount() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000)
+        );
+        int period = 5;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1500),
+                BigDecimal.valueOf(2000)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsEqualList_whenPeriodIsOne_andExistsSeveralValues() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        int period = 1;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getSimpleMovingAverages_returnsMovingAveragesEqualList_whenPeriodIsLowerThanValuesCount() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        int period = 4;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, period);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1500),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(2500),
+                BigDecimal.valueOf(3500),
+                BigDecimal.valueOf(4500),
+                BigDecimal.valueOf(5500),
+                BigDecimal.valueOf(6500),
+                BigDecimal.valueOf(7500),
+                BigDecimal.valueOf(8500)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
     }
 
     // endregion

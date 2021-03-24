@@ -3,10 +3,12 @@ package ru.obukhov.trader.common.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -114,6 +116,34 @@ public class MathUtils {
         return values.stream()
                 .min(Comparator.naturalOrder())
                 .orElse(null);
+    }
+
+    /**
+     * @return simple moving averages of given {@code values} by given {@code period}
+     */
+    public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int period) {
+        Assert.isTrue(period > 0, "period must be greater than zero");
+
+        // filling of first {period} averages
+        List<BigDecimal> movingAverages = new ArrayList<>(values.size());
+        for (int i = 0; i < period && i < values.size(); i++) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (int j = 0; j <= i; j++) {
+                sum = sum.add(values.get(j));
+            }
+
+            movingAverages.add(DecimalUtils.divide(sum, i + 1));
+        }
+
+        // filling of the rest averages
+        for (int i = period; i < values.size(); i++) {
+            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - period), period);
+            BigDecimal addedValue = DecimalUtils.divide(values.get(i), period);
+            BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
+            movingAverages.add(currentAverage);
+        }
+
+        return movingAverages;
     }
 
 }
