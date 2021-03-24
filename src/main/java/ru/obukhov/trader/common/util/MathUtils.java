@@ -150,4 +150,40 @@ public class MathUtils {
         return movingAverages;
     }
 
+    /**
+     * Calculates weighted moving averages of given {@code values} by given {@code period}
+     *
+     * @param values values for which averages are calculated for, must be greater than zero
+     * @param period count of values, used for calculation of each average, must be greater than zero
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getWeightedMovingAverages(List<BigDecimal> values, int period) {
+        Assert.isTrue(period > 0, "period must be greater than zero");
+
+        List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
+        for (int i = 0; i < values.size(); i++) {
+            weightedMovingAverages.add(getWeightedMovingAverage(values, i, period));
+        }
+
+        return weightedMovingAverages;
+    }
+
+    private static BigDecimal getWeightedMovingAverage(List<BigDecimal> values,
+                                                       final int index,
+                                                       final int period) {
+        final int maxPeriod = index + 1;
+        final int normalizedPeriod = Math.min(period, maxPeriod);
+        BigDecimal sum = DecimalUtils.multiply(values.get(index), normalizedPeriod);
+        BigDecimal weightsSum = BigDecimal.valueOf(normalizedPeriod);
+
+        for (int i = index - 1; i > index - normalizedPeriod; i--) {
+            int weight = normalizedPeriod - (index - i);
+            sum = sum.add(DecimalUtils.multiply(values.get(i), weight));
+            weightsSum = weightsSum.add(BigDecimal.valueOf(weight));
+        }
+
+        double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
+        return DecimalUtils.divide(sum, divisor);
+    }
+
 }
