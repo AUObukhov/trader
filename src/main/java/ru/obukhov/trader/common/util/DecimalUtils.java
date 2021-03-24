@@ -19,6 +19,13 @@ public class DecimalUtils {
     }
 
     /**
+     * @return multiplier * multiplicand
+     */
+    public static BigDecimal multiply(BigDecimal multiplier, int multiplicand) {
+        return multiplier.multiply(BigDecimal.valueOf(multiplicand));
+    }
+
+    /**
      * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#DEFAULT_SCALE}
      * and rounding mode = Half Up
      */

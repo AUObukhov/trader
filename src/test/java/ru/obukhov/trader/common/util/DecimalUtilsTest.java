@@ -10,14 +10,27 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DecimalUtilsTest {
+class DecimalUtilsTest {
+
+    // region multiply tests
 
     @Test
-    void multiply() {
+    void multiplyByDouble() {
         BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
 
         AssertUtils.assertEquals(BigDecimal.valueOf(150.15), result);
     }
+
+    @Test
+    void multiplyByInteger() {
+        BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 2);
+
+        AssertUtils.assertEquals(BigDecimal.valueOf(200.2), result);
+    }
+
+    // endregion
+
+    // region divide tests
 
     @Test
     void divideByInteger() {
@@ -39,6 +52,8 @@ public class DecimalUtilsTest {
 
         AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
     }
+
+    // endregion
 
     // region getIntegerQuotient
 
