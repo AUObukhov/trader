@@ -119,7 +119,11 @@ public class MathUtils {
     }
 
     /**
-     * @return simple moving averages of given {@code values} by given {@code period}
+     * Calculates simple moving averages of given {@code values}
+     *
+     * @param values list of values for which averages are calculated for, must be greater than zero
+     * @param period count of values, used for calculation of each average, must be greater than zero
+     * @return list of calculated averages
      */
     public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int period) {
         Assert.isTrue(period > 0, "period must be greater than zero");

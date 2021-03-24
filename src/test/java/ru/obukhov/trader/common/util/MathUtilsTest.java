@@ -175,7 +175,7 @@ class MathUtilsTest {
     // region getSimpleMovingAverages tests
 
     @Test
-    void getSimpleMovingAverages_returnsEmptyList_whenPeriodIsLowerThanZero() {
+    void getSimpleMovingAverages_throwsIllegalArgumentException_whenPeriodIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         int period = -1;
 
@@ -186,7 +186,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsEmptyList_whenPeriodIsZero() {
+    void getSimpleMovingAverages_throwsIllegalArgumentException_whenPeriodIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         int period = 0;
 
