@@ -151,26 +151,26 @@ public class MathUtils {
     }
 
     /**
-     * Calculates weighted moving averages of given {@code values} by given {@code period}
+     * Calculates linear weighted moving averages of given {@code values} by given {@code period}
      *
      * @param values values for which averages are calculated for, must be greater than zero
      * @param period count of values, used for calculation of each average, must be greater than zero
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getWeightedMovingAverages(List<BigDecimal> values, int period) {
+    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int period) {
         Assert.isTrue(period > 0, "period must be greater than zero");
 
         List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
-            weightedMovingAverages.add(getWeightedMovingAverage(values, i, period));
+            weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, period));
         }
 
         return weightedMovingAverages;
     }
 
-    private static BigDecimal getWeightedMovingAverage(List<BigDecimal> values,
-                                                       final int index,
-                                                       final int period) {
+    private static BigDecimal getLinearWeightedMovingAverage(List<BigDecimal> values,
+                                                             final int index,
+                                                             final int period) {
         final int maxPeriod = index + 1;
         final int normalizedPeriod = Math.min(period, maxPeriod);
         BigDecimal sum = DecimalUtils.multiply(values.get(index), normalizedPeriod);

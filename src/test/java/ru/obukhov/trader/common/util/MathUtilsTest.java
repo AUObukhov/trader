@@ -322,62 +322,62 @@ class MathUtilsTest {
 
     // endregion
 
-    // region getWeightedMovingAverages tests
+    // region getLinearWeightedMovingAverages tests
 
     @Test
-    void getWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsLowerThanZero() {
+    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         int period = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getWeightedMovingAverages(values, period),
+                () -> MathUtils.getLinearWeightedMovingAverages(values, period),
                 IllegalArgumentException.class,
                 "period must be greater than zero");
     }
 
     @Test
-    void getWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsZero() {
+    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         int period = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getWeightedMovingAverages(values, period),
+                () -> MathUtils.getLinearWeightedMovingAverages(values, period),
                 IllegalArgumentException.class,
                 "period must be greater than zero");
     }
 
     @Test
-    void getWeightedMovingAverages_returnsEmptyList_whenValuesAreEmpty() {
+    void getLinearWeightedMovingAverages_returnsEmptyList_whenValuesAreEmpty() {
         List<BigDecimal> values = Collections.emptyList();
         int period = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
-    void getWeightedMovingAverages_returnsEqualList_whenExistsSingleValue_andPeriodIsGreaterThanOne() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenExistsSingleValue_andPeriodIsGreaterThanOne() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int period = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         AssertUtils.assertListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getWeightedMovingAverages_returnsEqualList_whenPeriodIsEqualToValuesCount_andExistsSingleValue() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenPeriodIsEqualToValuesCount_andExistsSingleValue() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int period = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         AssertUtils.assertListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getWeightedMovingAverages_returnsAveragesList_whenPeriodIsEqualToValuesCount() {
+    void getLinearWeightedMovingAverages_returnsAveragesList_whenPeriodIsEqualToValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -386,7 +386,7 @@ class MathUtilsTest {
         );
         int period = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -398,7 +398,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getWeightedMovingAverages_returnsAveragesList_whenPeriodIsGreaterThanValuesCount() {
+    void getLinearWeightedMovingAverages_returnsAveragesList_whenPeriodIsGreaterThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -406,7 +406,7 @@ class MathUtilsTest {
         );
         int period = 5;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -417,7 +417,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getWeightedMovingAverages_returnsEqualList_whenPeriodIsOne_andExistsSeveralValues() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenPeriodIsOne_andExistsSeveralValues() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -432,13 +432,13 @@ class MathUtilsTest {
         );
         int period = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         AssertUtils.assertListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getWeightedMovingAverages_returnsMovingAveragesEqualList_whenPeriodIsLowerThanValuesCount() {
+    void getLinearWeightedMovingAverages_returnsMovingAveragesEqualList_whenPeriodIsLowerThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -453,7 +453,7 @@ class MathUtilsTest {
         );
         int period = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getWeightedMovingAverages(values, period);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, period);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
