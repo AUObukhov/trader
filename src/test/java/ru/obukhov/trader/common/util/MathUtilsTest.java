@@ -628,4 +628,269 @@ class MathUtilsTest {
 
     // endregion
 
+    // region getExponentialWeightedMovingAveragesOfArbitraryOrder tests
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = -0.1;
+        int order = 3;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.0;
+        int order = 3;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 1.1;
+        int order = 3;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenOrderIsLowerThanZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.5;
+        int order = -1;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                IllegalArgumentException.class,
+                "order must be positive");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenOrderIsZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.5;
+        int order = 0;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                IllegalArgumentException.class,
+                "order must be positive");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEmptyList_whenValuesAreEmpty() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        Assertions.assertTrue(movingAverages.isEmpty());
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualList_whenExistsSingleValue() {
+        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 1.0;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesListWithDefaultScale() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        for (BigDecimal average : movingAverages) {
+            Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
+                    "expected default scale for all averages");
+        }
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualList_whenAllValuesAreEqual() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000)
+        );
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forFirstOrder() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+        int order = 1;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1800),
+                BigDecimal.valueOf(2760),
+                BigDecimal.valueOf(3752),
+                BigDecimal.valueOf(4750.4),
+                BigDecimal.valueOf(5750.08),
+                BigDecimal.valueOf(6750.016),
+                BigDecimal.valueOf(7750.0032),
+                BigDecimal.valueOf(8750.00064),
+                BigDecimal.valueOf(9750.00013)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forSecondOrder() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+        int order = 2;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1640),
+                BigDecimal.valueOf(2536),
+                BigDecimal.valueOf(3508.8),
+                BigDecimal.valueOf(4502.08),
+                BigDecimal.valueOf(5500.48),
+                BigDecimal.valueOf(6500.1088),
+                BigDecimal.valueOf(7500.02432),
+                BigDecimal.valueOf(8500.00538),
+                BigDecimal.valueOf(9500.00118)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forThirdOrder() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1512),
+                BigDecimal.valueOf(2331.2),
+                BigDecimal.valueOf(3273.28),
+                BigDecimal.valueOf(4256.32),
+                BigDecimal.valueOf(5251.648),
+                BigDecimal.valueOf(6250.41664),
+                BigDecimal.valueOf(7250.10278),
+                BigDecimal.valueOf(8250.02486),
+                BigDecimal.valueOf(9250.00591)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    // endregion
+
 }

@@ -216,4 +216,29 @@ public class MathUtils {
         return averages;
     }
 
+    public static List<BigDecimal> getExponentialWeightedMovingAveragesOfArbitraryOrder(List<BigDecimal> values,
+                                                                                        double weightDecrease,
+                                                                                        int order) {
+        Assert.isTrue(order > 0, "order must be positive");
+
+        BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
+        List<BigDecimal> averages = getExponentialWeightedMovingAverages(values, weightDecrease);
+        if (averages.isEmpty()) {
+            return averages;
+        }
+
+        for (int i = 1; i < order; i++) {
+            BigDecimal average = averages.get(0);
+            for (int j = 1; j < averages.size(); j++) {
+                average = DecimalUtils.multiply(averages.get(j), weightDecrease)
+                        .add(average.multiply(revertedWeightDecrease));
+                averages.set(j, average);
+            }
+        }
+
+        return averages.stream()
+                .map(DecimalUtils::setDefaultScale)
+                .collect(Collectors.toList());
+    }
+
 }
