@@ -12,6 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DecimalUtilsTest {
 
+    @Test
+    void subtract() {
+        BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(100.1), 1.5);
+
+        AssertUtils.assertEquals(BigDecimal.valueOf(98.6), result);
+    }
+
     // region multiply tests
 
     @Test

@@ -12,6 +12,13 @@ public class DecimalUtils {
     public static final int DEFAULT_SCALE = 5;
 
     /**
+     * @return minuend - subtrahend
+     */
+    public static BigDecimal subtract(BigDecimal minuend, double subtrahend) {
+        return minuend.subtract(BigDecimal.valueOf(subtrahend));
+    }
+
+    /**
      * @return multiplier * multiplicand
      */
     public static BigDecimal multiply(BigDecimal multiplier, double multiplicand) {
