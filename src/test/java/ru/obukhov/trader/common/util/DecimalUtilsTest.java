@@ -33,21 +33,28 @@ class DecimalUtilsTest {
     // region divide tests
 
     @Test
-    void divideByInteger() {
+    void divideBigDecimalByInteger() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
 
         AssertUtils.assertEquals(BigDecimal.valueOf(33.33333), result);
     }
 
     @Test
-    void divideByDouble() {
+    void divideBigDecimalByDouble() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3.5);
 
         AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
     }
 
     @Test
-    void divideByBigDecimal() {
+    void divideDoubleByDouble() {
+        BigDecimal result = DecimalUtils.divide(100., 3.5);
+
+        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
+    }
+
+    @Test
+    void divideBigDecimalByBigDecimal() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
 
         AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);

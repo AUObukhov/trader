@@ -45,6 +45,14 @@ public class DecimalUtils {
      * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#DEFAULT_SCALE}
      * and rounding mode = Half Up
      */
+    public static BigDecimal divide(double dividend, double divisor) {
+        return divide(BigDecimal.valueOf(dividend), BigDecimal.valueOf(divisor));
+    }
+
+    /**
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#DEFAULT_SCALE}
+     * and rounding mode = Half Up
+     */
     public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
         return dividend.divide(divisor, DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
