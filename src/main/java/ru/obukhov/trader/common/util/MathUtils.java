@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MathUtils {
@@ -184,6 +185,35 @@ public class MathUtils {
 
         double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
         return DecimalUtils.divide(sum, divisor);
+    }
+
+    /**
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     *
+     * @param values         values for which averages are calculated for. Must be greater than zero
+     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getExponentialWeightedMovingAverages(List<BigDecimal> values,
+                                                                        double weightDecrease) {
+        Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
+                "weightDecrease must be in range (0; 1]");
+
+        List<BigDecimal> averages = new ArrayList<>(values.size());
+        if (values.isEmpty()) {
+            return averages;
+        }
+
+        BigDecimal average = values.get(0);
+        averages.add(average);
+        BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
+        for (int i = 1; i < values.size(); i++) {
+            average = DecimalUtils.multiply(values.get(i), weightDecrease)
+                    .add(average.multiply(revertedWeightDecrease));
+            averages.add(DecimalUtils.setDefaultScale(average));
+        }
+
+        return averages;
     }
 
 }

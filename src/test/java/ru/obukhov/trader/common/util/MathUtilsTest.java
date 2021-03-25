@@ -472,4 +472,160 @@ class MathUtilsTest {
 
     // endregion
 
+    // region getExponentialWeightedMovingAverages tests
+
+    @Test
+    void getExponentialWeightedMovingAverages_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = -0.1;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.0;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 1.1;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                IllegalArgumentException.class,
+                "weightDecrease must be in range (0; 1]");
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsEmptyList_whenValuesAreEmpty() {
+        List<BigDecimal> values = Collections.emptyList();
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        Assertions.assertTrue(movingAverages.isEmpty());
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsEqualList_whenExistsSingleValue() {
+        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsEqualsList_whenWeightDecreaseIsOne() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 1.0;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsAveragesListWithDefaultScale() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        for (BigDecimal average : movingAverages) {
+            Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
+                    "expected default scale for all averages");
+        }
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsEqualList_whenAllValuesAreEqual() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000)
+        );
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        AssertUtils.assertListsAreEqual(values, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_returnsAveragesList() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000),
+                BigDecimal.valueOf(5000),
+                BigDecimal.valueOf(6000),
+                BigDecimal.valueOf(7000),
+                BigDecimal.valueOf(8000),
+                BigDecimal.valueOf(9000),
+                BigDecimal.valueOf(10000)
+        );
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+
+        List<BigDecimal> expectedAverages = Arrays.asList(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1800),
+                BigDecimal.valueOf(2760),
+                BigDecimal.valueOf(3752),
+                BigDecimal.valueOf(4750.4),
+                BigDecimal.valueOf(5750.08),
+                BigDecimal.valueOf(6750.016),
+                BigDecimal.valueOf(7750.0032),
+                BigDecimal.valueOf(8750.00064),
+                BigDecimal.valueOf(9750.00013)
+        );
+        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    // endregion
+
 }
