@@ -123,15 +123,15 @@ public class MathUtils {
      * Calculates simple moving averages of given {@code values}
      *
      * @param values list of values for which averages are calculated for, must be greater than zero
-     * @param period count of values, used for calculation of each average, must be greater than zero
+     * @param window count of values, used for calculation of each average, must be greater than zero
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int period) {
-        Assert.isTrue(period > 0, "period must be greater than zero");
+    public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
+        Assert.isTrue(window > 0, "window must be greater than zero");
 
-        // filling of first {period} averages
+        // filling of first {window} averages
         List<BigDecimal> movingAverages = new ArrayList<>(values.size());
-        for (int i = 0; i < period && i < values.size(); i++) {
+        for (int i = 0; i < window && i < values.size(); i++) {
             BigDecimal sum = BigDecimal.ZERO;
             for (int j = 0; j <= i; j++) {
                 sum = sum.add(values.get(j));
@@ -141,9 +141,9 @@ public class MathUtils {
         }
 
         // filling of the rest averages
-        for (int i = period; i < values.size(); i++) {
-            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - period), period);
-            BigDecimal addedValue = DecimalUtils.divide(values.get(i), period);
+        for (int i = window; i < values.size(); i++) {
+            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
             BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
             movingAverages.add(currentAverage);
         }
@@ -152,18 +152,18 @@ public class MathUtils {
     }
 
     /**
-     * Calculates linear weighted moving averages of given {@code values} by given {@code period}
+     * Calculates linear weighted moving averages of given {@code values} by given {@code window}
      *
      * @param values values for which averages are calculated for, must be greater than zero
-     * @param period count of values, used for calculation of each average, must be greater than zero
+     * @param window count of values, used for calculation of each average, must be greater than zero
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int period) {
-        Assert.isTrue(period > 0, "period must be greater than zero");
+    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window) {
+        Assert.isTrue(window > 0, "window must be greater than zero");
 
         List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
-            weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, period));
+            weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, window));
         }
 
         return weightedMovingAverages;
@@ -171,9 +171,9 @@ public class MathUtils {
 
     private static BigDecimal getLinearWeightedMovingAverage(List<BigDecimal> values,
                                                              final int index,
-                                                             final int period) {
+                                                             final int window) {
         final int maxPeriod = index + 1;
-        final int normalizedPeriod = Math.min(period, maxPeriod);
+        final int normalizedPeriod = Math.min(window, maxPeriod);
         BigDecimal sum = DecimalUtils.multiply(values.get(index), normalizedPeriod);
         BigDecimal weightsSum = BigDecimal.valueOf(normalizedPeriod);
 
