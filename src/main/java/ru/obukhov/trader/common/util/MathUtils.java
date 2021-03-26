@@ -229,23 +229,24 @@ public class MathUtils {
                                                                                         double weightDecrease,
                                                                                         int order) {
         Assert.isTrue(order > 0, "order must be positive");
+        Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
+                "weightDecrease must be in range (0; 1]");
 
         BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
-        List<BigDecimal> averages = getExponentialWeightedMovingAverages(values, weightDecrease);
-        if (averages.isEmpty()) {
-            return averages;
+        if (values.isEmpty()) {
+            return values;
         }
 
-        for (int i = 1; i < order; i++) {
-            BigDecimal average = averages.get(0);
-            for (int j = 1; j < averages.size(); j++) {
-                average = DecimalUtils.multiply(averages.get(j), weightDecrease)
+        for (int i = 0; i < order; i++) {
+            BigDecimal average = values.get(0);
+            for (int j = 1; j < values.size(); j++) {
+                average = DecimalUtils.multiply(values.get(j), weightDecrease)
                         .add(average.multiply(revertedWeightDecrease));
-                averages.set(j, average);
+                values.set(j, average);
             }
         }
 
-        return averages.stream()
+        return values.stream()
                 .map(DecimalUtils::setDefaultScale)
                 .collect(Collectors.toList());
     }
