@@ -104,6 +104,34 @@ class ExcelServiceImplTest extends BaseMockedTest {
         assertChartCreated(sheet);
     }
 
+    @Test
+    void saveCandles() {
+        final String ticker = "ticker";
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 0, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
+        final Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = createCandles();
+
+        excelService.saveCandles(ticker, interval, candles);
+
+        String fileNamePrefix = "Candles for '" + ticker + "'";
+        verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        assertEquals(1, workbook.getNumberOfSheets());
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
+
+        assertEquals(2, sheet.getRowsCount());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        assertRowValues(rowIterator.next(), "Тикер", ticker);
+        assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
+
+        assertChartCreated(sheet);
+    }
+
     private SimulationResult createSimulationResult() {
         String ticker = "ticker";
 

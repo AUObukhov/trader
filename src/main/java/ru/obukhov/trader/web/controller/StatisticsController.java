@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
@@ -26,12 +27,17 @@ import java.util.List;
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
+    private final ExcelService excelService;
 
     @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
         Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         List<Candle> candles = statisticsService.getCandles(request.getTicker(), interval, request.getCandleInterval());
+
+        if (request.isSaveToFile()) {
+            excelService.saveCandles(request.getTicker(), interval, candles);
+        }
 
         return new GetCandlesResponse(candles);
 

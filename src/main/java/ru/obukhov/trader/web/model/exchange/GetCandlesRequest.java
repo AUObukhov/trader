@@ -13,6 +13,7 @@ public class GetCandlesRequest {
     private OffsetDateTime from;
     private OffsetDateTime to;
     private CandleInterval candleInterval;
+    private boolean saveToFile;
 
     // due to some lombok internal error
     public CandleInterval getCandleInterval() {
