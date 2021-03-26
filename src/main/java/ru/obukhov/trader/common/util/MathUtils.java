@@ -241,4 +241,38 @@ public class MathUtils {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Calculates indices of local extremes.
+     * If several consecutive elements are equal, then the last one is considered the extremum
+     *
+     * @param values     values among which extremes are sought for
+     * @param comparator comparator of elements, defining character of extremes
+     * @return calculated extremes
+     */
+    public static List<Integer> getLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
+        List<Integer> extremes = new ArrayList<>(values.size());
+        if (values.isEmpty()) {
+            return extremes;
+        }
+
+        boolean isGrowing = true;
+        BigDecimal previousValue = values.get(0);
+        for (int i = 0; i < values.size(); i++) {
+            BigDecimal currentValue = values.get(i);
+            if (comparator.compare(currentValue, previousValue) >= 0) {
+                isGrowing = true;
+            } else if (isGrowing) {
+                extremes.add(i - 1);
+                isGrowing = false;
+            }
+            previousValue = currentValue;
+        }
+
+        if (isGrowing) {
+            extremes.add(values.size() - 1);
+        }
+
+        return extremes;
+    }
+
 }

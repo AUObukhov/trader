@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -889,6 +890,272 @@ class MathUtilsTest {
                 BigDecimal.valueOf(9250.00591)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    // endregion
+
+    // region getLocalMaximums tests
+
+    @Test
+    void getLocalExtremes_returnsEmptyList_whenValuesIsEmpty() {
+        List<BigDecimal> values = Collections.emptyList();
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        Assertions.assertTrue(extremes.isEmpty());
+    }
+
+    @Test
+    void getLocalExtremes_returnsSingleZeroIndex_whenThereIsSingleValue() {
+        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(100));
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Collections.singletonList(0);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsSingleZeroIndex_whenThereAreTwoValues_andFirstIsGreater() {
+        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(90));
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Collections.singletonList(0);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoEqualsValues() {
+        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(100));
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Collections.singletonList(1);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoValues_andSecondIsGreater() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(90),
+                BigDecimal.valueOf(100)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Collections.singletonList(1);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsIndexOfLastElement_whenThereAreMultipleEqualValues() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(100)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Collections.singletonList(9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues1() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(29.9),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(25),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(30)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues2() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(29.9),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(25),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(30)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues3() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(29.9),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(25),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues4() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(100),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(29.9),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(25),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50.1)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder1() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5.1),
+                BigDecimal.valueOf(4),
+                BigDecimal.valueOf(3.5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(70),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(80)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder2() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(15.1),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(19),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(30)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder3() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(15),
+                BigDecimal.valueOf(15.1),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(19),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(10)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder4() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30.1),
+                BigDecimal.valueOf(20),
+                BigDecimal.valueOf(19),
+                BigDecimal.valueOf(21),
+                BigDecimal.valueOf(60),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(49.9)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder5() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5.1),
+                BigDecimal.valueOf(4),
+                BigDecimal.valueOf(3.5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(70),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(80)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+
+        List<Integer> expectedExtremes = Arrays.asList(0, 3, 7, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     // endregion
