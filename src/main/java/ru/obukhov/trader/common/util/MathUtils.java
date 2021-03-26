@@ -122,7 +122,7 @@ public class MathUtils {
     /**
      * Calculates simple moving averages of given {@code values}
      *
-     * @param values list of values for which averages are calculated for, must be greater than zero
+     * @param values list of values for which averages are calculated for
      * @param window count of values, used for calculation of each average, must be greater than zero
      * @return list of calculated averages
      */
@@ -154,7 +154,7 @@ public class MathUtils {
     /**
      * Calculates linear weighted moving averages of given {@code values} by given {@code window}
      *
-     * @param values values for which averages are calculated for, must be greater than zero
+     * @param values values for which averages are calculated for
      * @param window count of values, used for calculation of each average, must be greater than zero
      * @return list of calculated averages
      */
@@ -190,7 +190,7 @@ public class MathUtils {
     /**
      * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
      *
-     * @param values         values for which averages are calculated for. Must be greater than zero
+     * @param values         values for which averages are calculated for
      * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
      * @return list of calculated averages
      */
@@ -216,6 +216,15 @@ public class MathUtils {
         return averages;
     }
 
+    /**
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     * and {@code order}
+     *
+     * @param values         values for which averages are calculated for
+     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @param order          order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
     public static List<BigDecimal> getExponentialWeightedMovingAveragesOfArbitraryOrder(List<BigDecimal> values,
                                                                                         double weightDecrease,
                                                                                         int order) {
