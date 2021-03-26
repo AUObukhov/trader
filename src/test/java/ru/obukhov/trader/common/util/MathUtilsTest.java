@@ -213,7 +213,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -223,7 +223,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -244,7 +244,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(2500)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -263,7 +263,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(1500),
                 BigDecimal.valueOf(2000)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -284,7 +284,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -317,7 +317,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(7500),
                 BigDecimal.valueOf(8500)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     // endregion
@@ -363,7 +363,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -373,7 +373,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -394,7 +394,7 @@ class MathUtilsTest {
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(14000.0 / 6)),
                 BigDecimal.valueOf(3000)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -413,7 +413,7 @@ class MathUtilsTest {
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(5000.0 / 3)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(14000.0 / 6))
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -434,7 +434,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -467,7 +467,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(8000),
                 BigDecimal.valueOf(9000)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     // endregion
@@ -524,7 +524,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -545,7 +545,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -590,7 +590,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -623,7 +623,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(8750.00064),
                 BigDecimal.valueOf(9750.00013)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     // endregion
@@ -711,7 +711,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -734,7 +734,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -783,7 +783,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
 
-        AssertUtils.assertListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
@@ -818,7 +818,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(8750.00064),
                 BigDecimal.valueOf(9750.00013)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -853,7 +853,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(8500.00538),
                 BigDecimal.valueOf(9500.00118)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
@@ -888,7 +888,7 @@ class MathUtilsTest {
                 BigDecimal.valueOf(8250.02486),
                 BigDecimal.valueOf(9250.00591)
         );
-        AssertUtils.assertListsAreEqual(expectedAverages, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     // endregion

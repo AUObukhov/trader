@@ -25,6 +25,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,10 +57,36 @@ public class AssertUtils {
         }
     }
 
-    public static void assertListsAreEqual(List<BigDecimal> expected, List<BigDecimal> actual) {
-        Assertions.assertEquals(expected.size(), actual.size());
+    public static void assertListsAreEqual(List<?> expected, List<?> actual) {
+        assertListSize(expected, actual);
         for (int i = 0; i < expected.size(); i++) {
-            AssertUtils.assertEquals(expected.get(i), actual.get(i));
+            Object expectedValue = expected.get(i);
+            Object actualValue = actual.get(i);
+            if (!Objects.equals(expectedValue, actualValue)) {
+                String message = String.format("expected: <%s> at position <%s> but was: <%s>",
+                        expectedValue, actualValue, i);
+                Assertions.fail(message);
+            }
+        }
+    }
+
+    public static void assertBigDecimalListsAreEqual(List<BigDecimal> expected, List<BigDecimal> actual) {
+        assertListSize(expected, actual);
+        for (int i = 0; i < expected.size(); i++) {
+            BigDecimal expectedValue = expected.get(i);
+            BigDecimal actualValue = actual.get(i);
+            if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
+                String message = String.format("expected: <%s> at position <%s> but was: <%s>",
+                        expectedValue, actualValue, i);
+                Assertions.fail(message);
+            }
+        }
+    }
+
+    private static void assertListSize(List<?> expected, List<?> actual) {
+        if (expected.size() != actual.size()) {
+            String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
+            Assertions.fail(message);
         }
     }
 
