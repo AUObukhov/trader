@@ -64,7 +64,7 @@ public class AssertUtils {
             Object actualValue = actual.get(i);
             if (!Objects.equals(expectedValue, actualValue)) {
                 String message = String.format("expected: <%s> at position <%s> but was: <%s>",
-                        expectedValue, actualValue, i);
+                        expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
@@ -77,7 +77,7 @@ public class AssertUtils {
             BigDecimal actualValue = actual.get(i);
             if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
                 String message = String.format("expected: <%s> at position <%s> but was: <%s>",
-                        expectedValue, actualValue, i);
+                        expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
