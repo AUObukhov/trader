@@ -271,7 +271,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void addCandles(ExtendedChartData chartData, List<Candle> candles) {
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(candles);
-        addClosePrices(chartData, timesDataSource, candles);
+        addOpenPrices(chartData, timesDataSource, candles);
 
         chartData.stretchChart();
     }
@@ -296,7 +296,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
 
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(innerCandles);
-        addClosePrices(chartData, timesDataSource, innerCandles);
+        addOpenPrices(chartData, timesDataSource, innerCandles);
         addOperations(chartData, timesDataSource, operations, operationsIndices);
 
         chartData.stretchChart();
@@ -310,11 +310,11 @@ public class ExcelServiceImpl implements ExcelService {
         return XDDFDataSourcesFactory.fromArray(times);
     }
 
-    private void addClosePrices(ExtendedChartData chartData,
-                                XDDFCategoryDataSource timesDataSource,
-                                List<Candle> candles) {
+    private void addOpenPrices(ExtendedChartData chartData,
+                               XDDFCategoryDataSource timesDataSource,
+                               List<Candle> candles) {
         BigDecimal[] prices = candles.stream()
-                .map(Candle::getClosePrice)
+                .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE);
     }

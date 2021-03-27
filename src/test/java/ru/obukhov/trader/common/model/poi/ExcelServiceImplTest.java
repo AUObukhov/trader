@@ -217,23 +217,23 @@ class ExcelServiceImplTest extends BaseMockedTest {
     private List<Candle> createCandles() {
         Candle candle1 = Candle.builder()
                 .time(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
-                .closePrice(BigDecimal.valueOf(150))
+                .openPrice(BigDecimal.valueOf(150))
                 .build();
         Candle candle2 = Candle.builder()
                 .time(DateUtils.getDateTime(2020, 10, 1, 11, 0, 0))
-                .closePrice(BigDecimal.valueOf(160))
+                .openPrice(BigDecimal.valueOf(160))
                 .build();
         Candle candle3 = Candle.builder()
                 .time(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
-                .closePrice(BigDecimal.valueOf(180))
+                .openPrice(BigDecimal.valueOf(180))
                 .build();
         Candle candle4 = Candle.builder()
                 .time(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
-                .closePrice(BigDecimal.valueOf(160))
+                .openPrice(BigDecimal.valueOf(160))
                 .build();
         Candle candle5 = Candle.builder()
                 .time(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
-                .closePrice(BigDecimal.valueOf(120))
+                .openPrice(BigDecimal.valueOf(120))
                 .build();
 
         return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
