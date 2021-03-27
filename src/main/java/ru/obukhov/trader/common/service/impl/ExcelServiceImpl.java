@@ -285,7 +285,7 @@ public class ExcelServiceImpl implements ExcelService {
         List<Integer> operationsIndices = new ArrayList<>();
         for (SimulatedOperation operation : operations) {
             OffsetDateTime operationDateTime = operation.getDateTime();
-            Candle keyCandle = Candle.builder().time(operationDateTime).build();
+            Candle keyCandle = new Candle(operationDateTime);
             int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime));
             if (index < 0) {
                 index = -index - 1;

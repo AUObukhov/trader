@@ -216,25 +216,25 @@ class ExcelServiceImplTest extends BaseMockedTest {
     }
 
     private List<Candle> createCandles() {
-        Candle candle1 = TestDataHelper.createCandleWithTimeAndOpenPrice(
-                DateUtils.getDateTime(2020, 10, 1, 10, 0, 0),
-                150
+        Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                150,
+                DateUtils.getDateTime(2020, 10, 1, 10, 0, 0)
         );
-        Candle candle2 = TestDataHelper.createCandleWithTimeAndOpenPrice(
-                DateUtils.getDateTime(2020, 10, 1, 11, 0, 0),
-                160
+        Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                160,
+                DateUtils.getDateTime(2020, 10, 1, 11, 0, 0)
         );
-        Candle candle3 = TestDataHelper.createCandleWithTimeAndOpenPrice(
-                DateUtils.getDateTime(2020, 10, 5, 10, 11, 0),
-                180
+        Candle candle3 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                180,
+                DateUtils.getDateTime(2020, 10, 5, 10, 11, 0)
         );
-        Candle candle4 = TestDataHelper.createCandleWithTimeAndOpenPrice(
-                DateUtils.getDateTime(2020, 10, 10, 10, 50, 0),
-                160
+        Candle candle4 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                160,
+                DateUtils.getDateTime(2020, 10, 10, 10, 50, 0)
         );
-        Candle candle5 = TestDataHelper.createCandleWithTimeAndOpenPrice(
-                DateUtils.getDateTime(2020, 11, 1, 10, 0, 0),
-                120
+        Candle candle5 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                120,
+                DateUtils.getDateTime(2020, 11, 1, 10, 0, 0)
         );
 
         return Arrays.asList(candle1, candle2, candle3, candle4, candle5);

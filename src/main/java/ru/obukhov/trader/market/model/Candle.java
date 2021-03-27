@@ -1,7 +1,8 @@
 package ru.obukhov.trader.market.model;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
@@ -10,20 +11,25 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Candle {
 
-    private BigDecimal openPrice;
+    protected BigDecimal openPrice;
 
-    private BigDecimal closePrice;
+    protected BigDecimal closePrice;
 
-    private BigDecimal highestPrice;
+    protected BigDecimal highestPrice;
 
-    private BigDecimal lowestPrice;
+    protected BigDecimal lowestPrice;
 
-    private OffsetDateTime time;
+    protected OffsetDateTime time;
 
-    private CandleInterval interval;
+    protected CandleInterval interval;
+
+    public Candle(OffsetDateTime time) {
+        this.time = time;
+    }
 
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
@@ -40,14 +46,14 @@ public class Candle {
         BigDecimal lowestPrice = openPrice.min(closePrice);
         OffsetDateTime time = DateUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
 
-        return builder()
-                .openPrice(openPrice)
-                .closePrice(closePrice)
-                .highestPrice(highestPrice)
-                .lowestPrice(lowestPrice)
-                .time(time)
-                .interval(leftCandle.getInterval())
-                .build();
+        return new Candle(
+                openPrice,
+                closePrice,
+                highestPrice,
+                lowestPrice,
+                time,
+                leftCandle.getInterval()
+        );
     }
 
 }

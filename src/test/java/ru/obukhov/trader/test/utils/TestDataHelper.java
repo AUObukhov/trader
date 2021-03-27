@@ -45,17 +45,47 @@ public class TestDataHelper {
 
     }
 
-    public static Candle createCandleWithClosePrice(double closePrice) {
-        return Candle.builder()
-                .closePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)))
-                .build();
+    public static Candle createCandleWithOpenPrice(double openPrice) {
+        return createCandleWithOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }
 
-    public static Candle createCandleWithTimeAndOpenPrice(OffsetDateTime time, double openPrice) {
-        return Candle.builder()
-                .time(time)
-                .openPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)))
-                .build();
+    public static Candle createCandleWithOpenPrice(BigDecimal openPrice) {
+        Candle candle = new Candle();
+        candle.setOpenPrice(openPrice);
+        return candle;
+    }
+
+    public static Candle createCandleWithClosePrice(double closePrice) {
+        Candle candle = new Candle();
+        candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
+        return candle;
+    }
+
+    public static Candle createCandleWithTime(OffsetDateTime time) {
+        Candle candle = new Candle();
+        candle.setTime(time);
+        return candle;
+    }
+
+    public static Candle createCandleWithOpenPriceAndTime(double openPrice, OffsetDateTime time) {
+        Candle candle = new Candle();
+        candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
+        candle.setTime(time);
+        return candle;
+    }
+
+    public static Candle createCandleWithClosePriceAndTime(double closePrice, OffsetDateTime time) {
+        Candle candle = new Candle();
+        candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
+        candle.setTime(time);
+        return candle;
+    }
+
+    public static Candle createCandleWithTimeAndInterval(OffsetDateTime time, CandleInterval interval) {
+        Candle candle = new Candle();
+        candle.setTime(time);
+        candle.setInterval(interval);
+        return candle;
     }
 
     public static Instrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {

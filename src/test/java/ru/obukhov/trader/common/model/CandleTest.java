@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -14,13 +15,13 @@ class CandleTest {
 
     @Test
     void createAverage_throwsIllegalArgumentException_whenLeftCandleAfterRightCandle() {
-        Candle leftCandle = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 11, 1, 0, 0))
-                .build();
+        Candle leftCandle = TestDataHelper.createCandleWithTime(
+                DateUtils.getDateTime(2020, 10, 11, 1, 0, 0)
+        );
 
-        Candle rightCandle = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 10, 2, 0, 0))
-                .build();
+        Candle rightCandle = TestDataHelper.createCandleWithTime(
+                DateUtils.getDateTime(2020, 10, 10, 2, 0, 0)
+        );
 
         AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
                 IllegalArgumentException.class,
@@ -29,15 +30,15 @@ class CandleTest {
 
     @Test
     void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
-        Candle leftCandle = Candle.builder()
-                .interval(CandleInterval.DAY)
-                .time(DateUtils.getDateTime(2020, 10, 10, 1, 0, 0))
-                .build();
+        Candle leftCandle = TestDataHelper.createCandleWithTimeAndInterval(
+                DateUtils.getDateTime(2020, 10, 10, 1, 0, 0),
+                CandleInterval.DAY
+        );
 
-        Candle rightCandle = Candle.builder()
-                .interval(CandleInterval.HOUR)
-                .time(DateUtils.getDateTime(2020, 10, 11, 2, 0, 0))
-                .build();
+        Candle rightCandle = TestDataHelper.createCandleWithTimeAndInterval(
+                DateUtils.getDateTime(2020, 10, 11, 2, 0, 0),
+                CandleInterval.HOUR
+        );
 
         AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
                 IllegalArgumentException.class,
@@ -46,15 +47,15 @@ class CandleTest {
 
     @Test
     void createAverage() {
-        Candle candle1 = Candle.builder()
-                .closePrice(BigDecimal.valueOf(100))
-                .time(DateUtils.getDateTime(2020, 10, 10, 1, 0, 0))
-                .build();
+        Candle candle1 = TestDataHelper.createCandleWithClosePriceAndTime(
+                100,
+                DateUtils.getDateTime(2020, 10, 10, 1, 0, 0)
+        );
 
-        Candle candle2 = Candle.builder()
-                .openPrice(BigDecimal.valueOf(200))
-                .time(DateUtils.getDateTime(2020, 10, 11, 2, 0, 0))
-                .build();
+        Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
+                200,
+                DateUtils.getDateTime(2020, 10, 11, 2, 0, 0)
+        );
 
         Candle averageCandle = Candle.createAverage(candle1, candle2);
 

@@ -531,7 +531,7 @@ class MarketServiceImplTest extends BaseMockedTest {
 
         List<Candle> candles = new ArrayList<>(openPrices.size());
         for (int i = 0; i < openPrices.size(); i++) {
-            candles.add(TestDataHelper.createCandleWithTimeAndOpenPrice(times.get(i), openPrices.get(i)));
+            candles.add(TestDataHelper.createCandleWithOpenPriceAndTime(openPrices.get(i), times.get(i)));
         }
 
         return candles;
