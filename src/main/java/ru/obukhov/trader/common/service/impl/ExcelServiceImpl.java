@@ -106,6 +106,7 @@ public class ExcelServiceImpl implements ExcelService {
 
         putTicker(sheet, ticker);
         putInterval(sheet, interval);
+        putCandles(sheet, candles);
 
         sheet.autoSizeColumns();
 
@@ -221,6 +222,29 @@ public class ExcelServiceImpl implements ExcelService {
                         operation.getCommission());
             }
         }
+    }
+
+    private void putCandles(ExtendedSheet sheet, List<Candle> candles) {
+        sheet.addRow();
+        sheet.addRow().createUnitedCell("Свечи", 5);
+        sheet.addRow().createCells(
+                "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
+
+        for (Candle candle : candles) {
+            putCandle(sheet, candle);
+        }
+    }
+
+    private void putCandle(ExtendedSheet sheet, Candle candle) {
+        ExtendedRow row = sheet.addRow();
+        row.createCells(
+                candle.getTime(),
+                candle.getOpenPrice(),
+                candle.getClosePrice(),
+                candle.getHighestPrice(),
+                candle.getLowestPrice()
+        );
+
     }
 
     private void putChart(ExtendedSheet sheet, List<Candle> candles) {

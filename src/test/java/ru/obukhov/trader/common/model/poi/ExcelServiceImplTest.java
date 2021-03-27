@@ -123,11 +123,23 @@ class ExcelServiceImplTest extends BaseMockedTest {
         assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
 
-        assertEquals(2, sheet.getRowsCount());
+        assertEquals(10, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
         assertRowValues(rowIterator.next(), "Тикер", ticker);
         assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
+        assertRowValues(rowIterator.next());
+        assertRowValues(rowIterator.next(), "Свечи");
+        assertRowValues(rowIterator.next(),
+                "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
+        for (Candle candle : candles) {
+            assertRowValues(rowIterator.next(),
+                    candle.getTime(),
+                    candle.getOpenPrice(),
+                    candle.getClosePrice(),
+                    candle.getHighestPrice(),
+                    candle.getLowestPrice());
+        }
 
         assertChartCreated(sheet);
     }
