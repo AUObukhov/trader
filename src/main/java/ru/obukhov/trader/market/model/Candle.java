@@ -27,10 +27,6 @@ public class Candle {
 
     protected CandleInterval interval;
 
-    public Candle(OffsetDateTime time) {
-        this.time = time;
-    }
-
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
      */
