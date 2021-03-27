@@ -5,6 +5,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -42,6 +43,19 @@ public class TestDataHelper {
                 OffsetDateTime.now()
         );
 
+    }
+
+    public static Candle createCandleWithClosePrice(double closePrice) {
+        return Candle.builder()
+                .closePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)))
+                .build();
+    }
+
+    public static Candle createCandleWithTimeAndOpenPrice(OffsetDateTime time, double openPrice) {
+        return Candle.builder()
+                .time(time)
+                .openPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)))
+                .build();
     }
 
     public static Instrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {

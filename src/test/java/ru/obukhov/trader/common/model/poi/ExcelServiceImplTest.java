@@ -18,6 +18,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
@@ -215,26 +216,26 @@ class ExcelServiceImplTest extends BaseMockedTest {
     }
 
     private List<Candle> createCandles() {
-        Candle candle1 = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
-                .openPrice(BigDecimal.valueOf(150))
-                .build();
-        Candle candle2 = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 1, 11, 0, 0))
-                .openPrice(BigDecimal.valueOf(160))
-                .build();
-        Candle candle3 = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
-                .openPrice(BigDecimal.valueOf(180))
-                .build();
-        Candle candle4 = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
-                .openPrice(BigDecimal.valueOf(160))
-                .build();
-        Candle candle5 = Candle.builder()
-                .time(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
-                .openPrice(BigDecimal.valueOf(120))
-                .build();
+        Candle candle1 = TestDataHelper.createCandleWithTimeAndOpenPrice(
+                DateUtils.getDateTime(2020, 10, 1, 10, 0, 0),
+                150
+        );
+        Candle candle2 = TestDataHelper.createCandleWithTimeAndOpenPrice(
+                DateUtils.getDateTime(2020, 10, 1, 11, 0, 0),
+                160
+        );
+        Candle candle3 = TestDataHelper.createCandleWithTimeAndOpenPrice(
+                DateUtils.getDateTime(2020, 10, 5, 10, 11, 0),
+                180
+        );
+        Candle candle4 = TestDataHelper.createCandleWithTimeAndOpenPrice(
+                DateUtils.getDateTime(2020, 10, 10, 10, 50, 0),
+                160
+        );
+        Candle candle5 = TestDataHelper.createCandleWithTimeAndOpenPrice(
+                DateUtils.getDateTime(2020, 11, 1, 10, 0, 0),
+                120
+        );
 
         return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
     }

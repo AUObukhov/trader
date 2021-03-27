@@ -155,19 +155,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = createCandle(100);
+        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
 
-        final Candle candle1 = createCandle(200);
+        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
         final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
 
-        final Candle candle2 = createCandle(300);
+        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
         final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
 
-        final Candle candle3 = createCandle(400);
+        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
         final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
 
-        final Candle candle4 = createCandle(500);
+        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(ticker))
@@ -240,19 +240,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = createCandle(100);
+        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
 
-        final Candle candle1 = createCandle(200);
+        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
         final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
 
-        final Candle candle2 = createCandle(300);
+        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
         final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
 
-        final Candle candle3 = createCandle(400);
+        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
         final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
 
-        final Candle candle4 = createCandle(500);
+        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(ticker))
@@ -310,19 +310,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = createCandle(100);
+        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
 
-        final Candle candle1 = createCandle(200);
+        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
         final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
 
-        final Candle candle2 = createCandle(300);
+        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
         final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
 
-        final Candle candle3 = createCandle(400);
+        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
         final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
 
-        final Candle candle4 = createCandle(500);
+        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(ticker))
@@ -379,7 +379,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = createCandle(100);
+        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
 
@@ -444,19 +444,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = createCandle(100);
+        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
 
-        final Candle candle1 = createCandle(200);
+        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
         final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
 
-        final Candle candle2 = createCandle(300);
+        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
         final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
 
-        final Candle candle3 = createCandle(400);
+        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
         final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
 
-        final Candle candle4 = createCandle(500);
+        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(ticker))
@@ -513,7 +513,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = createCandle(100);
+        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
 
@@ -561,7 +561,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = createCandle(100);
+        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
 
@@ -646,7 +646,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = createCandle(100);
+        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
 
@@ -678,10 +678,6 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         Mockito.when(fakeBot.getName()).thenReturn(botName);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
-    }
-
-    private Candle createCandle(double closePrice) {
-        return Candle.builder().closePrice(BigDecimal.valueOf(closePrice)).build();
     }
 
     private void mockNextMinute(OffsetDateTime from) {

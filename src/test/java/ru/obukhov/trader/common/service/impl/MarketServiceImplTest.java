@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.math.BigDecimal;
@@ -530,19 +531,10 @@ class MarketServiceImplTest extends BaseMockedTest {
 
         List<Candle> candles = new ArrayList<>(openPrices.size());
         for (int i = 0; i < openPrices.size(); i++) {
-            candles.add(createCandleSimple(openPrices.get(i), times.get(i)));
+            candles.add(TestDataHelper.createCandleWithTimeAndOpenPrice(times.get(i), openPrices.get(i)));
         }
 
         return candles;
-    }
-
-    private Candle createCandleSimple(Integer openPrice, OffsetDateTime time) {
-
-        return Candle.builder()
-                .openPrice(BigDecimal.valueOf(openPrice))
-                .time(time)
-                .build();
-
     }
 
     // endregion
