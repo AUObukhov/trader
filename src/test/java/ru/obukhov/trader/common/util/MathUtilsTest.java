@@ -289,7 +289,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsMovingAveragesEqualList_whenWindowIsLowerThanValuesCount() {
+    void getSimpleMovingAverages_returnsAverages_whenWindowIsLowerThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
