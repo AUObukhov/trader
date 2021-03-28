@@ -175,7 +175,7 @@ class MathUtilsTest {
     // region getSimpleMovingAverages tests
 
     @Test
-    void getSimpleMovingAverages_throwsIllegalArgumentException_whenWindowIsLowerThanZero() {
+    void getSimpleMovingAverages_throwsIllegalArgumentException_whenWindowIsNegative() {
         List<BigDecimal> values = Collections.emptyList();
         int window = -1;
 
@@ -325,7 +325,7 @@ class MathUtilsTest {
     // region getLinearWeightedMovingAverages tests
 
     @Test
-    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenWindowIsLowerThanZero() {
+    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenWindowIsNegative() {
         List<BigDecimal> values = Collections.emptyList();
         int window = -1;
 
@@ -475,7 +475,7 @@ class MathUtilsTest {
     // region getExponentialWeightedMovingAverages tests
 
     @Test
-    void getExponentialWeightedMovingAverages_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
+    void getExponentialWeightedMovingAverages_throwsIllegalArgumentException_whenWeightDecreaseIsNegative() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = -0.1;
 
@@ -631,7 +631,7 @@ class MathUtilsTest {
     // region getExponentialWeightedMovingAverages with order tests
 
     @Test
-    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenWeightDecreaseIsNegative() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = -0.1;
         int order = 3;
@@ -667,7 +667,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenOrderIsLowerThanZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenOrderIsNegative() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.5;
         int order = -1;
