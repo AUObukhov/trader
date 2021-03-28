@@ -113,6 +113,21 @@ public class DecimalUtils {
     }
 
     /**
+     * @return BigDecimal with scale equal to minimum non negative value between scale of given {@code number}, 0 and
+     * {@link DecimalUtils#DEFAULT_SCALE}. If given {@code number} is null, then return null
+     */
+    public static BigDecimal setDefaultScale(Double number) {
+        if (number == null) {
+            return null;
+        }
+
+        BigDecimal bigDecimal = BigDecimal.valueOf(number);
+
+        int scale = Math.min(Math.max(bigDecimal.scale(), 0), DEFAULT_SCALE);
+        return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
+    }
+
+    /**
      * @return true if {@code value1} equals {@code value2}, or else false
      */
     public static boolean numbersEqual(BigDecimal value1, BigDecimal value2) {

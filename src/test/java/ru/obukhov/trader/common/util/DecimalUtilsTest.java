@@ -122,37 +122,83 @@ class DecimalUtilsTest {
         AssertUtils.assertEquals(BigDecimal.valueOf(0.00301), result);
     }
 
-    // region setDefaultScale tests
+    // region setDefaultScale with BigDecimal tests
 
     @Test
-    void setDefaultScale_returnsNull_whenNumberIsNull() {
-        assertNull(DecimalUtils.setDefaultScale(null));
+    void setDefaultScale_withBigDecimal_returnsNull_whenNumberIsNull() {
+        BigDecimal number = null;
+
+        assertNull(DecimalUtils.setDefaultScale(number));
     }
 
     @Test
-    void setDefaultScale_setZeroScale_whenNumberScaleIsNegative() {
+    void setDefaultScale_withBigDecimal_setZeroScale_whenNumberScaleIsNegative() {
         BigDecimal number = BigDecimal.valueOf(10, -1);
+
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         assertEquals(0, result.scale());
     }
 
     @Test
-    void setDefaultScale_notChangesScale_whenNumberScaleIsLowerThanDefault() {
+    void setDefaultScale_withBigDecimal_notChangesScale_whenNumberScaleIsLowerThanDefault() {
         int scale = 2;
         BigDecimal number = BigDecimal.valueOf(10, scale);
+
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         assertEquals(scale, result.scale());
     }
 
     @Test
-    void setDefaultScale_setDefaultScaleValue_whenNumberScaleIsGreaterThanDefault() {
+    void setDefaultScale_withBigDecimal_setDefaultScaleValue_whenNumberScaleIsGreaterThanDefault() {
         int scale = 6;
         BigDecimal number = BigDecimal.valueOf(10, scale);
+
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+    }
+
+    // endregion
+
+    // region setDefaultScale with double tests
+
+    @Test
+    void setDefaultScale_withDouble_returnsNull_whenNumberIsNull() {
+        Double number = null;
+
+        assertNull(DecimalUtils.setDefaultScale(number));
+    }
+
+    @Test
+    void setDefaultScale_withDouble_notChangesScale_whenNumberScaleIsLowerThanDefault() {
+        Double number = 10.01;
+
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+
+        assertEquals(2, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(10.01), result);
+    }
+
+    @Test
+    void setDefaultScale_withDouble_setDefaultScaleValue_andRoundsNumberDown_whenNumberScaleIsGreaterThanDefault() {
+        Double number = 10.000001;
+
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+
+        assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
+    }
+
+    @Test
+    void setDefaultScale_withDouble_setDefaultScaleValue_andRoundsNumberUp_whenNumberScaleIsGreaterThanDefault() {
+        Double number = 10.000005;
+
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+
+        assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(10.00001), result);
     }
 
     // endregion
