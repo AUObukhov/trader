@@ -176,7 +176,7 @@ class MathUtilsTest {
     // region getSimpleMovingAverages tests
 
     @Test
-    void getSimpleMovingAverages_throwsIllegalArgumentException_whenPeriodIsLowerThanZero() {
+    void getSimpleMovingAverages_throwsIllegalArgumentException_whenWindowIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         int window = -1;
 
@@ -187,7 +187,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_throwsIllegalArgumentException_whenPeriodIsZero() {
+    void getSimpleMovingAverages_throwsIllegalArgumentException_whenWindowIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         int window = 0;
 
@@ -208,7 +208,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsEqualList_whenExistsSingleValue_andPeriodIsGreaterThanOne() {
+    void getSimpleMovingAverages_returnsEqualList_whenExistsSingleValue_andWindowIsGreaterThanOne() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 4;
 
@@ -218,7 +218,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsEqualList_whenPeriodIsEqualToValuesCount_andExistsSingleValue() {
+    void getSimpleMovingAverages_returnsEqualList_whenWindowIsEqualToValuesCount_andExistsSingleValue() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 1;
 
@@ -228,7 +228,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsAveragesList_whenPeriodIsEqualToValuesCount() {
+    void getSimpleMovingAverages_returnsAveragesList_whenWindowIsEqualToValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -249,7 +249,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsAveragesList_whenPeriodIsGreaterThanValuesCount() {
+    void getSimpleMovingAverages_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -268,7 +268,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsEqualList_whenPeriodIsOne_andExistsSeveralValues() {
+    void getSimpleMovingAverages_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -289,7 +289,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getSimpleMovingAverages_returnsMovingAveragesEqualList_whenPeriodIsLowerThanValuesCount() {
+    void getSimpleMovingAverages_returnsMovingAveragesEqualList_whenWindowIsLowerThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -326,7 +326,7 @@ class MathUtilsTest {
     // region getLinearWeightedMovingAverages tests
 
     @Test
-    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsLowerThanZero() {
+    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenWindowIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         int window = -1;
 
@@ -337,7 +337,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenPeriodIsZero() {
+    void getLinearWeightedMovingAverages_throwsIllegalArgumentException_whenWindowIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         int window = 0;
 
@@ -358,7 +358,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsEqualList_whenExistsSingleValue_andPeriodIsGreaterThanOne() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenExistsSingleValue_andWindowIsGreaterThanOne() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 4;
 
@@ -368,7 +368,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsEqualList_whenPeriodIsEqualToValuesCount_andExistsSingleValue() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenWindowIsEqualToValuesCount_andExistsSingleValue() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 1;
 
@@ -378,7 +378,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsAveragesList_whenPeriodIsEqualToValuesCount() {
+    void getLinearWeightedMovingAverages_returnsAveragesList_whenWindowIsEqualToValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -399,7 +399,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsAveragesList_whenPeriodIsGreaterThanValuesCount() {
+    void getLinearWeightedMovingAverages_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -418,7 +418,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsEqualList_whenPeriodIsOne_andExistsSeveralValues() {
+    void getLinearWeightedMovingAverages_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -439,7 +439,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getLinearWeightedMovingAverages_returnsMovingAveragesEqualList_whenPeriodIsLowerThanValuesCount() {
+    void getLinearWeightedMovingAverages_returnsMovingAveragesEqualList_whenWindowIsLowerThanValuesCount() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
