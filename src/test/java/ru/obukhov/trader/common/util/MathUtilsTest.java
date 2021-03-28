@@ -13,11 +13,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MathUtilsTest {
+
+    private static final Function<BigDecimal, BigDecimal> SELF = number -> number;
 
     // region getAverage with collection tests
 
@@ -181,7 +184,7 @@ class MathUtilsTest {
         int window = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getSimpleMovingAverages(values, window),
+                () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
                 "window must be greater than zero");
     }
@@ -192,7 +195,7 @@ class MathUtilsTest {
         int window = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getSimpleMovingAverages(values, window),
+                () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
                 "window must be greater than zero");
     }
@@ -202,7 +205,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.emptyList();
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
@@ -212,7 +215,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -222,7 +225,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -237,7 +240,7 @@ class MathUtilsTest {
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -257,7 +260,7 @@ class MathUtilsTest {
         );
         int window = 5;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -283,7 +286,7 @@ class MathUtilsTest {
         );
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -304,7 +307,7 @@ class MathUtilsTest {
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -331,7 +334,7 @@ class MathUtilsTest {
         int window = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getLinearWeightedMovingAverages(values, window),
+                () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
                 "window must be greater than zero");
     }
@@ -342,7 +345,7 @@ class MathUtilsTest {
         int window = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getLinearWeightedMovingAverages(values, window),
+                () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
                 "window must be greater than zero");
     }
@@ -352,7 +355,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.emptyList();
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
@@ -362,7 +365,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -372,7 +375,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -387,7 +390,7 @@ class MathUtilsTest {
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -407,7 +410,7 @@ class MathUtilsTest {
         );
         int window = 5;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -433,7 +436,7 @@ class MathUtilsTest {
         );
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -454,7 +457,7 @@ class MathUtilsTest {
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -481,7 +484,7 @@ class MathUtilsTest {
         double weightDecrease = -0.1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -492,7 +495,7 @@ class MathUtilsTest {
         double weightDecrease = 0.0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -503,7 +506,7 @@ class MathUtilsTest {
         double weightDecrease = 1.1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -513,7 +516,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
@@ -523,7 +526,7 @@ class MathUtilsTest {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -544,7 +547,7 @@ class MathUtilsTest {
         );
         double weightDecrease = 1.0;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -565,7 +568,7 @@ class MathUtilsTest {
         );
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         for (BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
@@ -589,7 +592,7 @@ class MathUtilsTest {
         );
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -610,7 +613,7 @@ class MathUtilsTest {
         );
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -638,7 +641,7 @@ class MathUtilsTest {
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -650,7 +653,7 @@ class MathUtilsTest {
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -662,7 +665,7 @@ class MathUtilsTest {
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
@@ -674,7 +677,7 @@ class MathUtilsTest {
         int order = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
@@ -686,7 +689,7 @@ class MathUtilsTest {
         int order = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
@@ -698,7 +701,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
@@ -710,7 +713,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -733,7 +736,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -756,7 +759,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         for (BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
@@ -782,7 +785,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
@@ -805,7 +808,7 @@ class MathUtilsTest {
         int order = 1;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -840,7 +843,7 @@ class MathUtilsTest {
         int order = 2;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -875,7 +878,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = Arrays.asList(
                 BigDecimal.valueOf(1000),
@@ -897,59 +900,79 @@ class MathUtilsTest {
     // region getLocalMaximums tests
 
     @Test
-    void getLocalExtremes_returnsEmptyList_whenValuesIsEmpty() {
+    void getLocalExtremes_returnsEmptyList_whenValuesIsEmpty_andNaturalOrder() {
         List<BigDecimal> values = Collections.emptyList();
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         Assertions.assertTrue(extremes.isEmpty());
     }
 
     @Test
-    void getLocalExtremes_returnsSingleZeroIndex_whenThereIsSingleValue() {
+    void getLocalExtremes_returnsSingleZeroIndex_whenThereIsSingleValue_andNaturalOrder() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(100));
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Collections.singletonList(0);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsSingleZeroIndex_whenThereAreTwoValues_andFirstIsGreater() {
+    void getLocalExtremes_returnsSingleZeroIndex_whenThereAreTwoValues_andFirstIsGreater_andNaturalOrder() {
         List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(90));
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Collections.singletonList(0);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoEqualsValues() {
+    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoEqualsValues_andNaturalOrder() {
         List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(100));
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Collections.singletonList(1);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoValues_andSecondIsGreater() {
+    void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoValues_andSecondIsGreater_andNaturalOrder() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(90),
                 BigDecimal.valueOf(100)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Collections.singletonList(1);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsIndexOfLastElement_whenThereAreMultipleEqualValues() {
+    void getLocalExtremes_returnsIndexOfLastElement_whenThereAreMultipleEqualValues_andNaturalOrder() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(100),
@@ -963,14 +986,18 @@ class MathUtilsTest {
                 BigDecimal.valueOf(100)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Collections.singletonList(9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues1() {
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder1() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
@@ -984,14 +1011,18 @@ class MathUtilsTest {
                 BigDecimal.valueOf(30)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues2() {
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder2() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
@@ -1005,14 +1036,18 @@ class MathUtilsTest {
                 BigDecimal.valueOf(30)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues3() {
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder3() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
@@ -1026,14 +1061,18 @@ class MathUtilsTest {
                 BigDecimal.valueOf(50)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
-    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues4() {
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder4() {
         List<BigDecimal> values = Arrays.asList(
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(30),
@@ -1047,9 +1086,38 @@ class MathUtilsTest {
                 BigDecimal.valueOf(50.1)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
+        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    @Test
+    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder5() {
+        List<BigDecimal> values = Arrays.asList(
+                BigDecimal.valueOf(10),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(5.1),
+                BigDecimal.valueOf(4),
+                BigDecimal.valueOf(3.5),
+                BigDecimal.valueOf(5),
+                BigDecimal.valueOf(70),
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(80)
+        );
+
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.naturalOrder()
+        );
+
+        List<Integer> expectedExtremes = Arrays.asList(0, 3, 7, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
@@ -1068,7 +1136,11 @@ class MathUtilsTest {
                 BigDecimal.valueOf(80)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.reverseOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1089,7 +1161,11 @@ class MathUtilsTest {
                 BigDecimal.valueOf(30)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.reverseOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1110,7 +1186,11 @@ class MathUtilsTest {
                 BigDecimal.valueOf(10)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.reverseOrder()
+        );
 
         List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1131,30 +1211,13 @@ class MathUtilsTest {
                 BigDecimal.valueOf(49.9)
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.reverseOrder());
-
-        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
-        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
-    }
-
-    @Test
-    void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder5() {
-        List<BigDecimal> values = Arrays.asList(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5.1),
-                BigDecimal.valueOf(4),
-                BigDecimal.valueOf(3.5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(70),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(80)
+        List<Integer> extremes = MathUtils.getLocalExtremes(
+                values,
+                (BigDecimal number) -> number,
+                Comparator.reverseOrder()
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, Comparator.naturalOrder());
-
-        List<Integer> expectedExtremes = Arrays.asList(0, 3, 7, 9);
+        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
