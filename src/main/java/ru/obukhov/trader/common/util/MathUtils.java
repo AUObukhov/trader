@@ -241,7 +241,7 @@ public class MathUtils {
             double weightDecrease
     ) {
         List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getExponentialWeightedMovingAverages(values, weightDecrease);
+        return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
     }
 
     /**
@@ -255,25 +255,7 @@ public class MathUtils {
             List<BigDecimal> values,
             double weightDecrease
     ) {
-        Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
-                "weightDecrease must be in range (0; 1]");
-
-        int size = values.size();
-        List<BigDecimal> averages = new ArrayList<>(size);
-        if (values.isEmpty()) {
-            return averages;
-        }
-
-        BigDecimal average = values.get(0);
-        averages.add(average);
-        BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
-        for (int i = 1; i < size; i++) {
-            average = DecimalUtils.multiply(values.get(i), weightDecrease)
-                    .add(average.multiply(revertedWeightDecrease));
-            averages.add(DecimalUtils.setDefaultScale(average));
-        }
-
-        return averages;
+        return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
     }
 
     /**
@@ -286,14 +268,14 @@ public class MathUtils {
      * @param order          order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
-    public static <T> List<BigDecimal> getExponentialWeightedMovingAveragesOfArbitraryOrder(
+    public static <T> List<BigDecimal> getExponentialWeightedMovingAverages(
             List<T> elements,
             Function<T, BigDecimal> valueExtractor,
             double weightDecrease,
             int order
     ) {
         List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+        return getExponentialWeightedMovingAverages(values, weightDecrease, order);
     }
 
     /**
@@ -305,7 +287,7 @@ public class MathUtils {
      * @param order          order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getExponentialWeightedMovingAveragesOfArbitraryOrder(
+    public static List<BigDecimal> getExponentialWeightedMovingAverages(
             List<BigDecimal> values,
             double weightDecrease,
             int order

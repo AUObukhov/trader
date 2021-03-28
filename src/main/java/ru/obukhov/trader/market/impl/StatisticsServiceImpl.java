@@ -65,7 +65,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private List<BigDecimal> getAverages(List<Candle> candles) {
-        return MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(
+        return MathUtils.getExponentialWeightedMovingAverages(
                 candles,
                 Candle::getOpenPrice,
                 0.3,

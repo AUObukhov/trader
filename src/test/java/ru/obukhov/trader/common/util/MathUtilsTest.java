@@ -628,94 +628,94 @@ class MathUtilsTest {
 
     // endregion
 
-    // region getExponentialWeightedMovingAveragesOfArbitraryOrder tests
+    // region getExponentialWeightedMovingAverages with order tests
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenWeightDecreaseIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = -0.1;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.0;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 1.1;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenOrderIsLowerThanZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenOrderIsLowerThanZero() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.5;
         int order = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_throwsIllegalArgumentException_whenOrderIsZero() {
+    void getExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException_whenOrderIsZero() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.5;
         int order = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEmptyList_whenValuesAreEmpty() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsEmptyList_whenValuesAreEmpty() {
         List<BigDecimal> values = Collections.emptyList();
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualList_whenExistsSingleValue() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsEqualList_whenExistsSingleValue() {
         List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -732,13 +732,13 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesListWithDefaultScale() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsAveragesListWithDefaultScale() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -755,7 +755,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         for (BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
@@ -764,7 +764,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualList_whenAllValuesAreEqual() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsEqualList_whenAllValuesAreEqual() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
@@ -781,13 +781,13 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forFirstOrder() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsAveragesList_forFirstOrder() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -804,7 +804,7 @@ class MathUtilsTest {
         int order = 1;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -822,7 +822,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forSecondOrder() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsAveragesList_forSecondOrder() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -839,7 +839,7 @@ class MathUtilsTest {
         int order = 2;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -857,7 +857,7 @@ class MathUtilsTest {
     }
 
     @Test
-    void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forThirdOrder() {
+    void getExponentialWeightedMovingAverages_withOrder_returnsAveragesList_forThirdOrder() {
         List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
@@ -874,7 +874,7 @@ class MathUtilsTest {
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
