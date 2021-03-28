@@ -7,7 +7,6 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -144,7 +143,7 @@ class MathUtilsTest {
 
     @Test
     void max_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = Arrays.asList(-100d, 21d, 10d, 20d);
+        List<Double> values = ImmutableList.of(-100d, 21d, 10d, 20d);
 
         Double max = MathUtils.max(values);
 
@@ -164,7 +163,7 @@ class MathUtilsTest {
 
     @Test
     void min_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = Arrays.asList(100d, -21d, 10d, 20d);
+        List<Double> values = ImmutableList.of(100d, -21d, 10d, 20d);
 
         Double min = MathUtils.min(values);
 
@@ -229,7 +228,7 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_returnsAveragesList_whenWindowIsEqualToValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -239,7 +238,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1500),
                 BigDecimal.valueOf(2000),
@@ -250,7 +249,7 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000)
@@ -259,7 +258,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1500),
                 BigDecimal.valueOf(2000)
@@ -269,7 +268,7 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -290,7 +289,7 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_returnsAverages_whenWindowIsLowerThanValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -306,7 +305,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1500),
                 BigDecimal.valueOf(2000),
@@ -379,7 +378,7 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_returnsAveragesList_whenWindowIsEqualToValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -389,7 +388,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(5000.0 / 3)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(14000.0 / 6)),
@@ -400,7 +399,7 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000)
@@ -409,7 +408,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(5000.0 / 3)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(14000.0 / 6))
@@ -419,7 +418,7 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -440,7 +439,7 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_returnsMovingAveragesEqualList_whenWindowIsLowerThanValuesCount() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -456,7 +455,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(5000.0 / 3)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(14000.0 / 6)),
@@ -530,7 +529,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_returnsEqualsList_whenWeightDecreaseIsOne() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -551,7 +550,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_returnsAveragesListWithDefaultScale() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -575,7 +574,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_returnsEqualList_whenAllValuesAreEqual() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
@@ -596,7 +595,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_returnsAveragesList() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -612,7 +611,7 @@ class MathUtilsTest {
 
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1800),
                 BigDecimal.valueOf(2760),
@@ -717,7 +716,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -740,7 +739,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesListWithDefaultScale() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -766,7 +765,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsEqualList_whenAllValuesAreEqual() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
@@ -789,7 +788,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forFirstOrder() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -807,7 +806,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1800),
                 BigDecimal.valueOf(2760),
@@ -824,7 +823,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forSecondOrder() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -842,7 +841,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1640),
                 BigDecimal.valueOf(2536),
@@ -859,7 +858,7 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAveragesOfArbitraryOrder_returnsAveragesList_forThirdOrder() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -877,7 +876,7 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages =
                 MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder(values, SELF, weightDecrease, order);
 
-        List<BigDecimal> expectedAverages = Arrays.asList(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1512),
                 BigDecimal.valueOf(2331.2),
@@ -925,7 +924,7 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_returnsSingleZeroIndex_whenThereAreTwoValues_andFirstIsGreater_andNaturalOrder() {
-        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(90));
+        List<BigDecimal> values = ImmutableList.of(BigDecimal.valueOf(100), BigDecimal.valueOf(90));
 
         List<Integer> extremes = MathUtils.getLocalExtremes(
                 values,
@@ -939,7 +938,7 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoEqualsValues_andNaturalOrder() {
-        List<BigDecimal> values = Arrays.asList(BigDecimal.valueOf(100), BigDecimal.valueOf(100));
+        List<BigDecimal> values = ImmutableList.of(BigDecimal.valueOf(100), BigDecimal.valueOf(100));
 
         List<Integer> extremes = MathUtils.getLocalExtremes(
                 values,
@@ -953,7 +952,7 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_returnsSingleOneIndex_whenThereAreTwoValues_andSecondIsGreater_andNaturalOrder() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(90),
                 BigDecimal.valueOf(100)
         );
@@ -970,7 +969,7 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_returnsIndexOfLastElement_whenThereAreMultipleEqualValues_andNaturalOrder() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(100),
@@ -995,7 +994,7 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder1() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
@@ -1014,13 +1013,13 @@ class MathUtilsTest {
                 Comparator.naturalOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder2() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
@@ -1039,13 +1038,13 @@ class MathUtilsTest {
                 Comparator.naturalOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder3() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
@@ -1064,13 +1063,13 @@ class MathUtilsTest {
                 Comparator.naturalOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder4() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
@@ -1089,13 +1088,13 @@ class MathUtilsTest {
                 Comparator.naturalOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
+        List<Integer> expectedExtremes = ImmutableList.of(0, 2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder5() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(5),
@@ -1114,13 +1113,13 @@ class MathUtilsTest {
                 Comparator.naturalOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(0, 3, 7, 9);
+        List<Integer> expectedExtremes = ImmutableList.of(0, 3, 7, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder1() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(5),
@@ -1139,13 +1138,13 @@ class MathUtilsTest {
                 Comparator.reverseOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder2() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(20),
                 BigDecimal.valueOf(15),
                 BigDecimal.valueOf(15),
@@ -1164,13 +1163,13 @@ class MathUtilsTest {
                 Comparator.reverseOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 8);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder3() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(20),
                 BigDecimal.valueOf(15),
                 BigDecimal.valueOf(15),
@@ -1189,13 +1188,13 @@ class MathUtilsTest {
                 Comparator.reverseOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(2, 5, 9);
+        List<Integer> expectedExtremes = ImmutableList.of(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
     @Test
     void getLocalExtremes_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder4() {
-        List<BigDecimal> values = Arrays.asList(
+        List<BigDecimal> values = ImmutableList.of(
                 BigDecimal.valueOf(10),
                 BigDecimal.valueOf(30),
                 BigDecimal.valueOf(30),
@@ -1214,7 +1213,7 @@ class MathUtilsTest {
                 Comparator.reverseOrder()
         );
 
-        List<Integer> expectedExtremes = Arrays.asList(0, 2, 5, 9);
+        List<Integer> expectedExtremes = ImmutableList.of(0, 2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
 
