@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -11,11 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static ru.obukhov.trader.test.utils.AssertUtils.assertCellAttributes;
-import static ru.obukhov.trader.test.utils.AssertUtils.assertRowValues;
 
 class ExtendedRowTest {
 
@@ -63,7 +59,7 @@ class ExtendedRowTest {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExtendedRow extendedRow = new ExtendedRow(extendedSheet, row);
 
-        assertRowValues(extendedRow, value0, value1);
+        AssertUtils.assertRowValues(extendedRow, value0, value1);
     }
 
     // endregion
@@ -84,49 +80,61 @@ class ExtendedRowTest {
 
         List<ExtendedCell> cells = extendedRow.createCells(values);
 
-        assertEquals(values.length, cells.size());
+        Assertions.assertEquals(values.length, cells.size());
 
-        assertCellAttributes(cells.get(0),
+        AssertUtils.assertCellAttributes(
+                cells.get(0),
                 extendedRow,
                 0,
                 CellType.BLANK,
                 ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1",
-                values[0]);
+                values[0]
+        );
 
-        assertCellAttributes(cells.get(1),
+        AssertUtils.assertCellAttributes(
+                cells.get(1),
                 extendedRow,
                 1,
                 CellType.STRING,
                 ExtendedWorkbook.CellStylesNames.STRING,
-                values[1]);
+                values[1]
+        );
 
-        assertCellAttributes(cells.get(2),
+        AssertUtils.assertCellAttributes(
+                cells.get(2),
                 extendedRow,
                 2,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[2]);
+                values[2]
+        );
 
-        assertCellAttributes(cells.get(3),
+        AssertUtils.assertCellAttributes(
+                cells.get(3),
                 extendedRow,
                 3,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[3]);
+                values[3]
+        );
 
-        assertCellAttributes(cells.get(4),
+        AssertUtils.assertCellAttributes(
+                cells.get(4),
                 extendedRow,
                 4,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[4]);
+                values[4]
+        );
 
-        assertCellAttributes(cells.get(5),
+        AssertUtils.assertCellAttributes(
+                cells.get(5),
                 extendedRow,
                 5,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[5]);
+                values[5]
+        );
     }
 
     @Test
@@ -144,49 +152,61 @@ class ExtendedRowTest {
 
         List<ExtendedCell> cells = extendedRow.createCells(column, values);
 
-        assertEquals(values.length, cells.size());
+        Assertions.assertEquals(values.length, cells.size());
 
-        assertCellAttributes(cells.get(0),
+        AssertUtils.assertCellAttributes(
+                cells.get(0),
                 extendedRow,
                 column,
                 CellType.BLANK,
                 ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1",
-                values[0]);
+                values[0]
+        );
 
-        assertCellAttributes(cells.get(1),
+        AssertUtils.assertCellAttributes(
+                cells.get(1),
                 extendedRow,
                 column + 1,
                 CellType.STRING,
                 ExtendedWorkbook.CellStylesNames.STRING,
-                values[1]);
+                values[1]
+        );
 
-        assertCellAttributes(cells.get(2),
+        AssertUtils.assertCellAttributes(
+                cells.get(2),
                 extendedRow,
                 column + 2,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[2]);
+                values[2]
+        );
 
-        assertCellAttributes(cells.get(3),
+        AssertUtils.assertCellAttributes(
+                cells.get(3),
                 extendedRow,
                 column + 3,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                values[3]);
+                values[3]
+        );
 
-        assertCellAttributes(cells.get(4),
+        AssertUtils.assertCellAttributes(
+                cells.get(4),
                 extendedRow,
                 column + 4,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[4]);
+                values[4]
+        );
 
-        assertCellAttributes(cells.get(5),
+        AssertUtils.assertCellAttributes(
+                cells.get(5),
                 extendedRow,
                 column + 5,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                values[5]);
+                values[5]
+        );
     }
 
     // endregion
@@ -203,12 +223,12 @@ class ExtendedRowTest {
         extendedRow.createUnitedCell(column, value, width);
 
         List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
-        assertEquals(1, mergedRegions.size());
+        Assertions.assertEquals(1, mergedRegions.size());
         CellRangeAddress mergedRegion = mergedRegions.get(0);
-        assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
-        assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
-        assertEquals(column, mergedRegion.getFirstColumn());
-        assertEquals(column + width - 1, mergedRegion.getLastColumn());
+        Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
+        Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
+        Assertions.assertEquals(column, mergedRegion.getFirstColumn());
+        Assertions.assertEquals(column + width - 1, mergedRegion.getLastColumn());
     }
 
     // endregion
@@ -223,12 +243,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.BLANK,
                 ExtendedWorkbook.CellStylesNames.NO_NAME_PREFIX + "1",
-                value);
+                value
+        );
     }
 
     @Test
@@ -239,12 +261,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.STRING,
                 ExtendedWorkbook.CellStylesNames.STRING,
-                value);
+                value
+        );
     }
 
     @Test
@@ -255,12 +279,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     @Test
@@ -271,12 +297,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     @Test
@@ -288,12 +316,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     @Test
@@ -304,12 +334,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -324,12 +356,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.STRING,
                 ExtendedWorkbook.CellStylesNames.STRING,
-                value);
+                value
+        );
     }
 
     @Test
@@ -340,12 +374,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.STRING,
                 ExtendedWorkbook.CellStylesNames.STRING,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -360,12 +396,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     @Test
@@ -376,12 +414,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -396,12 +436,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     @Test
@@ -412,12 +454,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -432,12 +476,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     @Test
@@ -448,12 +494,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.NUMERIC,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -468,12 +516,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     @Test
@@ -485,12 +535,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -505,12 +557,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     @Test
@@ -521,12 +575,14 @@ class ExtendedRowTest {
 
         ExtendedCell cell = extendedRow.createCell(column, value);
 
-        assertCellAttributes(cell,
+        AssertUtils.assertCellAttributes(
+                cell,
                 extendedRow,
                 column,
                 CellType.NUMERIC,
                 ExtendedWorkbook.CellStylesNames.DATE_TIME,
-                value);
+                value
+        );
     }
 
     // endregion
@@ -540,7 +596,7 @@ class ExtendedRowTest {
 
         ExtendedWorkbook returnedExtendedWorkbook = extendedRow.getWorkbook();
 
-        assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
+        Assertions.assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
     }
 
     // endregion

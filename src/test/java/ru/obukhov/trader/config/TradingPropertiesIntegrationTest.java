@@ -1,5 +1,6 @@
 package ru.obukhov.trader.config;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
@@ -12,11 +13,6 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.time.Duration;
 import java.time.OffsetTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TradingPropertiesIntegrationTest {
 
@@ -31,18 +27,18 @@ class TradingPropertiesIntegrationTest {
                 .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
                 .withInitializer(new ConfigFileApplicationContextInitializer())
                 .run(context -> {
-                    assertNull(context.getStartupFailure());
+                    Assertions.assertNull(context.getStartupFailure());
 
                     TradingProperties tradingProperties = context.getBean(TradingProperties.class);
 
                     AssertUtils.assertEquals(0.1d, tradingProperties.getCommission());
 
                     OffsetTime expectedWorkStartTime = DateUtils.getTime(12, 0, 0).toOffsetTime();
-                    assertEquals(expectedWorkStartTime, tradingProperties.getWorkStartTime());
+                    Assertions.assertEquals(expectedWorkStartTime, tradingProperties.getWorkStartTime());
 
-                    assertEquals(Duration.ofMinutes(480), tradingProperties.getWorkDuration());
+                    Assertions.assertEquals(Duration.ofMinutes(480), tradingProperties.getWorkDuration());
 
-                    assertEquals(Integer.valueOf(5), tradingProperties.getConsecutiveEmptyDaysLimit());
+                    Assertions.assertEquals(Integer.valueOf(5), tradingProperties.getConsecutiveEmptyDaysLimit());
                 });
 
     }
@@ -127,11 +123,11 @@ class TradingPropertiesIntegrationTest {
     private void assertContextStartupFailed(AssertableApplicationContext context, String... messageSubstrings) {
         Throwable startupFailure = context.getStartupFailure();
 
-        assertNotNull(startupFailure);
+        Assertions.assertNotNull(startupFailure);
 
         String message = getBindValidationExceptionMessage(startupFailure);
         for (String substring : messageSubstrings) {
-            assertTrue(message.contains(substring));
+            Assertions.assertTrue(message.contains(substring));
         }
     }
 

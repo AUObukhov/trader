@@ -6,13 +6,11 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ExtendedChartDataTest {
 
@@ -28,10 +26,10 @@ class ExtendedChartDataTest {
         chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE);
 
         List<XDDFChartData.Series> seriesList = chartData.getSeries();
-        assertEquals(1, seriesList.size());
+        Assertions.assertEquals(1, seriesList.size());
         XDDFChartData.Series series = seriesList.get(0);
-        assertSame(categoryDataSource, series.getCategoryData());
-        assertSame(numericalDataSource, series.getValuesData());
+        Assertions.assertSame(categoryDataSource, series.getCategoryData());
+        Assertions.assertSame(numericalDataSource, series.getValuesData());
     }
 
     // region stretchChart tests

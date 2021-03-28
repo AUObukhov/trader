@@ -1,14 +1,10 @@
 package ru.obukhov.trader.common.util;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DecimalUtilsTest {
 
@@ -75,21 +71,21 @@ class DecimalUtilsTest {
     void getIntegerQuotient1() {
         int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(7.8), BigDecimal.valueOf(2.6));
 
-        assertEquals(3, result);
+        Assertions.assertEquals(3, result);
     }
 
     @Test
     void getIntegerQuotient2() {
         int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(7.9), BigDecimal.valueOf(2.6));
 
-        assertEquals(3, result);
+        Assertions.assertEquals(3, result);
     }
 
     @Test
     void getIntegerQuotient3() {
         int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(10.3), BigDecimal.valueOf(2.6));
 
-        assertEquals(3, result);
+        Assertions.assertEquals(3, result);
     }
 
     // endregion
@@ -128,7 +124,7 @@ class DecimalUtilsTest {
     void setDefaultScale_withBigDecimal_returnsNull_whenNumberIsNull() {
         BigDecimal number = null;
 
-        assertNull(DecimalUtils.setDefaultScale(number));
+        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
     @Test
@@ -137,7 +133,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(0, result.scale());
+        Assertions.assertEquals(0, result.scale());
     }
 
     @Test
@@ -147,7 +143,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(scale, result.scale());
+        Assertions.assertEquals(scale, result.scale());
     }
 
     @Test
@@ -157,7 +153,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
     }
 
     // endregion
@@ -168,7 +164,7 @@ class DecimalUtilsTest {
     void setDefaultScale_withDouble_returnsNull_whenNumberIsNull() {
         Double number = null;
 
-        assertNull(DecimalUtils.setDefaultScale(number));
+        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
     @Test
@@ -177,7 +173,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(2, result.scale());
+        Assertions.assertEquals(2, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(10.01), result);
     }
 
@@ -187,7 +183,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
     }
 
@@ -197,7 +193,7 @@ class DecimalUtilsTest {
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(10.00001), result);
     }
 
@@ -209,42 +205,42 @@ class DecimalUtilsTest {
     void numbersEqual_returnTrue_whenEqualsBigDecimal() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), BigDecimal.valueOf(100));
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     void numbersEqual_returnFalse_whenNotEqualsBigDecimal() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), BigDecimal.valueOf(100));
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
     void numbersEqual_returnTrue_whenEqualsInt() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), 100);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     void numbersEqual_returnFalse_whenNotEqualsInt() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), 100);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
     void numbersEqual_returnTrue_whenEqualsDouble() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), 100.00);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
     void numbersEqual_returnFalse_whenNotEqualsDouble() {
         boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), 100.00);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     // endregion
@@ -258,7 +254,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isGreater(value1, value2);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -268,7 +264,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isGreater(value1, value2);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -278,7 +274,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isGreater(value1, value2);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     // endregion
@@ -292,7 +288,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isLower(value1, value2);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -302,7 +298,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isLower(value1, value2);
 
-        assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -312,7 +308,7 @@ class DecimalUtilsTest {
 
         boolean result = DecimalUtils.isLower(value1, value2);
 
-        assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     // endregion

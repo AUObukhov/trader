@@ -1,5 +1,6 @@
 package ru.obukhov.trader.config;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -7,9 +8,6 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class QueryThrottlePropertiesIntegrationTest {
 
@@ -22,34 +20,34 @@ class QueryThrottlePropertiesIntegrationTest {
     void beanCreating_whenPropertiesFilled() {
 
         contextRunner.run(context -> {
-            assertNull(context.getStartupFailure());
+            Assertions.assertNull(context.getStartupFailure());
 
             QueryThrottleProperties queryThrottleProperties = context.getBean(QueryThrottleProperties.class);
 
             AssertUtils.assertEquals(60000L, queryThrottleProperties.getInterval());
 
             List<UrlLimit> limits = queryThrottleProperties.getLimits();
-            assertEquals(3, limits.size());
+            Assertions.assertEquals(3, limits.size());
 
             UrlLimit urlLimit0 = limits.get(0);
-            assertEquals(1, urlLimit0.getSegments().size());
-            assertEquals("market", urlLimit0.getSegments().get(0));
-            assertEquals(120, urlLimit0.getLimit());
+            Assertions.assertEquals(1, urlLimit0.getSegments().size());
+            Assertions.assertEquals("market", urlLimit0.getSegments().get(0));
+            Assertions.assertEquals(120, urlLimit0.getLimit());
 
             UrlLimit urlLimit1 = limits.get(1);
-            assertEquals(1, urlLimit1.getSegments().size());
-            assertEquals("orders", urlLimit1.getSegments().get(0));
-            assertEquals(100, urlLimit1.getLimit());
+            Assertions.assertEquals(1, urlLimit1.getSegments().size());
+            Assertions.assertEquals("orders", urlLimit1.getSegments().get(0));
+            Assertions.assertEquals(100, urlLimit1.getLimit());
 
             UrlLimit urlLimit2 = limits.get(2);
-            assertEquals(2, urlLimit2.getSegments().size());
-            assertEquals("orders", urlLimit2.getSegments().get(0));
-            assertEquals("limit-order", urlLimit2.getSegments().get(1));
-            assertEquals(50, urlLimit2.getLimit());
+            Assertions.assertEquals(2, urlLimit2.getSegments().size());
+            Assertions.assertEquals("orders", urlLimit2.getSegments().get(0));
+            Assertions.assertEquals("limit-order", urlLimit2.getSegments().get(1));
+            Assertions.assertEquals(50, urlLimit2.getLimit());
 
-            assertEquals(5000, queryThrottleProperties.getRetryInterval());
+            Assertions.assertEquals(5000, queryThrottleProperties.getRetryInterval());
 
-            assertEquals(30, queryThrottleProperties.getAttemptsCount());
+            Assertions.assertEquals(30, queryThrottleProperties.getAttemptsCount());
         });
 
     }

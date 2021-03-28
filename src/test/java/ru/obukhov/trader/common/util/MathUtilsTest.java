@@ -15,9 +15,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 class MathUtilsTest {
 
     private static final Function<BigDecimal, BigDecimal> SELF = number -> number;
@@ -142,7 +139,7 @@ class MathUtilsTest {
     void max_returnsNull_whenValuesIsEmpty() {
         Double max = MathUtils.max(Collections.emptyList());
 
-        assertNull(max);
+        Assertions.assertNull(max);
     }
 
     @Test
@@ -151,7 +148,7 @@ class MathUtilsTest {
 
         Double max = MathUtils.max(values);
 
-        assertEquals(max, Double.valueOf(21));
+        Assertions.assertEquals(max, Double.valueOf(21));
     }
 
     // endregion
@@ -162,7 +159,7 @@ class MathUtilsTest {
     void min_returnsNull_whenValuesIsEmpty() {
         Double min = MathUtils.min(Collections.emptyList());
 
-        assertNull(min);
+        Assertions.assertNull(min);
     }
 
     @Test
@@ -171,7 +168,7 @@ class MathUtilsTest {
 
         Double min = MathUtils.min(values);
 
-        assertEquals(min, Double.valueOf(-21));
+        Assertions.assertEquals(min, Double.valueOf(-21));
     }
 
     // endregion

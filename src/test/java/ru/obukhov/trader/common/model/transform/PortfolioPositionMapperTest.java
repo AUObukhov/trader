@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.model.transform;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -13,9 +14,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PortfolioPositionMapperTest {
 
@@ -46,14 +44,14 @@ class PortfolioPositionMapperTest {
 
         PortfolioPosition target = mapper.map(source);
 
-        assertEquals(ticker, target.getTicker());
-        assertEquals(balance, target.getBalance());
-        assertEquals(blocked, target.getBlocked());
-        assertEquals(expectedYield, target.getExpectedYield());
-        assertEquals(lots, target.getLotsCount());
-        assertEquals(averagePositionPrice, target.getAveragePositionPrice());
-        assertEquals(averagePositionPriceNoNkd, target.getAveragePositionPriceNoNkd());
-        assertEquals(name, target.getName());
+        Assertions.assertEquals(ticker, target.getTicker());
+        Assertions.assertEquals(balance, target.getBalance());
+        Assertions.assertEquals(blocked, target.getBlocked());
+        Assertions.assertEquals(expectedYield, target.getExpectedYield());
+        Assertions.assertEquals(lots, target.getLotsCount());
+        Assertions.assertEquals(averagePositionPrice, target.getAveragePositionPrice());
+        Assertions.assertEquals(averagePositionPriceNoNkd, target.getAveragePositionPriceNoNkd());
+        Assertions.assertEquals(name, target.getName());
     }
 
     @Test
@@ -106,26 +104,26 @@ class PortfolioPositionMapperTest {
 
         Iterator<PortfolioPosition> iterator = target.iterator();
         PortfolioPosition target1 = iterator.next();
-        assertEquals(ticker1, target1.getTicker());
-        assertEquals(balance1, target1.getBalance());
-        assertEquals(blocked1, target1.getBlocked());
-        assertEquals(expectedYield1, target1.getExpectedYield());
-        assertEquals(lots1, target1.getLotsCount());
-        assertEquals(averagePositionPrice1, target1.getAveragePositionPrice());
-        assertEquals(averagePositionPriceNoNkd1, target1.getAveragePositionPriceNoNkd());
-        assertEquals(name1, target1.getName());
+        Assertions.assertEquals(ticker1, target1.getTicker());
+        Assertions.assertEquals(balance1, target1.getBalance());
+        Assertions.assertEquals(blocked1, target1.getBlocked());
+        Assertions.assertEquals(expectedYield1, target1.getExpectedYield());
+        Assertions.assertEquals(lots1, target1.getLotsCount());
+        Assertions.assertEquals(averagePositionPrice1, target1.getAveragePositionPrice());
+        Assertions.assertEquals(averagePositionPriceNoNkd1, target1.getAveragePositionPriceNoNkd());
+        Assertions.assertEquals(name1, target1.getName());
 
         PortfolioPosition target2 = iterator.next();
-        assertEquals(ticker2, target2.getTicker());
-        assertEquals(balance2, target2.getBalance());
-        assertEquals(blocked2, target2.getBlocked());
-        assertEquals(expectedYield2, target2.getExpectedYield());
-        assertEquals(lots2, target2.getLotsCount());
-        assertEquals(averagePositionPrice2, target2.getAveragePositionPrice());
-        assertEquals(averagePositionPriceNoNkd2, target2.getAveragePositionPriceNoNkd());
-        assertEquals(name2, target2.getName());
+        Assertions.assertEquals(ticker2, target2.getTicker());
+        Assertions.assertEquals(balance2, target2.getBalance());
+        Assertions.assertEquals(blocked2, target2.getBlocked());
+        Assertions.assertEquals(expectedYield2, target2.getExpectedYield());
+        Assertions.assertEquals(lots2, target2.getLotsCount());
+        Assertions.assertEquals(averagePositionPrice2, target2.getAveragePositionPrice());
+        Assertions.assertEquals(averagePositionPriceNoNkd2, target2.getAveragePositionPriceNoNkd());
+        Assertions.assertEquals(name2, target2.getName());
 
-        assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
     }
 
 }

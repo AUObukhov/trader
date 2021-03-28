@@ -2,10 +2,12 @@ package ru.obukhov.trader.common.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
@@ -19,10 +21,6 @@ import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 class PortfolioServiceImplTest extends BaseMockedTest {
@@ -52,11 +50,11 @@ class PortfolioServiceImplTest extends BaseMockedTest {
                 createPortfolioPosition(ticker2),
                 createPortfolioPosition(ticker3)
         );
-        when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
         PortfolioPosition position = service.getPosition(ticker2);
 
-        assertEquals(ticker2, position.getTicker());
+        Assertions.assertEquals(ticker2, position.getTicker());
     }
 
     @Test
@@ -70,11 +68,11 @@ class PortfolioServiceImplTest extends BaseMockedTest {
                 createPortfolioPosition(ticker2),
                 createPortfolioPosition(ticker3)
         );
-        when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
         PortfolioPosition position = service.getPosition(TICKER);
 
-        assertNull(position);
+        Assertions.assertNull(position);
     }
 
     // endregion
@@ -92,7 +90,7 @@ class PortfolioServiceImplTest extends BaseMockedTest {
                 createPortfolioCurrency(Currency.RUB, rubBalance, rubBlocked),
                 createPortfolioCurrency(Currency.EUR, 10, 0)
         );
-        when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
         BigDecimal balance = service.getAvailableBalance(Currency.RUB);
 
@@ -107,7 +105,7 @@ class PortfolioServiceImplTest extends BaseMockedTest {
                 createPortfolioCurrency(Currency.USD, 100, 0),
                 createPortfolioCurrency(Currency.EUR, 10, 0)
         );
-        when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
         AssertUtils.assertThrowsWithMessage(() -> service.getAvailableBalance(Currency.RUB),
                 NoSuchElementException.class,

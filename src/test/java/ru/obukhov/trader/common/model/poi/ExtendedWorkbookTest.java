@@ -4,14 +4,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ExtendedWorkbookTest {
 
@@ -41,12 +38,12 @@ class ExtendedWorkbookTest {
         List<Sheet> sheets = ExcelTestDataHelper.createSheets(workbook, sheetName0, sheetName1);
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
-        assertEquals(2, extendedWorkbook.getNumberOfSheets());
+        Assertions.assertEquals(2, extendedWorkbook.getNumberOfSheets());
 
         ExtendedSheet extendedSheet0 = (ExtendedSheet) extendedWorkbook.getSheet(sheetName0);
         ExtendedSheet extendedSheet1 = (ExtendedSheet) extendedWorkbook.getSheet(sheetName1);
-        assertEquals(sheets.get(0), extendedSheet0.getDelegate());
-        assertEquals(sheets.get(1), extendedSheet1.getDelegate());
+        Assertions.assertEquals(sheets.get(0), extendedSheet0.getDelegate());
+        Assertions.assertEquals(sheets.get(1), extendedSheet1.getDelegate());
     }
 
     @Test
@@ -57,9 +54,9 @@ class ExtendedWorkbookTest {
 
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
-        assertEquals(workbook.getNumCellStyles(), extendedWorkbook.getNumCellStyles());
+        Assertions.assertEquals(workbook.getNumCellStyles(), extendedWorkbook.getNumCellStyles());
         for (int i = 0; i < workbook.getNumCellStyles(); i++) {
-            assertEquals(workbook.getCellStyleAt(i), extendedWorkbook.getCellStyleAt(i));
+            Assertions.assertEquals(workbook.getCellStyleAt(i), extendedWorkbook.getCellStyleAt(i));
         }
     }
 
@@ -86,9 +83,9 @@ class ExtendedWorkbookTest {
 
         CellStyle cellStyle = extendedWorkbook.createCellStyle("cellStyle");
 
-        assertNotNull(cellStyle);
-        assertEquals(initialNumCellStyles + 1, workbook.getNumCellStyles());
-        assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
+        Assertions.assertNotNull(cellStyle);
+        Assertions.assertEquals(initialNumCellStyles + 1, workbook.getNumCellStyles());
+        Assertions.assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
     }
 
     @Test
@@ -99,9 +96,9 @@ class ExtendedWorkbookTest {
 
         CellStyle cellStyle = extendedWorkbook.createCellStyle();
 
-        assertNotNull(cellStyle);
-        assertEquals(initialNumCellStyles + 1, workbook.getNumCellStyles());
-        assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
+        Assertions.assertNotNull(cellStyle);
+        Assertions.assertEquals(initialNumCellStyles + 1, workbook.getNumCellStyles());
+        Assertions.assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
     }
 
     // endregion
@@ -117,7 +114,7 @@ class ExtendedWorkbookTest {
 
         CellStyle returnedCellStyle = extendedWorkbook.getCellStyle(cellStyleName);
 
-        assertSame(createdCellStyle, returnedCellStyle);
+        Assertions.assertSame(createdCellStyle, returnedCellStyle);
     }
 
     // endregion
@@ -133,7 +130,7 @@ class ExtendedWorkbookTest {
 
         CellStyle newCellStyle = extendedWorkbook.getOrCreateCellStyle(cellStyleName);
 
-        assertSame(existingCellStyle, newCellStyle);
+        Assertions.assertSame(existingCellStyle, newCellStyle);
     }
 
     @Test
@@ -146,7 +143,7 @@ class ExtendedWorkbookTest {
 
         extendedWorkbook.getOrCreateCellStyle(cellStyleName);
 
-        assertEquals(initialNumCellStyles, extendedWorkbook.getNumCellStyles());
+        Assertions.assertEquals(initialNumCellStyles, extendedWorkbook.getNumCellStyles());
     }
 
     @Test
@@ -156,7 +153,7 @@ class ExtendedWorkbookTest {
 
         extendedWorkbook.getOrCreateCellStyle("cellStyle");
 
-        assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
+        Assertions.assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
     }
 
     // endregion
@@ -175,12 +172,12 @@ class ExtendedWorkbookTest {
 
         extendedWorkbook.setSheetOrder(sheetName1, 1);
 
-        assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName2));
-        assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName1));
-        assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName3));
-        assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName2));
-        assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName1));
-        assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName3));
+        Assertions.assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName2));
+        Assertions.assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName1));
+        Assertions.assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName3));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName2));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName1));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName3));
     }
 
     @Test
@@ -195,12 +192,12 @@ class ExtendedWorkbookTest {
 
         extendedWorkbook.setSheetOrder(sheetName3, 1);
 
-        assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName1));
-        assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName3));
-        assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName2));
-        assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName1));
-        assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName3));
-        assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName2));
+        Assertions.assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName1));
+        Assertions.assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName3));
+        Assertions.assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName2));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName1));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName3));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName2));
     }
 
     @Test
@@ -215,12 +212,12 @@ class ExtendedWorkbookTest {
 
         extendedWorkbook.setSheetOrder(sheetName2, 1);
 
-        assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName1));
-        assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName2));
-        assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName3));
-        assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName1));
-        assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName2));
-        assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName3));
+        Assertions.assertSame(workbook.getSheetAt(0), workbook.getSheet(sheetName1));
+        Assertions.assertSame(workbook.getSheetAt(1), workbook.getSheet(sheetName2));
+        Assertions.assertSame(workbook.getSheetAt(2), workbook.getSheet(sheetName3));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(0), extendedWorkbook.getSheet(sheetName1));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(1), extendedWorkbook.getSheet(sheetName2));
+        Assertions.assertSame(extendedWorkbook.getSheetAt(2), extendedWorkbook.getSheet(sheetName3));
     }
 
     // endregion
@@ -234,11 +231,11 @@ class ExtendedWorkbookTest {
 
         Sheet sheet = extendedWorkbook.createSheet();
 
-        assertNotNull(sheet);
-        assertEquals(1, extendedWorkbook.getNumberOfSheets());
-        assertEquals(1, workbook.getNumberOfSheets());
-        assertNotNull(extendedWorkbook.getSheetAt(0));
-        assertNotNull(workbook.getSheetAt(0));
+        Assertions.assertNotNull(sheet);
+        Assertions.assertEquals(1, extendedWorkbook.getNumberOfSheets());
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+        Assertions.assertNotNull(extendedWorkbook.getSheetAt(0));
+        Assertions.assertNotNull(workbook.getSheetAt(0));
     }
 
     @Test
@@ -249,11 +246,11 @@ class ExtendedWorkbookTest {
         String sheetName = "sheet";
         Sheet sheet = extendedWorkbook.createSheet(sheetName);
 
-        assertNotNull(sheet);
-        assertEquals(1, extendedWorkbook.getNumberOfSheets());
-        assertEquals(1, workbook.getNumberOfSheets());
-        assertNotNull(extendedWorkbook.getSheet(sheetName));
-        assertNotNull(workbook.getSheet(sheetName));
+        Assertions.assertNotNull(sheet);
+        Assertions.assertEquals(1, extendedWorkbook.getNumberOfSheets());
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+        Assertions.assertNotNull(extendedWorkbook.getSheet(sheetName));
+        Assertions.assertNotNull(workbook.getSheet(sheetName));
     }
 
     // endregion
@@ -269,13 +266,13 @@ class ExtendedWorkbookTest {
 
         Sheet clonedSheet = extendedWorkbook.cloneSheet(0);
 
-        assertNotNull(clonedSheet);
-        assertEquals(2, extendedWorkbook.getNumberOfSheets());
-        assertEquals(2, workbook.getNumberOfSheets());
+        Assertions.assertNotNull(clonedSheet);
+        Assertions.assertEquals(2, extendedWorkbook.getNumberOfSheets());
+        Assertions.assertEquals(2, workbook.getNumberOfSheets());
 
         String expectedNewSheetName = sheetName + " (2)";
-        assertNotNull(extendedWorkbook.getSheet(expectedNewSheetName));
-        assertNotNull(workbook.getSheet(expectedNewSheetName));
+        Assertions.assertNotNull(extendedWorkbook.getSheet(expectedNewSheetName));
+        Assertions.assertNotNull(workbook.getSheet(expectedNewSheetName));
     }
 
     // endregion

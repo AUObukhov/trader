@@ -1,7 +1,9 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -11,11 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CollectionsUtilsTest {
 
@@ -44,7 +41,7 @@ class CollectionsUtilsTest {
 
         List<Integer> result = CollectionsUtils.getTail(list, 0);
 
-        assertTrue(result.isEmpty());
+        Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
@@ -53,10 +50,10 @@ class CollectionsUtilsTest {
         int size = 3;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
-        assertEquals(size, result.size());
-        assertEquals(Integer.valueOf(2), result.get(0));
-        assertEquals(Integer.valueOf(3), result.get(1));
-        assertEquals(Integer.valueOf(4), result.get(2));
+        Assertions.assertEquals(size, result.size());
+        Assertions.assertEquals(Integer.valueOf(2), result.get(0));
+        Assertions.assertEquals(Integer.valueOf(3), result.get(1));
+        Assertions.assertEquals(Integer.valueOf(4), result.get(2));
     }
 
     @Test
@@ -65,9 +62,9 @@ class CollectionsUtilsTest {
         int size = 5;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
-        assertEquals(list.size(), result.size());
+        Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
-            assertEquals(list.get(0), result.get(0));
+            Assertions.assertEquals(list.get(0), result.get(0));
         }
     }
 
@@ -77,9 +74,9 @@ class CollectionsUtilsTest {
         int size = 6;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
-        assertEquals(list.size(), result.size());
+        Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
-            assertEquals(list.get(0), result.get(0));
+            Assertions.assertEquals(list.get(0), result.get(0));
         }
     }
 
@@ -122,12 +119,12 @@ class CollectionsUtilsTest {
 
     @Test
     void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
-        List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
+        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
         int index = 0;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
-        assertEquals(3, list.size());
+        Assertions.assertEquals(3, list.size());
         AssertUtils.assertEquals(5, list.get(0));
         AssertUtils.assertEquals(5, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
@@ -135,12 +132,12 @@ class CollectionsUtilsTest {
 
     @Test
     void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
-        List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
+        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
         int index = 2;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
-        assertEquals(3, list.size());
+        Assertions.assertEquals(3, list.size());
         AssertUtils.assertEquals(5, list.get(0));
         AssertUtils.assertEquals(10, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
@@ -148,12 +145,12 @@ class CollectionsUtilsTest {
 
     @Test
     void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
-        List<BigDecimal> list = newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN, BigDecimal.ZERO);
+        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN, BigDecimal.ZERO);
         int index = 1;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
-        assertEquals(4, list.size());
+        Assertions.assertEquals(4, list.size());
         AssertUtils.assertEquals(5, list.get(0));
         AssertUtils.assertEquals(7.5, list.get(1));
         AssertUtils.assertEquals(10, list.get(2));
@@ -189,7 +186,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = Collections.emptyList();
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -197,7 +194,7 @@ class CollectionsUtilsTest {
         List<String> list = Collections.emptyList();
         List<String> searchedList = Collections.emptyList();
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -205,7 +202,7 @@ class CollectionsUtilsTest {
         List<String> list = Collections.emptyList();
         List<String> searchedList = Collections.singletonList("0");
 
-        assertFalse(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -213,7 +210,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = Arrays.asList("0", "1");
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -221,7 +218,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("0", "1");
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -229,7 +226,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("1", "2");
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -237,7 +234,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "3");
 
-        assertTrue(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -245,7 +242,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("5", "6");
 
-        assertFalse(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -253,7 +250,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "3", "4");
 
-        assertFalse(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
     }
 
     @Test
@@ -261,7 +258,7 @@ class CollectionsUtilsTest {
         List<String> list = Arrays.asList("0", "1", "2", "3");
         List<String> searchedList = Arrays.asList("2", "1");
 
-        assertFalse(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
     }
 
     // endregion

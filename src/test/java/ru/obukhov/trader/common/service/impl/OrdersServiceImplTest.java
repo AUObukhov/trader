@@ -1,10 +1,12 @@
 package ru.obukhov.trader.common.service.impl;
 
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -18,9 +20,6 @@ import ru.tinkoff.invest.openapi.models.orders.Status;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 class OrdersServiceImplTest extends BaseMockedTest {
@@ -56,18 +55,18 @@ class OrdersServiceImplTest extends BaseMockedTest {
 
         List<Order> orders = service.getOrders(ticker);
 
-        assertEquals(3, orders.size());
-        assertEquals("order0", orders.get(0).id);
-        assertEquals("order1", orders.get(1).id);
-        assertEquals("order4", orders.get(2).id);
+        Assertions.assertEquals(3, orders.size());
+        Assertions.assertEquals("order0", orders.get(0).id);
+        Assertions.assertEquals("order1", orders.get(1).id);
+        Assertions.assertEquals("order4", orders.get(2).id);
     }
 
     private void mockFigi(String ticker, String figi) {
-        when(marketService.getFigi(ticker)).thenReturn(figi);
+        Mockito.when(marketService.getFigi(ticker)).thenReturn(figi);
     }
 
     private void mockOrders(List<Order> orders) {
-        when(tinkoffService.getOrders()).thenReturn(orders);
+        Mockito.when(tinkoffService.getOrders()).thenReturn(orders);
     }
 
     private Order createOrder(String id, String figi) {

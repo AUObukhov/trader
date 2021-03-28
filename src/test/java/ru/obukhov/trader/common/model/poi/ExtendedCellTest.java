@@ -3,10 +3,9 @@ package ru.obukhov.trader.common.model.poi;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ExtendedCellTest {
 
@@ -56,7 +55,7 @@ class ExtendedCellTest {
 
         ExtendedWorkbook returnedExtendedWorkbook = extendedCell.getWorkbook();
 
-        assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
+        Assertions.assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
     }
 
     // endregion

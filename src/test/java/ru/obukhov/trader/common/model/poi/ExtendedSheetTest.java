@@ -9,16 +9,12 @@ import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 class ExtendedSheetTest {
 
@@ -66,9 +62,9 @@ class ExtendedSheetTest {
 
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheet);
 
-        assertEquals(2, extendedSheet.getRowsCount());
-        assertEquals(value0, extendedSheet.getRow(0).getCell(0).getStringCellValue());
-        assertEquals(value1, extendedSheet.getRow(1).getCell(0).getStringCellValue());
+        Assertions.assertEquals(2, extendedSheet.getRowsCount());
+        Assertions.assertEquals(value0, extendedSheet.getRow(0).getCell(0).getStringCellValue());
+        Assertions.assertEquals(value1, extendedSheet.getRow(1).getCell(0).getStringCellValue());
     }
 
     // endregion
@@ -80,7 +76,7 @@ class ExtendedSheetTest {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 3);
 
-        assertEquals(4, extendedSheet.getRowsCount());
+        Assertions.assertEquals(4, extendedSheet.getRowsCount());
     }
 
     @Test
@@ -88,7 +84,7 @@ class ExtendedSheetTest {
         ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 10);
 
-        assertEquals(4, extendedSheet.getRowsCount());
+        Assertions.assertEquals(4, extendedSheet.getRowsCount());
     }
 
     // endregion
@@ -102,16 +98,16 @@ class ExtendedSheetTest {
         ExcelTestDataHelper.addRow(sheet, 1);
 
         Sheet sheetMock = Mockito.mock(Sheet.class);
-        when(sheetMock.rowIterator()).thenReturn(sheet.rowIterator());
+        Mockito.when(sheetMock.rowIterator()).thenReturn(sheet.rowIterator());
 
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheetMock);
 
         extendedSheet.autoSizeColumns();
 
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(0);
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(1);
-        Mockito.verify(sheetMock, times(1)).autoSizeColumn(2);
+        Mockito.verify(sheetMock, Mockito.times(1)).autoSizeColumn(0);
+        Mockito.verify(sheetMock, Mockito.times(1)).autoSizeColumn(1);
+        Mockito.verify(sheetMock, Mockito.times(1)).autoSizeColumn(2);
     }
 
     // region getColumnsCount tests
@@ -122,7 +118,7 @@ class ExtendedSheetTest {
 
         int columnsCount = extendedSheet.getColumnsCount();
 
-        assertEquals(0, columnsCount);
+        Assertions.assertEquals(0, columnsCount);
     }
 
     @Test
@@ -134,7 +130,7 @@ class ExtendedSheetTest {
 
         int columnsCount = extendedSheet.getColumnsCount();
 
-        assertEquals(3, columnsCount);
+        Assertions.assertEquals(3, columnsCount);
     }
 
     // endregion
@@ -148,9 +144,9 @@ class ExtendedSheetTest {
 
         ExtendedRow extendedRow = extendedSheet.addRow();
 
-        assertEquals(5, extendedRow.getRowNum());
-        assertEquals(5, extendedSheet.getLastRowNum());
-        assertEquals(4, extendedSheet.getRowsCount());
+        Assertions.assertEquals(5, extendedRow.getRowNum());
+        Assertions.assertEquals(5, extendedSheet.getLastRowNum());
+        Assertions.assertEquals(4, extendedSheet.getRowsCount());
     }
 
     @Test
@@ -163,22 +159,22 @@ class ExtendedSheetTest {
 
         ExtendedChart chart = extendedSheet.createChart(column1, row1, column2, row2);
 
-        assertNotNull(chart);
+        Assertions.assertNotNull(chart);
 
         Drawing<?> drawing = extendedSheet.getDrawingPatriarch();
         List<?> frames = IteratorUtils.toList(drawing.iterator());
-        assertEquals(1, frames.size());
+        Assertions.assertEquals(1, frames.size());
         XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.get(0);
 
         ClientAnchor anchor = frame.getAnchor();
-        assertEquals(column1, anchor.getCol1());
-        assertEquals(row1, anchor.getRow1());
-        assertEquals(column2, anchor.getCol2());
-        assertEquals(row2, anchor.getRow2());
+        Assertions.assertEquals(column1, anchor.getCol1());
+        Assertions.assertEquals(row1, anchor.getRow1());
+        Assertions.assertEquals(column2, anchor.getCol2());
+        Assertions.assertEquals(row2, anchor.getRow2());
 
         List<XSSFChart> charts = ((XSSFDrawing) drawing).getCharts();
-        assertEquals(1, charts.size());
-        assertEquals(chart.getDelegate(), charts.get(0));
+        Assertions.assertEquals(1, charts.size());
+        Assertions.assertEquals(chart.getDelegate(), charts.get(0));
     }
 
 }

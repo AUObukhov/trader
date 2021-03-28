@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.model.transform;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
@@ -13,8 +14,6 @@ import ru.tinkoff.invest.openapi.models.operations.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class OperationMapperTest {
 
@@ -41,11 +40,11 @@ class OperationMapperTest {
 
         SimulatedOperation target = operationMapper.map(source);
 
-        assertEquals(source.date, target.getDateTime());
-        assertEquals(source.operationType, target.getOperationType());
-        assertEquals(source.price, target.getPrice());
-        assertEquals(source.quantity, target.getQuantity());
-        assertEquals(source.commission.value, target.getCommission());
+        Assertions.assertEquals(source.date, target.getDateTime());
+        Assertions.assertEquals(source.operationType, target.getOperationType());
+        Assertions.assertEquals(source.price, target.getPrice());
+        Assertions.assertEquals(source.quantity, target.getQuantity());
+        Assertions.assertEquals(source.commission.value, target.getCommission());
 
     }
 
@@ -61,11 +60,11 @@ class OperationMapperTest {
 
         Operation target = operationMapper.map(source);
 
-        assertEquals(source.getDateTime(), target.date);
-        assertEquals(source.getOperationType(), target.operationType);
-        assertEquals(source.getPrice(), target.price);
-        assertEquals(source.getQuantity(), target.quantity);
-        assertEquals(source.getCommission(), target.commission.value);
+        Assertions.assertEquals(source.getDateTime(), target.date);
+        Assertions.assertEquals(source.getOperationType(), target.operationType);
+        Assertions.assertEquals(source.getPrice(), target.price);
+        Assertions.assertEquals(source.getQuantity(), target.quantity);
+        Assertions.assertEquals(source.getCommission(), target.commission.value);
     }
 
 }

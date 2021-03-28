@@ -6,6 +6,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
@@ -17,9 +18,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 class ThrottlingInterceptorTest extends BaseMockedTest {
 
@@ -36,13 +34,13 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
     public void setUp() throws IOException {
         Mockito.when(request.url()).thenReturn(url);
         Mockito.when(chain.request()).thenReturn(request);
-        Mockito.when(chain.proceed(any(Request.class))).thenReturn(response);
+        Mockito.when(chain.proceed(ArgumentMatchers.any(Request.class))).thenReturn(response);
     }
 
     @Test
     void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws Exception {
 
-        when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 1, 30, 120);
@@ -50,7 +48,8 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
                 new UrlLimit(Arrays.asList("orders", "market-order"), 50)
         ));
 
-        when(chain.proceed(any(Request.class))).thenThrow(new RuntimeException("exception for test"));
+        Mockito.when(chain.proceed(ArgumentMatchers.any(Request.class)))
+                .thenThrow(new RuntimeException("exception for test"));
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
         AssertUtils.assertThrowsWithMessage(() -> interceptor.intercept(chain),
@@ -62,7 +61,7 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
     @Test
     void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws Exception {
 
-        when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
@@ -84,7 +83,7 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
     @Test
     void intercept_throttles_onlyWhenLimitIsReached() throws Exception {
 
-        when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
+        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
@@ -109,7 +108,7 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
     @Test
     void intercept_throttlesByLowestLimit() throws Exception {
 
-        when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
@@ -153,9 +152,9 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
 
         final int limit = queryThrottleProperties.getLimits().get(0).getLimit() / 2;
         for (int i = 0; i < limit; i++) {
-            when(url.pathSegments()).thenReturn(limitOrderSegments);
+            Mockito.when(url.pathSegments()).thenReturn(limitOrderSegments);
             AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
-            when(url.pathSegments()).thenReturn(marketOrderSegments);
+            Mockito.when(url.pathSegments()).thenReturn(marketOrderSegments);
             AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
@@ -166,7 +165,7 @@ class ThrottlingInterceptorTest extends BaseMockedTest {
     @Test
     void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws Exception {
 
-        when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
+        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 50);

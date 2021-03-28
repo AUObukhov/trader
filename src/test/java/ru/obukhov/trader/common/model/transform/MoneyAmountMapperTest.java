@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.model.transform;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
@@ -7,8 +8,6 @@ import ru.tinkoff.invest.openapi.models.Currency;
 import ru.tinkoff.invest.openapi.models.MoneyAmount;
 
 import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MoneyAmountMapperTest {
 
@@ -23,8 +22,8 @@ class MoneyAmountMapperTest {
 
         ru.obukhov.trader.market.model.MoneyAmount target = mapper.map(source);
 
-        assertEquals(value, target.getValue());
-        assertEquals(currency, target.getCurrency());
+        Assertions.assertEquals(value, target.getValue());
+        Assertions.assertEquals(currency, target.getCurrency());
     }
 
     @Test
@@ -36,8 +35,8 @@ class MoneyAmountMapperTest {
 
         MoneyAmount target = mapper.map(source);
 
-        assertEquals(value, target.value);
-        assertEquals(currency, target.currency);
+        Assertions.assertEquals(value, target.value);
+        Assertions.assertEquals(currency, target.currency);
     }
 
 }

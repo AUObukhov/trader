@@ -5,6 +5,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,11 +32,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.verify;
-import static ru.obukhov.trader.test.utils.AssertUtils.assertRowValues;
-
 class ExcelServiceImplTest extends BaseMockedTest {
 
     @Captor
@@ -58,49 +54,54 @@ class ExcelServiceImplTest extends BaseMockedTest {
         excelService.saveSimulationResults(ticker, Collections.singletonList(result));
 
         String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
-        assertEquals(1, workbook.getNumberOfSheets());
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
         int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
-        assertEquals(expectedRowCount, sheet.getRowsCount());
+        Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
-        assertRowValues(rowIterator.next(), "Общая статистика");
-        assertRowValues(rowIterator.next(), "Тикер", ticker);
-        assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
-        assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
-        assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
-        assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
-        assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
-        assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getWeightedAverageInvestment());
-        assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
-        assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
-        assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
+        AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
+        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
+        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Средневзвешенные вложения", result.getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Относительный годовой доход", result.getRelativeYearProfit());
 
-        assertRowValues(rowIterator.next());
-        assertRowValues(rowIterator.next(), "Позиции");
-        assertRowValues(rowIterator.next(), "Цена", "Количество");
+        AssertUtils.assertRowValues(rowIterator.next());
+        AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
+        AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
         for (SimulatedPosition position : result.getPositions()) {
-            assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
+            AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
         }
 
-        assertRowValues(rowIterator.next());
-        assertRowValues(rowIterator.next(), "Операции");
-        assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+        AssertUtils.assertRowValues(rowIterator.next());
+        AssertUtils.assertRowValues(rowIterator.next(), "Операции");
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
         for (SimulatedOperation operation : result.getOperations()) {
-            assertRowValues(rowIterator.next(),
+            AssertUtils.assertRowValues(
+                    rowIterator.next(),
                     operation.getDateTime(),
                     operation.getOperationType().name(),
                     operation.getPrice(),
                     operation.getQuantity(),
-                    operation.getCommission());
+                    operation.getCommission()
+            );
         }
 
         List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
-        assertEquals(3, mergedRegions.size());
+        Assertions.assertEquals(3, mergedRegions.size());
 
         assertChartCreated(sheet);
     }
@@ -118,28 +119,30 @@ class ExcelServiceImplTest extends BaseMockedTest {
         excelService.saveCandles(ticker, interval, candles);
 
         String fileNamePrefix = "Candles for '" + ticker + "'";
-        verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
-        assertEquals(1, workbook.getNumberOfSheets());
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
 
-        assertEquals(10, sheet.getRowsCount());
+        Assertions.assertEquals(10, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
-        assertRowValues(rowIterator.next(), "Тикер", ticker);
-        assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
-        assertRowValues(rowIterator.next());
-        assertRowValues(rowIterator.next(), "Свечи");
-        assertRowValues(rowIterator.next(),
+        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
+        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
+        AssertUtils.assertRowValues(rowIterator.next());
+        AssertUtils.assertRowValues(rowIterator.next(), "Свечи");
+        AssertUtils.assertRowValues(rowIterator.next(),
                 "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
         for (Candle candle : candles) {
-            assertRowValues(rowIterator.next(),
+            AssertUtils.assertRowValues(
+                    rowIterator.next(),
                     candle.getTime(),
                     candle.getOpenPrice(),
                     candle.getClosePrice(),
                     candle.getHighestPrice(),
-                    candle.getLowestPrice());
+                    candle.getLowestPrice()
+            );
         }
 
         assertChartCreated(sheet);
@@ -243,12 +246,12 @@ class ExcelServiceImplTest extends BaseMockedTest {
     private void assertChartCreated(ExtendedSheet sheet) {
         Iterator<?> iterator = sheet.getDrawingPatriarch().iterator();
         XSSFGraphicFrame frame = (XSSFGraphicFrame) iterator.next();
-        assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
         List<XSSFChart> charts = frame.getDrawing().getCharts();
-        assertEquals(1, charts.size());
+        Assertions.assertEquals(1, charts.size());
         XSSFChart chart = charts.get(0);
         List<? extends XDDFChartAxis> axes = chart.getAxes();
-        assertEquals(2, axes.size());
+        Assertions.assertEquals(2, axes.size());
         AssertUtils.assertEquals(120, axes.get(1).getMinimum());
         AssertUtils.assertEquals(180, axes.get(1).getMaximum());
     }

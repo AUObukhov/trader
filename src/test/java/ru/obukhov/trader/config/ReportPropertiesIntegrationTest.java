@@ -6,8 +6,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 class ReportPropertiesIntegrationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -20,7 +18,7 @@ class ReportPropertiesIntegrationTest {
                 .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
                 .withInitializer(new ConfigFileApplicationContextInitializer())
                 .run(context -> {
-                    assertNull(context.getStartupFailure());
+                    Assertions.assertNull(context.getStartupFailure());
 
                     ReportProperties reportProperties = context.getBean(ReportProperties.class);
 
@@ -34,7 +32,7 @@ class ReportPropertiesIntegrationTest {
 
         this.contextRunner
                 .run(context -> {
-                    assertNull(context.getStartupFailure());
+                    Assertions.assertNull(context.getStartupFailure());
 
                     ReportProperties reportProperties = context.getBean(ReportProperties.class);
 
