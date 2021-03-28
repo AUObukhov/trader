@@ -183,7 +183,7 @@ class MathUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
-                "window must be greater than zero");
+                "window must be positive");
     }
 
     @Test
@@ -194,7 +194,7 @@ class MathUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
-                "window must be greater than zero");
+                "window must be positive");
     }
 
     @Test
@@ -333,7 +333,7 @@ class MathUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
-                "window must be greater than zero");
+                "window must be positive");
     }
 
     @Test
@@ -344,7 +344,7 @@ class MathUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
                 IllegalArgumentException.class,
-                "window must be greater than zero");
+                "window must be positive");
     }
 
     @Test

@@ -125,7 +125,7 @@ public class MathUtils {
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param window         count of values, used for calculation of each average, must be greater than zero
+     * @param window         count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getSimpleMovingAverages(
@@ -133,7 +133,7 @@ public class MathUtils {
             Function<T, BigDecimal> valueExtractor,
             int window
     ) {
-        Assert.isTrue(window > 0, "window must be greater than zero");
+        Assert.isTrue(window > 0, "window must be positive");
 
         // filling of first {window} averages
         List<BigDecimal> movingAverages = new ArrayList<>(elements.size());
@@ -165,7 +165,7 @@ public class MathUtils {
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param window         count of values, used for calculation of each average, must be greater than zero
+     * @param window         count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
@@ -173,7 +173,7 @@ public class MathUtils {
             Function<T, BigDecimal> valueExtractor,
             int window
     ) {
-        Assert.isTrue(window > 0, "window must be greater than zero");
+        Assert.isTrue(window > 0, "window must be positive");
 
         List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
