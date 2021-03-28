@@ -10,7 +10,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
-import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsRequest;
@@ -33,7 +33,11 @@ public class StatisticsController {
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
         Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
-        List<Candle> candles = statisticsService.getCandles(request.getTicker(), interval, request.getCandleInterval());
+        List<ExtendedCandle> candles = statisticsService.getExtendedCandles(
+                request.getTicker(),
+                interval,
+                request.getCandleInterval()
+        );
 
         if (request.isSaveToFile()) {
             excelService.saveCandles(request.getTicker(), interval, candles);

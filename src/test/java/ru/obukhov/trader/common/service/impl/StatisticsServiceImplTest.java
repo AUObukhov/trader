@@ -13,6 +13,10 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.ExtendedCandle;
+import ru.obukhov.trader.market.model.Extremum;
+import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.models.market.CandleInterval;
 
 import java.time.OffsetDateTime;
@@ -52,5 +56,54 @@ class StatisticsServiceImplTest extends BaseMockedTest {
 
         Assertions.assertSame(candles, candlesResponse);
     }
+
+    @Test
+    void getExtendedCandles_extendsCandles() {
+        final String ticker = TICKER;
+
+        final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
+        final Interval interval = Interval.of(from, to);
+
+        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+
+        final List<Candle> candles = new ArrayList<>();
+        OffsetDateTime time1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time1, CandleInterval.ONE_MIN));
+
+        OffsetDateTime time2 = DateUtils.getDateTime(2020, 1, 1, 10, 1, 0);
+        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time2, CandleInterval.ONE_MIN));
+
+        OffsetDateTime time3 = DateUtils.getDateTime(2020, 1, 1, 10, 2, 0);
+        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time3, CandleInterval.ONE_MIN));
+
+        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+
+        final List<ExtendedCandle> extendedCandles = service.getExtendedCandles(ticker, interval, candleInterval);
+
+        Assertions.assertEquals(candles.size(), extendedCandles.size());
+        for (int i = 0; i < candles.size(); i++) {
+            Candle candle = candles.get(i);
+            ExtendedCandle extendedCandle = extendedCandles.get(i);
+
+            AssertUtils.assertEquals(candle.getOpenPrice(), extendedCandle.getOpenPrice());
+            AssertUtils.assertEquals(candle.getClosePrice(), extendedCandle.getClosePrice());
+            AssertUtils.assertEquals(candle.getHighestPrice(), extendedCandle.getHighestPrice());
+            AssertUtils.assertEquals(candle.getLowestPrice(), extendedCandle.getLowestPrice());
+            Assertions.assertEquals(candle.getTime(), extendedCandle.getTime());
+            Assertions.assertEquals(candle.getInterval(), extendedCandle.getInterval());
+        }
+
+        // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
+        AssertUtils.assertEquals(10, extendedCandles.get(0).getAveragePrice());
+        Assertions.assertEquals(Extremum.MIN, extendedCandles.get(0).getExtremum());
+
+        AssertUtils.assertEquals(10.135, extendedCandles.get(1).getAveragePrice());
+        Assertions.assertEquals(Extremum.NONE, extendedCandles.get(1).getExtremum());
+
+        AssertUtils.assertEquals(10.5535, extendedCandles.get(2).getAveragePrice());
+        Assertions.assertEquals(Extremum.MAX, extendedCandles.get(2).getExtremum());
+    }
+
 
 }

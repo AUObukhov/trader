@@ -23,6 +23,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
@@ -62,7 +63,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public void saveCandles(String ticker, Interval interval, List<Candle> candles) {
+    public void saveCandles(String ticker, Interval interval, List<ExtendedCandle> candles) {
         ExtendedWorkbook workBook = createWorkBook();
         createSheet(workBook, ticker, interval, candles);
 
@@ -98,10 +99,14 @@ public class ExcelServiceImpl implements ExcelService {
 
         sheet.autoSizeColumns();
 
-        putChart(sheet, result.getCandles(), result.getOperations());
+        putChartWithOperations(sheet, result.getCandles(), result.getOperations());
     }
 
-    private void createSheet(ExtendedWorkbook workbook, String ticker, Interval interval, List<Candle> candles) {
+    private void createSheet(ExtendedWorkbook workbook,
+                             String ticker,
+                             Interval interval,
+                             List<ExtendedCandle> candles) {
+
         ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
 
         putTicker(sheet, ticker);
@@ -110,7 +115,7 @@ public class ExcelServiceImpl implements ExcelService {
 
         sheet.autoSizeColumns();
 
-        putChart(sheet, candles);
+        putChartWithAverages(sheet, candles);
     }
 
     private void putCommonStatistics(ExtendedSheet sheet, String ticker, SimulationResult result) {
@@ -224,37 +229,55 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCandles(ExtendedSheet sheet, List<Candle> candles) {
+    private void putCandles(ExtendedSheet sheet, List<ExtendedCandle> candles) {
         sheet.addRow();
-        sheet.addRow().createUnitedCell("Свечи", 5);
+        sheet.addRow().createUnitedCell("Свечи", 6);
         sheet.addRow().createCells(
-                "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
+                "Дата-время",
+                "Цена открытия",
+                "Цена закрытия",
+                "Набольшая цена",
+                "Наименьшая цена",
+                "Усреднённая цена",
+                "Экстремум"
+        );
 
-        for (Candle candle : candles) {
+        for (ExtendedCandle candle : candles) {
             putCandle(sheet, candle);
         }
     }
 
-    private void putCandle(ExtendedSheet sheet, Candle candle) {
+    private void putCandle(ExtendedSheet sheet, ExtendedCandle candle) {
         ExtendedRow row = sheet.addRow();
         row.createCells(
                 candle.getTime(),
                 candle.getOpenPrice(),
                 candle.getClosePrice(),
                 candle.getHighestPrice(),
-                candle.getLowestPrice()
+                candle.getLowestPrice(),
+                candle.getAveragePrice(),
+                getLocalExtremumString(candle)
         );
-
     }
 
-    private void putChart(ExtendedSheet sheet, List<Candle> candles) {
+    private String getLocalExtremumString(ExtendedCandle candle) {
+        if (candle.isLocalMaximum()) {
+            return "макс";
+        } else {
+            return candle.isLocalMinimum() ? "мин" : null;
+        }
+    }
+
+    private void putChartWithAverages(ExtendedSheet sheet, List<ExtendedCandle> candles) {
         ExtendedChart chart = createChart(sheet);
         ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandles(chartData, candles);
         chart.plot(chartData);
     }
 
-    private void putChart(ExtendedSheet sheet, List<Candle> candles, List<SimulatedOperation> operations) {
+    private void putChartWithOperations(ExtendedSheet sheet,
+                                        List<Candle> candles,
+                                        List<SimulatedOperation> operations) {
         ExtendedChart chart = createChart(sheet);
         ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandlesAndPricesAndOperations(chartData, candles, operations);
@@ -269,9 +292,12 @@ public class ExcelServiceImpl implements ExcelService {
         return sheet.createChart(column1, row1, column2, row2);
     }
 
-    private void addCandles(ExtendedChartData chartData, List<Candle> candles) {
+    private void addCandles(ExtendedChartData chartData, List<ExtendedCandle> candles) {
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(candles);
         addOpenPrices(chartData, timesDataSource, candles);
+        addAveragePrices(chartData, timesDataSource, candles);
+        addMaximums(chartData, timesDataSource, candles);
+        addMinimums(chartData, timesDataSource, candles);
 
         chartData.stretchChart();
     }
@@ -303,7 +329,7 @@ public class ExcelServiceImpl implements ExcelService {
         chartData.stretchChart();
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSource(List<Candle> innerCandles) {
+    private XDDFCategoryDataSource getTimesCategoryDataSource(List<? extends Candle> innerCandles) {
         String[] times = innerCandles.stream()
                 .map(Candle::getTime)
                 .map(DATE_TIME_FORMATTER::format)
@@ -313,11 +339,38 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void addOpenPrices(ExtendedChartData chartData,
                                XDDFCategoryDataSource timesDataSource,
-                               List<Candle> candles) {
+                               List<? extends Candle> candles) {
         BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE);
+    }
+
+    private void addAveragePrices(ExtendedChartData chartData,
+                                  XDDFCategoryDataSource timesDataSource,
+                                  List<ExtendedCandle> candles) {
+        BigDecimal[] averagePricesArray = candles.stream()
+                .map(ExtendedCandle::getAveragePrice)
+                .toArray(BigDecimal[]::new);
+        addSeries(chartData, timesDataSource, averagePricesArray, MarkerStyle.NONE);
+    }
+
+    private void addMaximums(ExtendedChartData chartData,
+                             XDDFCategoryDataSource timesDataSource,
+                             List<ExtendedCandle> candles) {
+        BigDecimal[] maximumsArray = candles.stream()
+                .map(candle -> candle.isLocalMaximum() ? candle.getAveragePrice() : null)
+                .toArray(BigDecimal[]::new);
+        addSeries(chartData, timesDataSource, maximumsArray, MarkerStyle.TRIANGLE);
+    }
+
+    private void addMinimums(ExtendedChartData chartData,
+                             XDDFCategoryDataSource timesDataSource,
+                             List<ExtendedCandle> candles) {
+        BigDecimal[] minimumsPricesArray = candles.stream()
+                .map(candle -> candle.isLocalMinimum() ? candle.getAveragePrice() : null)
+                .toArray(BigDecimal[]::new);
+        addSeries(chartData, timesDataSource, minimumsPricesArray, MarkerStyle.DIAMOND);
     }
 
     private void addOperations(ExtendedChartData chartData,

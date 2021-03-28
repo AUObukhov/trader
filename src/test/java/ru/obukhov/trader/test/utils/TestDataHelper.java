@@ -45,6 +45,24 @@ public class TestDataHelper {
 
     }
 
+    public static Candle createCandle(
+            double openPrice,
+            double closePrice,
+            double highestPrice,
+            double lowestPrice,
+            OffsetDateTime time,
+            CandleInterval interval
+    ) {
+        return new Candle(
+                DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),
+                DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)),
+                DecimalUtils.setDefaultScale(BigDecimal.valueOf(highestPrice)),
+                DecimalUtils.setDefaultScale(BigDecimal.valueOf(lowestPrice)),
+                time,
+                interval
+        );
+    }
+
     public static Candle createCandleWithOpenPrice(double openPrice) {
         return createCandleWithOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }

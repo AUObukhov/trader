@@ -501,7 +501,6 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
                             int lots,
                             ru.tinkoff.invest.openapi.models.orders.Operation operation,
                             BigDecimal price) {
-
         Candle candle = TestDataHelper.createCandleWithOpenPrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 

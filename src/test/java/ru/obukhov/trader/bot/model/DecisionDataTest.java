@@ -2,6 +2,7 @@ package ru.obukhov.trader.bot.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -41,6 +42,16 @@ class DecisionDataTest {
         decisionData.setCurrentCandles(candles);
 
         AssertUtils.assertEquals(lastCandleOpenPrice, decisionData.getCurrentPrice());
+    }
+
+    private Candle createCandle(int openPrice) {
+        return createCandle(BigDecimal.valueOf(openPrice));
+    }
+
+    private Candle createCandle(BigDecimal openPrice) {
+        Candle candle = new Candle();
+        candle.setOpenPrice(DecimalUtils.setDefaultScale(openPrice));
+        return candle;
     }
 
 }

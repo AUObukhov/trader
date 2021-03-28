@@ -17,7 +17,10 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.ExtendedCandle;
+import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
@@ -27,10 +30,14 @@ import ru.tinkoff.invest.openapi.models.operations.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 class ExcelServiceImplTest extends BaseMockedTest {
 
@@ -114,9 +121,9 @@ class ExcelServiceImplTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
         final Interval interval = Interval.of(from, to);
 
-        final List<Candle> candles = createCandles();
+        final List<ExtendedCandle> extendedCandles = createExtendedCandles();
 
-        excelService.saveCandles(ticker, interval, candles);
+        excelService.saveCandles(ticker, interval, extendedCandles);
 
         String fileNamePrefix = "Candles for '" + ticker + "'";
         Mockito.verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
@@ -132,20 +139,38 @@ class ExcelServiceImplTest extends BaseMockedTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Свечи");
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
-        for (Candle candle : candles) {
+        AssertUtils.assertRowValues(
+                rowIterator.next(),
+                "Дата-время",
+                "Цена открытия",
+                "Цена закрытия",
+                "Набольшая цена",
+                "Наименьшая цена",
+                "Усреднённая цена",
+                "Экстремум"
+        );
+        for (ExtendedCandle candle : extendedCandles) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     candle.getTime(),
                     candle.getOpenPrice(),
                     candle.getClosePrice(),
                     candle.getHighestPrice(),
-                    candle.getLowestPrice()
+                    candle.getLowestPrice(),
+                    candle.getAveragePrice(),
+                    getLocalExtremumString(candle)
             );
         }
 
         assertChartCreated(sheet);
+    }
+
+    private String getLocalExtremumString(ExtendedCandle candle) {
+        if (candle.isLocalMaximum()) {
+            return "макс";
+        } else {
+            return candle.isLocalMinimum() ? "мин" : null;
+        }
     }
 
     private SimulationResult createSimulationResult() {
@@ -241,6 +266,30 @@ class ExcelServiceImplTest extends BaseMockedTest {
         );
 
         return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
+    }
+
+    private List<ExtendedCandle> createExtendedCandles() {
+        final List<Candle> candles = createCandles();
+        final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
+        Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
+        final List<BigDecimal> averages = MathUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
+
+        final List<ExtendedCandle> extendedCandles = new ArrayList<>(candles.size());
+        for (int i = 0; i < candles.size(); i++) {
+            extendedCandles.add(new ExtendedCandle(candles.get(i), averages.get(i)));
+        }
+
+        final List<Integer> maximums = MathUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
+        for (Integer maximum : maximums) {
+            extendedCandles.get(maximum).setExtremum(Extremum.MAX);
+        }
+
+        final List<Integer> minimums = MathUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
+        for (Integer minimum : minimums) {
+            extendedCandles.get(minimum).setExtremum(Extremum.MIN);
+        }
+
+        return extendedCandles;
     }
 
     private void assertChartCreated(ExtendedSheet sheet) {
