@@ -133,14 +133,27 @@ public class MathUtils {
             Function<T, BigDecimal> valueExtractor,
             int window
     ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getSimpleMovingAverages(values, window);
+    }
+
+    /**
+     * Calculates simple moving averages of given {@code values}
+     *
+     * @param values values, for which averages are calculated for
+     * @param window count of values, used for calculation of each average, must be positive
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
         Assert.isTrue(window > 0, "window must be positive");
 
         // filling of first {window} averages
-        List<BigDecimal> movingAverages = new ArrayList<>(elements.size());
-        for (int i = 0; i < window && i < elements.size(); i++) {
+        List<BigDecimal> movingAverages = new ArrayList<>(values.size());
+        int count = Math.min(window, values.size());
+        for (int i = 0; i < count; i++) {
             BigDecimal sum = BigDecimal.ZERO;
             for (int j = 0; j <= i; j++) {
-                BigDecimal value = valueExtractor.apply(elements.get(j));
+                BigDecimal value = values.get(j);
                 sum = sum.add(value);
             }
 
@@ -148,11 +161,10 @@ public class MathUtils {
         }
 
         // filling of the rest averages
-        for (int i = window; i < elements.size(); i++) {
-            T excludedElement = elements.get(i - window);
-            BigDecimal excludedValue = DecimalUtils.divide(valueExtractor.apply(excludedElement), window);
-            T addedElement = elements.get(i);
-            BigDecimal addedValue = DecimalUtils.divide(valueExtractor.apply(addedElement), window);
+        count = values.size();
+        for (int i = window; i < count; i++) {
+            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
             BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
             movingAverages.add(currentAverage);
         }
@@ -173,9 +185,20 @@ public class MathUtils {
             Function<T, BigDecimal> valueExtractor,
             int window
     ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getLinearWeightedMovingAverages(values, window);
+    }
+
+    /**
+     * Calculates linear weighted moving averages of given {@code values} by given {@code window}
+     *
+     * @param values values, for which averages are calculated for
+     * @param window count of values, used for calculation of each average, must be positive
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window) {
         Assert.isTrue(window > 0, "window must be positive");
 
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
             weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, window));
@@ -217,20 +240,35 @@ public class MathUtils {
             Function<T, BigDecimal> valueExtractor,
             double weightDecrease
     ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getExponentialWeightedMovingAverages(values, weightDecrease);
+    }
+
+    /**
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     *
+     * @param values         values, for which averages are calculated for
+     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getExponentialWeightedMovingAverages(
+            List<BigDecimal> values,
+            double weightDecrease
+    ) {
         Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
                 "weightDecrease must be in range (0; 1]");
 
-        List<BigDecimal> averages = new ArrayList<>(elements.size());
-        if (elements.isEmpty()) {
+        int size = values.size();
+        List<BigDecimal> averages = new ArrayList<>(size);
+        if (values.isEmpty()) {
             return averages;
         }
 
-        BigDecimal average = valueExtractor.apply(elements.get(0));
+        BigDecimal average = values.get(0);
         averages.add(average);
         BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
-        for (int i = 1; i < elements.size(); i++) {
-            BigDecimal currentValue = valueExtractor.apply(elements.get(i));
-            average = DecimalUtils.multiply(currentValue, weightDecrease)
+        for (int i = 1; i < size; i++) {
+            average = DecimalUtils.multiply(values.get(i), weightDecrease)
                     .add(average.multiply(revertedWeightDecrease));
             averages.add(DecimalUtils.setDefaultScale(average));
         }
@@ -254,19 +292,37 @@ public class MathUtils {
             double weightDecrease,
             int order
     ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getExponentialWeightedMovingAveragesOfArbitraryOrder(values, weightDecrease, order);
+    }
+
+    /**
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     * and {@code order}
+     *
+     * @param values         values containing values, for which averages are calculated for
+     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @param order          order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getExponentialWeightedMovingAveragesOfArbitraryOrder(
+            List<BigDecimal> values,
+            double weightDecrease,
+            int order
+    ) {
         Assert.isTrue(order > 0, "order must be positive");
         Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
                 "weightDecrease must be in range (0; 1]");
 
         BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
-        List<BigDecimal> averages = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        List<BigDecimal> averages = new ArrayList<>(values);
         if (averages.isEmpty()) {
             return averages;
         }
 
         for (int i = 0; i < order; i++) {
             BigDecimal average = averages.get(0);
-            for (int j = 1; j < elements.size(); j++) {
+            for (int j = 1; j < values.size(); j++) {
                 average = DecimalUtils.multiply(averages.get(j), weightDecrease)
                         .add(average.multiply(revertedWeightDecrease));
                 averages.set(j, average);
