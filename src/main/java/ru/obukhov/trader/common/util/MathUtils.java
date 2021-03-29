@@ -296,24 +296,32 @@ public class MathUtils {
         Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
                 "weightDecrease must be in range (0; 1]");
 
-        BigDecimal revertedWeightDecrease = DecimalUtils.subtract(BigDecimal.ONE, weightDecrease);
+        double revertedWeightDecrease = 1 - weightDecrease;
         List<BigDecimal> averages = new ArrayList<>(values);
         if (averages.isEmpty()) {
             return averages;
         }
 
         for (int i = 0; i < order; i++) {
-            BigDecimal average = averages.get(0);
-            for (int j = 1; j < values.size(); j++) {
-                average = DecimalUtils.multiply(averages.get(j), weightDecrease)
-                        .add(average.multiply(revertedWeightDecrease));
-                averages.set(j, average);
-            }
+            updateExponentialMovingAverages(averages, weightDecrease, revertedWeightDecrease);
         }
 
         return averages.stream()
                 .map(DecimalUtils::setDefaultScale)
                 .collect(Collectors.toList());
+    }
+
+    private static void updateExponentialMovingAverages(
+            List<BigDecimal> averages,
+            double weightDecrease,
+            double revertedWeightDecrease
+    ) {
+        BigDecimal average = averages.get(0);
+        for (int j = 1; j < averages.size(); j++) {
+            average = DecimalUtils.multiply(averages.get(j), weightDecrease)
+                    .add(DecimalUtils.multiply(average, revertedWeightDecrease));
+            averages.set(j, average);
+        }
     }
 
     /**
