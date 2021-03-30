@@ -297,31 +297,57 @@ public class MathUtils {
                 "weightDecrease must be in range (0; 1]");
 
         double revertedWeightDecrease = 1 - weightDecrease;
-        List<BigDecimal> averages = new ArrayList<>(values);
-        if (averages.isEmpty()) {
-            return averages;
+        List<BigDecimal> averagesNatural = new ArrayList<>(values);
+        if (averagesNatural.isEmpty()) {
+            return averagesNatural;
         }
+        List<BigDecimal> averagesReverse = new ArrayList<>(values);
 
         for (int i = 0; i < order; i++) {
-            updateExponentialMovingAverages(averages, weightDecrease, revertedWeightDecrease);
+            updateExponentialMovingAveragesNatural(averagesNatural, weightDecrease, revertedWeightDecrease);
+            updateExponentialMovingAveragesReverse(averagesReverse, weightDecrease, revertedWeightDecrease);
         }
 
-        return averages.stream()
-                .map(DecimalUtils::setDefaultScale)
-                .collect(Collectors.toList());
+        return getAverageValues(averagesNatural, averagesReverse);
     }
 
-    private static void updateExponentialMovingAverages(
-            List<BigDecimal> averages,
-            double weightDecrease,
-            double revertedWeightDecrease
+    private static void updateExponentialMovingAveragesNatural(
+            List<BigDecimal> averages, double weightDecrease, double revertedWeightDecrease
     ) {
         BigDecimal average = averages.get(0);
-        for (int j = 1; j < averages.size(); j++) {
-            average = DecimalUtils.multiply(averages.get(j), weightDecrease)
-                    .add(DecimalUtils.multiply(average, revertedWeightDecrease));
-            averages.set(j, average);
+        final int size = averages.size();
+        for (int i = 1; i < size; i++) {
+            average = updateExponentialMovingAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
         }
+    }
+
+    private static void updateExponentialMovingAveragesReverse(
+            List<BigDecimal> averages, double weightDecrease, double revertedWeightDecrease
+    ) {
+        final int size = averages.size();
+        BigDecimal average = averages.get(size - 1);
+        for (int i = size - 2; i >= 0; i--) {
+            average = updateExponentialMovingAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
+        }
+    }
+
+    private static BigDecimal updateExponentialMovingAverage(List<BigDecimal> averages,
+                                                             BigDecimal average,
+                                                             int index,
+                                                             double weightDecrease,
+                                                             double revertedWeightDecrease) {
+        average = DecimalUtils.multiply(averages.get(index), weightDecrease)
+                .add(DecimalUtils.multiply(average, revertedWeightDecrease));
+        averages.set(index, average);
+        return average;
+    }
+
+    private static List<BigDecimal> getAverageValues(List<BigDecimal> values1, List<BigDecimal> values2) {
+        List<BigDecimal> values = new ArrayList<>(values1.size());
+        for (int i = 0; i < values1.size(); i++) {
+            values.add(DecimalUtils.divide(values1.get(i).add(values2.get(i)), 2));
+        }
+        return values;
     }
 
     /**

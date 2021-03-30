@@ -912,16 +912,16 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1800),
-                BigDecimal.valueOf(2760),
-                BigDecimal.valueOf(3752),
-                BigDecimal.valueOf(4750.4),
-                BigDecimal.valueOf(5750.08),
-                BigDecimal.valueOf(6750.016),
-                BigDecimal.valueOf(7750.0032),
-                BigDecimal.valueOf(8750.00064),
-                BigDecimal.valueOf(9750.00013)
+                BigDecimal.valueOf(1124.99994),
+                BigDecimal.valueOf(2024.99968),
+                BigDecimal.valueOf(3004.99840),
+                BigDecimal.valueOf(4000.99200),
+                BigDecimal.valueOf(5000.16000),
+                BigDecimal.valueOf(5999.84000),
+                BigDecimal.valueOf(6999.00800),
+                BigDecimal.valueOf(7995.00160),
+                BigDecimal.valueOf(8975.00032),
+                BigDecimal.valueOf(9875.00006)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1107,16 +1107,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1800),
-                BigDecimal.valueOf(2760),
-                BigDecimal.valueOf(3752),
-                BigDecimal.valueOf(4750.4),
-                BigDecimal.valueOf(5750.08),
-                BigDecimal.valueOf(6750.016),
-                BigDecimal.valueOf(7750.0032),
-                BigDecimal.valueOf(8750.00064),
-                BigDecimal.valueOf(9750.00013)
+                BigDecimal.valueOf(1124.99994),
+                BigDecimal.valueOf(2024.99968),
+                BigDecimal.valueOf(3004.99840),
+                BigDecimal.valueOf(4000.99200),
+                BigDecimal.valueOf(5000.16000),
+                BigDecimal.valueOf(5999.84000),
+                BigDecimal.valueOf(6999.00800),
+                BigDecimal.valueOf(7995.00160),
+                BigDecimal.valueOf(8975.00032),
+                BigDecimal.valueOf(9875.00006)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1142,16 +1142,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1640),
-                BigDecimal.valueOf(2536),
-                BigDecimal.valueOf(3508.8),
-                BigDecimal.valueOf(4502.08),
-                BigDecimal.valueOf(5500.48),
-                BigDecimal.valueOf(6500.1088),
-                BigDecimal.valueOf(7500.02432),
-                BigDecimal.valueOf(8500.00538),
-                BigDecimal.valueOf(9500.00118)
+                BigDecimal.valueOf(1249.99941),
+                BigDecimal.valueOf(2069.99731),
+                BigDecimal.valueOf(3017.98784),
+                BigDecimal.valueOf(4004.34560),
+                BigDecimal.valueOf(5000.80000),
+                BigDecimal.valueOf(5999.20000),
+                BigDecimal.valueOf(6995.65440),
+                BigDecimal.valueOf(7982.01216),
+                BigDecimal.valueOf(8930.00269),
+                BigDecimal.valueOf(9750.00059)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1177,16 +1177,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1512),
-                BigDecimal.valueOf(2331.2),
-                BigDecimal.valueOf(3273.28),
-                BigDecimal.valueOf(4256.32),
-                BigDecimal.valueOf(5251.648),
-                BigDecimal.valueOf(6250.41664),
-                BigDecimal.valueOf(7250.10278),
-                BigDecimal.valueOf(8250.02486),
-                BigDecimal.valueOf(9250.00591)
+                BigDecimal.valueOf(1374.99704),
+                BigDecimal.valueOf(2130.98757),
+                BigDecimal.valueOf(3040.54861),
+                BigDecimal.valueOf(4011.43168),
+                BigDecimal.valueOf(5002.33600),
+                BigDecimal.valueOf(5997.66400),
+                BigDecimal.valueOf(6988.56832),
+                BigDecimal.valueOf(7959.45139),
+                BigDecimal.valueOf(8869.01243),
+                BigDecimal.valueOf(9625.00296)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1333,16 +1333,16 @@ class MathUtilsTest {
         List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1800),
-                BigDecimal.valueOf(2760),
-                BigDecimal.valueOf(3752),
-                BigDecimal.valueOf(4750.4),
-                BigDecimal.valueOf(5750.08),
-                BigDecimal.valueOf(6750.016),
-                BigDecimal.valueOf(7750.0032),
-                BigDecimal.valueOf(8750.00064),
-                BigDecimal.valueOf(9750.00013)
+                BigDecimal.valueOf(1124.99994),
+                BigDecimal.valueOf(2024.99968),
+                BigDecimal.valueOf(3004.99840),
+                BigDecimal.valueOf(4000.99200),
+                BigDecimal.valueOf(5000.16000),
+                BigDecimal.valueOf(5999.84000),
+                BigDecimal.valueOf(6999.00800),
+                BigDecimal.valueOf(7995.00160),
+                BigDecimal.valueOf(8975.00032),
+                BigDecimal.valueOf(9875.00006)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1528,16 +1528,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1800),
-                BigDecimal.valueOf(2760),
-                BigDecimal.valueOf(3752),
-                BigDecimal.valueOf(4750.4),
-                BigDecimal.valueOf(5750.08),
-                BigDecimal.valueOf(6750.016),
-                BigDecimal.valueOf(7750.0032),
-                BigDecimal.valueOf(8750.00064),
-                BigDecimal.valueOf(9750.00013)
+                BigDecimal.valueOf(1124.99994),
+                BigDecimal.valueOf(2024.99968),
+                BigDecimal.valueOf(3004.99840),
+                BigDecimal.valueOf(4000.99200),
+                BigDecimal.valueOf(5000.16000),
+                BigDecimal.valueOf(5999.84000),
+                BigDecimal.valueOf(6999.00800),
+                BigDecimal.valueOf(7995.00160),
+                BigDecimal.valueOf(8975.00032),
+                BigDecimal.valueOf(9875.00006)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1563,16 +1563,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1640),
-                BigDecimal.valueOf(2536),
-                BigDecimal.valueOf(3508.8),
-                BigDecimal.valueOf(4502.08),
-                BigDecimal.valueOf(5500.48),
-                BigDecimal.valueOf(6500.1088),
-                BigDecimal.valueOf(7500.02432),
-                BigDecimal.valueOf(8500.00538),
-                BigDecimal.valueOf(9500.00118)
+                BigDecimal.valueOf(1249.99941),
+                BigDecimal.valueOf(2069.99731),
+                BigDecimal.valueOf(3017.98784),
+                BigDecimal.valueOf(4004.34560),
+                BigDecimal.valueOf(5000.80000),
+                BigDecimal.valueOf(5999.20000),
+                BigDecimal.valueOf(6995.65440),
+                BigDecimal.valueOf(7982.01216),
+                BigDecimal.valueOf(8930.00269),
+                BigDecimal.valueOf(9750.00059)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
@@ -1598,16 +1598,16 @@ class MathUtilsTest {
                 MathUtils.getExponentialWeightedMovingAverages(values, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(1512),
-                BigDecimal.valueOf(2331.2),
-                BigDecimal.valueOf(3273.28),
-                BigDecimal.valueOf(4256.32),
-                BigDecimal.valueOf(5251.648),
-                BigDecimal.valueOf(6250.41664),
-                BigDecimal.valueOf(7250.10278),
-                BigDecimal.valueOf(8250.02486),
-                BigDecimal.valueOf(9250.00591)
+                BigDecimal.valueOf(1374.99704),
+                BigDecimal.valueOf(2130.98757),
+                BigDecimal.valueOf(3040.54861),
+                BigDecimal.valueOf(4011.43168),
+                BigDecimal.valueOf(5002.33600),
+                BigDecimal.valueOf(5997.66400),
+                BigDecimal.valueOf(6988.56832),
+                BigDecimal.valueOf(7959.45139),
+                BigDecimal.valueOf(8869.01243),
+                BigDecimal.valueOf(9625.00296)
         );
         AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
