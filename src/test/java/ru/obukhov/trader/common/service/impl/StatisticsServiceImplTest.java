@@ -95,15 +95,15 @@ class StatisticsServiceImplTest extends BaseMockedTest {
         }
 
         // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
-        AssertUtils.assertEquals(10, extendedCandles.get(0).getAveragePrice());
+        // with weightDecrease = 0.3 and order = 3
+        AssertUtils.assertEquals(14.72325, extendedCandles.get(0).getAveragePrice());
         Assertions.assertEquals(Extremum.MIN, extendedCandles.get(0).getExtremum());
 
-        AssertUtils.assertEquals(10.135, extendedCandles.get(1).getAveragePrice());
+        AssertUtils.assertEquals(15, extendedCandles.get(1).getAveragePrice());
         Assertions.assertEquals(Extremum.NONE, extendedCandles.get(1).getExtremum());
 
-        AssertUtils.assertEquals(10.5535, extendedCandles.get(2).getAveragePrice());
+        AssertUtils.assertEquals(15.27675, extendedCandles.get(2).getAveragePrice());
         Assertions.assertEquals(Extremum.MAX, extendedCandles.get(2).getExtremum());
     }
-
 
 }
