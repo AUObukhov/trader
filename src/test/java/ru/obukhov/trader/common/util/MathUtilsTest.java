@@ -10,13 +10,11 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 class MathUtilsTest {
-
-    private static final Function<BigDecimal, BigDecimal> SELF = number -> number;
 
     // region getAverage with collection tests
 
@@ -176,67 +174,71 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_throwsIllegalArgumentException_whenWindowIsNegative() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
+                () -> MathUtils.getSimpleMovingAverages(elements, Optional::get, window),
                 IllegalArgumentException.class,
-                "window must be positive");
+                "window must be positive"
+        );
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_throwsIllegalArgumentException_whenWindowIsZero() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getSimpleMovingAverages(values, SELF, window),
+                () -> MathUtils.getSimpleMovingAverages(elements, Optional::get, window),
                 IllegalArgumentException.class,
-                "window must be positive");
+                "window must be positive"
+        );
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsEmptyList_whenValuesAreEmpty() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsEqualList_whenExistsSingleValue_andWindowIsGreaterThanOne() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = Collections.singletonList(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsEqualList_whenWindowIsEqualToValuesCount_andExistsSingleValue() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = Collections.singletonList(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsAveragesList_whenWindowIsEqualToValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000))
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -249,14 +251,14 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000))
         );
         int window = 5;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -268,7 +270,23 @@ class MathUtilsTest {
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
+        );
+        int window = 1;
+
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
+
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -280,30 +298,26 @@ class MathUtilsTest {
                 BigDecimal.valueOf(9000),
                 BigDecimal.valueOf(10000)
         );
-        int window = 1;
-
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
-
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getSimpleMovingAverages_withValueExtractor_returnsAverages_whenWindowIsLowerThanValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -476,67 +490,71 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_throwsIllegalArgumentException_whenWindowIsNegative() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
+                () -> MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window),
                 IllegalArgumentException.class,
-                "window must be positive");
+                "window must be positive"
+        );
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_throwsIllegalArgumentException_whenWindowIsZero() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getLinearWeightedMovingAverages(values, SELF, window),
+                () -> MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window),
                 IllegalArgumentException.class,
-                "window must be positive");
+                "window must be positive"
+        );
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsEmptyList_whenValuesAreEmpty() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsEqualList_whenExistsSingleValue_andWindowIsGreaterThanOne() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = Collections.singletonList(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsEqualList_whenWindowIsEqualToValuesCount_andExistsSingleValue() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         int window = 1;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = Collections.singletonList(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsAveragesList_whenWindowIsEqualToValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000))
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -549,14 +567,14 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsAveragesList_whenWindowIsGreaterThanValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000))
         );
         int window = 5;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -568,7 +586,23 @@ class MathUtilsTest {
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsEqualList_whenWindowIsOne_andExistsSeveralValues() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
+        );
+        int window = 1;
+
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
+
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -580,30 +614,26 @@ class MathUtilsTest {
                 BigDecimal.valueOf(9000),
                 BigDecimal.valueOf(10000)
         );
-        int window = 1;
-
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
-
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getLinearWeightedMovingAverages_withValueExtractor_returnsMovingAveragesEqualList_whenWindowIsLowerThanValuesCount() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         int window = 4;
 
-        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(values, SELF, window);
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
@@ -776,60 +806,77 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_throwsIllegalArgumentException_whenWeightDecreaseIsNegative() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = -0.1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 1.1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsEmptyList_whenValuesAreEmpty() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsEqualList_whenExistsSingleValue() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = ImmutableList.of(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
+        );
+        double weightDecrease = 1.0;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
+
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -841,30 +888,26 @@ class MathUtilsTest {
                 BigDecimal.valueOf(9000),
                 BigDecimal.valueOf(10000)
         );
-        double weightDecrease = 1.0;
-
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
-
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsAveragesListWithDefaultScale() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
 
         for (BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
@@ -874,7 +917,23 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsEqualList_whenAllValuesAreEqual() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000))
+        );
+        double weightDecrease = 0.8;
+
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
+
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
@@ -886,30 +945,26 @@ class MathUtilsTest {
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000)
         );
-        double weightDecrease = 0.8;
-
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
-
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithoutOrder_returnsAveragesList() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 0.8;
 
-        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease);
+        List<BigDecimal> movingAverages = MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1124.99994),
@@ -932,114 +987,110 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_throwsIllegalArgumentException_whenWeightDecreaseIsNegative() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = -0.1;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_throwsIllegalArgumentException_whenWeightDecreaseIsZero() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.0;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_throwsIllegalArgumentException_whenWeightDecreaseIsGreaterThanOne() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 1.1;
         int order = 3;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
                 "weightDecrease must be in range (0; 1]");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_throwsIllegalArgumentException_whenOrderIsNegative() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.5;
         int order = -1;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_throwsIllegalArgumentException_whenOrderIsZero() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.5;
         int order = 0;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order),
+                () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
                 "order must be positive");
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsEmptyList_whenValuesAreEmpty() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
         Assertions.assertTrue(movingAverages.isEmpty());
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsEqualList_whenExistsSingleValue() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(1000));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(1000)));
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        List<BigDecimal> expectedAverages = ImmutableList.of(BigDecimal.valueOf(1000));
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsEqualsList_whenWeightDecreaseIsOne() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 1.0;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
-    }
-
-    @Test
-    void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsAveragesListWithDefaultScale() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(2000),
                 BigDecimal.valueOf(3000),
@@ -1051,11 +1102,28 @@ class MathUtilsTest {
                 BigDecimal.valueOf(9000),
                 BigDecimal.valueOf(10000)
         );
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
+    }
+
+    @Test
+    void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsAveragesListWithDefaultScale() {
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
+        );
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
         for (BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(),
@@ -1065,7 +1133,25 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsEqualList_whenAllValuesAreEqual() {
-        List<BigDecimal> values = ImmutableList.of(
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(1000))
+        );
+        double weightDecrease = 0.8;
+        int order = 3;
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
+
+        List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000),
@@ -1077,34 +1163,28 @@ class MathUtilsTest {
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(1000)
         );
-        double weightDecrease = 0.8;
-        int order = 3;
-
-        List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
-
-        AssertUtils.assertBigDecimalListsAreEqual(values, movingAverages);
+        AssertUtils.assertBigDecimalListsAreEqual(expectedAverages, movingAverages);
     }
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsAveragesList_forFirstOrder() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 0.8;
         int order = 1;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1124.99994),
@@ -1123,23 +1203,23 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsAveragesList_forSecondOrder() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 0.8;
         int order = 2;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1249.99941),
@@ -1158,23 +1238,23 @@ class MathUtilsTest {
 
     @Test
     void getExponentialWeightedMovingAverages_withValueExtractor_andWithOrder_returnsAveragesList_forThirdOrder() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(1000),
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(3000),
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(5000),
-                BigDecimal.valueOf(6000),
-                BigDecimal.valueOf(7000),
-                BigDecimal.valueOf(8000),
-                BigDecimal.valueOf(9000),
-                BigDecimal.valueOf(10000)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(1000)),
+                Optional.of(BigDecimal.valueOf(2000)),
+                Optional.of(BigDecimal.valueOf(3000)),
+                Optional.of(BigDecimal.valueOf(4000)),
+                Optional.of(BigDecimal.valueOf(5000)),
+                Optional.of(BigDecimal.valueOf(6000)),
+                Optional.of(BigDecimal.valueOf(7000)),
+                Optional.of(BigDecimal.valueOf(8000)),
+                Optional.of(BigDecimal.valueOf(9000)),
+                Optional.of(BigDecimal.valueOf(10000))
         );
         double weightDecrease = 0.8;
         int order = 3;
 
         List<BigDecimal> movingAverages =
-                MathUtils.getExponentialWeightedMovingAverages(values, SELF, weightDecrease, order);
+                MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
         List<BigDecimal> expectedAverages = ImmutableList.of(
                 BigDecimal.valueOf(1374.99704),
@@ -1618,18 +1698,18 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsEmptyList_whenValuesIsEmpty_andNaturalOrder() {
-        List<BigDecimal> values = Collections.emptyList();
+        List<Optional<BigDecimal>> elements = Collections.emptyList();
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         Assertions.assertTrue(extremes.isEmpty());
     }
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsSingleZeroIndex_whenThereIsSingleValue_andNaturalOrder() {
-        List<BigDecimal> values = Collections.singletonList(BigDecimal.valueOf(100));
+        List<Optional<BigDecimal>> elements = Collections.singletonList(Optional.of(BigDecimal.valueOf(100)));
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = Collections.singletonList(0);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1637,9 +1717,12 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsSingleZeroIndex_whenThereAreTwoValues_andFirstIsGreater_andNaturalOrder() {
-        List<BigDecimal> values = ImmutableList.of(BigDecimal.valueOf(100), BigDecimal.valueOf(90));
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(90))
+        );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = Collections.singletonList(0);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1647,9 +1730,12 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsSingleOneIndex_whenThereAreTwoEqualsValues_andNaturalOrder() {
-        List<BigDecimal> values = ImmutableList.of(BigDecimal.valueOf(100), BigDecimal.valueOf(100));
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100))
+        );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = Collections.singletonList(1);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1657,12 +1743,12 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsSingleOneIndex_whenThereAreTwoValues_andSecondIsGreater_andNaturalOrder() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(90),
-                BigDecimal.valueOf(100)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(90)),
+                Optional.of(BigDecimal.valueOf(100))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = Collections.singletonList(1);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1670,20 +1756,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsIndexOfLastElement_whenThereAreMultipleEqualValues_andNaturalOrder() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(100)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(100))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = Collections.singletonList(9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1691,20 +1777,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder1() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(29.9),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(25),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(30)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(29.9)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(25)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(30))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1712,20 +1798,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder2() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(29.9),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(25),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(30)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(29.9)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(25)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(30))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1733,20 +1819,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder3() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(29.9),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(25),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(50)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(29.9)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(25)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(50))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1754,20 +1840,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder4() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(29.9),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(25),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(50.1)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(100)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(29.9)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(25)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(50.1))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(0, 2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1775,20 +1861,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andNaturalOrder5() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5.1),
-                BigDecimal.valueOf(4),
-                BigDecimal.valueOf(3.5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(70),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(80)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(5.1)),
+                Optional.of(BigDecimal.valueOf(4)),
+                Optional.of(BigDecimal.valueOf(3.5)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(70)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(80))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.naturalOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.naturalOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(0, 3, 7, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1796,20 +1882,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder1() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(5.1),
-                BigDecimal.valueOf(4),
-                BigDecimal.valueOf(3.5),
-                BigDecimal.valueOf(5),
-                BigDecimal.valueOf(70),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(80)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(5.1)),
+                Optional.of(BigDecimal.valueOf(4)),
+                Optional.of(BigDecimal.valueOf(3.5)),
+                Optional.of(BigDecimal.valueOf(5)),
+                Optional.of(BigDecimal.valueOf(70)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(80))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.reverseOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1817,20 +1903,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder2() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(15.1),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(19),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(30)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(15.1)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(19)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(30))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.reverseOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 8);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1838,20 +1924,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder3() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(15),
-                BigDecimal.valueOf(15.1),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(19),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(10)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(15)),
+                Optional.of(BigDecimal.valueOf(15.1)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(19)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(10))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.reverseOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
@@ -1859,20 +1945,20 @@ class MathUtilsTest {
 
     @Test
     void getLocalExtremes_withValueExtractor_returnsProperIndices_whenThereAreMultipleValues_andReverseOrder4() {
-        List<BigDecimal> values = ImmutableList.of(
-                BigDecimal.valueOf(10),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(30.1),
-                BigDecimal.valueOf(20),
-                BigDecimal.valueOf(19),
-                BigDecimal.valueOf(21),
-                BigDecimal.valueOf(60),
-                BigDecimal.valueOf(50),
-                BigDecimal.valueOf(49.9)
+        List<Optional<BigDecimal>> elements = ImmutableList.of(
+                Optional.of(BigDecimal.valueOf(10)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30)),
+                Optional.of(BigDecimal.valueOf(30.1)),
+                Optional.of(BigDecimal.valueOf(20)),
+                Optional.of(BigDecimal.valueOf(19)),
+                Optional.of(BigDecimal.valueOf(21)),
+                Optional.of(BigDecimal.valueOf(60)),
+                Optional.of(BigDecimal.valueOf(50)),
+                Optional.of(BigDecimal.valueOf(49.9))
         );
 
-        List<Integer> extremes = MathUtils.getLocalExtremes(values, SELF, Comparator.reverseOrder());
+        List<Integer> extremes = MathUtils.getLocalExtremes(elements, Optional::get, Comparator.reverseOrder());
 
         List<Integer> expectedExtremes = ImmutableList.of(0, 2, 5, 9);
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
