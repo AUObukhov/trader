@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
@@ -419,6 +420,67 @@ public class MathUtils {
         }
 
         return extremes;
+    }
+
+    // endregion
+
+    // region getSortedLocalExtremes
+
+    /**
+     * Calculates indices of local extremes.
+     * If several consecutive elements are equal, then the last one is considered the extremum
+     *
+     * @param elements       extended elements among which values extremes are sought for
+     * @param valueExtractor function to get elements to compare from element
+     * @param comparator     comparator of elements, defining character of extremes
+     * @return calculated extremes in order, opposite to {@code comparator} order
+     */
+    public static <T> List<Integer> getSortedLocalExtremes(
+            List<T> elements,
+            Function<T, BigDecimal> valueExtractor,
+            Comparator<BigDecimal> comparator
+    ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getSortedLocalExtremes(values, comparator);
+    }
+
+    /**
+     * Calculates indices of local extremes.
+     * If several consecutive elements are equal, then the last one is considered the extremum
+     *
+     * @param values     extended values among which extremes are sought for
+     * @param comparator comparator of elements, defining character of extremes
+     * @return calculated extremes in order, opposite to {@code comparator} order
+     */
+    public static List<Integer> getSortedLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
+        if (values.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        int size = values.size();
+        List<Pair<Integer, BigDecimal>> extremes = new ArrayList<>(size);
+
+        boolean isGrowing = true;
+        BigDecimal previousValue = values.get(0);
+        for (int i = 0; i < size; i++) {
+            BigDecimal currentValue = values.get(i);
+            if (comparator.compare(currentValue, previousValue) >= 0) {
+                isGrowing = true;
+            } else if (isGrowing) {
+                extremes.add(Pair.of(i - 1, previousValue));
+                isGrowing = false;
+            }
+            previousValue = currentValue;
+        }
+
+        if (isGrowing) {
+            extremes.add(Pair.of(size - 1, previousValue));
+        }
+
+        return extremes.stream()
+                .sorted(Comparator.comparing(Pair::getRight, comparator.reversed()))
+                .map(Pair::getLeft)
+                .collect(Collectors.toList());
     }
 
     // endregion
