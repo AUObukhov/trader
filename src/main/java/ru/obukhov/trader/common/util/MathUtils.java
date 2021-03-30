@@ -395,14 +395,15 @@ public class MathUtils {
      * @return calculated extremes
      */
     public static List<Integer> getLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
-        List<Integer> extremes = new ArrayList<>(values.size());
+        int size = values.size();
+        List<Integer> extremes = new ArrayList<>(size);
         if (values.isEmpty()) {
             return extremes;
         }
 
         boolean isGrowing = true;
         BigDecimal previousValue = values.get(0);
-        for (int i = 0; i < values.size(); i++) {
+        for (int i = 0; i < size; i++) {
             BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
                 isGrowing = true;
@@ -414,7 +415,7 @@ public class MathUtils {
         }
 
         if (isGrowing) {
-            extremes.add(values.size() - 1);
+            extremes.add(size - 1);
         }
 
         return extremes;
