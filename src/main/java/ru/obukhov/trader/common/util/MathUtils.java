@@ -35,6 +35,16 @@ public class MathUtils {
     }
 
     /**
+     * @return average value of passed {@code numbers} with scale = {@link DecimalUtils#DEFAULT_SCALE}
+     * and rounding mode = Half Up
+     */
+    public static BigDecimal getAverage(BigDecimal... numbers) {
+        return getAverage(Arrays.asList(numbers));
+    }
+
+    // region getWeightedAverage
+
+    /**
      * Calculates weighted average of given amounts.<br/>
      * Weight is count of milliseconds every amount was actual.
      * Every amount is actual from its begin dateTime inclusive to begin dateTime of next amount exclusive.
@@ -92,13 +102,7 @@ public class MathUtils {
         return DecimalUtils.setDefaultScale(weightedAverage);
     }
 
-    /**
-     * @return average value of passed {@code numbers} with scale = {@link DecimalUtils#DEFAULT_SCALE}
-     * and rounding mode = Half Up
-     */
-    public static BigDecimal getAverage(BigDecimal... numbers) {
-        return getAverage(Arrays.asList(numbers));
-    }
+    // endregion
 
     /**
      * @return maximum of given {@code values}, or null if {@code values} is empty
@@ -119,6 +123,8 @@ public class MathUtils {
                 .min(Comparator.naturalOrder())
                 .orElse(null);
     }
+
+    // region getSimpleMovingAverages
 
     /**
      * Calculates simple moving averages of given {@code elements}
@@ -171,6 +177,10 @@ public class MathUtils {
 
         return movingAverages;
     }
+
+    // endregion
+
+    // region getLinearWeightedMovingAverages
 
     /**
      * Calculates linear weighted moving averages of given {@code elements} by given {@code window}
@@ -226,6 +236,10 @@ public class MathUtils {
         double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
         return DecimalUtils.divide(sum, divisor);
     }
+
+    // endregion
+
+    // region getExponentialWeightedMovingAverages
 
     /**
      * Calculates exponential weighted moving averages of given {@code elements} with given {@code weightDecrease}
@@ -350,6 +364,10 @@ public class MathUtils {
         return values;
     }
 
+    // endregion
+
+    // region getLocalExtremes
+
     /**
      * Calculates indices of local extremes.
      * If several consecutive elements are equal, then the last one is considered the extremum
@@ -401,5 +419,7 @@ public class MathUtils {
 
         return extremes;
     }
+
+    // endregion
 
 }
