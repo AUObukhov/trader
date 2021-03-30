@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Line;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
@@ -59,7 +60,29 @@ public class StatisticsServiceImpl implements StatisticsService {
             extendedCandles.add(new ExtendedCandle(candles.get(i), averages.get(i)));
         }
 
-        fillExtremes(extendedCandles);
+        List<Integer> localMaximums = MathUtils.getSortedLocalExtremes(averages, Comparator.naturalOrder());
+        for (Integer localMaximum : localMaximums) {
+            extendedCandles.get(localMaximum).setExtremum(Extremum.MAX);
+        }
+
+        List<Integer> localMinimums = MathUtils.getSortedLocalExtremes(averages, Comparator.reverseOrder());
+        for (Integer localMinimum : localMinimums) {
+            extendedCandles.get(localMinimum).setExtremum(Extremum.MIN);
+        }
+
+        Line supportLine = getLine(averages, localMinimums);
+        if (supportLine != null) {
+            for (int i = 0; i < extendedCandles.size(); i++) {
+                extendedCandles.get(i).setSupportValue(supportLine.getValue(i));
+            }
+        }
+
+        Line resistanceLine = getLine(averages, localMaximums);
+        if (resistanceLine != null) {
+            for (int i = 0; i < extendedCandles.size(); i++) {
+                extendedCandles.get(i).setResistanceValue(resistanceLine.getValue(i));
+            }
+        }
 
         return extendedCandles;
     }
@@ -73,18 +96,18 @@ public class StatisticsServiceImpl implements StatisticsService {
         );
     }
 
-    private void fillExtremes(List<ExtendedCandle> extendedCandles) {
-        List<Integer> localMaximums =
-                MathUtils.getLocalExtremes(extendedCandles, ExtendedCandle::getAveragePrice, Comparator.naturalOrder());
-        for (Integer localMaximum : localMaximums) {
-            extendedCandles.get(localMaximum).setExtremum(Extremum.MAX);
+    private Line getLine(List<BigDecimal> values, List<Integer> localExtremes) {
+        if (localExtremes.size() < 2) {
+            log.warn("Not enough local extremes to get line");
+            return null;
         }
 
-        List<Integer> localMinimums =
-                MathUtils.getLocalExtremes(extendedCandles, ExtendedCandle::getAveragePrice, Comparator.reverseOrder());
-        for (Integer localMinimum : localMinimums) {
-            extendedCandles.get(localMinimum).setExtremum(Extremum.MIN);
-        }
+        int x1 = localExtremes.get(0);
+        BigDecimal y1 = values.get(x1);
+        int x2 = localExtremes.get(1);
+        BigDecimal y2 = values.get(x2);
+
+        return new Line(x1, y1, x2, y2);
     }
 
     /**

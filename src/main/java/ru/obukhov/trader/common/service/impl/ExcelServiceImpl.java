@@ -33,10 +33,13 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -295,9 +298,11 @@ public class ExcelServiceImpl implements ExcelService {
     private void addCandles(ExtendedChartData chartData, List<ExtendedCandle> candles) {
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(candles);
         addOpenPrices(chartData, timesDataSource, candles);
-        addAveragePrices(chartData, timesDataSource, candles);
-        addMaximums(chartData, timesDataSource, candles);
-        addMinimums(chartData, timesDataSource, candles);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getAveragePrice);
+        addMinimums(chartData, candles, timesDataSource);
+        addMaximums(chartData, candles, timesDataSource);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getSupportValue);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getResistanceValue);
 
         chartData.stretchChart();
     }
@@ -346,31 +351,52 @@ public class ExcelServiceImpl implements ExcelService {
         addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE);
     }
 
-    private void addAveragePrices(ExtendedChartData chartData,
-                                  XDDFCategoryDataSource timesDataSource,
-                                  List<ExtendedCandle> candles) {
-        BigDecimal[] averagePricesArray = candles.stream()
-                .map(ExtendedCandle::getAveragePrice)
-                .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, averagePricesArray, MarkerStyle.NONE);
+    private void addLine(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            List<ExtendedCandle> candles,
+            Function<ExtendedCandle, BigDecimal> lineValueExtractor
+    ) {
+        addLine(chartData, timesDataSource, candles, lineValueExtractor, MarkerStyle.NONE);
     }
 
-    private void addMaximums(ExtendedChartData chartData,
-                             XDDFCategoryDataSource timesDataSource,
-                             List<ExtendedCandle> candles) {
-        BigDecimal[] maximumsArray = candles.stream()
-                .map(candle -> candle.isLocalMaximum() ? candle.getAveragePrice() : null)
+    private void addLine(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            List<ExtendedCandle> candles,
+            Function<ExtendedCandle, BigDecimal> lineValueExtractor,
+            MarkerStyle markerStyle
+    ) {
+        BigDecimal[] values = candles.stream()
+                .map(lineValueExtractor)
                 .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, maximumsArray, MarkerStyle.TRIANGLE);
+        if (!Arrays.stream(values).allMatch(Objects::isNull)) {
+            addSeries(chartData, timesDataSource, values, markerStyle);
+        }
     }
 
-    private void addMinimums(ExtendedChartData chartData,
-                             XDDFCategoryDataSource timesDataSource,
-                             List<ExtendedCandle> candles) {
-        BigDecimal[] minimumsPricesArray = candles.stream()
-                .map(candle -> candle.isLocalMinimum() ? candle.getAveragePrice() : null)
-                .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, minimumsPricesArray, MarkerStyle.DIAMOND);
+    private void addMinimums(
+            ExtendedChartData chartData,
+            List<ExtendedCandle> candles,
+            XDDFCategoryDataSource timesDataSource
+    ) {
+        Function<ExtendedCandle, BigDecimal> localMinimumExtractor =
+                candle -> candle.isLocalMinimum()
+                        ? candle.getAveragePrice()
+                        : null;
+        addLine(chartData, timesDataSource, candles, localMinimumExtractor, MarkerStyle.DIAMOND);
+    }
+
+    private void addMaximums(
+            ExtendedChartData chartData,
+            List<ExtendedCandle> candles,
+            XDDFCategoryDataSource timesDataSource
+    ) {
+        Function<ExtendedCandle, BigDecimal> localMaximumExtractor =
+                candle -> candle.isLocalMaximum()
+                        ? candle.getAveragePrice()
+                        : null;
+        addLine(chartData, timesDataSource, candles, localMaximumExtractor, MarkerStyle.TRIANGLE);
     }
 
     private void addOperations(ExtendedChartData chartData,

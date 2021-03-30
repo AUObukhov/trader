@@ -18,6 +18,16 @@ public class ExtendedCandle extends Candle {
 
     private Extremum extremum;
 
+    /**
+     * value of support line at time of current candle
+     */
+    private BigDecimal supportValue;
+
+    /**
+     * value of resistance line at time of current candle
+     */
+    private BigDecimal resistanceValue;
+
     public ExtendedCandle(Candle candle, BigDecimal averagePrice) {
         super(
                 candle.getOpenPrice(),
