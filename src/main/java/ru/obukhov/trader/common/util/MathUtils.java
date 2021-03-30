@@ -354,25 +354,38 @@ public class MathUtils {
      * Calculates indices of local extremes.
      * If several consecutive elements are equal, then the last one is considered the extremum
      *
-     * @param values         extended values among which extremes are sought for
-     * @param valueExtractor function to get values to compare from candle
+     * @param elements       extended elements among which values extremes are sought for
+     * @param valueExtractor function to get elements to compare from element
      * @param comparator     comparator of elements, defining character of extremes
      * @return calculated extremes
      */
-    public static <T, C extends Comparable<C>> List<Integer> getLocalExtremes(
-            List<T> values,
-            Function<T, C> valueExtractor,
-            Comparator<C> comparator
+    public static <T> List<Integer> getLocalExtremes(
+            List<T> elements,
+            Function<T, BigDecimal> valueExtractor,
+            Comparator<BigDecimal> comparator
     ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getLocalExtremes(values, comparator);
+    }
+
+    /**
+     * Calculates indices of local extremes.
+     * If several consecutive elements are equal, then the last one is considered the extremum
+     *
+     * @param values     extended values among which extremes are sought for
+     * @param comparator comparator of elements, defining character of extremes
+     * @return calculated extremes
+     */
+    public static List<Integer> getLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
         List<Integer> extremes = new ArrayList<>(values.size());
         if (values.isEmpty()) {
             return extremes;
         }
 
         boolean isGrowing = true;
-        C previousValue = valueExtractor.apply(values.get(0));
+        BigDecimal previousValue = values.get(0);
         for (int i = 0; i < values.size(); i++) {
-            C currentValue = valueExtractor.apply(values.get(i));
+            BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
                 isGrowing = true;
             } else if (isGrowing) {
