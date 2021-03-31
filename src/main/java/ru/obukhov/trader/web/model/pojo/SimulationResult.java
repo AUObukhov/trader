@@ -34,6 +34,11 @@ public class SimulationResult {
     private BigDecimal totalInvestment;
 
     /**
+     * weighted average value of all investments where weight is time of corresponding investment being last investment
+     */
+    private BigDecimal weightedAverageInvestment;
+
+    /**
      * currency balance + costs of all position after simulation
      */
     private BigDecimal finalTotalBalance;
@@ -42,11 +47,6 @@ public class SimulationResult {
      * currency balance after simulation
      */
     private BigDecimal finalBalance;
-
-    /**
-     * weighted average value of all investments where weights are time of corresponding investment was last investment
-     */
-    private BigDecimal weightedAverageInvestment;
 
     /**
      * {@code finalBalance} - {@code totalInvestment}
