@@ -4,8 +4,8 @@ import lombok.Data;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,7 +17,7 @@ public class DecisionData {
     private PortfolioPosition position;
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
-    private Instrument instrument;
+    private MarketInstrument instrument;
 
     public Integer getPositionLotsCount() {
         return position.getLotsCount();
@@ -34,7 +34,7 @@ public class DecisionData {
     }
 
     public int getLotSize() {
-        return instrument.lot;
+        return instrument.getLot();
     }
 
 }

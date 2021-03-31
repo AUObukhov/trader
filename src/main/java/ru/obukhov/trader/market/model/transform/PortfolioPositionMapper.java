@@ -3,12 +3,11 @@ package ru.obukhov.trader.market.model.transform;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
 
 import java.util.Collection;
 
 /**
- * Maps {@link Portfolio.PortfolioPosition} to {@link PortfolioPosition}
+ * Maps {@link PortfolioPosition} to {@link PortfolioPosition}
  */
 @Mapper(uses = MoneyAmountMapper.class)
 public interface PortfolioPositionMapper {
@@ -18,8 +17,8 @@ public interface PortfolioPositionMapper {
     @Mapping(source = "lots", target = "lotsCount")
     @Mapping(source = "averagePositionPrice.value", target = "averagePositionPrice")
     @Mapping(source = "averagePositionPriceNoNkd.value", target = "averagePositionPriceNoNkd")
-    PortfolioPosition map(Portfolio.PortfolioPosition source);
+    PortfolioPosition map(ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source);
 
-    Collection<PortfolioPosition> map(Collection<Portfolio.PortfolioPosition> source);
+    Collection<PortfolioPosition> map(Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source);
 
 }

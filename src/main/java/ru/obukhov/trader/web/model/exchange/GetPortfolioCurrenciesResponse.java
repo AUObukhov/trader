@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GetPortfolioCurrenciesResponse {
 
-    private List<PortfolioCurrencies.PortfolioCurrency> currencies;
+    private List<CurrencyPosition> currencies;
 
 }

@@ -15,7 +15,6 @@ import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxServiceImpl;
 import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
-import ru.obukhov.trader.market.interfaces.ConnectionService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
@@ -23,6 +22,7 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.tinkoff.invest.openapi.OpenApi;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -70,8 +70,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TinkoffService realTinkoffService(ConnectionService connectionService) {
-        return new RealTinkoffService(connectionService);
+    public TinkoffService realTinkoffService(OpenApi opeApi) {
+        return new RealTinkoffService(opeApi);
     }
 
     @Bean
@@ -81,8 +81,8 @@ public class BeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(ConnectionService connectionService, MarketService realMarketService) {
-        return new SandboxServiceImpl(connectionService, realMarketService);
+    public SandboxService sandboxService(OpenApi opeApi, MarketService realMarketService) {
+        return new SandboxServiceImpl(opeApi, realMarketService);
     }
 
     @Bean

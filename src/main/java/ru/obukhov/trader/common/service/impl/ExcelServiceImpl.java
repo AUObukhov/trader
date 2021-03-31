@@ -27,7 +27,7 @@ import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -105,10 +105,12 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithOperations(sheet, result.getCandles(), result.getOperations());
     }
 
-    private void createSheet(ExtendedWorkbook workbook,
-                             String ticker,
-                             Interval interval,
-                             List<ExtendedCandle> candles) {
+    private void createSheet(
+            ExtendedWorkbook workbook,
+            String ticker,
+            Interval interval,
+            List<ExtendedCandle> candles
+    ) {
 
         ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
 
@@ -278,9 +280,11 @@ public class ExcelServiceImpl implements ExcelService {
         chart.plot(chartData);
     }
 
-    private void putChartWithOperations(ExtendedSheet sheet,
-                                        List<Candle> candles,
-                                        List<SimulatedOperation> operations) {
+    private void putChartWithOperations(
+            ExtendedSheet sheet,
+            List<Candle> candles,
+            List<SimulatedOperation> operations
+    ) {
         ExtendedChart chart = createChart(sheet);
         ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandlesAndPricesAndOperations(chartData, candles, operations);
@@ -307,9 +311,11 @@ public class ExcelServiceImpl implements ExcelService {
         chartData.stretchChart();
     }
 
-    private void addCandlesAndPricesAndOperations(ExtendedChartData chartData,
-                                                  List<Candle> candles,
-                                                  List<SimulatedOperation> operations) {
+    private void addCandlesAndPricesAndOperations(
+            ExtendedChartData chartData,
+            List<Candle> candles,
+            List<SimulatedOperation> operations
+    ) {
         List<Candle> innerCandles = new ArrayList<>(candles);
 
         // interpolating candles and computing operationsIndices for future processing
@@ -399,10 +405,12 @@ public class ExcelServiceImpl implements ExcelService {
         addLine(chartData, timesDataSource, candles, localMaximumExtractor, MarkerStyle.TRIANGLE);
     }
 
-    private void addOperations(ExtendedChartData chartData,
-                               XDDFCategoryDataSource timesDataSource,
-                               List<SimulatedOperation> operations,
-                               List<Integer> operationsIndices) {
+    private void addOperations(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            List<SimulatedOperation> operations,
+            List<Integer> operationsIndices
+    ) {
 
         BigDecimal[] buyOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
         BigDecimal[] sellOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
@@ -411,7 +419,7 @@ public class ExcelServiceImpl implements ExcelService {
         for (int i = 0; i < operations.size(); i++) {
             SimulatedOperation operation = operations.get(i);
             int index = operationsIndices.get(i);
-            if (operation.getOperationType() == OperationType.Buy) {
+            if (operation.getOperationType() == OperationType.BUY) {
                 buyOperationsPrices[index] = operation.getPrice();
                 buyOperationsExist = true;
             } else {
@@ -428,10 +436,12 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void addSeries(ExtendedChartData chartData,
-                           XDDFCategoryDataSource timesDataSource,
-                           BigDecimal[] numbers,
-                           MarkerStyle markerStyle) {
+    private void addSeries(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            BigDecimal[] numbers,
+            MarkerStyle markerStyle
+    ) {
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
         chartData.addSeries(timesDataSource, numericalDataSource, OPERATION_MARKER_SIZE, markerStyle);
     }

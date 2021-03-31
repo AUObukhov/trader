@@ -17,7 +17,7 @@ import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ class StatisticsServiceImplTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+        final CandleResolution candleInterval = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
 
@@ -65,17 +65,17 @@ class StatisticsServiceImplTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final CandleInterval candleInterval = CandleInterval.ONE_MIN;
+        final CandleResolution candleInterval = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
         OffsetDateTime time1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time1, CandleInterval.ONE_MIN));
+        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time1, CandleResolution._1MIN));
 
         OffsetDateTime time2 = DateUtils.getDateTime(2020, 1, 1, 10, 1, 0);
-        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time2, CandleInterval.ONE_MIN));
+        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time2, CandleResolution._1MIN));
 
         OffsetDateTime time3 = DateUtils.getDateTime(2020, 1, 1, 10, 2, 0);
-        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time3, CandleInterval.ONE_MIN));
+        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time3, CandleResolution._1MIN));
 
         Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 

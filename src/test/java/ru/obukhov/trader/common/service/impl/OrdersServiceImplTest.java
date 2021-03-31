@@ -13,10 +13,10 @@ import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.tinkoff.invest.openapi.models.orders.Operation;
-import ru.tinkoff.invest.openapi.models.orders.Order;
-import ru.tinkoff.invest.openapi.models.orders.OrderType;
-import ru.tinkoff.invest.openapi.models.orders.Status;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.Order;
+import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
+import ru.tinkoff.invest.openapi.model.rest.OrderType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -56,9 +56,9 @@ class OrdersServiceImplTest extends BaseMockedTest {
         List<Order> orders = service.getOrders(ticker);
 
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals("order0", orders.get(0).id);
-        Assertions.assertEquals("order1", orders.get(1).id);
-        Assertions.assertEquals("order4", orders.get(2).id);
+        Assertions.assertEquals("order0", orders.get(0).getOrderId());
+        Assertions.assertEquals("order1", orders.get(1).getOrderId());
+        Assertions.assertEquals("order4", orders.get(2).getOrderId());
     }
 
     private void mockFigi(String ticker, String figi) {
@@ -70,7 +70,16 @@ class OrdersServiceImplTest extends BaseMockedTest {
     }
 
     private Order createOrder(String id, String figi) {
-        return new Order(id, figi,
-                Operation.Buy, Status.Fill, 1, 1, OrderType.Market, BigDecimal.TEN);
+        Order order = new Order();
+        order.setOrderId(id);
+        order.setFigi(figi);
+        order.setOperation(OperationType.BUY);
+        order.setStatus(OrderStatus.FILL);
+        order.setRequestedLots(1);
+        order.setExecutedLots(1);
+        order.setType(OrderType.MARKET);
+        order.setPrice(BigDecimal.TEN);
+        return order;
     }
+
 }

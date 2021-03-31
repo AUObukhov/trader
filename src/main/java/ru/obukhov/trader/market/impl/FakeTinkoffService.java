@@ -18,17 +18,19 @@ import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.market.Orderbook;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
-import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
-import ru.tinkoff.invest.openapi.models.orders.Order;
-import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
-import ru.tinkoff.invest.openapi.models.orders.Status;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
+import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.Order;
+import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
+import ru.tinkoff.invest.openapi.model.rest.Orderbook;
+import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
+import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -113,22 +115,22 @@ public class FakeTinkoffService implements TinkoffService {
     // region MarketContext proxy
 
     @Override
-    public List<Instrument> getMarketStocks() {
+    public List<MarketInstrument> getMarketStocks() {
         return realTinkoffService.getMarketStocks();
     }
 
     @Override
-    public List<Instrument> getMarketBonds() {
+    public List<MarketInstrument> getMarketBonds() {
         return realTinkoffService.getMarketBonds();
     }
 
     @Override
-    public List<Instrument> getMarketEtfs() {
+    public List<MarketInstrument> getMarketEtfs() {
         return realTinkoffService.getMarketEtfs();
     }
 
     @Override
-    public List<Instrument> getMarketCurrencies() {
+    public List<MarketInstrument> getMarketCurrencies() {
         return realTinkoffService.getMarketCurrencies();
     }
 
@@ -138,12 +140,12 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleResolution candleInterval) {
         return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
     }
 
     @Override
-    public Instrument searchMarketInstrument(String ticker) {
+    public MarketInstrument searchMarketInstrument(String ticker) {
         return realTinkoffService.searchMarketInstrument(ticker);
     }
 
@@ -182,32 +184,32 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
+    public PlacedLimitOrder placeLimitOrder(String ticker, LimitOrderRequest orderRequest) {
         throw new UnsupportedOperationException("Only market orders supported in simulation");
     }
 
     /**
      * Performs market order with fake portfolio
      *
-     * @param ticker      ticker of executed order
-     * @param marketOrder model of executed order
+     * @param ticker       ticker of executed order
+     * @param orderRequest model of executed order
      * @return result of order execution
      */
     @Override
-    public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
+    public PlacedMarketOrder placeMarketOrder(String ticker, MarketOrderRequest orderRequest) {
         BigDecimal currentPrice = getCurrentPrice(ticker);
-        BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, marketOrder.lots);
+        BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, orderRequest.getLots());
         BigDecimal commissionAmount = DecimalUtils.getFraction(totalPrice, tradingProperties.getCommission());
         MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
 
-        if (marketOrder.operation == ru.tinkoff.invest.openapi.models.orders.Operation.Buy) {
-            buyPosition(ticker, currentPrice, marketOrder.lots, totalPrice, commissionAmount);
+        if (orderRequest.getOperation() == OperationType.BUY) {
+            buyPosition(ticker, currentPrice, orderRequest.getLots(), totalPrice, commissionAmount);
         } else {
-            sellPosition(ticker, marketOrder.lots, totalPrice, commissionAmount);
+            sellPosition(ticker, orderRequest.getLots(), totalPrice, commissionAmount);
         }
 
-        addOperation(ticker, currentPrice, commission, marketOrder);
-        return createOrder(marketOrder, commission);
+        addOperation(ticker, currentPrice, commission, orderRequest);
+        return createOrder(orderRequest, commission);
     }
 
     private BigDecimal getCurrentPrice(String ticker) {
@@ -220,14 +222,14 @@ public class FakeTinkoffService implements TinkoffService {
                              BigDecimal totalPrice,
                              BigDecimal commissionAmount) {
 
-        Instrument instrument = searchMarketInstrument(ticker);
+        MarketInstrument instrument = searchMarketInstrument(ticker);
 
-        updateBalance(instrument.currency, totalPrice.negate().subtract(commissionAmount));
+        updateBalance(instrument.getCurrency(), totalPrice.negate().subtract(commissionAmount));
 
         PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            position = createNewPosition(ticker, totalPrice, instrument.currency, currentPrice, lotsCount);
+            position = createNewPosition(ticker, totalPrice, instrument.getCurrency(), currentPrice, lotsCount);
         } else {
             position = addValuesToPosition(existingPosition, lotsCount, totalPrice);
         }
@@ -293,9 +295,9 @@ public class FakeTinkoffService implements TinkoffService {
             throw new IllegalArgumentException(message);
         }
 
-        Instrument instrument = searchMarketInstrument(ticker);
+        MarketInstrument instrument = searchMarketInstrument(ticker);
 
-        updateBalance(instrument.currency, totalPrice.subtract(commissionAmount));
+        updateBalance(instrument.getCurrency(), totalPrice.subtract(commissionAmount));
         if (newLotsCount == 0) {
             fakeContext.removePosition(ticker);
         } else {
@@ -321,28 +323,27 @@ public class FakeTinkoffService implements TinkoffService {
     private void addOperation(String ticker,
                               BigDecimal price,
                               MoneyAmount commission,
-                              MarketOrder marketOrder) {
+                              MarketOrderRequest orderRequest) {
 
         final SimulatedOperation operation = SimulatedOperation.builder()
                 .ticker(ticker)
                 .price(price)
-                .quantity(marketOrder.lots)
+                .quantity(orderRequest.getLots())
                 .commission(commission.getValue())
                 .dateTime(fakeContext.getCurrentDateTime())
-                .operationType(operationTypeMapper.map(marketOrder.operation))
+                .operationType(orderRequest.getOperation())
                 .build();
         fakeContext.addOperation(operation);
     }
 
-    private PlacedOrder createOrder(MarketOrder marketOrder, MoneyAmount commission) {
-        return new PlacedOrder(StringUtils.EMPTY,
-                marketOrder.operation,
-                Status.New,
-                StringUtils.EMPTY,
-                StringUtils.EMPTY,
-                marketOrder.lots,
-                marketOrder.lots,
-                moneyAmountMapper.map(commission));
+    private PlacedMarketOrder createOrder(MarketOrderRequest orderRequest, MoneyAmount commission) {
+        PlacedMarketOrder order = new PlacedMarketOrder();
+        order.setOperation(orderRequest.getOperation());
+        order.setStatus(OrderStatus.NEW);
+        order.setExecutedLots(orderRequest.getLots());
+        order.setRequestedLots(orderRequest.getLots());
+        order.setCommission(moneyAmountMapper.map(commission));
+        return order;
     }
 
     @Override
@@ -360,9 +361,14 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies() {
+    public List<CurrencyPosition> getPortfolioCurrencies() {
         return fakeContext.getBalances().entrySet().stream()
-                .map(entry -> new PortfolioCurrencies.PortfolioCurrency(entry.getKey(), entry.getValue(), null))
+                .map(entry -> {
+                    CurrencyPosition currencyPosition = new CurrencyPosition();
+                    currencyPosition.setCurrency(entry.getKey());
+                    currencyPosition.setBalance(entry.getValue());
+                    return currencyPosition;
+                })
                 .collect(Collectors.toList());
     }
 

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -25,7 +25,7 @@ public class Candle {
 
     protected OffsetDateTime time;
 
-    protected CandleInterval interval;
+    protected CandleResolution interval;
 
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}

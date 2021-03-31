@@ -1,44 +1,22 @@
 package ru.obukhov.trader.market.model.transform;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
-import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
-
-import java.math.BigDecimal;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 /**
- * Maps {@link Operation} to {@link SimulatedOperation}
+ * Maps {@link Operation} to {@link SimulatedOperation} and vice versa
  */
-@Mapper
+@Mapper(uses = OperationTypeMapper.class)
 public interface OperationMapper {
 
     @Mapping(target = "dateTime", source = "date")
     @Mapping(target = "commission", source = "commission.value")
     SimulatedOperation map(Operation source);
 
-    default Operation map(SimulatedOperation source) {
-        BigDecimal totalPrice = DecimalUtils.multiply(source.getPrice(), source.getQuantity());
-        MoneyAmount commission = new MoneyAmount(Currency.RUB, source.getCommission());
-        return new Operation(StringUtils.EMPTY,
-                OperationStatus.Done,
-                null,
-                commission,
-                Currency.RUB,
-                totalPrice,
-                source.getPrice(),
-                source.getQuantity(),
-                StringUtils.EMPTY,
-                InstrumentType.Stock,
-                false,
-                source.getDateTime(),
-                source.getOperationType());
-    }
+    @Mapping(target = "date", source = "dateTime")
+    @Mapping(target = "commission.value", source = "commission")
+    Operation map(SimulatedOperation source);
 
 }

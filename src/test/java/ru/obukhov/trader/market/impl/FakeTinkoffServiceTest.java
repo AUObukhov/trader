@@ -18,10 +18,11 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
+import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -127,11 +128,11 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(100));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(200));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(200));
         service.nextMinute();
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(300));
+        placeOrder(ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         OffsetDateTime newDateTime = DateUtils.getDateTime(2021, 10, 5, 12, 0, 0);
         BigDecimal newBalance = BigDecimal.valueOf(1000);
@@ -209,11 +210,11 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(100));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(200));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(200));
         service.nextMinute();
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(300));
+        placeOrder(ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         Interval wholeInterval = Interval.of(dateTime, dateTime.plusMinutes(2));
         List<Operation> allOperations = service.getOperations(wholeInterval, ticker);
@@ -223,7 +224,7 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
         Interval localInterval = Interval.of(dateTime.plusMinutes(1), dateTime.plusMinutes(1));
         List<Operation> localOperations = service.getOperations(localInterval, ticker);
         Assertions.assertEquals(1, localOperations.size());
-        Assertions.assertEquals(dateTime.plusMinutes(1), localOperations.get(0).date);
+        Assertions.assertEquals(dateTime.plusMinutes(1), localOperations.get(0).getDate());
     }
 
     @Test
@@ -239,21 +240,21 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker1);
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker2);
 
-        placeOrder(ticker1, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(100));
+        placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
-        placeOrder(ticker2, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(200));
+        placeOrder(ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
         service.nextMinute();
-        placeOrder(ticker2, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(300));
+        placeOrder(ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         List<Operation> ticker1Operations = service.getOperations(interval, ticker1);
         Assertions.assertEquals(1, ticker1Operations.size());
-        Assertions.assertEquals(dateTime, ticker1Operations.get(0).date);
+        Assertions.assertEquals(dateTime, ticker1Operations.get(0).getDate());
 
         List<Operation> ticker2Operations = service.getOperations(interval, ticker2);
         Assertions.assertEquals(2, ticker2Operations.size());
-        Assertions.assertEquals(dateTime.plusMinutes(1), ticker2Operations.get(0).date);
-        Assertions.assertEquals(dateTime.plusMinutes(2), ticker2Operations.get(1).date);
+        Assertions.assertEquals(dateTime.plusMinutes(1), ticker2Operations.get(0).getDate());
+        Assertions.assertEquals(dateTime.plusMinutes(2), ticker2Operations.get(1).getDate());
     }
 
     @Test
@@ -269,11 +270,11 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker1);
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker2);
 
-        placeOrder(ticker1, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(100));
+        placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
-        placeOrder(ticker2, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(200));
+        placeOrder(ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
         service.nextMinute();
-        placeOrder(ticker2, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(300));
+        placeOrder(ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         List<Operation> operations = service.getOperations(interval, null);
@@ -300,7 +301,7 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
         Executable executable = () ->
                 placeOrder(ticker,
                         2,
-                        ru.tinkoff.invest.openapi.models.orders.Operation.Buy,
+                        OperationType.BUY,
                         BigDecimal.valueOf(500));
 
         AssertUtils.assertThrowsWithMessage(executable,
@@ -323,7 +324,7 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(1000));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(1000));
 
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());
@@ -343,8 +344,8 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 2, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(1000));
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(4000));
+        placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
 
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());
@@ -367,11 +368,11 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 2, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(1000));
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(4000));
+        placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
         Executable sellExecutable = () -> placeOrder(ticker,
                 4,
-                ru.tinkoff.invest.openapi.models.orders.Operation.Sell,
+                OperationType.SELL,
                 BigDecimal.valueOf(3000));
 
         AssertUtils.assertThrowsWithMessage(sellExecutable,
@@ -399,9 +400,9 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 2, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(1000));
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(4000));
-        placeOrder(ticker, 3, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(3000));
+        placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
+        placeOrder(ticker, 3, OperationType.SELL, BigDecimal.valueOf(3000));
 
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertTrue(positions.isEmpty());
@@ -420,9 +421,9 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        placeOrder(ticker, 2, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(1000));
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Buy, BigDecimal.valueOf(4000));
-        placeOrder(ticker, 1, ru.tinkoff.invest.openapi.models.orders.Operation.Sell, BigDecimal.valueOf(3000));
+        placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
+        placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
+        placeOrder(ticker, 1, OperationType.SELL, BigDecimal.valueOf(3000));
 
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());
@@ -443,18 +444,18 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         service.init(dateTime);
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = service.getPortfolioCurrencies();
+        List<CurrencyPosition> currencies = service.getPortfolioCurrencies();
 
         Assertions.assertEquals(Currency.values().length, currencies.size());
         for (Currency currency : Currency.values()) {
-            if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.currency == currency)) {
+            if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)) {
                 Assertions.fail("Currency " + currency + " found in getPortfolioCurrencies result");
             }
         }
 
-        for (PortfolioCurrencies.PortfolioCurrency portfolioCurrency : currencies) {
-            AssertUtils.assertEquals(BigDecimal.ZERO, portfolioCurrency.balance);
-            Assertions.assertNull(portfolioCurrency.blocked);
+        for (CurrencyPosition portfolioCurrency : currencies) {
+            AssertUtils.assertEquals(BigDecimal.ZERO, portfolioCurrency.getBalance());
+            Assertions.assertNull(portfolioCurrency.getBlocked());
         }
     }
 
@@ -466,14 +467,14 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
 
         service.init(dateTime, currency, balance);
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = service.getPortfolioCurrencies();
+        List<CurrencyPosition> currencies = service.getPortfolioCurrencies();
 
-        PortfolioCurrencies.PortfolioCurrency portfolioCurrency = currencies.stream()
-                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.currency == currency)
+        CurrencyPosition portfolioCurrency = currencies.stream()
+                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.getCurrency() == currency)
                 .findFirst()
                 .orElseThrow();
 
-        AssertUtils.assertEquals(balance, portfolioCurrency.balance);
+        AssertUtils.assertEquals(balance, portfolioCurrency.getBalance());
     }
 
     @Test
@@ -485,27 +486,29 @@ class FakeTinkoffServiceTest extends BaseMockedTest {
         service.init(dateTime);
         service.incrementBalance(currency, balance);
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = service.getPortfolioCurrencies();
+        List<CurrencyPosition> currencies = service.getPortfolioCurrencies();
 
-        PortfolioCurrencies.PortfolioCurrency portfolioCurrency = currencies.stream()
-                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.currency == currency)
+        CurrencyPosition portfolioCurrency = currencies.stream()
+                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.getCurrency() == currency)
                 .findFirst()
                 .orElseThrow();
 
-        AssertUtils.assertEquals(balance, portfolioCurrency.balance);
+        AssertUtils.assertEquals(balance, portfolioCurrency.getBalance());
     }
 
     // endregion
 
     private void placeOrder(String ticker,
                             int lots,
-                            ru.tinkoff.invest.openapi.models.orders.Operation operation,
+                            OperationType operationType,
                             BigDecimal price) {
         Candle candle = TestDataHelper.createCandleWithOpenPrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
-        MarketOrder marketOrder = new MarketOrder(lots, operation);
-        service.placeMarketOrder(ticker, marketOrder);
+        MarketOrderRequest orderRequest = new MarketOrderRequest();
+        orderRequest.setLots(lots);
+        orderRequest.setOperation(operationType);
+        service.placeMarketOrder(ticker, orderRequest);
     }
 
 }

@@ -9,22 +9,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.TinkoffContextsAware;
-import ru.obukhov.trader.market.interfaces.ConnectionService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.market.model.transform.PortfolioPositionMapper;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.market.Orderbook;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
-import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
-import ru.tinkoff.invest.openapi.models.orders.Order;
-import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.OpenApi;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
+import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.Order;
+import ru.tinkoff.invest.openapi.model.rest.Orderbook;
+import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
+import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -46,39 +46,39 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     private final PortfolioPositionMapper portfolioPositionMapper = Mappers.getMapper(PortfolioPositionMapper.class);
     private RealTinkoffService self;
 
-    public RealTinkoffService(ConnectionService connectionService) {
-        super(connectionService);
+    public RealTinkoffService(OpenApi opeApi) {
+        super(opeApi);
     }
 
     // region MarketContext
 
     @Override
     @Cacheable(value = "marketStocks", sync = true)
-    public List<Instrument> getMarketStocks() {
-        return getMarketContext().getMarketStocks().join().instruments;
+    public List<MarketInstrument> getMarketStocks() {
+        return getMarketContext().getMarketStocks().join().getInstruments();
     }
 
     @Override
     @Cacheable(value = "marketBonds", sync = true)
-    public List<Instrument> getMarketBonds() {
-        return getMarketContext().getMarketBonds().join().instruments;
+    public List<MarketInstrument> getMarketBonds() {
+        return getMarketContext().getMarketBonds().join().getInstruments();
     }
 
     @Override
     @Cacheable(value = "marketEtfs", sync = true)
-    public List<Instrument> getMarketEtfs() {
-        return getMarketContext().getMarketEtfs().join().instruments;
+    public List<MarketInstrument> getMarketEtfs() {
+        return getMarketContext().getMarketEtfs().join().getInstruments();
     }
 
     @Override
     @Cacheable(value = "marketCurrencies", sync = true)
-    public List<Instrument> getMarketCurrencies() {
-        return getMarketContext().getMarketCurrencies().join().instruments;
+    public List<MarketInstrument> getMarketCurrencies() {
+        return getMarketContext().getMarketCurrencies().join().getInstruments();
     }
 
     @Override
     public Orderbook getMarketOrderbook(String ticker, int depth) {
-        String figi = self.searchMarketInstrument(ticker).figi;
+        String figi = self.searchMarketInstrument(ticker).getFigi();
         return getMarketContext()
                 .getMarketOrderbook(figi, depth)
                 .join()
@@ -87,8 +87,8 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval) {
-        String figi = self.searchMarketInstrument(ticker).figi;
+    public List<Candle> getMarketCandles(String ticker, Interval interval, CandleResolution candleInterval) {
+        String figi = self.searchMarketInstrument(ticker).getFigi();
         List<Candle> candles = getMarketContext()
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval)
                 .join()
@@ -100,11 +100,11 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     @Cacheable(value = "marketInstrument", sync = true)
-    public Instrument searchMarketInstrument(String ticker) {
-        List<Instrument> instruments = getMarketContext()
+    public MarketInstrument searchMarketInstrument(String ticker) {
+        List<MarketInstrument> instruments = getMarketContext()
                 .searchMarketInstrumentsByTicker(ticker)
                 .join()
-                .instruments;
+                .getInstruments();
         return CollectionUtils.firstElement(instruments);
     }
 
@@ -114,11 +114,11 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<Operation> getOperations(Interval interval, String ticker) {
-        String figi = self.searchMarketInstrument(ticker).figi;
+        String figi = self.searchMarketInstrument(ticker).getFigi();
         return getOperationsContext()
                 .getOperations(interval.getFrom(), interval.getTo(), figi, null)
                 .join()
-                .operations;
+                .getOperations();
     }
 
     // endregion
@@ -131,15 +131,15 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    public PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder) {
-        String figi = self.searchMarketInstrument(ticker).figi;
-        return getOrdersContext().placeLimitOrder(figi, limitOrder, null).join();
+    public PlacedLimitOrder placeLimitOrder(String ticker, LimitOrderRequest orderRequest) {
+        String figi = self.searchMarketInstrument(ticker).getFigi();
+        return getOrdersContext().placeLimitOrder(figi, orderRequest, null).join();
     }
 
     @Override
-    public PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder) {
-        String figi = self.searchMarketInstrument(ticker).figi;
-        return getOrdersContext().placeMarketOrder(figi, marketOrder, null).join();
+    public PlacedMarketOrder placeMarketOrder(String ticker, MarketOrderRequest orderRequest) {
+        String figi = self.searchMarketInstrument(ticker).getFigi();
+        return getOrdersContext().placeMarketOrder(figi, orderRequest, null).join();
     }
 
     @Override
@@ -153,16 +153,16 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public Collection<PortfolioPosition> getPortfolioPositions() {
-        List<Portfolio.PortfolioPosition> positions = getPortfolioContext()
+        List<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> positions = getPortfolioContext()
                 .getPortfolio(null)
                 .join()
-                .positions;
+                .getPositions();
         return portfolioPositionMapper.map(positions);
     }
 
     @Override
-    public List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies() {
-        return getPortfolioContext().getPortfolioCurrencies(null).join().currencies;
+    public List<CurrencyPosition> getPortfolioCurrencies() {
+        return getPortfolioContext().getPortfolioCurrencies(null).join().getCurrencies();
     }
 
     // endregion

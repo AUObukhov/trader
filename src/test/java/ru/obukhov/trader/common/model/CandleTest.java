@@ -6,7 +6,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -32,12 +32,12 @@ class CandleTest {
     void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
         Candle leftCandle = TestDataHelper.createCandleWithTimeAndInterval(
                 DateUtils.getDateTime(2020, 10, 10, 1, 0, 0),
-                CandleInterval.DAY
+                CandleResolution.DAY
         );
 
         Candle rightCandle = TestDataHelper.createCandleWithTimeAndInterval(
                 DateUtils.getDateTime(2020, 10, 11, 2, 0, 0),
-                CandleInterval.HOUR
+                CandleResolution.HOUR
         );
 
         AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),

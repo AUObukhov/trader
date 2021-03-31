@@ -2,13 +2,13 @@ package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.market.interfaces.ConnectionService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.SandboxService;
+import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.SandboxContext;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.sandbox.CurrencyBalance;
-import ru.tinkoff.invest.openapi.models.sandbox.PositionBalance;
+import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
+import ru.tinkoff.invest.openapi.model.rest.SandboxSetCurrencyBalanceRequest;
+import ru.tinkoff.invest.openapi.model.rest.SandboxSetPositionBalanceRequest;
 
 import java.math.BigDecimal;
 
@@ -17,29 +17,37 @@ public class SandboxServiceImpl implements SandboxService {
     private final MarketService marketService;
     private final SandboxContext sandboxContext;
 
-    public SandboxServiceImpl(ConnectionService connectionService, MarketService marketService) {
+    public SandboxServiceImpl(OpenApi opeApi, MarketService marketService) {
         this.marketService = marketService;
-        this.sandboxContext = connectionService.getSandboxContext();
+        this.sandboxContext = opeApi.getSandboxContext();
     }
 
     @Override
-    public void setCurrencyBalance(@NotNull Currency currency,
-                                   @NotNull BigDecimal balance,
-                                   @Nullable String brokerAccountId) {
+    public void setCurrencyBalance(
+            @NotNull SandboxCurrency currency,
+            @NotNull BigDecimal balance,
+            @Nullable String brokerAccountId
+    ) {
 
-        CurrencyBalance currencyBalance = new CurrencyBalance(currency, balance);
-        sandboxContext.setCurrencyBalance(currencyBalance, brokerAccountId).join();
+        SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest();
+        setCurrencyBalanceRequest.setCurrency(currency);
+        setCurrencyBalanceRequest.setBalance(balance);
+        sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId).join();
 
     }
 
     @Override
-    public void setPositionBalance(@NotNull String ticker,
-                                   @NotNull BigDecimal balance,
-                                   @Nullable String brokerAccountId) {
+    public void setPositionBalance(
+            @NotNull String ticker,
+            @NotNull BigDecimal balance,
+            @Nullable String brokerAccountId
+    ) {
 
-        String figi = marketService.getFigi(ticker);
-        PositionBalance positionBalance = new PositionBalance(figi, balance);
-        sandboxContext.setPositionBalance(positionBalance, brokerAccountId).join();
+        SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest();
+        setPositionBalanceRequest.setFigi(marketService.getFigi(ticker));
+        setPositionBalanceRequest.setBalance(balance);
+
+        sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId).join();
 
     }
 

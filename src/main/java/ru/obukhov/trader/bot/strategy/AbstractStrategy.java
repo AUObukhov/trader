@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
+import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.math.BigDecimal;
 
@@ -46,7 +46,7 @@ public abstract class AbstractStrategy implements Strategy {
 
     protected static boolean existsOperationInProgress(DecisionData data) {
         return data.getLastOperations().stream()
-                .anyMatch(operation -> operation.status == OperationStatus.Progress);
+                .anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
     }
 
     protected int getAvailableLots(DecisionData data) {

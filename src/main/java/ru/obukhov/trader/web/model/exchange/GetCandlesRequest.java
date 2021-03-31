@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
 
@@ -12,11 +12,11 @@ public class GetCandlesRequest {
     private String ticker;
     private OffsetDateTime from;
     private OffsetDateTime to;
-    private CandleInterval candleInterval;
+    private CandleResolution candleInterval;
     private boolean saveToFile;
 
     // due to some lombok internal error
-    public CandleInterval getCandleInterval() {
+    public CandleResolution getCandleInterval() {
         return this.candleInterval;
     }
 }

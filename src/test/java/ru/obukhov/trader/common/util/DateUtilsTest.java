@@ -8,7 +8,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.text.ParseException;
 import java.time.Duration;
@@ -518,7 +518,7 @@ class DateUtilsTest {
     @Test
     void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
 
-        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.HOUR);
+        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.HOUR);
 
         Assertions.assertEquals(ChronoUnit.DAYS, unit);
     }
@@ -526,7 +526,7 @@ class DateUtilsTest {
     @Test
     void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
 
-        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.DAY);
+        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.DAY);
 
         Assertions.assertEquals(ChronoUnit.YEARS, unit);
     }

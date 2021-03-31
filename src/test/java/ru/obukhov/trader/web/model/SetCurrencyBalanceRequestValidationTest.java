@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.web.model.exchange.SetCurrencyBalanceRequest;
-import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -25,7 +25,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(SandboxCurrency.RUB);
         request.setBalance(BigDecimal.TEN);
 
         Set<ConstraintViolation<SetCurrencyBalanceRequest>> violations = validator.validate(request);
@@ -45,7 +45,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationFails_whenBalanceIsNull() {
         SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(SandboxCurrency.RUB);
         request.setBalance(null);
 
         Set<ConstraintViolation<SetCurrencyBalanceRequest>> violations = validator.validate(request);

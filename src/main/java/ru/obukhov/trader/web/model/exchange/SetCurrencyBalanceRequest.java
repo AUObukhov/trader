@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
-import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class SetCurrencyBalanceRequest {
 
     @NotNull(message = "currency is mandatory")
-    private Currency currency;
+    private SandboxCurrency currency;
 
     @NotNull(message = "balance is mandatory")
     private BigDecimal balance;

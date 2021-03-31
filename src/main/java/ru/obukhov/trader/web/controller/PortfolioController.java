@@ -8,7 +8,7 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,7 +36,7 @@ public class PortfolioController {
     @GetMapping("/currencies")
     public GetPortfolioCurrenciesResponse getCurrencies() {
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = portfolioService.getCurrencies();
+        List<CurrencyPosition> currencies = portfolioService.getCurrencies();
 
         return new GetPortfolioCurrenciesResponse(currencies);
 

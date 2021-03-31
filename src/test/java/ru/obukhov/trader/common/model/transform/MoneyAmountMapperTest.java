@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 
 import java.math.BigDecimal;
 
@@ -18,7 +18,9 @@ class MoneyAmountMapperTest {
         Currency currency = Currency.RUB;
         BigDecimal value = BigDecimal.valueOf(100);
 
-        MoneyAmount source = new MoneyAmount(currency, value);
+        MoneyAmount source = new MoneyAmount();
+        source.setCurrency(currency);
+        source.setValue(value);
 
         ru.obukhov.trader.market.model.MoneyAmount target = mapper.map(source);
 
@@ -35,8 +37,8 @@ class MoneyAmountMapperTest {
 
         MoneyAmount target = mapper.map(source);
 
-        Assertions.assertEquals(value, target.value);
-        Assertions.assertEquals(currency, target.currency);
+        Assertions.assertEquals(currency, target.getCurrency());
+        Assertions.assertEquals(value, target.getValue());
     }
 
 }

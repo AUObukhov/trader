@@ -25,8 +25,8 @@ import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -252,7 +252,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private Currency getCurrency(FakeTinkoffService fakeTinkoffService, String ticker) {
-        return fakeTinkoffService.searchMarketInstrument(ticker).currency;
+        return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
     }
 
     private List<SimulatedPosition> getPositions(Collection<PortfolioPosition> portfolioPositions,

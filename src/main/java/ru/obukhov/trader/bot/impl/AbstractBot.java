@@ -13,10 +13,11 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.orders.Operation;
-import ru.tinkoff.invest.openapi.models.orders.Order;
-import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.Order;
+import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -58,9 +59,9 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(DecisionData decisionData, String ticker) {
-        Instrument instrument = marketService.getInstrument(ticker);
+        MarketInstrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(instrument.currency));
+        decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
         decisionData.setCurrentCandles(marketService.getLastCandles(ticker, LAST_CANDLES_COUNT));
         decisionData.setLastOperations(getLastWeekOperations(ticker));
@@ -68,7 +69,7 @@ public abstract class AbstractBot implements Bot {
 
     }
 
-    private List<ru.tinkoff.invest.openapi.models.operations.Operation> getLastWeekOperations(String ticker) {
+    private List<Operation> getLastWeekOperations(String ticker) {
         OffsetDateTime to = OffsetDateTime.now();
         OffsetDateTime from = to.minusWeeks(1);
         return operationsService.getOperations(Interval.of(from, to), ticker);
@@ -80,8 +81,8 @@ public abstract class AbstractBot implements Bot {
             return;
         }
 
-        Operation operation = decision.getAction() == DecisionAction.BUY ? Operation.Buy : Operation.Sell;
-        PlacedOrder order = ordersService.placeOrder(ticker, decision.getLots(), operation, null);
+        OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
+        PlacedMarketOrder order = ordersService.placeMarketOrder(ticker, decision.getLots(), operation);
         log.info("Placed order {}", order);
     }
 

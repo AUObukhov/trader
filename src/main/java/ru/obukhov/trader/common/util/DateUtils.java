@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -193,10 +193,10 @@ public class DateUtils {
     /**
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
-    public static ChronoUnit getPeriodByCandleInterval(CandleInterval candleInterval) {
-        return candleInterval == CandleInterval.DAY
-                || candleInterval == CandleInterval.WEEK
-                || candleInterval == CandleInterval.MONTH
+    public static ChronoUnit getPeriodByCandleInterval(CandleResolution candleInterval) {
+        return candleInterval == CandleResolution.DAY
+                || candleInterval == CandleResolution.WEEK
+                || candleInterval == CandleResolution.MONTH
                 ? ChronoUnit.YEARS
                 : ChronoUnit.DAYS;
     }

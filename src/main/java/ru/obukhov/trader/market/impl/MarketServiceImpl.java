@@ -12,8 +12,8 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.TickerType;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -38,7 +38,7 @@ public class MarketServiceImpl implements MarketService {
      * @return sorted by time list of loaded candles
      */
     @Override
-    public List<Candle> getCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+    public List<Candle> getCandles(String ticker, Interval interval, CandleResolution candleInterval) {
 
         DateUtils.assertDateTimeNotFuture(interval.getTo(), tinkoffService.getCurrentDateTime(), "to");
 
@@ -56,7 +56,7 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> getAllCandlesByDays(String ticker, Interval interval, CandleInterval candleInterval) {
+    private List<Candle> getAllCandlesByDays(String ticker, Interval interval, CandleResolution candleInterval) {
 
         OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), tradingProperties.getStartDate());
         OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
@@ -82,9 +82,11 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> getAllCandlesByYears(String ticker,
-                                              Interval interval,
-                                              CandleInterval candleInterval) {
+    private List<Candle> getAllCandlesByYears(
+            String ticker,
+            Interval interval,
+            CandleResolution candleInterval
+    ) {
 
         final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
         OffsetDateTime currentFrom = DateUtils.roundUpToYear(innerTo);
@@ -104,15 +106,17 @@ public class MarketServiceImpl implements MarketService {
 
     }
 
-    private List<Candle> loadCandles(String ticker,
-                                     OffsetDateTime from,
-                                     OffsetDateTime to,
-                                     CandleInterval candleInterval) {
+    private List<Candle> loadCandles(
+            String ticker,
+            OffsetDateTime from,
+            OffsetDateTime to,
+            CandleResolution candleInterval
+    ) {
         OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, OffsetDateTime.now());
         return tinkoffService.getMarketCandles(ticker, Interval.of(from, innerTo), candleInterval);
     }
 
-    private List<Candle> loadDayCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+    private List<Candle> loadDayCandles(String ticker, Interval interval, CandleResolution candleInterval) {
         return tinkoffService.getMarketCandles(ticker, interval.extendToWholeDay(true), candleInterval)
                 .stream()
                 .filter(candle -> interval.contains(candle.getTime()))
@@ -147,7 +151,7 @@ public class MarketServiceImpl implements MarketService {
         ListIterator<Interval> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             Interval interval = listIterator.previous();
-            List<Candle> candles = loadDayCandles(ticker, interval, CandleInterval.ONE_MIN);
+            List<Candle> candles = loadDayCandles(ticker, interval, CandleResolution._1MIN);
             if (!candles.isEmpty()) {
                 return CollectionUtils.lastElement(candles);
             }
@@ -170,7 +174,7 @@ public class MarketServiceImpl implements MarketService {
         List<Candle> candles = new ArrayList<>();
 
         do {
-            List<Candle> currentCandles = loadDayCandles(ticker, Interval.of(from, to), CandleInterval.ONE_MIN);
+            List<Candle> currentCandles = loadDayCandles(ticker, Interval.of(from, to), CandleResolution._1MIN);
             if (currentCandles.isEmpty()) {
                 consecutiveEmptyDaysCount++;
             } else {
@@ -188,9 +192,9 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Instrument getInstrument(String ticker) {
+    public MarketInstrument getInstrument(String ticker) {
         return getAllInstruments().stream()
-                .filter(instrument -> instrument.ticker.equals(ticker))
+                .filter(instrument -> instrument.getTicker().equals(ticker))
                 .findFirst()
                 .orElse(null);
     }
@@ -199,7 +203,7 @@ public class MarketServiceImpl implements MarketService {
      * @return list of available instruments of given {@code type}
      */
     @Override
-    public List<Instrument> getInstruments(TickerType type) {
+    public List<MarketInstrument> getInstruments(TickerType type) {
         if (type == null) {
             return getAllInstruments();
         }
@@ -218,9 +222,9 @@ public class MarketServiceImpl implements MarketService {
         }
     }
 
-    private List<Instrument> getAllInstruments() {
+    private List<MarketInstrument> getAllInstruments() {
 
-        List<Instrument> result = new ArrayList<>();
+        List<MarketInstrument> result = new ArrayList<>();
         result.addAll(tinkoffService.getMarketEtfs());
         result.addAll(tinkoffService.getMarketStocks());
         result.addAll(tinkoffService.getMarketBonds());
@@ -231,7 +235,7 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public String getFigi(String ticker) {
-        return tinkoffService.searchMarketInstrument(ticker).figi;
+        return tinkoffService.searchMarketInstrument(ticker).getFigi();
     }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"ru.tinkoff.invest.openapi.okhttp", "ru.obukhov.trader"})
 @EnableCaching
 @EnableScheduling
 @EnableAspectJAutoProxy

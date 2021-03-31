@@ -1,7 +1,6 @@
 package ru.obukhov.trader.common.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +14,9 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -46,9 +46,9 @@ class PortfolioServiceImplTest extends BaseMockedTest {
         String ticker3 = "ticker3";
 
         List<PortfolioPosition> positions = ImmutableList.of(
-                createPortfolioPosition(ticker1),
-                createPortfolioPosition(ticker2),
-                createPortfolioPosition(ticker3)
+                TestDataHelper.createPortfolioPosition(ticker1),
+                TestDataHelper.createPortfolioPosition(ticker2),
+                TestDataHelper.createPortfolioPosition(ticker3)
         );
         Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
@@ -64,9 +64,9 @@ class PortfolioServiceImplTest extends BaseMockedTest {
         String ticker3 = "ticker3";
 
         List<PortfolioPosition> positions = ImmutableList.of(
-                createPortfolioPosition(ticker1),
-                createPortfolioPosition(ticker2),
-                createPortfolioPosition(ticker3)
+                TestDataHelper.createPortfolioPosition(ticker1),
+                TestDataHelper.createPortfolioPosition(ticker2),
+                TestDataHelper.createPortfolioPosition(ticker3)
         );
         Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
@@ -85,10 +85,10 @@ class PortfolioServiceImplTest extends BaseMockedTest {
         int rubBalance = 1000;
         int rubBlocked = 100;
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = ImmutableList.of(
-                createPortfolioCurrency(Currency.USD, 100, 0),
-                createPortfolioCurrency(Currency.RUB, rubBalance, rubBlocked),
-                createPortfolioCurrency(Currency.EUR, 10, 0)
+        List<CurrencyPosition> currencies = ImmutableList.of(
+                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
+                TestDataHelper.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
+                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
@@ -101,9 +101,9 @@ class PortfolioServiceImplTest extends BaseMockedTest {
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
 
-        List<PortfolioCurrencies.PortfolioCurrency> currencies = ImmutableList.of(
-                createPortfolioCurrency(Currency.USD, 100, 0),
-                createPortfolioCurrency(Currency.EUR, 10, 0)
+        List<CurrencyPosition> currencies = ImmutableList.of(
+                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
+                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
@@ -111,30 +111,6 @@ class PortfolioServiceImplTest extends BaseMockedTest {
                 NoSuchElementException.class,
                 "No value present");
 
-    }
-
-    // endregion
-
-    // region mocks
-
-    private PortfolioPosition createPortfolioPosition(String ticker) {
-        return new PortfolioPosition(
-                ticker,
-                BigDecimal.ONE,
-                null,
-                Currency.RUB,
-                null,
-                1,
-                null,
-                null,
-                StringUtils.EMPTY
-        );
-    }
-
-    private PortfolioCurrencies.PortfolioCurrency createPortfolioCurrency(Currency currency, int balance, int blocked) {
-        return new PortfolioCurrencies.PortfolioCurrency(currency,
-                BigDecimal.valueOf(balance),
-                BigDecimal.valueOf(blocked));
     }
 
     // endregion

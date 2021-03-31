@@ -10,14 +10,15 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.market.InstrumentType;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.operations.OperationStatus;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
+import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -27,22 +28,35 @@ import java.util.concurrent.TimeUnit;
 
 public class TestDataHelper {
 
-    public static ru.tinkoff.invest.openapi.models.market.Candle createTinkoffCandle(double openPrice,
-                                                                                     double closePrice,
-                                                                                     double highestPrice,
-                                                                                     double lowestPrice) {
+    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+            double openPrice,
+            double closePrice,
+            double highestPrice,
+            double lowestPrice
+    ) {
+        return createTinkoffCandle(CandleResolution.DAY, openPrice, closePrice, highestPrice, lowestPrice);
+    }
 
-        return new ru.tinkoff.invest.openapi.models.market.Candle(
-                StringUtils.EMPTY,
-                CandleInterval.DAY,
-                BigDecimal.valueOf(openPrice),
-                BigDecimal.valueOf(closePrice),
-                BigDecimal.valueOf(highestPrice),
-                BigDecimal.valueOf(lowestPrice),
-                BigDecimal.TEN,
-                OffsetDateTime.now()
-        );
+    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+            CandleResolution interval,
+            double openPrice,
+            double closePrice,
+            double highestPrice,
+            double lowestPrice
+    ) {
 
+        ru.tinkoff.invest.openapi.model.rest.Candle candle = new ru.tinkoff.invest.openapi.model.rest.Candle();
+
+        candle.setFigi(StringUtils.EMPTY);
+        candle.setInterval(interval);
+        candle.setO(BigDecimal.valueOf(openPrice));
+        candle.setC(BigDecimal.valueOf(closePrice));
+        candle.setH(BigDecimal.valueOf(highestPrice));
+        candle.setL(BigDecimal.valueOf(lowestPrice));
+        candle.setV(10);
+        candle.setTime(OffsetDateTime.now());
+
+        return candle;
     }
 
     public static Candle createCandle(
@@ -51,7 +65,7 @@ public class TestDataHelper {
             double highestPrice,
             double lowestPrice,
             OffsetDateTime time,
-            CandleInterval interval
+            CandleResolution interval
     ) {
         return new Candle(
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),
@@ -99,22 +113,21 @@ public class TestDataHelper {
         return candle;
     }
 
-    public static Candle createCandleWithTimeAndInterval(OffsetDateTime time, CandleInterval interval) {
+    public static Candle createCandleWithTimeAndInterval(OffsetDateTime time, CandleResolution interval) {
         Candle candle = new Candle();
         candle.setTime(time);
         candle.setInterval(interval);
         return candle;
     }
 
-    public static Instrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {
-        Instrument instrument = new Instrument(StringUtils.EMPTY,
-                ticker,
-                null,
-                null,
-                0,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.Stock);
+    public static MarketInstrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {
+        MarketInstrument instrument = new MarketInstrument();
+        instrument.setFigi(StringUtils.EMPTY);
+        instrument.setTicker(ticker);
+        instrument.setLot(0);
+        instrument.setCurrency(Currency.RUB);
+        instrument.setName(StringUtils.EMPTY);
+        instrument.setType(InstrumentType.STOCK);
 
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
@@ -147,6 +160,10 @@ public class TestDataHelper {
         return decisionData;
     }
 
+    public static PortfolioPosition createPortfolioPosition(String ticker) {
+        return createPortfolioPosition(ticker, 1);
+    }
+
     public static PortfolioPosition createPortfolioPosition(String ticker, int lotsCount) {
         return new PortfolioPosition(
                 ticker,
@@ -161,32 +178,121 @@ public class TestDataHelper {
         );
     }
 
-    public static Operation createTinkoffOperation(OffsetDateTime operationDateTime,
-                                                   OperationType operationType,
-                                                   BigDecimal operationPrice,
-                                                   int operationQuantity,
-                                                   BigDecimal operationCommission) {
-        return new Operation(StringUtils.EMPTY,
-                OperationStatus.Done,
-                null,
-                new MoneyAmount(Currency.RUB, operationCommission),
-                Currency.RUB,
-                BigDecimal.ZERO,
-                operationPrice,
-                operationQuantity,
-                null,
-                null,
-                false,
-                operationDateTime,
-                operationType);
+    public static Operation createTinkoffOperation(
+            OffsetDateTime operationDateTime,
+            OperationTypeWithCommission operationType,
+            BigDecimal operationPrice,
+            int operationQuantity,
+            BigDecimal commissionValue
+    ) {
+        Operation operation = new Operation();
+        operation.setId(StringUtils.EMPTY);
+        operation.setStatus(OperationStatus.DONE);
+
+        MoneyAmount commission = new MoneyAmount();
+        commission.setValue(commissionValue);
+        operation.setCommission(commission);
+
+        operation.setCurrency(Currency.RUB);
+        operation.setPayment(BigDecimal.ZERO);
+        operation.setPrice(operationPrice);
+        operation.setQuantity(operationQuantity);
+        operation.setQuantityExecuted(operationQuantity);
+        operation.setDate(operationDateTime);
+        operation.setOperationType(operationType);
+        return operation;
     }
 
-    public static void mockTinkoffOperations(TinkoffService tinkoffService,
-                                             String ticker,
-                                             Interval interval,
-                                             Operation... operations) {
+    public static void mockTinkoffOperations(
+            TinkoffService tinkoffService,
+            String ticker,
+            Interval interval,
+            Operation... operations
+    ) {
         Mockito.when(tinkoffService.getOperations(interval, ticker))
                 .thenReturn(Arrays.asList(operations));
+    }
+
+    public static ru.tinkoff.invest.openapi.model.rest.PortfolioPosition createTinkoffPortfolioPosition(
+            String figi,
+            String ticker,
+            String isin,
+            InstrumentType instrumentType,
+            BigDecimal balance,
+            BigDecimal blocked,
+            BigDecimal expectedYield,
+            Integer lots,
+            BigDecimal averagePositionPriceValue,
+            BigDecimal averagePositionPriceValueNoNkd,
+            String name
+    ) {
+        return createTinkoffPortfolioPosition(
+                figi,
+                ticker,
+                isin,
+                instrumentType,
+                balance,
+                blocked,
+                createMoneyAmount(expectedYield),
+                lots,
+                createMoneyAmount(averagePositionPriceValue),
+                createMoneyAmount(averagePositionPriceValueNoNkd),
+                name
+        );
+    }
+
+    public static ru.tinkoff.invest.openapi.model.rest.PortfolioPosition createTinkoffPortfolioPosition(
+            String figi,
+            String ticker,
+            String isin,
+            InstrumentType instrumentType,
+            BigDecimal balance,
+            BigDecimal blocked,
+            MoneyAmount expectedYield,
+            Integer lots,
+            MoneyAmount averagePositionPriceValue,
+            MoneyAmount averagePositionPriceValueNoNkd,
+            String name
+    ) {
+        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition portfolioPosition =
+                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition();
+
+        portfolioPosition.setFigi(figi);
+        portfolioPosition.setTicker(ticker);
+        portfolioPosition.setIsin(isin);
+        portfolioPosition.setInstrumentType(instrumentType);
+        portfolioPosition.setBalance(balance);
+        portfolioPosition.setBlocked(blocked);
+        portfolioPosition.setExpectedYield(expectedYield);
+        portfolioPosition.setLots(lots);
+        portfolioPosition.setAveragePositionPrice(averagePositionPriceValue);
+        portfolioPosition.setAveragePositionPriceNoNkd(averagePositionPriceValueNoNkd);
+        portfolioPosition.setName(name);
+
+        return portfolioPosition;
+    }
+
+    public static MoneyAmount createMoneyAmount(BigDecimal value) {
+        return createMoneyAmount(null, value);
+    }
+
+    public static MoneyAmount createMoneyAmount(Currency currency, BigDecimal value) {
+        MoneyAmount moneyAmount = new MoneyAmount();
+        moneyAmount.setCurrency(currency);
+        moneyAmount.setValue(value);
+        return moneyAmount;
+    }
+
+    public static CurrencyPosition createCurrencyPosition(Currency currency, int balance) {
+        return createCurrencyPosition(currency, balance, 0);
+    }
+
+    public static CurrencyPosition createCurrencyPosition(Currency currency, int balance, int blocked) {
+        CurrencyPosition currencyPosition = new CurrencyPosition();
+        currencyPosition.setCurrency(currency);
+        currencyPosition.setBalance(BigDecimal.valueOf(balance));
+        currencyPosition.setBlocked(BigDecimal.valueOf(blocked));
+        return currencyPosition;
     }
 
 }

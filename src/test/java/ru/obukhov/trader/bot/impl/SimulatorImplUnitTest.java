@@ -25,10 +25,11 @@ import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -143,7 +144,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -175,10 +176,10 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(currentBalance);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
@@ -225,7 +226,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -260,10 +261,10 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(currentBalance);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
@@ -282,7 +283,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         Mockito.verify(fakeTinkoffService, Mockito.times(5))
                 .incrementBalance(
-                        Mockito.eq(instrument.currency),
+                        Mockito.eq(MarketInstrument.getCurrency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
     }
@@ -298,7 +299,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -330,8 +331,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
@@ -367,7 +368,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -385,16 +386,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final OffsetDateTime operationDateTime = from.plusMinutes(2);
-        final OperationType operationType = OperationType.Buy;
+        final OperationTypeWithCommission operationType = OperationTypeWithCommission.BUY;
         final BigDecimal operationPrice = BigDecimal.valueOf(100);
         final int operationQuantity = 2;
         final BigDecimal operationCommission = BigDecimal.valueOf(0.03);
         final Operation operation = TestDataHelper.createTinkoffOperation(
-                operationDateTime, operationType, operationPrice, operationQuantity, operationCommission);
+                operationDateTime,
+                operationType,
+                operationPrice,
+                operationQuantity,
+                operationCommission
+        );
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval, operation);
 
         mockPortfolioPositions();
@@ -413,7 +419,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatedOperation simulatedOperation = resultOperations.get(0);
         Assertions.assertEquals(ticker, simulatedOperation.getTicker());
         Assertions.assertEquals(operationDateTime, simulatedOperation.getDateTime());
-        Assertions.assertEquals(operationType, simulatedOperation.getOperationType());
+        Assertions.assertEquals(OperationType.BUY, simulatedOperation.getOperationType());
         AssertUtils.assertEquals(operationPrice, simulatedOperation.getPrice());
         Assertions.assertEquals(operationQuantity, simulatedOperation.getQuantity());
         AssertUtils.assertEquals(operationCommission, simulatedOperation.getCommission());
@@ -432,7 +438,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -464,8 +470,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
@@ -501,7 +507,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -519,8 +525,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.ZERO);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();
@@ -549,7 +555,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -567,8 +573,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.ZERO);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();
@@ -634,7 +640,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
 
-        Instrument instrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
@@ -652,8 +658,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(instrument.currency, from, simulationUnit.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(instrument.currency)).thenReturn(BigDecimal.ZERO);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();

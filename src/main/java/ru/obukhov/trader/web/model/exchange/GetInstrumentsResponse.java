@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 public class GetInstrumentsResponse {
 
-    private List<Instrument> instruments;
+    private List<MarketInstrument> instruments;
 
 }

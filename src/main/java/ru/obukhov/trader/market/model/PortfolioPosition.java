@@ -5,7 +5,7 @@ import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
-import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
 

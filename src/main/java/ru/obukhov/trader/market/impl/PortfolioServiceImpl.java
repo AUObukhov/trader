@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -33,20 +33,20 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public BigDecimal getAvailableBalance(Currency currency) {
         return getCurrencies().stream()
-                .filter(portfolioCurrency -> portfolioCurrency.currency == currency)
+                .filter(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)
                 .findFirst()
                 .map(this::getAvailableBalance)
                 .orElseThrow();
     }
 
-    private BigDecimal getAvailableBalance(PortfolioCurrencies.PortfolioCurrency currency) {
-        return currency.blocked == null
-                ? currency.balance
-                : currency.balance.subtract(currency.blocked);
+    private BigDecimal getAvailableBalance(CurrencyPosition currency) {
+        return currency.getBlocked() == null
+                ? currency.getBalance()
+                : currency.getBalance().subtract(currency.getBlocked());
     }
 
     @Override
-    public List<PortfolioCurrencies.PortfolioCurrency> getCurrencies() {
+    public List<CurrencyPosition> getCurrencies() {
         return tinkoffService.getPortfolioCurrencies();
     }
 

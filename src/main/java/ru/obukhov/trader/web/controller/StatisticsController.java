@@ -15,7 +15,7 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsRequest;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -50,7 +50,7 @@ public class StatisticsController {
     @GetMapping("/instruments")
     public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
 
-        List<Instrument> instruments = statisticsService.getInstruments(request.getTickerType());
+        List<MarketInstrument> instruments = statisticsService.getInstruments(request.getTickerType());
 
         return new GetInstrumentsResponse(instruments);
 

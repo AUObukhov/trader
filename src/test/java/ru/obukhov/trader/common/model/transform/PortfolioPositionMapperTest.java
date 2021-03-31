@@ -5,10 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.PortfolioPositionMapper;
-import ru.tinkoff.invest.openapi.models.Currency;
-import ru.tinkoff.invest.openapi.models.MoneyAmount;
-import ru.tinkoff.invest.openapi.models.portfolio.InstrumentType;
-import ru.tinkoff.invest.openapi.models.portfolio.Portfolio;
+import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
+import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -25,32 +26,48 @@ class PortfolioPositionMapperTest {
         final BigDecimal balance = BigDecimal.valueOf(1000);
         final BigDecimal blocked = BigDecimal.valueOf(500);
         final Currency currency = Currency.RUB;
-        final BigDecimal expectedYield = BigDecimal.valueOf(200);
+        final BigDecimal expectedYieldValue = BigDecimal.valueOf(200);
         final int lots = 10;
-        final BigDecimal averagePositionPrice = BigDecimal.valueOf(100);
-        final BigDecimal averagePositionPriceNoNkd = BigDecimal.valueOf(50);
+        final BigDecimal averagePositionPriceValue = BigDecimal.valueOf(100);
+        final BigDecimal averagePositionPriceNoNkdValue = BigDecimal.valueOf(50);
         final String name = "name";
-        Portfolio.PortfolioPosition source = new Portfolio.PortfolioPosition("figi",
-                ticker,
-                "isin",
-                InstrumentType.Stock,
-                balance,
-                blocked,
-                new MoneyAmount(currency, expectedYield),
-                lots,
-                new MoneyAmount(currency, averagePositionPrice),
-                new MoneyAmount(currency, averagePositionPriceNoNkd),
-                name);
+        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source =
+                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition();
+        source.setFigi("figi");
+        source.setTicker(ticker);
+        source.setIsin("isin");
+        source.setInstrumentType(InstrumentType.STOCK);
+        source.setBalance(balance);
+        source.setBlocked(blocked);
+
+        MoneyAmount expectedYield = new MoneyAmount();
+        expectedYield.setCurrency(currency);
+        expectedYield.setValue(expectedYieldValue);
+        source.setExpectedYield(expectedYield);
+
+        source.setLots(lots);
+
+        MoneyAmount averagePositionPrice = new MoneyAmount();
+        averagePositionPrice.setCurrency(currency);
+        averagePositionPrice.setValue(averagePositionPriceValue);
+        source.setAveragePositionPrice(averagePositionPrice);
+
+        MoneyAmount averagePositionPriceNoNkd = new MoneyAmount();
+        averagePositionPriceNoNkd.setCurrency(currency);
+        averagePositionPriceNoNkd.setValue(averagePositionPriceNoNkdValue);
+        source.setAveragePositionPriceNoNkd(averagePositionPriceNoNkd);
+
+        source.setName(name);
 
         PortfolioPosition target = mapper.map(source);
 
         Assertions.assertEquals(ticker, target.getTicker());
         Assertions.assertEquals(balance, target.getBalance());
         Assertions.assertEquals(blocked, target.getBlocked());
-        Assertions.assertEquals(expectedYield, target.getExpectedYield());
+        AssertUtils.assertEquals(expectedYieldValue, target.getExpectedYield());
         Assertions.assertEquals(lots, target.getLotsCount());
-        Assertions.assertEquals(averagePositionPrice, target.getAveragePositionPrice());
-        Assertions.assertEquals(averagePositionPriceNoNkd, target.getAveragePositionPriceNoNkd());
+        AssertUtils.assertEquals(averagePositionPriceValue, target.getAveragePositionPrice());
+        AssertUtils.assertEquals(averagePositionPriceNoNkdValue, target.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(name, target.getName());
     }
 
@@ -65,17 +82,19 @@ class PortfolioPositionMapperTest {
         final BigDecimal averagePositionPrice1 = BigDecimal.valueOf(100);
         final BigDecimal averagePositionPriceNoNkd1 = BigDecimal.valueOf(50);
         final String name1 = "name1";
-        Portfolio.PortfolioPosition source1 = new Portfolio.PortfolioPosition("figi1",
+        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source1 = TestDataHelper.createTinkoffPortfolioPosition(
+                "figi1",
                 ticker1,
                 "isin1",
-                InstrumentType.Stock,
+                InstrumentType.STOCK,
                 balance1,
                 blocked1,
-                new MoneyAmount(currency1, expectedYield1),
+                TestDataHelper.createMoneyAmount(currency1, expectedYield1),
                 lots1,
-                new MoneyAmount(currency1, averagePositionPrice1),
-                new MoneyAmount(currency1, averagePositionPriceNoNkd1),
-                name1);
+                TestDataHelper.createMoneyAmount(currency1, averagePositionPrice1),
+                TestDataHelper.createMoneyAmount(currency1, averagePositionPriceNoNkd1),
+                name1
+        );
 
         final String ticker2 = "ticker2";
         final BigDecimal balance2 = BigDecimal.valueOf(2000);
@@ -86,19 +105,21 @@ class PortfolioPositionMapperTest {
         final BigDecimal averagePositionPrice2 = BigDecimal.valueOf(200);
         final BigDecimal averagePositionPriceNoNkd2 = BigDecimal.valueOf(100);
         final String name2 = "name2";
-        Portfolio.PortfolioPosition source2 = new Portfolio.PortfolioPosition("figi2",
+        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source2 = TestDataHelper.createTinkoffPortfolioPosition(
+                "figi2",
                 ticker2,
                 "isin2",
-                InstrumentType.Bond,
+                InstrumentType.BOND,
                 balance2,
                 blocked2,
-                new MoneyAmount(currency2, expectedYield2),
+                TestDataHelper.createMoneyAmount(currency2, expectedYield2),
                 lots2,
-                new MoneyAmount(currency2, averagePositionPrice2),
-                new MoneyAmount(currency2, averagePositionPriceNoNkd2),
-                name2);
+                TestDataHelper.createMoneyAmount(currency2, averagePositionPrice2),
+                TestDataHelper.createMoneyAmount(currency2, averagePositionPriceNoNkd2),
+                name2
+        );
 
-        Collection<Portfolio.PortfolioPosition> source = Arrays.asList(source1, source2);
+        Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source = Arrays.asList(source1, source2);
 
         Collection<PortfolioPosition> target = mapper.map(source);
 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
-import ru.tinkoff.invest.openapi.models.orders.Order;
+import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.util.List;
 

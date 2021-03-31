@@ -3,15 +3,16 @@ package ru.obukhov.trader.market.interfaces;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
-import ru.tinkoff.invest.openapi.models.market.Orderbook;
-import ru.tinkoff.invest.openapi.models.operations.Operation;
-import ru.tinkoff.invest.openapi.models.orders.LimitOrder;
-import ru.tinkoff.invest.openapi.models.orders.MarketOrder;
-import ru.tinkoff.invest.openapi.models.orders.Order;
-import ru.tinkoff.invest.openapi.models.orders.PlacedOrder;
-import ru.tinkoff.invest.openapi.models.portfolio.PortfolioCurrencies;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
+import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.Order;
+import ru.tinkoff.invest.openapi.model.rest.Orderbook;
+import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
+import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -22,33 +23,33 @@ import java.util.List;
  */
 public interface TinkoffService {
 
-    List<Instrument> getMarketStocks();
+    List<MarketInstrument> getMarketStocks();
 
-    List<Instrument> getMarketBonds();
+    List<MarketInstrument> getMarketBonds();
 
-    List<Instrument> getMarketEtfs();
+    List<MarketInstrument> getMarketEtfs();
 
-    List<Instrument> getMarketCurrencies();
+    List<MarketInstrument> getMarketCurrencies();
 
     Orderbook getMarketOrderbook(String ticker, int depth);
 
-    List<Candle> getMarketCandles(String ticker, Interval interval, CandleInterval candleInterval);
+    List<Candle> getMarketCandles(String ticker, Interval interval, CandleResolution candleInterval);
 
-    Instrument searchMarketInstrument(String ticker);
+    MarketInstrument searchMarketInstrument(String ticker);
 
     List<Operation> getOperations(Interval interval, String ticker);
 
     List<Order> getOrders();
 
-    PlacedOrder placeLimitOrder(String ticker, LimitOrder limitOrder);
+    PlacedLimitOrder placeLimitOrder(String ticker, LimitOrderRequest orderRequest);
 
-    PlacedOrder placeMarketOrder(String ticker, MarketOrder marketOrder);
+    PlacedMarketOrder placeMarketOrder(String ticker, MarketOrderRequest orderRequest);
 
     void cancelOrder(String orderId);
 
     Collection<PortfolioPosition> getPortfolioPositions();
 
-    List<PortfolioCurrencies.PortfolioCurrency> getPortfolioCurrencies();
+    List<CurrencyPosition> getPortfolioCurrencies();
 
     OffsetDateTime getCurrentDateTime();
 

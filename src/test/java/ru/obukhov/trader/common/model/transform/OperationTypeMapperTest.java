@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
-import ru.tinkoff.invest.openapi.models.orders.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 class OperationTypeMapperTest {
 
@@ -13,20 +13,20 @@ class OperationTypeMapperTest {
 
     @Test
     void mapsBuyOperation() {
-        Operation source = Operation.Buy;
+        OperationType source = OperationType.BUY;
 
-        OperationType target = operationTypeMapper.map(source);
+        OperationTypeWithCommission target = operationTypeMapper.map(source);
 
-        Assertions.assertEquals(OperationType.Buy, target);
+        Assertions.assertEquals(OperationTypeWithCommission.BUY, target);
     }
 
     @Test
     void mapsSellOperation() {
-        Operation source = Operation.Sell;
+        OperationType source = OperationType.SELL;
 
-        OperationType target = operationTypeMapper.map(source);
+        OperationTypeWithCommission target = operationTypeMapper.map(source);
 
-        Assertions.assertEquals(OperationType.Sell, target);
+        Assertions.assertEquals(OperationTypeWithCommission.SELL, target);
     }
 
 }

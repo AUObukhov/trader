@@ -12,8 +12,8 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.market.model.TickerType;
-import ru.tinkoff.invest.openapi.models.market.CandleInterval;
-import ru.tinkoff.invest.openapi.models.market.Instrument;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return list of found candles
      */
     @Override
-    public List<Candle> getCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+    public List<Candle> getCandles(String ticker, Interval interval, CandleResolution candleInterval) {
         return marketService.getCandles(ticker, interval, candleInterval);
     }
 
@@ -48,7 +48,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return list of found candles
      */
     @Override
-    public List<ExtendedCandle> getExtendedCandles(String ticker, Interval interval, CandleInterval candleInterval) {
+    public List<ExtendedCandle> getExtendedCandles(String ticker, Interval interval, CandleResolution candleInterval) {
         List<Candle> candles = marketService.getCandles(ticker, interval, candleInterval);
         return createExtendedCandles(candles);
     }
@@ -115,7 +115,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
      */
     @Override
-    public List<Instrument> getInstruments(@Nullable TickerType type) {
+    public List<MarketInstrument> getInstruments(@Nullable TickerType type) {
         return marketService.getInstruments(type);
     }
 

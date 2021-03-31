@@ -1,19 +1,30 @@
 package ru.obukhov.trader.market.model.transform;
 
 import org.mapstruct.Mapper;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
-import ru.tinkoff.invest.openapi.models.orders.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 /**
- * Maps {@link Operation} to {@link OperationType}
+ * Maps {@link OperationType} to {@link OperationTypeWithCommission}
  */
 @Mapper
 public interface OperationTypeMapper {
 
-    default OperationType map(Operation source) {
-        return source == ru.tinkoff.invest.openapi.models.orders.Operation.Buy
-                ? OperationType.Buy
-                : OperationType.Sell;
+    default OperationTypeWithCommission map(OperationType source) {
+        return source == OperationType.BUY
+                ? OperationTypeWithCommission.BUY
+                : OperationTypeWithCommission.SELL;
+    }
+
+    default OperationType map(OperationTypeWithCommission source) {
+        switch (source) {
+            case BUY:
+                return OperationType.BUY;
+            case SELL:
+                return OperationType.SELL;
+            default:
+                throw new IllegalArgumentException("Expected buy or sell operation, got " + source);
+        }
     }
 
 }

@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.Getter;
 import lombok.Setter;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
-import ru.tinkoff.invest.openapi.models.Currency;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

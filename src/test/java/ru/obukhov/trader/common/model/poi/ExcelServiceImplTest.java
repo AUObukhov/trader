@@ -26,7 +26,7 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
-import ru.tinkoff.invest.openapi.models.operations.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -210,7 +210,7 @@ class ExcelServiceImplTest extends BaseMockedTest {
         SimulatedOperation operation1 = SimulatedOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
-                .operationType(OperationType.Buy)
+                .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(150))
                 .quantity(1)
                 .commission(BigDecimal.valueOf(0.45))
@@ -218,7 +218,7 @@ class ExcelServiceImplTest extends BaseMockedTest {
         SimulatedOperation operation2 = SimulatedOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
-                .operationType(OperationType.Sell)
+                .operationType(OperationType.SELL)
                 .price(BigDecimal.valueOf(180))
                 .quantity(1)
                 .commission(BigDecimal.valueOf(0.54))
@@ -226,7 +226,7 @@ class ExcelServiceImplTest extends BaseMockedTest {
         SimulatedOperation operation3 = SimulatedOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
-                .operationType(OperationType.Buy)
+                .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(160))
                 .quantity(3)
                 .commission(BigDecimal.valueOf(0.48))
@@ -234,7 +234,7 @@ class ExcelServiceImplTest extends BaseMockedTest {
         SimulatedOperation operation4 = SimulatedOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
-                .operationType(OperationType.Buy)
+                .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(120))
                 .quantity(2)
                 .commission(BigDecimal.valueOf(0.36))
