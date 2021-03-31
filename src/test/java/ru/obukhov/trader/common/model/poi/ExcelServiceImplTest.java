@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.model.poi;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
@@ -55,7 +56,41 @@ class ExcelServiceImplTest extends BaseMockedTest {
     // region saveSimulationResult tests
 
     @Test
-    void saveSimulationResult_savesSingleResult() {
+    void saveSimulationResult_savesMultipleResults() {
+
+        final String ticker = "ticker";
+
+        SimulationResult result1 = createSimulationResult(ticker, "bot1");
+        SimulationResult result2 = createSimulationResult(ticker, "bot2");
+        SimulationResult result3 = createSimulationResult(ticker, "bot3");
+        List<SimulationResult> results = Arrays.asList(result1, result2, result3);
+
+        excelService.saveSimulationResults(ticker, results);
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
+
+        for (SimulationResult result : results) {
+            ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+            int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+            Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
+
+            Iterator<Row> rowIterator = sheet.iterator();
+            assertCommonStatistics(ticker, result, rowIterator);
+            assertPositions(result, rowIterator);
+            assertOperations(result, rowIterator);
+            assertMergedRegions(sheet);
+            assertChartCreated(sheet);
+        }
+    }
+
+    @Test
+    void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() {
         final String ticker = "ticker";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
@@ -69,77 +104,77 @@ class ExcelServiceImplTest extends BaseMockedTest {
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        assertSheetData(ticker, workbook, result);
-    }
-
-    @Test
-    void saveSimulationResult_savesMultipleResults() {
-
-        final String ticker = "ticker";
-
-        SimulationResult result1 = createSimulationResult(ticker, "bot1");
-        SimulationResult result2 = createSimulationResult(ticker, "bot2");
-        SimulationResult result3 = createSimulationResult(ticker, "bot3");
-        List<SimulationResult> results = Arrays.asList(result1, result2, result3);
-        excelService.saveSimulationResults(ticker, results);
-
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
-
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
-        Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
-
-        for (SimulationResult result : results) {
-            assertSheetData(ticker, workbook, result);
-        }
-    }
-
-    private void assertSheetData(String ticker, ExtendedWorkbook workbook, SimulationResult result) {
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
         int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         Iterator<Row> rowIterator = sheet.iterator();
-        AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
-        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
-        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Средневзвешенные вложения", result.getWeightedAverageInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Относительный годовой доход", result.getRelativeYearProfit());
+        assertCommonStatistics(ticker, result, rowIterator);
+        assertPositions(result, rowIterator);
+        assertOperations(result, rowIterator);
+        assertMergedRegions(sheet);
+        assertChartCreated(sheet);
+    }
 
-        AssertUtils.assertRowValues(rowIterator.next());
-        AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
-        AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
-        for (SimulatedPosition position : result.getPositions()) {
-            AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
-        }
+    @Test
+    void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() {
+        final String ticker = "ticker";
 
-        AssertUtils.assertRowValues(rowIterator.next());
-        AssertUtils.assertRowValues(rowIterator.next(), "Операции");
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
-        for (SimulatedOperation operation : result.getOperations()) {
-            AssertUtils.assertRowValues(
-                    rowIterator.next(),
-                    operation.getDateTime(),
-                    operation.getOperationType().name(),
-                    operation.getPrice(),
-                    operation.getQuantity(),
-                    operation.getCommission()
-            );
-        }
+        SimulationResult result = createSimulationResult(ticker, "bot");
+        result.setError(StringUtils.EMPTY);
 
-        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
-        Assertions.assertEquals(3, mergedRegions.size());
+        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        assertCommonStatistics(ticker, result, rowIterator);
+        assertPositions(result, rowIterator);
+        assertOperations(result, rowIterator);
+        assertMergedRegions(sheet);
+        assertChartCreated(sheet);
+    }
+
+    @Test
+    void saveSimulationResult_addsErrorMessage_whenErrorIsNotEmpty() {
+        final String ticker = "ticker";
+        final String error = "error";
+
+        SimulationResult result = createSimulationResult(ticker, "bot");
+        result.setError(error);
+
+        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+        int expectedRowCount = 18 + result.getPositions().size() + result.getOperations().size();
+        Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        assertCommonStatistics(ticker, result, rowIterator);
+        AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.getError());
+
+        assertPositions(result, rowIterator);
+        assertOperations(result, rowIterator);
+        assertMergedRegions(sheet);
 
         assertChartCreated(sheet);
     }
@@ -159,7 +194,18 @@ class ExcelServiceImplTest extends BaseMockedTest {
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        assertCommonStatistics(ticker, result, rowIterator);
+        assertPositions(result, rowIterator);
+        assertOperations(result, rowIterator);
+        assertMergedRegions(sheet);
 
         Assertions.assertNull(sheet.getDrawingPatriarch());
     }
@@ -179,9 +225,67 @@ class ExcelServiceImplTest extends BaseMockedTest {
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
+        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
+
+        Iterator<Row> rowIterator = sheet.iterator();
+        assertCommonStatistics(ticker, result, rowIterator);
+        assertPositions(result, rowIterator);
+        assertOperations(result, rowIterator);
+        assertMergedRegions(sheet);
+
         Assertions.assertNull(sheet.getDrawingPatriarch());
+    }
+
+    private void assertCommonStatistics(String ticker, SimulationResult result, Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
+        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
+        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Средневзвешенные вложения", result.getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Относительный годовой доход", result.getRelativeYearProfit());
+    }
+
+    private void assertPositions(SimulationResult result, Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next());
+        AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
+        AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
+        for (SimulatedPosition position : result.getPositions()) {
+            AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
+        }
+    }
+
+    private void assertOperations(SimulationResult result, Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next());
+        AssertUtils.assertRowValues(rowIterator.next(), "Операции");
+        AssertUtils.assertRowValues(rowIterator.next(),
+                "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+        for (SimulatedOperation operation : result.getOperations()) {
+            AssertUtils.assertRowValues(
+                    rowIterator.next(),
+                    operation.getDateTime(),
+                    operation.getOperationType().name(),
+                    operation.getPrice(),
+                    operation.getQuantity(),
+                    operation.getCommission()
+            );
+        }
+    }
+
+    private void assertMergedRegions(ExtendedSheet sheet) {
+        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        Assertions.assertEquals(3, mergedRegions.size());
     }
 
     // endregion

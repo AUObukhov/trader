@@ -12,6 +12,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedChart;
@@ -138,6 +139,7 @@ public class ExcelServiceImpl implements ExcelService {
         putAbsoluteProfit(sheet, result.getAbsoluteProfit());
         putRelativeProfit(sheet, result.getRelativeProfit());
         putRelativeYearProfit(sheet, result.getRelativeYearProfit());
+        putError(sheet, result.getError());
     }
 
     private void putTicker(ExtendedSheet sheet, String ticker) {
@@ -194,6 +196,13 @@ public class ExcelServiceImpl implements ExcelService {
         ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
         CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         cells.get(1).setCellStyle(style);
+    }
+
+    private void putError(ExtendedSheet sheet, String error) {
+        if (!StringUtils.isEmpty(error)) {
+            ExtendedRow row = sheet.addRow();
+            row.createCells("Текст ошибки", error);
+        }
     }
 
     private void putPositions(ExtendedSheet sheet, List<SimulatedPosition> positions) {
