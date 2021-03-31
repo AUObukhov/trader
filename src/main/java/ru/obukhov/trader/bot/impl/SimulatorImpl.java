@@ -26,6 +26,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.obukhov.trader.web.model.pojo.SimulationUnit;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -158,27 +160,49 @@ public class SimulatorImpl implements Simulator {
             String message = String.format("Simulation for bot '%s' with ticker '%s' failed with error: %s",
                     bot.getName(), simulationUnit.getTicker(), ex.getMessage());
             log.error(message, ex);
-            return SimulationResult.builder().error(message).build();
+            return SimulationResult.builder()
+                    .botName(bot.getName())
+                    .interval(interval)
+                    .initialBalance(simulationUnit.getInitialBalance())
+                    .totalInvestment(simulationUnit.getInitialBalance())
+                    .weightedAverageInvestment(simulationUnit.getInitialBalance())
+                    .finalBalance(BigDecimal.ZERO)
+                    .finalTotalBalance(BigDecimal.ZERO)
+                    .absoluteProfit(BigDecimal.ZERO)
+                    .relativeProfit(0.0)
+                    .relativeYearProfit(0.0)
+                    .positions(Collections.emptyList())
+                    .operations(Collections.emptyList())
+                    .candles(Collections.emptyList())
+                    .error(message)
+                    .build();
         }
     }
 
     private SimulationResult simulate(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
 
+        final String ticker = simulationUnit.getTicker();
+
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
-        Currency currency = getCurrency(fakeTinkoffService, simulationUnit.getTicker());
-        fakeTinkoffService.init(interval.getFrom(), currency, simulationUnit.getInitialBalance());
+
+        MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
+        if (marketInstrument == null) {
+            throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
+        }
+
+        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), simulationUnit.getInitialBalance());
         List<Candle> candles = new ArrayList<>();
 
         do {
 
-            DecisionData decisionData = bot.processTicker(simulationUnit.getTicker());
+            DecisionData decisionData = bot.processTicker(ticker);
             addLastCandle(candles, decisionData);
 
             moveToNextMinute(simulationUnit, fakeTinkoffService);
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(bot, interval, simulationUnit.getTicker(), candles);
+        return createResult(bot, interval, ticker, candles);
     }
 
     private void moveToNextMinute(SimulationUnit simulationUnit, FakeTinkoffService fakeTinkoffService) {

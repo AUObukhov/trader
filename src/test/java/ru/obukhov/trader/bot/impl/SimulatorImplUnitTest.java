@@ -105,9 +105,11 @@ class SimulatorImplUnitTest extends BaseMockedTest {
                 "^java.lang.IllegalArgumentException: 'from' \\(%1$s\\) can't be in future. Now is %1$s$",
                 DATE_TIME_REGEX_PATTERN);
 
-        AssertUtils.assertThrowsWithMessagePattern(() -> simulator.simulate(simulationUnits, interval, false),
+        AssertUtils.assertThrowsWithMessagePattern(
+                () -> simulator.simulate(simulationUnits, interval, false),
                 RuntimeException.class,
-                expectedMessagePattern);
+                expectedMessagePattern
+        );
     }
 
     @Test
@@ -128,9 +130,59 @@ class SimulatorImplUnitTest extends BaseMockedTest {
                 "^java.lang.IllegalArgumentException: 'to' \\(%1$s\\) can't be in future. Now is %1$s$",
                 DATE_TIME_REGEX_PATTERN);
 
-        AssertUtils.assertThrowsWithMessagePattern(() -> simulator.simulate(simulationUnits, interval, false),
+        AssertUtils.assertThrowsWithMessagePattern(
+                () -> simulator.simulate(simulationUnits, interval, false),
                 RuntimeException.class,
-                expectedMessagePattern);
+                expectedMessagePattern
+        );
+    }
+
+    @Test
+    void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
+        // arrange
+
+        final String ticker = "ticker";
+        final String botName = "botName";
+
+        FakeBot fakeBot = createFakeBotMock(botName);
+        Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
+
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
+
+        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
+        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
+        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final Interval interval = Interval.of(from, to);
+
+        // act
+
+        Map<String, List<SimulationResult>> tickerToSimulationResults =
+                simulator.simulate(simulationUnits, interval, false);
+
+        // assert
+
+        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+
+        Assertions.assertEquals(botName, simulationResult.getBotName());
+        Assertions.assertEquals(interval, simulationResult.getInterval());
+        AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
+        AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
+        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getFinalTotalBalance());
+        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getFinalBalance());
+        AssertUtils.assertEquals(initialBalance, simulationResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getAbsoluteProfit());
+        AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
+        AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
+
+        String expectedError = String.format(
+                "Simulation for bot '%1$s' with ticker '%2$s' failed with error: Not found instrument for ticker '%2$s'",
+                botName,
+                ticker
+        );
+        Assertions.assertEquals(expectedError, simulationResult.getError());
     }
 
     @Test
