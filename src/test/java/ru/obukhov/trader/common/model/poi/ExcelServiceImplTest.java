@@ -52,19 +52,50 @@ class ExcelServiceImplTest extends BaseMockedTest {
         this.excelService = new ExcelServiceImpl(excelFileService);
     }
 
+    // region saveSimulationResult tests
+
     @Test
-    void saveSimulationResult() {
-
-        SimulationResult result = createSimulationResult();
-
+    void saveSimulationResult_savesSingleResult() {
         final String ticker = "ticker";
+
+        SimulationResult result = createSimulationResult(ticker, "bot");
+
         excelService.saveSimulationResults(ticker, Collections.singletonList(result));
 
         String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
+        assertSheetData(ticker, workbook, result);
+    }
+
+    @Test
+    void saveSimulationResult_savesMultipleResults() {
+
+        final String ticker = "ticker";
+
+        SimulationResult result1 = createSimulationResult(ticker, "bot1");
+        SimulationResult result2 = createSimulationResult(ticker, "bot2");
+        SimulationResult result3 = createSimulationResult(ticker, "bot3");
+        List<SimulationResult> results = Arrays.asList(result1, result2, result3);
+        excelService.saveSimulationResults(ticker, results);
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
+
+        for (SimulationResult result : results) {
+            assertSheetData(ticker, workbook, result);
+        }
+    }
+
+    private void assertSheetData(String ticker, ExtendedWorkbook workbook, SimulationResult result) {
         ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
         int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
@@ -112,6 +143,48 @@ class ExcelServiceImplTest extends BaseMockedTest {
 
         assertChartCreated(sheet);
     }
+
+    @Test
+    void saveSimulationResult_skipsChart_whenCandlesAreNull() {
+
+        final String ticker = "ticker";
+
+        SimulationResult result = createSimulationResult(ticker, "bot");
+        result.setCandles(null);
+
+        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+        Assertions.assertNull(sheet.getDrawingPatriarch());
+    }
+
+    @Test
+    void saveSimulationResult_skipsChart_whenCandlesAreEmpty() {
+
+        final String ticker = "ticker";
+
+        SimulationResult result = createSimulationResult(ticker, "bot");
+        result.setCandles(Collections.emptyList());
+
+        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.verify(excelFileService)
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+
+        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+
+        Assertions.assertNull(sheet.getDrawingPatriarch());
+    }
+
+    // endregion
 
     @Test
     void saveCandles() {
@@ -173,11 +246,9 @@ class ExcelServiceImplTest extends BaseMockedTest {
         }
     }
 
-    private SimulationResult createSimulationResult() {
-        String ticker = "ticker";
-
+    private SimulationResult createSimulationResult(String ticker, String botName) {
         return SimulationResult.builder()
-                .botName("bot")
+                .botName(botName)
                 .interval(createInterval())
                 .initialBalance(BigDecimal.valueOf(700))
                 .finalTotalBalance(BigDecimal.valueOf(1000))

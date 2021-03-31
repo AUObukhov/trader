@@ -285,10 +285,12 @@ public class ExcelServiceImpl implements ExcelService {
             List<Candle> candles,
             List<SimulatedOperation> operations
     ) {
-        ExtendedChart chart = createChart(sheet);
-        ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
-        addCandlesAndPricesAndOperations(chartData, candles, operations);
-        chart.plot(chartData);
+        if (CollectionUtils.isNotEmpty(candles)) {
+            ExtendedChart chart = createChart(sheet);
+            ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+            addCandlesAndPricesAndOperations(chartData, candles, operations);
+            chart.plot(chartData);
+        }
     }
 
     private ExtendedChart createChart(ExtendedSheet sheet) {
