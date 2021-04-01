@@ -1,0 +1,24 @@
+{
+  "orders": [
+    {
+      "orderId": "order1",
+      "figi": "figi1",
+      "operation": "Buy",
+      "status": "Fill",
+      "requestedLots": 10,
+      "executedLots": 5,
+      "type": "Limit",
+      "price": 100
+    },
+    {
+      "orderId": "order2",
+      "figi": "figi2",
+      "operation": "Sell",
+      "status": "New",
+      "requestedLots": 1,
+      "executedLots": 0,
+      "type": "Market",
+      "price": 1000
+    }
+  ]
+}
