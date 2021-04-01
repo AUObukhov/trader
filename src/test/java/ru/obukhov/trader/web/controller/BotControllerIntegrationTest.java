@@ -45,7 +45,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
 
-        String request = ResourceUtils.getResourceAsString("test-data/simulateRequest.json");
+        String request = ResourceUtils.getResourceAsString("test-data/SimulateRequest.json");
 
         Map<String, List<SimulationResult>> simulationResultsMap = new HashMap<>();
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
@@ -124,7 +124,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         Mockito.when(simulator.simulate(Mockito.anyList(), Mockito.any(Interval.class), Mockito.eq(true)))
                 .thenReturn(simulationResultsMap);
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/simulateResponse.json");
+        String expectedResponse = ResourceUtils.getResourceAsString("test-data/SimulateResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate")
                 .content(request)
@@ -159,7 +159,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void setTickers_setsTickers() throws Exception {
-        String tickers = ResourceUtils.getResourceAsString("test-data/setTickersRequest.json");
+        String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers")
                 .content(tickers)

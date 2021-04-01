@@ -45,7 +45,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mockito.when(ordersService.getOrders()).thenReturn(Arrays.asList(order1, order2));
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/getOrdersResponse.json");
+        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetOrdersResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/orders/get")
                 .contentType(MediaType.APPLICATION_JSON))

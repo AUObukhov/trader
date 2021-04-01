@@ -48,7 +48,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mockito.when(portfolioService.getPositions()).thenReturn(Arrays.asList(position1, position2));
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/getPortfolioPositionsResponse.json");
+        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetPortfolioPositionsResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/positions")
                 .contentType(MediaType.APPLICATION_JSON))

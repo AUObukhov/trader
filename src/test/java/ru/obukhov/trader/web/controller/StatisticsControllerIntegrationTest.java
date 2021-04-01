@@ -76,8 +76,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(Arrays.asList(candle1, candle2, candle3));
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/getCandlesRequest1.json");
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/getCandlesResponse.json");
+        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -100,7 +100,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(Collections.emptyList());
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/getCandlesRequest1.json");
+        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -120,7 +120,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(Collections.emptyList());
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/getCandlesRequest2.json");
+        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest2.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -136,8 +136,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getInstruments() throws Exception {
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/getInstrumentsRequest.json");
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/getInstrumentsResponse.json");
+        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetInstrumentsRequest.json");
+        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetInstrumentsResponse.json");
 
         MarketInstrument instrument1 = new MarketInstrument()
                 .figi("figi1")
