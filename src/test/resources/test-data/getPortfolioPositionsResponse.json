@@ -1,0 +1,26 @@
+{
+  "positions": [
+    {
+      "ticker": "ticker1",
+      "balance": 10000,
+      "blocked": null,
+      "currency": "RUB",
+      "expectedYield": 1000,
+      "lotsCount": 5,
+      "averagePositionPrice": 2000,
+      "averagePositionPriceNoNkd": 2000,
+      "name": "name1"
+    },
+    {
+      "ticker": "ticker2",
+      "balance": 20000,
+      "blocked": null,
+      "currency": "USD",
+      "expectedYield": 2000,
+      "lotsCount": 5,
+      "averagePositionPrice": 4000,
+      "averagePositionPriceNoNkd": 4000,
+      "name": "name2"
+    }
+  ]
+}

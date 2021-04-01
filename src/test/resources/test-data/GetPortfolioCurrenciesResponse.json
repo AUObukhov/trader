@@ -1,0 +1,14 @@
+{
+  "currencies": [
+    {
+      "currency": "RUB",
+      "balance": 10000,
+      "blocked": 0
+    },
+    {
+      "currency": "EUR",
+      "balance": 1000,
+      "blocked": 100
+    }
+  ]
+}
