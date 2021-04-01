@@ -1,0 +1,8 @@
+{
+  "ticker": "ticker",
+  "tickerType": "stock",
+  "from": "2021-03-25T10:00:00+03:00",
+  "to": "2021-03-25T19:00:00+03:00",
+  "candleInterval": "1min",
+  "saveToFile": true
+}

@@ -1,0 +1,46 @@
+{
+  "candles": [
+    {
+      "openPrice": 12000,
+      "closePrice": 8000,
+      "highestPrice": 15000,
+      "lowestPrice": 6000,
+      "time": "2021-03-25T10:00:00+03:00",
+      "interval": "1min",
+      "averagePrice": 10000,
+      "extremum": "MAX",
+      "supportValue": 9000,
+      "resistanceValue": 11000,
+      "localMinimum": false,
+      "localMaximum": true
+    },
+    {
+      "openPrice": 1200,
+      "closePrice": 800,
+      "highestPrice": 1500,
+      "lowestPrice": 600,
+      "time": "2021-03-25T10:01:00+03:00",
+      "interval": "1min",
+      "averagePrice": 1000,
+      "extremum": "NONE",
+      "supportValue": 900,
+      "resistanceValue": 1100,
+      "localMinimum": false,
+      "localMaximum": false
+    },
+    {
+      "openPrice": 120,
+      "closePrice": 80,
+      "highestPrice": 150,
+      "lowestPrice": 60,
+      "time": "2021-03-25T10:02:00+03:00",
+      "interval": "1min",
+      "averagePrice": 100,
+      "extremum": "MIN",
+      "supportValue": 90,
+      "resistanceValue": 110,
+      "localMinimum": true,
+      "localMaximum": false
+    }
+  ]
+}
