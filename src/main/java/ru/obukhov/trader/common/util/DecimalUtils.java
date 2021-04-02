@@ -137,6 +137,20 @@ public class DecimalUtils {
         return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
     }
 
+    /**
+     * @return BigDecimal with scale zero. If given {@code number} is null, then return null
+     */
+    public static BigDecimal setDefaultScale(Long number) {
+        if (number == null) {
+            return null;
+        }
+
+        BigDecimal bigDecimal = BigDecimal.valueOf(number);
+
+        int scale = Math.min(Math.max(bigDecimal.scale(), 0), DEFAULT_SCALE);
+        return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
+    }
+
     // endregion
 
     // region numbersEqual overloads

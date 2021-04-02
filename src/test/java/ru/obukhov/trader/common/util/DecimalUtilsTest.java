@@ -199,6 +199,27 @@ class DecimalUtilsTest {
 
     // endregion
 
+    // region setDefaultScale with long tests
+
+    @Test
+    void setDefaultScale_withLong_returnsNull_whenNumberIsNull() {
+        Long number = null;
+
+        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
+    }
+
+    @Test
+    void setDefaultScale_withLong_notChangesScale() {
+        Long number = 10L;
+
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+
+        Assertions.assertEquals(0, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
+    }
+
+    // endregion
+
     // region numbersEqual tests
 
     @Test
