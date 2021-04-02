@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
-class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
+class StatisticsControllerWebTest extends ControllerIntegrationTest {
 
     @MockBean
     private StatisticsService statisticsService;

@@ -16,7 +16,7 @@ import ru.tinkoff.invest.openapi.model.rest.OrderType;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
+class OrdersControllerWebTest extends ControllerIntegrationTest {
 
     @MockBean
     private OrdersService ordersService;

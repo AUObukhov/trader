@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class BotControllerIntegrationTest extends ControllerIntegrationTest {
+class BotControllerWebTest extends ControllerIntegrationTest {
 
     @Captor
     private ArgumentCaptor<List<String>> stringListArgumentCaptor;
