@@ -18,6 +18,8 @@ public class DecimalUtils {
         return minuend.subtract(BigDecimal.valueOf(subtrahend));
     }
 
+    // region multiply overloads
+
     /**
      * @return multiplier * multiplicand
      */
@@ -31,6 +33,10 @@ public class DecimalUtils {
     public static BigDecimal multiply(BigDecimal multiplier, int multiplicand) {
         return multiplier.multiply(BigDecimal.valueOf(multiplicand));
     }
+
+    // endregion
+
+    // region divide overloads
 
     /**
      * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#DEFAULT_SCALE}
@@ -63,6 +69,8 @@ public class DecimalUtils {
     public static BigDecimal divide(BigDecimal dividend, BigDecimal divisor) {
         return dividend.divide(divisor, DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
+
+    // endregion
 
     /**
      * @return integer quotient of division of {@code dividend} by {@code divisor}
@@ -99,6 +107,8 @@ public class DecimalUtils {
         return divide(number1, number2).subtract(BigDecimal.ONE);
     }
 
+    // region setDefaultScale overloads
+
     /**
      * @return BigDecimal with scale equal to minimum non negative value between scale of given {@code number}, 0 and
      * {@link DecimalUtils#DEFAULT_SCALE}. If given {@code number} is null, then return null
@@ -127,6 +137,10 @@ public class DecimalUtils {
         return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
     }
 
+    // endregion
+
+    // region numbersEqual overloads
+
     /**
      * @return true if {@code value1} equals {@code value2}, or else false
      */
@@ -147,6 +161,10 @@ public class DecimalUtils {
     public static boolean numbersEqual(BigDecimal value1, double value2) {
         return numbersEqual(value1, BigDecimal.valueOf(value2));
     }
+
+    // endregion
+
+    // region isGreater overloads
 
     /**
      * @return true if {@code value1} is greater than {@code value2}, or else false
@@ -169,6 +187,10 @@ public class DecimalUtils {
         return value1.compareTo(value2) > 0;
     }
 
+    // endregion
+
+    // region isLower overloads
+
     /**
      * @return true if {@code value1} is lower than {@code value2}, or else false
      */
@@ -189,5 +211,7 @@ public class DecimalUtils {
     public static boolean isLower(BigDecimal value1, BigDecimal value2) {
         return value1.compareTo(value2) < 0;
     }
+
+    // endregion
 
 }
