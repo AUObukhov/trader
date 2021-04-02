@@ -44,19 +44,15 @@ public class TestDataHelper {
             double highestPrice,
             double lowestPrice
     ) {
-
-        ru.tinkoff.invest.openapi.model.rest.Candle candle = new ru.tinkoff.invest.openapi.model.rest.Candle();
-
-        candle.setFigi(StringUtils.EMPTY);
-        candle.setInterval(interval);
-        candle.setO(BigDecimal.valueOf(openPrice));
-        candle.setC(BigDecimal.valueOf(closePrice));
-        candle.setH(BigDecimal.valueOf(highestPrice));
-        candle.setL(BigDecimal.valueOf(lowestPrice));
-        candle.setV(10);
-        candle.setTime(OffsetDateTime.now());
-
-        return candle;
+        return new ru.tinkoff.invest.openapi.model.rest.Candle()
+                .figi(StringUtils.EMPTY)
+                .interval(interval)
+                .o(DecimalUtils.setDefaultScale(openPrice))
+                .c(DecimalUtils.setDefaultScale(closePrice))
+                .h(DecimalUtils.setDefaultScale(highestPrice))
+                .l(DecimalUtils.setDefaultScale(lowestPrice))
+                .v(10)
+                .time(OffsetDateTime.now());
     }
 
     public static Candle createCandle(
@@ -185,22 +181,17 @@ public class TestDataHelper {
             int operationQuantity,
             BigDecimal commissionValue
     ) {
-        Operation operation = new Operation();
-        operation.setId(StringUtils.EMPTY);
-        operation.setStatus(OperationStatus.DONE);
-
-        MoneyAmount commission = new MoneyAmount();
-        commission.setValue(commissionValue);
-        operation.setCommission(commission);
-
-        operation.setCurrency(Currency.RUB);
-        operation.setPayment(BigDecimal.ZERO);
-        operation.setPrice(operationPrice);
-        operation.setQuantity(operationQuantity);
-        operation.setQuantityExecuted(operationQuantity);
-        operation.setDate(operationDateTime);
-        operation.setOperationType(operationType);
-        return operation;
+        return new Operation()
+                .id(StringUtils.EMPTY)
+                .status(OperationStatus.DONE)
+                .commission(new MoneyAmount().value(commissionValue))
+                .currency(Currency.RUB)
+                .payment(BigDecimal.ZERO)
+                .price(operationPrice)
+                .quantity(operationQuantity)
+                .quantityExecuted(operationQuantity)
+                .date(operationDateTime)
+                .operationType(operationType);
     }
 
     public static void mockTinkoffOperations(
