@@ -213,65 +213,6 @@ public class TestDataHelper {
                 .thenReturn(Arrays.asList(operations));
     }
 
-    public static ru.tinkoff.invest.openapi.model.rest.PortfolioPosition createTinkoffPortfolioPosition(
-            String figi,
-            String ticker,
-            String isin,
-            InstrumentType instrumentType,
-            BigDecimal balance,
-            BigDecimal blocked,
-            BigDecimal expectedYield,
-            Integer lots,
-            BigDecimal averagePositionPriceValue,
-            BigDecimal averagePositionPriceValueNoNkd,
-            String name
-    ) {
-        return createTinkoffPortfolioPosition(
-                figi,
-                ticker,
-                isin,
-                instrumentType,
-                balance,
-                blocked,
-                new MoneyAmount().value(expectedYield),
-                lots,
-                new MoneyAmount().value(averagePositionPriceValue),
-                new MoneyAmount().value(averagePositionPriceValueNoNkd),
-                name
-        );
-    }
-
-    public static ru.tinkoff.invest.openapi.model.rest.PortfolioPosition createTinkoffPortfolioPosition(
-            String figi,
-            String ticker,
-            String isin,
-            InstrumentType instrumentType,
-            BigDecimal balance,
-            BigDecimal blocked,
-            MoneyAmount expectedYield,
-            Integer lots,
-            MoneyAmount averagePositionPriceValue,
-            MoneyAmount averagePositionPriceValueNoNkd,
-            String name
-    ) {
-        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition portfolioPosition =
-                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition();
-
-        portfolioPosition.setFigi(figi);
-        portfolioPosition.setTicker(ticker);
-        portfolioPosition.setIsin(isin);
-        portfolioPosition.setInstrumentType(instrumentType);
-        portfolioPosition.setBalance(balance);
-        portfolioPosition.setBlocked(blocked);
-        portfolioPosition.setExpectedYield(expectedYield);
-        portfolioPosition.setLots(lots);
-        portfolioPosition.setAveragePositionPrice(averagePositionPriceValue);
-        portfolioPosition.setAveragePositionPriceNoNkd(averagePositionPriceValueNoNkd);
-        portfolioPosition.setName(name);
-
-        return portfolioPosition;
-    }
-
     public static CurrencyPosition createCurrencyPosition(Currency currency, long balance) {
         return new CurrencyPosition()
                 .currency(currency)
@@ -283,6 +224,12 @@ public class TestDataHelper {
                 .currency(currency)
                 .balance(DecimalUtils.setDefaultScale(balance))
                 .blocked(DecimalUtils.setDefaultScale(blocked));
+    }
+
+    public static MoneyAmount createMoneyAmount(Currency currency, long value) {
+        return new MoneyAmount()
+                .currency(currency)
+                .value(BigDecimal.valueOf(value));
     }
 
 }
