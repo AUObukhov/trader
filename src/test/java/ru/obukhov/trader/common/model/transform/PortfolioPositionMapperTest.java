@@ -89,10 +89,10 @@ class PortfolioPositionMapperTest {
                 InstrumentType.STOCK,
                 balance1,
                 blocked1,
-                TestDataHelper.createMoneyAmount(currency1, expectedYield1),
+                new MoneyAmount().currency(currency1).value(expectedYield1),
                 lots1,
-                TestDataHelper.createMoneyAmount(currency1, averagePositionPrice1),
-                TestDataHelper.createMoneyAmount(currency1, averagePositionPriceNoNkd1),
+                new MoneyAmount().currency(currency1).value(averagePositionPrice1),
+                new MoneyAmount().currency(currency1).value(averagePositionPriceNoNkd1),
                 name1
         );
 
@@ -112,10 +112,10 @@ class PortfolioPositionMapperTest {
                 InstrumentType.BOND,
                 balance2,
                 blocked2,
-                TestDataHelper.createMoneyAmount(currency2, expectedYield2),
+                new MoneyAmount().currency(currency2).value(expectedYield2),
                 lots2,
-                TestDataHelper.createMoneyAmount(currency2, averagePositionPrice2),
-                TestDataHelper.createMoneyAmount(currency2, averagePositionPriceNoNkd2),
+                new MoneyAmount().currency(currency2).value(averagePositionPrice2),
+                new MoneyAmount().currency(currency2).value(averagePositionPriceNoNkd2),
                 name2
         );
 

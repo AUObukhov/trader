@@ -233,10 +233,10 @@ public class TestDataHelper {
                 instrumentType,
                 balance,
                 blocked,
-                createMoneyAmount(expectedYield),
+                new MoneyAmount().value(expectedYield),
                 lots,
-                createMoneyAmount(averagePositionPriceValue),
-                createMoneyAmount(averagePositionPriceValueNoNkd),
+                new MoneyAmount().value(averagePositionPriceValue),
+                new MoneyAmount().value(averagePositionPriceValueNoNkd),
                 name
         );
     }
@@ -270,17 +270,6 @@ public class TestDataHelper {
         portfolioPosition.setName(name);
 
         return portfolioPosition;
-    }
-
-    public static MoneyAmount createMoneyAmount(BigDecimal value) {
-        return createMoneyAmount(null, value);
-    }
-
-    public static MoneyAmount createMoneyAmount(Currency currency, BigDecimal value) {
-        MoneyAmount moneyAmount = new MoneyAmount();
-        moneyAmount.setCurrency(currency);
-        moneyAmount.setValue(value);
-        return moneyAmount;
     }
 
     public static CurrencyPosition createCurrencyPosition(Currency currency, int balance) {
