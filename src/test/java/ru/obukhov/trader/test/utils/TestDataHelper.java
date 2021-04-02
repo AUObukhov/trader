@@ -272,16 +272,17 @@ public class TestDataHelper {
         return portfolioPosition;
     }
 
-    public static CurrencyPosition createCurrencyPosition(Currency currency, int balance) {
-        return createCurrencyPosition(currency, balance, 0);
+    public static CurrencyPosition createCurrencyPosition(Currency currency, long balance) {
+        return new CurrencyPosition()
+                .currency(currency)
+                .balance(DecimalUtils.setDefaultScale(balance));
     }
 
-    public static CurrencyPosition createCurrencyPosition(Currency currency, int balance, int blocked) {
-        CurrencyPosition currencyPosition = new CurrencyPosition();
-        currencyPosition.setCurrency(currency);
-        currencyPosition.setBalance(BigDecimal.valueOf(balance));
-        currencyPosition.setBlocked(BigDecimal.valueOf(blocked));
-        return currencyPosition;
+    public static CurrencyPosition createCurrencyPosition(Currency currency, long balance, long blocked) {
+        return new CurrencyPosition()
+                .currency(currency)
+                .balance(DecimalUtils.setDefaultScale(balance))
+                .blocked(DecimalUtils.setDefaultScale(blocked));
     }
 
 }

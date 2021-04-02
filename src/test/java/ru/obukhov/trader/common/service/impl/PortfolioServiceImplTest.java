@@ -82,8 +82,8 @@ class PortfolioServiceImplTest extends BaseMockedTest {
     @Test
     void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
 
-        int rubBalance = 1000;
-        int rubBlocked = 100;
+        long rubBalance = 1000;
+        long rubBlocked = 100;
 
         List<CurrencyPosition> currencies = ImmutableList.of(
                 TestDataHelper.createCurrencyPosition(Currency.USD, 100),
