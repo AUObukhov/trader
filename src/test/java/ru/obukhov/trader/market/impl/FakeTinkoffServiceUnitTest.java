@@ -505,9 +505,9 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         Candle candle = TestDataHelper.createCandleWithOpenPrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
-        MarketOrderRequest orderRequest = new MarketOrderRequest();
-        orderRequest.setLots(lots);
-        orderRequest.setOperation(operationType);
+        MarketOrderRequest orderRequest = new MarketOrderRequest()
+                .lots(lots)
+                .operation(operationType);
         service.placeMarketOrder(ticker, orderRequest);
     }
 
