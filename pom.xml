@@ -23,6 +23,7 @@
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <mockito.version>3.8.0</mockito.version>
         <spring-boot-maven-plugin.version>2.4.4</spring-boot-maven-plugin.version>
+        <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
     </properties>
 
     <repositories>
@@ -145,6 +146,18 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
