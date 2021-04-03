@@ -2,7 +2,6 @@ package ru.obukhov.trader.bot.impl;
 
 import org.apache.commons.compress.utils.Sets;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -51,11 +50,6 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     private FakeBotFactory fakeBotFactory;
     @Mock
     private FakeTinkoffService fakeTinkoffService;
-
-    @BeforeEach
-    void setUp() {
-
-    }
 
     // region constructor tests
 
