@@ -5,6 +5,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -13,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 class CollectionsUtilsUnitTest {
 
@@ -181,84 +185,27 @@ class CollectionsUtilsUnitTest {
                 "searchedList must not be null");
     }
 
-    @Test
-    void containsList_returnTrue_whenSearchedListIsEmpty() {
-        List<String> list = Arrays.asList("0", "1");
-        List<String> searchedList = Collections.emptyList();
-
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
+    static Stream<Arguments> getData_forContainsList() {
+        return Stream.of(
+                Arguments.of(Collections.emptyList(), Collections.emptyList(), true),
+                Arguments.of(Arrays.asList("0", "1"), Collections.emptyList(), true),
+                Arguments.of(Arrays.asList("0", "1"), Arrays.asList("0", "1"), true),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("0", "1"), true),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("1", "2"), true),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "3"), true),
+                Arguments.of(Collections.emptyList(), Collections.singletonList("0"), false),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("5", "6"), false),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "3", "4"), false),
+                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "1"), false)
+        );
     }
 
-    @Test
-    void containsList_returnTrue_whenBothListsAreEmpty() {
-        List<String> list = Collections.emptyList();
-        List<String> searchedList = Collections.emptyList();
+    @ParameterizedTest
+    @MethodSource("getData_forContainsList")
+    void containsList(List<String> list, List<String> searchedList, boolean expectedResult) {
+        boolean result = CollectionsUtils.containsList(list, searchedList);
 
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnFalse_whenListIsEmpty() {
-        List<String> list = Collections.emptyList();
-        List<String> searchedList = Collections.singletonList("0");
-
-        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnTrue_whenListsAreEqual() {
-        List<String> list = Arrays.asList("0", "1");
-        List<String> searchedList = Arrays.asList("0", "1");
-
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnTrue_whenListContainsSearchedListFromTheBeginning() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("0", "1");
-
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnTrue_whenListContainsSearchedListInTheMiddle() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("1", "2");
-
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnTrue_whenListContainsSearchedListInTheEnd() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("2", "3");
-
-        Assertions.assertTrue(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnFalse_whenListDoesNotContainsSearchedList() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("5", "6");
-
-        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnFalse_whenListContainsOnlyPartOfSearchedList() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("2", "3", "4");
-
-        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
-    }
-
-    @Test
-    void containsList_returnFalse_whenListContainsSearchedListButInAnotherOrder() {
-        List<String> list = Arrays.asList("0", "1", "2", "3");
-        List<String> searchedList = Arrays.asList("2", "1");
-
-        Assertions.assertFalse(CollectionsUtils.containsList(list, searchedList));
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion
