@@ -56,9 +56,11 @@ public class FakeTinkoffService implements TinkoffService {
 
     private FakeContext fakeContext;
 
-    public FakeTinkoffService(TradingProperties tradingProperties,
-                              MarketService marketService,
-                              RealTinkoffService realTinkoffService) {
+    public FakeTinkoffService(
+            TradingProperties tradingProperties,
+            MarketService marketService,
+            RealTinkoffService realTinkoffService
+    ) {
 
         this.tradingProperties = tradingProperties;
         this.marketService = marketService;
@@ -214,11 +216,13 @@ public class FakeTinkoffService implements TinkoffService {
         return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getOpenPrice();
     }
 
-    private void buyPosition(String ticker,
-                             BigDecimal currentPrice,
-                             int lotsCount,
-                             BigDecimal totalPrice,
-                             BigDecimal commissionAmount) {
+    private void buyPosition(
+            String ticker,
+            BigDecimal currentPrice,
+            int lotsCount,
+            BigDecimal totalPrice,
+            BigDecimal commissionAmount
+    ) {
 
         MarketInstrument instrument = searchMarketInstrument(ticker);
 
@@ -235,11 +239,13 @@ public class FakeTinkoffService implements TinkoffService {
         fakeContext.addPosition(ticker, position);
     }
 
-    private PortfolioPosition createNewPosition(String ticker,
-                                                BigDecimal balance,
-                                                Currency currency,
-                                                BigDecimal averagePositionPrice,
-                                                int lotsCount) {
+    private PortfolioPosition createNewPosition(
+            String ticker,
+            BigDecimal balance,
+            Currency currency,
+            BigDecimal averagePositionPrice,
+            int lotsCount
+    ) {
         return new PortfolioPosition(
                 ticker,
                 balance,
@@ -252,19 +258,23 @@ public class FakeTinkoffService implements TinkoffService {
                 StringUtils.EMPTY);
     }
 
-    private PortfolioPosition addValuesToPosition(PortfolioPosition existingPosition,
-                                                  int lotsCount,
-                                                  BigDecimal totalPrice) {
+    private PortfolioPosition addValuesToPosition(
+            PortfolioPosition existingPosition,
+            int lotsCount,
+            BigDecimal totalPrice
+    ) {
         BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
         int newLotsCount = existingPosition.getLotsCount() + lotsCount;
         BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
         return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
     }
 
-    private PortfolioPosition clonePositionWithNewValues(PortfolioPosition position,
-                                                         BigDecimal balance,
-                                                         int lotsCount,
-                                                         BigDecimal averagePositionPrice) {
+    private PortfolioPosition clonePositionWithNewValues(
+            PortfolioPosition position,
+            BigDecimal balance,
+            int lotsCount,
+            BigDecimal averagePositionPrice
+    ) {
         return new PortfolioPosition(
                 position.getTicker(),
                 balance,
@@ -274,7 +284,8 @@ public class FakeTinkoffService implements TinkoffService {
                 lotsCount,
                 averagePositionPrice,
                 position.getAveragePositionPriceNoNkd(),
-                position.getName());
+                position.getName()
+        );
     }
 
     private void updateBalance(Currency currency, BigDecimal increment) {
@@ -315,7 +326,8 @@ public class FakeTinkoffService implements TinkoffService {
                 lotsCount,
                 position.getAveragePositionPrice(),
                 position.getAveragePositionPriceNoNkd(),
-                position.getName());
+                position.getName()
+        );
     }
 
     private void addOperation(String ticker,
@@ -335,13 +347,12 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private PlacedMarketOrder createOrder(MarketOrderRequest orderRequest, MoneyAmount commission) {
-        PlacedMarketOrder order = new PlacedMarketOrder();
-        order.setOperation(orderRequest.getOperation());
-        order.setStatus(OrderStatus.NEW);
-        order.setExecutedLots(orderRequest.getLots());
-        order.setRequestedLots(orderRequest.getLots());
-        order.setCommission(moneyAmountMapper.map(commission));
-        return order;
+        return new PlacedMarketOrder()
+                .operation(orderRequest.getOperation())
+                .status(OrderStatus.NEW)
+                .executedLots(orderRequest.getLots())
+                .requestedLots(orderRequest.getLots())
+                .commission(moneyAmountMapper.map(commission));
     }
 
     @Override
