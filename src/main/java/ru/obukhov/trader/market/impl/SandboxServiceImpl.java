@@ -29,9 +29,10 @@ public class SandboxServiceImpl implements SandboxService {
             @Nullable String brokerAccountId
     ) {
 
-        SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest();
-        setCurrencyBalanceRequest.setCurrency(currency);
-        setCurrencyBalanceRequest.setBalance(balance);
+        SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest()
+                .currency(currency)
+                .balance(balance);
+
         sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId).join();
 
     }
@@ -43,9 +44,9 @@ public class SandboxServiceImpl implements SandboxService {
             @Nullable String brokerAccountId
     ) {
 
-        SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest();
-        setPositionBalanceRequest.setFigi(marketService.getFigi(ticker));
-        setPositionBalanceRequest.setBalance(balance);
+        SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
+                .figi(marketService.getFigi(ticker))
+                .balance(balance);
 
         sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId).join();
 
