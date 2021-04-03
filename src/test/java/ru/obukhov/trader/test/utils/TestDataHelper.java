@@ -117,13 +117,13 @@ public class TestDataHelper {
     }
 
     public static MarketInstrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {
-        MarketInstrument instrument = new MarketInstrument();
-        instrument.setFigi(StringUtils.EMPTY);
-        instrument.setTicker(ticker);
-        instrument.setLot(0);
-        instrument.setCurrency(Currency.RUB);
-        instrument.setName(StringUtils.EMPTY);
-        instrument.setType(InstrumentType.STOCK);
+        MarketInstrument instrument = new MarketInstrument()
+                .figi(StringUtils.EMPTY)
+                .ticker(ticker)
+                .lot(0)
+                .currency(Currency.RUB)
+                .name(StringUtils.EMPTY)
+                .type(InstrumentType.STOCK);
 
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
