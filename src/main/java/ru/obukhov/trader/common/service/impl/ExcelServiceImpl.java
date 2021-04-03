@@ -199,7 +199,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putError(ExtendedSheet sheet, String error) {
-        if (!StringUtils.isEmpty(error)) {
+        if (StringUtils.hasLength(error)) {
             ExtendedRow row = sheet.addRow();
             row.createCells("Текст ошибки", error);
         }
