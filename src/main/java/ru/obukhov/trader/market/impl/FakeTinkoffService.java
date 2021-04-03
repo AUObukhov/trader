@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
-import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
@@ -53,7 +52,6 @@ public class FakeTinkoffService implements TinkoffService {
     private final RealTinkoffService realTinkoffService;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
-    private final OperationTypeMapper operationTypeMapper = Mappers.getMapper(OperationTypeMapper.class);
     private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
 
     private FakeContext fakeContext;
