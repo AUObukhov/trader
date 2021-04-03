@@ -200,7 +200,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     /**
-     * @return list of available instruments of given {@code type}
+     * @return list of available instruments of given {@code type} or all instruments if {@code type} is null
      * @throws IllegalArgumentException when {@code type} is not
      *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
      */
