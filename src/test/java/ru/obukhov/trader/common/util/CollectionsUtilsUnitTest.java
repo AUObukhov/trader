@@ -96,7 +96,8 @@ class CollectionsUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
                 IllegalArgumentException.class,
-                "index can't be negative");
+                "index can't be negative"
+        );
     }
 
     @Test
@@ -107,7 +108,8 @@ class CollectionsUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
                 IllegalArgumentException.class,
-                "index can't be greater than size of list");
+                "index can't be greater than size of list"
+        );
     }
 
     @Test
@@ -118,7 +120,8 @@ class CollectionsUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
                 IllegalArgumentException.class,
-                "list can't be empty");
+                "list can't be empty"
+        );
     }
 
     @Test
@@ -170,9 +173,11 @@ class CollectionsUtilsUnitTest {
         List<String> list = null;
         List<String> searchedList = Arrays.asList("0", "1");
 
-        AssertUtils.assertThrowsWithMessage(() -> CollectionsUtils.containsList(list, searchedList),
+        AssertUtils.assertThrowsWithMessage(
+                () -> CollectionsUtils.containsList(list, searchedList),
                 IllegalArgumentException.class,
-                "list must not be null");
+                "list must not be null"
+        );
     }
 
     @Test
@@ -180,9 +185,11 @@ class CollectionsUtilsUnitTest {
         List<String> list = Arrays.asList("0", "1");
         List<String> searchedList = null;
 
-        AssertUtils.assertThrowsWithMessage(() -> CollectionsUtils.containsList(list, searchedList),
+        AssertUtils.assertThrowsWithMessage(
+                () -> CollectionsUtils.containsList(list, searchedList),
                 IllegalArgumentException.class,
-                "searchedList must not be null");
+                "searchedList must not be null"
+        );
     }
 
     static Stream<Arguments> getData_forContainsList() {
