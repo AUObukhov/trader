@@ -2,6 +2,8 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -65,30 +67,13 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
-    // region getIntegerQuotient
+    @ParameterizedTest
+    @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
+    void getIntegerQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
+        int result = DecimalUtils.getIntegerQuotient(dividend, divisor);
 
-    @Test
-    void getIntegerQuotient1() {
-        int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(7.8), BigDecimal.valueOf(2.6));
-
-        Assertions.assertEquals(3, result);
+        Assertions.assertEquals(expectedQuotient, result);
     }
-
-    @Test
-    void getIntegerQuotient2() {
-        int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(7.9), BigDecimal.valueOf(2.6));
-
-        Assertions.assertEquals(3, result);
-    }
-
-    @Test
-    void getIntegerQuotient3() {
-        int result = DecimalUtils.getIntegerQuotient(BigDecimal.valueOf(10.3), BigDecimal.valueOf(2.6));
-
-        Assertions.assertEquals(3, result);
-    }
-
-    // endregion
 
     @Test
     void getFraction() {
