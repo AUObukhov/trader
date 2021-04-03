@@ -22,59 +22,44 @@ class PortfolioPositionMapperUnitTest {
 
     @Test
     void mapsSinglePosition() {
-        final String ticker = "ticker";
-        final BigDecimal balance = BigDecimal.valueOf(1000);
-        final BigDecimal blocked = BigDecimal.valueOf(500);
         final Currency currency = Currency.RUB;
-        final BigDecimal expectedYieldValue = BigDecimal.valueOf(200);
-        final int lots = 10;
-        final BigDecimal averagePositionPriceValue = BigDecimal.valueOf(100);
-        final BigDecimal averagePositionPriceNoNkdValue = BigDecimal.valueOf(50);
-        final String name = "name";
-        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source =
-                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition();
-        source.setFigi("figi");
-        source.setTicker(ticker);
-        source.setIsin("isin");
-        source.setInstrumentType(InstrumentType.STOCK);
-        source.setBalance(balance);
-        source.setBlocked(blocked);
 
-        MoneyAmount expectedYield = new MoneyAmount();
-        expectedYield.setCurrency(currency);
-        expectedYield.setValue(expectedYieldValue);
+        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source =
+                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
+                        .figi("figi")
+                        .ticker("ticker")
+                        .isin("isin")
+                        .instrumentType(InstrumentType.STOCK)
+                        .balance(BigDecimal.valueOf(1000))
+                        .blocked(BigDecimal.valueOf(500));
+
+        MoneyAmount expectedYield = TestDataHelper.createMoneyAmount(currency, 200);
         source.setExpectedYield(expectedYield);
 
-        source.setLots(lots);
+        source.setLots(10);
 
-        MoneyAmount averagePositionPrice = new MoneyAmount();
-        averagePositionPrice.setCurrency(currency);
-        averagePositionPrice.setValue(averagePositionPriceValue);
+        MoneyAmount averagePositionPrice = TestDataHelper.createMoneyAmount(currency, 100);
         source.setAveragePositionPrice(averagePositionPrice);
 
-        MoneyAmount averagePositionPriceNoNkd = new MoneyAmount();
-        averagePositionPriceNoNkd.setCurrency(currency);
-        averagePositionPriceNoNkd.setValue(averagePositionPriceNoNkdValue);
+        MoneyAmount averagePositionPriceNoNkd = TestDataHelper.createMoneyAmount(currency, 50);
         source.setAveragePositionPriceNoNkd(averagePositionPriceNoNkd);
 
-        source.setName(name);
+        source.setName("name");
 
         PortfolioPosition target = mapper.map(source);
 
-        Assertions.assertEquals(ticker, target.getTicker());
-        Assertions.assertEquals(balance, target.getBalance());
-        Assertions.assertEquals(blocked, target.getBlocked());
-        AssertUtils.assertEquals(expectedYieldValue, target.getExpectedYield());
-        Assertions.assertEquals(lots, target.getLotsCount());
-        AssertUtils.assertEquals(averagePositionPriceValue, target.getAveragePositionPrice());
-        AssertUtils.assertEquals(averagePositionPriceNoNkdValue, target.getAveragePositionPriceNoNkd());
-        Assertions.assertEquals(name, target.getName());
+        Assertions.assertEquals(source.getTicker(), target.getTicker());
+        Assertions.assertEquals(source.getBalance(), target.getBalance());
+        Assertions.assertEquals(source.getBlocked(), target.getBlocked());
+        AssertUtils.assertEquals(expectedYield.getValue(), target.getExpectedYield());
+        Assertions.assertEquals(source.getLots(), target.getLotsCount());
+        AssertUtils.assertEquals(averagePositionPrice.getValue(), target.getAveragePositionPrice());
+        AssertUtils.assertEquals(averagePositionPriceNoNkd.getValue(), target.getAveragePositionPriceNoNkd());
+        Assertions.assertEquals(source.getName(), target.getName());
     }
 
     @Test
     void mapCollection() {
-        final BigDecimal balance1 = BigDecimal.valueOf(1000);
-        final BigDecimal blocked1 = BigDecimal.valueOf(500);
         final Currency currency1 = Currency.RUB;
         final MoneyAmount expectedYield1 = TestDataHelper.createMoneyAmount(currency1, 200);
         final MoneyAmount averagePositionPrice1 = TestDataHelper.createMoneyAmount(currency1, 100);
@@ -86,16 +71,14 @@ class PortfolioPositionMapperUnitTest {
                         .ticker("ticker1")
                         .isin("isin1")
                         .instrumentType(InstrumentType.STOCK)
-                        .balance(balance1)
-                        .blocked(blocked1)
+                        .balance(BigDecimal.valueOf(1000))
+                        .blocked(BigDecimal.valueOf(500))
                         .expectedYield(expectedYield1)
                         .lots(10)
                         .averagePositionPrice(averagePositionPrice1)
                         .averagePositionPriceNoNkd(averagePositionPriceNoNkd1)
                         .name("name1");
 
-        final BigDecimal balance2 = BigDecimal.valueOf(2000);
-        final BigDecimal blocked2 = BigDecimal.valueOf(1000);
         final Currency currency2 = Currency.USD;
         final MoneyAmount expectedYield2 = TestDataHelper.createMoneyAmount(currency2, 400);
         final MoneyAmount averagePositionPrice2 = TestDataHelper.createMoneyAmount(currency2, 200);
@@ -107,8 +90,8 @@ class PortfolioPositionMapperUnitTest {
                         .ticker("ticker2")
                         .isin("isin2")
                         .instrumentType(InstrumentType.BOND)
-                        .balance(balance2)
-                        .blocked(blocked2)
+                        .balance(BigDecimal.valueOf(2000))
+                        .blocked(BigDecimal.valueOf(1000))
                         .expectedYield(expectedYield2)
                         .lots(5)
                         .averagePositionPrice(averagePositionPrice2)
@@ -122,8 +105,8 @@ class PortfolioPositionMapperUnitTest {
         Iterator<PortfolioPosition> iterator = target.iterator();
         PortfolioPosition target1 = iterator.next();
         Assertions.assertEquals(source1.getTicker(), target1.getTicker());
-        Assertions.assertEquals(balance1, target1.getBalance());
-        Assertions.assertEquals(blocked1, target1.getBlocked());
+        Assertions.assertEquals(source1.getBalance(), target1.getBalance());
+        Assertions.assertEquals(source1.getBlocked(), target1.getBlocked());
         Assertions.assertEquals(expectedYield1.getValue(), target1.getExpectedYield());
         Assertions.assertEquals(source1.getLots(), target1.getLotsCount());
         Assertions.assertEquals(averagePositionPrice1.getValue(), target1.getAveragePositionPrice());
@@ -132,8 +115,8 @@ class PortfolioPositionMapperUnitTest {
 
         PortfolioPosition target2 = iterator.next();
         Assertions.assertEquals(source2.getTicker(), target2.getTicker());
-        Assertions.assertEquals(balance2, target2.getBalance());
-        Assertions.assertEquals(blocked2, target2.getBlocked());
+        Assertions.assertEquals(source2.getBalance(), target2.getBalance());
+        Assertions.assertEquals(source2.getBlocked(), target2.getBlocked());
         Assertions.assertEquals(expectedYield2.getValue(), target2.getExpectedYield());
         Assertions.assertEquals(source2.getLots(), target2.getLotsCount());
         Assertions.assertEquals(averagePositionPrice2.getValue(), target2.getAveragePositionPrice());
