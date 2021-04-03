@@ -201,6 +201,8 @@ public class MarketServiceImpl implements MarketService {
 
     /**
      * @return list of available instruments of given {@code type}
+     * @throws IllegalArgumentException when {@code type} is not
+     *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
      */
     @Override
     public List<MarketInstrument> getInstruments(TickerType type) {
