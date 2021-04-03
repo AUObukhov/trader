@@ -2,6 +2,9 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
@@ -18,6 +21,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
+import java.util.stream.Stream;
 
 class DateUtilsUnitTest {
 
@@ -178,28 +182,29 @@ class DateUtilsUnitTest {
 
     // region getNextWorkDay tests
 
-    @Test
-    void getNextWorkDay_returnsNextDay_whenMonday() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 12);
-        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
-
-        Assertions.assertEquals(dateTime.plusDays(1), nextWorkDay);
+    static Stream<Arguments> getData_forGetNextWorkDay_returnsNextDay() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDate(2020, 10, 12),  // monday
+                        DateUtils.getDate(2020, 10, 13)
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2020, 10, 16), // friday
+                        DateUtils.getDate(2020, 10, 19)
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2020, 10, 17), // saturday
+                        DateUtils.getDate(2020, 10, 19)
+                )
+        );
     }
 
-    @Test
-    void getNextWorkDay_returnsNextMonday_whenFriday() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 16);
+    @ParameterizedTest
+    @MethodSource("getData_forGetNextWorkDay_returnsNextDay")
+    void getNextWorkDay(OffsetDateTime dateTime, OffsetDateTime expectedNextWorkDay) {
         OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
 
-        Assertions.assertEquals(dateTime.plusDays(3), nextWorkDay);
-    }
-
-    @Test
-    void getNextWorkDay_returnsNextMonday_whenSaturday() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 10, 17);
-        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
-
-        Assertions.assertEquals(dateTime.plusDays(2), nextWorkDay);
+        Assertions.assertEquals(expectedNextWorkDay, nextWorkDay);
     }
 
     // endregion
@@ -683,224 +688,157 @@ class DateUtilsUnitTest {
                 "workTimeDuration must be less than 1 day");
     }
 
-    @Test
-    void isWorkTime_returnsTrue_whenWorkTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertTrue(result);
+    static Stream<Arguments> getData_isWorkTime() {
+        return Stream.of(
+                // dateTime is work time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 12, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        true
+                ),
+                // dateTime is before midnight and end work time is after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 23, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        true
+                ),
+                // dateTime is after midnight and end work time is after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 1, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        true
+                ),
+                // dateTime is start time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        true
+                ),
+                // dateTime is start time and end work time are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        true
+                ),
+                // dateTime is saturday and before end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 10, 1, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        true
+                ),
+                // dateTime is weekend and work time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 3, 12, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is weekend and not work time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 3, 4, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is work day and not work time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 8, 4, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is work day and end of work time
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 8, 19, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is work day and end of work time and both after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 8, 2, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is after end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 8, 5, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is saturday and after end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 10, 4, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is saturday and before end of work time and both are before midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 10, 13, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // saturday and equals end of work time and both are before midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 10, 19, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is sunday and before end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 11, 1, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is sunday and after end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 11, 4, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is sunday and time equals end of work time and both are after midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 11, 2, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(16),
+                        false
+                ),
+                // dateTime is sunday and before end of work time and both are before midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 11, 13, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                ),
+                // dateTime is sunday and equals end of work time and both are before midnight
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 11, 19, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        false
+                )
+        );
     }
 
-    @Test
-    void isWorkTime_returnsTrue_whenTimeIsBeforeMidnight_andEndWorkTimeIsAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 23, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
+    @ParameterizedTest
+    @MethodSource("getData_isWorkTime")
+    void isWorkTime(OffsetDateTime dateTime, OffsetTime startTime, Duration duration, boolean expectedResult) {
         boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
 
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkTime_returnsTrue_whenTimeIsAfterMidnight_andEndWorkTimeIsAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 1, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkTime_returnsTrue_whenStartTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkTime_returnsTrue_whenStartTime_andEndWorkTimeAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkTime_returnsTrue_whenSaturday_andBeforeEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 1, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenWeekend_andWorkTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenWeekend_andNotWorkTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 3, 4, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenWorkDay_andNotWorkTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 4, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenWorkDay_andEndOfWorkTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenWorkDayAndEndOfWorkTime_andBothAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 2, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenAfterEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 8, 5, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSaturday_andAfterEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 4, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSaturday_andBeforeEndOfWorkTime_andBothAreBeforeMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 13, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSaturday_andEqualsEndOfWorkTime_andBothAreBeforeMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSunday_andBeforeEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 1, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSunday_andAfterEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 4, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSunday_andTimeEqualsEndOfWorkTime_andBothAreAfterMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 2, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(16);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSunday_andBeforeEndOfWorkTime_andBothAreBeforeMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 13, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkTime_returnsFalse_whenSunday_andEqualsEndOfWorkTime_andBothAreBeforeMidnight() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 11, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
-
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
-
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion
@@ -918,37 +856,42 @@ class DateUtilsUnitTest {
                 "workTimeDuration must be positive");
     }
 
-    @Test
-    void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(0);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be positive");
+    static Stream<Arguments> getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 12, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(0),
+                        "workTimeDuration must be positive"
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 12, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(24),
+                        "workTimeDuration must be less than 1 day"
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 12, 0, 0),
+                        DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(25),
+                        "workTimeDuration must be less than 1 day"
+                )
+        );
     }
 
-    @Test
-    void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(24);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+    @ParameterizedTest
+    @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
+    void getNearestWorkTime_throwsIllegalArgumentException(
+            OffsetDateTime dateTime,
+            OffsetTime startTime,
+            Duration duration,
+            String expectedErrorMessage
+    ) {
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
-    }
-
-    @Test
-    void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(25);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
+                expectedErrorMessage
+        );
     }
 
     @Test
@@ -1037,37 +980,18 @@ class DateUtilsUnitTest {
                 "workTimeDuration must be positive");
     }
 
-    @Test
-    void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsZero() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(0);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+    @ParameterizedTest
+    @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
+    void getNextWorkMinute_throwsIllegalArgumentException(
+            OffsetDateTime dateTime,
+            OffsetTime startTime,
+            Duration duration,
+            String expectedErrorMessage
+    ) {
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be positive");
-    }
-
-    @Test
-    void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(24);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
-    }
-
-    @Test
-    void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsMoreThanOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(25);
-
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
+                expectedErrorMessage);
     }
 
     @Test
