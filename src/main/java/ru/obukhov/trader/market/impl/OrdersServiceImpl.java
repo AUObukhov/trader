@@ -39,25 +39,29 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(@NotNull String ticker,
-                                              int lots,
-                                              @NotNull OperationType operationType) {
-        MarketOrderRequest orderRequest = new MarketOrderRequest();
-        orderRequest.setLots(lots);
-        orderRequest.setOperation(operationType);
+    public PlacedMarketOrder placeMarketOrder(
+            @NotNull String ticker,
+            int lots,
+            @NotNull OperationType operationType
+    ) {
+        MarketOrderRequest orderRequest = new MarketOrderRequest()
+                .lots(lots)
+                .operation(operationType);
         return tinkoffService.placeMarketOrder(ticker, orderRequest);
 
     }
 
     @Override
-    public PlacedLimitOrder placeLimitOrder(@NotNull String ticker,
-                                            int lots,
-                                            @NotNull OperationType operationType,
-                                            BigDecimal price) {
-        LimitOrderRequest orderRequest = new LimitOrderRequest();
-        orderRequest.setLots(lots);
-        orderRequest.setOperation(operationType);
-        orderRequest.setPrice(price);
+    public PlacedLimitOrder placeLimitOrder(
+            @NotNull String ticker,
+            int lots,
+            @NotNull OperationType operationType,
+            BigDecimal price
+    ) {
+        LimitOrderRequest orderRequest = new LimitOrderRequest()
+                .lots(lots)
+                .operation(operationType)
+                .price(price);
         return tinkoffService.placeLimitOrder(ticker, orderRequest);
     }
 
