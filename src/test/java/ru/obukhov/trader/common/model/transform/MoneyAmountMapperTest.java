@@ -3,9 +3,11 @@ package ru.obukhov.trader.common.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
+import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 
 import java.math.BigDecimal;
 
@@ -15,17 +17,13 @@ class MoneyAmountMapperTest {
 
     @Test
     void mapsTinkoffToCustom() {
-        Currency currency = Currency.RUB;
-        BigDecimal value = BigDecimal.valueOf(100);
+        ru.tinkoff.invest.openapi.model.rest.MoneyAmount source =
+                TestDataHelper.createMoneyAmount(Currency.RUB, 100);
 
-        MoneyAmount source = new MoneyAmount();
-        source.setCurrency(currency);
-        source.setValue(value);
+        MoneyAmount target = mapper.map(source);
 
-        ru.obukhov.trader.market.model.MoneyAmount target = mapper.map(source);
-
-        Assertions.assertEquals(value, target.getValue());
-        Assertions.assertEquals(currency, target.getCurrency());
+        Assertions.assertEquals(source.getCurrency(), target.getCurrency());
+        AssertUtils.assertEquals(source.getValue(), target.getValue());
     }
 
     @Test
@@ -33,12 +31,12 @@ class MoneyAmountMapperTest {
         Currency currency = Currency.RUB;
         BigDecimal value = BigDecimal.valueOf(100);
 
-        ru.obukhov.trader.market.model.MoneyAmount source = new ru.obukhov.trader.market.model.MoneyAmount(currency, value);
+        MoneyAmount source = new MoneyAmount(currency, value);
 
-        MoneyAmount target = mapper.map(source);
+        ru.tinkoff.invest.openapi.model.rest.MoneyAmount target = mapper.map(source);
 
         Assertions.assertEquals(currency, target.getCurrency());
-        Assertions.assertEquals(value, target.getValue());
+        AssertUtils.assertEquals(value, target.getValue());
     }
 
 }
