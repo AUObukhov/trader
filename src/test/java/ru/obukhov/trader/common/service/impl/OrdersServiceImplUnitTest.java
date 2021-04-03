@@ -70,16 +70,15 @@ class OrdersServiceImplUnitTest extends BaseMockedTest {
     }
 
     private Order createOrder(String id, String figi) {
-        Order order = new Order();
-        order.setOrderId(id);
-        order.setFigi(figi);
-        order.setOperation(OperationType.BUY);
-        order.setStatus(OrderStatus.FILL);
-        order.setRequestedLots(1);
-        order.setExecutedLots(1);
-        order.setType(OrderType.MARKET);
-        order.setPrice(BigDecimal.TEN);
-        return order;
+        return new Order()
+                .orderId(id)
+                .figi(figi)
+                .operation(OperationType.BUY)
+                .status(OrderStatus.FILL)
+                .requestedLots(1)
+                .executedLots(1)
+                .type(OrderType.MARKET)
+                .price(BigDecimal.TEN);
     }
 
 }
