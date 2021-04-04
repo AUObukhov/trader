@@ -20,7 +20,9 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.stream.Stream;
 
 class DateUtilsUnitTest {
@@ -1139,8 +1141,6 @@ class DateUtilsUnitTest {
 
     @Test
     void toDate_returnsEqualDate_whenDateTimeIsNotNull() {
-        final int FIRST_YEAR = 1900;
-
         final int year = 2021;
         final int month = 10;
         final int dayOfMonth = 11;
@@ -1152,12 +1152,14 @@ class DateUtilsUnitTest {
 
         Date date = DateUtils.toDate(dateTime);
 
-        Assertions.assertEquals(year, date.getYear() + FIRST_YEAR);
-        Assertions.assertEquals(month, date.getMonth() + 1);
-        Assertions.assertEquals(dayOfMonth, date.getDate());
-        Assertions.assertEquals(hour, date.getHours());
-        Assertions.assertEquals(minute, date.getMinutes());
-        Assertions.assertEquals(second, date.getSeconds());
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        Assertions.assertEquals(year, calendar.get(Calendar.YEAR));
+        Assertions.assertEquals(month, calendar.get(Calendar.MONTH) + 1);
+        Assertions.assertEquals(dayOfMonth, calendar.get(Calendar.DAY_OF_MONTH));
+        Assertions.assertEquals(hour, calendar.get(Calendar.HOUR_OF_DAY));
+        Assertions.assertEquals(minute, calendar.get(Calendar.MINUTE));
+        Assertions.assertEquals(second, calendar.get(Calendar.SECOND));
     }
 
     // endregion
