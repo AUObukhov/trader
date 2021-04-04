@@ -73,7 +73,7 @@ public class FakeBotFactory extends AbstractBotFactory {
             return String.format("Trend reversal bot (%s|%s)",
                     trendReversalStrategy.getExtremumPriceIndex(), trendReversalStrategy.getLastPricesCount());
         } else {
-            throw new IllegalArgumentException("Unknownstrategy class: " + strategy.getClass());
+            throw new IllegalArgumentException("Unknown strategy class: " + strategy.getClass());
         }
     }
 
