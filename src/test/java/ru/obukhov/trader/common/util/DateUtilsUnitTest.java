@@ -253,6 +253,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void getLatestDateTime_returnsFirst_whenSecondIsNull() {
         OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
         OffsetDateTime dateTime2 = null;
@@ -263,6 +264,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void getLatestDateTime_returnsSecond_whenFirstIsNull() {
         OffsetDateTime dateTime1 = null;
         OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
@@ -343,6 +345,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void getEarliestDateTime_returnsFirst_whenSecondIsNull() {
         OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
         OffsetDateTime dateTime2 = null;
@@ -353,6 +356,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void getEarliestDateTime_returnsSecond_whenFirstIsNull() {
         OffsetDateTime dateTime1 = null;
         OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
@@ -1124,6 +1128,7 @@ class DateUtilsUnitTest {
     // region toDate tests
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void toDate_returnsNull_whenDateTimeIsNull() {
         OffsetDateTime dateTime = null;
 
