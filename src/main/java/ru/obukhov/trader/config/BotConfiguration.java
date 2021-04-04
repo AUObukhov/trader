@@ -29,23 +29,27 @@ public class BotConfiguration {
 
     @Bean
     @Autowired
-    public BotFactory scheduledBotFactory(TradingProperties tradingProperties,
-                                          MarketService realMarketService,
-                                          RealTinkoffService realTinkoffService,
-                                          DumbStrategy strategy,
-                                          OperationsService realOperationsService,
-                                          OrdersService realOrdersService,
-                                          PortfolioService realPortfolioService,
-                                          BotConfig botConfig) {
+    public BotFactory scheduledBotFactory(
+            TradingProperties tradingProperties,
+            MarketService realMarketService,
+            RealTinkoffService realTinkoffService,
+            DumbStrategy strategy,
+            OperationsService realOperationsService,
+            OrdersService realOrdersService,
+            PortfolioService realPortfolioService,
+            BotConfig botConfig
+    ) {
 
-        return new ScheduledBotFactory(tradingProperties,
+        return new ScheduledBotFactory(
+                tradingProperties,
                 realMarketService,
                 realTinkoffService,
                 Sets.newHashSet(strategy),
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,
-                botConfig);
+                botConfig
+        );
 
     }
 

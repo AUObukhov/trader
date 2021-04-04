@@ -22,14 +22,16 @@ public class ScheduledBotFactory extends AbstractBotFactory {
     private final PortfolioService realPortfolioService;
     private final BotConfig botConfig;
 
-    public ScheduledBotFactory(TradingProperties tradingProperties,
-                               MarketService realMarketService,
-                               RealTinkoffService realTinkoffService,
-                               Collection<Strategy> strategies,
-                               OperationsService realOperationsService,
-                               OrdersService realOrdersService,
-                               PortfolioService realPortfolioService,
-                               BotConfig botConfig) {
+    public ScheduledBotFactory(
+            TradingProperties tradingProperties,
+            MarketService realMarketService,
+            RealTinkoffService realTinkoffService,
+            Collection<Strategy> strategies,
+            OperationsService realOperationsService,
+            OrdersService realOrdersService,
+            PortfolioService realPortfolioService,
+            BotConfig botConfig
+    ) {
 
         super(tradingProperties, realMarketService, realTinkoffService, new HashSet<>(strategies));
 
@@ -48,13 +50,15 @@ public class ScheduledBotFactory extends AbstractBotFactory {
 
     private Bot createScheduledBot(Strategy strategy) {
 
-        return new ScheduledBot(strategy,
+        return new ScheduledBot(
+                strategy,
                 realMarketService,
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,
                 botConfig,
-                tradingProperties);
+                tradingProperties
+        );
 
     }
 
