@@ -87,7 +87,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public OperationsService realOperationsService(TinkoffService realTinkoffService, MarketService realMarketService) {
+    public OperationsService realOperationsService(TinkoffService realTinkoffService) {
         return new OperationsServiceImpl(realTinkoffService);
     }
 
