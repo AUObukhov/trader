@@ -75,7 +75,7 @@ public class CollectionsUtils {
     }
 
     /**
-     * @return true, when given {@code list} contains all elements of given {@code seachedList} in same order, otherwise false.
+     * @return true, when given {@code list} contains all elements of given {@code searchedList} in same order, otherwise false.
      * Elements compared by {@link Objects#equals(Object, Object)}
      * @throws IllegalArgumentException when any of given lists is null
      */

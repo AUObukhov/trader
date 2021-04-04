@@ -164,10 +164,10 @@ public class DateUtils {
      * Same as {@link OffsetDateTime#minus}, but if result is before {@code minDateTime}, then returns {@code minDateTime}
      */
     public static OffsetDateTime minusLimited(OffsetDateTime dateTime,
-                                              long amountToSubstract,
+                                              long amountToSubtract,
                                               TemporalUnit temporalUnit,
                                               @Nullable OffsetDateTime minDateTime) {
-        return DateUtils.getLatestDateTime(dateTime.minus(amountToSubstract, temporalUnit), minDateTime);
+        return DateUtils.getLatestDateTime(dateTime.minus(amountToSubtract, temporalUnit), minDateTime);
     }
 
     /**
