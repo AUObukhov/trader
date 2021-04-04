@@ -43,6 +43,7 @@ public class ExtendedChartData {
     /**
      * Stretches chart to vertical borders
      */
+    @SuppressWarnings("ConstantConditions")
     public void stretchChart() {
         List<Double> values = getSeries().stream()
                 .map(this::getSeriesValues)

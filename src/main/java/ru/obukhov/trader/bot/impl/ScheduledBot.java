@@ -34,6 +34,7 @@ public class ScheduledBot extends AbstractBot {
     }
 
     @Scheduled(fixedDelayString = "${bot.delay}")
+    @SuppressWarnings("unused")
     public void tick() {
         if (!botConfig.isEnabled()) {
             log.trace("Bot is disabled. Do nothing");

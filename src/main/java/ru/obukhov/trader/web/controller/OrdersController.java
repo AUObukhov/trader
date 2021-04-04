@@ -13,6 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/trader/orders")
+@SuppressWarnings("unused")
 public class OrdersController {
 
     private final OrdersService ordersService;

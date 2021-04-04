@@ -24,6 +24,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/trader/bot")
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class BotController {
 
     private final Simulator simulator;

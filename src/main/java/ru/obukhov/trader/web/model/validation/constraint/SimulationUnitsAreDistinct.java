@@ -19,6 +19,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = SimulationUnitsAreDistinctValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+@SuppressWarnings("unused")
 public @interface SimulationUnitsAreDistinct {
 
     String message() default "simulation units in collection must contain different tickers";

@@ -16,6 +16,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/trader/portfolio")
+@SuppressWarnings("unused")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;

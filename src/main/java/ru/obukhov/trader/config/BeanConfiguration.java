@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
  * Configuration of beans, which need qualifying of dependencies
  */
 @Configuration
+@SuppressWarnings("unused")
 public class BeanConfiguration {
 
     @Bean

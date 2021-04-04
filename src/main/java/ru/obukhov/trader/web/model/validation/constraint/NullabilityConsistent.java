@@ -17,6 +17,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = NullabilityConsistentValidator.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@SuppressWarnings("unused")
 public @interface NullabilityConsistent {
 
     String message() default "several fields must be all null or not null";

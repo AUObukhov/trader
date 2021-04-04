@@ -25,6 +25,7 @@ import java.util.Set;
 @Configuration
 @DependsOn("beanConfiguration")
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class BotConfiguration {
 
     @Bean

@@ -17,6 +17,7 @@ import ru.obukhov.trader.web.model.exchange.SetPositionBalanceRequest;
 @RequestMapping("/trader/sandbox")
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
+@SuppressWarnings("unused")
 public class SandboxController {
 
     private final SandboxService sandboxService;
