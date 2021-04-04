@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.service.impl;
+package ru.obukhov.trader.market.impl;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.trader.BaseMockedTest;
-import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;

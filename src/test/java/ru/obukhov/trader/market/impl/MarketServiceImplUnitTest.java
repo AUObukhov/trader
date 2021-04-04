@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.service.impl;
+package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.TickerType;
