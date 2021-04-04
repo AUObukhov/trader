@@ -11,7 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.interfaces.MarketService;
-import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import ru.tinkoff.invest.openapi.model.rest.Order;
@@ -32,7 +31,7 @@ class OrdersServiceImplUnitTest extends BaseMockedTest {
     @Mock
     private MarketService marketService;
 
-    private OrdersService service;
+    private OrdersServiceImpl service;
 
     @BeforeEach
     public void setUp() {

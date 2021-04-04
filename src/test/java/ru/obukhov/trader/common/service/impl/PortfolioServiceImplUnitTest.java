@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
-import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -30,7 +29,7 @@ class PortfolioServiceImplUnitTest extends BaseMockedTest {
     @Mock
     private TinkoffService tinkoffService;
 
-    private PortfolioService service;
+    private PortfolioServiceImpl service;
 
     @BeforeEach
     public void setUp() {

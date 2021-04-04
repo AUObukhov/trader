@@ -13,7 +13,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
-import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.TickerType;
@@ -38,7 +37,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     @Mock
     private TinkoffService tinkoffService;
 
-    private MarketService service;
+    private MarketServiceImpl service;
 
     @BeforeEach
     public void setUp() {
