@@ -2,6 +2,9 @@ package ru.obukhov.trader.common.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -10,6 +13,7 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 class IntervalUnitTest {
 
@@ -266,95 +270,71 @@ class IntervalUnitTest {
 
     // region contains tests
 
-    @Test
-    void contains_returnsFalse_whenDateTimeBeforeFrom() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 5);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertFalse(result);
-
+    static Stream<Arguments> getData_forContains() {
+        return Stream.of(
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 1, 10, 5, 5),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                        true
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 1, 12, 5, 10),
+                        true
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 2, 10, 5, 10),
+                        true
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 2, 10, 5, 15),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                null,
+                                DateUtils.getDateTime(2020, 10, 2, 10, 5, 10)
+                        ),
+                        DateUtils.getDateTime(2020, 10, 1, 12, 5, 10),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 1, 10, 5, 10),
+                                null
+                        ),
+                        DateUtils.getDateTime(2020, 10, 1, 12, 5, 10),
+                        false
+                )
+        );
     }
 
-    @Test
-    void contains_returnsTrue_whenDateTimeEqualsFrom() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertTrue(result);
-
-    }
-
-    @Test
-    void contains_returnsTrue_whenDateTimeBetweenFromAndTo() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 12, 5, 10);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertTrue(result);
-
-    }
-
-    @Test
-    void contains_returnsTrue_whenDateTimeEqualsTo() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertTrue(result);
-
-    }
-
-    @Test
-    void contains_returnsFalse_whenDateTimeAfterTo() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 2, 10, 5, 15);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertFalse(result);
-
-    }
-
-    @Test
-    void contains_returnsFalse_whenFromIsNull() {
-
-        OffsetDateTime from = null;
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 2, 10, 5, 10);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 12, 5, 10);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertFalse(result);
-
-    }
-
-    @Test
-    void contains_returnsFalse_whenToIsNull() {
-
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 1, 10, 5, 10);
-        OffsetDateTime to = null;
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 1, 12, 5, 10);
-
-        boolean result = Interval.of(from, to).contains(dateTime);
-
-        Assertions.assertFalse(result);
-
+    @ParameterizedTest
+    @MethodSource("getData_forContains")
+    void contains(Interval interval, OffsetDateTime dateTime, boolean expectedResult) {
+        Assertions.assertEquals(expectedResult, interval.contains(dateTime));
     }
 
     // endregion
