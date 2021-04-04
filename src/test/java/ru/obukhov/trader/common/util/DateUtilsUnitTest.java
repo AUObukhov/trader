@@ -25,8 +25,6 @@ import java.util.stream.Stream;
 
 class DateUtilsUnitTest {
 
-    // region getDate tests
-
     @Test
     void getDateTime() {
         int year = 2020;
@@ -63,8 +61,6 @@ class DateUtilsUnitTest {
         Assertions.assertEquals(0, dateTime.getSecond());
         Assertions.assertEquals(0, dateTime.getNano());
     }
-
-    // endregion
 
     @Test
     void getTime_fillsTimeOnly() {
@@ -142,40 +138,21 @@ class DateUtilsUnitTest {
 
     // region isWorkDay tests
 
-    @Test
-    void isWorkDay_returnsTrue_whenMonday() {
-        OffsetDateTime date = DateUtils.getDate(2020, 8, 24);
-
-        boolean result = DateUtils.isWorkDay(date);
-
-        Assertions.assertTrue(result);
+    static Stream<Arguments> getData_forIsWorkDay() {
+        return Stream.of(
+                Arguments.of(DateUtils.getDate(2020, 8, 24), true), // monday
+                Arguments.of(DateUtils.getDate(2020, 8, 28), true), // friday
+                Arguments.of(DateUtils.getDate(2020, 8, 22), false), // saturday
+                Arguments.of(DateUtils.getDate(2020, 8, 23), false) // sunday
+        );
     }
 
-    @Test
-    void isWorkDay_returnsTrue_whenFriday() {
-        OffsetDateTime date = DateUtils.getDate(2020, 8, 28);
-
+    @ParameterizedTest
+    @MethodSource("getData_forIsWorkDay")
+    void isWorkDay(OffsetDateTime date, boolean expectedResult) {
         boolean result = DateUtils.isWorkDay(date);
 
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void isWorkDay_returnsFalse_whenSaturday() {
-        OffsetDateTime date = DateUtils.getDate(2020, 8, 22);
-
-        boolean result = DateUtils.isWorkDay(date);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isWorkDay_returnsFalse_whenSunday() {
-        OffsetDateTime date = DateUtils.getDate(2020, 8, 23);
-
-        boolean result = DateUtils.isWorkDay(date);
-
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion
