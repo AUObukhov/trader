@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
@@ -17,6 +18,8 @@ import org.springframework.validation.ObjectError;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.ExtendedCandle;
+import ru.obukhov.trader.market.model.Extremum;
 
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
@@ -43,15 +46,28 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(int expected, BigDecimal actual) {
-        if (!DecimalUtils.numbersEqual(actual, expected)) {
+    public static void assertEquals(@Nullable Integer expected, BigDecimal actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual, expected)) {
             String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
     }
 
-    public static void assertEquals(double expected, BigDecimal actual) {
-        if (!DecimalUtils.numbersEqual(actual, expected)) {
+    public static void assertEquals(@Nullable Long expected, BigDecimal actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual, expected)) {
+            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            Assertions.fail(message);
+        }
+    }
+
+    public static void assertEquals(@Nullable Double expected, BigDecimal actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual, expected)) {
             String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
