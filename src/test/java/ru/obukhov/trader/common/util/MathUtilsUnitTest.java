@@ -182,7 +182,7 @@ class MathUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetLinearWeightedMovingAverages_throwsIllegalArgumentException")
+    @MethodSource("getData_forGetSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException")
     void getSimpleMovingAverages_withValueExtractor_throwsIllegalArgumentException(
             List<Double> values,
             int window,
