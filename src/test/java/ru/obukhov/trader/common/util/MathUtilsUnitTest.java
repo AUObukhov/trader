@@ -453,7 +453,8 @@ class MathUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease),
                 IllegalArgumentException.class,
-                expectedMessage);
+                expectedMessage
+        );
     }
 
     @ParameterizedTest
@@ -468,7 +469,8 @@ class MathUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
                 IllegalArgumentException.class,
-                expectedMessage);
+                expectedMessage
+        );
     }
 
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withoutOrder() {
@@ -580,7 +582,8 @@ class MathUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease, order),
                 IllegalArgumentException.class,
-                expectedMessage);
+                expectedMessage
+        );
     }
 
     @ParameterizedTest
@@ -596,7 +599,8 @@ class MathUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MathUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
                 IllegalArgumentException.class,
-                expectedMessage);
+                expectedMessage
+        );
     }
 
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withOrder() {
