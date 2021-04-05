@@ -57,7 +57,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void getExtendedCandles_extendsCandles() {
+    void getExtendedCandles_extendsCandles_withoutExtremes() {
         final String ticker = TICKER;
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
@@ -67,14 +67,11 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         final CandleResolution candleInterval = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
-        OffsetDateTime time1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time1, CandleResolution._1MIN));
+        OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        OffsetDateTime time2 = DateUtils.getDateTime(2020, 1, 1, 10, 1, 0);
-        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time2, CandleResolution._1MIN));
-
-        OffsetDateTime time3 = DateUtils.getDateTime(2020, 1, 1, 10, 2, 0);
-        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time3, CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), CandleResolution._1MIN));
 
         Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
@@ -95,14 +92,65 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
-        AssertUtils.assertEquals(14.72325, extendedCandles.get(0).getAveragePrice());
-        Assertions.assertEquals(Extremum.MIN, extendedCandles.get(0).getExtremum());
+        AssertUtils.assertExtendedCandle(extendedCandles.get(0), 14.72325, Extremum.MIN, null, null);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(1), 15, Extremum.NONE, null, null);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(2), 15.27675, Extremum.MAX, null, null);
+    }
 
-        AssertUtils.assertEquals(15, extendedCandles.get(1).getAveragePrice());
-        Assertions.assertEquals(Extremum.NONE, extendedCandles.get(1).getExtremum());
+    @Test
+    void getExtendedCandles_extendsCandles_withExtremes() {
+        final String ticker = TICKER;
 
-        AssertUtils.assertEquals(15.27675, extendedCandles.get(2).getAveragePrice());
-        Assertions.assertEquals(Extremum.MAX, extendedCandles.get(2).getExtremum());
+        final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
+        final Interval interval = Interval.of(from, to);
+
+        final CandleResolution candleInterval = CandleResolution._1MIN;
+
+        final List<Candle> candles = new ArrayList<>();
+        OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+
+        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(10, 20, 25, 10, time.plusMinutes(1), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
+
+        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+
+        final List<ExtendedCandle> extendedCandles = service.getExtendedCandles(ticker, interval, candleInterval);
+
+        Assertions.assertEquals(candles.size(), extendedCandles.size());
+        for (int i = 0; i < candles.size(); i++) {
+            Candle candle = candles.get(i);
+            ExtendedCandle extendedCandle = extendedCandles.get(i);
+
+            AssertUtils.assertEquals(candle.getOpenPrice(), extendedCandle.getOpenPrice());
+            AssertUtils.assertEquals(candle.getClosePrice(), extendedCandle.getClosePrice());
+            AssertUtils.assertEquals(candle.getHighestPrice(), extendedCandle.getHighestPrice());
+            AssertUtils.assertEquals(candle.getLowestPrice(), extendedCandle.getLowestPrice());
+            Assertions.assertEquals(candle.getTime(), extendedCandle.getTime());
+            Assertions.assertEquals(candle.getInterval(), extendedCandle.getInterval());
+        }
+
+        // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
+        // with weightDecrease = 0.3 and order = 3
+        AssertUtils.assertExtendedCandle(extendedCandles.get(0), 99.72048, Extremum.MIN, 99.72048, 110.54690);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(1), 102.46637, Extremum.NONE, 96.22562, 107.29418);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(2), 104.04146, Extremum.MAX, 92.73077, 104.04146);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(3), 102.67578, Extremum.NONE, 89.23591, 100.78874);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(4), 98.28161, Extremum.NONE, 85.74105, 97.53602);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(5), 89.06988, Extremum.NONE, 82.24619, 94.28330);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(6), 75.78625, Extremum.NONE, 78.75134, 91.03058);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(7), 71.94727, Extremum.NONE, 75.25648, 87.77786);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(8), 71.76162, Extremum.MIN, 71.76162, 84.52514);
+        AssertUtils.assertExtendedCandle(extendedCandles.get(9), 81.27242, Extremum.MAX, 68.26676, 81.27242);
+
     }
 
 }

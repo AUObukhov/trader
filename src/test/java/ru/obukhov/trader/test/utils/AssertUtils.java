@@ -260,4 +260,17 @@ public class AssertUtils {
         }
     }
 
+    public static void assertExtendedCandle(
+            ExtendedCandle extendedCandle,
+            double expectedAveragePrice,
+            Extremum expectedExtremum,
+            Double expectedSupportValue,
+            Double expectedResistanceValue
+    ) {
+        AssertUtils.assertEquals(expectedAveragePrice, extendedCandle.getAveragePrice());
+        Assertions.assertEquals(expectedExtremum, extendedCandle.getExtremum());
+        AssertUtils.assertEquals(expectedSupportValue, extendedCandle.getSupportValue());
+        AssertUtils.assertEquals(expectedResistanceValue, extendedCandle.getResistanceValue());
+    }
+
 }
