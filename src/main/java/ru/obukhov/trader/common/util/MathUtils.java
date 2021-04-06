@@ -128,13 +128,13 @@ public class MathUtils {
     // region getSimpleMovingAverages
 
     /**
-     * Calculates simple moving averages of given {@code values}.<br/>
+     * Calculates simple moving averages of values of given {@code elements}.<br/>
      * Each average (except first and last {@code <window>} averages) is
      * arithmetic average of {@code <window>} previous values,
      * corresponding value and {@code <window>} next values.
      * <p>
      * Window for each of the first and the last {@code <window>} averages is
-     * particular and equal to distance to nearest side of {@code values} list.
+     * particular and equal to distance to nearest side of {@code elements} list.
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
@@ -176,25 +176,25 @@ public class MathUtils {
         }
 
         final int lastIndex = size - 1;
-        window = Math.min(window, lastIndex / 2);
+        final int actualWindow = Math.min(window, lastIndex / 2);
 
         // calculation of first {window} averages
-        for (int i = 0; i < window; i++) {
+        for (int i = 0; i < actualWindow; i++) {
             int length = Math.min(i * 2 + 1, size);
             BigDecimal sum = sumValues(values, 0, length);
             averages.add(DecimalUtils.divide(sum, length));
         }
 
         // calculation of the middle averages
-        int commonLength = 2 * window + 1;
-        int to = size - window;
-        for (int i = window; i < to; i++) {
-            BigDecimal sum = sumValues(values, i - window, i + window + 1);
+        int commonLength = 2 * actualWindow + 1;
+        int to = size - actualWindow;
+        for (int i = actualWindow; i < to; i++) {
+            BigDecimal sum = sumValues(values, i - actualWindow, i + actualWindow + 1);
             averages.add(DecimalUtils.divide(sum, commonLength));
         }
 
         // calculation of last {window} averages
-        int from = size - window;
+        int from = size - actualWindow;
         for (int i = from; i < size; i++) {
             BigDecimal sum = sumValues(values, i * 2 - lastIndex, size);
             int length = (size - i) * 2 - 1;
