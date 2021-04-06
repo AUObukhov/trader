@@ -15,6 +15,7 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrumentList;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
@@ -24,6 +25,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class TestDataHelper {
@@ -44,6 +47,24 @@ public class TestDataHelper {
             double highestPrice,
             double lowestPrice
     ) {
+        return createTinkoffCandle(
+                interval,
+                openPrice,
+                closePrice,
+                highestPrice,
+                lowestPrice,
+                OffsetDateTime.now()
+        );
+    }
+
+    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+            CandleResolution interval,
+            double openPrice,
+            double closePrice,
+            double highestPrice,
+            double lowestPrice,
+            OffsetDateTime time
+    ) {
         return new ru.tinkoff.invest.openapi.model.rest.Candle()
                 .figi(StringUtils.EMPTY)
                 .interval(interval)
@@ -51,8 +72,8 @@ public class TestDataHelper {
                 .c(DecimalUtils.setDefaultScale(closePrice))
                 .h(DecimalUtils.setDefaultScale(highestPrice))
                 .l(DecimalUtils.setDefaultScale(lowestPrice))
-                .v(10)
-                .time(OffsetDateTime.now());
+                .v(0)
+                .time(time);
     }
 
     public static Candle createCandle(
@@ -221,6 +242,12 @@ public class TestDataHelper {
         return new MoneyAmount()
                 .currency(currency)
                 .value(BigDecimal.valueOf(value));
+    }
+
+    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(MarketInstrument... instruments) {
+        List<MarketInstrument> instrumentList = Arrays.asList(instruments);
+        MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
+        return CompletableFuture.completedFuture(marketInstrumentList);
     }
 
 }
