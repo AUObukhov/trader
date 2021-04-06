@@ -112,33 +112,18 @@ class DecimalUtilsUnitTest {
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
-    @Test
-    void setDefaultScale_withBigDecimal_setZeroScale_whenNumberScaleIsNegative() {
-        BigDecimal number = BigDecimal.valueOf(10, -1);
+    @ParameterizedTest
+    @CsvSource({
+            "10, -1, 0",
+            "10, 2, 2",
+            "10, 6, 5"
+    })
+    void setDefaultScale_withBigDecimal(long unscaledVal, int scale, int expectedScale) {
+        BigDecimal number = BigDecimal.valueOf(unscaledVal, scale);
 
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+        BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        Assertions.assertEquals(0, result.scale());
-    }
-
-    @Test
-    void setDefaultScale_withBigDecimal_notChangesScale_whenNumberScaleIsLowerThanDefault() {
-        int scale = 2;
-        BigDecimal number = BigDecimal.valueOf(10, scale);
-
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
-
-        Assertions.assertEquals(scale, result.scale());
-    }
-
-    @Test
-    void setDefaultScale_withBigDecimal_setDefaultScaleValue_whenNumberScaleIsGreaterThanDefault() {
-        int scale = 6;
-        BigDecimal number = BigDecimal.valueOf(10, scale);
-
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
-
-        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        Assertions.assertEquals(expectedScale, result.scale());
     }
 
     // endregion
@@ -152,34 +137,17 @@ class DecimalUtilsUnitTest {
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
-    @Test
-    void setDefaultScale_withDouble_notChangesScale_whenNumberScaleIsLowerThanDefault() {
-        Double number = 10.01;
+    @ParameterizedTest
+    @CsvSource({
+            "10.01, 2, 10.01",
+            "10.000001, 5, 10",
+            "10.000005, 5, 10.00001"
+    })
+    void setDefaultScale_withDouble(Double number, int expectedScale, double expectedValue) {
+        BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
-
-        Assertions.assertEquals(2, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(10.01), result);
-    }
-
-    @Test
-    void setDefaultScale_withDouble_setDefaultScaleValue_andRoundsNumberDown_whenNumberScaleIsGreaterThanDefault() {
-        Double number = 10.000001;
-
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
-
-        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
-    }
-
-    @Test
-    void setDefaultScale_withDouble_setDefaultScaleValue_andRoundsNumberUp_whenNumberScaleIsGreaterThanDefault() {
-        Double number = 10.000005;
-
-        final BigDecimal result = DecimalUtils.setDefaultScale(number);
-
-        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(10.00001), result);
+        Assertions.assertEquals(expectedScale, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(expectedValue), result);
     }
 
     // endregion
@@ -245,72 +213,28 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
-    // region isGreater tests
-
-    @Test
-    void isGreater_returnsFalse_whenLower() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 151L;
-
+    @ParameterizedTest
+    @CsvSource({
+            "150, 151, false",
+            "150, 150, false",
+            "150, 149, true"
+    })
+    void isGreater(BigDecimal value1, long value2, boolean expectedResult) {
         boolean result = DecimalUtils.isGreater(value1, value2);
 
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    void isGreater_returnsFalse_whenEquals() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 150L;
-
-        boolean result = DecimalUtils.isGreater(value1, value2);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isGreater_returnsTrue_whenGreater() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 149L;
-
-        boolean result = DecimalUtils.isGreater(value1, value2);
-
-        Assertions.assertTrue(result);
-    }
-
-    // endregion
-
-    // region isLower tests
-
-    @Test
-    void isLower_returnsFalse_whenGreater() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 149L;
-
+    @ParameterizedTest
+    @CsvSource({
+            "150, 149, false",
+            "150, 150, false",
+            "150, 151, true"
+    })
+    void isLower(BigDecimal value1, long value2, boolean expectedResult) {
         boolean result = DecimalUtils.isLower(value1, value2);
 
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
-
-    @Test
-    void isLower_returnsFalse_whenEquals() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 150L;
-
-        boolean result = DecimalUtils.isLower(value1, value2);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void isLower_returnsTrue_whenGreater() {
-        BigDecimal value1 = BigDecimal.valueOf(150);
-        long value2 = 151L;
-
-        boolean result = DecimalUtils.isLower(value1, value2);
-
-        Assertions.assertTrue(result);
-    }
-
-    // endregion
 
 }
