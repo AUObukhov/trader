@@ -144,7 +144,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public void cancelOrder(String orderId) {
-        getOrdersContext().cancelOrder(orderId, null);
+        getOrdersContext().cancelOrder(orderId, null).join();
     }
 
     // endregion
