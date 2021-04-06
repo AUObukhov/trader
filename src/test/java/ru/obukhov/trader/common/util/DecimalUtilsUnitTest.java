@@ -207,46 +207,40 @@ class DecimalUtilsUnitTest {
 
     // region numbersEqual tests
 
-    @Test
-    void numbersEqual_returnTrue_whenEqualsBigDecimal() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), BigDecimal.valueOf(100));
+    @ParameterizedTest
+    @CsvSource({
+            ", , true",
+            ", 100, false",
+            "100, , false",
+            "100, 100, true",
+            "11, 100, false"
+    })
+    void numbersEqual_withBigDecimal(BigDecimal value1, BigDecimal value2, boolean expectedResult) {
+        boolean result = DecimalUtils.numbersEqual(value1, value2);
 
-        Assertions.assertTrue(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    void numbersEqual_returnFalse_whenNotEqualsBigDecimal() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), BigDecimal.valueOf(100));
+    @ParameterizedTest
+    @CsvSource({
+            "100, 100, true",
+            "11, 100, false",
+    })
+    void numbersEqual_withInt(BigDecimal value1, int value2, boolean expectedResult) {
+        boolean result = DecimalUtils.numbersEqual(value1, value2);
 
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    void numbersEqual_returnTrue_whenEqualsInt() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), 100);
+    @ParameterizedTest
+    @CsvSource({
+            "100, 100, true",
+            "11, 100, false",
+    })
+    void numbersEqual_withDouble(BigDecimal value1, double value2, boolean expectedResult) {
+        boolean result = DecimalUtils.numbersEqual(value1, value2);
 
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void numbersEqual_returnFalse_whenNotEqualsInt() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), 100);
-
-        Assertions.assertFalse(result);
-    }
-
-    @Test
-    void numbersEqual_returnTrue_whenEqualsDouble() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(100.00), 100.00);
-
-        Assertions.assertTrue(result);
-    }
-
-    @Test
-    void numbersEqual_returnFalse_whenNotEqualsDouble() {
-        boolean result = DecimalUtils.numbersEqual(BigDecimal.valueOf(11.00), 100.00);
-
-        Assertions.assertFalse(result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion

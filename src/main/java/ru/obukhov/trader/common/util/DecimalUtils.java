@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -158,8 +159,10 @@ public class DecimalUtils {
     /**
      * @return true if {@code value1} equals {@code value2}, or else false
      */
-    public static boolean numbersEqual(BigDecimal value1, BigDecimal value2) {
-        return value1.compareTo(value2) == 0;
+    public static boolean numbersEqual(@Nullable BigDecimal value1, @Nullable BigDecimal value2) {
+        return value1 == null
+                ? value2 == null
+                : value2 != null && value1.compareTo(value2) == 0;
     }
 
     /**
