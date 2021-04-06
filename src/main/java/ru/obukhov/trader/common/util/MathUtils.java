@@ -217,11 +217,16 @@ public class MathUtils {
     // region getLinearWeightedMovingAverages
 
     /**
-     * Calculates linear weighted moving averages of given {@code elements} by given {@code window}
+     * Calculates linear weighted moving averages of values of given {@code elements} by given {@code window}
+     * Each average (except first and last {@code <window>} averages) is
+     * weighted average of {@code <window>} previous values,
+     * corresponding value and {@code <window>} next values.
+     * Weights are decreasing linearly beginning from {@code window} to 1.
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param window         count of values, used for calculation of each average, must be positive
+     * @param window         count of values at both sides from each value, used for calculation of average.
+     *                       Must be positive.
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
@@ -235,40 +240,64 @@ public class MathUtils {
 
     /**
      * Calculates linear weighted moving averages of given {@code values} by given {@code window}
+     * Each average (except first and last {@code <window>} averages) is
+     * weighted average of {@code <window>} previous values,
+     * corresponding value and {@code <window>} next values.
+     * Weights are decreasing linearly beginning from {@code window} to 1.
      *
      * @param values values, for which averages are calculated for
-     * @param window count of values, used for calculation of each average, must be positive
+     * @param window count of values at both sides from each value, used for calculation of average.
+     *               Must be positive.
      * @return list of calculated averages
      */
     public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window) {
         Assert.isTrue(window > 0, "window must be positive");
 
-        List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
-        for (int i = 0; i < values.size(); i++) {
-            weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, window));
+        final int size = values.size();
+        List<BigDecimal> weightedMovingAverages = new ArrayList<>(size);
+
+        // calculation of the first {window} averages
+        int index;
+        int weight;
+        double divisor;
+        final int actualWindow = Math.min(window, (size - 1) / 2);
+        for (index = 0; index < actualWindow; index++) {
+            weight = index + 1;
+            BigDecimal sum = getLinearWeightedSum(values, index, index, weight);
+            divisor = (double) weight * weight;
+            weightedMovingAverages.add(DecimalUtils.divide(sum, divisor));
+        }
+
+        // calculation of the middle averages
+        weight = actualWindow + 1;
+        divisor = (double) weight * weight;
+        final int count = size - actualWindow;
+        for (; index < count; index++) {
+            BigDecimal sum = getLinearWeightedSum(values, index, actualWindow, weight);
+            weightedMovingAverages.add(DecimalUtils.divide(sum, divisor));
+        }
+
+        // calculation of the last {window} averages
+        for (; index < size; index++) {
+            weight = size - index;
+            BigDecimal sum = getLinearWeightedSum(values, index, weight - 1, weight);
+            divisor = (double) weight * weight;
+            weightedMovingAverages.add(DecimalUtils.divide(sum, divisor));
         }
 
         return weightedMovingAverages;
     }
 
-    private static BigDecimal getLinearWeightedMovingAverage(
-            List<BigDecimal> values,
-            final int index,
-            final int window
-    ) {
-        final int maxPeriod = index + 1;
-        final int normalizedPeriod = Math.min(window, maxPeriod);
-        BigDecimal sum = DecimalUtils.multiply(values.get(index), normalizedPeriod);
-        BigDecimal weightsSum = BigDecimal.valueOf(normalizedPeriod);
+    private static BigDecimal getLinearWeightedSum(List<BigDecimal> values, int index, int window, int weight) {
+        BigDecimal sum = DecimalUtils.multiply(values.get(index), weight);
+        int currentWeight = weight;
 
-        for (int i = index - 1; i > index - normalizedPeriod; i--) {
-            int weight = normalizedPeriod - (index - i);
-            sum = sum.add(DecimalUtils.multiply(values.get(i), weight));
-            weightsSum = weightsSum.add(BigDecimal.valueOf(weight));
+        for (int i = 1; i <= window; i++) {
+            currentWeight--;
+            sum = sum.add(DecimalUtils.multiply(values.get(index - i).add(values.get(index + i)), currentWeight));
         }
 
-        double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
-        return DecimalUtils.divide(sum, divisor);
+        return sum;
     }
 
     // endregion
