@@ -219,7 +219,7 @@ public class AssertUtils {
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
-    public static void assertFaster(CheckedRunnable runnable, long time) throws Exception {
+    public static void assertFaster(Runnable runnable, long time) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         runnable.run();
         stopwatch.stop();
@@ -229,7 +229,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertSlower(CheckedRunnable runnable, long time) throws Exception {
+    public static void assertSlower(Runnable runnable, long time) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         runnable.run();
         stopwatch.stop();
