@@ -84,12 +84,12 @@
         <!-- tinkoff -->
 
         <dependency>
-            <groupId>com.github.AUObukhov.invest-openapi-java-sdk</groupId>
+            <groupId>com.github.TinkoffCreditSystems.invest-openapi-java-sdk</groupId>
             <artifactId>openapi-java-sdk-core</artifactId>
             <version>${invest-openapi-java-sdk.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.AUObukhov.invest-openapi-java-sdk</groupId>
+            <groupId>com.github.TinkoffCreditSystems.invest-openapi-java-sdk</groupId>
             <artifactId>openapi-java-sdk-java8</artifactId>
             <version>${invest-openapi-java-sdk.version}</version>
         </dependency>
