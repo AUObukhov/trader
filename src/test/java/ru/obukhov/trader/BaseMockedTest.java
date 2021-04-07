@@ -1,6 +1,6 @@
 package ru.obukhov.trader;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
@@ -13,7 +13,7 @@ public abstract class BaseMockedTest {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
-    @After
+    @AfterEach
     public void releaseMocks() throws Exception {
         closeable.close();
     }
