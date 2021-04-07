@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Class for parsing time from properties
+ */
 @Component
 @ConfigurationPropertiesBinding
 public class OffsetTimeConverter implements Converter<String, OffsetTime> {
