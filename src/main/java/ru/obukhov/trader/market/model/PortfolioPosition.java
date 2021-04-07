@@ -23,7 +23,7 @@ public class PortfolioPosition {
     @JsonSerialize(using = BigDecimalSerializer.class)
     private final BigDecimal blocked;
 
-    @NotNull
+    @Nullable
     private final Currency currency;
 
     @Nullable
