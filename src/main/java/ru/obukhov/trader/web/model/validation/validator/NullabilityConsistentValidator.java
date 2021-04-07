@@ -35,5 +35,4 @@ public class NullabilityConsistentValidator implements ConstraintValidator<Nulla
         return true;
     }
 
-
 }

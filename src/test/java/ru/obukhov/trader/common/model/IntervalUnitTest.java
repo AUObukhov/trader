@@ -124,7 +124,6 @@ class IntervalUnitTest {
         Assertions.assertEquals(interval.getTo(), newInterval.getTo());
     }
 
-
     // endregion
 
     // region extendToWholeDay tests

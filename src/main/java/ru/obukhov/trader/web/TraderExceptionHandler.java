@@ -36,7 +36,6 @@ public class TraderExceptionHandler {
                 .body(createResponseMap(ex));
     }
 
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
         log.error("Unknown exception", ex);
