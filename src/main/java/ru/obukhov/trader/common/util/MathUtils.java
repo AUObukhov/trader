@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.common.collect.Streams;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -385,7 +386,8 @@ public class MathUtils {
             updateExponentialMovingAveragesReverse(averagesReverse, weightDecrease, revertedWeightDecrease);
         }
 
-        return getAverageValues(averagesNatural, averagesReverse);
+        return Streams.zip(averagesNatural.stream(), averagesReverse.stream(), DecimalUtils::getAverage)
+                .collect(Collectors.toList());
     }
 
     private static void updateExponentialMovingAveragesNatural(
@@ -423,14 +425,6 @@ public class MathUtils {
                 .add(DecimalUtils.multiply(average, revertedWeightDecrease));
         averages.set(index, average);
         return average;
-    }
-
-    private static List<BigDecimal> getAverageValues(List<BigDecimal> values1, List<BigDecimal> values2) {
-        List<BigDecimal> values = new ArrayList<>(values1.size());
-        for (int i = 0; i < values1.size(); i++) {
-            values.add(DecimalUtils.divide(values1.get(i).add(values2.get(i)), 2));
-        }
-        return values;
     }
 
     // endregion
