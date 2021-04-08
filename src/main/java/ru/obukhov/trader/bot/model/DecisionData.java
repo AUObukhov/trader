@@ -1,6 +1,9 @@
 package ru.obukhov.trader.bot.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -11,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@With
+@NoArgsConstructor
+@AllArgsConstructor
 public class DecisionData {
 
     private BigDecimal balance;

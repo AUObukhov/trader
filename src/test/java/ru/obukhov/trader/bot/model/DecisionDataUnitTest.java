@@ -8,40 +8,37 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 class DecisionDataUnitTest {
 
     @Test
     void getCurrentPrice_returnsNull_whenCandlesAreNull() {
-        DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(null);
+        DecisionData decisionData = new DecisionData()
+                .withCurrentCandles(null);
 
         Assertions.assertNull(decisionData.getCurrentPrice());
     }
 
     @Test
     void getCurrentPrice_returnsNull_whenCandlesAreEmpty() {
-        DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(Collections.emptyList());
+        DecisionData decisionData = new DecisionData()
+                .withCurrentCandles(Collections.emptyList());
 
         Assertions.assertNull(decisionData.getCurrentPrice());
     }
 
     @Test
     void getCurrentPrice_returnsLastCandleOpenPrice() {
-        List<Candle> candles = new ArrayList<>();
-        candles.add(TestDataHelper.createCandleWithOpenPrice(100));
-        candles.add(TestDataHelper.createCandleWithOpenPrice(200));
-        BigDecimal lastCandleOpenPrice = BigDecimal.valueOf(300);
-        candles.add(TestDataHelper.createCandleWithOpenPrice(lastCandleOpenPrice));
+        Candle candle1 = TestDataHelper.createCandleWithOpenPrice(100);
+        Candle candle2 = TestDataHelper.createCandleWithOpenPrice(200);
+        Candle candle3 = TestDataHelper.createCandleWithOpenPrice(BigDecimal.valueOf(300));
 
-        DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(candles);
+        DecisionData decisionData = new DecisionData()
+                .withCurrentCandles(Arrays.asList(candle1, candle2, candle3));
 
-        AssertUtils.assertEquals(lastCandleOpenPrice, decisionData.getCurrentPrice());
+        AssertUtils.assertEquals(candle3.getOpenPrice(), decisionData.getCurrentPrice());
     }
 
     private Candle createCandle(int openPrice) {

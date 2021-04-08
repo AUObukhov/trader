@@ -174,9 +174,8 @@ public class TestDataHelper {
     }
 
     public static DecisionData createDecisionData(Candle... candles) {
-        DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(Arrays.asList(candles));
-        return decisionData;
+        return new DecisionData()
+                .withCurrentCandles(Arrays.asList(candles));
     }
 
     public static PortfolioPosition createPortfolioPosition(String ticker) {
