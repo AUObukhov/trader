@@ -389,7 +389,9 @@ public class MathUtils {
     }
 
     private static void updateExponentialMovingAveragesNatural(
-            List<BigDecimal> averages, double weightDecrease, double revertedWeightDecrease
+            List<BigDecimal> averages,
+            double weightDecrease,
+            double revertedWeightDecrease
     ) {
         BigDecimal average = averages.get(0);
         final int size = averages.size();
@@ -399,7 +401,9 @@ public class MathUtils {
     }
 
     private static void updateExponentialMovingAveragesReverse(
-            List<BigDecimal> averages, double weightDecrease, double revertedWeightDecrease
+            List<BigDecimal> averages,
+            double weightDecrease,
+            double revertedWeightDecrease
     ) {
         final int size = averages.size();
         BigDecimal average = averages.get(size - 1);
@@ -408,11 +412,13 @@ public class MathUtils {
         }
     }
 
-    private static BigDecimal updateExponentialMovingAverage(List<BigDecimal> averages,
-                                                             BigDecimal average,
-                                                             int index,
-                                                             double weightDecrease,
-                                                             double revertedWeightDecrease) {
+    private static BigDecimal updateExponentialMovingAverage(
+            List<BigDecimal> averages,
+            BigDecimal average,
+            int index,
+            double weightDecrease,
+            double revertedWeightDecrease
+    ) {
         average = DecimalUtils.multiply(averages.get(index), weightDecrease)
                 .add(DecimalUtils.multiply(average, revertedWeightDecrease));
         averages.set(index, average);
