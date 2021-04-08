@@ -24,6 +24,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -283,10 +284,11 @@ public class TestDataHelper {
                 .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
     }
 
-    public static DecisionData createDecisionData(double currentPrice, int lotSize, double balance) {
+    public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
         return new DecisionData()
                 .withBalance(DecimalUtils.setDefaultScale(balance))
                 .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)))
+                .withLastOperations(new ArrayList<>())
                 .withInstrument(new MarketInstrument().lot(lotSize));
     }
 

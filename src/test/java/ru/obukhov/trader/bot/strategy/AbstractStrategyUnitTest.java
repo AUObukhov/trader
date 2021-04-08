@@ -81,7 +81,7 @@ class AbstractStrategyUnitTest {
             "1000.0, 10, 20060.0, 2"
     })
     void getAvailableLots(double currentPrice, int lotSize, double balance, int expectedAvailableLots) {
-        DecisionData data = TestDataHelper.createDecisionData(currentPrice, lotSize, balance);
+        DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
 
         int availableLots = strategy.getAvailableLots(data);
 
