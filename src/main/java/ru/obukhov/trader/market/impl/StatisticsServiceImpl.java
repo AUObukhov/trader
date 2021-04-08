@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Line;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
@@ -60,12 +60,12 @@ public class StatisticsServiceImpl implements StatisticsService {
             extendedCandles.add(new ExtendedCandle(candles.get(i), averages.get(i)));
         }
 
-        List<Integer> localMaximums = MathUtils.getSortedLocalExtremes(averages, Comparator.naturalOrder());
+        List<Integer> localMaximums = TrendUtils.getSortedLocalExtremes(averages, Comparator.naturalOrder());
         for (Integer localMaximum : localMaximums) {
             extendedCandles.get(localMaximum).setExtremum(Extremum.MAX);
         }
 
-        List<Integer> localMinimums = MathUtils.getSortedLocalExtremes(averages, Comparator.reverseOrder());
+        List<Integer> localMinimums = TrendUtils.getSortedLocalExtremes(averages, Comparator.reverseOrder());
         for (Integer localMinimum : localMinimums) {
             extendedCandles.get(localMinimum).setExtremum(Extremum.MIN);
         }
@@ -88,7 +88,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private List<BigDecimal> getAverages(List<Candle> candles) {
-        return MathUtils.getExponentialWeightedMovingAverages(
+        return TrendUtils.getExponentialWeightedMovingAverages(
                 candles,
                 Candle::getOpenPrice,
                 0.3,

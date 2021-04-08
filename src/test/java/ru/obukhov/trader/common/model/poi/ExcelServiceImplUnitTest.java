@@ -18,7 +18,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.ExtendedCandle;
 import ru.obukhov.trader.market.model.Extremum;
@@ -447,19 +447,19 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         final List<Candle> candles = createCandles();
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
         Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
-        final List<BigDecimal> averages = MathUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
+        final List<BigDecimal> averages = TrendUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
 
         final List<ExtendedCandle> extendedCandles = new ArrayList<>(candles.size());
         for (int i = 0; i < candles.size(); i++) {
             extendedCandles.add(new ExtendedCandle(candles.get(i), averages.get(i)));
         }
 
-        final List<Integer> maximums = MathUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
+        final List<Integer> maximums = TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
         for (Integer maximum : maximums) {
             extendedCandles.get(maximum).setExtremum(Extremum.MAX);
         }
 
-        final List<Integer> minimums = MathUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
+        final List<Integer> minimums = TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
         for (Integer minimum : minimums) {
             extendedCandles.get(minimum).setExtremum(Extremum.MIN);
         }

@@ -26,8 +26,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class TestDataHelper {
 
@@ -248,6 +250,17 @@ public class TestDataHelper {
         List<MarketInstrument> instrumentList = Arrays.asList(instruments);
         MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
+    }
+
+    public static List<BigDecimal> getBigDecimalValues(List<Double> values) {
+        return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+    }
+
+    public static List<Optional<BigDecimal>> getOptionalBigDecimalValues(List<Double> values) {
+        return values.stream()
+                .map(DecimalUtils::setDefaultScale)
+                .map(Optional::of)
+                .collect(Collectors.toList());
     }
 
 }
