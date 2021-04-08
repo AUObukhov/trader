@@ -240,6 +240,55 @@ public class MathUtils {
     }
 
     /**
+     * Calculates linear weighted moving averages of values of given {@code elements} by given {@code window}
+     * Each average (except first and last {@code <window>} averages) is
+     * weighted average of {@code <window>} previous values,
+     * corresponding value and {@code <window>} next values.
+     * Weights are decreasing linearly beginning from {@code window} to 1.
+     *
+     * @param elements       elements containing values, for which averages are calculated for
+     * @param valueExtractor function to get value from current element
+     * @param window         count of values at both sides from each value, used for calculation of average.
+     *                       Must be positive.
+     * @param order          order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
+    public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
+            List<T> elements,
+            Function<T, BigDecimal> valueExtractor,
+            int window,
+            int order
+    ) {
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+
+        return getLinearWeightedMovingAverages(values, window, order);
+    }
+
+    /**
+     * Calculates linear weighted moving averages of given {@code values} by given {@code window}
+     * Each average (except first and last {@code <window>} averages) is
+     * weighted average of {@code <window>} previous values,
+     * corresponding value and {@code <window>} next values.
+     * Weights are decreasing linearly beginning from {@code window} to 1.
+     *
+     * @param values values, for which averages are calculated for
+     * @param window count of values at both sides from each value, used for calculation of average.
+     *               Must be positive.
+     * @param order  order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window, int order) {
+        Assert.isTrue(order > 0, "order must be positive");
+
+        List<BigDecimal> averages = new ArrayList<>(values);
+        for (int i = 0; i < order; i++) {
+            averages = getLinearWeightedMovingAverages(averages, window);
+        }
+
+        return averages;
+    }
+
+    /**
      * Calculates linear weighted moving averages of given {@code values} by given {@code window}
      * Each average (except first and last {@code <window>} averages) is
      * weighted average of {@code <window>} previous values,

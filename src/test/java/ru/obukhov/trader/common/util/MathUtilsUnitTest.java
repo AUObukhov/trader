@@ -300,7 +300,7 @@ class MathUtilsUnitTest {
 
     // region getLinearWeightedMovingAverages tests
 
-    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_throwsIllegalArgumentException() {
+    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -1, "window must be positive"),
                 Arguments.of(Collections.emptyList(), 0, "window must be positive")
@@ -308,8 +308,8 @@ class MathUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetLinearWeightedMovingAverages_throwsIllegalArgumentException")
-    void getLinearWeightedMovingAverages_withoutValueExtractor_throwsIllegalArgumentException(
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
+    void getLinearWeightedMovingAverages_withoutOrder_withoutValueExtractor_throwsIllegalArgumentException(
             List<Double> values,
             int window,
             String expectedMessage
@@ -324,8 +324,8 @@ class MathUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetLinearWeightedMovingAverages_throwsIllegalArgumentException")
-    void getLinearWeightedMovingAverages_withValueExtractor_throwsIllegalArgumentException(
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
+    void getLinearWeightedMovingAverages_withoutOrder_withValueExtractor_throwsIllegalArgumentException(
             List<Double> values,
             int window,
             String expectedMessage
@@ -339,7 +339,46 @@ class MathUtilsUnitTest {
         );
     }
 
-    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages() {
+    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException() {
+        return Stream.of(
+                Arguments.of(Collections.emptyList(), -1, "order must be positive"),
+                Arguments.of(Collections.emptyList(), 0, "order must be positive")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
+    void getLinearWeightedMovingAverages_withOrder_withoutValueExtractor_throwsIllegalArgumentException(
+            List<Double> values,
+            int order,
+            String expectedMessage
+    ) {
+        List<BigDecimal> bigDecimalValues = getBigDecimalValues(values);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getLinearWeightedMovingAverages(bigDecimalValues, 1, order),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
+    void getLinearWeightedMovingAverages_withOrder_withValueExtractor_throwsIllegalArgumentException(
+            List<Double> values,
+            int order,
+            String expectedMessage
+    ) {
+        List<Optional<BigDecimal>> bigDecimalValues = getOptionalBigDecimalValues(values);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> MathUtils.getLinearWeightedMovingAverages(bigDecimalValues, Optional::get, 1, order),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withoutOrder() {
         return Stream.of(
                 Arguments.of(
                         Collections.emptyList(),
@@ -395,8 +434,8 @@ class MathUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetLinearWeightedMovingAverages")
-    void getLinearWeightedMovingAverages_withoutValueExtractor(
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
+    void getLinearWeightedMovingAverages_withoutOrder_withoutValueExtractor(
             List<Double> values,
             int window,
             List<Double> expectedValues
@@ -417,8 +456,8 @@ class MathUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetLinearWeightedMovingAverages")
-    void getLinearWeightedMovingAverages_withValueExtractor(
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
+    void getLinearWeightedMovingAverages_withoutOrder_withValueExtractor(
             List<Double> values,
             int window,
             List<Double> expectedValues
@@ -426,6 +465,179 @@ class MathUtilsUnitTest {
         List<Optional<BigDecimal>> elements = getOptionalBigDecimalValues(values);
 
         List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
+
+        List<BigDecimal> bigDecimalExpectedValues = getBigDecimalValues(expectedValues);
+        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+
+        for (BigDecimal average : movingAverages) {
+            Assertions.assertTrue(
+                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
+                    "expected default scale for all averages"
+            );
+        }
+    }
+
+    static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withOrder() {
+        return Stream.of(
+                Arguments.of(Collections.emptyList(), 4, 1, Collections.emptyList()),
+                Arguments.of(Collections.emptyList(), 4, 2, Collections.emptyList()),
+                Arguments.of(Collections.emptyList(), 4, 10, Collections.emptyList()),
+
+                Arguments.of(Collections.singletonList(1000.0), 4, 1, Collections.singletonList(1000.0)),
+                Arguments.of(Collections.singletonList(1000.0), 4, 2, Collections.singletonList(1000.0)),
+                Arguments.of(Collections.singletonList(1000.0), 4, 10, Collections.singletonList(1000.0)),
+
+                Arguments.of(ImmutableList.of(1000.0, 2000.0), 4, 1, ImmutableList.of(1000.0, 2000.0)),
+                Arguments.of(ImmutableList.of(1000.0, 2000.0), 4, 2, ImmutableList.of(1000.0, 2000.0)),
+                Arguments.of(ImmutableList.of(1000.0, 2000.0), 4, 10, ImmutableList.of(1000.0, 2000.0)),
+
+                Arguments.of(Collections.singletonList(1000.0), 1, 1, Collections.singletonList(1000.0)),
+                Arguments.of(Collections.singletonList(1000.0), 1, 2, Collections.singletonList(1000.0)),
+                Arguments.of(Collections.singletonList(1000.0), 1, 10, Collections.singletonList(1000.0)),
+
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        4,
+                        1,
+                        ImmutableList.of(1000.0, 2250.0, 2750.0, 4000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        4,
+                        2,
+                        ImmutableList.of(1000.0, 2062.5, 2937.5, 4000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        4,
+                        3,
+                        ImmutableList.of(1000.0, 2015.625, 2984.375, 4000.0)
+                ),
+
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        4,
+                        1,
+                        ImmutableList.of(1000.0, 2250.0, 2000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        4,
+                        2,
+                        ImmutableList.of(1000.0, 1875.0, 2000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        4,
+                        3,
+                        ImmutableList.of(1000.0, 1687.5, 2000.0)
+                ),
+
+                Arguments.of(
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        1,
+                        1,
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        1,
+                        2,
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        1,
+                        10,
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                ),
+
+                Arguments.of(
+                        ImmutableList.of(
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
+                        ),
+                        4,
+                        1,
+                        ImmutableList.of(
+                                9912.00000, 9896.00000, 9891.88889, 9893.50000, 9893.44000,
+                                9892.44000, 9891.32000, 9890.44000, 9888.40000, 9886.32000,
+                                9884.20000, 9882.84000, 9881.76000, 9880.00000, 9878.00000,
+                                9875.76000, 9872.75000, 9867.55556, 9861.75000, 9862.00000
+                        )
+                ),
+                Arguments.of(
+                        ImmutableList.of(
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
+                        ),
+                        4,
+                        2,
+                        ImmutableList.of(
+                                9912.00000, 9898.97222, 9895.56741, 9894.38667, 9893.35467,
+                                9891.83831, 9890.77476, 9889.55920, 9888.05440, 9886.41760,
+                                9884.73280, 9883.04000, 9881.28280, 9879.30462, 9876.93244,
+                                9874.25307, 9871.40292, 9867.71408, 9863.26389, 9862.00000
+                        )
+                ),
+                Arguments.of(
+                        ImmutableList.of(
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
+                        ),
+                        4,
+                        3,
+                        ImmutableList.of(
+                                9912.00000, 9901.37796, 9897.64163, 9895.54430, 9893.91268,
+                                9892.00721, 9890.62399, 9889.25928, 9887.80384, 9886.25170,
+                                9884.59763, 9882.80860, 9880.86347, 9878.70666, 9876.25820,
+                                9873.59185, 9870.82565, 9867.63655, 9864.06047, 9862.00000
+                        )
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder")
+    void getLinearWeightedMovingAverages_withOrder_withoutValueExtractor(
+            List<Double> values,
+            int window,
+            int order,
+            List<Double> expectedValues
+    ) {
+        List<BigDecimal> bigDecimalValues = getBigDecimalValues(values);
+
+        List<BigDecimal> movingAverages = MathUtils.getLinearWeightedMovingAverages(bigDecimalValues, window, order);
+
+        List<BigDecimal> bigDecimalExpectedValues = getBigDecimalValues(expectedValues);
+        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+
+        for (BigDecimal average : movingAverages) {
+            Assertions.assertTrue(
+                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
+                    "expected default scale for all averages"
+            );
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder")
+    void getLinearWeightedMovingAverages_withOrder_withValueExtractor(
+            List<Double> values,
+            int window,
+            int order,
+            List<Double> expectedValues
+    ) {
+        List<Optional<BigDecimal>> elements = getOptionalBigDecimalValues(values);
+
+        List<BigDecimal> movingAverages =
+                MathUtils.getLinearWeightedMovingAverages(elements, Optional::get, window, order);
 
         List<BigDecimal> bigDecimalExpectedValues = getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
