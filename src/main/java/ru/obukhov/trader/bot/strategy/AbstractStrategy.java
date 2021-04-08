@@ -24,22 +24,25 @@ public abstract class AbstractStrategy implements Strategy {
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
     protected double getProfit(DecisionData data) {
-        BigDecimal buyLotPrice = DecimalUtils.multiply(data.getAveragePositionPrice(), data.getLotSize());
-        BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(buyLotPrice, tradingProperties.getCommission());
+        final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
+        BigDecimal buyPricePlusCommission =
+                DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());
 
-        BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(
-                currentLotPrice, tradingProperties.getCommission());
+        final BigDecimal currentPrice = data.getCurrentPrice();
+        BigDecimal sellPriceMinusCommission =
+                DecimalUtils.subtractFraction(currentPrice, tradingProperties.getCommission());
 
         double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
                 .doubleValue();
 
-        log.debug("buyLotPrice = {}, "
-                        + "buyPricePlusCommission = {}, "
-                        + "currentLotPrice = {}, "
-                        + "sellPriceMinusCommission = {}, "
-                        + "profit = {}, ",
-                buyLotPrice, buyPricePlusCommission, currentLotPrice, sellPriceMinusCommission, profit);
+        log.debug(
+                "averagePositionPrice = {}, " +
+                        "buyPricePlusCommission = {}, " +
+                        "currentPrice = {}, " +
+                        "sellPriceMinusCommission = {}, " +
+                        "profit = {}, ",
+                averagePositionPrice, buyPricePlusCommission, currentPrice, sellPriceMinusCommission, profit
+        );
 
         return profit;
     }
