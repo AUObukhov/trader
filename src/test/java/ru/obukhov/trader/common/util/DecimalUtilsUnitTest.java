@@ -68,6 +68,20 @@ class DecimalUtilsUnitTest {
     // endregion
 
     @ParameterizedTest
+    @CsvSource({
+            "10, 5, 7.5",
+            "-10, 10, 0",
+            "10, 10, 10",
+            "1.234567, 2.345678, 1.79012",
+            "1.234567, 9.87654321, 5.55556"
+    })
+    void getAverage(BigDecimal value1, BigDecimal value2, BigDecimal expectedAverage) {
+        BigDecimal average = DecimalUtils.getAverage(value1, value2);
+
+        AssertUtils.assertEquals(expectedAverage, average);
+    }
+
+    @ParameterizedTest
     @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
     void getIntegerQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
         int result = DecimalUtils.getIntegerQuotient(dividend, divisor);

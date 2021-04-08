@@ -74,6 +74,13 @@ public class DecimalUtils {
     // endregion
 
     /**
+     * @return average between given {@code value1} and {@code value2} with scale = {@link DecimalUtils#DEFAULT_SCALE}
+     */
+    public static BigDecimal getAverage(BigDecimal value1, BigDecimal value2) {
+        return divide(value1.add(value2), 2);
+    }
+
+    /**
      * @return integer quotient of division of {@code dividend} by {@code divisor}
      */
     public static int getIntegerQuotient(BigDecimal dividend, BigDecimal divisor) {
