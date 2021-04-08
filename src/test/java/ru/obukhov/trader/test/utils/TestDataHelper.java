@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -182,6 +183,20 @@ public class TestDataHelper {
         return createPortfolioPosition(ticker, 1);
     }
 
+    public static PortfolioPosition createPortfolioPosition(double averagePositionPrice) {
+        return new PortfolioPosition(
+                StringUtils.EMPTY,
+                BigDecimal.ZERO,
+                null,
+                Currency.RUB,
+                null,
+                0,
+                DecimalUtils.setDefaultScale(averagePositionPrice),
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
     public static PortfolioPosition createPortfolioPosition(String ticker, int lotsCount) {
         return new PortfolioPosition(
                 ticker,
@@ -260,6 +275,19 @@ public class TestDataHelper {
                 .map(DecimalUtils::setDefaultScale)
                 .map(Optional::of)
                 .collect(Collectors.toList());
+    }
+
+    public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
+        return new DecisionData()
+                .withPosition(createPortfolioPosition(averagePositionPrice))
+                .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+    }
+
+    public static DecisionData createDecisionData(double currentPrice, int lotSize, double balance) {
+        return new DecisionData()
+                .withBalance(DecimalUtils.setDefaultScale(balance))
+                .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)))
+                .withInstrument(new MarketInstrument().lot(lotSize));
     }
 
 }
