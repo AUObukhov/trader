@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,6 +48,23 @@ public class CollectionsUtils {
         }
 
         return list.subList(list.size() - size, list.size());
+    }
+
+    /**
+     * @return last item of given {@code iterable} or null if {@code iterable} is null or empty
+     */
+    public static <T> T getLast(Iterable<T> iterable) {
+        if (iterable == null) {
+            return null;
+        }
+
+        Iterator<T> iterator = iterable.iterator();
+        T last = null;
+        while (iterator.hasNext()) {
+            last = iterator.next();
+        }
+
+        return last;
     }
 
     /**

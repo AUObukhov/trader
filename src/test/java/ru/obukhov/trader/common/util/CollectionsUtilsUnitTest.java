@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -82,6 +83,26 @@ class CollectionsUtilsUnitTest {
         for (int i = 0; i < list.size(); i++) {
             Assertions.assertEquals(list.get(0), result.get(0));
         }
+    }
+
+    // endregion
+
+    // region getLast tests
+
+    static Stream<Arguments> getData_forGetLast() {
+        return Stream.of(
+                Arguments.of(null, null),
+                Arguments.of(Collections.emptyList(), null),
+                Arguments.of(ImmutableList.of(1, 2, 3), 3)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetLast")
+    <T> void getLast_returnsLastItem_whenIterablesIsNotEmpty(Iterable<T> iterable, T expectedLastItem) {
+        T lastItem = CollectionsUtils.getLast(iterable);
+
+        Assertions.assertEquals(expectedLastItem, lastItem);
     }
 
     // endregion
