@@ -181,6 +181,24 @@ public class TestDataHelper {
         return decisionData;
     }
 
+    public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
+        DecisionData decisionData = new DecisionData();
+        decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
+        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+
+        return decisionData;
+    }
+
+    public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
+        DecisionData decisionData = new DecisionData();
+        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
+        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setLastOperations(new ArrayList<>());
+        decisionData.setInstrument(new MarketInstrument().lot(lotSize));
+
+        return decisionData;
+    }
+
     public static PortfolioPosition createPortfolioPosition(String ticker) {
         return createPortfolioPosition(ticker, 1);
     }
@@ -277,24 +295,6 @@ public class TestDataHelper {
                 .map(DecimalUtils::setDefaultScale)
                 .map(Optional::of)
                 .collect(Collectors.toList());
-    }
-
-    public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
-        DecisionData decisionData = new DecisionData();
-        decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
-        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
-
-        return decisionData;
-    }
-
-    public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
-        DecisionData decisionData = new DecisionData();
-        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
-        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
-        decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setInstrument(new MarketInstrument().lot(lotSize));
-
-        return decisionData;
     }
 
 }
