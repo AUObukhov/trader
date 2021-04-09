@@ -50,7 +50,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
 
     private Bot createScheduledBot(Strategy strategy) {
 
-        return new ScheduledBot(
+        return ScheduledBot.create(
                 strategy,
                 realMarketService,
                 realOperationsService,

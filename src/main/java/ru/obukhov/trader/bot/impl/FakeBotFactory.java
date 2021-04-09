@@ -54,13 +54,15 @@ public class FakeBotFactory extends AbstractBotFactory {
         OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
         PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
-        return new FakeBotImpl(name,
+        return FakeBotImpl.create(
+                name,
                 strategy,
                 fakeMarketService,
                 fakeOperationsService,
                 fakeOrdersService,
                 fakePortfolioService,
-                fakeTinkoffService);
+                fakeTinkoffService
+        );
     }
 
     private String getBotName(Strategy strategy) {

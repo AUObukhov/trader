@@ -19,13 +19,35 @@ public class ScheduledBot extends AbstractBot {
     private final BotConfig botConfig;
     private final TradingProperties tradingProperties;
 
-    public ScheduledBot(Strategy strategy,
-                        MarketService marketService,
-                        OperationsService operationsService,
-                        OrdersService ordersService,
-                        PortfolioService portfolioService,
-                        BotConfig botConfig,
-                        TradingProperties tradingProperties) {
+    public static ScheduledBot create(
+            Strategy strategy,
+            MarketService marketService,
+            OperationsService operationsService,
+            OrdersService ordersService,
+            PortfolioService portfolioService,
+            BotConfig botConfig,
+            TradingProperties tradingProperties
+    ) {
+        return new ScheduledBot(
+                strategy,
+                marketService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                botConfig,
+                tradingProperties
+        );
+    }
+
+    private ScheduledBot(
+            Strategy strategy,
+            MarketService marketService,
+            OperationsService operationsService,
+            OrdersService ordersService,
+            PortfolioService portfolioService,
+            BotConfig botConfig,
+            TradingProperties tradingProperties
+    ) {
 
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 

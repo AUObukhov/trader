@@ -18,14 +18,35 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     @Getter
     private final FakeTinkoffService fakeTinkoffService;
 
-    public FakeBotImpl(String name,
-                       Strategy strategy,
-                       MarketService marketService,
-                       OperationsService operationsService,
-                       OrdersService ordersService,
-                       PortfolioService portfolioService,
-                       FakeTinkoffService fakeTinkoffService) {
+    public static FakeBotImpl create(
+            String name,
+            Strategy strategy,
+            MarketService marketService,
+            OperationsService operationsService,
+            OrdersService ordersService,
+            PortfolioService portfolioService,
+            FakeTinkoffService fakeTinkoffService
+    ) {
+        return new FakeBotImpl(
+                name,
+                strategy,
+                marketService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                fakeTinkoffService
+        );
+    }
 
+    private FakeBotImpl(
+            String name,
+            Strategy strategy,
+            MarketService marketService,
+            OperationsService operationsService,
+            OrdersService ordersService,
+            PortfolioService portfolioService,
+            FakeTinkoffService fakeTinkoffService
+    ) {
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 
         this.name = name;
