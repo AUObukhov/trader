@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -151,6 +152,20 @@ public class TestDataHelper {
                 .type(InstrumentType.STOCK);
 
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+
+        return instrument;
+    }
+
+    public static MarketInstrument createAndMockInstrument(MarketService marketService, String ticker) {
+        MarketInstrument instrument = new MarketInstrument()
+                .figi(StringUtils.EMPTY)
+                .ticker(ticker)
+                .lot(0)
+                .currency(Currency.RUB)
+                .name(StringUtils.EMPTY)
+                .type(InstrumentType.STOCK);
+
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         return instrument;
     }
