@@ -3,6 +3,7 @@ package ru.obukhov.trader.bot.impl;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Value;
@@ -226,21 +227,25 @@ public class SimulatorImpl implements Simulator {
     }
 
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
-        List<Candle> currentCandles = decisionData.getCurrentCandles();
-        Candle candle = Iterables.getLast(currentCandles);
-        if (candle != null) {
-            candles.add(candle);
+        if (decisionData != null && CollectionUtils.isNotEmpty(decisionData.getCurrentCandles())) {
+            List<Candle> currentCandles = decisionData.getCurrentCandles();
+            Candle candle = Iterables.getLast(currentCandles);
+            if (candle != null) {
+                candles.add(candle);
+            }
         }
     }
 
-    private SimulationResult createResult(FakeBot bot,
-                                          Interval interval,
-                                          String ticker,
-                                          List<Candle> candles) {
+    private SimulationResult createResult(
+            FakeBot bot,
+            Interval interval,
+            String ticker,
+            List<Candle> candles
+    ) {
 
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
-        BigDecimal currentPrice = Iterables.getLast(candles).getClosePrice();
+        BigDecimal currentPrice = CollectionUtils.isEmpty(candles) ? null : Iterables.getLast(candles).getClosePrice();
         List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), currentPrice);
         Currency currency = getCurrency(fakeTinkoffService, ticker);
 
@@ -279,8 +284,10 @@ public class SimulatorImpl implements Simulator {
         return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<SimulatedPosition> getPositions(Collection<PortfolioPosition> portfolioPositions,
-                                                 BigDecimal currentPrice) {
+    private List<SimulatedPosition> getPositions(
+            Collection<PortfolioPosition> portfolioPositions,
+            BigDecimal currentPrice
+    ) {
         return portfolioPositions.stream()
                 .map(portfolioPosition -> createSimulatedPosition(portfolioPosition, currentPrice))
                 .collect(Collectors.toList());

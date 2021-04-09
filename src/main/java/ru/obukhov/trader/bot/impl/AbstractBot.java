@@ -36,8 +36,9 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     public DecisionData processTicker(String ticker) {
-        DecisionData decisionData = new DecisionData();
         try {
+            DecisionData decisionData = new DecisionData();
+
             List<Order> orders = ordersService.getOrders(ticker);
             if (orders.isEmpty()) {
                 fillDecisionData(decisionData, ticker);
@@ -50,11 +51,12 @@ public abstract class AbstractBot implements Bot {
             } else {
                 log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
             }
+
+            return decisionData;
         } catch (Exception ex) {
             log.error("Exception while process ticker '{}'. Do nothing", ticker, ex);
+            return null;
         }
-
-        return decisionData;
     }
 
     private void fillDecisionData(DecisionData decisionData, String ticker) {

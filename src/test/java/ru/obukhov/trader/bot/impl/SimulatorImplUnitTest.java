@@ -543,6 +543,142 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
+    void simulate_notFillsCandles_whenDecisionDataIsNull() {
+
+        // arrange
+
+        final String ticker = "ticker";
+        final String botName = "botName";
+
+        FakeBot fakeBot = createFakeBotMock(botName);
+        Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
+
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
+
+        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
+        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
+        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final Interval interval = Interval.of(from, to);
+
+        mockNextMinute(from);
+
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+
+        // act
+
+        Map<String, List<SimulationResult>> tickerToSimulationResults =
+                simulator.simulate(simulationUnits, interval, false);
+
+        // assert
+
+        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+
+        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
+        Assertions.assertNull(simulationResult.getError());
+
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull() {
+
+        // arrange
+
+        final String ticker = "ticker";
+        final String botName = "botName";
+
+        FakeBot fakeBot = createFakeBotMock(botName);
+        Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
+
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
+
+        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
+        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
+        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final Interval interval = Interval.of(from, to);
+
+        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(new DecisionData());
+
+        mockNextMinute(from);
+
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+
+        // act
+
+        Map<String, List<SimulationResult>> tickerToSimulationResults =
+                simulator.simulate(simulationUnits, interval, false);
+
+        // assert
+
+        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+
+        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
+        Assertions.assertNull(simulationResult.getError());
+
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty() {
+
+        // arrange
+
+        final String ticker = "ticker";
+        final String botName = "botName";
+
+        FakeBot fakeBot = createFakeBotMock(botName);
+        Mockito.when(fakeBotFactory.createBots()).thenReturn(Sets.newHashSet(fakeBot));
+
+        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
+
+        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
+        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
+        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final Interval interval = Interval.of(from, to);
+
+        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(TestDataHelper.createDecisionData());
+
+        mockNextMinute(from);
+
+        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+
+        // act
+
+        Map<String, List<SimulationResult>> tickerToSimulationResults =
+                simulator.simulate(simulationUnits, interval, false);
+
+        // assert
+
+        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+
+        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
+        Assertions.assertNull(simulationResult.getError());
+
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
+    }
+
+    @Test
     void simulate_callsSaveToFile_whenSaveToFilesIsTrue() {
 
         // arrange
