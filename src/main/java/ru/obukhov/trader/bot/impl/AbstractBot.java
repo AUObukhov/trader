@@ -60,11 +60,11 @@ public abstract class AbstractBot implements Bot {
     private void fillDecisionData(DecisionData decisionData, String ticker) {
         MarketInstrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.withBalance(portfolioService.getAvailableBalance(instrument.getCurrency()))
-                .withPosition(portfolioService.getPosition(ticker))
-                .withCurrentCandles(marketService.getLastCandles(ticker, LAST_CANDLES_COUNT))
-                .withLastOperations(getLastWeekOperations(ticker))
-                .withInstrument(instrument);
+        decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
+        decisionData.setPosition(portfolioService.getPosition(ticker));
+        decisionData.setCurrentCandles(marketService.getLastCandles(ticker, LAST_CANDLES_COUNT));
+        decisionData.setLastOperations(getLastWeekOperations(ticker));
+        decisionData.setInstrument(instrument);
 
     }
 

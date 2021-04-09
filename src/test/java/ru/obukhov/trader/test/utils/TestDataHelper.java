@@ -176,8 +176,9 @@ public class TestDataHelper {
     }
 
     public static DecisionData createDecisionData(Candle... candles) {
-        return new DecisionData()
-                .withCurrentCandles(Arrays.asList(candles));
+        DecisionData decisionData = new DecisionData();
+        decisionData.setCurrentCandles(Arrays.asList(candles));
+        return decisionData;
     }
 
     public static PortfolioPosition createPortfolioPosition(String ticker) {
@@ -279,17 +280,21 @@ public class TestDataHelper {
     }
 
     public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
-        return new DecisionData()
-                .withPosition(createPortfolioPosition(averagePositionPrice))
-                .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+        DecisionData decisionData = new DecisionData();
+        decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
+        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+
+        return decisionData;
     }
 
     public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
-        return new DecisionData()
-                .withBalance(DecimalUtils.setDefaultScale(balance))
-                .withCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)))
-                .withLastOperations(new ArrayList<>())
-                .withInstrument(new MarketInstrument().lot(lotSize));
+        DecisionData decisionData = new DecisionData();
+        decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
+        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setLastOperations(new ArrayList<>());
+        decisionData.setInstrument(new MarketInstrument().lot(lotSize));
+
+        return decisionData;
     }
 
 }

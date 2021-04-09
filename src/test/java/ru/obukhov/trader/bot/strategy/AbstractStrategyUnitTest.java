@@ -49,7 +49,8 @@ class AbstractStrategyUnitTest {
         Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
         Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData().withLastOperations(Arrays.asList(operation1, operation2, operation3));
+        DecisionData data = new DecisionData();
+        data.setLastOperations(Arrays.asList(operation1, operation2, operation3));
 
         Assertions.assertTrue(TestStrategy.existsOperationInProgress(data));
     }
@@ -59,14 +60,16 @@ class AbstractStrategyUnitTest {
         Operation operation1 = new Operation().status(OperationStatus.DONE);
         Operation operation2 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData().withLastOperations(Arrays.asList(operation1, operation2));
+        DecisionData data = new DecisionData();
+        data.setLastOperations(Arrays.asList(operation1, operation2));
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(data));
     }
 
     @Test
     void existsOperationInProgress_returnsFalse_whenNoOperations() {
-        DecisionData data = new DecisionData().withLastOperations(Collections.emptyList());
+        DecisionData data = new DecisionData();
+        data.setLastOperations(Collections.emptyList());
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(data));
     }

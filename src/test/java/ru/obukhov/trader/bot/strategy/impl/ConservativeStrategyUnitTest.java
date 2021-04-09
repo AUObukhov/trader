@@ -31,8 +31,8 @@ class ConservativeStrategyUnitTest {
         Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
         Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData()
-                .withLastOperations(Arrays.asList(operation1, operation2, operation3));
+        DecisionData data = new DecisionData();
+        data.setLastOperations(Arrays.asList(operation1, operation2, operation3));
 
         Decision decision = strategy.decide(data);
 
