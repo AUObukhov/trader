@@ -51,8 +51,7 @@ public abstract class AbstractBot implements Bot {
                 log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
             }
         } catch (Exception ex) {
-            String msg = String.format("Exception while process ticker '%s'. Do nothing", ticker);
-            log.error(msg, ex);
+            log.error("Exception while process ticker '{}'. Do nothing", ticker, ex);
         }
 
         return decisionData;
