@@ -15,6 +15,7 @@ import ru.obukhov.trader.bot.interfaces.Simulator;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MathUtils;
@@ -245,8 +246,7 @@ public class SimulatorImpl implements Simulator {
 
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
-        BigDecimal currentPrice = CollectionUtils.isEmpty(candles) ? null : Iterables.getLast(candles).getClosePrice();
-        List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), currentPrice);
+        List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), candles);
         Currency currency = getCurrency(fakeTinkoffService, ticker);
 
         SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
@@ -286,8 +286,11 @@ public class SimulatorImpl implements Simulator {
 
     private List<SimulatedPosition> getPositions(
             Collection<PortfolioPosition> portfolioPositions,
-            BigDecimal currentPrice
+            List<Candle> candles
     ) {
+        Candle lastCandle = CollectionsUtils.getLast(candles);
+        BigDecimal currentPrice = lastCandle == null ? null : lastCandle.getClosePrice();
+
         return portfolioPositions.stream()
                 .map(portfolioPosition -> createSimulatedPosition(portfolioPosition, currentPrice))
                 .collect(Collectors.toList());
