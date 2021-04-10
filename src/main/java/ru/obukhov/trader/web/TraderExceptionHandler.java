@@ -9,7 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TraderExceptionHandler {
         if (CollectionUtils.isNotEmpty(errors)) {
             result.put("errors", errors);
         }
-        result.put("time", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        result.put("time", OffsetDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return result;
     }
 
