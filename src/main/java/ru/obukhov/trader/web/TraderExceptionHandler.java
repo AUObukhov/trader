@@ -14,20 +14,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
 public class TraderExceptionHandler {
-
-    @ExceptionHandler(CompletionException.class)
-    public ResponseEntity<Map<String, Object>> handleCompletionException(Exception exception) {
-        log.error("Unknown tinkoff exception", exception);
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createResponseMap(exception));
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException exception) {
