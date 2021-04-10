@@ -1,6 +1,5 @@
 package ru.obukhov.trader.bot.impl;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -8,8 +7,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.model.Decision;
-import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
@@ -87,13 +84,6 @@ class ScheduledBotFactoryUnitTest extends BaseMockedTest {
                         tradingProperties
                 )
         );
-    }
-
-    private static class TestStrategy implements Strategy {
-        @Override
-        public Decision decide(DecisionData data) {
-            throw new NotImplementedException();
-        }
     }
 
 }
