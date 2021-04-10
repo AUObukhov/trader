@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -193,9 +192,7 @@ class DateUtilsUnitTest {
     @Test
     void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
         OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
-        try (MockedStatic<OffsetDateTime> OffsetDateTimeStaticMock =
-                     Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS)) {
-            OffsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
 
             OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
 
@@ -207,9 +204,7 @@ class DateUtilsUnitTest {
     void getLastWorkDay_returnsNow_whenTodayIsWeekend() {
         OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
         OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
-        try (MockedStatic<OffsetDateTime> OffsetDateTimeStaticMock =
-                     Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS)) {
-            OffsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
 
             OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
 

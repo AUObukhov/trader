@@ -149,7 +149,7 @@ class IntervalUnitTest {
         OffsetDateTime to = from.plusMinutes(10);
         Interval interval = Interval.of(from, to);
 
-        try (MockedStatic<OffsetDateTime> OffsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
 
             String expectedMessage =
                     "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";

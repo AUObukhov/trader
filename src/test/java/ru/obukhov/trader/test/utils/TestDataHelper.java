@@ -177,10 +177,10 @@ public class TestDataHelper {
     }
 
     public static MockedStatic<OffsetDateTime> mockNow(OffsetDateTime mockedNow) {
-        MockedStatic<OffsetDateTime> OffsetDateTimeStaticMock =
+        MockedStatic<OffsetDateTime> offsetDateTimeStaticMock =
                 Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
-        OffsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
-        return OffsetDateTimeStaticMock;
+        offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
+        return offsetDateTimeStaticMock;
     }
 
     public static SimulationUnit createSimulationUnit(String ticker, BigDecimal initialBalance) {
