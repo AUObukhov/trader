@@ -22,34 +22,38 @@ import java.util.stream.Collectors;
 public class TraderExceptionHandler {
 
     @ExceptionHandler(CompletionException.class)
-    public ResponseEntity<Map<String, Object>> handleCompletionException(Exception ex) {
-        log.error("Unknown tinkoff exception", ex);
+    public ResponseEntity<Map<String, Object>> handleCompletionException(Exception exception) {
+        log.error("Unknown tinkoff exception", exception);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createResponseMap(ex.getMessage(), null));
+                .body(createResponseMap(exception));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(createResponseMap(ex));
+                .body(createResponseMap(exception));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
-        log.error("Unknown exception", ex);
+    public ResponseEntity<Map<String, Object>> handleException(Exception exception) {
+        log.error("Unknown exception", exception);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(createResponseMap(ex.getMessage(), null));
+                .body(createResponseMap(exception));
     }
 
-    private Map<String, Object> createResponseMap(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult().getAllErrors().stream()
+    private Map<String, Object> createResponseMap(MethodArgumentNotValidException exception) {
+        List<String> errors = exception.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
 
         return createResponseMap("Invalid request", errors);
+    }
+
+    private Map<String, Object> createResponseMap(Exception exception) {
+        return createResponseMap(exception.getMessage(), null);
     }
 
     private Map<String, Object> createResponseMap(String message, List<String> errors) {
@@ -61,4 +65,5 @@ public class TraderExceptionHandler {
         result.put("time", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return result;
     }
+
 }
