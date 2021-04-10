@@ -19,6 +19,8 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,16 +28,13 @@ import java.util.stream.Collectors;
 @DependsOn("trendReversalStrategy")
 public class FakeBotFactory extends AbstractBotFactory {
 
-    public FakeBotFactory(TradingProperties tradingProperties,
-                          MarketService realMarketService,
-                          RealTinkoffService realTinkoffService,
-                          Set<Strategy> strategies) {
-
-        super(tradingProperties,
-                realMarketService,
-                realTinkoffService,
-                strategies);
-
+    public FakeBotFactory(
+            TradingProperties tradingProperties,
+            MarketService realMarketService,
+            RealTinkoffService realTinkoffService,
+            Collection<Strategy> strategies
+    ) {
+        super(tradingProperties, realMarketService, realTinkoffService, new HashSet<>(strategies));
     }
 
     @Override
