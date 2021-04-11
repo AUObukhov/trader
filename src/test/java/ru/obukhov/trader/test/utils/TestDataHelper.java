@@ -312,4 +312,11 @@ public class TestDataHelper {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static MockedStatic<Runtime> mockRuntime(Runtime runtime) {
+        MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
+        runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
+        return runtimeStaticMock;
+    }
+
 }

@@ -29,6 +29,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
     @Mock
     private ExcelFileService excelFileService;
+    @Mock
+    private File file;
+
     private ExcelServiceImpl excelService;
 
     @BeforeEach
@@ -65,11 +69,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result3 = createSimulationResult(ticker, "bot3");
         List<SimulationResult> results = Arrays.asList(result1, result2, result3);
 
-        excelService.saveSimulationResults(ticker, results);
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, results);
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
@@ -95,11 +102,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
 
         SimulationResult result = createSimulationResult(ticker, "bot");
 
-        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -124,11 +134,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(StringUtils.EMPTY);
 
-        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -154,11 +167,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(error);
 
-        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -187,11 +203,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(null);
 
-        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -218,11 +237,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(Collections.emptyList());
 
-        excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
-        String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService)
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+
+        Assertions.assertEquals(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -300,10 +322,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
 
         final List<ExtendedCandle> extendedCandles = createExtendedCandles();
 
-        excelService.saveCandles(ticker, interval, extendedCandles);
+        final String fileNamePrefix = "Candles for '" + ticker + "'";
 
-        String fileNamePrefix = "Candles for '" + ticker + "'";
-        Mockito.verify(excelFileService).saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
+                .thenReturn(file);
+
+        File returnedFile = excelService.saveCandles(ticker, interval, extendedCandles);
+
+        Assertions.assertSame(file, returnedFile);
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());

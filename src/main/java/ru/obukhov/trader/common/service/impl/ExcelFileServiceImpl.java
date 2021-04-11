@@ -26,21 +26,23 @@ public class ExcelFileServiceImpl implements ExcelFileService {
 
     @Override
     @SneakyThrows
-    public void saveToFile(Workbook book, String fileName) {
-        try (FileOutputStream outputStream = createFileOutputStream(fileName)) {
+    public File saveToFile(Workbook book, String fileName) {
+        final File file = createFile(fileName);
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
             book.write(outputStream);
             book.close();
         }
+
+        return file;
     }
 
-    private FileOutputStream createFileOutputStream(String fileName) throws IOException {
+    private File createFile(String fileName) throws IOException {
         String extendedFileName = getFileName(fileName);
         final File file = new File(reportProperties.getSaveDirectory(), extendedFileName);
         if (!file.createNewFile()) {
             throw new IllegalStateException("Failed to create file " + file.getAbsolutePath());
         }
-
-        return new FileOutputStream(file);
+        return file;
     }
 
     private String getFileName(String fileName) {

@@ -30,6 +30,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -57,21 +58,21 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResults(String ticker, Collection<SimulationResult> results) {
+    public File saveSimulationResults(String ticker, Collection<SimulationResult> results) {
         ExtendedWorkbook workBook = createWorkBook();
         for (SimulationResult result : results) {
             createSheet(workBook, ticker, result);
         }
 
-        excelFileService.saveToFile(workBook, "SimulationResult for '" + ticker + "'");
+        return excelFileService.saveToFile(workBook, "SimulationResult for '" + ticker + "'");
     }
 
     @Override
-    public void saveCandles(String ticker, Interval interval, List<ExtendedCandle> candles) {
+    public File saveCandles(String ticker, Interval interval, List<ExtendedCandle> candles) {
         ExtendedWorkbook workBook = createWorkBook();
         createSheet(workBook, ticker, interval, candles);
 
-        excelFileService.saveToFile(workBook, "Candles for '" + ticker + "'");
+        return excelFileService.saveToFile(workBook, "Candles for '" + ticker + "'");
     }
 
     @NotNull
