@@ -12,6 +12,7 @@ import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 public class ScheduledBot extends AbstractBot {
@@ -48,7 +49,6 @@ public class ScheduledBot extends AbstractBot {
             BotConfig botConfig,
             TradingProperties tradingProperties
     ) {
-
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 
         this.botConfig = botConfig;
@@ -68,7 +68,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        HashSet<String> tickers = new HashSet<>(botConfig.getTickers());
+        Set<String> tickers = new HashSet<>(botConfig.getTickers());
         if (tickers.isEmpty()) {
             log.warn("No tickers configured for bot. Do nothing");
             return;
