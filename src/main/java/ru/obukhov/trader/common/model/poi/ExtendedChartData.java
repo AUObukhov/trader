@@ -22,10 +22,13 @@ import java.util.stream.Collectors;
 public class ExtendedChartData {
 
     @Getter
+    private final ExtendedChart chart;
+    @Getter
     private final XDDFChartData delegate;
 
-    public ExtendedChartData(XDDFChartData delegate) {
+    public ExtendedChartData(XDDFChartData delegate, ExtendedChart chart) {
         this.delegate = delegate;
+        this.chart = chart;
     }
 
     // region additional methods

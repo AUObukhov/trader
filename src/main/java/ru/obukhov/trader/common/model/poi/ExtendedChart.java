@@ -30,13 +30,15 @@ public class ExtendedChart implements Chart, ChartAxisFactory {
 
     // region additional methods
 
-    public ExtendedChartData createChartData(AxisPosition categoryAxisPosition,
-                                             AxisPosition valueAxisPosition,
-                                             ChartTypes chartType) {
+    public ExtendedChartData createChartData(
+            AxisPosition categoryAxisPosition,
+            AxisPosition valueAxisPosition,
+            ChartTypes chartType
+    ) {
         XDDFCategoryAxis categoryAxis = delegate.createCategoryAxis(categoryAxisPosition);
         XDDFValueAxis valueAxis = delegate.createValueAxis(valueAxisPosition);
         XDDFChartData xddfChartData = delegate.createData(chartType, categoryAxis, valueAxis);
-        return new ExtendedChartData(xddfChartData);
+        return new ExtendedChartData(xddfChartData, this);
     }
 
     // endregion
