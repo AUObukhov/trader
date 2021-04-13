@@ -112,7 +112,12 @@ public class ExtendedChartData {
     }
 
     public List<XDDFChartData.Series> getSeries() {
-        return delegate.getSeries();
+        int count = delegate.getSeriesCount();
+        List<XDDFChartData.Series> series = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            series.add(delegate.getSeries(i));
+        }
+        return series;
     }
 
     public void removeSeries(int n) {
