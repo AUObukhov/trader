@@ -83,20 +83,8 @@ public class ExtendedCell implements Cell {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public CellType getCellTypeEnum() {
-        return delegate.getCellTypeEnum();
-    }
-
-    @Override
     public CellType getCachedFormulaResultType() {
         return delegate.getCachedFormulaResultType();
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public CellType getCachedFormulaResultTypeEnum() {
-        return delegate.getCachedFormulaResultTypeEnum();
     }
 
     @Override

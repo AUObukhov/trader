@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -243,20 +246,14 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public short getNumberOfFonts() {
+    public int getNumberOfFonts() {
         return delegate.getNumberOfFonts();
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int getNumberOfFontsAsInt() {
         return delegate.getNumberOfFontsAsInt();
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public Font getFontAt(short idx) {
-        return delegate.getFontAt(idx);
     }
 
     @Override
@@ -313,32 +310,8 @@ public class ExtendedWorkbook implements Workbook {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public Name getNameAt(int nameIndex) {
-        return delegate.getNameAt(nameIndex);
-    }
-
-    @Override
     public Name createName() {
         return delegate.createName();
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public int getNameIndex(String name) {
-        return delegate.getNameIndex(name);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void removeName(int index) {
-        delegate.removeName(index);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public void removeName(String name) {
-        delegate.removeName(name);
     }
 
     @Override
@@ -461,10 +434,29 @@ public class ExtendedWorkbook implements Workbook {
         return delegate.addOlePackage(oleData, label, fileName, command);
     }
 
+    @Override
+    public EvaluationWorkbook createEvaluationWorkbook() {
+        return delegate.createEvaluationWorkbook();
+    }
+
+    // endregion
+
+    // region Iterable implementation
+
     @NotNull
     @Override
     public Iterator<Sheet> iterator() {
         return sheetIterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Sheet> action) {
+        delegate.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Sheet> spliterator() {
+        return delegate.spliterator();
     }
 
     // endregion

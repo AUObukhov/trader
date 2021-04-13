@@ -2,31 +2,24 @@ package ru.obukhov.trader.common.model.poi;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
-import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
-import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.ManualLayout;
-import org.apache.poi.ss.usermodel.charts.ValueAxis;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-
-import java.util.List;
 
 /**
  * Decorator of {@link XSSFChart} with additional handy methods
  */
 @RequiredArgsConstructor
-public class ExtendedChart implements Chart, ChartAxisFactory {
+public class ExtendedChart extends XDDFChart {
 
     @Getter
-    private final XSSFChart delegate;
+    private final XDDFChart delegate;
 
     // region additional methods
 
@@ -51,22 +44,7 @@ public class ExtendedChart implements Chart, ChartAxisFactory {
 
     // endregion
 
-    // region Chart implementation
-
-    @Override
-    public ChartDataFactory getChartDataFactory() {
-        return delegate.getChartDataFactory();
-    }
-
-    @Override
-    public ChartAxisFactory getChartAxisFactory() {
-        return delegate.getChartAxisFactory();
-    }
-
-    @Override
-    public ChartLegend getOrCreateLegend() {
-        return delegate.getOrCreateLegend();
-    }
+    // region XDDFChart implementation
 
     @Override
     public void deleteLegend() {
@@ -74,38 +52,24 @@ public class ExtendedChart implements Chart, ChartAxisFactory {
     }
 
     @Override
-    public List<? extends ChartAxis> getAxis() {
-        return delegate.getAxis();
+    protected POIXMLRelation getChartRelation() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void plot(ChartData data, ChartAxis... axis) {
-        delegate.plot(data, axis);
+    protected POIXMLRelation getChartWorkbookRelation() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public ManualLayout getManualLayout() {
-        return delegate.getManualLayout();
+    protected POIXMLFactory getChartFactory() {
+        throw new UnsupportedOperationException();
     }
 
     // endregion
 
     // region ChartAxisFactory implementation
 
-    @Override
-    public ValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        return delegate.createValueAxis(pos);
-    }
-
-    @Override
-    public ChartAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        return delegate.createCategoryAxis(pos);
-    }
-
-    @Override
-    public ChartAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        return delegate.createDateAxis(pos);
-    }
 
     // endregion
 
