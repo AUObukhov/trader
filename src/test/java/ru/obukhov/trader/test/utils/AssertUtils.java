@@ -96,6 +96,13 @@ public class AssertUtils {
         Assertions.assertEquals(expected.getName(), actual.getName());
     }
 
+    public static void assertEquals(byte[] expected, byte[] actual) {
+        Assertions.assertEquals(expected.length, actual.length);
+        for (int i = 0; i < actual.length; i++) {
+            Assertions.assertEquals(expected[i], actual[i]);
+        }
+    }
+
     public static void assertListsAreEqual(List<?> expected, List<?> actual) {
         assertListSize(expected, actual);
         for (int i = 0; i < expected.size(); i++) {

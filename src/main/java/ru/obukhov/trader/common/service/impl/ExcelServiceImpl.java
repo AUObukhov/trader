@@ -30,6 +30,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
+import java.awt.Color;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -314,11 +315,11 @@ public class ExcelServiceImpl implements ExcelService {
     private void addCandles(ExtendedChartData chartData, List<ExtendedCandle> candles) {
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(candles);
         addOpenPrices(chartData, timesDataSource, candles);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getAveragePrice);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getAveragePrice, Color.BLUE);
         addMinimums(chartData, candles, timesDataSource);
         addMaximums(chartData, candles, timesDataSource);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getSupportValue);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getResistanceValue);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getSupportValue, Color.GREEN);
+        addLine(chartData, timesDataSource, candles, ExtendedCandle::getResistanceValue, Color.RED);
 
         chartData.stretchChart();
     }
@@ -360,22 +361,15 @@ public class ExcelServiceImpl implements ExcelService {
         return XDDFDataSourcesFactory.fromArray(times);
     }
 
-    private void addOpenPrices(ExtendedChartData chartData,
-                               XDDFCategoryDataSource timesDataSource,
-                               List<? extends Candle> candles) {
+    private void addOpenPrices(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            List<? extends Candle> candles
+    ) {
         BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE);
-    }
-
-    private void addLine(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            List<ExtendedCandle> candles,
-            Function<ExtendedCandle, BigDecimal> lineValueExtractor
-    ) {
-        addLine(chartData, timesDataSource, candles, lineValueExtractor, MarkerStyle.NONE);
+        addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE, Color.GRAY);
     }
 
     private void addLine(
@@ -383,13 +377,24 @@ public class ExcelServiceImpl implements ExcelService {
             XDDFCategoryDataSource timesDataSource,
             List<ExtendedCandle> candles,
             Function<ExtendedCandle, BigDecimal> lineValueExtractor,
-            MarkerStyle markerStyle
+            Color color
+    ) {
+        addLine(chartData, timesDataSource, candles, lineValueExtractor, MarkerStyle.NONE, color);
+    }
+
+    private void addLine(
+            ExtendedChartData chartData,
+            XDDFCategoryDataSource timesDataSource,
+            List<ExtendedCandle> candles,
+            Function<ExtendedCandle, BigDecimal> lineValueExtractor,
+            MarkerStyle markerStyle,
+            Color color
     ) {
         BigDecimal[] values = candles.stream()
                 .map(lineValueExtractor)
                 .toArray(BigDecimal[]::new);
         if (!Arrays.stream(values).allMatch(Objects::isNull)) {
-            addSeries(chartData, timesDataSource, values, markerStyle);
+            addSeries(chartData, timesDataSource, values, markerStyle, color);
         }
     }
 
@@ -402,7 +407,7 @@ public class ExcelServiceImpl implements ExcelService {
                 candle -> candle.isLocalMinimum()
                         ? candle.getAveragePrice()
                         : null;
-        addLine(chartData, timesDataSource, candles, localMinimumExtractor, MarkerStyle.DIAMOND);
+        addLine(chartData, timesDataSource, candles, localMinimumExtractor, MarkerStyle.DIAMOND, Color.MAGENTA);
     }
 
     private void addMaximums(
@@ -414,7 +419,7 @@ public class ExcelServiceImpl implements ExcelService {
                 candle -> candle.isLocalMaximum()
                         ? candle.getAveragePrice()
                         : null;
-        addLine(chartData, timesDataSource, candles, localMaximumExtractor, MarkerStyle.TRIANGLE);
+        addLine(chartData, timesDataSource, candles, localMaximumExtractor, MarkerStyle.TRIANGLE, Color.YELLOW);
     }
 
     private void addOperations(
@@ -441,10 +446,10 @@ public class ExcelServiceImpl implements ExcelService {
         }
 
         if (buyOperationsExist) { // apache.poi fails when no values in dataSource
-            addSeries(chartData, timesDataSource, buyOperationsPrices, MarkerStyle.TRIANGLE);
+            addSeries(chartData, timesDataSource, buyOperationsPrices, MarkerStyle.TRIANGLE, Color.RED);
         }
         if (sellOperationsExist) {
-            addSeries(chartData, timesDataSource, sellOperationsPrices, MarkerStyle.DIAMOND);
+            addSeries(chartData, timesDataSource, sellOperationsPrices, MarkerStyle.DIAMOND, Color.GREEN);
         }
     }
 
@@ -452,9 +457,10 @@ public class ExcelServiceImpl implements ExcelService {
             ExtendedChartData chartData,
             XDDFCategoryDataSource timesDataSource,
             BigDecimal[] numbers,
-            MarkerStyle markerStyle
+            MarkerStyle markerStyle,
+            Color color
     ) {
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
-        chartData.addSeries(timesDataSource, numericalDataSource, OPERATION_MARKER_SIZE, markerStyle);
+        chartData.addSeries(timesDataSource, numericalDataSource, OPERATION_MARKER_SIZE, markerStyle, color);
     }
 }

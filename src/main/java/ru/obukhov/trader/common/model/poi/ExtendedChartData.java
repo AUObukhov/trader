@@ -1,6 +1,10 @@
 package ru.obukhov.trader.common.model.poi;
 
 import lombok.Getter;
+import org.apache.poi.xddf.usermodel.XDDFFillProperties;
+import org.apache.poi.xddf.usermodel.XDDFLineProperties;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.MarkerStyle;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
@@ -8,8 +12,10 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.MathUtils;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +32,8 @@ public class ExtendedChartData {
     @Getter
     private final XDDFChartData delegate;
 
+    private final ColorMapper colorMapper = Mappers.getMapper(ColorMapper.class);
+
     public ExtendedChartData(XDDFChartData delegate, ExtendedChart chart) {
         this.delegate = delegate;
         this.chart = chart;
@@ -33,14 +41,31 @@ public class ExtendedChartData {
 
     // region additional methods
 
-    public void addSeries(XDDFCategoryDataSource categoryDataSource,
-                          XDDFNumericalDataSource<Number> numericalDataSource,
-                          short markerSize,
-                          MarkerStyle markerStyle) {
+    public void addSeries(
+            XDDFCategoryDataSource categoryDataSource,
+            XDDFNumericalDataSource<Number> numericalDataSource,
+            short markerSize,
+            MarkerStyle markerStyle,
+            Color color
+    ) {
         XDDFLineChartData.Series series =
                 (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
         series.setMarkerSize(markerSize);
         series.setMarkerStyle(markerStyle);
+        setSeriesColor(series, color);
+    }
+
+    private void setSeriesColor(XDDFChartData.Series series, Color color) {
+        XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
+        XDDFLineProperties lineProperties = new XDDFLineProperties(fillProperties);
+
+        XDDFShapeProperties shapeProperties = series.getShapeProperties();
+        if (shapeProperties == null) {
+            shapeProperties = new XDDFShapeProperties();
+        }
+        shapeProperties.setFillProperties(fillProperties);
+        shapeProperties.setLineProperties(lineProperties);
+        series.setShapeProperties(shapeProperties);
     }
 
     /**
