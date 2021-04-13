@@ -68,9 +68,4 @@ public class ExtendedChart extends XDDFChart {
 
     // endregion
 
-    // region ChartAxisFactory implementation
-
-
-    // endregion
-
 }
