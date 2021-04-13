@@ -8,13 +8,18 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xddf.usermodel.XDDFColorRgbBinary;
+import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
+import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
+import org.mapstruct.factory.Mappers;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ContextConsumer;
 import org.springframework.validation.ObjectError;
+import ru.obukhov.trader.common.model.poi.ColorMapper;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -24,6 +29,7 @@ import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import javax.validation.ConstraintViolation;
+import java.awt.Color;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -36,6 +42,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AssertUtils {
+
+    private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
 
     public static void assertEquals(double expected, double actual) {
         Assertions.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
@@ -136,6 +144,8 @@ public class AssertUtils {
         }
     }
 
+    // region apache poi assertions
+
     public static void assertRowValues(Row row, Object... values) {
         Assertions.assertEquals(values.length, row.getPhysicalNumberOfCells());
         for (int index = 0; index < values.length; index++) {
@@ -225,6 +235,15 @@ public class AssertUtils {
         Date expectedValue = Date.from(value.toInstant());
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
+
+    public static void assertSeriesColor(XDDFLineChartData.Series series, Color color) {
+        XDDFSolidFillProperties fillProperties1 =
+                (XDDFSolidFillProperties) series.getShapeProperties().getFillProperties();
+        XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
+        AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), xddfColor1.getValue());
+    }
+
+    // endregion
 
     public static void assertFaster(Runnable runnable, long time) {
         Stopwatch stopwatch = Stopwatch.createStarted();

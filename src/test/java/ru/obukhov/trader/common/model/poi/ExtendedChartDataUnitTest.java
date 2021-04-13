@@ -1,7 +1,5 @@
 package ru.obukhov.trader.common.model.poi;
 
-import org.apache.poi.xddf.usermodel.XDDFColorRgbBinary;
-import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.MarkerStyle;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
@@ -11,15 +9,12 @@ import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.awt.Color;
 import java.util.List;
 
 class ExtendedChartDataUnitTest {
-
-    private final ColorMapper colorMapper = Mappers.getMapper(ColorMapper.class);
 
     @Test
     void addSeries_andGetSeries() {
@@ -51,20 +46,12 @@ class ExtendedChartDataUnitTest {
         XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.get(0);
         Assertions.assertSame(categoryDataSource1, series1.getCategoryData());
         Assertions.assertSame(numericalDataSource1, series1.getValuesData());
-
-        XDDFSolidFillProperties fillProperties1 =
-                (XDDFSolidFillProperties) series1.getShapeProperties().getFillProperties();
-        XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
-        AssertUtils.assertEquals(colorMapper.mapToBytes(color1), xddfColor1.getValue());
+        AssertUtils.assertSeriesColor(series1, color1);
 
         XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) seriesList.get(1);
         Assertions.assertSame(categoryDataSource2, series2.getCategoryData());
         Assertions.assertSame(numericalDataSource2, series2.getValuesData());
-
-        XDDFSolidFillProperties fillProperties2 =
-                (XDDFSolidFillProperties) series2.getShapeProperties().getFillProperties();
-        XDDFColorRgbBinary xddfColor2 = (XDDFColorRgbBinary) fillProperties2.getColor();
-        AssertUtils.assertEquals(colorMapper.mapToBytes(color2), xddfColor2.getValue());
+        AssertUtils.assertSeriesColor(series2, color2);
     }
 
     // region stretchChart tests
