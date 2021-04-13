@@ -55,17 +55,28 @@ public class ExtendedChartData {
         setSeriesColor(series, color);
     }
 
-    private void setSeriesColor(XDDFChartData.Series series, Color color) {
-        XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
-        XDDFLineProperties lineProperties = new XDDFLineProperties(fillProperties);
+    public void addSeries(
+            XDDFCategoryDataSource categoryDataSource,
+            XDDFNumericalDataSource<Number> numericalDataSource,
+            short markerSize,
+            MarkerStyle markerStyle
+    ) {
+        addSeries(categoryDataSource, numericalDataSource, markerSize, markerStyle, null);
+    }
 
-        XDDFShapeProperties shapeProperties = series.getShapeProperties();
-        if (shapeProperties == null) {
-            shapeProperties = new XDDFShapeProperties();
+    private void setSeriesColor(XDDFChartData.Series series, Color color) {
+        if (color != null) {
+            XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
+            XDDFLineProperties lineProperties = new XDDFLineProperties(fillProperties);
+
+            XDDFShapeProperties shapeProperties = series.getShapeProperties();
+            if (shapeProperties == null) {
+                shapeProperties = new XDDFShapeProperties();
+            }
+            shapeProperties.setFillProperties(fillProperties);
+            shapeProperties.setLineProperties(lineProperties);
+            series.setShapeProperties(shapeProperties);
         }
-        shapeProperties.setFillProperties(fillProperties);
-        shapeProperties.setLineProperties(lineProperties);
-        series.setShapeProperties(shapeProperties);
     }
 
     /**
