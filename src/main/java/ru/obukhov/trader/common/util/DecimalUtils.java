@@ -118,45 +118,51 @@ public class DecimalUtils {
     // region setDefaultScale overloads
 
     /**
-     * @return BigDecimal with scale equal to minimum non negative value between scale of given {@code number}, 0 and
-     * {@link DecimalUtils#DEFAULT_SCALE}. If given {@code number} is null, then return null
+     * @return BigDecimal equals to give {@code number} with scale {@link DecimalUtils#DEFAULT_SCALE}.
+     * If given {@code number} is null, then returns null
      */
     public static BigDecimal setDefaultScale(BigDecimal number) {
         if (number == null) {
             return null;
         }
 
-        int scale = Math.min(Math.max(number.scale(), 0), DEFAULT_SCALE);
-        return number.setScale(scale, RoundingMode.HALF_UP);
+        return number.setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     /**
-     * @return BigDecimal with scale equal to minimum non negative value between scale of given {@code number}, 0 and
-     * {@link DecimalUtils#DEFAULT_SCALE}. If given {@code number} is null, then return null
+     * @return BigDecimal equals to give {@code number} with scale {@link DecimalUtils#DEFAULT_SCALE}.
+     * If given {@code number} is null, then returns null
      */
     public static BigDecimal setDefaultScale(Double number) {
         if (number == null) {
             return null;
         }
 
-        BigDecimal bigDecimal = BigDecimal.valueOf(number);
-
-        int scale = Math.min(Math.max(bigDecimal.scale(), 0), DEFAULT_SCALE);
-        return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
+        return BigDecimal.valueOf(number).setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     /**
-     * @return BigDecimal with scale zero. If given {@code number} is null, then return null
+     * @return BigDecimal equals to give {@code number} with scale {@link DecimalUtils#DEFAULT_SCALE}.
+     * If given {@code number} is null, then returns null
      */
     public static BigDecimal setDefaultScale(Long number) {
         if (number == null) {
             return null;
         }
 
-        BigDecimal bigDecimal = BigDecimal.valueOf(number);
+        return BigDecimal.valueOf(number).setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
+    }
 
-        int scale = Math.min(Math.max(bigDecimal.scale(), 0), DEFAULT_SCALE);
-        return bigDecimal.setScale(scale, RoundingMode.HALF_UP);
+    /**
+     * @return BigDecimal equals to give {@code number} with scale {@link DecimalUtils#DEFAULT_SCALE}.
+     * If given {@code number} is null, then returns null
+     */
+    public static BigDecimal setDefaultScale(Integer number) {
+        if (number == null) {
+            return null;
+        }
+
+        return BigDecimal.valueOf(number).setScale(DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
     // endregion

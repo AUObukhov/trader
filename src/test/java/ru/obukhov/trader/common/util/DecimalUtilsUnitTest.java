@@ -120,6 +120,7 @@ class DecimalUtilsUnitTest {
     // region setDefaultScale with BigDecimal tests
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void setDefaultScale_withBigDecimal_returnsNull_whenNumberIsNull() {
         BigDecimal number = null;
 
@@ -128,16 +129,16 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource({
-            "10, -1, 0",
-            "10, 2, 2",
-            "10, 6, 5"
+            "10, -1",
+            "10, 2",
+            "10, 6"
     })
-    void setDefaultScale_withBigDecimal(long unscaledVal, int scale, int expectedScale) {
+    void setDefaultScale_withBigDecimal(long unscaledVal, int scale) {
         BigDecimal number = BigDecimal.valueOf(unscaledVal, scale);
 
         BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        Assertions.assertEquals(expectedScale, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
     }
 
     // endregion
@@ -153,14 +154,14 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource({
-            "10.01, 2, 10.01",
-            "10.000001, 5, 10",
-            "10.000005, 5, 10.00001"
+            "10.01, 10.01",
+            "10.000001, 10",
+            "10.000005, 10.00001"
     })
-    void setDefaultScale_withDouble(Double number, int expectedScale, double expectedValue) {
+    void setDefaultScale_withDouble(Double number, double expectedValue) {
         BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        Assertions.assertEquals(expectedScale, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(expectedValue), result);
     }
 
@@ -176,16 +177,38 @@ class DecimalUtilsUnitTest {
     }
 
     @Test
-    void setDefaultScale_withLong_notChangesScale() {
+    void setDefaultScale_withLong_setsDefaultScale() {
         Long number = 10L;
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
-        Assertions.assertEquals(0, result.scale());
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
     }
 
     // endregion
+
+    // region setDefaultScale with Integer tests
+
+    @Test
+    void setDefaultScale_withInteger_returnsNull_whenNumberIsNull() {
+        Integer number = null;
+
+        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
+    }
+
+    @Test
+    void setDefaultScale_withInteger_setsDefaultScale() {
+        Integer number = 10;
+
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
+
+        Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
+        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
+    }
+
+    // endregion
+
 
     // region numbersEqual tests
 

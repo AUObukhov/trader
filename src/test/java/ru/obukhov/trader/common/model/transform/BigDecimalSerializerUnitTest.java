@@ -37,7 +37,7 @@ class BigDecimalSerializerUnitTest extends BaseMockedTest {
     @ParameterizedTest
     @CsvSource({
             ",",
-            "100, 100",
+            "100, 100.00000",
             "100.12345, 100.12345",
             "100.123454, 100.12345",
             "100.123456, 100.12346",
