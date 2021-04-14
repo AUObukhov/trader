@@ -9,14 +9,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
-import ru.obukhov.trader.market.model.ExtendedCandle;
-import ru.obukhov.trader.market.model.Extremum;
+import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.TickerType;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 class StatisticsControllerWebTest extends ControllerIntegrationTest {
 
@@ -46,45 +48,74 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     void getCandles_returnsCandles() throws Exception {
         final String ticker = "ticker";
 
-        ExtendedCandle candle1 = new ExtendedCandle();
-        candle1.setOpenPrice(BigDecimal.valueOf(12000));
-        candle1.setClosePrice(BigDecimal.valueOf(8000));
-        candle1.setHighestPrice(BigDecimal.valueOf(15000));
-        candle1.setLowestPrice(BigDecimal.valueOf(6000));
-        candle1.setTime(DateUtils.getDateTime(2021, 3, 25, 10, 0, 0));
-        candle1.setInterval(CandleResolution._1MIN);
-        candle1.setAveragePrice(BigDecimal.valueOf(10000));
-        candle1.setExtremum(Extremum.MAX);
-        candle1.setSupportValue(BigDecimal.valueOf(9000));
-        candle1.setResistanceValue(BigDecimal.valueOf(11000));
+        Candle candle1 = TestDataHelper.createCandle(
+                12000,
+                8000,
+                15000,
+                6000,
+                DateUtils.getDateTime(2021, 3, 25, 10, 0, 0),
+                CandleResolution._1MIN
+        );
 
-        ExtendedCandle candle2 = new ExtendedCandle();
-        candle2.setOpenPrice(BigDecimal.valueOf(1200));
-        candle2.setClosePrice(BigDecimal.valueOf(800));
-        candle2.setHighestPrice(BigDecimal.valueOf(1500));
-        candle2.setLowestPrice(BigDecimal.valueOf(600));
-        candle2.setTime(DateUtils.getDateTime(2021, 3, 25, 10, 1, 0));
-        candle2.setInterval(CandleResolution._1MIN);
-        candle2.setAveragePrice(BigDecimal.valueOf(1000));
-        candle2.setExtremum(Extremum.NONE);
-        candle2.setSupportValue(BigDecimal.valueOf(900));
-        candle2.setResistanceValue(BigDecimal.valueOf(1100));
+        Candle candle2 = TestDataHelper.createCandle(
+                1200,
+                800,
+                1500,
+                600,
+                DateUtils.getDateTime(2021, 3, 25, 10, 1, 0),
+                CandleResolution._1MIN
+        );
 
-        ExtendedCandle candle3 = new ExtendedCandle();
-        candle3.setOpenPrice(BigDecimal.valueOf(120));
-        candle3.setClosePrice(BigDecimal.valueOf(80));
-        candle3.setHighestPrice(BigDecimal.valueOf(150));
-        candle3.setLowestPrice(BigDecimal.valueOf(60));
-        candle3.setTime(DateUtils.getDateTime(2021, 3, 25, 10, 2, 0));
-        candle3.setInterval(CandleResolution._1MIN);
-        candle3.setAveragePrice(BigDecimal.valueOf(100));
-        candle3.setExtremum(Extremum.MIN);
-        candle3.setSupportValue(BigDecimal.valueOf(90));
-        candle3.setResistanceValue(BigDecimal.valueOf(110));
+        Candle candle3 = TestDataHelper.createCandle(
+                120,
+                80,
+                150,
+                60,
+                DateUtils.getDateTime(2021, 3, 25, 10, 2, 0),
+                CandleResolution._1MIN
+        );
+
+        List<BigDecimal> averages = Arrays.asList(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(100)
+        );
+
+        List<Point> localMinimums = Collections.singletonList(TestDataHelper.createPoint(candle1));
+        List<Point> localMaximums = Collections.singletonList(TestDataHelper.createPoint(candle3));
+
+        List<Point> supportLine1 = Arrays.asList(
+                Point.of(candle1.getTime(), 9000),
+                Point.of(candle1.getTime(), 900)
+        );
+        List<Point> supportLine2 = Arrays.asList(
+                Point.of(candle1.getTime(), 900),
+                Point.of(candle1.getTime(), 90)
+        );
+        List<List<Point>> supportLines = Arrays.asList(supportLine1, supportLine2);
+
+        List<Point> resistanceLine1 = Arrays.asList(
+                Point.of(candle1.getTime(), 11000),
+                Point.of(candle1.getTime(), 1100)
+        );
+        List<Point> resistanceLine2 = Arrays.asList(
+                Point.of(candle1.getTime(), 1100),
+                Point.of(candle1.getTime(), 110)
+        );
+        List<List<Point>> resistanceLines = Arrays.asList(resistanceLine1, resistanceLine2);
+
+        GetCandlesResponse response = new GetCandlesResponse(
+                Arrays.asList(candle1, candle2, candle3),
+                averages,
+                localMinimums,
+                localMaximums,
+                supportLines,
+                resistanceLines
+        );
 
         Mockito.when(statisticsService.getExtendedCandles(
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
-        )).thenReturn(Arrays.asList(candle1, candle2, candle3));
+        )).thenReturn(response);
 
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
         String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
@@ -114,9 +145,17 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
 
+        GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
         Mockito.when(statisticsService.getExtendedCandles(
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
-        )).thenReturn(Collections.emptyList());
+        )).thenReturn(response);
 
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
 
@@ -131,7 +170,7 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
             Mockito.verify(excelService, Mockito.times(1))
-                    .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.anyList());
+                    .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
             Mockito.verify(runtime, Mockito.times(1))
                     .exec(new String[]{"explorer", fileAbsolutePath});
         }
@@ -141,9 +180,17 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
 
+        GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
         Mockito.when(statisticsService.getExtendedCandles(
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
-        )).thenReturn(Collections.emptyList());
+        )).thenReturn(response);
 
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest2.json");
 
@@ -154,7 +201,7 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
         Mockito.verify(excelService, Mockito.never())
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.anyList());
+                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
     }
 
     // endregion
@@ -200,8 +247,13 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     }
 
     private void mockFile(String ticker, String fileAbsolutePath) {
-        Mockito.when(excelService.saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.anyList()))
-                .thenReturn(file);
+        Mockito.when(
+                excelService.saveCandles(
+                        Mockito.eq(ticker),
+                        Mockito.any(Interval.class),
+                        Mockito.any(GetCandlesResponse.class)
+                )
+        ).thenReturn(file);
         Mockito.when(file.getAbsolutePath()).thenReturn(fileAbsolutePath);
     }
 

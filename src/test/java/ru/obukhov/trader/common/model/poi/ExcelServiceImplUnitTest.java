@@ -15,15 +15,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.ExtendedCandle;
-import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
@@ -32,7 +32,6 @@ import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -320,14 +319,14 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
         final Interval interval = Interval.of(from, to);
 
-        final List<ExtendedCandle> extendedCandles = createExtendedCandles();
+        final GetCandlesResponse response = createGetCandlesResponse();
 
         final String fileNamePrefix = "Candles for '" + ticker + "'";
 
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveCandles(ticker, interval, extendedCandles);
+        File returnedFile = excelService.saveCandles(ticker, interval, response);
 
         Assertions.assertSame(file, returnedFile);
 
@@ -348,32 +347,20 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
                 "Цена открытия",
                 "Цена закрытия",
                 "Набольшая цена",
-                "Наименьшая цена",
-                "Усреднённая цена",
-                "Экстремум"
+                "Наименьшая цена"
         );
-        for (ExtendedCandle candle : extendedCandles) {
+        for (Candle candle : response.getCandles()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     candle.getTime(),
                     candle.getOpenPrice(),
                     candle.getClosePrice(),
                     candle.getHighestPrice(),
-                    candle.getLowestPrice(),
-                    candle.getAveragePrice(),
-                    getLocalExtremumString(candle)
+                    candle.getLowestPrice()
             );
         }
 
         assertChartCreated(sheet);
-    }
-
-    private String getLocalExtremumString(ExtendedCandle candle) {
-        if (candle.isLocalMaximum()) {
-            return "макс";
-        } else {
-            return candle.isLocalMinimum() ? "мин" : null;
-        }
     }
 
     private SimulationResult createSimulationResult(String ticker, String botName) {
@@ -469,28 +456,36 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
     }
 
-    private List<ExtendedCandle> createExtendedCandles() {
+    private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
+        final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
-        Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
+        final Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
         final List<BigDecimal> averages = TrendUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
 
-        final List<ExtendedCandle> extendedCandles = new ArrayList<>(candles.size());
-        for (int i = 0; i < candles.size(); i++) {
-            extendedCandles.add(new ExtendedCandle(candles.get(i), averages.get(i)));
-        }
+        List<Integer> localMinimumsIndices =
+                TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
+        List<Point> localMinimums = localMinimumsIndices.stream()
+                .map(minimum -> TestDataHelper.createPoint(candles.get(minimum)))
+                .collect(Collectors.toList());
 
-        final List<Integer> maximums = TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
-        for (Integer maximum : maximums) {
-            extendedCandles.get(maximum).setExtremum(Extremum.MAX);
-        }
+        List<Integer> localMaximumsIndices =
+                TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
+        List<Point> localMaximums = localMaximumsIndices.stream()
+                .map(maximum -> TestDataHelper.createPoint(candles.get(maximum)))
+                .collect(Collectors.toList());
 
-        final List<Integer> minimums = TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
-        for (Integer minimum : minimums) {
-            extendedCandles.get(minimum).setExtremum(Extremum.MIN);
-        }
+        List<List<Point>> supportLines = TrendUtils.getRestraintLine(times, averages, localMinimumsIndices);
+        List<List<Point>> resistanceLines = TrendUtils.getRestraintLine(times, averages, localMaximumsIndices);
 
-        return extendedCandles;
+        return new GetCandlesResponse(
+                candles,
+                averages,
+                localMinimums,
+                localMaximums,
+                supportLines,
+                resistanceLines
+        );
     }
 
     private void assertChartCreated(ExtendedSheet sheet) {

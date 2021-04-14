@@ -5,8 +5,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.model.Line;
+import ru.obukhov.trader.common.model.Point;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -428,6 +431,16 @@ public class TrendUtils {
 
     // endregion
 
+    public static List<Point> getLocalExtremes(
+            List<BigDecimal> values,
+            List<OffsetDateTime> times,
+            List<Integer> localExtremesIndices
+    ) {
+        return localExtremesIndices.stream()
+                .map(extremum -> Point.of(times.get(extremum), values.get(extremum)))
+                .collect(Collectors.toList());
+    }
+
     // region getSortedLocalExtremes
 
     /**
@@ -488,5 +501,41 @@ public class TrendUtils {
     }
 
     // endregion
+
+    public static List<List<Point>> getRestraintLine(
+            List<OffsetDateTime> times,
+            List<BigDecimal> values,
+            List<Integer> localExtremes
+    ) {
+        List<List<Point>> lines = new ArrayList<>();
+        Integer currentExtremum;
+        Integer nextExtremum = localExtremes.get(0);
+        final int count = localExtremes.size() - 1;
+        for (int i = 0; i < count; i++) {
+            currentExtremum = nextExtremum;
+            nextExtremum = localExtremes.get(i + 1);
+            Line line = getLine(values, currentExtremum, nextExtremum);
+            List<Point> points = getPoints(times, currentExtremum, nextExtremum, line);
+            lines.add(points);
+        }
+        return lines;
+    }
+
+    private static Line getLine(List<BigDecimal> values, Integer x1, Integer x2) {
+        BigDecimal y1 = values.get(x1);
+        BigDecimal y2 = values.get(x2);
+
+        return new Line(x1, y1, x2, y2);
+    }
+
+    private static List<Point> getPoints(List<OffsetDateTime> times, Integer x1, Integer x2, Line line) {
+        List<Point> points = new ArrayList<>();
+        for (int x = x1; x <= x2; x++) {
+            OffsetDateTime time = times.get(x);
+            BigDecimal value = line.getValue(x);
+            points.add(Point.of(time, value));
+        }
+        return points;
+    }
 
 }

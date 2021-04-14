@@ -11,9 +11,11 @@ import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedChart;
 import ru.obukhov.trader.common.model.poi.ExtendedChartData;
@@ -24,7 +26,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.ExtendedCandle;
+import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
@@ -36,13 +38,12 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,9 +70,9 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public File saveCandles(String ticker, Interval interval, List<ExtendedCandle> candles) {
+    public File saveCandles(String ticker, Interval interval, GetCandlesResponse response) {
         ExtendedWorkbook workBook = createWorkBook();
-        createSheet(workBook, ticker, interval, candles);
+        createSheet(workBook, ticker, interval, response);
 
         return excelFileService.saveToFile(workBook, "Candles for '" + ticker + "'");
     }
@@ -112,18 +113,18 @@ public class ExcelServiceImpl implements ExcelService {
             ExtendedWorkbook workbook,
             String ticker,
             Interval interval,
-            List<ExtendedCandle> candles
+            GetCandlesResponse response
     ) {
 
         ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
 
         putTicker(sheet, ticker);
         putInterval(sheet, interval);
-        putCandles(sheet, candles);
+        putCandles(sheet, response.getCandles());
 
         sheet.autoSizeColumns();
 
-        putChartWithAverages(sheet, candles);
+        putChartWithAverages(sheet, response);
     }
 
     private void putCommonStatistics(ExtendedSheet sheet, String ticker, SimulationResult result) {
@@ -245,7 +246,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCandles(ExtendedSheet sheet, List<ExtendedCandle> candles) {
+    private void putCandles(ExtendedSheet sheet, List<Candle> candles) {
         sheet.addRow();
         sheet.addRow().createUnitedCell("Свечи", 6);
         sheet.addRow().createCells(
@@ -253,41 +254,29 @@ public class ExcelServiceImpl implements ExcelService {
                 "Цена открытия",
                 "Цена закрытия",
                 "Набольшая цена",
-                "Наименьшая цена",
-                "Усреднённая цена",
-                "Экстремум"
+                "Наименьшая цена"
         );
 
-        for (ExtendedCandle candle : candles) {
+        for (Candle candle : candles) {
             putCandle(sheet, candle);
         }
     }
 
-    private void putCandle(ExtendedSheet sheet, ExtendedCandle candle) {
+    private void putCandle(ExtendedSheet sheet, Candle candle) {
         ExtendedRow row = sheet.addRow();
         row.createCells(
                 candle.getTime(),
                 candle.getOpenPrice(),
                 candle.getClosePrice(),
                 candle.getHighestPrice(),
-                candle.getLowestPrice(),
-                candle.getAveragePrice(),
-                getLocalExtremumString(candle)
+                candle.getLowestPrice()
         );
     }
 
-    private String getLocalExtremumString(ExtendedCandle candle) {
-        if (candle.isLocalMaximum()) {
-            return "макс";
-        } else {
-            return candle.isLocalMinimum() ? "мин" : null;
-        }
-    }
-
-    private void putChartWithAverages(ExtendedSheet sheet, List<ExtendedCandle> candles) {
+    private void putChartWithAverages(ExtendedSheet sheet, GetCandlesResponse response) {
         ExtendedChart chart = createChart(sheet);
         ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
-        addCandles(chartData, candles);
+        addCandles(chartData, response);
         chart.plot(chartData);
     }
 
@@ -312,14 +301,15 @@ public class ExcelServiceImpl implements ExcelService {
         return sheet.createChart(column1, row1, column2, row2);
     }
 
-    private void addCandles(ExtendedChartData chartData, List<ExtendedCandle> candles) {
-        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(candles);
-        addOpenPrices(chartData, timesDataSource, candles);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getAveragePrice, Color.BLUE);
-        addMinimums(chartData, candles, timesDataSource);
-        addMaximums(chartData, candles, timesDataSource);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getSupportValue, Color.GREEN);
-        addLine(chartData, timesDataSource, candles, ExtendedCandle::getResistanceValue, Color.RED);
+    private void addCandles(ExtendedChartData chartData, GetCandlesResponse response) {
+        List<OffsetDateTime> times = response.getCandles().stream().map(Candle::getTime).collect(Collectors.toList());
+        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
+        addOpenPrices(chartData, timesDataSource, response.getCandles());
+        addLine(chartData, timesDataSource, response.getAverages(), MarkerStyle.NONE, Color.BLUE);
+        addExtremesLine(chartData, times, timesDataSource, response.getLocalMinimums(), MarkerStyle.DIAMOND, null);
+        addExtremesLine(chartData, times, timesDataSource, response.getLocalMaximums(), MarkerStyle.TRIANGLE, null);
+        addRestraintLines(chartData, times, timesDataSource, response.getSupportLines(), Color.GREEN);
+        addRestraintLines(chartData, times, timesDataSource, response.getResistanceLines(), Color.RED);
 
         chartData.stretchChart();
     }
@@ -346,14 +336,21 @@ public class ExcelServiceImpl implements ExcelService {
             operationsIndices.add(index);
         }
 
-        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSource(innerCandles);
+        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromCandles(innerCandles);
         addOpenPrices(chartData, timesDataSource, innerCandles);
         addOperations(chartData, timesDataSource, operations, operationsIndices);
 
         chartData.stretchChart();
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSource(List<? extends Candle> innerCandles) {
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(List<OffsetDateTime> times) {
+        String[] timesArray = times.stream()
+                .map(DATE_TIME_FORMATTER::format)
+                .toArray(String[]::new);
+        return XDDFDataSourcesFactory.fromArray(timesArray);
+    }
+
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(List<Candle> innerCandles) {
         String[] times = innerCandles.stream()
                 .map(Candle::getTime)
                 .map(DATE_TIME_FORMATTER::format)
@@ -364,7 +361,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void addOpenPrices(
             ExtendedChartData chartData,
             XDDFCategoryDataSource timesDataSource,
-            List<? extends Candle> candles
+            List<Candle> candles
     ) {
         BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
@@ -375,51 +372,53 @@ public class ExcelServiceImpl implements ExcelService {
     private void addLine(
             ExtendedChartData chartData,
             XDDFCategoryDataSource timesDataSource,
-            List<ExtendedCandle> candles,
-            Function<ExtendedCandle, BigDecimal> lineValueExtractor,
-            Color color
-    ) {
-        addLine(chartData, timesDataSource, candles, lineValueExtractor, MarkerStyle.NONE, color);
-    }
-
-    private void addLine(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            List<ExtendedCandle> candles,
-            Function<ExtendedCandle, BigDecimal> lineValueExtractor,
+            List<BigDecimal> values,
             MarkerStyle markerStyle,
             Color color
     ) {
-        BigDecimal[] values = candles.stream()
-                .map(lineValueExtractor)
-                .toArray(BigDecimal[]::new);
-        if (!Arrays.stream(values).allMatch(Objects::isNull)) {
-            addSeries(chartData, timesDataSource, values, markerStyle, color);
+        if (values.stream().anyMatch(Objects::nonNull)) {
+            addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerStyle, color);
         }
     }
 
-    private void addMinimums(
+    private void addExtremesLine(
             ExtendedChartData chartData,
-            List<ExtendedCandle> candles,
-            XDDFCategoryDataSource timesDataSource
+            List<OffsetDateTime> times,
+            XDDFCategoryDataSource timesDataSource,
+            List<Point> extremes,
+            MarkerStyle markerStyle,
+            Color color
     ) {
-        Function<ExtendedCandle, BigDecimal> localMinimumExtractor =
-                candle -> candle.isLocalMinimum()
-                        ? candle.getAveragePrice()
-                        : null;
-        addLine(chartData, timesDataSource, candles, localMinimumExtractor, MarkerStyle.DIAMOND, Color.MAGENTA);
+        List<BigDecimal> values = getValues(times, extremes);
+        addLine(chartData, timesDataSource, values, markerStyle, color);
     }
 
-    private void addMaximums(
+    private void addRestraintLines(
             ExtendedChartData chartData,
-            List<ExtendedCandle> candles,
-            XDDFCategoryDataSource timesDataSource
+            List<OffsetDateTime> times,
+            XDDFCategoryDataSource timesDataSource,
+            List<List<Point>> restraintLines,
+            Color color
     ) {
-        Function<ExtendedCandle, BigDecimal> localMaximumExtractor =
-                candle -> candle.isLocalMaximum()
-                        ? candle.getAveragePrice()
-                        : null;
-        addLine(chartData, timesDataSource, candles, localMaximumExtractor, MarkerStyle.TRIANGLE, Color.YELLOW);
+        for (List<Point> line : restraintLines) {
+            List<BigDecimal> values = getValues(times, line);
+            addLine(chartData, timesDataSource, values, MarkerStyle.NONE, color);
+        }
+    }
+
+    private List<BigDecimal> getValues(List<OffsetDateTime> times, List<Point> points) {
+        return times.stream()
+                .map(time -> getValueAtTime(points, time))
+                .collect(Collectors.toList());
+    }
+
+    @Nullable
+    private BigDecimal getValueAtTime(List<Point> points, OffsetDateTime time) {
+        return points.stream()
+                .filter(extreme -> extreme.getTime().equals(time))
+                .findFirst()
+                .map(Point::getValue)
+                .orElse(null);
     }
 
     private void addOperations(

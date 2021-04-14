@@ -5,6 +5,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -33,6 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TestDataHelper {
 
@@ -317,6 +319,14 @@ public class TestDataHelper {
         MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
         runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
         return runtimeStaticMock;
+    }
+
+    public static Point createPoint(Candle candle) {
+        return Point.of(candle.getTime(), candle.getOpenPrice());
+    }
+
+    public static List<BigDecimal> createBigDecimalsList(Double... values) {
+        return Stream.of(values).map(BigDecimal::valueOf).collect(Collectors.toList());
     }
 
 }

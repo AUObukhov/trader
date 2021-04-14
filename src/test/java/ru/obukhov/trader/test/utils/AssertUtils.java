@@ -24,8 +24,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.ExtendedCandle;
-import ru.obukhov.trader.market.model.Extremum;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import javax.validation.ConstraintViolation;
@@ -307,19 +305,6 @@ public class AssertUtils {
             String message = String.format("pattern:\n%s\nactual:\n%s", expectedMessagePattern, throwable.getMessage());
             Assertions.fail(message);
         }
-    }
-
-    public static void assertExtendedCandle(
-            ExtendedCandle extendedCandle,
-            double expectedAveragePrice,
-            Extremum expectedExtremum,
-            Double expectedSupportValue,
-            Double expectedResistanceValue
-    ) {
-        AssertUtils.assertEquals(expectedAveragePrice, extendedCandle.getAveragePrice());
-        Assertions.assertEquals(expectedExtremum, extendedCandle.getExtremum());
-        AssertUtils.assertEquals(expectedSupportValue, extendedCandle.getSupportValue());
-        AssertUtils.assertEquals(expectedResistanceValue, extendedCandle.getResistanceValue());
     }
 
 }
