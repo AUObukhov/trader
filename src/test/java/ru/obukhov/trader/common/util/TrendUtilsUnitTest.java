@@ -927,6 +927,27 @@ class TrendUtilsUnitTest {
 
     // endregion
 
+    // region getLocalExtremes tests
+
+    @Test
+    void getLocalExtremes() {
+        List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10, 20, 15, 30);
+        OffsetDateTime now = OffsetDateTime.now();
+        List<OffsetDateTime> times = ImmutableList.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
+        List<Integer> localExtremesIndices = ImmutableList.of(0, 2);
+
+        List<Point> localExtremes = TrendUtils.getLocalExtremes(values, times, localExtremesIndices);
+
+        List<Point> expectedLocalExtremes = ImmutableList.of(
+                Point.of(times.get(0), values.get(0)),
+                Point.of(times.get(2), values.get(2))
+        );
+
+        AssertUtils.assertListsAreEqual(expectedLocalExtremes, localExtremes);
+    }
+
+    // endregion
+
     // region getSortedLocalExtremes tests
 
     @SuppressWarnings("unused")
