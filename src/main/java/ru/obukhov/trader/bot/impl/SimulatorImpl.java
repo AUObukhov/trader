@@ -31,6 +31,7 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -63,9 +64,11 @@ public class SimulatorImpl implements Simulator {
     private final BotFactory fakeBotFactory;
     private final ExecutorService executor;
 
-    public SimulatorImpl(ExcelService excelService,
-                         BotFactory fakeBotFactory,
-                         @Value("${simulation.thread-count:10}") Integer simulationThreadCount) {
+    public SimulatorImpl(
+            ExcelService excelService,
+            BotFactory fakeBotFactory,
+            @Value("${simulation.thread-count:10}") Integer simulationThreadCount
+    ) {
 
         Assert.isTrue(simulationThreadCount > 1, "simulationThreadCount must be greater than 1");
 
@@ -89,9 +92,11 @@ public class SimulatorImpl implements Simulator {
      * @return map of simulations results by tickers
      */
     @Override
-    public Map<String, List<SimulationResult>> simulate(List<SimulationUnit> simulationUnits,
-                                                        Interval interval,
-                                                        boolean saveToFiles) {
+    public Map<String, List<SimulationResult>> simulate(
+            List<SimulationUnit> simulationUnits,
+            Interval interval,
+            boolean saveToFiles
+    ) {
 
         Map<String, CompletableFuture<List<SimulationResult>>> tickersToSimulationResults = simulationUnits.stream()
                 .collect(Collectors.toMap(
@@ -106,9 +111,11 @@ public class SimulatorImpl implements Simulator {
                 ));
     }
 
-    private CompletableFuture<List<SimulationResult>> startSimulations(SimulationUnit simulationUnit,
-                                                                       Interval interval,
-                                                                       boolean saveToFile) {
+    private CompletableFuture<List<SimulationResult>> startSimulations(
+            SimulationUnit simulationUnit,
+            Interval interval,
+            boolean saveToFile
+    ) {
         return CompletableFuture.supplyAsync(() -> simulate(simulationUnit, interval, saveToFile), executor);
     }
 
@@ -146,9 +153,11 @@ public class SimulatorImpl implements Simulator {
         return (Set<FakeBot>) (Set<?>) fakeBotFactory.createBots();
     }
 
-    private CompletableFuture<SimulationResult> startSimulation(FakeBot bot,
-                                                                SimulationUnit simulationUnit,
-                                                                Interval interval) {
+    private CompletableFuture<SimulationResult> startSimulation(
+            FakeBot bot,
+            SimulationUnit simulationUnit,
+            Interval interval
+    ) {
         return CompletableFuture.supplyAsync(() -> simulateSafe(bot, simulationUnit, interval), executor);
     }
 
@@ -312,7 +321,9 @@ public class SimulatorImpl implements Simulator {
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }
 
-    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(SortedMap<OffsetDateTime, BigDecimal> investments) {
+    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(
+            SortedMap<OffsetDateTime, BigDecimal> investments
+    ) {
         SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
         BigDecimal currentBalance = BigDecimal.ZERO;
         for (Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
@@ -338,7 +349,9 @@ public class SimulatorImpl implements Simulator {
     private void saveSimulationResultsSafe(String ticker, List<SimulationResult> simulationResults) {
         try {
             log.debug("Saving simulation for ticker {} result to file", ticker);
-            excelService.saveSimulationResults(ticker, simulationResults);
+            File file = excelService.saveSimulationResults(ticker, simulationResults);
+            log.debug("Opening file {}", file.getAbsolutePath());
+            Runtime.getRuntime().exec(new String[]{"explorer", file.getAbsolutePath()});
         } catch (Exception ex) {
             log.error("Failed to save simulation for ticker {} result to file", ticker, ex);
         }
