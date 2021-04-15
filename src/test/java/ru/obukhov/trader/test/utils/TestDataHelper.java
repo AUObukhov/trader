@@ -326,7 +326,7 @@ public class TestDataHelper {
     }
 
     public static List<BigDecimal> createBigDecimalsList(Double... values) {
-        return Stream.of(values).map(BigDecimal::valueOf).collect(Collectors.toList());
+        return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
 }

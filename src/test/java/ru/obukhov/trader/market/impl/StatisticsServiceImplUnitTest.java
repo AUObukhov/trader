@@ -71,32 +71,33 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         final List<Candle> candles = new ArrayList<>();
         OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, candleInterval));
+        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleInterval));
+        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), candleInterval));
 
         Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval);
 
-        Assertions.assertEquals(candles.size(), response.getCandles().size());
-        for (int i = 0; i < candles.size(); i++) {
-            Candle candle = candles.get(i);
-            Candle extendedCandle = response.getCandles().get(i);
-
-            AssertUtils.assertEquals(candle.getOpenPrice(), extendedCandle.getOpenPrice());
-            AssertUtils.assertEquals(candle.getClosePrice(), extendedCandle.getClosePrice());
-            AssertUtils.assertEquals(candle.getHighestPrice(), extendedCandle.getHighestPrice());
-            AssertUtils.assertEquals(candle.getLowestPrice(), extendedCandle.getLowestPrice());
-            Assertions.assertEquals(candle.getTime(), extendedCandle.getTime());
-            Assertions.assertEquals(candle.getInterval(), extendedCandle.getInterval());
-        }
+        AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
         // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
-//        AssertUtils.assertExtendedCandle(extendedCandles.get(0), 14.72325, Extremum.MIN, null, null);
-//        AssertUtils.assertExtendedCandle(extendedCandles.get(1), 15, Extremum.NONE, null, null);
-//        AssertUtils.assertExtendedCandle(extendedCandles.get(2), 15.27675, Extremum.MAX, null, null);
+        List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(14.72325, 15.00000, 15.27675);
+        AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
+
+        List<Point> expectedMinimums = ImmutableList.of(
+                Point.of(candles.get(0).getTime(), 14.72325)
+        );
+        AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
+
+        List<Point> expectedMaximums = ImmutableList.of(
+                Point.of(candles.get(2).getTime(), 15.27675)
+        );
+        AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
+
+        Assertions.assertTrue(response.getSupportLines().isEmpty());
+        Assertions.assertTrue(response.getResistanceLines().isEmpty());
     }
 
     @Test
@@ -112,16 +113,16 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         final List<Candle> candles = new ArrayList<>();
         OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(10, 20, 25, 10, time.plusMinutes(1), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), CandleResolution._1MIN));
-        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), CandleResolution._1MIN));
+        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleInterval));
+        candles.add(TestDataHelper.createCandle(10, 20, 25, 10, time.plusMinutes(1), candleInterval));
+        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleInterval));
+        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleInterval));
+        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleInterval));
+        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleInterval));
+        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleInterval));
+        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleInterval));
+        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleInterval));
+        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleInterval));
 
         Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
@@ -177,7 +178,6 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
                 Point.of(candles.get(9).getTime(), 81.27242)
         );
         AssertUtils.assertListsAreEqual(expectedResistanceLine, resistanceLines.get(0));
-
     }
 
 }
