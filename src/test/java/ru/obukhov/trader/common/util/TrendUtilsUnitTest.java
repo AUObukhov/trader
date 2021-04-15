@@ -63,7 +63,6 @@ class TrendUtilsUnitTest {
         );
     }
 
-    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSimpleMovingAverages() {
         return Stream.of(
                 Arguments.of(
@@ -79,7 +78,7 @@ class TrendUtilsUnitTest {
                 Arguments.of(
                         ImmutableList.of(1000.0, 2000.0),
                         4,
-                        ImmutableList.of(1000.0, 2000.0)
+                        ImmutableList.of(1000.0, 1500.0)
                 ),
                 Arguments.of(
                         Collections.singletonList(1000.0),
@@ -87,19 +86,30 @@ class TrendUtilsUnitTest {
                         Collections.singletonList(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0),
                         4,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0)
+                        ImmutableList.of(1000.0, 1500.0, 2000.0, 2500.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        ImmutableList.of(1000.0, 2000.0, 3000.0),
                         5,
-                        ImmutableList.of(1000.0, 2000.0, 2000.0)
+                        ImmutableList.of(1000.0, 1500.0, 2000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0, 6000.0),
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 6000.0)
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                ),
+                Arguments.of(
+                        ImmutableList.of(
+                                1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
+                                6000.0, 7000.0, 8000.0, 9000.0, 10000.0
+                        ),
+                        4,
+                        ImmutableList.of(
+                                1000.0, 1500.0, 2000.0, 2500.0, 3500.0,
+                                4500.0, 5500.0, 6500.0, 7500.0, 8500.0
+                        )
                 ),
                 Arguments.of(
                         ImmutableList.of(
@@ -110,10 +120,10 @@ class TrendUtilsUnitTest {
                         ),
                         4,
                         ImmutableList.of(
-                                9912.00000, 9895.33333, 9896.00000, 9894.71429, 9894.11111,
-                                9891.44444, 9889.55556, 9889.77778, 9888.66667, 9886.55556,
-                                9884.33333, 9884.11111, 9882.11111, 9879.11111, 9876.22222,
-                                9874.11111, 9871.71429, 9869.20000, 9861.66667, 9862.00000
+                                9912.00000, 9905.00000, 9895.33333, 9895.75000, 9892.00000,
+                                9892.00000, 9894.25000, 9894.00000, 9891.75000, 9889.25000,
+                                9888.25000, 9883.75000, 9883.50000, 9881.00000, 9880.25000,
+                                9881.50000, 9879.25000, 9875.00000, 9871.00000, 9865.75000
                         )
                 )
         );

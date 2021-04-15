@@ -31,18 +31,11 @@ public class TrendUtils {
     // region getSimpleMovingAverages
 
     /**
-     * Calculates simple moving averages of values of given {@code elements}.<br/>
-     * Each average (except first and last {@code <window>} averages) is
-     * arithmetic average of {@code <window>} previous values,
-     * corresponding value and {@code <window>} next values.
-     * <p>
-     * Window for each of the first and the last {@code <window>} averages is
-     * particular and equal to distance to nearest side of {@code elements} list.
+     * Calculates simple moving averages of given {@code elements}
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param window         count of values at both sides from each value, used for calculation of average.
-     *                       Must be positive.
+     * @param window         count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getSimpleMovingAverages(
@@ -55,64 +48,38 @@ public class TrendUtils {
     }
 
     /**
-     * Calculates simple moving averages of given {@code values}.<br/>
-     * Each average (except first and last {@code <window>} averages) is
-     * arithmetic average of {@code <window>} previous values,
-     * corresponding value and {@code <window>} next values.
-     * <p>
-     * Window for each of the first and the last {@code <window>} averages is
-     * particular and equal to distance to nearest side of {@code values} list.
+     * Calculates simple moving averages of given {@code values}
      *
      * @param values values, for which averages are calculated for
-     * @param window count of values at both sides from each value, used for calculation of average.
-     *               Must be positive.
+     * @param window count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
     public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
         Assert.isTrue(window > 0, "window must be positive");
 
-        final int size = values.size();
-        List<BigDecimal> averages = new ArrayList<>(size);
+        // filling of first {window} averages
+        List<BigDecimal> movingAverages = new ArrayList<>(values.size());
+        int count = Math.min(window, values.size());
+        for (int i = 0; i < count; i++) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (int j = 0; j <= i; j++) {
+                BigDecimal value = values.get(j);
+                sum = sum.add(value);
+            }
 
-        if (size == 0) {
-            return averages;
+            movingAverages.add(DecimalUtils.divide(sum, i + 1));
         }
 
-        final int lastIndex = size - 1;
-        final int actualWindow = Math.min(window, lastIndex / 2);
-
-        // calculation of first {window} averages
-        for (int i = 0; i < actualWindow; i++) {
-            int length = Math.min(i * 2 + 1, size);
-            BigDecimal sum = sumValues(values, 0, length);
-            averages.add(DecimalUtils.divide(sum, length));
+        // filling of the rest averages
+        count = values.size();
+        for (int i = window; i < count; i++) {
+            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
+            BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
+            movingAverages.add(currentAverage);
         }
 
-        // calculation of the middle averages
-        int commonLength = 2 * actualWindow + 1;
-        int to = size - actualWindow;
-        for (int i = actualWindow; i < to; i++) {
-            BigDecimal sum = sumValues(values, i - actualWindow, i + actualWindow + 1);
-            averages.add(DecimalUtils.divide(sum, commonLength));
-        }
-
-        // calculation of last {window} averages
-        int from = size - actualWindow;
-        for (int i = from; i < size; i++) {
-            BigDecimal sum = sumValues(values, i * 2 - lastIndex, size);
-            int length = (size - i) * 2 - 1;
-            averages.add(DecimalUtils.divide(sum, length));
-        }
-
-        return averages;
-    }
-
-    private static BigDecimal sumValues(List<BigDecimal> values, int leftIndex, int rightIndex) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (int j = leftIndex; j < rightIndex; j++) {
-            sum = sum.add(values.get(j));
-        }
-        return sum;
+        return movingAverages;
     }
 
     // endregion
