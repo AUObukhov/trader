@@ -38,7 +38,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws Exception {
+    void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws IOException {
 
         Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
@@ -59,7 +59,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws Exception {
+    void intercept_doesNotThrottle_whenNoOpenApiPrefix() {
 
         Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
 
@@ -81,7 +81,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_throttles_onlyWhenLimitIsReached() throws Exception {
+    void intercept_throttles_onlyWhenLimitIsReached() {
 
         Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
@@ -106,7 +106,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_throttlesByLowestLimit() throws Exception {
+    void intercept_throttlesByLowestLimit() {
 
         Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
 
@@ -132,7 +132,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_throttlesByCommonLimit() throws Exception {
+    void intercept_throttlesByCommonLimit() {
 
         final List<String> limitOrderSegments = Arrays.asList("openapi", "orders", "limit-order");
         final List<String> marketOrderSegments = Arrays.asList("openapi", "orders", "market-order");
@@ -163,7 +163,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws Exception {
+    void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() {
 
         Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
 
