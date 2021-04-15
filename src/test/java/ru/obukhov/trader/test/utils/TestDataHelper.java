@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -327,6 +328,19 @@ public class TestDataHelper {
 
     public static List<BigDecimal> createBigDecimalsList(Double... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+    }
+
+    public static List<BigDecimal> createBigDecimalsList(Integer... values) {
+        return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+    }
+
+    public static List<BigDecimal> createRandomBigDecimalsList(int size) {
+        final Random random = new Random();
+        List<BigDecimal> values = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            values.add(DecimalUtils.setDefaultScale(random.nextDouble()));
+        }
+        return values;
     }
 
 }

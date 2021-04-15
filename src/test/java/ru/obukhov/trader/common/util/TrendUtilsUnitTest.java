@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.util;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1154,4 +1155,105 @@ class TrendUtilsUnitTest {
 
     // endregion
 
+    // region getCrossovers tests
+
+    @Test
+    void getCrossovers_throwIllegalArgumentException_whenArgumentsHaveDifferentSizes() {
+        List<BigDecimal> values1 = TestDataHelper.createBigDecimalsList(10.0, 20.0);
+        List<BigDecimal> values2 = TestDataHelper.createBigDecimalsList(10.0);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getCrossovers(values1, values2),
+                IllegalArgumentException.class,
+                "values1 and values2 must have same size"
+        );
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCrossovers() {
+        return Stream.of(
+                Arguments.of(
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        Collections.emptyList()
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 20, 30),
+                        TestDataHelper.createBigDecimalsList(10, 20, 30),
+                        Collections.emptyList()
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 20, 30),
+                        TestDataHelper.createBigDecimalsList(10, 20, 31),
+                        Collections.emptyList()
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 12, 13),
+                        TestDataHelper.createBigDecimalsList(11, 10, 11),
+                        ImmutableList.of(1)
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
+                        TestDataHelper.createBigDecimalsList(10, 12, 13, 12, 11),
+                        ImmutableList.of(3)
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
+                        TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11),
+                        ImmutableList.of(3)
+                ),
+                Arguments.of(
+                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15, 15, 16, 16),
+                        TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11, 11, 11, 20),
+                        ImmutableList.of(3, 7)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetCrossovers")
+    void getCrossovers(
+            List<BigDecimal> values1,
+            List<BigDecimal> values2,
+            List<Integer> expectedCrossovers
+    ) {
+        List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
+
+        AssertUtils.assertListsAreEqual(expectedCrossovers, crossovers);
+    }
+
+    @Test
+    void getCrossovers_commonAssertions_forRandomValues() {
+        List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(1000);
+        List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(1000);
+
+        List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
+
+        if (!crossovers.isEmpty()) {
+            if (crossovers.get(0) <= 0) {
+                String message = String.format(
+                        "First crossover is %s for [%s] and [%s]",
+                        crossovers.get(0),
+                        StringUtils.join(values1, ", "),
+                        StringUtils.join(values2, ", ")
+                );
+                Assertions.fail(message);
+            }
+        }
+
+        for (int i = 0; i < crossovers.size() - 1; i++) {
+            int currentCrossover = crossovers.get(i);
+            int nextCrossover = crossovers.get(i + 1);
+            if (currentCrossover >= nextCrossover) {
+                String message = String.format(
+                        "Not ascending crossovers for [%s] and [%s]",
+                        StringUtils.join(values1, ", "),
+                        StringUtils.join(values2, ", ")
+                );
+                Assertions.fail(message);
+            }
+        }
+    }
+
+    // endregion
 }

@@ -566,4 +566,50 @@ public class TrendUtils {
 
     // endregion
 
+    // region getCrossovers
+
+    public static List<Integer> getCrossovers(List<BigDecimal> values1, List<BigDecimal> values2) {
+        final int size = values1.size();
+        Assert.isTrue(size == values2.size(), "values1 and values2 must have same size");
+
+        List<Integer> crossovers = new ArrayList<>();
+        if (values1.isEmpty()) {
+            return crossovers;
+        }
+
+        int index = getFirstDifferenceIndex(values1, values2);
+        if (index == -1) {
+            return crossovers;
+        }
+
+        // searching for crossovers
+        int previousDifference;
+        int currentDifference = values1.get(index).compareTo(values2.get(index));
+        for (index++; index < size; index++) {
+            previousDifference = currentDifference;
+            currentDifference = values1.get(index).compareTo(values2.get(index));
+            if (isCrossover(previousDifference, currentDifference)) {
+                crossovers.add(index);
+            }
+        }
+
+        return crossovers;
+    }
+
+    private static int getFirstDifferenceIndex(List<BigDecimal> values1, List<BigDecimal> values2) {
+        for (int i = 0; i < values1.size(); i++) {
+            if (values1.get(i).compareTo(values2.get(i)) != 0) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static boolean isCrossover(int previousDifference, int currentDifference) {
+        return previousDifference != currentDifference && currentDifference != 0;
+    }
+
+    // endregion
+
 }
