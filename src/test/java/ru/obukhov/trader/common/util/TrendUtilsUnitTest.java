@@ -22,6 +22,7 @@ class TrendUtilsUnitTest {
 
     // region getSimpleMovingAverages tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -1, "window must be positive"),
@@ -61,6 +62,7 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSimpleMovingAverages() {
         return Stream.of(
                 Arguments.of(
@@ -164,6 +166,7 @@ class TrendUtilsUnitTest {
 
     // region getLinearWeightedMovingAverages tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -1, "window must be positive"),
@@ -203,6 +206,7 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -1, "order must be positive"),
@@ -242,6 +246,7 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withoutOrder() {
         return Stream.of(
                 Arguments.of(
@@ -341,6 +346,7 @@ class TrendUtilsUnitTest {
         }
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withOrder() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), 4, 1, Collections.emptyList()),
@@ -518,6 +524,7 @@ class TrendUtilsUnitTest {
 
     // region getExponentialWeightedMovingAverages without order tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -0.1, "weightDecrease must be in range (0; 1]"),
@@ -558,6 +565,7 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withoutOrder() {
         return Stream.of(
                 Arguments.of(
@@ -644,6 +652,7 @@ class TrendUtilsUnitTest {
 
     // region getExponentialWeightedMovingAverages with order tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -0.1, 3, "weightDecrease must be in range (0; 1]"),
@@ -688,6 +697,7 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withOrder() {
         return Stream.of(
                 Arguments.of(
@@ -805,6 +815,7 @@ class TrendUtilsUnitTest {
 
     // region getLocalExtremes tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLocalExtremes() {
         return Stream.of(
                 Arguments.of(
@@ -917,6 +928,7 @@ class TrendUtilsUnitTest {
 
     // region getSortedLocalExtremes tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSortedLocalExtremes() {
         return Stream.of(
                 Arguments.of(

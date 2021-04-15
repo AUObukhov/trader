@@ -139,6 +139,7 @@ class DateUtilsUnitTest {
 
     // region isWorkDay tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forIsWorkDay() {
         return Stream.of(
                 Arguments.of(DateUtils.getDate(2020, 8, 24), true), // monday
@@ -160,6 +161,7 @@ class DateUtilsUnitTest {
 
     // region getNextWorkDay tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetNextWorkDay_returnsNextDay() {
         return Stream.of(
                 Arguments.of(
@@ -190,6 +192,7 @@ class DateUtilsUnitTest {
     // region getLastWorkDay without arguments tests
 
     @Test
+    @SuppressWarnings("unused")
     void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
         OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
@@ -201,6 +204,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     void getLastWorkDay_returnsNow_whenTodayIsWeekend() {
         OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
         OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
@@ -666,6 +670,7 @@ class DateUtilsUnitTest {
                 "workTimeDuration must be less than 1 day");
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_isWorkTime() {
         return Stream.of(
                 // dateTime is work time
@@ -834,6 +839,7 @@ class DateUtilsUnitTest {
                 "workTimeDuration must be positive");
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(

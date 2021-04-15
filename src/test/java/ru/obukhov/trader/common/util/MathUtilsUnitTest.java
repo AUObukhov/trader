@@ -21,6 +21,7 @@ class MathUtilsUnitTest {
 
     // region getAverage with collection tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetAverage_withCollection() {
         return Stream.of(
                 Arguments.of(ImmutableList.of(), 0.0),

@@ -21,6 +21,7 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
     private Workbook workbook;
 
     @Test
+    @SuppressWarnings("unused")
     void saveToFile_throwsIllegalArgumentException_whenFailsToCreateFile() throws IOException {
 
         String saveDirectory = "save directory";
@@ -37,9 +38,7 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
                     Mockito.when(mock.getAbsolutePath()).thenReturn(absolutePath);
                 };
 
-        try (
-                MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer)
-        ) {
+        try (MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer)) {
             Throwable throwable = Assertions.assertThrows(
                     IllegalStateException.class,
                     () -> service.saveToFile(workbook, fileName)
@@ -53,6 +52,7 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     void saveToFile_writesWorkbookToFile() throws IOException {
 
         String saveDirectory = "save directory";

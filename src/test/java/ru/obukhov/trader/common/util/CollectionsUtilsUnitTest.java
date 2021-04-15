@@ -89,6 +89,7 @@ class CollectionsUtilsUnitTest {
 
     // region getLast tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLast() {
         return Stream.of(
                 Arguments.of(null, null),
@@ -213,6 +214,7 @@ class CollectionsUtilsUnitTest {
         );
     }
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forContainsList() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), Collections.emptyList(), true),

@@ -269,6 +269,7 @@ class IntervalUnitTest {
 
     // region contains tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forContains() {
         return Stream.of(
                 Arguments.of(
