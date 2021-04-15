@@ -475,8 +475,8 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
                 .map(maximum -> TestDataHelper.createPoint(candles.get(maximum)))
                 .collect(Collectors.toList());
 
-        List<List<Point>> supportLines = TrendUtils.getRestraintLine(times, averages, localMinimumsIndices);
-        List<List<Point>> resistanceLines = TrendUtils.getRestraintLine(times, averages, localMaximumsIndices);
+        List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
+        List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
 
         return new GetCandlesResponse(
                 candles,

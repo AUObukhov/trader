@@ -161,7 +161,8 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
                 Point.of(candles.get(5).getTime(), 82.24619),
                 Point.of(candles.get(6).getTime(), 78.75134),
                 Point.of(candles.get(7).getTime(), 75.25648),
-                Point.of(candles.get(8).getTime(), 71.76162)
+                Point.of(candles.get(8).getTime(), 71.76162),
+                Point.of(candles.get(9).getTime(), 68.26676)
         );
         AssertUtils.assertListsAreEqual(expectedSupportLine, supportLines.get(0));
 

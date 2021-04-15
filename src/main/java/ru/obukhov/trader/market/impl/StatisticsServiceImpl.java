@@ -62,8 +62,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         List<Point> localMinimumsPoints = TrendUtils.getLocalExtremes(averages, times, localMinimumsIndices);
         List<Point> localMaximumsPoints = TrendUtils.getLocalExtremes(averages, times, localMaximumsIndices);
-        List<List<Point>> supportLines = TrendUtils.getRestraintLine(times, averages, localMinimumsIndices);
-        List<List<Point>> resistanceLines = TrendUtils.getRestraintLine(times, averages, localMaximumsIndices);
+        List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
+        List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
 
         return new GetCandlesResponse(
                 candles,

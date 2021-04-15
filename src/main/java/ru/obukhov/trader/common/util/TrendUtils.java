@@ -22,6 +22,12 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrendUtils {
 
+    /**
+     * Factor, that representing the duration of the restriction line
+     * in compare to distance between extremes used to build this line
+     */
+    static final double RESTRAINT_DURATION_FACTOR = 2.0;
+
     // region getSimpleMovingAverages
 
     /**
@@ -502,12 +508,31 @@ public class TrendUtils {
 
     // endregion
 
-    public static List<List<Point>> getRestraintLine(
+    // region getRestraintLines
+
+    /**
+     * Calculates restraint lines for every consecutive pair of local extremes.
+     * Length of each line is distance between from extremes multiplicated to {@value RESTRAINT_DURATION_FACTOR}
+     *
+     * @param times         X values
+     * @param values        Y values
+     * @param localExtremes indices of local extremes of values
+     * @return list of calculated lines, each line is list of points
+     */
+    public static List<List<Point>> getRestraintLines(
             List<OffsetDateTime> times,
             List<BigDecimal> values,
             List<Integer> localExtremes
     ) {
+        Assert.isTrue(times.size() == values.size(), "times and values must have same size");
+        Assert.isTrue(times.size() >= localExtremes.size(),
+                "localExtremes can't be longer than times and values");
+
         List<List<Point>> lines = new ArrayList<>();
+        if (localExtremes.isEmpty()) {
+            return lines;
+        }
+
         Integer currentExtremum;
         Integer nextExtremum = localExtremes.get(0);
         final int count = localExtremes.size() - 1;
@@ -530,12 +555,15 @@ public class TrendUtils {
 
     private static List<Point> getPoints(List<OffsetDateTime> times, Integer x1, Integer x2, Line line) {
         List<Point> points = new ArrayList<>();
-        for (int x = x1; x <= x2; x++) {
+        int futureX = Math.min(times.size() - 1, x1 + (int) ((x2 - x1) * RESTRAINT_DURATION_FACTOR));
+        for (int x = x1; x <= futureX; x++) {
             OffsetDateTime time = times.get(x);
             BigDecimal value = line.getValue(x);
             points.add(Point.of(time, value));
         }
         return points;
     }
+
+    // endregion
 
 }

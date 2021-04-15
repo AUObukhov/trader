@@ -2,13 +2,16 @@ package ru.obukhov.trader.common.util;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -1020,6 +1023,121 @@ class TrendUtilsUnitTest {
         List<Integer> extremes = TrendUtils.getSortedLocalExtremes(elements, Optional::get, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+    }
+
+    // endregion
+
+    // region getRestraintLines tests
+
+    @Test
+    void getRestraintLines_throwsIllegalArgumentException_whenTimesIsLongerThanValues() {
+        final OffsetDateTime startTime = OffsetDateTime.now();
+        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
+        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
+                IllegalArgumentException.class,
+                "times and values must have same size"
+        );
+    }
+
+    @Test
+    void getRestraintLines_throwsIllegalArgumentException_whenValuesIsLongerThanTimes() {
+        final List<OffsetDateTime> times = ImmutableList.of(OffsetDateTime.now());
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
+                IllegalArgumentException.class,
+                "times and values must have same size"
+        );
+    }
+
+    @Test
+    void getRestraintLines_throwsIllegalArgumentException_whenLocalExtremesIsLongerThanTimes() {
+        final List<OffsetDateTime> times = ImmutableList.of(OffsetDateTime.now());
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
+        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
+                IllegalArgumentException.class,
+                "localExtremes can't be longer than times and values"
+        );
+    }
+
+    @Test
+    void getRestraintLines_returnsEmptyList_whenLocalExtremesIsEmpty() {
+        final OffsetDateTime startTime = OffsetDateTime.now();
+        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<Integer> localExtremes = ImmutableList.of();
+
+        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+
+        Assertions.assertTrue(restraintLines.isEmpty());
+    }
+
+    @Test
+    void getRestraintLines_returnsEmptyList_whenThereIsSingleLocalExtremum() {
+        final OffsetDateTime startTime = OffsetDateTime.now();
+        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<Integer> localExtremes = ImmutableList.of(0);
+
+        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+
+        Assertions.assertTrue(restraintLines.isEmpty());
+    }
+
+    @Test
+    void getRestraintLines_returnsLines() {
+        final OffsetDateTime startTime = OffsetDateTime.now();
+        final List<OffsetDateTime> times = ImmutableList.of(
+                startTime,
+                startTime.plusMinutes(1),
+                startTime.plusMinutes(2),
+                startTime.plusMinutes(3),
+                startTime.plusMinutes(4),
+                startTime.plusMinutes(5),
+                startTime.plusMinutes(6),
+                startTime.plusMinutes(7),
+                startTime.plusMinutes(8),
+                startTime.plusMinutes(9)
+        );
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(
+                10.0, 15.0, 14.0, 11.0, 12.0,
+                13.0, 14.0, 14.0, 12.0, 16.0
+        );
+        final List<Integer> localExtremes = ImmutableList.of(0, 3, 8);
+
+        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+
+        Assertions.assertEquals(2, restraintLines.size());
+        List<Point> expectedRestraintLine1 = ImmutableList.of(
+                Point.of(times.get(0), 10.00000),
+                Point.of(times.get(1), 10.33333),
+                Point.of(times.get(2), 10.66667),
+                Point.of(times.get(3), 11.00000),
+                Point.of(times.get(4), 11.33333),
+                Point.of(times.get(5), 11.66667),
+                Point.of(times.get(6), 12.00000)
+        );
+        AssertUtils.assertListsAreEqual(expectedRestraintLine1, restraintLines.get(0));
+
+        List<Point> expectedRestraintLine2 = ImmutableList.of(
+                Point.of(times.get(3), 11.0),
+                Point.of(times.get(4), 11.2),
+                Point.of(times.get(5), 11.4),
+                Point.of(times.get(6), 11.6),
+                Point.of(times.get(7), 11.8),
+                Point.of(times.get(8), 12.0),
+                Point.of(times.get(9), 12.2)
+        );
+        AssertUtils.assertListsAreEqual(expectedRestraintLine2, restraintLines.get(1));
     }
 
     // endregion
