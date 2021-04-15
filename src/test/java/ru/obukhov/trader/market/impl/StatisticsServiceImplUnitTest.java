@@ -83,16 +83,16 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
-        List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(14.72325, 15.00000, 15.27675);
+        List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.00000, 10.13500, 10.55350);
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
         List<Point> expectedMinimums = ImmutableList.of(
-                Point.of(candles.get(0).getTime(), 14.72325)
+                Point.of(candles.get(0).getTime(), 10.00000)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
         List<Point> expectedMaximums = ImmutableList.of(
-                Point.of(candles.get(2).getTime(), 15.27675)
+                Point.of(candles.get(2).getTime(), 10.55350)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
 
@@ -114,7 +114,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
         candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleInterval));
-        candles.add(TestDataHelper.createCandle(10, 20, 25, 10, time.plusMinutes(1), candleInterval));
+        candles.add(TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleInterval));
         candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleInterval));
         candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleInterval));
         candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleInterval));
@@ -133,50 +133,47 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         // expectedAverages are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
         List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(
-                99.72048, 102.46637, 104.04146, 102.67578, 98.28161,
-                89.06988, 75.78625, 71.94727, 71.76162, 81.27242
+                80.00000, 104.84000, 131.89400, 151.38260, 161.32940,
+                161.76896, 156.91483, 174.05676, 191.96114, 201.88675
         );
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
         List<Point> expectedMinimums = ImmutableList.of(
-                Point.of(candles.get(0).getTime(), 99.72048),
-                Point.of(candles.get(8).getTime(), 71.76162)
+                Point.of(candles.get(0).getTime(), 80.00000),
+                Point.of(candles.get(6).getTime(), 156.91483)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
         List<Point> expectedMaximums = ImmutableList.of(
-                Point.of(candles.get(2).getTime(), 104.04146),
-                Point.of(candles.get(9).getTime(), 81.27242)
+                Point.of(candles.get(5).getTime(), 161.76896),
+                Point.of(candles.get(9).getTime(), 201.88675)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
 
         List<List<Point>> supportLines = response.getSupportLines();
         Assertions.assertEquals(1, supportLines.size());
         List<Point> expectedSupportLine = ImmutableList.of(
-                Point.of(candles.get(0).getTime(), 99.72048),
-                Point.of(candles.get(1).getTime(), 96.22562),
-                Point.of(candles.get(2).getTime(), 92.73077),
-                Point.of(candles.get(3).getTime(), 89.23591),
-                Point.of(candles.get(4).getTime(), 85.74105),
-                Point.of(candles.get(5).getTime(), 82.24619),
-                Point.of(candles.get(6).getTime(), 78.75134),
-                Point.of(candles.get(7).getTime(), 75.25648),
-                Point.of(candles.get(8).getTime(), 71.76162),
-                Point.of(candles.get(9).getTime(), 68.26676)
+                Point.of(candles.get(0).getTime(), 80.00000),
+                Point.of(candles.get(1).getTime(), 92.81914),
+                Point.of(candles.get(2).getTime(), 105.63828),
+                Point.of(candles.get(3).getTime(), 118.45742),
+                Point.of(candles.get(4).getTime(), 131.27655),
+                Point.of(candles.get(5).getTime(), 144.09569),
+                Point.of(candles.get(6).getTime(), 156.91483),
+                Point.of(candles.get(7).getTime(), 169.73397),
+                Point.of(candles.get(8).getTime(), 182.55311),
+                Point.of(candles.get(9).getTime(), 195.37225)
         );
         AssertUtils.assertListsAreEqual(expectedSupportLine, supportLines.get(0));
 
         List<List<Point>> resistanceLines = response.getResistanceLines();
         Assertions.assertEquals(1, resistanceLines.size());
         List<Point> expectedResistanceLine = ImmutableList.of(
-                Point.of(candles.get(2).getTime(), 104.04146),
-                Point.of(candles.get(3).getTime(), 100.78874),
-                Point.of(candles.get(4).getTime(), 97.53602),
-                Point.of(candles.get(5).getTime(), 94.2833),
-                Point.of(candles.get(6).getTime(), 91.03058),
-                Point.of(candles.get(7).getTime(), 87.77786),
-                Point.of(candles.get(8).getTime(), 84.52514),
-                Point.of(candles.get(9).getTime(), 81.27242)
+                Point.of(candles.get(5).getTime(), 161.76896),
+                Point.of(candles.get(6).getTime(), 171.79841),
+                Point.of(candles.get(7).getTime(), 181.82786),
+                Point.of(candles.get(8).getTime(), 191.85730),
+                Point.of(candles.get(9).getTime(), 201.88675)
         );
         AssertUtils.assertListsAreEqual(expectedResistanceLine, resistanceLines.get(0));
     }

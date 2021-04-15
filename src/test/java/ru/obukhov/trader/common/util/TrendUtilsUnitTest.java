@@ -617,8 +617,23 @@ class TrendUtilsUnitTest {
                         ),
                         0.8,
                         ImmutableList.of(
-                                1124.99994, 2024.99968, 3004.99840, 4000.99200, 5000.16000,
-                                5999.84000, 6999.00800, 7995.00160, 8975.00032, 9875.00006
+                                1000.00000, 1800.00000, 2760.00000, 3752.00000, 4750.40000,
+                                5750.08000, 6750.01600, 7750.00320, 8750.00064, 9750.00013
+                        )
+                ),
+                Arguments.of(
+                        ImmutableList.of(
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
+                        ),
+                        0.5,
+                        ImmutableList.of(
+                                9912.00000, 9905.00000, 9890.50000, 9893.75000, 9895.37500,
+                                9896.68750, 9890.84375, 9893.42188, 9890.71094, 9889.35547,
+                                9885.17773, 9881.58887, 9884.29443, 9881.14722, 9879.57361,
+                                9881.28680, 9879.64340, 9870.32170, 9866.16085, 9864.08043
                         )
                 )
         );
@@ -725,26 +740,26 @@ class TrendUtilsUnitTest {
                 Arguments.of(
                         Collections.emptyList(),
                         0.8,
-                        3,
-                        Collections.emptyList()
+                        Collections.emptyList(),
+                        3
                 ),
                 Arguments.of(
                         Collections.singletonList(1000.0),
                         0.8,
-                        3,
-                        Collections.singletonList(1000.0)
+                        Collections.singletonList(1000.0),
+                        3
                 ),
                 Arguments.of(
                         ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
-                        3,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        3
                 ),
                 Arguments.of(
                         ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
                         0.8,
-                        3,
-                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
+                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
+                        3
                 ),
                 Arguments.of(
                         ImmutableList.of(
@@ -752,11 +767,11 @@ class TrendUtilsUnitTest {
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         0.8,
-                        1,
                         ImmutableList.of(
-                                1124.99994, 2024.99968, 3004.99840, 4000.99200, 5000.16000,
-                                5999.84000, 6999.00800, 7995.00160, 8975.00032, 9875.00006
-                        )
+                                1000.00000, 1640.00000, 2536.00000, 3508.80000, 4502.08000,
+                                5500.48000, 6500.10880, 7500.02432, 8500.00538, 9500.00118
+                        ),
+                        2
                 ),
                 Arguments.of(
                         ImmutableList.of(
@@ -764,24 +779,59 @@ class TrendUtilsUnitTest {
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         0.8,
-                        2,
                         ImmutableList.of(
-                                1249.99941, 2069.99731, 3017.98784, 4004.34560, 5000.80000,
-                                5999.20000, 6995.65440, 7982.01216, 8930.00269, 9750.00059
-                        )
+                                1000.00000, 1512.00000, 2331.20000, 3273.28000, 4256.32000,
+                                5251.64800, 6250.41664, 7250.10278, 8250.02486, 9250.00591
+                        ),
+                        3
                 ),
                 Arguments.of(
                         ImmutableList.of(
-                                1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
-                                6000.0, 7000.0, 8000.0, 9000.0, 10000.0
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
-                        0.8,
-                        3,
+                        0.5,
                         ImmutableList.of(
-                                1374.99704, 2130.98757, 3040.54861, 4011.43168, 5002.33600,
-                                5997.66400, 6988.56832, 7959.45139, 8869.01243, 9625.00296
-                        )
+                                9912.00000, 9908.50000, 9899.50000, 9896.62500, 9896.00000,
+                                9896.34375, 9893.59375, 9893.50781, 9892.10938, 9890.73242,
+                                9887.95508, 9884.77197, 9884.53320, 9882.84021, 9881.20691,
+                                9881.24686, 9880.44513, 9875.38342, 9870.77213, 9867.42628
+                        ),
+                        2
+                ),
+                Arguments.of(
+                        ImmutableList.of(
+                                9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
+                                9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
+                                9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
+                                9883.0, 9878.0, 9861.0, 9862.0, 9862.0
+                        ),
+                        0.5,
+                        ImmutableList.of(
+                                9912.00000, 9910.25000, 9904.87500, 9900.75000, 9898.37500,
+                                9897.35938, 9895.47656, 9894.49219, 9893.30078, 9892.01660,
+                                9889.98584, 9887.37891, 9885.95605, 9884.39813, 9882.80252,
+                                9882.02469, 9881.23491, 9878.30916, 9874.54065, 9870.98346
+                        ),
+                        3
                 )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
+    void getExponentialWeightedMovingAverages_withOrderOne_andWithoutValueExtractor(
+            List<Double> values,
+            double weightDecrease,
+            List<Double> expectedValues
+    ) {
+        getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
+                values,
+                weightDecrease,
+                expectedValues,
+                1
         );
     }
 
@@ -790,8 +840,8 @@ class TrendUtilsUnitTest {
     void getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
             List<Double> values,
             double weightDecrease,
-            int order,
-            List<Double> expectedValues
+            List<Double> expectedValues,
+            int order
     ) {
         List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
@@ -810,12 +860,27 @@ class TrendUtilsUnitTest {
     }
 
     @ParameterizedTest
+    @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
+    void getExponentialWeightedMovingAverages_withOrderOne_andWithValueExtractor(
+            List<Double> values,
+            double weightDecrease,
+            List<Double> expectedValues
+    ) {
+        getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
+                values,
+                weightDecrease,
+                expectedValues,
+                1
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder")
     void getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
             List<Double> values,
             double weightDecrease,
-            int order,
-            List<Double> expectedValues
+            List<Double> expectedValues,
+            int order
     ) {
         List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 

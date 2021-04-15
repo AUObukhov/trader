@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.Streams;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -254,22 +253,19 @@ public class TrendUtils {
                 "weightDecrease must be in range (0; 1]");
 
         double revertedWeightDecrease = 1 - weightDecrease;
-        List<BigDecimal> averagesNatural = new ArrayList<>(values);
-        if (averagesNatural.isEmpty()) {
-            return averagesNatural;
+        List<BigDecimal> averages = new ArrayList<>(values);
+        if (averages.isEmpty()) {
+            return averages;
         }
-        List<BigDecimal> averagesReverse = new ArrayList<>(values);
 
         for (int i = 0; i < order; i++) {
-            updateExponentialMovingAveragesNatural(averagesNatural, weightDecrease, revertedWeightDecrease);
-            updateExponentialMovingAveragesReverse(averagesReverse, weightDecrease, revertedWeightDecrease);
+            updateExponentialMovingAverages(averages, weightDecrease, revertedWeightDecrease);
         }
 
-        return Streams.zip(averagesNatural.stream(), averagesReverse.stream(), DecimalUtils::getAverage)
-                .collect(Collectors.toList());
+        return averages.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    private static void updateExponentialMovingAveragesNatural(
+    private static void updateExponentialMovingAverages(
             List<BigDecimal> averages,
             double weightDecrease,
             double revertedWeightDecrease
@@ -277,18 +273,6 @@ public class TrendUtils {
         BigDecimal average = averages.get(0);
         final int size = averages.size();
         for (int i = 1; i < size; i++) {
-            average = updateExponentialMovingAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
-        }
-    }
-
-    private static void updateExponentialMovingAveragesReverse(
-            List<BigDecimal> averages,
-            double weightDecrease,
-            double revertedWeightDecrease
-    ) {
-        final int size = averages.size();
-        BigDecimal average = averages.get(size - 1);
-        for (int i = size - 2; i >= 0; i--) {
             average = updateExponentialMovingAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
         }
     }
