@@ -568,6 +568,13 @@ public class TrendUtils {
 
     // region getCrossovers
 
+    /**
+     * Calculates indices of crossovers of given lists.
+     * Crossover is situation, when preponderance of value from one list
+     * is changed to preponderance of value from another list within step to next pair of corresponding values
+     *
+     * @return indices of crossovers
+     */
     public static List<Integer> getCrossovers(List<BigDecimal> values1, List<BigDecimal> values2) {
         final int size = values1.size();
         Assert.isTrue(size == values2.size(), "values1 and values2 must have same size");
