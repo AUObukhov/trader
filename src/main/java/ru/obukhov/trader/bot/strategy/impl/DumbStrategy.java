@@ -37,37 +37,4 @@ public class DumbStrategy extends AbstractStrategy {
         return decision;
     }
 
-    private Decision getBuyOrWaitDecision(DecisionData data) {
-        Decision decision;
-        int availableLots = getAvailableLots(data);
-        if (availableLots > 0) {
-            decision = new Decision(DecisionAction.BUY, availableLots);
-            log.debug("No position and current balance {} allows to buy {} lots. Decision is {}",
-                    data.getBalance(), availableLots, decision.toPrettyString());
-
-        } else {
-            decision = Decision.WAIT_DECISION;
-            log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
-                    data.getBalance(), decision.toPrettyString());
-        }
-        return decision;
-    }
-
-    private Decision getSellOrWaitDecision(DecisionData data) {
-        double profit = getProfit(data);
-
-        Decision decision;
-        if (profit < MINIMUM_PROFIT) {
-            decision = Decision.WAIT_DECISION;
-            log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision.toPrettyString());
-        } else {
-            decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
-            log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision.toPrettyString());
-        }
-
-        return decision;
-    }
-
 }

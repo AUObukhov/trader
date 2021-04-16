@@ -56,52 +56,35 @@ public class TrendReversalStrategy extends AbstractStrategy {
         return decision;
     }
 
-    private Decision getBuyOrWaitDecision(DecisionData data) {
+    @Override
+    protected Decision getBuyOrWaitDecision(DecisionData data) {
         Decision decision;
         List<Candle> currentCandles = CollectionsUtils.getTail(data.getCurrentCandles(), lastPricesCount);
-        int availableLots = getAvailableLots(data);
-        if (availableLots > 0) {
-            final BigDecimal minPrice = getMinPrice(currentCandles);
-            final BigDecimal expectedMinPrice = getExpectedExtremumCandle(currentCandles).getLowestPrice();
-            if (DecimalUtils.numbersEqual(expectedMinPrice, minPrice)) {
-                decision = new Decision(DecisionAction.BUY, availableLots);
-                log.debug("expectedMinPrice {} is equal to minPrice {}. Decision is {}",
-                        expectedMinPrice, minPrice, decision.toPrettyString());
-            } else {
-                decision = Decision.WAIT_DECISION;
-                log.debug("expectedMinPrice {} is not equal to minPrice {}. Decision is {}",
-                        expectedMinPrice, minPrice, decision.toPrettyString());
-            }
+        final BigDecimal minPrice = getMinPrice(currentCandles);
+        final BigDecimal expectedMinPrice = getExpectedExtremumCandle(currentCandles).getLowestPrice();
+        if (DecimalUtils.numbersEqual(expectedMinPrice, minPrice)) {
+            decision = super.getBuyOrWaitDecision(data);
         } else {
             decision = Decision.WAIT_DECISION;
-            log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
-                    data.getBalance(), decision.toPrettyString());
+            log.debug("expectedMinPrice {} is not equal to minPrice {}. Decision is {}",
+                    expectedMinPrice, minPrice, decision.toPrettyString());
         }
+
         return decision;
     }
 
-    private Decision getSellOrWaitDecision(DecisionData data) {
-        double profit = getProfit(data);
+    @Override
+    protected Decision getSellOrWaitDecision(DecisionData data) {
         Decision decision;
-        if (profit < MINIMUM_PROFIT) {
-            decision = Decision.WAIT_DECISION;
-            log.debug("Profit {} is lower than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision.toPrettyString());
+        List<Candle> currentCandles = CollectionsUtils.getTail(data.getCurrentCandles(), lastPricesCount);
+        final BigDecimal maxPrice = getMaxPrice(currentCandles);
+        final BigDecimal expectedMaxPrice = getExpectedExtremumCandle(currentCandles).getHighestPrice();
+        if (DecimalUtils.numbersEqual(expectedMaxPrice, maxPrice)) {
+            decision = super.getSellOrWaitDecision(data);
         } else {
-            List<Candle> currentCandles = CollectionsUtils.getTail(data.getCurrentCandles(), lastPricesCount);
-            final BigDecimal maxPrice = getMaxPrice(currentCandles);
-            final BigDecimal expectedMaxPrice = getExpectedExtremumCandle(currentCandles).getHighestPrice();
-
-            if (DecimalUtils.numbersEqual(expectedMaxPrice, maxPrice)) {
-                decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
-                log.debug("expectedMaxPrice {} is equal to maxPrice {}. Decision is {}",
-                        expectedMaxPrice, maxPrice, decision.toPrettyString());
-
-            } else {
-                decision = Decision.WAIT_DECISION;
-                log.debug("expectedMaxPrice {} is not equal to maxPrice {}. Decision is {}",
-                        expectedMaxPrice, maxPrice, decision.toPrettyString());
-            }
+            decision = Decision.WAIT_DECISION;
+            log.debug("expectedMaxPrice {} is not equal to maxPrice {}. Decision is {}",
+                    expectedMaxPrice, maxPrice, decision.toPrettyString());
         }
 
         return decision;
