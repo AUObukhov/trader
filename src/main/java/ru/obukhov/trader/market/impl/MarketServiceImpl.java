@@ -166,7 +166,7 @@ public class MarketServiceImpl implements MarketService {
      * within {@code trading.consecutive-empty-days-limit} days.
      */
     @Override
-    public List<Candle> getLastCandles(String ticker, int limit) {
+    public List<Candle> getLastCandles(String ticker, int limit, CandleResolution candleResolution) {
 
         OffsetDateTime to = tinkoffService.getCurrentDateTime();
         OffsetDateTime from = DateUtils.atStartOfDay(to);
@@ -174,7 +174,7 @@ public class MarketServiceImpl implements MarketService {
         List<Candle> candles = new ArrayList<>();
 
         do {
-            List<Candle> currentCandles = loadDayCandles(ticker, Interval.of(from, to), CandleResolution._1MIN);
+            List<Candle> currentCandles = loadDayCandles(ticker, Interval.of(from, to), candleResolution);
             if (currentCandles.isEmpty()) {
                 consecutiveEmptyDaysCount++;
             } else {

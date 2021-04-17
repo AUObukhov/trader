@@ -22,6 +22,7 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -246,11 +247,17 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
-            Mockito.when(marketService.getLastCandles(Mockito.eq(ticker1), Mockito.anyInt()))
-                    .thenThrow(new IllegalArgumentException());
+            Mockito.when(marketService.getLastCandles(
+                    Mockito.eq(ticker1),
+                    Mockito.anyInt(),
+                    Mockito.any(CandleResolution.class)
+            )).thenThrow(new IllegalArgumentException());
             prepareEmptyMockedData(ticker2);
-            Mockito.when(marketService.getLastCandles(Mockito.eq(ticker2), Mockito.anyInt()))
-                    .thenThrow(new IllegalArgumentException());
+            Mockito.when(marketService.getLastCandles(
+                    Mockito.eq(ticker2),
+                    Mockito.anyInt(),
+                    Mockito.any(CandleResolution.class)
+            )).thenThrow(new IllegalArgumentException());
 
             bot.tick();
 
@@ -507,8 +514,11 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     }
 
     private void mockCandles(String ticker, List<Candle> candles) {
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt()))
-                .thenReturn(candles);
+        Mockito.when(marketService.getLastCandles(
+                Mockito.eq(ticker),
+                Mockito.anyInt(),
+                Mockito.any(CandleResolution.class)
+        )).thenReturn(candles);
     }
 
     private void verifyNoOrdersMade() {

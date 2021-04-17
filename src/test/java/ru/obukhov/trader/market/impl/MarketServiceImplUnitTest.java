@@ -341,7 +341,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 10));
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        List<Candle> candles = service.getLastCandles(ticker, limit);
+        List<Candle> candles = service.getLastCandles(ticker, limit, CandleResolution._1MIN);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -350,6 +350,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getLastCandles_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String ticker = TICKER;
         int limit = 5;
+        CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
         List<Integer> prices1 = Arrays.asList(1, 2, 3);
@@ -357,22 +358,22 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
-        mockCandlesSimple(ticker, interval1, CandleResolution._1MIN, prices1, times1);
+        mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
         List<Integer> prices2 = Arrays.asList(4, 5);
         List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
-        mockCandlesSimple(ticker, interval2, CandleResolution._1MIN, prices2, times2);
+        mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
         List<Integer> prices3 = Collections.singletonList(6);
         List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
-        mockCandlesSimple(ticker, interval3, CandleResolution._1MIN, prices3, times3);
+        mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         Mockito.when(tinkoffService.getCurrentDateTime())
                 .thenReturn(DateUtils.getDateTime(2020, 9, 10, 2, 0, 0));
 
-        List<Candle> candles = service.getLastCandles(ticker, limit);
+        List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
         Assertions.assertEquals(limit, candles.size());
         AssertUtils.assertEquals(2, candles.get(0).getOpenPrice());
@@ -386,6 +387,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getLastCandles_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String ticker = TICKER;
         int limit = 10;
+        CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
         List<Integer> prices1 = Arrays.asList(1, 2, 3);
@@ -393,22 +395,22 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
-        mockCandlesSimple(ticker, interval1, CandleResolution._1MIN, prices1, times1);
+        mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
         List<Integer> prices2 = Arrays.asList(4, 5);
         List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
-        mockCandlesSimple(ticker, interval2, CandleResolution._1MIN, prices2, times2);
+        mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
         List<Integer> prices3 = Collections.singletonList(6);
         List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
-        mockCandlesSimple(ticker, interval3, CandleResolution._1MIN, prices3, times3);
+        mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         Mockito.when(tinkoffService.getCurrentDateTime())
                 .thenReturn(DateUtils.getDateTime(2020, 9, 10, 2, 0, 0));
 
-        List<Candle> candles = service.getLastCandles(ticker, limit);
+        List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getOpenPrice());
@@ -423,6 +425,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getLastCandles_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
         final String ticker = TICKER;
         int limit = 5;
+        CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
         List<Integer> prices1 = Arrays.asList(1, 2, 3);
@@ -430,23 +433,23 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
-        mockCandlesSimple(ticker, interval1, CandleResolution._1MIN, prices1, times1);
+        mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
         List<Integer> prices2 = Arrays.asList(4, 5);
         List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
-        mockCandlesSimple(ticker, interval2, CandleResolution._1MIN, prices2, times2);
+        mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
         List<Integer> prices3 = Collections.singletonList(6);
         List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
-        mockCandlesSimple(ticker, interval3, CandleResolution._1MIN, prices3, times3);
+        mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         OffsetDateTime currentDateTime = interval3.getTo()
                 .plusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        List<Candle> candles = service.getLastCandles(ticker, limit);
+        List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -455,6 +458,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getLastCandles_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
         final String ticker = TICKER;
         int limit = 5;
+        CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 1);
         List<Integer> prices1 = Arrays.asList(1, 2, 3);
@@ -462,22 +466,22 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
-        mockCandlesSimple(ticker, interval1, CandleResolution._1MIN, prices1, times1);
+        mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 10);
         List<Integer> prices2 = Arrays.asList(4, 5);
         List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
-        mockCandlesSimple(ticker, interval2, CandleResolution._1MIN, prices2, times2);
+        mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 11);
         List<Integer> prices3 = Collections.singletonList(6);
         List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
-        mockCandlesSimple(ticker, interval3, CandleResolution._1MIN, prices3, times3);
+        mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         OffsetDateTime currentDateTime = interval3.getTo().plusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        List<Candle> candles = service.getLastCandles(ticker, limit);
+        List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
         Assertions.assertEquals(3, candles.size());
         AssertUtils.assertEquals(4, candles.get(0).getOpenPrice());
@@ -684,65 +688,65 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         ).thenReturn(Collections.emptyList());
     }
 
-    private void mockCandlesSimple(String ticker,
-                                   OffsetDateTime from,
-                                   OffsetDateTime to,
-                                   CandleResolution candleInterval,
-                                   Integer... openPrices) {
-
-        mockCandlesSimple(ticker, Interval.of(from, to), candleInterval, openPrices);
-
+    private void mockCandlesSimple(
+            String ticker,
+            OffsetDateTime from,
+            OffsetDateTime to,
+            CandleResolution candleResolution,
+            Integer... openPrices
+    ) {
+        mockCandlesSimple(ticker, Interval.of(from, to), candleResolution, openPrices);
     }
 
-    private void mockCandlesSimple(String ticker,
-                                   Interval interval,
-                                   CandleResolution candleInterval,
-                                   Integer... openPrices) {
-
+    private void mockCandlesSimple(
+            String ticker,
+            Interval interval,
+            CandleResolution candleResolution,
+            Integer... openPrices
+    ) {
         List<Integer> prices = Arrays.asList(openPrices);
         List<OffsetDateTime> times = Collections.nCopies(openPrices.length, interval.getFrom());
 
-        mockCandlesSimple(ticker, interval, candleInterval, prices, times);
-
+        mockCandlesSimple(ticker, interval, candleResolution, prices, times);
     }
 
-    private void mockCandlesSimple(String ticker,
-                                   OffsetDateTime date,
-                                   CandleResolution candleInterval,
-                                   Integer... openPrices) {
-
+    private void mockCandlesSimple(
+            String ticker,
+            OffsetDateTime date,
+            CandleResolution candleResolution,
+            Integer... openPrices
+    ) {
         Interval interval = Interval.of(date, date).extendToWholeDay(false);
 
         List<Integer> prices = Arrays.asList(openPrices);
         List<OffsetDateTime> times = Collections.nCopies(openPrices.length, interval.getFrom());
 
-        mockCandlesSimple(ticker, interval, candleInterval, prices, times);
-
+        mockCandlesSimple(ticker, interval, candleResolution, prices, times);
     }
 
-    private void mockCandlesSimple(String ticker,
-                                   Interval interval,
-                                   CandleResolution candleInterval,
-                                   Integer openPrice,
-                                   OffsetDateTime time) {
-
+    private void mockCandlesSimple(
+            String ticker,
+            Interval interval,
+            CandleResolution candleResolution,
+            Integer openPrice,
+            OffsetDateTime time
+    ) {
         final List<Integer> openPrices = Collections.singletonList(openPrice);
         final List<OffsetDateTime> times = Collections.singletonList(time);
 
-        mockCandlesSimple(ticker, interval, candleInterval, openPrices, times);
-
+        mockCandlesSimple(ticker, interval, candleResolution, openPrices, times);
     }
 
-    private void mockCandlesSimple(String ticker,
-                                   Interval interval,
-                                   CandleResolution candleInterval,
-                                   List<Integer> openPrices,
-                                   List<OffsetDateTime> times) {
-
+    private void mockCandlesSimple(
+            String ticker,
+            Interval interval,
+            CandleResolution candleResolution,
+            List<Integer> openPrices,
+            List<OffsetDateTime> times
+    ) {
         List<Candle> candles = createCandlesSimple(openPrices, times);
 
-        Mockito.when(tinkoffService.getMarketCandles(ticker, interval, candleInterval)).thenReturn(candles);
-
+        Mockito.when(tinkoffService.getMarketCandles(ticker, interval, candleResolution)).thenReturn(candles);
     }
 
     private List<Candle> createCandlesSimple(List<Integer> openPrices, List<OffsetDateTime> times) {

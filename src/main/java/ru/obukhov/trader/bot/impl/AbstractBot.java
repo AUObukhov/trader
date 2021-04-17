@@ -13,6 +13,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -64,7 +65,9 @@ public abstract class AbstractBot implements Bot {
 
         decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
-        decisionData.setCurrentCandles(marketService.getLastCandles(ticker, LAST_CANDLES_COUNT));
+        decisionData.setCurrentCandles(
+                marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CandleResolution._1MIN)
+        );
         decisionData.setLastOperations(getLastWeekOperations(ticker));
         decisionData.setInstrument(instrument);
 

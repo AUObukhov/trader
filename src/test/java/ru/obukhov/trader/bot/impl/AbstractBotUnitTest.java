@@ -19,6 +19,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -127,8 +128,11 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt()))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(marketService.getLastCandles(
+                Mockito.eq(ticker),
+                Mockito.anyInt(),
+                Mockito.any(CandleResolution.class)
+        )).thenThrow(new IllegalArgumentException());
 
         DecisionData decisionData = bot.processTicker(ticker);
 
@@ -319,8 +323,11 @@ class AbstractBotUnitTest extends BaseMockedTest {
     }
 
     private void mockCandles(String ticker, List<Candle> candles) {
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt()))
-                .thenReturn(candles);
+        Mockito.when(marketService.getLastCandles(
+                Mockito.eq(ticker),
+                Mockito.anyInt(),
+                Mockito.any(CandleResolution.class)
+        )).thenReturn(candles);
     }
 
     private void verifyNoOrdersMade() {
