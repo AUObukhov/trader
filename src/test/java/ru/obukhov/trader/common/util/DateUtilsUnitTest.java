@@ -589,6 +589,35 @@ class DateUtilsUnitTest {
 
     // endregion
 
+    // region roundDownToYear tests
+
+    static Stream<Arguments> getData_forRoundDownToYear() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDate(2019, 1, 1),
+                        DateUtils.getDate(2019, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2019, 5, 5, 1, 0, 0),
+                        DateUtils.getDate(2019, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2019, 1, 5, 0, 0, 1),
+                        DateUtils.getDate(2019, 1, 1)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forRoundDownToYear")
+    void roundDownToYear(OffsetDateTime dateTime, OffsetDateTime expectedResult) {
+        OffsetDateTime result = DateUtils.roundDownToYear(dateTime);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
     // region roundUpToYear tests
 
     static Stream<Arguments> getData_forRoundUpToYear() {

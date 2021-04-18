@@ -220,13 +220,23 @@ public class DateUtils {
     }
 
     /**
+     * Moves given {@code dateTime} to start of it's year.
+     * If given {@code dateTime} is already start of year, not changes it
+     *
+     * @return moved date
+     */
+    public static OffsetDateTime roundDownToYear(OffsetDateTime dateTime) {
+        return dateTime.withDayOfYear(1).truncatedTo(ChronoUnit.DAYS);
+    }
+
+    /**
      * Moves given {@code dateTime} to start of next year.
      * If given {@code dateTime} is already start of year, not changes it
      *
      * @return moved date
      */
     public static OffsetDateTime roundUpToYear(OffsetDateTime dateTime) {
-        OffsetDateTime date = dateTime.withDayOfYear(1).truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime date = roundDownToYear(dateTime);
         if (!date.equals(dateTime)) {
             date = date.plusYears(1);
         }
