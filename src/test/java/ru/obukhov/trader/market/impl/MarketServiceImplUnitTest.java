@@ -194,7 +194,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenNoCandles() {
+    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
         final CandleResolution candleInterval = CandleResolution.MONTH;
         final String ticker = TICKER;
 
@@ -235,12 +235,51 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(BigDecimal.valueOf(0), candles.get(0).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1), candles.get(1).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2), candles.get(2).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(3), candles.get(3).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(4), candles.get(4).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(5), candles.get(5).getOpenPrice());
+        AssertUtils.assertEquals(0, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(1, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(2).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(3).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(4).getOpenPrice());
+        AssertUtils.assertEquals(5, candles.get(5).getOpenPrice());
+    }
+
+    @Test
+    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
+        final CandleResolution candleInterval = CandleResolution.MONTH;
+        final String ticker = TICKER;
+
+        mockCandlesSimple(
+                ticker,
+                DateUtils.getDate(2017, 1, 1),
+                DateUtils.getDate(2018, 1, 1),
+                candleInterval,
+                0, 1, 2
+        );
+
+        mockCandlesSimple(
+                ticker,
+                DateUtils.getDate(2018, 1, 1),
+                DateUtils.getDate(2019, 1, 1),
+                candleInterval,
+                3, 4
+        );
+
+        mockCandlesSimple(
+                ticker,
+                DateUtils.getDate(2019, 1, 1),
+                DateUtils.getDate(2020, 1, 1),
+                candleInterval,
+                5
+        );
+
+        final OffsetDateTime from = DateUtils.getDate(2017, 4, 1);
+        final OffsetDateTime to = DateUtils.getDate(2020, 1, 1);
+        List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
+
+        Assertions.assertEquals(3, candles.size());
+        AssertUtils.assertEquals(3, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(5, candles.get(2).getOpenPrice());
     }
 
     // endregion

@@ -85,9 +85,9 @@ public class MarketServiceImpl implements MarketService {
     private List<Candle> getAllCandlesByYears(
             String ticker,
             Interval interval,
-            CandleResolution candleInterval
+            CandleResolution candleResolution
     ) {
-
+        final OffsetDateTime innerFrom = DateUtils.roundDownToYear(interval.getFrom());
         final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
         OffsetDateTime currentFrom = DateUtils.roundUpToYear(innerTo);
         OffsetDateTime currentTo;
@@ -96,14 +96,16 @@ public class MarketServiceImpl implements MarketService {
         List<Candle> currentCandles;
         do {
             currentTo = currentFrom;
-            currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.YEARS, interval.getFrom());
+            currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.YEARS, innerFrom);
 
-            currentCandles = loadCandles(ticker, currentFrom, currentTo, candleInterval);
+            currentCandles = loadCandles(ticker, currentFrom, currentTo, candleResolution)
+                    .stream()
+                    .filter(candle -> !candle.getTime().isBefore(interval.getFrom()))
+                    .collect(Collectors.toList());
             allCandles.addAll(currentCandles);
         } while (DateUtils.isAfter(currentFrom, interval.getFrom()) && !currentCandles.isEmpty());
 
         return allCandles;
-
     }
 
     private List<Candle> loadCandles(
