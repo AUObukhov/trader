@@ -591,35 +591,29 @@ class DateUtilsUnitTest {
 
     // region roundUpToYear tests
 
-    @Test
-    void roundUpToYear_doesNotChangesDateTime_whenDateTimeIsStartOfYear() {
-        OffsetDateTime dateTime = DateUtils.getDate(2019, 1, 1);
-
-        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
-
-        OffsetDateTime expected = DateUtils.getDate(2019, 1, 1);
-        Assertions.assertEquals(expected, result);
+    static Stream<Arguments> getData_forRoundUpToYear() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDate(2019, 1, 1),
+                        DateUtils.getDate(2019, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2019, 5, 5),
+                        DateUtils.getDate(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2019, 1, 5, 0, 0, 1),
+                        DateUtils.getDate(2020, 1, 1)
+                )
+        );
     }
 
-    @Test
-    void roundUpToYear_movesDateTimeToNextYear_whenDateTimeIsAfterStartOfYear() {
-        OffsetDateTime dateTime = DateUtils.getDate(2019, 5, 5);
-
+    @ParameterizedTest
+    @MethodSource("getData_forRoundUpToYear")
+    void roundUpToYear(OffsetDateTime dateTime, OffsetDateTime expectedResult) {
         OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
 
-        OffsetDateTime expected = DateUtils.getDate(2020, 1, 1);
-        Assertions.assertEquals(expected, result);
-    }
-
-    @Test
-    void roundUpToYear_movesDateTimeToNextYear_whenDateTimeIsAfterStartOfYearForFewTime() {
-        OffsetDateTime dateTime =
-                DateUtils.getDateTime(2019, 1, 5, 0, 0, 1);
-
-        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
-
-        OffsetDateTime expected = DateUtils.getDate(2020, 1, 1);
-        Assertions.assertEquals(expected, result);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion
