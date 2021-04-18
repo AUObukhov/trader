@@ -365,12 +365,13 @@ public class DateUtils {
     /**
      * @throws IllegalArgumentException when given {@code dateTime} is not null and after given {@code now}
      */
-    public static void assertDateTimeNotFuture(@Nullable OffsetDateTime dateTime,
-                                               OffsetDateTime now,
-                                               String name) {
+    public static void assertDateTimeNotFuture(
+            @Nullable OffsetDateTime dateTime,
+            OffsetDateTime now,
+            String name
+    ) {
         if (dateTime != null && dateTime.isAfter(now)) {
-            String message = String.format("'%s' (%s) can't be in future. Now is %s",
-                    name, dateTime.toString(), now.toString());
+            String message = String.format("'%s' (%s) can't be in future. Now is %s", name, dateTime, now);
             throw new IllegalArgumentException(message);
         }
     }
