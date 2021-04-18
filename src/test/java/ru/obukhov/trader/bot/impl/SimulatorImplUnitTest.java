@@ -164,10 +164,10 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         Assertions.assertEquals(interval, simulationResult.getInterval());
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
-        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getFinalTotalBalance());
-        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getFinalBalance());
+        AssertUtils.assertEquals(0, simulationResult.getFinalTotalBalance());
+        AssertUtils.assertEquals(0, simulationResult.getFinalBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getWeightedAverageInvestment());
-        AssertUtils.assertEquals(BigDecimal.ZERO, simulationResult.getAbsoluteProfit());
+        AssertUtils.assertEquals(0, simulationResult.getAbsoluteProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 

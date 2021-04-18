@@ -105,7 +105,7 @@ class FakeContextUnitTest {
         Assertions.assertEquals(investment1, fakeContext.getInvestments(currency).get(investment1DateTime));
         Assertions.assertEquals(investment2, fakeContext.getInvestments(currency).get(investment2DateTime));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(170), fakeContext.getBalance(currency));
+        AssertUtils.assertEquals(170, fakeContext.getBalance(currency));
     }
 
     // endregion

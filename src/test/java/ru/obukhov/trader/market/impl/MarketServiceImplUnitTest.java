@@ -20,7 +20,6 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,12 +88,12 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(BigDecimal.valueOf(0), candles.get(0).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1), candles.get(1).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2), candles.get(2).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(3), candles.get(3).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(4), candles.get(4).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(5), candles.get(5).getOpenPrice());
+        AssertUtils.assertEquals(0, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(1, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(2).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(3).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(4).getOpenPrice());
+        AssertUtils.assertEquals(5, candles.get(5).getOpenPrice());
     }
 
     @Test
@@ -135,12 +134,12 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(BigDecimal.valueOf(0), candles.get(0).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1), candles.get(1).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2), candles.get(2).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(3), candles.get(3).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(4), candles.get(4).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(5), candles.get(5).getOpenPrice());
+        AssertUtils.assertEquals(0, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(1, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(2).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(3).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(4).getOpenPrice());
+        AssertUtils.assertEquals(5, candles.get(5).getOpenPrice());
     }
 
     @Test
@@ -185,12 +184,12 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(BigDecimal.valueOf(0), candles.get(0).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1), candles.get(1).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2), candles.get(2).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(3), candles.get(3).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(4), candles.get(4).getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(5), candles.get(5).getOpenPrice());
+        AssertUtils.assertEquals(0, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(1, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(2).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(3).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(4).getOpenPrice());
+        AssertUtils.assertEquals(5, candles.get(5).getOpenPrice());
     }
 
     @Test

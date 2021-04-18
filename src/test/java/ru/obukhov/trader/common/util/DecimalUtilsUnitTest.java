@@ -14,7 +14,7 @@ class DecimalUtilsUnitTest {
     void subtract() {
         BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(100.1), 1.5);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(98.6), result);
+        AssertUtils.assertEquals(98.6, result);
     }
 
     // region multiply tests
@@ -23,14 +23,14 @@ class DecimalUtilsUnitTest {
     void multiplyByDouble() {
         BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(150.15), result);
+        AssertUtils.assertEquals(150.15, result);
     }
 
     @Test
     void multiplyByInteger() {
         BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 2);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(200.2), result);
+        AssertUtils.assertEquals(200.2, result);
     }
 
     // endregion
@@ -41,28 +41,28 @@ class DecimalUtilsUnitTest {
     void divideBigDecimalByInteger() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(33.33333), result);
+        AssertUtils.assertEquals(33.33333, result);
     }
 
     @Test
     void divideBigDecimalByDouble() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3.5);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
+        AssertUtils.assertEquals(28.57143, result);
     }
 
     @Test
     void divideDoubleByDouble() {
         BigDecimal result = DecimalUtils.divide(100., 3.5);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
+        AssertUtils.assertEquals(28.57143, result);
     }
 
     @Test
     void divideBigDecimalByBigDecimal() {
         BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(28.57143), result);
+        AssertUtils.assertEquals(28.57143, result);
     }
 
     // endregion
@@ -93,28 +93,28 @@ class DecimalUtilsUnitTest {
     void getFraction() {
         BigDecimal result = DecimalUtils.getFraction(BigDecimal.valueOf(765), 0.003);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(2.295), result);
+        AssertUtils.assertEquals(2.295, result);
     }
 
     @Test
     void addFraction() {
         BigDecimal result = DecimalUtils.addFraction(BigDecimal.valueOf(765), 0.003);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(767.295), result);
+        AssertUtils.assertEquals(767.295, result);
     }
 
     @Test
     void subtractFraction() {
         BigDecimal result = DecimalUtils.subtractFraction(BigDecimal.valueOf(765), 0.003);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(762.705), result);
+        AssertUtils.assertEquals(762.705, result);
     }
 
     @Test
     void getFractionDifference() {
         BigDecimal result = DecimalUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(0.00301), result);
+        AssertUtils.assertEquals(0.00301, result);
     }
 
     // region setDefaultScale with BigDecimal tests
@@ -183,7 +183,7 @@ class DecimalUtilsUnitTest {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
+        AssertUtils.assertEquals(10, result);
     }
 
     // endregion
@@ -204,7 +204,7 @@ class DecimalUtilsUnitTest {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(10), result);
+        AssertUtils.assertEquals(10, result);
     }
 
     // endregion

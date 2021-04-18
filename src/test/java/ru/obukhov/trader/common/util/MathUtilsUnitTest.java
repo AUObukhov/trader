@@ -49,7 +49,7 @@ class MathUtilsUnitTest {
 
         BigDecimal average = MathUtils.getAverage();
 
-        AssertUtils.assertEquals(BigDecimal.ZERO, average);
+        AssertUtils.assertEquals(0, average);
 
     }
 
@@ -73,7 +73,7 @@ class MathUtilsUnitTest {
                 BigDecimal.valueOf(1000)
         );
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(433.33333), average);
+        AssertUtils.assertEquals(433.33333, average);
 
     }
 
@@ -88,7 +88,7 @@ class MathUtilsUnitTest {
 
         BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(BigDecimal.ZERO, weightedAverage);
+        AssertUtils.assertEquals(0, weightedAverage);
     }
 
     @Test
@@ -110,7 +110,7 @@ class MathUtilsUnitTest {
 
         BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(106764.70588), weightedAverage);
+        AssertUtils.assertEquals(106764.70588, weightedAverage);
     }
 
     // endregion

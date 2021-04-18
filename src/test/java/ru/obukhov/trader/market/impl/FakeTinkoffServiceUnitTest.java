@@ -309,7 +309,7 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
                 "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions().isEmpty());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1000), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(1000, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -329,7 +329,7 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());
         Assertions.assertEquals(ticker, positions.iterator().next().getTicker());
-        AssertUtils.assertEquals(BigDecimal.valueOf(998999), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(998999, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -352,8 +352,8 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(3, portfolioPosition.getLotsCount());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2000), portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(993994), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(993994, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -384,8 +384,8 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(3, portfolioPosition.getLotsCount());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2000), portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(993994), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(993994, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -406,7 +406,7 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
 
         Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertTrue(positions.isEmpty());
-        AssertUtils.assertEquals(BigDecimal.valueOf(1002985), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(1002985, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -430,8 +430,8 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(2, portfolioPosition.getLotsCount());
-        AssertUtils.assertEquals(BigDecimal.valueOf(2000), portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(996991), service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(996991, service.getCurrentBalance(currency));
     }
 
     // endregion
@@ -454,7 +454,7 @@ class FakeTinkoffServiceUnitTest extends BaseMockedTest {
         }
 
         for (CurrencyPosition portfolioCurrency : currencies) {
-            AssertUtils.assertEquals(BigDecimal.ZERO, portfolioCurrency.getBalance());
+            AssertUtils.assertEquals(0, portfolioCurrency.getBalance());
             Assertions.assertNull(portfolioCurrency.getBlocked());
         }
     }

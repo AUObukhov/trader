@@ -8,7 +8,6 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 class CandleUnitTest {
@@ -59,10 +58,10 @@ class CandleUnitTest {
 
         Candle averageCandle = Candle.createAverage(candle1, candle2);
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(100), averageCandle.getOpenPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(200), averageCandle.getClosePrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(200), averageCandle.getHighestPrice());
-        AssertUtils.assertEquals(BigDecimal.valueOf(100), averageCandle.getLowestPrice());
+        AssertUtils.assertEquals(100, averageCandle.getOpenPrice());
+        AssertUtils.assertEquals(200, averageCandle.getClosePrice());
+        AssertUtils.assertEquals(200, averageCandle.getHighestPrice());
+        AssertUtils.assertEquals(100, averageCandle.getLowestPrice());
 
         OffsetDateTime expectedTime = DateUtils.getDateTime(2020, 10, 10, 13, 30, 0);
         Assertions.assertEquals(expectedTime, averageCandle.getTime());

@@ -13,7 +13,7 @@ class FakeBalanceUnitTest {
     void constructor_initializesFields() {
         FakeBalance fakeBalance = new FakeBalance();
 
-        AssertUtils.assertEquals(BigDecimal.ZERO, fakeBalance.getCurrentAmount());
+        AssertUtils.assertEquals(0, fakeBalance.getCurrentAmount());
         Assertions.assertTrue(fakeBalance.getInvestments().isEmpty());
     }
 
@@ -73,7 +73,7 @@ class FakeBalanceUnitTest {
         Assertions.assertEquals(amount1, fakeBalance.getInvestments().get(investment1DateTime));
         Assertions.assertEquals(amount2, fakeBalance.getInvestments().get(investment2DateTime));
 
-        AssertUtils.assertEquals(BigDecimal.valueOf(70), fakeBalance.getCurrentAmount());
+        AssertUtils.assertEquals(70, fakeBalance.getCurrentAmount());
     }
 
     // endregion
