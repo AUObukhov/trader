@@ -10,7 +10,6 @@ import ru.obukhov.trader.common.util.ThrottledCounter;
 import ru.obukhov.trader.config.QueryThrottleProperties;
 import ru.obukhov.trader.config.UrlLimit;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -91,19 +90,14 @@ public class ThrottlingInterceptor implements Interceptor {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (matchingCounters.isEmpty()) {
-            incrementCounter(defaultCounter, "default counter");
+            defaultCounter.increment();
         } else {
             for (Map.Entry<UrlLimit, ThrottledCounter> entry : matchingCounters.entrySet()) {
                 if (entry.getKey().matchesUrl(url)) {
-                    incrementCounter(entry.getValue(), entry.getKey().getUrl());
+                    entry.getValue().increment();
                 }
             }
         }
-    }
-
-    private void incrementCounter(ThrottledCounter counter, String counterName) {
-        Duration throttled = counter.increment();
-        log.trace("Counter \"{}\" throttled {} ms", counterName, throttled.toMillis());
     }
 
 }

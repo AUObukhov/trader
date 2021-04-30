@@ -5,8 +5,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.test.utils.AssertUtils;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 class ThrottledCounterUnitTest {
@@ -44,18 +44,18 @@ class ThrottledCounterUnitTest {
         ThrottledCounter counter = new ThrottledCounter(1000, 3);
         Stopwatch stopwatch = Stopwatch.createStarted();
 
-        Duration duration1 = counter.increment();
+        AssertUtils.runAndAssertFaster(counter::increment, 1);
         int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        Duration duration2 = counter.increment();
+        AssertUtils.runAndAssertFaster(counter::increment, 1);
         int value2 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        Duration duration3 = counter.increment();
+        AssertUtils.runAndAssertFaster(counter::increment, 1);
         int value3 = counter.getValue();
 
-        Duration duration4 = counter.increment(); // waits for ~500 milliseconds until -1, then +1
+        AssertUtils.runAndAssertExecutionTimeRange(counter::increment, 450, 550); // should wait for ~500 milliseconds until -1, then +1
         int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
@@ -76,19 +76,9 @@ class ThrottledCounterUnitTest {
         );
 
         Assertions.assertEquals(1, value1);
-        Assertions.assertEquals(0, duration1.toMillis());
-
         Assertions.assertEquals(2, value2);
-        Assertions.assertEquals(0, duration2.toMillis());
-
         Assertions.assertEquals(3, value3);
-        Assertions.assertEquals(0, duration3.toMillis());
-
         Assertions.assertEquals(3, value4);
-        MatcherAssert.assertThat(
-                duration4.toMillis(),
-                Matchers.allOf(Matchers.greaterThan(450L), Matchers.lessThan(550L))
-        );
         Assertions.assertEquals(2, value5);
         Assertions.assertEquals(1, value6);
         Assertions.assertEquals(0, value7);

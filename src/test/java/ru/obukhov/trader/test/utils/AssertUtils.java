@@ -243,25 +243,40 @@ public class AssertUtils {
 
     // endregion
 
-    public static void assertFaster(Runnable runnable, long time) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        runnable.run();
-        stopwatch.stop();
-        long elapsed = stopwatch.elapsed().toMillis();
-        if (elapsed >= time) {
-            Assertions.fail("Expected execution faster than " + time + " ms. Actual is " + elapsed + " ms");
+    // region execution time assertions
+
+    public static void runAndAssertFaster(Runnable runnable, long maxTime) {
+        long elapsed = runAndGetElapsedMillis(runnable);
+        if (elapsed > maxTime) {
+            Assertions.fail("Expected execution within maximum " + maxTime + " ms. Actual is " + elapsed + " ms");
         }
     }
 
-    public static void assertSlower(Runnable runnable, long time) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        runnable.run();
-        stopwatch.stop();
-        long elapsed = stopwatch.elapsed().toMillis();
-        if (elapsed < time) {
-            Assertions.fail("Expected execution slower than " + time + " ms. Actual is " + elapsed + " ms");
+    public static void runAndAssertSlower(Runnable runnable, long minTime) {
+        long elapsed = runAndGetElapsedMillis(runnable);
+        if (elapsed < minTime) {
+            Assertions.fail("Expected execution within minimum " + minTime + " ms. Actual is " + elapsed + " ms");
         }
     }
+
+    public static void runAndAssertExecutionTimeRange(Runnable runnable, long minTime, long maxTime) {
+        long elapsed = runAndGetElapsedMillis(runnable);
+        if (elapsed < minTime || elapsed > maxTime) {
+            String message = String.format(
+                    "Expected execution within %s-%s ms. Actual is %s ms",
+                    minTime, maxTime, elapsed
+            );
+            Assertions.fail(message);
+        }
+    }
+
+    private static long runAndGetElapsedMillis(Runnable runnable) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        runnable.run();
+        return stopwatch.stop().elapsed().toMillis();
+    }
+
+    // endregion
 
     public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(String message) {
         return context -> AssertUtils.assertContextStartupFailedWithMessage(context, message);

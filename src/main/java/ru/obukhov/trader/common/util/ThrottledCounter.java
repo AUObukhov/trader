@@ -1,9 +1,7 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.base.Stopwatch;
 import lombok.SneakyThrows;
 
-import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,12 +32,10 @@ public class ThrottledCounter {
      * Increments current value and starts task to decrement it after delay
      */
     @SneakyThrows
-    public synchronized Duration increment() {
-        Duration duration = this.counterWithMaxValue.increment();
+    public synchronized void increment() {
+        this.counterWithMaxValue.increment();
 
         timer.schedule(new DecrementTask(), interval);
-
-        return duration;
     }
 
     public int getValue() {
@@ -56,16 +52,12 @@ public class ThrottledCounter {
         }
 
         @SneakyThrows
-        private synchronized Duration increment() {
-            Stopwatch stopwatch = Stopwatch.createStarted();
+        private synchronized void increment() {
             while (value.get() >= maxValue) {
                 wait();
             }
-            stopwatch.stop();
 
             value.incrementAndGet();
-
-            return stopwatch.elapsed();
         }
 
         private synchronized void decrement() {
