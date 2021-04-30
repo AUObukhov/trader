@@ -11,7 +11,7 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
-import java.util.Arrays;
+import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
@@ -32,7 +32,7 @@ class ConservativeStrategyUnitTest {
         Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
         DecisionData data = new DecisionData();
-        data.setLastOperations(Arrays.asList(operation1, operation2, operation3));
+        data.setLastOperations(List.of(operation1, operation2, operation3));
 
         Decision decision = strategy.decide(data);
 

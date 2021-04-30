@@ -1,6 +1,5 @@
 package ru.obukhov.trader.bot.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -33,6 +32,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 class ScheduledBotUnitTest extends BaseMockedTest {
 
@@ -126,9 +126,9 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            List<Order> orders1 = Collections.singletonList(new Order());
+            List<Order> orders1 = List.of(new Order());
             Mockito.when(ordersService.getOrders(ticker1)).thenReturn(orders1);
-            List<Order> orders2 = Collections.singletonList(new Order());
+            List<Order> orders2 = List.of(new Order());
             Mockito.when(ordersService.getOrders(ticker2)).thenReturn(orders2);
 
             bot.tick();
@@ -305,9 +305,9 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, Collections.singletonList(new Candle()));
+            mockCandles(ticker1, List.of(new Candle()));
             prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, Collections.singletonList(new Candle()));
+            mockCandles(ticker2, List.of(new Candle()));
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenThrow(new IllegalArgumentException());
 
@@ -331,9 +331,9 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, Collections.singletonList(new Candle()));
+            mockCandles(ticker1, List.of(new Candle()));
             prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, Collections.singletonList(new Candle()));
+            mockCandles(ticker2, List.of(new Candle()));
 
             Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
@@ -405,9 +405,9 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, Collections.singletonList(new Candle()));
+            mockCandles(ticker1, List.of(new Candle()));
             prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, Collections.singletonList(new Candle()));
+            mockCandles(ticker2, List.of(new Candle()));
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
 
@@ -472,7 +472,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     }
 
     private void mockTickers(String... tickers) {
-        Mockito.when(botConfig.getTickers()).thenReturn(ImmutableSet.copyOf(tickers));
+        Mockito.when(botConfig.getTickers()).thenReturn(Set.of(tickers));
     }
 
     private void mockData(String ticker) {
@@ -486,11 +486,11 @@ class ScheduledBotUnitTest extends BaseMockedTest {
         Mockito.when(portfolioService.getPosition(ticker))
                 .thenReturn(position);
 
-        final List<Operation> operations = Collections.singletonList(new Operation());
+        final List<Operation> operations = List.of(new Operation());
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = Collections.singletonList(new Candle());
+        final List<Candle> currentCandles = List.of(new Candle());
         mockCandles(ticker, currentCandles);
     }
 

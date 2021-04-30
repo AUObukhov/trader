@@ -7,9 +7,9 @@ import ru.obukhov.trader.web.model.pojo.SimulationUnit;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 class SimulationUnitsAreDistinctValidatorUnitTest {
 
@@ -43,7 +43,7 @@ class SimulationUnitsAreDistinctValidatorUnitTest {
         simulationUnit.setBalanceIncrement(BigDecimal.valueOf(10));
         simulationUnit.setBalanceIncrementCron(new CronExpression("0 0 0 1 * ?"));
 
-        Collection<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        Collection<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         boolean result = validator.isValid(simulationUnits, null);
 
@@ -65,7 +65,7 @@ class SimulationUnitsAreDistinctValidatorUnitTest {
         simulationUnit2.setInitialBalance(BigDecimal.valueOf(200));
         simulationUnit2.setBalanceIncrement(BigDecimal.valueOf(20));
         simulationUnit2.setBalanceIncrementCron(new CronExpression("0 0 0 2 * ?"));
-        Collection<SimulationUnit> simulationUnits = Arrays.asList(simulationUnit1, simulationUnit2);
+        Collection<SimulationUnit> simulationUnits = List.of(simulationUnit1, simulationUnit2);
 
         boolean result = validator.isValid(simulationUnits, null);
 
@@ -87,7 +87,7 @@ class SimulationUnitsAreDistinctValidatorUnitTest {
         simulationUnit2.setInitialBalance(BigDecimal.valueOf(200));
         simulationUnit2.setBalanceIncrement(BigDecimal.valueOf(20));
         simulationUnit2.setBalanceIncrementCron(new CronExpression("0 0 0 2 * ?"));
-        Collection<SimulationUnit> simulationUnits = Arrays.asList(simulationUnit1, simulationUnit2);
+        Collection<SimulationUnit> simulationUnits = List.of(simulationUnit1, simulationUnit2);
 
         boolean result = validator.isValid(simulationUnits, null);
 

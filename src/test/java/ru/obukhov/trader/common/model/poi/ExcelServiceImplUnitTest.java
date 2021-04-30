@@ -32,7 +32,6 @@ import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import java.io.File;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -66,7 +65,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result1 = createSimulationResult(ticker, "bot1");
         SimulationResult result2 = createSimulationResult(ticker, "bot2");
         SimulationResult result3 = createSimulationResult(ticker, "bot3");
-        List<SimulationResult> results = Arrays.asList(result1, result2, result3);
+        List<SimulationResult> results = List.of(result1, result2, result3);
 
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
 
@@ -106,7 +105,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
 
         Assertions.assertEquals(file, returnedFile);
 
@@ -138,7 +137,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
 
         Assertions.assertEquals(file, returnedFile);
 
@@ -171,7 +170,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
 
         Assertions.assertEquals(file, returnedFile);
 
@@ -207,7 +206,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
 
         Assertions.assertEquals(file, returnedFile);
 
@@ -241,7 +240,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
                 .thenReturn(file);
 
-        File returnedFile = excelService.saveSimulationResults(ticker, Collections.singletonList(result));
+        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
 
         Assertions.assertEquals(file, returnedFile);
 
@@ -388,7 +387,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     private List<SimulatedPosition> createPositions(String ticker) {
-        return Arrays.asList(
+        return List.of(
                 new SimulatedPosition(ticker, BigDecimal.valueOf(200), 3),
                 new SimulatedPosition(ticker, BigDecimal.valueOf(100), 2)
         );
@@ -428,7 +427,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
                 .commission(BigDecimal.valueOf(0.36))
                 .build();
 
-        return Arrays.asList(operation1, operation2, operation3, operation4);
+        return List.of(operation1, operation2, operation3, operation4);
     }
 
     private List<Candle> createCandles() {
@@ -453,7 +452,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
                 DateUtils.getDateTime(2020, 11, 1, 10, 0, 0)
         );
 
-        return Arrays.asList(candle1, candle2, candle3, candle4, candle5);
+        return List.of(candle1, candle2, candle3, candle4, candle5);
     }
 
     private GetCandlesResponse createGetCandlesResponse() {

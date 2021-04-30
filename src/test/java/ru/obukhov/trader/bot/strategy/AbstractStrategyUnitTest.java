@@ -13,8 +13,8 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 class AbstractStrategyUnitTest {
 
@@ -50,7 +50,7 @@ class AbstractStrategyUnitTest {
         Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
         DecisionData data = new DecisionData();
-        data.setLastOperations(Arrays.asList(operation1, operation2, operation3));
+        data.setLastOperations(List.of(operation1, operation2, operation3));
 
         Assertions.assertTrue(TestStrategy.existsOperationInProgress(data));
     }
@@ -61,7 +61,7 @@ class AbstractStrategyUnitTest {
         Operation operation2 = new Operation().status(OperationStatus.DECLINE);
 
         DecisionData data = new DecisionData();
-        data.setLastOperations(Arrays.asList(operation1, operation2));
+        data.setLastOperations(List.of(operation1, operation2));
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(data));
     }

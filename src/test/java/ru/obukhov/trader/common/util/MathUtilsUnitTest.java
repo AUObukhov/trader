@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,9 +23,9 @@ class MathUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetAverage_withCollection() {
         return Stream.of(
-                Arguments.of(ImmutableList.of(), 0.0),
-                Arguments.of(ImmutableList.of(1000.0), 1000.0),
-                Arguments.of(ImmutableList.of(100.0, 200.0, 1000.0), 433.33333)
+                Arguments.of(List.of(), 0.0),
+                Arguments.of(List.of(1000.0), 1000.0),
+                Arguments.of(List.of(100.0, 200.0, 1000.0), 433.33333)
         );
     }
 
@@ -126,7 +125,7 @@ class MathUtilsUnitTest {
 
     @Test
     void max_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = ImmutableList.of(-100d, 21d, 10d, 20d);
+        List<Double> values = List.of(-100d, 21d, 10d, 20d);
 
         Double max = MathUtils.max(values);
 
@@ -146,7 +145,7 @@ class MathUtilsUnitTest {
 
     @Test
     void min_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = ImmutableList.of(100d, -21d, 10d, 20d);
+        List<Double> values = List.of(100d, -21d, 10d, 20d);
 
         Double min = MathUtils.min(values);
 

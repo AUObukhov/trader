@@ -15,8 +15,8 @@ import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 class SimulateRequestValidationTest {
@@ -135,7 +135,7 @@ class SimulateRequestValidationTest {
         simulationUnit2.setBalanceIncrement(BigDecimal.valueOf(20));
         simulationUnit2.setBalanceIncrementCron(new CronExpression("0 0 0 2 * ?"));
 
-        request.setSimulationUnits(Arrays.asList(simulationUnit1, simulationUnit2));
+        request.setSimulationUnits(List.of(simulationUnit1, simulationUnit2));
 
         Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
         AssertUtils.assertViolation(violations,
@@ -150,7 +150,7 @@ class SimulateRequestValidationTest {
         simulationUnit.setInitialBalance(BigDecimal.TEN);
         simulationUnit.setBalanceIncrement(BigDecimal.ONE);
         simulationUnit.setBalanceIncrementCron(new CronExpression("0 0 0 1 * ?"));
-        request.setSimulationUnits(Collections.singletonList(simulationUnit));
+        request.setSimulationUnits(List.of(simulationUnit));
 
         request.setFrom(OffsetDateTime.now());
 

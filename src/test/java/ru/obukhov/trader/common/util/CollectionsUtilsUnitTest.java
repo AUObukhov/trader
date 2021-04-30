@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
@@ -13,8 +12,6 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -42,7 +39,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEmptyList_whenSizeIsZero() {
-        List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
+        List<Integer> list = List.of(0, 1, 2, 3, 4);
 
         List<Integer> result = CollectionsUtils.getTail(list, 0);
 
@@ -51,7 +48,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsTail_whenSizeIsLowerThanListSize() {
-        List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
+        List<Integer> list = List.of(0, 1, 2, 3, 4);
         int size = 3;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
@@ -63,7 +60,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEqualList_whenSizeIsEqualToListSize() {
-        List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
+        List<Integer> list = List.of(0, 1, 2, 3, 4);
         int size = 5;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
@@ -75,7 +72,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEqualList_whenSizeIsGreaterThanListSize() {
-        List<Integer> list = Arrays.asList(0, 1, 2, 3, 4);
+        List<Integer> list = List.of(0, 1, 2, 3, 4);
         int size = 6;
         List<Integer> result = CollectionsUtils.getTail(list, size);
 
@@ -93,8 +90,8 @@ class CollectionsUtilsUnitTest {
     static Stream<Arguments> getData_forGetLast() {
         return Stream.of(
                 Arguments.of(null, null),
-                Arguments.of(Collections.emptyList(), null),
-                Arguments.of(ImmutableList.of(1, 2, 3), 3)
+                Arguments.of(List.of(), null),
+                Arguments.of(List.of(1, 2, 3), 3)
         );
     }
 
@@ -112,7 +109,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
-        List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
+        List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
         int index = -1;
 
         AssertUtils.assertThrowsWithMessage(
@@ -124,7 +121,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
-        List<BigDecimal> list = Arrays.asList(BigDecimal.ONE, BigDecimal.TEN);
+        List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
         int index = 3;
 
         AssertUtils.assertThrowsWithMessage(
@@ -193,7 +190,7 @@ class CollectionsUtilsUnitTest {
     @Test
     void containsList_throwsIllegalArgumentException_whenListIsNull() {
         List<String> list = null;
-        List<String> searchedList = Arrays.asList("0", "1");
+        List<String> searchedList = List.of("0", "1");
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.containsList(list, searchedList),
@@ -204,7 +201,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
-        List<String> list = Arrays.asList("0", "1");
+        List<String> list = List.of("0", "1");
         List<String> searchedList = null;
 
         AssertUtils.assertThrowsWithMessage(
@@ -217,16 +214,16 @@ class CollectionsUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forContainsList() {
         return Stream.of(
-                Arguments.of(Collections.emptyList(), Collections.emptyList(), true),
-                Arguments.of(Arrays.asList("0", "1"), Collections.emptyList(), true),
-                Arguments.of(Arrays.asList("0", "1"), Arrays.asList("0", "1"), true),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("0", "1"), true),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("1", "2"), true),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "3"), true),
-                Arguments.of(Collections.emptyList(), Collections.singletonList("0"), false),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("5", "6"), false),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "3", "4"), false),
-                Arguments.of(Arrays.asList("0", "1", "2", "3"), Arrays.asList("2", "1"), false)
+                Arguments.of(List.of(), List.of(), true),
+                Arguments.of(List.of("0", "1"), List.of(), true),
+                Arguments.of(List.of("0", "1"), List.of("0", "1"), true),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("0", "1"), true),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("1", "2"), true),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "3"), true),
+                Arguments.of(List.of(), List.of("0"), false),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("5", "6"), false),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "3", "4"), false),
+                Arguments.of(List.of("0", "1", "2", "3"), List.of("2", "1"), false)
         );
     }
 

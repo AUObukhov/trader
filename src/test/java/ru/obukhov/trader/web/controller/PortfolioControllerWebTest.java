@@ -13,7 +13,7 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.List;
 
 class PortfolioControllerWebTest extends ControllerIntegrationTest {
 
@@ -46,7 +46,7 @@ class PortfolioControllerWebTest extends ControllerIntegrationTest {
                 "name2"
         );
 
-        Mockito.when(portfolioService.getPositions()).thenReturn(Arrays.asList(position1, position2));
+        Mockito.when(portfolioService.getPositions()).thenReturn(List.of(position1, position2));
 
         String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetPortfolioPositionsResponse.json");
 
@@ -70,7 +70,7 @@ class PortfolioControllerWebTest extends ControllerIntegrationTest {
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(BigDecimal.valueOf(100));
 
-        Mockito.when(portfolioService.getCurrencies()).thenReturn(Arrays.asList(currencyPosition1, currencyPosition2));
+        Mockito.when(portfolioService.getCurrencies()).thenReturn(List.of(currencyPosition1, currencyPosition2));
 
         String expectedResponse =
                 ResourceUtils.getResourceAsString("test-data/getPortfolioCurrenciesResponse.json");

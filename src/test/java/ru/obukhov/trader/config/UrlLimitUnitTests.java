@@ -4,7 +4,6 @@ import okhttp3.HttpUrl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 class UrlLimitUnitTests {
@@ -13,7 +12,7 @@ class UrlLimitUnitTests {
 
     @Test
     void matchesUrl_returnsTrue_whenMatches() {
-        List<String> segments = Arrays.asList("market", "order");
+        List<String> segments = List.of("market", "order");
         UrlLimit urlLimit = new UrlLimit(segments, 100);
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
@@ -29,7 +28,7 @@ class UrlLimitUnitTests {
 
     @Test
     void matchesUrl_returnsFalse_whenDoesNotMatches() {
-        List<String> segments = Arrays.asList("market", "candles");
+        List<String> segments = List.of("market", "candles");
         UrlLimit urlLimit = new UrlLimit(segments, 100);
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
@@ -49,7 +48,7 @@ class UrlLimitUnitTests {
 
     @Test
     void getUrl_returnsProperUrl() {
-        List<String> segments = Arrays.asList("market", "candles");
+        List<String> segments = List.of("market", "candles");
         UrlLimit urlLimit = new UrlLimit(segments, 100);
 
         Assertions.assertEquals("/market/candles", urlLimit.getUrl());

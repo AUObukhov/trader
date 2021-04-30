@@ -53,7 +53,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
     void processTicker_doesNothing_and_returnsEmptyDecisionData_whenThereAreOrders() {
         String ticker = "ticker";
 
-        List<Order> orders = Collections.singletonList(new Order());
+        List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
         DecisionData decisionData = bot.processTicker(ticker);
@@ -159,7 +159,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
-        mockCandles(ticker, Collections.singletonList(new Candle()));
+        mockCandles(ticker, List.of(new Candle()));
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenThrow(new IllegalArgumentException());
 
@@ -174,7 +174,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
-        mockCandles(ticker, Collections.singletonList(new Candle()));
+        mockCandles(ticker, List.of(new Candle()));
 
         Decision decision = new Decision(DecisionAction.BUY, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
@@ -219,7 +219,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
-        mockCandles(ticker, Collections.singletonList(new Candle()));
+        mockCandles(ticker, List.of(new Candle()));
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
 
@@ -245,11 +245,11 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(portfolioService.getPosition(ticker))
                 .thenReturn(position);
 
-        final List<Operation> operations = Collections.singletonList(new Operation());
+        final List<Operation> operations = List.of(new Operation());
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = Collections.singletonList(new Candle());
+        final List<Candle> currentCandles = List.of(new Candle());
         mockCandles(ticker, currentCandles);
 
         Decision decision = new Decision(DecisionAction.BUY, 5);
@@ -281,11 +281,11 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(portfolioService.getPosition(ticker))
                 .thenReturn(position);
 
-        final List<Operation> operations = Collections.singletonList(new Operation());
+        final List<Operation> operations = List.of(new Operation());
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = Collections.singletonList(new Candle());
+        final List<Candle> currentCandles = List.of(new Candle());
         mockCandles(ticker, currentCandles);
 
         Decision decision = new Decision(DecisionAction.SELL, 5);

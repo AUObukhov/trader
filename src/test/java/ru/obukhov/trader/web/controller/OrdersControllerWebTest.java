@@ -14,7 +14,7 @@ import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
 import ru.tinkoff.invest.openapi.model.rest.OrderType;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.List;
 
 class OrdersControllerWebTest extends ControllerIntegrationTest {
 
@@ -43,7 +43,7 @@ class OrdersControllerWebTest extends ControllerIntegrationTest {
                 .type(OrderType.MARKET)
                 .price(BigDecimal.valueOf(1000));
 
-        Mockito.when(ordersService.getOrders()).thenReturn(Arrays.asList(order1, order2));
+        Mockito.when(ordersService.getOrders()).thenReturn(List.of(order1, order2));
 
         String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetOrdersResponse.json");
 

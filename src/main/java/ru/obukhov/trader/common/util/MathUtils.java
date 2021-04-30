@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class MathUtils {
      * and rounding mode = Half Up
      */
     public static BigDecimal getAverage(BigDecimal... numbers) {
-        return getAverage(Arrays.asList(numbers));
+        return getAverage(List.of(numbers));
     }
 
     // region getWeightedAverage

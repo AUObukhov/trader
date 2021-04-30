@@ -1,6 +1,5 @@
 package ru.obukhov.trader.config;
 
-import com.google.common.collect.ImmutableSet;
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,7 +16,7 @@ public class TrendReversalStrategyProperties {
     private final Set<StrategyConfig> configs;
 
     public TrendReversalStrategyProperties(Set<StrategyConfig> configs) {
-        this.configs = ImmutableSet.copyOf(configs);
+        this.configs = Set.copyOf(configs);
     }
 
     @Data

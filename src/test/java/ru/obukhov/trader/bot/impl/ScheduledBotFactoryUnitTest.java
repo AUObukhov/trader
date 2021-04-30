@@ -16,8 +16,8 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 class ScheduledBotFactoryUnitTest extends BaseMockedTest {
@@ -46,7 +46,7 @@ class ScheduledBotFactoryUnitTest extends BaseMockedTest {
             Strategy strategy1 = new TestStrategy();
             Strategy strategy2 = new TestStrategy();
             Strategy strategy3 = new TestStrategy();
-            Collection<Strategy> strategies = Arrays.asList(strategy1, strategy2, strategy3);
+            Collection<Strategy> strategies = List.of(strategy1, strategy2, strategy3);
 
             ScheduledBotFactory factory = new ScheduledBotFactory(
                     tradingProperties,

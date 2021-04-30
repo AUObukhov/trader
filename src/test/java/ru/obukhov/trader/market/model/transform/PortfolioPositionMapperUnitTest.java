@@ -11,9 +11,9 @@ import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 class PortfolioPositionMapperUnitTest {
 
@@ -97,7 +97,7 @@ class PortfolioPositionMapperUnitTest {
                         .averagePositionPriceNoNkd(averagePositionPriceNoNkd2)
                         .name("name2");
 
-        Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source = Arrays.asList(source1, source2);
+        Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source = List.of(source1, source2);
 
         Collection<PortfolioPosition> target = mapper.map(source);
 

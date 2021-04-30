@@ -38,7 +38,6 @@ import ru.tinkoff.invest.openapi.model.rest.Portfolio;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -198,7 +197,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
                 1000,
                 from.plusMinutes(1)
         );
-        Candles tinkoffCandles = new Candles().candles(Arrays.asList(tinkoffCandle1, tinkoffCandle2));
+        Candles tinkoffCandles = new Candles().candles(List.of(tinkoffCandle1, tinkoffCandle2));
         Optional<Candles> optionalCandles = Optional.of(tinkoffCandles);
         Mockito.when(marketContext.getMarketCandles(figi, from, to, candleInterval))
                 .thenReturn(CompletableFuture.completedFuture(optionalCandles));
@@ -253,7 +252,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
         final MarketInstrument instrument1 = new MarketInstrument().ticker(ticker);
         final MarketInstrument instrument2 = new MarketInstrument().ticker(ticker);
 
-        List<MarketInstrument> instrumentList = Arrays.asList(instrument1, instrument2);
+        List<MarketInstrument> instrumentList = List.of(instrument1, instrument2);
         MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         CompletableFuture<MarketInstrumentList> future = CompletableFuture.completedFuture(marketInstrumentList);
 
@@ -281,7 +280,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
 
         Operation operation1 = new Operation();
         Operation operation2 = new Operation();
-        Operations operations = new Operations().operations(Arrays.asList(operation1, operation2));
+        Operations operations = new Operations().operations(List.of(operation1, operation2));
         Mockito.when(operationsContext.getOperations(from, to, figi, null))
                 .thenReturn(CompletableFuture.completedFuture(operations));
 
@@ -296,7 +295,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
 
     @Test
     void getOrders() {
-        List<Order> orders = Arrays.asList(new Order(), new Order());
+        List<Order> orders = List.of(new Order(), new Order());
         Mockito.when(ordersContext.getOrders(null)).thenReturn(CompletableFuture.completedFuture(orders));
 
         List<Order> result = realTinkoffService.getOrders();
@@ -384,7 +383,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
                         .averagePositionPrice(TestDataHelper.createMoneyAmount(Currency.RUB, 440))
                         .averagePositionPriceNoNkd(TestDataHelper.createMoneyAmount(Currency.RUB, 440))
                         .name("name2");
-        Portfolio portfolio = new Portfolio().positions(Arrays.asList(tinkoffPosition1, tinkoffPosition2));
+        Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
         Mockito.when(portfolioContext.getPortfolio(null))
                 .thenReturn(CompletableFuture.completedFuture(portfolio));
 
@@ -406,7 +405,7 @@ class RealTinkoffServiceUnitTest extends BaseMockedTest {
                 .currency(Currency.USD)
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(null);
-        Currencies currencies = new Currencies().currencies(Arrays.asList(currency1, currency2));
+        Currencies currencies = new Currencies().currencies(List.of(currency1, currency2));
         Mockito.when(portfolioContext.getPortfolioCurrencies(null))
                 .thenReturn(CompletableFuture.completedFuture(currencies));
 

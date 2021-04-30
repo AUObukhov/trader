@@ -24,8 +24,6 @@ import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +77,8 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 .absoluteProfit(BigDecimal.valueOf(100000))
                 .relativeProfit(1.0)
                 .relativeYearProfit(12.0)
-                .operations(Collections.singletonList(operation))
-                .candles(Collections.singletonList(candle))
+                .operations(List.of(operation))
+                .candles(List.of(candle))
                 .build();
         SimulationResult simulationResult2 = SimulationResult.builder()
                 .botName("ticker1 bot2")
@@ -93,9 +91,9 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 .absoluteProfit(BigDecimal.valueOf(100000))
                 .relativeProfit(1.0)
                 .relativeYearProfit(12.0)
-                .positions(Collections.singletonList(simulatedPosition1))
+                .positions(List.of(simulatedPosition1))
                 .build();
-        simulationResultsMap.put(ticker1, Arrays.asList(simulationResult1, simulationResult2));
+        simulationResultsMap.put(ticker1, List.of(simulationResult1, simulationResult2));
 
         SimulatedPosition simulatedPosition2 = new SimulatedPosition();
         simulatedPosition2.setTicker(ticker2);
@@ -116,10 +114,10 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 .absoluteProfit(BigDecimal.valueOf(100000))
                 .relativeProfit(0.33)
                 .relativeYearProfit(4.0)
-                .positions(Arrays.asList(simulatedPosition2, simulatedPosition3))
+                .positions(List.of(simulatedPosition2, simulatedPosition3))
                 .error("error")
                 .build();
-        simulationResultsMap.put(ticker2, Collections.singletonList(simulationResult3));
+        simulationResultsMap.put(ticker2, List.of(simulationResult3));
 
         Mockito.when(simulator.simulate(Mockito.anyList(), Mockito.any(Interval.class), Mockito.eq(true)))
                 .thenReturn(simulationResultsMap);

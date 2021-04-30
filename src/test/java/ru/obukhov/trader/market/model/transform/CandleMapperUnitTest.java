@@ -10,7 +10,6 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Candles;
 
-import java.util.Arrays;
 import java.util.List;
 
 class CandleMapperUnitTest {
@@ -57,7 +56,7 @@ class CandleMapperUnitTest {
                 200, 400, 2000, 100
         );
 
-        List<ru.tinkoff.invest.openapi.model.rest.Candle> candles = Arrays.asList(tinkoffCandle1, tinkoffCandle2);
+        List<ru.tinkoff.invest.openapi.model.rest.Candle> candles = List.of(tinkoffCandle1, tinkoffCandle2);
         Candles source = new Candles();
         source.setFigi(StringUtils.EMPTY);
         source.setInterval(CandleResolution.DAY);

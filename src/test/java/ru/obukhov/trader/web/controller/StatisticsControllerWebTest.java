@@ -25,7 +25,6 @@ import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,37 +74,37 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
                 CandleResolution._1MIN
         );
 
-        List<BigDecimal> averages = Arrays.asList(
+        List<BigDecimal> averages = List.of(
                 BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(100)
         );
 
-        List<Point> localMinimums = Collections.singletonList(TestDataHelper.createPoint(candle1));
-        List<Point> localMaximums = Collections.singletonList(TestDataHelper.createPoint(candle3));
+        List<Point> localMinimums = List.of(TestDataHelper.createPoint(candle1));
+        List<Point> localMaximums = List.of(TestDataHelper.createPoint(candle3));
 
-        List<Point> supportLine1 = Arrays.asList(
+        List<Point> supportLine1 = List.of(
                 Point.of(candle1.getTime(), 9000),
                 Point.of(candle1.getTime(), 900)
         );
-        List<Point> supportLine2 = Arrays.asList(
+        List<Point> supportLine2 = List.of(
                 Point.of(candle1.getTime(), 900),
                 Point.of(candle1.getTime(), 90)
         );
-        List<List<Point>> supportLines = Arrays.asList(supportLine1, supportLine2);
+        List<List<Point>> supportLines = List.of(supportLine1, supportLine2);
 
-        List<Point> resistanceLine1 = Arrays.asList(
+        List<Point> resistanceLine1 = List.of(
                 Point.of(candle1.getTime(), 11000),
                 Point.of(candle1.getTime(), 1100)
         );
-        List<Point> resistanceLine2 = Arrays.asList(
+        List<Point> resistanceLine2 = List.of(
                 Point.of(candle1.getTime(), 1100),
                 Point.of(candle1.getTime(), 110)
         );
-        List<List<Point>> resistanceLines = Arrays.asList(resistanceLine1, resistanceLine2);
+        List<List<Point>> resistanceLines = List.of(resistanceLine1, resistanceLine2);
 
         GetCandlesResponse response = new GetCandlesResponse(
-                Arrays.asList(candle1, candle2, candle3),
+                List.of(candle1, candle2, candle3),
                 averages,
                 localMinimums,
                 localMaximums,
@@ -233,7 +232,7 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
                 .type(InstrumentType.BOND);
 
         Mockito.when(statisticsService.getInstruments(TickerType.STOCK))
-                .thenReturn(Arrays.asList(instrument1, instrument2));
+                .thenReturn(List.of(instrument1, instrument2));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/instruments")
                 .content(getCandlesRequest)

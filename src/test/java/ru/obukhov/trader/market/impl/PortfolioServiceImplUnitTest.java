@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ class PortfolioServiceImplUnitTest extends BaseMockedTest {
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
 
-        List<PortfolioPosition> positions = ImmutableList.of(
+        List<PortfolioPosition> positions = List.of(
                 TestDataHelper.createPortfolioPosition(ticker1),
                 TestDataHelper.createPortfolioPosition(ticker2),
                 TestDataHelper.createPortfolioPosition(ticker3)
@@ -61,7 +60,7 @@ class PortfolioServiceImplUnitTest extends BaseMockedTest {
         String ticker2 = "ticker2";
         String ticker3 = "ticker3";
 
-        List<PortfolioPosition> positions = ImmutableList.of(
+        List<PortfolioPosition> positions = List.of(
                 TestDataHelper.createPortfolioPosition(ticker1),
                 TestDataHelper.createPortfolioPosition(ticker2),
                 TestDataHelper.createPortfolioPosition(ticker3)
@@ -83,7 +82,7 @@ class PortfolioServiceImplUnitTest extends BaseMockedTest {
         long rubBalance = 1000;
         long rubBlocked = 100;
 
-        List<CurrencyPosition> currencies = ImmutableList.of(
+        List<CurrencyPosition> currencies = List.of(
                 TestDataHelper.createCurrencyPosition(Currency.USD, 100),
                 TestDataHelper.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
                 TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
@@ -99,7 +98,7 @@ class PortfolioServiceImplUnitTest extends BaseMockedTest {
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
 
-        List<CurrencyPosition> currencies = ImmutableList.of(
+        List<CurrencyPosition> currencies = List.of(
                 TestDataHelper.createCurrencyPosition(Currency.USD, 100),
                 TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
         );

@@ -15,8 +15,6 @@ import ru.obukhov.trader.config.UrlLimit;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 class ThrottlingInterceptorUnitTest extends BaseMockedTest {
@@ -40,12 +38,12 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws IOException {
 
-        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 1, 30, 120);
-        queryThrottleProperties.setLimits(Collections.singletonList(
-                new UrlLimit(Arrays.asList("orders", "market-order"), 50)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("orders", "market-order"), 50)
         ));
 
         Mockito.when(chain.proceed(ArgumentMatchers.any(Request.class)))
@@ -61,12 +59,12 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_doesNotThrottle_whenNoOpenApiPrefix() {
 
-        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
-        queryThrottleProperties.setLimits(Collections.singletonList(
-                new UrlLimit(Arrays.asList("orders", "market-order"), 50)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("orders", "market-order"), 50)
         ));
 
         final long maximumNotThrottledTime = 100;
@@ -83,12 +81,12 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_throttles_onlyWhenLimitIsReached() {
 
-        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
+        Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
-        queryThrottleProperties.setLimits(Collections.singletonList(
-                new UrlLimit(Collections.singletonList("market"), 120)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("market"), 120)
         ));
 
         final long maximumNotThrottledTime = 60;
@@ -108,13 +106,13 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_throttlesByLowestLimit() {
 
-        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "orders", "market-order"));
+        Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
-        queryThrottleProperties.setLimits(Arrays.asList(
-                new UrlLimit(Collections.singletonList("orders"), 100),
-                new UrlLimit(Arrays.asList("orders", "market-order"), 50)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("orders"), 100),
+                new UrlLimit(List.of("orders", "market-order"), 50)
         ));
 
         final long maximumNotThrottledTime = 75;
@@ -134,15 +132,15 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_throttlesByCommonLimit() {
 
-        final List<String> limitOrderSegments = Arrays.asList("openapi", "orders", "limit-order");
-        final List<String> marketOrderSegments = Arrays.asList("openapi", "orders", "market-order");
+        final List<String> limitOrderSegments = List.of("openapi", "orders", "limit-order");
+        final List<String> marketOrderSegments = List.of("openapi", "orders", "market-order");
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 120);
-        queryThrottleProperties.setLimits(Arrays.asList(
-                new UrlLimit(Collections.singletonList("orders"), 100),
-                new UrlLimit(Arrays.asList("orders", "limit-order"), 90),
-                new UrlLimit(Arrays.asList("orders", "market-order"), 90)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("orders"), 100),
+                new UrlLimit(List.of("orders", "limit-order"), 90),
+                new UrlLimit(List.of("orders", "market-order"), 90)
         ));
 
         final long maximumNotThrottledTime = 75;
@@ -165,12 +163,12 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     @Test
     void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() {
 
-        Mockito.when(url.pathSegments()).thenReturn(Arrays.asList("openapi", "market", "candles"));
+        Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
                 createQueryThrottleProperties(1000, 5000, 30, 50);
-        queryThrottleProperties.setLimits(Collections.singletonList(
-                new UrlLimit(Collections.singletonList("portfolio"), 120)
+        queryThrottleProperties.setLimits(List.of(
+                new UrlLimit(List.of("portfolio"), 120)
         ));
 
         final long maximumNotThrottledTime = 45;

@@ -21,8 +21,8 @@ import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,7 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
             Integer extremumPriceIndex = 95;
             Strategy strategy3 = new TrendReversalStrategy(tradingProperties, lastPricesCount, extremumPriceIndex);
 
-            Collection<Strategy> strategies = Arrays.asList(strategy1, strategy2, strategy3);
+            Collection<Strategy> strategies = List.of(strategy1, strategy2, strategy3);
 
             FakeBotFactory factory = new FakeBotFactory(
                     tradingProperties,
@@ -81,7 +81,7 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
         try (MockedStatic<FakeBotImpl> fakeBotImplStaticMock =
                      Mockito.mockStatic(FakeBotImpl.class, Mockito.CALLS_REAL_METHODS)) {
 
-            Collection<Strategy> strategies = Arrays.asList(
+            Collection<Strategy> strategies = List.of(
                     new ConservativeStrategy(tradingProperties),
                     new TestStrategy()
             );

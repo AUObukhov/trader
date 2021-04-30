@@ -22,7 +22,6 @@ import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -391,21 +390,21 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
-        List<Integer> prices1 = Arrays.asList(1, 2, 3);
-        List<OffsetDateTime> times1 = Arrays.asList(
+        List<Integer> prices1 = List.of(1, 2, 3);
+        List<OffsetDateTime> times1 = List.of(
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
         mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
-        List<Integer> prices2 = Arrays.asList(4, 5);
-        List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
+        List<Integer> prices2 = List.of(4, 5);
+        List<OffsetDateTime> times2 = List.of(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
         mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
-        List<Integer> prices3 = Collections.singletonList(6);
-        List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
+        List<Integer> prices3 = List.of(6);
+        List<OffsetDateTime> times3 = List.of(interval3.getFrom().withHour(1));
         mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         Mockito.when(tinkoffService.getCurrentDateTime())
@@ -428,21 +427,21 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
-        List<Integer> prices1 = Arrays.asList(1, 2, 3);
-        List<OffsetDateTime> times1 = Arrays.asList(
+        List<Integer> prices1 = List.of(1, 2, 3);
+        List<OffsetDateTime> times1 = List.of(
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
         mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
-        List<Integer> prices2 = Arrays.asList(4, 5);
-        List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
+        List<Integer> prices2 = List.of(4, 5);
+        List<OffsetDateTime> times2 = List.of(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
         mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
-        List<Integer> prices3 = Collections.singletonList(6);
-        List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
+        List<Integer> prices3 = List.of(6);
+        List<OffsetDateTime> times3 = List.of(interval3.getFrom().withHour(1));
         mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         Mockito.when(tinkoffService.getCurrentDateTime())
@@ -466,21 +465,21 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 8);
-        List<Integer> prices1 = Arrays.asList(1, 2, 3);
-        List<OffsetDateTime> times1 = Arrays.asList(
+        List<Integer> prices1 = List.of(1, 2, 3);
+        List<OffsetDateTime> times1 = List.of(
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
         mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 9);
-        List<Integer> prices2 = Arrays.asList(4, 5);
-        List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
+        List<Integer> prices2 = List.of(4, 5);
+        List<OffsetDateTime> times2 = List.of(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
         mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 10);
-        List<Integer> prices3 = Collections.singletonList(6);
-        List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
+        List<Integer> prices3 = List.of(6);
+        List<OffsetDateTime> times3 = List.of(interval3.getFrom().withHour(1));
         mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         OffsetDateTime currentDateTime = interval3.getTo()
@@ -499,21 +498,21 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
         CandleResolution candleResolution = CandleResolution._1MIN;
 
         Interval interval1 = Interval.ofDay(2020, 9, 1);
-        List<Integer> prices1 = Arrays.asList(1, 2, 3);
-        List<OffsetDateTime> times1 = Arrays.asList(
+        List<Integer> prices1 = List.of(1, 2, 3);
+        List<OffsetDateTime> times1 = List.of(
                 interval1.getFrom().withHour(1),
                 interval1.getFrom().withHour(2),
                 interval1.getFrom().withHour(3));
         mockCandlesSimple(ticker, interval1, candleResolution, prices1, times1);
 
         Interval interval2 = Interval.ofDay(2020, 9, 10);
-        List<Integer> prices2 = Arrays.asList(4, 5);
-        List<OffsetDateTime> times2 = Arrays.asList(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
+        List<Integer> prices2 = List.of(4, 5);
+        List<OffsetDateTime> times2 = List.of(interval2.getFrom().withHour(1), interval2.getFrom().withHour(2));
         mockCandlesSimple(ticker, interval2, candleResolution, prices2, times2);
 
         Interval interval3 = Interval.ofDay(2020, 9, 11);
-        List<Integer> prices3 = Collections.singletonList(6);
-        List<OffsetDateTime> times3 = Collections.singletonList(interval3.getFrom().withHour(1));
+        List<Integer> prices3 = List.of(6);
+        List<OffsetDateTime> times3 = List.of(interval3.getFrom().withHour(1));
         mockCandlesSimple(ticker, interval3, candleResolution, prices3, times3);
 
         OffsetDateTime currentDateTime = interval3.getTo().plusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
@@ -535,19 +534,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstrument_returnsNull_whenNoMatchingTicker() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         MarketInstrument marketInstrument = service.getInstrument(TICKER);
 
@@ -558,19 +557,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstrument_filtersInstruments() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker(TICKER);
         MarketInstrument stock2 = new MarketInstrument().ticker(TICKER);
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         MarketInstrument marketInstrument = service.getInstrument(TICKER);
 
@@ -585,19 +584,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstruments_returnsEtfs_whenTypeIsEtf() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         List<MarketInstrument> instruments = service.getInstruments(TickerType.ETF);
 
@@ -610,19 +609,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstruments_returnsStocks_whenTypeIsStock() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         List<MarketInstrument> instruments = service.getInstruments(TickerType.STOCK);
 
@@ -635,19 +634,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstruments_returnsBonds_whenTypeIsBond() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         List<MarketInstrument> instruments = service.getInstruments(TickerType.BOND);
 
@@ -660,19 +659,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstruments_returnsCurrencies_whenTypeIsCurrency() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         List<MarketInstrument> instruments = service.getInstruments(TickerType.CURRENCY);
 
@@ -685,19 +684,19 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     void getInstruments_returnsAllInstruments_whenTypeIsNull() {
         MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(Arrays.asList(etf1, etf2));
+        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(Arrays.asList(stock1, stock2));
+        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(Arrays.asList(bond1, bond2));
+        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(Arrays.asList(currency1, currency2));
+        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         List<MarketInstrument> instruments = service.getInstruments(null);
 
@@ -742,7 +741,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
             CandleResolution candleResolution,
             Integer... openPrices
     ) {
-        List<Integer> prices = Arrays.asList(openPrices);
+        List<Integer> prices = List.of(openPrices);
         List<OffsetDateTime> times = Collections.nCopies(openPrices.length, interval.getFrom());
 
         mockCandlesSimple(ticker, interval, candleResolution, prices, times);
@@ -756,7 +755,7 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
     ) {
         Interval interval = Interval.of(date, date).extendToWholeDay(false);
 
-        List<Integer> prices = Arrays.asList(openPrices);
+        List<Integer> prices = List.of(openPrices);
         List<OffsetDateTime> times = Collections.nCopies(openPrices.length, interval.getFrom());
 
         mockCandlesSimple(ticker, interval, candleResolution, prices, times);
@@ -769,8 +768,8 @@ class MarketServiceImplUnitTest extends BaseMockedTest {
             Integer openPrice,
             OffsetDateTime time
     ) {
-        final List<Integer> openPrices = Collections.singletonList(openPrice);
-        final List<OffsetDateTime> times = Collections.singletonList(time);
+        final List<Integer> openPrices = List.of(openPrice);
+        final List<OffsetDateTime> times = List.of(time);
 
         mockCandlesSimple(ticker, interval, candleResolution, openPrices, times);
     }

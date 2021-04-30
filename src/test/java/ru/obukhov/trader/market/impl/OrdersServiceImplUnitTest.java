@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +42,7 @@ class OrdersServiceImplUnitTest extends BaseMockedTest {
         String figi = FIGI;
 
         mockFigi(ticker, figi);
-        mockOrders(ImmutableList.of(
+        mockOrders(List.of(
                 createOrder("order0", figi),
                 createOrder("order1", figi),
                 createOrder("order2", "figi3"),

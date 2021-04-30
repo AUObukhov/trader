@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -66,60 +65,60 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetSimpleMovingAverages() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
+                        List.of(),
                         4,
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         4,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0),
+                        List.of(1000.0, 2000.0),
                         4,
-                        ImmutableList.of(1000.0, 1500.0)
+                        List.of(1000.0, 1500.0)
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         1,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0),
                         4,
-                        ImmutableList.of(1000.0, 1500.0, 2000.0, 2500.0)
+                        List.of(1000.0, 1500.0, 2000.0, 2500.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0),
+                        List.of(1000.0, 2000.0, 3000.0),
                         5,
-                        ImmutableList.of(1000.0, 1500.0, 2000.0)
+                        List.of(1000.0, 1500.0, 2000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         4,
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 1500.0, 2000.0, 2500.0, 3500.0,
                                 4500.0, 5500.0, 6500.0, 7500.0, 8500.0
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
                         4,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9905.00000, 9895.33333, 9895.75000, 9892.00000,
                                 9892.00000, 9894.25000, 9894.00000, 9891.75000, 9889.25000,
                                 9888.25000, 9883.75000, 9883.50000, 9881.00000, 9880.25000,
@@ -261,60 +260,60 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withoutOrder() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
+                        List.of(),
                         4,
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         4,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0),
+                        List.of(1000.0, 2000.0),
                         4,
-                        ImmutableList.of(1000.0, 1666.66667)
+                        List.of(1000.0, 1666.66667)
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         1,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0),
                         4,
-                        ImmutableList.of(1000.0, 5000.0 / 3, 14000.0 / 6, 3000.0)
+                        List.of(1000.0, 5000.0 / 3, 14000.0 / 6, 3000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0),
+                        List.of(1000.0, 2000.0, 3000.0),
                         4,
-                        ImmutableList.of(1000.0, 5000.0 / 3, 14000.0 / 6)
+                        List.of(1000.0, 5000.0 / 3, 14000.0 / 6)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         4,
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 5000.0 / 3, 14000.0 / 6, 3000.0, 4000.0,
                                 5000.0, 6000.0, 7000.0, 8000.0, 9000.0
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
                         4,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9902.66667, 9889.33333, 9892.40000, 9892.90000,
                                 9895.30000, 9892.50000, 9893.20000, 9890.80000, 9889.30000,
                                 9886.00000, 9881.90000, 9883.20000, 9881.00000, 9879.80000,
@@ -371,60 +370,60 @@ class TrendUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetLinearWeightedMovingAverages_withOrder() {
         return Stream.of(
-                Arguments.of(Collections.emptyList(), 4, 2, Collections.emptyList()),
-                Arguments.of(Collections.emptyList(), 4, 10, Collections.emptyList()),
+                Arguments.of(List.of(), 4, 2, List.of()),
+                Arguments.of(List.of(), 4, 10, List.of()),
 
-                Arguments.of(Collections.singletonList(1000.0), 4, 2, Collections.singletonList(1000.0)),
-                Arguments.of(Collections.singletonList(1000.0), 4, 10, Collections.singletonList(1000.0)),
+                Arguments.of(List.of(1000.0), 4, 2, List.of(1000.0)),
+                Arguments.of(List.of(1000.0), 4, 10, List.of(1000.0)),
 
-                Arguments.of(ImmutableList.of(1000.0, 2000.0), 4, 2, ImmutableList.of(1000.0, 1444.44445)),
-                Arguments.of(ImmutableList.of(1000.0, 2000.0), 4, 10, ImmutableList.of(1000.0, 1017.34153)),
+                Arguments.of(List.of(1000.0, 2000.0), 4, 2, List.of(1000.0, 1444.44445)),
+                Arguments.of(List.of(1000.0, 2000.0), 4, 10, List.of(1000.0, 1017.34153)),
 
-                Arguments.of(Collections.singletonList(1000.0), 1, 1, Collections.singletonList(1000.0)),
-                Arguments.of(Collections.singletonList(1000.0), 1, 2, Collections.singletonList(1000.0)),
-                Arguments.of(Collections.singletonList(1000.0), 1, 10, Collections.singletonList(1000.0)),
+                Arguments.of(List.of(1000.0), 1, 1, List.of(1000.0)),
+                Arguments.of(List.of(1000.0), 1, 2, List.of(1000.0)),
+                Arguments.of(List.of(1000.0), 1, 10, List.of(1000.0)),
 
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        List.of(1000.0, 3000.0, 2000.0, 4000.0),
                         4,
                         2,
-                        ImmutableList.of(1000.0, 1888.88889, 2027.77778, 2376.66667)
+                        List.of(1000.0, 1888.88889, 2027.77778, 2376.66667)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0, 4000.0),
+                        List.of(1000.0, 3000.0, 2000.0, 4000.0),
                         4,
                         3,
-                        ImmutableList.of(1000.0, 1592.59259, 1810.18519, 2036.77778)
+                        List.of(1000.0, 1592.59259, 1810.18519, 2036.77778)
                 ),
 
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        List.of(1000.0, 3000.0, 2000.0),
                         4,
                         2,
-                        ImmutableList.of(1000.0, 1888.88889, 2027.77778)
+                        List.of(1000.0, 1888.88889, 2027.77778)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 3000.0, 2000.0),
+                        List.of(1000.0, 3000.0, 2000.0),
                         4,
                         3,
-                        ImmutableList.of(1000.0, 1592.59259, 1810.18519)
+                        List.of(1000.0, 1592.59259, 1810.18519)
                 ),
 
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
                         2,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
                         10,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
 
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
@@ -432,7 +431,7 @@ class TrendUtilsUnitTest {
                         ),
                         4,
                         2,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9905.77778, 9897.55556, 9895.49333, 9893.01333,
                                 9893.40333, 9893.41000, 9893.38000, 9892.31000, 9890.85000,
                                 9888.67000, 9885.50000, 9883.98000, 9882.34000, 9881.05000,
@@ -440,7 +439,7 @@ class TrendUtilsUnitTest {
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
@@ -448,7 +447,7 @@ class TrendUtilsUnitTest {
                         ),
                         4,
                         3,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9907.85185, 9902.70371, 9899.81956, 9895.94222,
                                 9894.11955, 9893.53700, 9893.35700, 9892.96033, 9892.05000,
                                 9890.52300, 9888.20200, 9886.06100, 9884.09700, 9882.46800,
@@ -574,45 +573,45 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withoutOrder() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
+                        List.of(),
                         0.8,
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         0.8,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1.0,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
+                        List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
                         0.8,
-                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
+                        List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         0.8,
-                        ImmutableList.of(
+                        List.of(
                                 1000.00000, 1800.00000, 2760.00000, 3752.00000, 4750.40000,
                                 5750.08000, 6750.01600, 7750.00320, 8750.00064, 9750.00013
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
                         0.5,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9905.00000, 9890.50000, 9893.75000, 9895.37500,
                                 9896.68750, 9890.84375, 9893.42188, 9890.71094, 9889.35547,
                                 9885.17773, 9881.58887, 9884.29443, 9881.14722, 9879.57361,
@@ -721,55 +720,55 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withOrder() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
+                        List.of(),
                         0.8,
                         3,
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
-                        Collections.singletonList(1000.0),
+                        List.of(1000.0),
                         0.8,
                         3,
-                        Collections.singletonList(1000.0)
+                        List.of(1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
                         1,
                         3,
-                        ImmutableList.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
+                        List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
+                        List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
                         0.8,
                         2,
-                        ImmutableList.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
+                        List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         0.8,
                         2,
-                        ImmutableList.of(
+                        List.of(
                                 1000.00000, 1640.00000, 2536.00000, 3508.80000, 4502.08000,
                                 5500.48000, 6500.10880, 7500.02432, 8500.00538, 9500.00118
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
                         0.8,
                         3,
-                        ImmutableList.of(
+                        List.of(
                                 1000.00000, 1512.00000, 2331.20000, 3273.28000, 4256.32000,
                                 5251.64800, 6250.41664, 7250.10278, 8250.02486, 9250.00591
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
@@ -777,7 +776,7 @@ class TrendUtilsUnitTest {
                         ),
                         0.5,
                         2,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9908.50000, 9899.50000, 9896.62500, 9896.00000,
                                 9896.34375, 9893.59375, 9893.50781, 9892.10938, 9890.73242,
                                 9887.95508, 9884.77197, 9884.53320, 9882.84021, 9881.20691,
@@ -785,7 +784,7 @@ class TrendUtilsUnitTest {
                         )
                 ),
                 Arguments.of(
-                        ImmutableList.of(
+                        List.of(
                                 9912.0, 9898.0, 9876.0, 9897.0, 9897.0,
                                 9898.0, 9885.0, 9896.0, 9888.0, 9888.0,
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
@@ -793,7 +792,7 @@ class TrendUtilsUnitTest {
                         ),
                         0.5,
                         3,
-                        ImmutableList.of(
+                        List.of(
                                 9912.00000, 9910.25000, 9904.87500, 9900.75000, 9898.37500,
                                 9897.35938, 9895.47656, 9894.49219, 9893.30078, 9892.01660,
                                 9889.98584, 9887.37891, 9885.95605, 9884.39813, 9882.80252,
@@ -889,78 +888,78 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetLocalExtremes() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
+                        List.of(),
+                        List.of(),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        Collections.singletonList(100.0),
-                        Collections.singletonList(0),
+                        List.of(100.0),
+                        List.of(0),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 90.0),
-                        Collections.singletonList(0),
+                        List.of(100.0, 90.0),
+                        List.of(0),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 100.0),
-                        Collections.singletonList(1),
+                        List.of(100.0, 100.0),
+                        List.of(1),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(90.0, 100.0),
-                        Collections.singletonList(1),
+                        List.of(90.0, 100.0),
+                        List.of(1),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0),
-                        Collections.singletonList(9),
+                        List.of(100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0),
+                        List.of(9),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 30.0),
-                        ImmutableList.of(2, 5, 8),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 30.0),
+                        List.of(2, 5, 8),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 30.0),
-                        ImmutableList.of(2, 5, 8),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 30.0),
+                        List.of(2, 5, 8),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 50.0),
-                        ImmutableList.of(2, 5, 9),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 50.0),
+                        List.of(2, 5, 9),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 50.1),
-                        ImmutableList.of(0, 2, 5, 9),
+                        List.of(100.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 50.1),
+                        List.of(0, 2, 5, 9),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
-                        ImmutableList.of(0, 3, 7, 9),
+                        List.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
+                        List.of(0, 3, 7, 9),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
-                        ImmutableList.of(2, 5, 8),
+                        List.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
+                        List.of(2, 5, 8),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 30.0),
-                        ImmutableList.of(2, 5, 8),
+                        List.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 30.0),
+                        List.of(2, 5, 8),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 10.0),
-                        ImmutableList.of(2, 5, 9),
+                        List.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 10.0),
+                        List.of(2, 5, 9),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 30.1, 20.0, 19.0, 21.0, 60.0, 50.0, 49.9),
-                        ImmutableList.of(0, 2, 5, 9),
+                        List.of(10.0, 30.0, 30.0, 30.1, 20.0, 19.0, 21.0, 60.0, 50.0, 49.9),
+                        List.of(0, 2, 5, 9),
                         Comparator.reverseOrder()
                 )
         );
@@ -1002,12 +1001,12 @@ class TrendUtilsUnitTest {
     void getLocalExtremes() {
         List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10, 20, 15, 30);
         OffsetDateTime now = OffsetDateTime.now();
-        List<OffsetDateTime> times = ImmutableList.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
-        List<Integer> localExtremesIndices = ImmutableList.of(0, 2);
+        List<OffsetDateTime> times = List.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
+        List<Integer> localExtremesIndices = List.of(0, 2);
 
         List<Point> localExtremes = TrendUtils.getLocalExtremes(values, times, localExtremesIndices);
 
-        List<Point> expectedLocalExtremes = ImmutableList.of(
+        List<Point> expectedLocalExtremes = List.of(
                 Point.of(times.get(0), values.get(0)),
                 Point.of(times.get(2), values.get(2))
         );
@@ -1023,78 +1022,78 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetSortedLocalExtremes() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
+                        List.of(),
+                        List.of(),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        Collections.singletonList(100.0),
-                        Collections.singletonList(0),
+                        List.of(100.0),
+                        List.of(0),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 90.0),
-                        Collections.singletonList(0),
+                        List.of(100.0, 90.0),
+                        List.of(0),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 100.0),
-                        Collections.singletonList(1),
+                        List.of(100.0, 100.0),
+                        List.of(1),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(90.0, 100.0),
-                        Collections.singletonList(1),
+                        List.of(90.0, 100.0),
+                        List.of(1),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0),
-                        Collections.singletonList(9),
+                        List.of(100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0),
+                        List.of(9),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 30.0),
-                        ImmutableList.of(8, 2, 5),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 30.0),
+                        List.of(8, 2, 5),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 30.0),
-                        ImmutableList.of(8, 2, 5),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 30.0),
+                        List.of(8, 2, 5),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 50.0),
-                        ImmutableList.of(9, 2, 5),
+                        List.of(10.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 50.0, 50.0, 50.0),
+                        List.of(9, 2, 5),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(100.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 50.1),
-                        ImmutableList.of(0, 9, 2, 5),
+                        List.of(100.0, 30.0, 30.0, 29.9, 20.0, 25.0, 21.0, 15.0, 50.0, 50.1),
+                        List.of(0, 9, 2, 5),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
-                        ImmutableList.of(9, 7, 0, 3),
+                        List.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
+                        List.of(9, 7, 0, 3),
                         Comparator.naturalOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
-                        ImmutableList.of(5, 2, 8),
+                        List.of(10.0, 5.0, 5.0, 5.1, 4.0, 3.5, 5.0, 70.0, 50.0, 80.0),
+                        List.of(5, 2, 8),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 30.0),
-                        ImmutableList.of(8, 2, 5),
+                        List.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 30.0),
+                        List.of(8, 2, 5),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 10.0),
-                        ImmutableList.of(9, 2, 5),
+                        List.of(20.0, 15.0, 15.0, 15.1, 20.0, 19.0, 21.0, 10.0, 10.0, 10.0),
+                        List.of(9, 2, 5),
                         Comparator.reverseOrder()
                 ),
                 Arguments.of(
-                        ImmutableList.of(10.0, 30.0, 30.0, 30.1, 20.0, 19.0, 21.0, 60.0, 50.0, 49.9),
-                        ImmutableList.of(0, 5, 2, 9),
+                        List.of(10.0, 30.0, 30.0, 30.1, 20.0, 19.0, 21.0, 60.0, 50.0, 49.9),
+                        List.of(0, 5, 2, 9),
                         Comparator.reverseOrder()
                 )
         );
@@ -1135,9 +1134,9 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenTimesIsLongerThanValues() {
         final OffsetDateTime startTime = OffsetDateTime.now();
-        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
-        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+        final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getRestraintLines(times, values, localExtremes),
@@ -1148,9 +1147,9 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenValuesIsLongerThanTimes() {
-        final List<OffsetDateTime> times = ImmutableList.of(OffsetDateTime.now());
+        final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
-        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+        final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getRestraintLines(times, values, localExtremes),
@@ -1161,9 +1160,9 @@ class TrendUtilsUnitTest {
 
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenLocalExtremesIsLongerThanTimes() {
-        final List<OffsetDateTime> times = ImmutableList.of(OffsetDateTime.now());
+        final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
-        final List<Integer> localExtremes = ImmutableList.of(0, 1);
+        final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getRestraintLines(times, values, localExtremes),
@@ -1175,9 +1174,9 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_returnsEmptyList_whenLocalExtremesIsEmpty() {
         final OffsetDateTime startTime = OffsetDateTime.now();
-        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
-        final List<Integer> localExtremes = ImmutableList.of();
+        final List<Integer> localExtremes = List.of();
 
         List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
@@ -1187,9 +1186,9 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_returnsEmptyList_whenThereIsSingleLocalExtremum() {
         final OffsetDateTime startTime = OffsetDateTime.now();
-        final List<OffsetDateTime> times = ImmutableList.of(startTime, startTime.plusMinutes(1));
+        final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
-        final List<Integer> localExtremes = ImmutableList.of(0);
+        final List<Integer> localExtremes = List.of(0);
 
         List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
@@ -1199,7 +1198,7 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_returnsLines() {
         final OffsetDateTime startTime = OffsetDateTime.now();
-        final List<OffsetDateTime> times = ImmutableList.of(
+        final List<OffsetDateTime> times = List.of(
                 startTime,
                 startTime.plusMinutes(1),
                 startTime.plusMinutes(2),
@@ -1215,12 +1214,12 @@ class TrendUtilsUnitTest {
                 10.0, 15.0, 14.0, 11.0, 12.0,
                 13.0, 14.0, 14.0, 12.0, 16.0
         );
-        final List<Integer> localExtremes = ImmutableList.of(0, 3, 8);
+        final List<Integer> localExtremes = List.of(0, 3, 8);
 
         List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
         Assertions.assertEquals(2, restraintLines.size());
-        List<Point> expectedRestraintLine1 = ImmutableList.of(
+        List<Point> expectedRestraintLine1 = List.of(
                 Point.of(times.get(0), 10.00000),
                 Point.of(times.get(1), 10.33333),
                 Point.of(times.get(2), 10.66667),
@@ -1231,7 +1230,7 @@ class TrendUtilsUnitTest {
         );
         AssertUtils.assertListsAreEqual(expectedRestraintLine1, restraintLines.get(0));
 
-        List<Point> expectedRestraintLine2 = ImmutableList.of(
+        List<Point> expectedRestraintLine2 = List.of(
                 Point.of(times.get(3), 11.0),
                 Point.of(times.get(4), 11.2),
                 Point.of(times.get(5), 11.4),
@@ -1263,39 +1262,39 @@ class TrendUtilsUnitTest {
     static Stream<Arguments> getData_forGetCrossovers() {
         return Stream.of(
                 Arguments.of(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        Collections.emptyList()
+                        List.of(),
+                        List.of(),
+                        List.of()
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 20, 30),
                         TestDataHelper.createBigDecimalsList(10, 20, 30),
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 20, 30),
                         TestDataHelper.createBigDecimalsList(10, 20, 31),
-                        Collections.emptyList()
+                        List.of()
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 12, 13),
                         TestDataHelper.createBigDecimalsList(11, 10, 11),
-                        ImmutableList.of(1)
+                        List.of(1)
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
                         TestDataHelper.createBigDecimalsList(10, 12, 13, 12, 11),
-                        ImmutableList.of(3)
+                        List.of(3)
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
                         TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11),
-                        ImmutableList.of(3)
+                        List.of(3)
                 ),
                 Arguments.of(
                         TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15, 15, 16, 16),
                         TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11, 11, 11, 20),
-                        ImmutableList.of(3, 7)
+                        List.of(3, 7)
                 )
         );
     }

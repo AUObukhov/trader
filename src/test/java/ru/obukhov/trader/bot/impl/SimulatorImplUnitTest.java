@@ -33,8 +33,6 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -89,7 +87,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
@@ -114,7 +112,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
@@ -145,7 +143,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -196,7 +194,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -281,7 +279,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         simulationUnit.setBalanceIncrementCron(new CronExpression("0 * * * * ?"));
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
         simulationUnit.setBalanceIncrement(balanceIncrement);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -351,7 +349,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -420,7 +418,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -490,7 +488,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -559,7 +557,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -603,7 +601,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -649,7 +647,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -695,7 +693,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -743,7 +741,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -791,7 +789,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -828,7 +826,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = Collections.singletonList(simulationUnit);
+        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -887,7 +885,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
     private void mockPortfolioPositions(PortfolioPosition... portfolioPositions) {
         Mockito.when(fakeTinkoffService.getPortfolioPositions())
-                .thenReturn(Arrays.asList(portfolioPositions));
+                .thenReturn(List.of(portfolioPositions));
     }
 
     private SimulationResult assertAndGetSingleSimulationResult(

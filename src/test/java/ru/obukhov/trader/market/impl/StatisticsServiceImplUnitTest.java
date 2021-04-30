@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,12 +85,12 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.00000, 10.13500, 10.55350);
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
-        List<Point> expectedMinimums = ImmutableList.of(
+        List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 10.00000)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
-        List<Point> expectedMaximums = ImmutableList.of(
+        List<Point> expectedMaximums = List.of(
                 Point.of(candles.get(2).getTime(), 10.55350)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
@@ -138,13 +137,13 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         );
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
-        List<Point> expectedMinimums = ImmutableList.of(
+        List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 80.00000),
                 Point.of(candles.get(6).getTime(), 156.91483)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
-        List<Point> expectedMaximums = ImmutableList.of(
+        List<Point> expectedMaximums = List.of(
                 Point.of(candles.get(5).getTime(), 161.76896),
                 Point.of(candles.get(9).getTime(), 201.88675)
         );
@@ -152,7 +151,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         List<List<Point>> supportLines = response.getSupportLines();
         Assertions.assertEquals(1, supportLines.size());
-        List<Point> expectedSupportLine = ImmutableList.of(
+        List<Point> expectedSupportLine = List.of(
                 Point.of(candles.get(0).getTime(), 80.00000),
                 Point.of(candles.get(1).getTime(), 92.81914),
                 Point.of(candles.get(2).getTime(), 105.63828),
@@ -168,7 +167,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         List<List<Point>> resistanceLines = response.getResistanceLines();
         Assertions.assertEquals(1, resistanceLines.size());
-        List<Point> expectedResistanceLine = ImmutableList.of(
+        List<Point> expectedResistanceLine = List.of(
                 Point.of(candles.get(5).getTime(), 161.76896),
                 Point.of(candles.get(6).getTime(), 171.79841),
                 Point.of(candles.get(7).getTime(), 181.82786),

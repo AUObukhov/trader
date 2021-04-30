@@ -27,8 +27,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -195,14 +193,14 @@ public class TestDataHelper {
 
     public static DecisionData createDecisionData(Candle... candles) {
         DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(Arrays.asList(candles));
+        decisionData.setCurrentCandles(List.of(candles));
         return decisionData;
     }
 
     public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
         DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
-        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
 
         return decisionData;
     }
@@ -210,7 +208,7 @@ public class TestDataHelper {
     public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
         DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
-        decisionData.setCurrentCandles(Collections.singletonList(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setInstrument(new MarketInstrument().lot(lotSize));
 
@@ -276,7 +274,7 @@ public class TestDataHelper {
             Operation... operations
     ) {
         Mockito.when(tinkoffService.getOperations(interval, ticker))
-                .thenReturn(Arrays.asList(operations));
+                .thenReturn(List.of(operations));
     }
 
     public static CurrencyPosition createCurrencyPosition(Currency currency, long balance) {
@@ -299,7 +297,7 @@ public class TestDataHelper {
     }
 
     public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(MarketInstrument... instruments) {
-        List<MarketInstrument> instrumentList = Arrays.asList(instruments);
+        List<MarketInstrument> instrumentList = List.of(instruments);
         MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
     }
