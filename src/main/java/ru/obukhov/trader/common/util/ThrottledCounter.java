@@ -1,6 +1,6 @@
 package ru.obukhov.trader.common.util;
 
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * each increment is followed by a decrement after given delay in milliseconds
  * When value is maximum, current thread starts waiting until value decrement
  */
+@Slf4j
 public class ThrottledCounter {
 
     private final CounterWithMaxValue counterWithMaxValue;
@@ -31,7 +32,6 @@ public class ThrottledCounter {
     /**
      * Increments current value and starts task to decrement it after delay
      */
-    @SneakyThrows
     public synchronized void increment() {
         this.counterWithMaxValue.increment();
 
@@ -51,13 +51,17 @@ public class ThrottledCounter {
             this.maxValue = maxValue;
         }
 
-        @SneakyThrows
         private synchronized void increment() {
-            while (value.get() >= maxValue) {
-                wait();
-            }
+            try {
+                while (value.get() >= maxValue) {
+                    wait();
+                }
 
-            value.incrementAndGet();
+                value.incrementAndGet();
+            } catch (InterruptedException exception) {
+                log.error("Counter increment waiting was interrupted", exception);
+                Thread.currentThread().interrupt();
+            }
         }
 
         private synchronized void decrement() {
