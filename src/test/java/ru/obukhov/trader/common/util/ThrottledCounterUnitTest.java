@@ -1,11 +1,9 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.base.Stopwatch;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,20 +40,20 @@ class ThrottledCounterUnitTest {
     void waiting_whenValueIsMax() throws InterruptedException {
 
         ThrottledCounter counter = new ThrottledCounter(1000, 3);
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        long start = System.currentTimeMillis();
 
-        AssertUtils.runAndAssertFaster(counter::increment, 1);
+        long elapsed1 = TestUtils.runAndGetElapsedMillis(counter::increment);
         int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        AssertUtils.runAndAssertFaster(counter::increment, 1);
+        long elapsed2 = TestUtils.runAndGetElapsedMillis(counter::increment);
         int value2 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        AssertUtils.runAndAssertFaster(counter::increment, 1);
+        long elapsed3 = TestUtils.runAndGetElapsedMillis(counter::increment);
         int value3 = counter.getValue();
 
-        AssertUtils.runAndAssertExecutionTimeRange(counter::increment, 450, 550); // should wait for ~500 milliseconds until -1, then +1
+        long elapsed4 = TestUtils.runAndGetElapsedMillis(counter::increment); // should wait for ~500 milliseconds until -1, then +1
         int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
@@ -68,12 +66,13 @@ class ThrottledCounterUnitTest {
         TimeUnit.MILLISECONDS.sleep(500);
         int value7 = counter.getValue();
 
-        stopwatch.stop();
+        long elapsedOverall = System.currentTimeMillis() - start;
 
-        MatcherAssert.assertThat(
-                stopwatch.elapsed().toMillis(),
-                Matchers.allOf(Matchers.greaterThan(2000L), Matchers.lessThan(2200L))
-        );
+        Assertions.assertTrue(elapsed1 < 1);
+        Assertions.assertTrue(elapsed2 < 1);
+        Assertions.assertTrue(elapsed3 < 1);
+        AssertUtils.assertRangeInclusive(450, 550, elapsed4);
+        AssertUtils.assertRangeInclusive(2000, 2200, elapsedOverall);
 
         Assertions.assertEquals(1, value1);
         Assertions.assertEquals(2, value2);

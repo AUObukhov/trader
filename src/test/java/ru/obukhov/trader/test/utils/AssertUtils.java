@@ -1,6 +1,5 @@
 package ru.obukhov.trader.test.utils;
 
-import com.google.common.base.Stopwatch;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -107,6 +106,11 @@ public class AssertUtils {
         for (int i = 0; i < actual.length; i++) {
             Assertions.assertEquals(expected[i], actual[i]);
         }
+    }
+
+    public static void assertRangeInclusive(long expectedMin, long expectedMax, long actual) {
+        Assertions.assertTrue(actual >= expectedMin);
+        Assertions.assertTrue(actual <= expectedMax);
     }
 
     public static void assertListsAreEqual(List<?> expected, List<?> actual) {
@@ -246,34 +250,17 @@ public class AssertUtils {
     // region execution time assertions
 
     public static void runAndAssertFaster(Runnable runnable, long maxTime) {
-        long elapsed = runAndGetElapsedMillis(runnable);
+        long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed > maxTime) {
             Assertions.fail("Expected execution within maximum " + maxTime + " ms. Actual is " + elapsed + " ms");
         }
     }
 
     public static void runAndAssertSlower(Runnable runnable, long minTime) {
-        long elapsed = runAndGetElapsedMillis(runnable);
+        long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed < minTime) {
             Assertions.fail("Expected execution within minimum " + minTime + " ms. Actual is " + elapsed + " ms");
         }
-    }
-
-    public static void runAndAssertExecutionTimeRange(Runnable runnable, long minTime, long maxTime) {
-        long elapsed = runAndGetElapsedMillis(runnable);
-        if (elapsed < minTime || elapsed > maxTime) {
-            String message = String.format(
-                    "Expected execution within %s-%s ms. Actual is %s ms",
-                    minTime, maxTime, elapsed
-            );
-            Assertions.fail(message);
-        }
-    }
-
-    private static long runAndGetElapsedMillis(Runnable runnable) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        runnable.run();
-        return stopwatch.stop().elapsed().toMillis();
     }
 
     // endregion
@@ -321,5 +308,6 @@ public class AssertUtils {
             Assertions.fail(message);
         }
     }
+
 
 }
