@@ -32,7 +32,7 @@ public class ThrottledCounter {
     /**
      * Increments current value and starts task to decrement it after delay
      */
-    public synchronized void increment() {
+    public void increment() {
         this.counterWithMaxValue.increment();
 
         timer.schedule(new DecrementTask(), interval);
@@ -45,29 +45,33 @@ public class ThrottledCounter {
     private static class CounterWithMaxValue {
         private final AtomicInteger value = new AtomicInteger(0);
 
-        int maxValue;
+        private final int maxValue;
 
         private CounterWithMaxValue(int maxValue) {
             this.maxValue = maxValue;
         }
 
-        private synchronized void increment() {
-            try {
-                while (value.get() >= maxValue) {
-                    wait();
-                }
+        private void increment() {
+            synchronized (this) {
+                try {
+                    while (value.get() >= maxValue) {
+                        wait();
+                    }
 
-                value.incrementAndGet();
-            } catch (InterruptedException exception) {
-                log.error("Counter increment waiting was interrupted", exception);
-                Thread.currentThread().interrupt();
+                    value.incrementAndGet();
+                } catch (InterruptedException exception) {
+                    log.error("Counter increment waiting was interrupted", exception);
+                    Thread.currentThread().interrupt();
+                }
             }
         }
 
-        private synchronized void decrement() {
-            int previousValue = value.getAndDecrement();
-            if (previousValue == maxValue) {
-                notifyAll();
+        private void decrement() {
+            synchronized (this) {
+                int previousValue = value.getAndDecrement();
+                if (previousValue == maxValue) {
+                    notifyAll();
+                }
             }
         }
 
@@ -78,8 +82,10 @@ public class ThrottledCounter {
 
     private class DecrementTask extends TimerTask {
         @Override
-        public synchronized void run() {
-            counterWithMaxValue.decrement();
+        public void run() {
+            synchronized (this) {
+                counterWithMaxValue.decrement();
+            }
         }
     }
 
