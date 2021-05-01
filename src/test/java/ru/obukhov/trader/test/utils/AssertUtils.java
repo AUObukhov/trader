@@ -249,14 +249,14 @@ public class AssertUtils {
 
     // region execution time assertions
 
-    public static void runAndAssertFaster(Runnable runnable, long maxTime) {
+    public static void assertFaster(Runnable runnable, long maxTime) {
         long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed > maxTime) {
             Assertions.fail("Expected execution within maximum " + maxTime + " ms. Actual is " + elapsed + " ms");
         }
     }
 
-    public static void runAndAssertSlower(Runnable runnable, long minTime) {
+    public static void assertSlower(Runnable runnable, long minTime) {
         long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed < minTime) {
             Assertions.fail("Expected execution within minimum " + minTime + " ms. Actual is " + elapsed + " ms");

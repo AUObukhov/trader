@@ -73,7 +73,7 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
 
         final int limit = queryThrottleProperties.getLimits().get(0).getLimit() + 10;
         for (int i = 0; i < limit; i++) {
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
     }
@@ -96,10 +96,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
 
         final int limit = queryThrottleProperties.getLimits().get(0).getLimit();
         for (int i = 0; i < limit; i++) {
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
-        AssertUtils.runAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
+        AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
 
     }
 
@@ -122,10 +122,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
 
         final int limit = queryThrottleProperties.getLimits().get(1).getLimit();
         for (int i = 0; i < limit; i++) {
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
-        AssertUtils.runAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
+        AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
 
     }
 
@@ -151,12 +151,12 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         final int limit = queryThrottleProperties.getLimits().get(0).getLimit() / 2;
         for (int i = 0; i < limit; i++) {
             Mockito.when(url.pathSegments()).thenReturn(limitOrderSegments);
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
             Mockito.when(url.pathSegments()).thenReturn(marketOrderSegments);
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
-        AssertUtils.runAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
+        AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
 
     }
 
@@ -178,10 +178,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
 
         final int limit = queryThrottleProperties.getDefaultLimit();
         for (int i = 0; i < limit; i++) {
-            AssertUtils.runAndAssertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
+            AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
 
-        AssertUtils.runAndAssertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
+        AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
 
     }
 
