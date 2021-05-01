@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.Iterables;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
@@ -59,7 +58,7 @@ public class CollectionsUtils {
         if (index == 0) {
             list.add(0, list.get(0));
         } else if (index == list.size()) {
-            list.add(Iterables.getLast(list));
+            list.add(getLast(list));
         } else {
             T value = interpolator.apply(list.get(index - 1), list.get(index));
             list.add(index, value);

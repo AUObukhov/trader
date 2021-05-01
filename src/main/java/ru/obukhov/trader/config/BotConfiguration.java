@@ -1,6 +1,5 @@
 package ru.obukhov.trader.config;
 
-import com.google.common.collect.Sets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +44,7 @@ public class BotConfiguration {
                 tradingProperties,
                 realMarketService,
                 realTinkoffService,
-                Sets.newHashSet(strategy),
+                Set.of(strategy),
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,

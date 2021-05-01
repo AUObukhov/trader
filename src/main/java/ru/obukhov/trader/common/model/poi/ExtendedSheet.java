@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.model.poi;
 
-import com.google.common.collect.Streams;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Proxy class, implementing {@link Sheet} and having additional handy methods
@@ -59,9 +59,8 @@ public class ExtendedSheet implements Sheet {
         this.rows = initRows(delegate);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private TreeMap<Integer, ExtendedRow> initRows(Sheet delegate) {
-        Map<Integer, ExtendedRow> map = Streams.stream(delegate.rowIterator())
+        Map<Integer, ExtendedRow> map = StreamSupport.stream(delegate.spliterator(), false)
                 .collect(Collectors.toMap(Row::getRowNum, this::createRow));
         return new TreeMap<>(map);
     }

@@ -1,12 +1,12 @@
 package ru.obukhov.trader.common.util;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
-        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
+        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
         int index = 0;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -138,7 +138,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
-        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN);
+        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
         int index = 2;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -151,7 +151,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
-        List<BigDecimal> list = Lists.newArrayList(BigDecimal.valueOf(5), BigDecimal.TEN, BigDecimal.ZERO);
+        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10, 0);
         int index = 1;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);

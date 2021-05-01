@@ -1,7 +1,5 @@
 package ru.obukhov.trader.bot.impl;
 
-import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -48,7 +46,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -74,15 +71,8 @@ public class SimulatorImpl implements Simulator {
 
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
-        this.executor = createExecutor(simulationThreadCount);
+        this.executor = Executors.newFixedThreadPool(simulationThreadCount);
 
-    }
-
-    private ExecutorService createExecutor(Integer simulationThreadCount) {
-        ThreadFactory simulationThreadFactory = new ThreadFactoryBuilder()
-                .setNameFormat("simulation-thread-%d")
-                .build();
-        return Executors.newFixedThreadPool(simulationThreadCount, simulationThreadFactory);
     }
 
     /**
@@ -239,7 +229,7 @@ public class SimulatorImpl implements Simulator {
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
         if (decisionData != null && CollectionUtils.isNotEmpty(decisionData.getCurrentCandles())) {
             List<Candle> currentCandles = decisionData.getCurrentCandles();
-            Candle candle = Iterables.getLast(currentCandles);
+            Candle candle = currentCandles.get(currentCandles.size() - 1);
             if (candle != null) {
                 candles.add(candle);
             }

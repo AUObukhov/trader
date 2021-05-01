@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.model.poi;
 
-import com.google.common.collect.Streams;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Proxy class, implementing {@link Workbook} and having additional handy methods
@@ -74,9 +74,10 @@ public class ExtendedWorkbook implements Workbook {
         return cellStyleName;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private List<ExtendedSheet> initSheets(Workbook delegate) {
-        return Streams.stream(delegate.sheetIterator()).map(this::createSheet).collect(Collectors.toList());
+        return StreamSupport.stream(delegate.spliterator(), false)
+                .map(this::createSheet)
+                .collect(Collectors.toList());
     }
 
     private ExtendedSheet createSheet(Sheet sheet) {

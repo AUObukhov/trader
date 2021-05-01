@@ -98,7 +98,7 @@ class ExtendedSheetUnitTest {
         ExcelTestDataHelper.addRow(sheet, 1);
 
         Sheet sheetMock = Mockito.mock(Sheet.class);
-        Mockito.when(sheetMock.rowIterator()).thenReturn(sheet.rowIterator());
+        Mockito.when(sheetMock.spliterator()).thenReturn(sheet.spliterator());
 
         ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheetMock);
