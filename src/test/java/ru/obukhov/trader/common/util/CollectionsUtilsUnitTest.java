@@ -1,8 +1,6 @@
 package ru.obukhov.trader.common.util;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,27 +11,9 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 class CollectionsUtilsUnitTest {
-
-    @Test
-    void reduceMultimap_average() {
-        Multimap<String, BigDecimal> multimap = MultimapBuilder.hashKeys().arrayListValues().build();
-
-        multimap.put("key1", BigDecimal.valueOf(10));
-
-        multimap.put("key2", BigDecimal.valueOf(1));
-        multimap.put("key2", BigDecimal.valueOf(2));
-        multimap.put("key2", BigDecimal.valueOf(3));
-        multimap.put("key2", BigDecimal.valueOf(4));
-
-        Map<String, BigDecimal> result = CollectionsUtils.reduceMultimap(multimap, MathUtils::getAverage);
-
-        AssertUtils.assertEquals(10, result.get("key1"));
-        AssertUtils.assertEquals(2.5, result.get("key2"));
-    }
 
     // region getTail tests
 
