@@ -68,9 +68,9 @@ class ThrottledCounterUnitTest {
 
         long elapsedOverall = System.currentTimeMillis() - start;
 
-        Assertions.assertTrue(elapsed1 < 1);
-        Assertions.assertTrue(elapsed2 < 1);
-        Assertions.assertTrue(elapsed3 < 1);
+        Assertions.assertTrue(elapsed1 <= 1);
+        Assertions.assertTrue(elapsed2 <= 1);
+        Assertions.assertTrue(elapsed3 <= 1);
         AssertUtils.assertRangeInclusive(450, 550, elapsed4);
         AssertUtils.assertRangeInclusive(2000, 2200, elapsedOverall);
 
