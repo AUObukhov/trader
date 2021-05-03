@@ -14,12 +14,15 @@ public class Decision {
     private final Integer lots;
 
     public String toPrettyString() {
-        if (action == DecisionAction.WAIT) {
-            return "Wait";
-        } else if (action == DecisionAction.BUY) {
-            return "Buy " + lots + " lots";
-        } else {
-            return "Sell " + lots + " lots";
+        switch (action) {
+            case WAIT:
+                return "Wait";
+            case BUY:
+                return "Buy " + lots + " lots";
+            case SELL:
+                return "Sell " + lots + " lots";
+            default:
+                throw new IllegalStateException("Unknown action: " + action);
         }
     }
 
