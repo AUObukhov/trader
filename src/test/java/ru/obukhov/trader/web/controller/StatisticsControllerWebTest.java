@@ -154,7 +154,7 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     }
 
     @Test
-    void getCandles_doesNotCallSaveToFile_whenSaveToFileTrue() throws Exception {
+    void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
         final String ticker = "ticker";
 
         GetCandlesResponse response = new GetCandlesResponse(
