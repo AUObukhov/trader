@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
@@ -33,7 +34,7 @@ import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.awt.Color;
-import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExcelServiceImpl implements ExcelService {
@@ -60,21 +62,29 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public File saveSimulationResults(String ticker, Collection<SimulationResult> results) {
+    public void saveSimulationResults(String ticker, Collection<SimulationResult> results) {
         ExtendedWorkbook workBook = createWorkBook();
         for (SimulationResult result : results) {
             createSheet(workBook, ticker, result);
         }
 
-        return excelFileService.saveToFile(workBook, "SimulationResult for '" + ticker + "'");
+        saveToFile(workBook, "SimulationResult for '" + ticker + "'");
     }
 
     @Override
-    public File saveCandles(String ticker, Interval interval, GetCandlesResponse response) {
+    public void saveCandles(String ticker, Interval interval, GetCandlesResponse response) {
         ExtendedWorkbook workBook = createWorkBook();
         createSheet(workBook, ticker, interval, response);
 
-        return excelFileService.saveToFile(workBook, "Candles for '" + ticker + "'");
+        saveToFile(workBook, "Candles for '" + ticker + "'");
+    }
+
+    private void saveToFile(ExtendedWorkbook workBook, String fileName) {
+        try {
+            excelFileService.saveToFile(workBook, fileName);
+        } catch (IOException ioException) {
+            log.error("Failed to save file " + fileName);
+        }
     }
 
     @NotNull

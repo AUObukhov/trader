@@ -1,8 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -23,7 +21,6 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +31,6 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     private StatisticsService statisticsService;
     @MockBean
     private ExcelService excelService;
-
-    @Mock
-    private File file;
-    @Mock
-    private Runtime runtime;
 
     // region getCandles tests
 
@@ -119,24 +111,17 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
         String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
 
-        final String fileAbsolutePath = "file absolute path";
-        mockFile(ticker, fileAbsolutePath);
+        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .content(getCandlesRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        try (MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
-            mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                    .content(getCandlesRequest)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
-
-            Mockito.verify(statisticsService, Mockito.times(1))
-                    .getExtendedCandles(
-                            Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
-                    );
-            Mockito.verify(runtime, Mockito.times(1))
-                    .exec(new String[]{"explorer", fileAbsolutePath});
-        }
+        Mockito.verify(statisticsService, Mockito.times(1))
+                .getExtendedCandles(
+                        Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+                );
     }
 
     @Test
@@ -158,21 +143,14 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
 
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
 
-        final String fileAbsolutePath = "file absolute path";
-        mockFile(ticker, fileAbsolutePath);
+        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .content(getCandlesRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
-        try (MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
-            mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                    .content(getCandlesRequest)
-                    .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-
-            Mockito.verify(excelService, Mockito.times(1))
-                    .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
-            Mockito.verify(runtime, Mockito.times(1))
-                    .exec(new String[]{"explorer", fileAbsolutePath});
-        }
+        Mockito.verify(excelService, Mockito.times(1))
+                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
     }
 
     @Test
@@ -243,17 +221,6 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
 
         Mockito.verify(statisticsService, Mockito.times(1))
                 .getInstruments(TickerType.STOCK);
-    }
-
-    private void mockFile(String ticker, String fileAbsolutePath) {
-        Mockito.when(
-                excelService.saveCandles(
-                        Mockito.eq(ticker),
-                        Mockito.any(Interval.class),
-                        Mockito.any(GetCandlesResponse.class)
-                )
-        ).thenReturn(file);
-        Mockito.when(file.getAbsolutePath()).thenReturn(fileAbsolutePath);
     }
 
 }

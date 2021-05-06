@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.config.ReportProperties;
+import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +21,8 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
     private ReportProperties reportProperties;
     @Mock
     private Workbook workbook;
+    @Mock
+    private Runtime runtime;
 
     @Test
     @SuppressWarnings("unused")
@@ -55,17 +59,21 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
     @SuppressWarnings("unused")
     void saveToFile_writesWorkbookToFile() throws IOException {
 
-        String saveDirectory = "save directory";
-        String fileName = "file";
+        final String saveDirectory = "save directory";
+        final String fileName = "file";
 
         Mockito.when(reportProperties.getSaveDirectory()).thenReturn(saveDirectory);
 
         ExcelFileServiceImpl service = new ExcelFileServiceImpl(reportProperties);
 
         MockedConstruction.MockInitializer<File> fileMockInitializer =
-                (mock, context) -> Mockito.when(mock.createNewFile()).thenReturn(true);
+                (mock, context) -> {
+                    Mockito.when(mock.createNewFile()).thenReturn(true);
+                    Mockito.when(mock.getAbsolutePath()).thenReturn(fileName);
+                };
 
         try (
+                MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime);
                 MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer);
                 MockedConstruction<FileOutputStream> fileOutputStreamConstruction =
                         Mockito.mockConstruction(FileOutputStream.class)
@@ -76,6 +84,7 @@ class ExcelFileServiceImplUnitTest extends BaseMockedTest {
 
             Mockito.verify(workbook, Mockito.times(1)).write(fileOutputStream);
             Mockito.verify(workbook, Mockito.times(1)).close();
+            Mockito.verify(runtime, Mockito.times(1)).exec(new String[]{"explorer", fileName});
         }
 
     }

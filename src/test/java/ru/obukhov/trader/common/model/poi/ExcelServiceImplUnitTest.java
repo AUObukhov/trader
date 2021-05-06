@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.model.poi;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
@@ -29,7 +30,7 @@ import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
-import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -45,8 +46,6 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
     @Mock
     private ExcelFileService excelFileService;
-    @Mock
-    private File file;
 
     private ExcelServiceImpl excelService;
 
@@ -58,7 +57,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     // region saveSimulationResult tests
 
     @Test
-    void saveSimulationResult_savesMultipleResults() {
+    void saveSimulationResult_savesMultipleResults() throws IOException {
 
         final String ticker = "ticker";
 
@@ -67,14 +66,11 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         SimulationResult result3 = createSimulationResult(ticker, "bot3");
         List<SimulationResult> results = List.of(result1, result2, result3);
 
+        excelService.saveSimulationResults(ticker, results);
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, results);
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
@@ -95,19 +91,16 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() {
+    void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
 
+        excelService.saveSimulationResults(ticker, List.of(result));
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -126,20 +119,17 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() {
+    void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(StringUtils.EMPTY);
 
+        excelService.saveSimulationResults(ticker, List.of(result));
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -158,21 +148,18 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void saveSimulationResult_addsErrorMessage_whenErrorIsNotEmpty() {
+    void saveSimulationResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
         final String ticker = "ticker";
         final String error = "error";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(error);
 
+        excelService.saveSimulationResults(ticker, List.of(result));
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -194,21 +181,18 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void saveSimulationResult_skipsChart_whenCandlesAreNull() {
+    void saveSimulationResult_skipsChart_whenCandlesAreNull() throws IOException {
 
         final String ticker = "ticker";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(null);
 
+        excelService.saveSimulationResults(ticker, List.of(result));
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -228,21 +212,18 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void saveSimulationResult_skipsChart_whenCandlesAreEmpty() {
+    void saveSimulationResult_skipsChart_whenCandlesAreEmpty() throws IOException {
 
         final String ticker = "ticker";
 
         SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(Collections.emptyList());
 
+        excelService.saveSimulationResults(ticker, List.of(result));
+
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveSimulationResults(ticker, List.of(result));
-
-        Assertions.assertEquals(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -259,6 +240,26 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         assertMergedRegions(sheet);
 
         Assertions.assertNull(sheet.getDrawingPatriarch());
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Tests should include assertions
+    void saveSimulationResult_catchesIOExceptionOfFileSaving() throws IOException {
+
+        final String ticker = "ticker";
+
+        SimulationResult result1 = createSimulationResult(ticker, "bot1");
+        SimulationResult result2 = createSimulationResult(ticker, "bot2");
+        SimulationResult result3 = createSimulationResult(ticker, "bot3");
+        List<SimulationResult> results = List.of(result1, result2, result3);
+
+        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
+        Mockito.doThrow(new IOException())
+                .when(excelFileService)
+                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
+
+        excelService.saveSimulationResults(ticker, results);
     }
 
     private void assertCommonStatistics(String ticker, SimulationResult result, Iterator<Row> rowIterator) {
@@ -311,7 +312,7 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
     // endregion
 
     @Test
-    void saveCandles() {
+    void saveCandles_createsAndSaveWorkbook() throws IOException {
         final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 0, 0, 0);
@@ -320,14 +321,11 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
 
         final GetCandlesResponse response = createGetCandlesResponse();
 
+        excelService.saveCandles(ticker, interval, response);
+
         final String fileNamePrefix = "Candles for '" + ticker + "'";
-
-        Mockito.when(excelFileService.saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix)))
-                .thenReturn(file);
-
-        File returnedFile = excelService.saveCandles(ticker, interval, response);
-
-        Assertions.assertSame(file, returnedFile);
+        Mockito.verify(excelFileService, Mockito.times(1))
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -360,6 +358,26 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         }
 
         assertChartCreated(sheet);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Tests should include assertions
+    void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
+        final String ticker = "ticker";
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 0, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
+        final Interval interval = Interval.of(from, to);
+
+        final GetCandlesResponse response = createGetCandlesResponse();
+
+        final String fileNamePrefix = "Candles for '" + ticker + "'";
+        Mockito.doThrow(new IOException())
+                .when(excelFileService)
+                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
+
+        excelService.saveCandles(ticker, interval, response);
     }
 
     private SimulationResult createSimulationResult(String ticker, String botName) {

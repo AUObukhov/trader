@@ -17,8 +17,6 @@ import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +29,7 @@ public class StatisticsController {
     private final ExcelService excelService;
 
     @GetMapping("/candles")
-    public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) throws IOException {
+    public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
         Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         GetCandlesResponse response = statisticsService.getExtendedCandles(
@@ -41,8 +39,7 @@ public class StatisticsController {
         );
 
         if (request.isSaveToFile()) {
-            File file = excelService.saveCandles(request.getTicker(), interval, response);
-            Runtime.getRuntime().exec(new String[]{"explorer", file.getAbsolutePath()});
+            excelService.saveCandles(request.getTicker(), interval, response);
         }
 
         return response;

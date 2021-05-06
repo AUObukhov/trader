@@ -29,7 +29,6 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -339,9 +338,7 @@ public class SimulatorImpl implements Simulator {
     private void saveSimulationResultsSafe(String ticker, List<SimulationResult> simulationResults) {
         try {
             log.debug("Saving simulation for ticker {} result to file", ticker);
-            File file = excelService.saveSimulationResults(ticker, simulationResults);
-            log.debug("Opening file {}", file.getAbsolutePath());
-            Runtime.getRuntime().exec(new String[]{"explorer", file.getAbsolutePath()});
+            excelService.saveSimulationResults(ticker, simulationResults);
         } catch (Exception ex) {
             log.error("Failed to save simulation for ticker {} result to file", ticker, ex);
         }
