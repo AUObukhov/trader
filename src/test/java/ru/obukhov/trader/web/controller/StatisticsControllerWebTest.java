@@ -35,7 +35,6 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     // region getCandles tests
 
     @Test
-    @SuppressWarnings("unused")
     void getCandles_returnsCandles() throws Exception {
         final String ticker = "ticker";
 
@@ -125,7 +124,6 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
     }
 
     @Test
-    @SuppressWarnings("unused")
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
 
@@ -142,6 +140,37 @@ class StatisticsControllerWebTest extends ControllerIntegrationTest {
         )).thenReturn(response);
 
         String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .content(getCandlesRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        Mockito.verify(excelService, Mockito.times(1))
+                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
+    }
+
+    @Test
+    void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
+        final String ticker = "ticker";
+
+        GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
+        Mockito.when(statisticsService.getExtendedCandles(
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+        )).thenReturn(response);
+
+        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        Mockito.doThrow(new RuntimeException())
+                .when(excelService)
+                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)

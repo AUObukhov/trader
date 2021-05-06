@@ -31,19 +31,29 @@ public class StatisticsController {
     @GetMapping("/candles")
     public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
 
-        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        final String ticker = request.getTicker();
+        final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         GetCandlesResponse response = statisticsService.getExtendedCandles(
-                request.getTicker(),
+                ticker,
                 interval,
                 request.getCandleInterval()
         );
 
         if (request.isSaveToFile()) {
-            excelService.saveCandles(request.getTicker(), interval, response);
+            saveCandlesSafe(ticker, interval, response);
         }
 
         return response;
 
+    }
+
+    private void saveCandlesSafe(String ticker, Interval interval, GetCandlesResponse response) {
+        try {
+            log.debug("Saving candles for ticker {} to file", ticker);
+            excelService.saveCandles(ticker, interval, response);
+        } catch (RuntimeException exception) {
+            log.error("Failed to save candles for ticker {} to file", ticker, exception);
+        }
     }
 
     @GetMapping("/instruments")
