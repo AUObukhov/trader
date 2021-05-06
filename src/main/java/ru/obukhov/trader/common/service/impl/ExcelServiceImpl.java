@@ -81,7 +81,9 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void saveToFile(ExtendedWorkbook workBook, String fileName) {
         try {
+            log.info("Saving file " + fileName);
             excelFileService.saveToFile(workBook, fileName);
+            log.info("File " + fileName + " saved");
         } catch (IOException ioException) {
             log.error("Failed to save file " + fileName);
         }
