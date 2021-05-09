@@ -36,6 +36,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import java.awt.Color;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class ExcelServiceImpl implements ExcelService {
 
     private static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+    private static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
     private static final String PERCENT_FORMAT = "0.00%";
 
     private static final int CHART_WIDTH = 20;
@@ -80,12 +83,13 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void saveToFile(ExtendedWorkbook workBook, String fileName) {
+        String extendedFileName = fileName + " " + LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER) + ".xlsx";
         try {
-            log.info("Saving file " + fileName);
-            excelFileService.saveToFile(workBook, fileName);
-            log.info("File " + fileName + " saved");
+            log.info("Creating file \"{}\"", extendedFileName);
+            excelFileService.saveToFile(workBook, extendedFileName);
+            log.info("File \"{}\" created", extendedFileName);
         } catch (IOException ioException) {
-            log.error("Failed to save file " + fileName);
+            log.error("Failed to save file \"{}\"", extendedFileName);
         }
     }
 
