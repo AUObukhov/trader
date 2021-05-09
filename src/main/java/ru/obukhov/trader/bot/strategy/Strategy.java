@@ -5,6 +5,8 @@ import ru.obukhov.trader.bot.model.DecisionData;
 
 public interface Strategy {
 
+    String getName();
+
     Decision decide(DecisionData data);
 
 }

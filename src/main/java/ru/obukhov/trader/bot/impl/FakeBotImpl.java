@@ -14,12 +14,14 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 public class FakeBotImpl extends AbstractBot implements FakeBot {
 
     @Getter
-    private final String name;
-    @Getter
     private final FakeTinkoffService fakeTinkoffService;
 
+    @Override
+    public String getStrategyName() {
+        return strategy.getName();
+    }
+
     public static FakeBotImpl create(
-            String name,
             Strategy strategy,
             MarketService marketService,
             OperationsService operationsService,
@@ -28,7 +30,6 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
             FakeTinkoffService fakeTinkoffService
     ) {
         return new FakeBotImpl(
-                name,
                 strategy,
                 marketService,
                 operationsService,
@@ -39,7 +40,6 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     }
 
     private FakeBotImpl(
-            String name,
             Strategy strategy,
             MarketService marketService,
             OperationsService operationsService,
@@ -49,7 +49,6 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     ) {
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 
-        this.name = name;
         this.fakeTinkoffService = fakeTinkoffService;
     }
 

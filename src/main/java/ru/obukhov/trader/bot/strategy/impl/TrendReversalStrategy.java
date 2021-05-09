@@ -26,10 +26,12 @@ public class TrendReversalStrategy extends AbstractStrategy {
     private final Integer lastPricesCount;
     private final Integer extremumPriceIndex;
 
-    public TrendReversalStrategy(TradingProperties tradingProperties,
-                                 Integer lastPricesCount,
-                                 Integer extremumPriceIndex) {
-        super(tradingProperties);
+    public TrendReversalStrategy(
+            TradingProperties tradingProperties,
+            Integer lastPricesCount,
+            Integer extremumPriceIndex
+    ) {
+        super(String.format("Trend reversal strategy (%s|%s)", extremumPriceIndex, lastPricesCount), tradingProperties);
         this.lastPricesCount = lastPricesCount;
         this.extremumPriceIndex = extremumPriceIndex;
     }

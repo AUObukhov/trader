@@ -6,6 +6,12 @@ import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.bot.strategy.Strategy;
 
 public class TestStrategy implements Strategy {
+
+    @Override
+    public String getName() {
+        throw new NotImplementedException();
+    }
+
     @Override
     public Decision decide(DecisionData data) {
         throw new NotImplementedException();

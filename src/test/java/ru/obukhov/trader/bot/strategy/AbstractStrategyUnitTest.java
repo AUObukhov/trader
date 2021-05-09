@@ -1,6 +1,7 @@
 package ru.obukhov.trader.bot.strategy;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -94,7 +95,7 @@ class AbstractStrategyUnitTest {
     private static class TestStrategy extends AbstractStrategy {
 
         public TestStrategy(TradingProperties tradingProperties) {
-            super(tradingProperties);
+            super(StringUtils.EMPTY, tradingProperties);
         }
 
         @Override

@@ -19,12 +19,10 @@ import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
-import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 class FakeBotFactoryUnitTest extends BaseMockedTest {
 
@@ -63,48 +61,15 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
                 Assertions.assertEquals(FakeBotImpl.class, bot.getClass());
             }
 
-            Set<String> fakeBotsNames = bots.stream()
-                    .map(bot -> ((FakeBotImpl) bot).getName())
-                    .collect(Collectors.toSet());
-            Assertions.assertTrue(fakeBotsNames.contains("Conservative bot"));
-            Assertions.assertTrue(fakeBotsNames.contains("Dumb bot"));
-            Assertions.assertTrue(fakeBotsNames.contains("Trend reversal bot (95|100)"));
-
-            verifyFakeBotCreated(fakeBotImplStaticMock, "Conservative bot", strategy1);
-            verifyFakeBotCreated(fakeBotImplStaticMock, "Dumb bot", strategy2);
-            verifyFakeBotCreated(fakeBotImplStaticMock, "Trend reversal bot (95|100)", strategy3);
+            verifyFakeBotCreated(fakeBotImplStaticMock, strategy1);
+            verifyFakeBotCreated(fakeBotImplStaticMock, strategy2);
+            verifyFakeBotCreated(fakeBotImplStaticMock, strategy3);
         }
     }
 
-    @Test
-    void createBots_throwsIllegalArgumentException_whenGetsUnknownTypeOfStrategy() {
-        try (MockedStatic<FakeBotImpl> fakeBotImplStaticMock =
-                     Mockito.mockStatic(FakeBotImpl.class, Mockito.CALLS_REAL_METHODS)) {
-
-            Collection<Strategy> strategies = List.of(
-                    new ConservativeStrategy(tradingProperties),
-                    new TestStrategy()
-            );
-
-            FakeBotFactory factory = new FakeBotFactory(
-                    tradingProperties,
-                    marketService,
-                    tinkoffService,
-                    strategies
-            );
-
-            AssertUtils.assertThrowsWithMessage(
-                    factory::createBots,
-                    IllegalArgumentException.class,
-                    "Unknown strategy class: " + TestStrategy.class
-            );
-        }
-    }
-
-    private void verifyFakeBotCreated(MockedStatic<FakeBotImpl> fakeBotStaticMock, String name, Strategy strategy) {
+    private void verifyFakeBotCreated(MockedStatic<FakeBotImpl> fakeBotStaticMock, Strategy strategy) {
         fakeBotStaticMock.verify(
                 () -> FakeBotImpl.create(
-                        Mockito.eq(name),
                         Mockito.eq(strategy),
                         Mockito.any(MarketServiceImpl.class),
                         Mockito.any(OperationsServiceImpl.class),

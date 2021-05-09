@@ -1,6 +1,6 @@
 package ru.obukhov.trader.bot.strategy;
 
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
@@ -15,12 +15,18 @@ import java.math.BigDecimal;
  * Abstract strategy with some common methods
  */
 @Slf4j
-@RequiredArgsConstructor
 public abstract class AbstractStrategy implements Strategy {
 
     protected static final double MINIMUM_PROFIT = 0.01;
 
+    @Getter
+    protected final String name;
     protected final TradingProperties tradingProperties;
+
+    protected AbstractStrategy(String name, TradingProperties tradingProperties) {
+        this.name = name;
+        this.tradingProperties = tradingProperties;
+    }
 
     /**
      * @return decision to buy all available lots or decision to wait if no lots available

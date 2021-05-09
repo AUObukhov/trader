@@ -4,9 +4,6 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.strategy.Strategy;
-import ru.obukhov.trader.bot.strategy.impl.ConservativeStrategy;
-import ru.obukhov.trader.bot.strategy.impl.DumbStrategy;
-import ru.obukhov.trader.bot.strategy.impl.TrendReversalStrategy;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
@@ -45,7 +42,6 @@ public class FakeBotFactory extends AbstractBotFactory {
     }
 
     private Bot createBot(Strategy strategy) {
-        String name = getBotName(strategy);
         FakeTinkoffService fakeTinkoffService =
                 new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
         MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
@@ -54,7 +50,6 @@ public class FakeBotFactory extends AbstractBotFactory {
         PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         return FakeBotImpl.create(
-                name,
                 strategy,
                 fakeMarketService,
                 fakeOperationsService,
@@ -62,20 +57,6 @@ public class FakeBotFactory extends AbstractBotFactory {
                 fakePortfolioService,
                 fakeTinkoffService
         );
-    }
-
-    private String getBotName(Strategy strategy) {
-        if (strategy instanceof ConservativeStrategy) {
-            return "Conservative bot";
-        } else if (strategy instanceof DumbStrategy) {
-            return "Dumb bot";
-        } else if (strategy instanceof TrendReversalStrategy) {
-            TrendReversalStrategy trendReversalStrategy = (TrendReversalStrategy) strategy;
-            return String.format("Trend reversal bot (%s|%s)",
-                    trendReversalStrategy.getExtremumPriceIndex(), trendReversalStrategy.getLastPricesCount());
-        } else {
-            throw new IllegalArgumentException("Unknown strategy class: " + strategy.getClass());
-        }
     }
 
 }

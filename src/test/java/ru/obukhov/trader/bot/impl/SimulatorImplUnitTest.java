@@ -170,7 +170,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         String expectedError = String.format(
-                "Simulation for bot '%1$s' with ticker '%2$s' failed with error: Not found instrument for ticker '%2$s'",
+                "Simulation for '%1$s' with ticker '%2$s' failed with error: Not found instrument for ticker '%2$s'",
                 botName,
                 ticker
         );
@@ -804,7 +804,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
 
-        String expectedErrorMessage = String.format("Simulation for bot '%s' with ticker '%s' failed with error: %s",
+        String expectedErrorMessage = String.format("Simulation for '%s' with ticker '%s' failed with error: %s",
                 botName, ticker, mockedExceptionMessage);
         Assertions.assertEquals(expectedErrorMessage, simulationResult.getError());
     }
@@ -861,7 +861,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
     private FakeBot createFakeBotMock(String botName) {
         FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBot.getName()).thenReturn(botName);
+        Mockito.when(fakeBot.getStrategyName()).thenReturn(botName);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
     }

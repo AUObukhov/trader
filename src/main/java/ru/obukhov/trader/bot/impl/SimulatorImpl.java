@@ -152,16 +152,21 @@ public class SimulatorImpl implements Simulator {
 
     private SimulationResult simulateSafe(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
         try {
-            log.info("Simulation for bot '{}' with ticker = '{}' started", bot.getName(), simulationUnit.getTicker());
+            log.info(
+                    "Simulation for '{}' with ticker = '{}' started",
+                    bot.getStrategyName(), simulationUnit.getTicker()
+            );
             SimulationResult result = simulate(bot, simulationUnit, interval);
-            log.info("Simulation for bot '{}' with ticker = '{}' ended", bot.getName(), simulationUnit.getTicker());
+            log.info("Simulation for '{}' with ticker = '{}' ended", bot.getStrategyName(), simulationUnit.getTicker());
             return result;
         } catch (Exception ex) {
-            String message = String.format("Simulation for bot '%s' with ticker '%s' failed with error: %s",
-                    bot.getName(), simulationUnit.getTicker(), ex.getMessage());
+            String message = String.format(
+                    "Simulation for '%s' with ticker '%s' failed with error: %s",
+                    bot.getStrategyName(), simulationUnit.getTicker(), ex.getMessage()
+            );
             log.error(message, ex);
             return SimulationResult.builder()
-                    .botName(bot.getName())
+                    .botName(bot.getStrategyName())
                     .interval(interval)
                     .initialBalance(simulationUnit.getInitialBalance())
                     .totalInvestment(simulationUnit.getInitialBalance())
@@ -262,7 +267,7 @@ public class SimulatorImpl implements Simulator {
         List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()
-                .botName(bot.getName())
+                .botName(bot.getStrategyName())
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .finalTotalBalance(totalBalance)
