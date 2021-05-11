@@ -531,4 +531,61 @@ public class TrendUtils {
 
     // endregion
 
+    /**
+     * @return 0 if not enough values too calculate crossovers or if there is no crossover<br/>
+     * 1 if {@code values1} crosses {@code values2} from below at given {@code index} and
+     * there are no crossovers or touches after {@code index}<br/>
+     * -1 if {@code values1} crosses {@code values2} from above at given {@code index} and
+     * there are no crossovers or touches after {@code index}<br/>
+     * @throws IllegalArgumentException if {@code values1} and {@code values2} have different sizes
+     */
+    public static int getCrossoverIfLast(List<BigDecimal> values1, List<BigDecimal> values2, int index) {
+        final int size = values1.size();
+
+        Assert.isTrue(size == values2.size(), "Collections must has same size");
+
+        if (size < 2) {
+            return 0;
+        }
+
+        final int previousIndex1 = index - 1;
+
+        final BigDecimal previousValue1 = values1.get(previousIndex1);
+        final BigDecimal previousValue2 = values2.get(previousIndex1);
+
+        final BigDecimal currentValue1 = values1.get(index);
+        final BigDecimal currentValue2 = values2.get(index);
+
+        final int previousComparisonResult = previousValue1.compareTo(previousValue2);
+        final int currentComparisonResult = currentValue1.compareTo(currentValue2);
+
+        if (previousComparisonResult > 0 && currentComparisonResult < 0) {
+            if (relationIsKept(values1, values2, index + 1, currentComparisonResult)) {
+                return -1;
+            }
+        } else if (
+                previousComparisonResult < 0 && currentComparisonResult > 0 &&
+                        relationIsKept(values1, values2, index + 1, currentComparisonResult)
+        ) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private static boolean relationIsKept(
+            List<BigDecimal> values1,
+            List<BigDecimal> values2,
+            int index,
+            int relation
+    ) {
+        for (int i = index; i < values1.size(); i++) {
+            if (values1.get(i).compareTo(values2.get(i)) != relation) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

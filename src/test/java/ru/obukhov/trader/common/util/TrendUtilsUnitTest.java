@@ -1346,4 +1346,113 @@ class TrendUtilsUnitTest {
 
     // endregion
 
+    // region getCrossoverIfLast tests
+
+    @Test
+    void getCrossoverIfLast_throwIllegalArgumentException_whenDifferentSizes() {
+        final List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(10);
+        final List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(9);
+        final int index = 2;
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getCrossoverIfLast(values1, values2, index),
+                IllegalArgumentException.class,
+                "Collections must has same size"
+        );
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCrossoverIfLast() {
+        return Stream.of(
+                Arguments.of(
+                        List.of(),
+                        List.of(),
+                        2,
+                        0
+                ),
+                Arguments.of(
+                        List.of(4.0),
+                        List.of(3.0),
+                        2,
+                        0
+                ),
+                // crossover from below and it is last
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(0.0, 1.0, 4.0, 5.0, 7.0),
+                        2,
+                        -1
+                ),
+                // crossover from below and it is not last because of another crossover
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(0.0, 1.0, 4.0, 5.0, 3.0),
+                        2,
+                        0
+                ),
+                // crossover from below and it is not last because of touch
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(0.0, 1.0, 4.0, 4.0, 7.0),
+                        2,
+                        0
+                ),
+                // crossover from above and it is last
+                Arguments.of(
+                        List.of(0.0, 1.0, 4.0, 5.0, 7.0),
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        2,
+                        1
+                ),
+                // crossover from above and it is not last because of another crossover
+                Arguments.of(
+                        List.of(0.0, 1.0, 4.0, 5.0, 3.0),
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        2,
+                        0
+                ),
+                // crossover from above and it is not last because of touch
+                Arguments.of(
+                        List.of(0.0, 1.0, 4.0, 4.0, 7.0),
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        2,
+                        0
+                ),
+                // no crossover because collections are equal
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        2,
+                        0
+                ),
+                // no crossover because values1 is above values2
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(0.0, 1.0, 2.0, 3.0, 4.0),
+                        2,
+                        0
+                ),
+                // no crossover because values1 is below values2
+                Arguments.of(
+                        List.of(1.0, 2.0, 3.0, 4.0, 5.0),
+                        List.of(2.0, 3.0, 4.0, 5.0, 6.0),
+                        2,
+                        0
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetCrossoverIfLast")
+    void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, int expectedCrossover) {
+        List<BigDecimal> bigDecimalValues1 = TestDataHelper.getBigDecimalValues(values1);
+        List<BigDecimal> bigDecimalValues2 = TestDataHelper.getBigDecimalValues(values2);
+
+        int crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
+
+        Assertions.assertEquals(expectedCrossover, crossover);
+    }
+
+    // endregion
+
 }
