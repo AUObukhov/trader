@@ -14,7 +14,7 @@ import ru.obukhov.trader.config.TradingProperties;
 public class DumbStrategy extends AbstractStrategy {
 
     public DumbStrategy(TradingProperties tradingProperties) {
-        super("Dumb strategy", tradingProperties);
+        super("Dumb", tradingProperties);
     }
 
     @Override

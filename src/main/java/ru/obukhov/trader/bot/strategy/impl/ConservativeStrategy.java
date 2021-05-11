@@ -13,7 +13,7 @@ import ru.obukhov.trader.config.TradingProperties;
 public class ConservativeStrategy extends AbstractStrategy {
 
     public ConservativeStrategy(TradingProperties tradingProperties) {
-        super("Conservative strategy", tradingProperties);
+        super("Conservative", tradingProperties);
     }
 
     @Override

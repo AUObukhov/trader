@@ -18,12 +18,17 @@ import java.math.BigDecimal;
 public abstract class AbstractStrategy implements Strategy {
 
     protected static final double MINIMUM_PROFIT = 0.01;
+    protected static final int NAME_LENGTH_LIMIT = 32;
 
     @Getter
     protected final String name;
     protected final TradingProperties tradingProperties;
 
     protected AbstractStrategy(String name, TradingProperties tradingProperties) {
+        if (name.length() >= NAME_LENGTH_LIMIT) {
+            throw new IllegalArgumentException("name must be shorter than " + NAME_LENGTH_LIMIT);
+        }
+
         this.name = name;
         this.tradingProperties = tradingProperties;
     }
