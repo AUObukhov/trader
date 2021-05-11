@@ -71,6 +71,11 @@ public abstract class AbstractStrategy implements Strategy {
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
     protected double getProfit(DecisionData data) {
+        if (data.getPosition() == null) {
+            log.debug("no position - no profit");
+            return 0.0;
+        }
+
         final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
         BigDecimal buyPricePlusCommission =
                 DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());

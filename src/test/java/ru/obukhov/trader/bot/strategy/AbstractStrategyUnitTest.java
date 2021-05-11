@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
@@ -29,6 +30,17 @@ class AbstractStrategyUnitTest {
         TRADING_PROPERTIES.setCommission(COMMISSION);
     }
 
+    // region getProfit tests
+
+    @Test
+    void getProfit_returnsZero_whenPositionIsNull() {
+        DecisionData decisionData = new DecisionData();
+
+        double profit = strategy.getProfit(decisionData);
+
+        AssertUtils.assertEquals(0.0, profit);
+    }
+
     @ParameterizedTest
     @CsvSource({
             "1000.0, 1100.0, 0.09342",
@@ -41,6 +53,8 @@ class AbstractStrategyUnitTest {
 
         Assertions.assertEquals(expectedProfit, profit);
     }
+
+    // endregion
 
     // region existsOperationInProgress tests
 
