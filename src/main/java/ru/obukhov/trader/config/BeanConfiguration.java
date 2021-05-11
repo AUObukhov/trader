@@ -45,28 +45,29 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Set<Strategy> trendReversalStrategy(TradingProperties tradingProperties,
-                                               TrendReversalStrategyProperties trendReversalStrategyProperties,
-                                               ConfigurableListableBeanFactory beanFactory) {
-
+    public Set<Strategy> trendReversalStrategy(
+            TradingProperties tradingProperties,
+            TrendReversalStrategyProperties trendReversalStrategyProperties,
+            ConfigurableListableBeanFactory beanFactory
+    ) {
         return trendReversalStrategyProperties.getConfigs().stream()
                 .map(config -> createAndRegisterTrendReversalStrategy(beanFactory, tradingProperties, config))
                 .collect(Collectors.toSet());
     }
 
-    private TrendReversalStrategy createAndRegisterTrendReversalStrategy(ConfigurableListableBeanFactory beanFactory,
-                                                                         TradingProperties tradingProperties,
-                                                                         TrendReversalStrategyProperties.StrategyConfig config) {
-
-        String name = String.format("trendReversalStrategy (%s|%s)",
-                config.getExtremumPriceIndex(), config.getLastPricesCount());
-
+    private TrendReversalStrategy createAndRegisterTrendReversalStrategy(
+            ConfigurableListableBeanFactory beanFactory,
+            TradingProperties tradingProperties,
+            TrendReversalStrategyProperties.StrategyConfig config
+    ) {
         TrendReversalStrategy strategy = new TrendReversalStrategy(
                 tradingProperties,
                 config.getLastPricesCount(),
-                config.getExtremumPriceIndex());
+                config.getExtremumPriceIndex()
+        );
 
-        beanFactory.registerSingleton(name, strategy);
+        beanFactory.registerSingleton(strategy.getName(), strategy);
+
         return strategy;
     }
 
