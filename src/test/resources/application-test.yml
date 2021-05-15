@@ -10,6 +10,15 @@ trend-reversal-strategy:
   last-prices-count: 100
   extremum-price-index: 95
 
+golden-cross-strategy:
+  configs:
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.8
+    - small-window: 25
+      big-window: 100
+      index-coefficient: 0.7
+
 query.throttle:
   interval: 60000
   limits:

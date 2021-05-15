@@ -21,6 +21,24 @@ trend-reversal-strategy:
     - extremum-price-index: 950
       last-prices-count: 1000
 
+golden-cross-strategy:
+  configs:
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.8
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.7
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.6
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.5
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.4
+
 simulation:
   thread-count: 100
 

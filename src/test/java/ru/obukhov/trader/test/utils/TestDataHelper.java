@@ -233,6 +233,20 @@ public class TestDataHelper {
         );
     }
 
+    public static PortfolioPosition createPortfolioPosition(double averagePositionPrice, int lotsCount) {
+        return new PortfolioPosition(
+                StringUtils.EMPTY,
+                BigDecimal.ZERO,
+                null,
+                Currency.RUB,
+                null,
+                lotsCount,
+                DecimalUtils.setDefaultScale(averagePositionPrice),
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
     public static PortfolioPosition createPortfolioPosition(String ticker, int lotsCount) {
         return new PortfolioPosition(
                 ticker,
