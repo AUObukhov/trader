@@ -9,8 +9,7 @@ import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.strategy.Strategy;
 import ru.obukhov.trader.bot.strategy.impl.ConservativeStrategy;
-import ru.obukhov.trader.bot.strategy.impl.DumbStrategy;
-import ru.obukhov.trader.bot.strategy.impl.TrendReversalStrategy;
+import ru.obukhov.trader.bot.strategy.impl.GoldenCrossStrategy;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
@@ -39,13 +38,13 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
                      Mockito.mockStatic(FakeBotImpl.class, Mockito.CALLS_REAL_METHODS)) {
 
             Strategy strategy1 = new ConservativeStrategy(tradingProperties);
-            Strategy strategy2 = new DumbStrategy(tradingProperties);
 
-            Integer lastPricesCount = 100;
-            Integer extremumPriceIndex = 95;
-            Strategy strategy3 = new TrendReversalStrategy(tradingProperties, lastPricesCount, extremumPriceIndex);
+            int smallWindow = 100;
+            int bigWindow = 95;
+            float indexCoefficient = 0.5f;
+            Strategy strategy2 = new GoldenCrossStrategy(tradingProperties, smallWindow, bigWindow, indexCoefficient);
 
-            Collection<Strategy> strategies = List.of(strategy1, strategy2, strategy3);
+            Collection<Strategy> strategies = List.of(strategy1, strategy2);
 
             FakeBotFactory factory = new FakeBotFactory(
                     tradingProperties,
@@ -63,7 +62,6 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
 
             verifyFakeBotCreated(fakeBotImplStaticMock, strategy1);
             verifyFakeBotCreated(fakeBotImplStaticMock, strategy2);
-            verifyFakeBotCreated(fakeBotImplStaticMock, strategy3);
         }
     }
 

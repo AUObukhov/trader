@@ -6,10 +6,6 @@ trading:
   consecutive-empty-days-limit: 5
   start-date: 2000-01-01T00:00:00+03:00
 
-trend-reversal-strategy:
-  last-prices-count: 100
-  extremum-price-index: 95
-
 golden-cross-strategy:
   configs:
     - small-window: 50

@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@DependsOn({"trendReversalStrategy", "goldenCrossStrategy"})
+@DependsOn("goldenCrossStrategy")
 public class FakeBotFactory extends AbstractBotFactory {
 
     public FakeBotFactory(

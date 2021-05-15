@@ -9,7 +9,8 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.bot.impl.ScheduledBotFactory;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
-import ru.obukhov.trader.bot.strategy.impl.DumbStrategy;
+import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.impl.GoldenCrossStrategy;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -33,24 +34,23 @@ public class BotConfiguration {
             TradingProperties tradingProperties,
             MarketService realMarketService,
             RealTinkoffService realTinkoffService,
-            DumbStrategy strategy,
+            Set<GoldenCrossStrategy> strategies,
             OperationsService realOperationsService,
             OrdersService realOrdersService,
             PortfolioService realPortfolioService,
             BotConfig botConfig
     ) {
-
+        Set<Strategy> strategySet = Set.of(strategies.stream().findFirst().orElseThrow());
         return new ScheduledBotFactory(
                 tradingProperties,
                 realMarketService,
                 realTinkoffService,
-                Set.of(strategy),
+                strategySet,
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,
                 botConfig
         );
-
     }
 
     @Bean
