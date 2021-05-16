@@ -31,7 +31,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             int bigWindow,
             float indexCoefficient
     ) {
-        super(String.format("Golden cross (%s|%s|%s)", smallWindow, bigWindow, indexCoefficient), tradingProperties);
+        super(String.format("Golden cross (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient), tradingProperties);
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;
