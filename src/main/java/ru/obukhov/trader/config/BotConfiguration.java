@@ -74,7 +74,7 @@ public class BotConfiguration {
             PortfolioService realPortfolioService,
             BotConfig botConfig
     ) {
-        Set<Strategy> strategySet = Set.of(strategies.stream().findFirst().orElseThrow());
+        Set<Strategy> strategySet = strategies.stream().limit(1).collect(Collectors.toSet());
         return new ScheduledBotFactory(
                 tradingProperties,
                 realMarketService,
