@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.common.model.transform.OffsetTimeConverter;
@@ -25,7 +25,7 @@ class TradingPropertiesIntegrationTest {
 
         this.contextRunner
                 .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
-                .withInitializer(new ConfigFileApplicationContextInitializer())
+                .withInitializer(new ConfigDataApplicationContextInitializer())
                 .run(context -> {
                     Assertions.assertNull(context.getStartupFailure());
 

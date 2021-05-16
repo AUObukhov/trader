@@ -3,7 +3,7 @@ package ru.obukhov.trader.config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 class ReportPropertiesIntegrationTest {
@@ -16,7 +16,7 @@ class ReportPropertiesIntegrationTest {
 
         this.contextRunner
                 .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
-                .withInitializer(new ConfigFileApplicationContextInitializer())
+                .withInitializer(new ConfigDataApplicationContextInitializer())
                 .run(context -> {
                     Assertions.assertNull(context.getStartupFailure());
 

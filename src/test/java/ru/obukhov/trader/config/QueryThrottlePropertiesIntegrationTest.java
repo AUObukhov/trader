@@ -3,7 +3,7 @@ package ru.obukhov.trader.config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -14,7 +14,7 @@ class QueryThrottlePropertiesIntegrationTest {
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)
             .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
-            .withInitializer(new ConfigFileApplicationContextInitializer());
+            .withInitializer(new ConfigDataApplicationContextInitializer());
 
     @Test
     void beanCreating_whenPropertiesFilled() {
