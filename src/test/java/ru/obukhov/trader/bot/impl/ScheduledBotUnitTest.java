@@ -9,7 +9,7 @@ import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.BotConfig;
@@ -37,7 +37,7 @@ import java.util.Set;
 class ScheduledBotUnitTest extends BaseMockedTest {
 
     @Mock
-    private Strategy strategy;
+    private TradingStrategy strategy;
 
     @Mock
     private MarketService marketService;

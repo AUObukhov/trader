@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.bot.impl.ScheduledBotFactory;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.BotFactory;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.bot.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.bot.strategy.impl.GoldenCrossStrategy;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 public class BotConfiguration {
 
     @Bean
-    public Strategy conservativeStrategy(TradingProperties tradingProperties) {
+    public TradingStrategy conservativeStrategy(TradingProperties tradingProperties) {
         return new ConservativeStrategy(tradingProperties);
     }
 
     @Bean
-    public Set<Strategy> goldenCrossStrategy(
+    public Set<TradingStrategy> goldenCrossStrategy(
             ConfigurableListableBeanFactory beanFactory,
             TradingProperties tradingProperties,
             GoldenCrossStrategyProperties strategyProperties
@@ -74,7 +74,7 @@ public class BotConfiguration {
             PortfolioService realPortfolioService,
             BotConfig botConfig
     ) {
-        Set<Strategy> strategySet = strategies.stream().limit(1).collect(Collectors.toSet());
+        Set<TradingStrategy> strategySet = strategies.stream().limit(1).collect(Collectors.toSet());
         return new ScheduledBotFactory(
                 tradingProperties,
                 realMarketService,

@@ -18,7 +18,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 import java.util.Collections;
 import java.util.List;
 
-class AbstractStrategyUnitTest {
+class AbstractTradingStrategyUnitTest {
 
     private static final double COMMISSION = 0.003;
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
@@ -35,7 +35,7 @@ class AbstractStrategyUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> new TestStrategy(name, TRADING_PROPERTIES),
                 IllegalArgumentException.class,
-                "name must be shorter than " + AbstractStrategy.NAME_LENGTH_LIMIT
+                "name must be shorter than " + AbstractTradingStrategy.NAME_LENGTH_LIMIT
         );
     }
 
@@ -43,7 +43,7 @@ class AbstractStrategyUnitTest {
 
     @Test
     void getProfit_returnsZero_whenPositionIsNull() {
-        final AbstractStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
         DecisionData decisionData = new DecisionData();
 
         double profit = strategy.getProfit(decisionData);
@@ -57,7 +57,7 @@ class AbstractStrategyUnitTest {
             "1000.0, 900.0, -0.10538",
     })
     void getProfit(double averagePositionPrice, double currentPrice, double expectedProfit) {
-        final AbstractStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
         DecisionData data = TestDataHelper.createDecisionData(averagePositionPrice, currentPrice);
 
         double profit = strategy.getProfit(data);
@@ -110,7 +110,7 @@ class AbstractStrategyUnitTest {
             "1000.0, 10, 20060.0, 2"
     })
     void getAvailableLots(double currentPrice, int lotSize, double balance, int expectedAvailableLots) {
-        final AbstractStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
         DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
 
         int availableLots = strategy.getAvailableLots(data);
@@ -118,7 +118,7 @@ class AbstractStrategyUnitTest {
         Assertions.assertEquals(expectedAvailableLots, availableLots);
     }
 
-    private static class TestStrategy extends AbstractStrategy {
+    private static class TestStrategy extends AbstractTradingStrategy {
 
         public TestStrategy(TradingProperties tradingProperties) {
             super(StringUtils.EMPTY, tradingProperties);
@@ -138,7 +138,7 @@ class AbstractStrategyUnitTest {
         }
 
         public static boolean existsOperationInProgress(DecisionData data) {
-            return AbstractStrategy.existsOperationInProgress(data);
+            return AbstractTradingStrategy.existsOperationInProgress(data);
         }
 
         public int getAvailableLots(DecisionData data) {

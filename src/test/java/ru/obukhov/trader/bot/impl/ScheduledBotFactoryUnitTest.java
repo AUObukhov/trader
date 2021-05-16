@@ -7,7 +7,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
@@ -43,10 +43,10 @@ class ScheduledBotFactoryUnitTest extends BaseMockedTest {
         try (MockedStatic<ScheduledBot> ScheduledBotStaticMock =
                      Mockito.mockStatic(ScheduledBot.class, Mockito.CALLS_REAL_METHODS)) {
 
-            Strategy strategy1 = new TestStrategy();
-            Strategy strategy2 = new TestStrategy();
-            Strategy strategy3 = new TestStrategy();
-            Collection<Strategy> strategies = List.of(strategy1, strategy2, strategy3);
+            TradingStrategy strategy1 = new TestStrategy();
+            TradingStrategy strategy2 = new TestStrategy();
+            TradingStrategy strategy3 = new TestStrategy();
+            Collection<TradingStrategy> strategies = List.of(strategy1, strategy2, strategy3);
 
             ScheduledBotFactory factory = new ScheduledBotFactory(
                     tradingProperties,
@@ -72,7 +72,7 @@ class ScheduledBotFactoryUnitTest extends BaseMockedTest {
         }
     }
 
-    private void verifyScheduledBotCreated(MockedStatic<ScheduledBot> scheduledBotStaticMock, Strategy strategy) {
+    private void verifyScheduledBotCreated(MockedStatic<ScheduledBot> scheduledBotStaticMock, TradingStrategy strategy) {
         scheduledBotStaticMock.verify(
                 () -> ScheduledBot.create(
                         strategy,

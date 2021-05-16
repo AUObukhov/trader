@@ -7,7 +7,7 @@ import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -29,7 +29,7 @@ public abstract class AbstractBot implements Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
 
-    protected final Strategy strategy;
+    protected final TradingStrategy strategy;
     protected final MarketService marketService;
     protected final OperationsService operationsService;
     protected final OrdersService ordersService;

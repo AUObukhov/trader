@@ -9,7 +9,7 @@ import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -32,7 +32,7 @@ import java.util.List;
 class AbstractBotUnitTest extends BaseMockedTest {
 
     @Mock
-    private Strategy strategy;
+    private TradingStrategy strategy;
     @Mock
     private MarketService marketService;
     @Mock
@@ -338,7 +338,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
     private static class TestBot extends AbstractBot {
 
         public TestBot(
-                Strategy strategy,
+                TradingStrategy strategy,
                 MarketService marketService,
                 OperationsService operationsService,
                 OrdersService ordersService,

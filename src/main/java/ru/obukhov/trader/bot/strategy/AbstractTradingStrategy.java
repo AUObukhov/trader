@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  * Abstract strategy with some common methods
  */
 @Slf4j
-public abstract class AbstractStrategy implements Strategy {
+public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     protected static final double MINIMUM_PROFIT = 0.01;
     protected static final int NAME_LENGTH_LIMIT = 32;
@@ -24,7 +24,7 @@ public abstract class AbstractStrategy implements Strategy {
     protected final String name;
     protected final TradingProperties tradingProperties;
 
-    protected AbstractStrategy(String name, TradingProperties tradingProperties) {
+    protected AbstractTradingStrategy(String name, TradingProperties tradingProperties) {
         if (name.length() >= NAME_LENGTH_LIMIT) {
             throw new IllegalArgumentException("name must be shorter than " + NAME_LENGTH_LIMIT);
         }

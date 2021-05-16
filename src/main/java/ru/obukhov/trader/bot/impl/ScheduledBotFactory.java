@@ -1,7 +1,7 @@
 package ru.obukhov.trader.bot.impl;
 
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
@@ -26,7 +26,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
             TradingProperties tradingProperties,
             MarketService realMarketService,
             RealTinkoffService realTinkoffService,
-            Collection<Strategy> strategies,
+            Collection<TradingStrategy> strategies,
             OperationsService realOperationsService,
             OrdersService realOrdersService,
             PortfolioService realPortfolioService,
@@ -48,7 +48,7 @@ public class ScheduledBotFactory extends AbstractBotFactory {
                 .collect(Collectors.toSet());
     }
 
-    private Bot createScheduledBot(Strategy strategy) {
+    private Bot createScheduledBot(TradingStrategy strategy) {
 
         return ScheduledBot.create(
                 strategy,

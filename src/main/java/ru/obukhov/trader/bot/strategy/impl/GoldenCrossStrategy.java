@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
-import ru.obukhov.trader.bot.strategy.AbstractStrategy;
+import ru.obukhov.trader.bot.strategy.AbstractTradingStrategy;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">investopedia</a>
  */
 @Slf4j
-public class GoldenCrossStrategy extends AbstractStrategy {
+public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
     private final int smallWindow;
     private final int bigWindow;

@@ -7,7 +7,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.Bot;
-import ru.obukhov.trader.bot.strategy.Strategy;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.bot.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.bot.strategy.impl.GoldenCrossStrategy;
 import ru.obukhov.trader.config.TradingProperties;
@@ -37,14 +37,14 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
         try (MockedStatic<FakeBotImpl> fakeBotImplStaticMock =
                      Mockito.mockStatic(FakeBotImpl.class, Mockito.CALLS_REAL_METHODS)) {
 
-            Strategy strategy1 = new ConservativeStrategy(tradingProperties);
+            TradingStrategy strategy1 = new ConservativeStrategy(tradingProperties);
 
             int smallWindow = 100;
             int bigWindow = 95;
             float indexCoefficient = 0.5f;
-            Strategy strategy2 = new GoldenCrossStrategy(tradingProperties, smallWindow, bigWindow, indexCoefficient);
+            TradingStrategy strategy2 = new GoldenCrossStrategy(tradingProperties, smallWindow, bigWindow, indexCoefficient);
 
-            Collection<Strategy> strategies = List.of(strategy1, strategy2);
+            Collection<TradingStrategy> strategies = List.of(strategy1, strategy2);
 
             FakeBotFactory factory = new FakeBotFactory(
                     tradingProperties,
@@ -65,7 +65,7 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
         }
     }
 
-    private void verifyFakeBotCreated(MockedStatic<FakeBotImpl> fakeBotStaticMock, Strategy strategy) {
+    private void verifyFakeBotCreated(MockedStatic<FakeBotImpl> fakeBotStaticMock, TradingStrategy strategy) {
         fakeBotStaticMock.verify(
                 () -> FakeBotImpl.create(
                         Mockito.eq(strategy),
