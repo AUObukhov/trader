@@ -66,12 +66,11 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Override
     public void saveSimulationResults(String ticker, Collection<SimulationResult> results) {
-        ExtendedWorkbook workBook = createWorkBook();
         for (SimulationResult result : results) {
+            ExtendedWorkbook workBook = createWorkBook();
             createSheet(workBook, ticker, result);
+            saveToFile(workBook, "SimulationResult for '" + ticker + "' by '" + result.getBotName() + "'");
         }
-
-        saveToFile(workBook, "SimulationResult for '" + ticker + "'");
     }
 
     @Override
