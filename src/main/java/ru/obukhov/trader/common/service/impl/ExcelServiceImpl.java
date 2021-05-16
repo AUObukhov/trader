@@ -89,7 +89,7 @@ public class ExcelServiceImpl implements ExcelService {
             excelFileService.saveToFile(workBook, extendedFileName);
             log.info("File \"{}\" created", extendedFileName);
         } catch (IOException ioException) {
-            log.error("Failed to save file \"{}\"", extendedFileName);
+            log.error("Failed to save file \"" + extendedFileName + "\"", ioException);
         }
     }
 
