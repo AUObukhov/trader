@@ -10,6 +10,9 @@ golden-cross-strategy:
   configs:
     - small-window: 50
       big-window: 200
+      index-coefficient: 0.9
+    - small-window: 50
+      big-window: 200
       index-coefficient: 0.8
     - small-window: 50
       big-window: 200
@@ -23,6 +26,15 @@ golden-cross-strategy:
     - small-window: 50
       big-window: 200
       index-coefficient: 0.4
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.3
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.2
+    - small-window: 50
+      big-window: 200
+      index-coefficient: 0.1
 
 simulation:
   thread-count: 100
