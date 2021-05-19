@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -24,7 +25,6 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
-import ru.obukhov.trader.web.model.pojo.SimulationUnit;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -48,7 +48,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Simulates trading by bot
+ * Simulates trading by bots
  */
 @Slf4j
 @Service
@@ -65,52 +65,32 @@ public class SimulatorImpl implements Simulator {
             BotFactory fakeBotFactory,
             @Value("${simulation.thread-count:10}") Integer simulationThreadCount
     ) {
-
         Assert.isTrue(simulationThreadCount > 1, "simulationThreadCount must be greater than 1");
 
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
         this.executor = Executors.newFixedThreadPool(simulationThreadCount);
-
     }
 
     /**
-     * @param simulationUnits list of simulated tickers and corresponding initial balances
-     * @param interval        all simulations interval
-     * @param saveToFiles     flag to save simulations results to file
+     * @param ticker               ticker for all simulations
+     * @param initialBalance       initial balance sum of each simulation
+     * @param balanceIncrement     regular balance increment sum
+     * @param balanceIncrementCron cron expression, representing schedule of balance increment
+     * @param interval             all simulations interval
+     * @param saveToFiles          flag to save simulations results to file
      * @return map of simulations results by tickers
      */
     @Override
-    public Map<String, List<SimulationResult>> simulate(
-            List<SimulationUnit> simulationUnits,
+    public List<SimulationResult> simulate(
+            String ticker,
+            BigDecimal initialBalance,
+            BigDecimal balanceIncrement,
+            CronExpression balanceIncrementCron,
             Interval interval,
             boolean saveToFiles
     ) {
-
-        Map<String, CompletableFuture<List<SimulationResult>>> tickersToSimulationResults = simulationUnits.stream()
-                .collect(Collectors.toMap(
-                        SimulationUnit::getTicker,
-                        simulationUnit -> startSimulations(simulationUnit, interval, saveToFiles)
-                ));
-
-        return tickersToSimulationResults.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().join()
-                ));
-    }
-
-    private CompletableFuture<List<SimulationResult>> startSimulations(
-            SimulationUnit simulationUnit,
-            Interval interval,
-            boolean saveToFile
-    ) {
-        return CompletableFuture.supplyAsync(() -> simulate(simulationUnit, interval, saveToFile), executor);
-    }
-
-    private List<SimulationResult> simulate(SimulationUnit simulationUnit, Interval interval, boolean saveToFile) {
-
-        log.info("Simulation for ticker = '{}' started", simulationUnit.getTicker());
+        log.info("Simulation for ticker = '{}' started", ticker);
 
         OffsetDateTime startTime = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), startTime, "from");
@@ -119,7 +99,7 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull();
 
         List<CompletableFuture<SimulationResult>> simulationFutures = createFakeBots().stream()
-                .map(bot -> startSimulation(bot, simulationUnit, finiteInterval))
+                .map(bot -> startSimulation(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, finiteInterval))
                 .collect(Collectors.toList());
         List<SimulationResult> simulationResults = simulationFutures.stream()
                 .map(CompletableFuture::join)
@@ -128,10 +108,10 @@ public class SimulatorImpl implements Simulator {
 
         Duration simulationDuration = Duration.between(startTime, OffsetDateTime.now());
         String simulationDurationString = DurationFormatUtils.formatDurationHMS(simulationDuration.toMillis());
-        log.info("Simulation for ticker = '{}' ended within {}", simulationUnit.getTicker(), simulationDurationString);
+        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
 
-        if (saveToFile) {
-            saveSimulationResultsSafe(simulationUnit.getTicker(), simulationResults);
+        if (saveToFiles) {
+            saveSimulationResultsSafe(ticker, simulationResults);
         }
 
         return simulationResults;
@@ -144,33 +124,44 @@ public class SimulatorImpl implements Simulator {
 
     private CompletableFuture<SimulationResult> startSimulation(
             FakeBot bot,
-            SimulationUnit simulationUnit,
+            String ticker,
+            BigDecimal initialBalance,
+            BigDecimal balanceIncrement,
+            CronExpression balanceIncrementCron,
             Interval interval
     ) {
-        return CompletableFuture.supplyAsync(() -> simulateSafe(bot, simulationUnit, interval), executor);
+        return CompletableFuture.supplyAsync(
+                () -> simulateSafe(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
+                executor
+        );
     }
 
-    private SimulationResult simulateSafe(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
+    private SimulationResult simulateSafe(
+            FakeBot bot,
+            String ticker,
+            BigDecimal initialBalance,
+            BigDecimal balanceIncrement,
+            CronExpression balanceIncrementCron,
+            Interval interval
+    ) {
         try {
-            log.info(
-                    "Simulation for '{}' with ticker = '{}' started",
-                    bot.getStrategyName(), simulationUnit.getTicker()
-            );
-            SimulationResult result = simulate(bot, simulationUnit, interval);
-            log.info("Simulation for '{}' with ticker = '{}' ended", bot.getStrategyName(), simulationUnit.getTicker());
+            log.info("Simulation for '{}' with ticker = '{}' started", bot.getStrategyName(), ticker);
+            SimulationResult result =
+                    simulate(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval);
+            log.info("Simulation for '{}' with ticker = '{}' ended", bot.getStrategyName(), ticker);
             return result;
         } catch (Exception ex) {
             String message = String.format(
                     "Simulation for '%s' with ticker '%s' failed with error: %s",
-                    bot.getStrategyName(), simulationUnit.getTicker(), ex.getMessage()
+                    bot.getStrategyName(), ticker, ex.getMessage()
             );
             log.error(message, ex);
             return SimulationResult.builder()
                     .botName(bot.getStrategyName())
                     .interval(interval)
-                    .initialBalance(simulationUnit.getInitialBalance())
-                    .totalInvestment(simulationUnit.getInitialBalance())
-                    .weightedAverageInvestment(simulationUnit.getInitialBalance())
+                    .initialBalance(initialBalance)
+                    .totalInvestment(initialBalance)
+                    .weightedAverageInvestment(initialBalance)
                     .finalBalance(BigDecimal.ZERO)
                     .finalTotalBalance(BigDecimal.ZERO)
                     .absoluteProfit(BigDecimal.ZERO)
@@ -184,10 +175,14 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private SimulationResult simulate(FakeBot bot, SimulationUnit simulationUnit, Interval interval) {
-
-        final String ticker = simulationUnit.getTicker();
-
+    private SimulationResult simulate(
+            FakeBot bot,
+            String ticker,
+            BigDecimal initialBalance,
+            BigDecimal balanceIncrement,
+            CronExpression balanceIncrementCron,
+            Interval interval
+    ) {
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
         MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
@@ -195,38 +190,40 @@ public class SimulatorImpl implements Simulator {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), simulationUnit.getInitialBalance());
+        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), initialBalance);
         List<Candle> candles = new ArrayList<>();
 
         do {
-
             DecisionData decisionData = bot.processTicker(ticker);
             addLastCandle(candles, decisionData);
 
-            moveToNextMinute(simulationUnit, fakeTinkoffService);
+            moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
 
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createResult(bot, interval, ticker, candles);
     }
 
-    private void moveToNextMinute(SimulationUnit simulationUnit, FakeTinkoffService fakeTinkoffService) {
-        if (simulationUnit.isBalanceIncremented()) {
+    private void moveToNextMinute(
+            String ticker,
+            BigDecimal balanceIncrement,
+            CronExpression balanceIncrementCron,
+            FakeTinkoffService fakeTinkoffService
+    ) {
+        if (balanceIncrement == null) {
+            fakeTinkoffService.nextMinute();
+        } else {
             OffsetDateTime previousDate = fakeTinkoffService.getCurrentDateTime();
             OffsetDateTime nextDate = fakeTinkoffService.nextMinute();
 
-            int incrementsCount =
-                    DateUtils.getCronHitsBetweenDates(simulationUnit.getBalanceIncrementCron(), previousDate, nextDate);
+            int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, previousDate, nextDate);
             if (incrementsCount > 0) {
-                BigDecimal balanceIncrement =
-                        DecimalUtils.multiply(simulationUnit.getBalanceIncrement(), incrementsCount);
-                Currency currency = getCurrency(fakeTinkoffService, simulationUnit.getTicker());
+                BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceIncrement, incrementsCount);
+                Currency currency = getCurrency(fakeTinkoffService, ticker);
                 BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
-                log.debug("Incrementing balance {} by {}", currentBalance, balanceIncrement);
-                fakeTinkoffService.incrementBalance(currency, balanceIncrement);
+                log.debug("Incrementing balance {} by {}", currentBalance, totalBalanceIncrement);
+                fakeTinkoffService.incrementBalance(currency, totalBalanceIncrement);
             }
-        } else {
-            fakeTinkoffService.nextMinute();
         }
     }
 

@@ -11,7 +11,6 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.web.model.pojo.SimulationUnit;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -182,13 +181,6 @@ public class TestDataHelper {
                 Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
         offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
         return offsetDateTimeStaticMock;
-    }
-
-    public static SimulationUnit createSimulationUnit(String ticker, BigDecimal initialBalance) {
-        SimulationUnit simulationUnit = new SimulationUnit();
-        simulationUnit.setTicker(ticker);
-        simulationUnit.setInitialBalance(initialBalance);
-        return simulationUnit;
     }
 
     public static DecisionData createDecisionData(Candle... candles) {

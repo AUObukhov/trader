@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils;
+package ru.obukhov.trader.test.utils.matchers;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

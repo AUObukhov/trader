@@ -18,7 +18,6 @@ import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -36,7 +35,14 @@ public class BotController {
         Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        Map<String, List<SimulationResult>> results = simulator.simulate(request.getSimulationUnits(), interval, saveToFiles);
+        List<SimulationResult> results = simulator.simulate(
+                request.getTicker(),
+                request.getInitialBalance(),
+                request.getBalanceIncrement(),
+                request.getBalanceIncrementCron(),
+                interval,
+                saveToFiles
+        );
 
         return new SimulateResponse(results);
 

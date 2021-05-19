@@ -18,12 +18,11 @@ import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
-import ru.obukhov.trader.web.model.pojo.SimulationUnit;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -56,7 +55,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> new SimulatorImpl(excelService, fakeBotFactory, -1),
                 IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1");
+                "simulationThreadCount must be greater than 1"
+        );
     }
 
     @Test
@@ -64,7 +64,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> new SimulatorImpl(excelService, fakeBotFactory, 0),
                 IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1");
+                "simulationThreadCount must be greater than 1"
+        );
     }
 
     @Test
@@ -72,7 +73,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> new SimulatorImpl(excelService, fakeBotFactory, 1),
                 IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1");
+                "simulationThreadCount must be greater than 1"
+        );
     }
 
     // endregion
@@ -80,57 +82,57 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     // region simulate tests
 
     @Test
-    void simulate_throwsIllegalArgumentException_whenFromIsInFuture() {
+    void simulate_throwsIllegalArgumentException_whenFromIsInFuture() throws ParseException {
         final String ticker = "ticker";
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
         final Interval interval = Interval.of(from, to);
 
         final String expectedMessagePattern = String.format(
-                "^java.lang.IllegalArgumentException: 'from' \\(%1$s\\) can't be in future. Now is %1$s$",
+                "^'from' \\(%1$s\\) can't be in future. Now is %1$s$",
                 DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(simulationUnits, interval, false),
-                RuntimeException.class,
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false),
+                IllegalArgumentException.class,
                 expectedMessagePattern
         );
     }
 
     @Test
-    void simulate_throwsIllegalArgumentException_whenToIsInFuture() {
+    void simulate_throwsIllegalArgumentException_whenToIsInFuture() throws ParseException {
         final String ticker = "ticker";
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
         final Interval interval = Interval.of(from, to);
 
         final String expectedMessagePattern = String.format(
-                "^java.lang.IllegalArgumentException: 'to' \\(%1$s\\) can't be in future. Now is %1$s$",
+                "^'to' \\(%1$s\\) can't be in future. Now is %1$s$",
                 DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(simulationUnits, interval, false),
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
     }
 
     @Test
-    void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
+    void simulate_returnsResultWithEmptyValues_whenTickerNotFound() throws ParseException {
         // arrange
 
         final String ticker = "ticker";
@@ -142,8 +144,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -151,12 +153,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertEquals(botName, simulationResult.getBotName());
         Assertions.assertEquals(interval, simulationResult.getInterval());
@@ -178,7 +182,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_fillsCommonStatistics() {
+    void simulate_fillsCommonStatistics() throws ParseException {
 
         // arrange
 
@@ -193,8 +197,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -220,7 +224,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
@@ -231,12 +235,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertEquals(botName, simulationResult.getBotName());
         Assertions.assertEquals(interval, simulationResult.getInterval());
@@ -275,11 +281,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        simulationUnit.setBalanceIncrementCron(new CronExpression("0 * * * * ?"));
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
-        simulationUnit.setBalanceIncrement(balanceIncrement);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -305,7 +308,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
@@ -316,12 +319,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertNull(simulationResult.getError());
 
@@ -333,7 +338,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_fillsPositions() {
+    void simulate_fillsPositions() throws ParseException {
 
         // arrange
 
@@ -348,8 +353,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -375,7 +380,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final int positionLotsCount = 2;
@@ -384,12 +389,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         final List<SimulatedPosition> positions = simulationResult.getPositions();
         Assertions.assertEquals(1, positions.size());
@@ -402,7 +409,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_fillsOperations() {
+    void simulate_fillsOperations() throws ParseException {
 
         // arrange
 
@@ -417,8 +424,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -430,7 +437,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final OffsetDateTime operationDateTime = from.plusMinutes(2);
@@ -451,12 +458,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         List<SimulatedOperation> resultOperations = simulationResult.getOperations();
         Assertions.assertEquals(1, resultOperations.size());
@@ -472,7 +481,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_fillsCandles() {
+    void simulate_fillsCandles() throws ParseException {
 
         // arrange
 
@@ -487,8 +496,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = null;
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -514,17 +523,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         List<Candle> candles = simulationResult.getCandles();
         Assertions.assertEquals(5, candles.size());
@@ -541,7 +552,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_notFillsCandles_whenDecisionDataIsNull() {
+    void simulate_notFillsCandles_whenDecisionDataIsNull() throws ParseException {
 
         // arrange
 
@@ -556,8 +567,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = null;
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -565,17 +576,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
@@ -585,7 +598,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull() {
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull() throws ParseException {
 
         // arrange
 
@@ -600,8 +613,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = null;
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -611,17 +624,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
@@ -631,7 +646,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty() {
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty() throws ParseException {
 
         // arrange
 
@@ -646,8 +661,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = null;
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -657,17 +672,19 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
@@ -677,7 +694,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_callsSaveToFile_whenSaveToFilesIsTrue() {
+    void simulate_callsSaveToFile_whenSaveToFilesIsTrue() throws ParseException {
 
         // arrange
 
@@ -692,8 +709,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -705,7 +722,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -713,19 +730,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, true);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, true);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
     }
 
     @Test
-    void simulate_neverCallsSaveToFile_whenSaveToFilesIsFalse() {
+    void simulate_neverCallsSaveToFile_whenSaveToFilesIsFalse() throws ParseException {
 
         // arrange
 
@@ -740,8 +759,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -753,7 +772,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -761,19 +780,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any(), Mockito.any());
     }
 
     @Test
-    void simulate_catchesSimulationException() {
+    void simulate_catchesSimulationException() throws ParseException {
 
         // arrange
 
@@ -788,8 +809,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -797,12 +818,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, false);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         String expectedErrorMessage = String.format("Simulation for '%s' with ticker '%s' failed with error: %s",
                 botName, ticker, mockedExceptionMessage);
@@ -810,7 +833,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_catchesSaveToFileException() {
+    void simulate_catchesSaveToFileException() throws ParseException {
 
         // arrange
 
@@ -825,8 +848,8 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, 2);
 
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final SimulationUnit simulationUnit = TestDataHelper.createSimulationUnit(ticker, initialBalance);
-        final List<SimulationUnit> simulationUnits = List.of(simulationUnit);
+        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final CronExpression cronExpression = new CronExpression("0 * * * * ?");
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -838,7 +861,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, simulationUnit.getInitialBalance());
+        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -849,12 +872,14 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        Map<String, List<SimulationResult>> tickerToSimulationResults =
-                simulator.simulate(simulationUnits, interval, true);
+        List<SimulationResult> simulationResults =
+                simulator.simulate(ticker, initialBalance, balanceIncrement, cronExpression, interval, false);
 
         // assert
 
-        SimulationResult simulationResult = assertAndGetSingleSimulationResult(tickerToSimulationResults, ticker);
+        Assertions.assertEquals(1, simulationResults.size());
+
+        SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertNull(simulationResult.getError());
     }

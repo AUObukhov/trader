@@ -1,18 +1,9 @@
 {
-  "simulationUnits": [
-    {
-      "ticker": "ticker1",
-      "initialBalance": 1000,
-      "balanceIncrement": 100,
-      "balanceIncrementCron": "0 0 0 1 * ?"
-    },
-    {
-      "ticker": "ticker2",
-      "initialBalance": 2000,
-      "balanceIncrement": 200,
-      "balanceIncrementCron": "0 0 0 2 * ?"
-    }
-  ],
+  "ticker": "ticker",
+  "initialBalance": 1000,
+  "balanceIncrement": 100,
+  "balanceIncrementCron": "0 0 0 1 * ?",
+  "candleResolution": "1min",
   "from": "2021-01-01T10:00:00+03:00",
   "to": "2021-02-01T00:00:00+03:00",
   "saveToFiles": true

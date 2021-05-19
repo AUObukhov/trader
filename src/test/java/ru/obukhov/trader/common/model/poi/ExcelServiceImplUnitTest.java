@@ -69,13 +69,18 @@ class ExcelServiceImplUnitTest extends BaseMockedTest {
         excelService.saveSimulationResults(ticker, results);
 
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
-        Mockito.verify(excelFileService, Mockito.times(1))
+        Mockito.verify(excelFileService, Mockito.times(3))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
-        Assertions.assertEquals(results.size(), workbook.getNumberOfSheets());
+        List<ExtendedWorkbook> workbooks = workbookArgumentCaptor.getAllValues();
+        Assertions.assertEquals(results.size(), workbooks.size());
 
-        for (SimulationResult result : results) {
+        for (int i = 0; i < results.size(); i++) {
+            SimulationResult result = results.get(i);
+
+            ExtendedWorkbook workbook = workbooks.get(i);
+            Assertions.assertEquals(1, workbook.getNumberOfSheets());
+
             ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
             int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();

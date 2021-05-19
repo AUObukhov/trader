@@ -1,56 +1,52 @@
 {
-  "results": {
-    "ticker1": [
-      {
-        "botName": "ticker1 bot1",
-        "interval": {
-          "from": "2021-01-01T10:00:00+03:00",
-          "to": "2021-02-01T00:00:00+03:00"
-        },
-        "initialBalance": 100000,
-        "totalInvestment": 100000,
-        "weightedAverageInvestment": 100000,
-        "finalTotalBalance": 200000,
-        "finalBalance": 200000,
-        "absoluteProfit": 100000,
-        "relativeProfit": 1.0,
-        "relativeYearProfit": 12.0,
-        "error": null
+  "results": [
+    {
+      "botName": "bot1",
+      "interval": {
+        "from": "2021-01-01T10:00:00+03:00",
+        "to": "2021-02-01T00:00:00+03:00"
       },
-      {
-        "botName": "ticker1 bot2",
-        "interval": {
-          "from": "2021-01-01T10:00:00+03:00",
-          "to": "2021-02-01T00:00:00+03:00"
-        },
-        "initialBalance": 1000000,
-        "totalInvestment": 1000000,
-        "weightedAverageInvestment": 1000000,
-        "finalTotalBalance": 2000000,
-        "finalBalance": 1000000,
-        "absoluteProfit": 100000,
-        "relativeProfit": 1.0,
-        "relativeYearProfit": 12.0,
-        "error": null
-      }
-    ],
-    "ticker2": [
-      {
-        "botName": "ticker2 bot1",
-        "interval": {
-          "from": "2021-01-01T10:00:00+03:00",
-          "to": "2021-02-01T00:00:00+03:00"
-        },
-        "initialBalance": 200000,
-        "totalInvestment": 200000,
-        "weightedAverageInvestment": 200000,
-        "finalTotalBalance": 400000,
-        "finalBalance": 300000,
-        "absoluteProfit": 100000,
-        "relativeProfit": 0.33,
-        "relativeYearProfit": 4.0,
-        "error": "error"
-      }
-    ]
-  }
+      "initialBalance": 1000,
+      "totalInvestment": 1000,
+      "weightedAverageInvestment": 1000,
+      "finalTotalBalance": 2000,
+      "finalBalance": 2000,
+      "absoluteProfit": 1000,
+      "relativeProfit": 1.0,
+      "relativeYearProfit": 12.0,
+      "error": null
+    },
+    {
+      "botName": "bot2",
+      "interval": {
+        "from": "2021-01-01T10:00:00+03:00",
+        "to": "2021-02-01T00:00:00+03:00"
+      },
+      "initialBalance": 1000,
+      "totalInvestment": 10000,
+      "weightedAverageInvestment": 10000,
+      "finalTotalBalance": 20000,
+      "finalBalance": 10000,
+      "absoluteProfit": 1000,
+      "relativeProfit": 1.0,
+      "relativeYearProfit": 12.0,
+      "error": null
+    },
+    {
+      "botName": "bot3",
+      "interval": {
+        "from": "2021-01-01T10:00:00+03:00",
+        "to": "2021-02-01T00:00:00+03:00"
+      },
+      "initialBalance": 1000,
+      "totalInvestment": 2000,
+      "weightedAverageInvestment": 2000,
+      "finalTotalBalance": 4000,
+      "finalBalance": 3000,
+      "absoluteProfit": 1000,
+      "relativeProfit": 0.33,
+      "relativeYearProfit": 4.0,
+      "error": "error"
+    }
+  ]
 }
