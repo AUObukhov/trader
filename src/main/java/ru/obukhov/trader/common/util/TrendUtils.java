@@ -56,9 +56,11 @@ public class TrendUtils {
     public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
         Assert.isTrue(window > 0, "window must be positive");
 
+        int size = values.size();
+
         // filling of first {window} averages
-        List<BigDecimal> movingAverages = new ArrayList<>(values.size());
-        int count = Math.min(window, values.size());
+        List<BigDecimal> movingAverages = new ArrayList<>(size);
+        int count = Math.min(window, size);
         for (int i = 0; i < count; i++) {
             BigDecimal sum = BigDecimal.ZERO;
             for (int j = 0; j <= i; j++) {
@@ -70,8 +72,7 @@ public class TrendUtils {
         }
 
         // filling of the rest averages
-        count = values.size();
-        for (int i = window; i < count; i++) {
+        for (int i = window; i < size; i++) {
             BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
             BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
             BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
