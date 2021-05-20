@@ -1,9 +1,9 @@
 package ru.obukhov.trader.bot.interfaces;
 
-import java.util.Set;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 
 public interface BotFactory {
 
-    Set<Bot> createBots();
+    Bot createBot(TradingStrategy strategy);
 
 }

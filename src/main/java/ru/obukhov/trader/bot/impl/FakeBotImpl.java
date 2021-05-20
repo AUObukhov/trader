@@ -21,25 +21,7 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
         return strategy.getName();
     }
 
-    public static FakeBotImpl create(
-            TradingStrategy strategy,
-            MarketService marketService,
-            OperationsService operationsService,
-            OrdersService ordersService,
-            PortfolioService portfolioService,
-            FakeTinkoffService fakeTinkoffService
-    ) {
-        return new FakeBotImpl(
-                strategy,
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                fakeTinkoffService
-        );
-    }
-
-    private FakeBotImpl(
+    public FakeBotImpl(
             TradingStrategy strategy,
             MarketService marketService,
             OperationsService operationsService,

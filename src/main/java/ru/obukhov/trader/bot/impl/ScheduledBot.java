@@ -2,6 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.BotConfig;
@@ -15,32 +16,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
+@Component
 public class ScheduledBot extends AbstractBot {
 
     private final BotConfig botConfig;
     private final TradingProperties tradingProperties;
 
-    public static ScheduledBot create(
-            TradingStrategy strategy,
-            MarketService marketService,
-            OperationsService operationsService,
-            OrdersService ordersService,
-            PortfolioService portfolioService,
-            BotConfig botConfig,
-            TradingProperties tradingProperties
-    ) {
-        return new ScheduledBot(
-                strategy,
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                botConfig,
-                tradingProperties
-        );
-    }
-
-    private ScheduledBot(
+    public ScheduledBot(
             TradingStrategy strategy,
             MarketService marketService,
             OperationsService operationsService,

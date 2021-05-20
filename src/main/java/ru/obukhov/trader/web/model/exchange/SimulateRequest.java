@@ -2,13 +2,16 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Data;
 import org.quartz.CronExpression;
+import ru.obukhov.trader.bot.model.StrategyConfig;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 @Valid
@@ -32,6 +35,10 @@ public class SimulateRequest {
     private OffsetDateTime from;
 
     private OffsetDateTime to;
+
+    @Valid
+    @NotEmpty(message = "strategiesConfigs is mandatory")
+    private List<StrategyConfig> strategiesConfigs;
 
     private Boolean saveToFiles;
 

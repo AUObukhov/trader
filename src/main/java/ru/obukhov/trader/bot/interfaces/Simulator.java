@@ -1,6 +1,7 @@
 package ru.obukhov.trader.bot.interfaces;
 
 import org.quartz.CronExpression;
+import ru.obukhov.trader.bot.model.StrategyConfig;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
 
@@ -13,6 +14,7 @@ public interface Simulator {
             BigDecimal initialBalance,
             BigDecimal balanceIncrement,
             CronExpression balanceIncrementCron,
+            List<StrategyConfig> strategiesConfigs,
             Interval interval,
             boolean saveToFiles
     );

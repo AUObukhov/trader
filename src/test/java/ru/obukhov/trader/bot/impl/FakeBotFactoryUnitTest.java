@@ -3,25 +3,14 @@ package ru.obukhov.trader.bot.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.Bot;
+import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.bot.strategy.impl.ConservativeStrategy;
-import ru.obukhov.trader.bot.strategy.impl.GoldenCrossStrategy;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketServiceImpl;
-import ru.obukhov.trader.market.impl.OperationsServiceImpl;
-import ru.obukhov.trader.market.impl.OrdersServiceImpl;
-import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 class FakeBotFactoryUnitTest extends BaseMockedTest {
 
@@ -33,49 +22,14 @@ class FakeBotFactoryUnitTest extends BaseMockedTest {
     private RealTinkoffService tinkoffService;
 
     @Test
-    void createBots_createsBots() {
-        try (MockedStatic<FakeBotImpl> fakeBotImplStaticMock =
-                     Mockito.mockStatic(FakeBotImpl.class, Mockito.CALLS_REAL_METHODS)) {
+    void createBot_createsFakeBot() {
+        TradingStrategy strategy = new ConservativeStrategy(tradingProperties);
 
-            TradingStrategy strategy1 = new ConservativeStrategy(tradingProperties);
+        FakeBotFactory factory = new FakeBotFactory(tradingProperties, marketService, tinkoffService);
 
-            int smallWindow = 100;
-            int bigWindow = 95;
-            float indexCoefficient = 0.5f;
-            TradingStrategy strategy2 = new GoldenCrossStrategy(tradingProperties, smallWindow, bigWindow, indexCoefficient);
+        Bot bot = factory.createBot(strategy);
 
-            Collection<TradingStrategy> strategies = List.of(strategy1, strategy2);
-
-            FakeBotFactory factory = new FakeBotFactory(
-                    tradingProperties,
-                    marketService,
-                    tinkoffService,
-                    strategies
-            );
-
-            Set<Bot> bots = factory.createBots();
-
-            Assertions.assertEquals(strategies.size(), bots.size());
-            for (Bot bot : bots) {
-                Assertions.assertEquals(FakeBotImpl.class, bot.getClass());
-            }
-
-            verifyFakeBotCreated(fakeBotImplStaticMock, strategy1);
-            verifyFakeBotCreated(fakeBotImplStaticMock, strategy2);
-        }
-    }
-
-    private void verifyFakeBotCreated(MockedStatic<FakeBotImpl> fakeBotStaticMock, TradingStrategy strategy) {
-        fakeBotStaticMock.verify(
-                () -> FakeBotImpl.create(
-                        Mockito.eq(strategy),
-                        Mockito.any(MarketServiceImpl.class),
-                        Mockito.any(OperationsServiceImpl.class),
-                        Mockito.any(OrdersServiceImpl.class),
-                        Mockito.any(PortfolioServiceImpl.class),
-                        Mockito.any(FakeTinkoffService.class)
-                )
-        );
+        Assertions.assertTrue(bot instanceof FakeBot);
     }
 
 }

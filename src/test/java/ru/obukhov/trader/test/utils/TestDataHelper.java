@@ -1,8 +1,10 @@
 package ru.obukhov.trader.test.utils;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.quartz.CronExpression;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
@@ -345,6 +347,11 @@ public class TestDataHelper {
             values.add(DecimalUtils.setDefaultScale(random.nextDouble()));
         }
         return values;
+    }
+
+    @SneakyThrows
+    public static CronExpression createCronExpression() {
+        return new CronExpression("0 * * * * ?");
     }
 
 }

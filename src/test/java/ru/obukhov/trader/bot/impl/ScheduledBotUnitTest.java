@@ -61,7 +61,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
 
     @BeforeEach
     void setUp() {
-        bot = ScheduledBot.create(
+        this.bot = new ScheduledBot(
                 strategy,
                 marketService,
                 operationsService,

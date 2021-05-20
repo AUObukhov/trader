@@ -12,6 +12,8 @@ import ru.obukhov.trader.bot.interfaces.BotFactory;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.interfaces.Simulator;
 import ru.obukhov.trader.bot.model.DecisionData;
+import ru.obukhov.trader.bot.model.StrategyConfig;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
@@ -39,7 +41,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
@@ -59,16 +60,19 @@ public class SimulatorImpl implements Simulator {
     private final ExcelService excelService;
     private final BotFactory fakeBotFactory;
     private final ExecutorService executor;
+    private final TradingStrategyFactory strategyFactory;
 
     public SimulatorImpl(
             ExcelService excelService,
             BotFactory fakeBotFactory,
+            TradingStrategyFactory strategyFactory,
             @Value("${simulation.thread-count:10}") Integer simulationThreadCount
     ) {
         Assert.isTrue(simulationThreadCount > 1, "simulationThreadCount must be greater than 1");
 
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
+        this.strategyFactory = strategyFactory;
         this.executor = Executors.newFixedThreadPool(simulationThreadCount);
     }
 
@@ -87,6 +91,7 @@ public class SimulatorImpl implements Simulator {
             BigDecimal initialBalance,
             BigDecimal balanceIncrement,
             CronExpression balanceIncrementCron,
+            List<StrategyConfig> strategiesConfigs,
             Interval interval,
             boolean saveToFiles
     ) {
@@ -98,7 +103,8 @@ public class SimulatorImpl implements Simulator {
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
-        List<CompletableFuture<SimulationResult>> simulationFutures = createFakeBots().stream()
+        List<CompletableFuture<SimulationResult>> simulationFutures = strategiesConfigs.stream()
+                .map(this::createFakeBot)
                 .map(bot -> startSimulation(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, finiteInterval))
                 .collect(Collectors.toList());
         List<SimulationResult> simulationResults = simulationFutures.stream()
@@ -117,9 +123,9 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
-    @SuppressWarnings("unchecked")
-    private Set<FakeBot> createFakeBots() {
-        return (Set<FakeBot>) (Set<?>) fakeBotFactory.createBots();
+    private FakeBot createFakeBot(StrategyConfig strategyConfig) {
+        final TradingStrategy strategy = strategyFactory.createStrategy(strategyConfig);
+        return (FakeBot) fakeBotFactory.createBot(strategy);
     }
 
     private CompletableFuture<SimulationResult> startSimulation(

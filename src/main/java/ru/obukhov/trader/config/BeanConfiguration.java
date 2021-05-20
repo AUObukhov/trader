@@ -3,6 +3,9 @@ package ru.obukhov.trader.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.obukhov.trader.bot.impl.TradingStrategyFactory;
+import ru.obukhov.trader.bot.model.StrategyConfig;
+import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -60,6 +63,11 @@ public class BeanConfiguration {
     @Bean
     public StatisticsService statisticsService(MarketService realMarketService) {
         return new StatisticsServiceImpl(realMarketService);
+    }
+
+    @Bean
+    public TradingStrategy tradingStrategy(TradingStrategyFactory strategyFactory, StrategyConfig strategyConfig) {
+        return strategyFactory.createStrategy(strategyConfig);
     }
 
 }

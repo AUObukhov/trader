@@ -124,6 +124,7 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(initialBalance)),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement)),
                         ArgumentMatchers.argThat(CronExpressionMatcher.of(balanceIncrementCron)),
+                        Mockito.anyList(),
                         Mockito.any(Interval.class),
                         Mockito.eq(true)
                 )
@@ -144,6 +145,7 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(initialBalance)),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement)),
                         ArgumentMatchers.argThat(CronExpressionMatcher.of(balanceIncrementCron)),
+                        Mockito.anyList(),
                         Mockito.any(Interval.class),
                         Mockito.eq(true)
                 );
