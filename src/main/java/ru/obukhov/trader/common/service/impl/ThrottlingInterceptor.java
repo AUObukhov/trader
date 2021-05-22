@@ -28,8 +28,10 @@ public class ThrottlingInterceptor implements Interceptor {
     public ThrottlingInterceptor(QueryThrottleProperties queryThrottleProperties) {
         this.queryThrottleProperties = queryThrottleProperties;
         this.counters = createCounters(queryThrottleProperties);
-        this.defaultCounter =
-                new ThrottledCounter(queryThrottleProperties.getInterval(), queryThrottleProperties.getDefaultLimit());
+        this.defaultCounter = new ThrottledCounter(
+                queryThrottleProperties.getDefaultLimit(),
+                queryThrottleProperties.getInterval()
+        );
     }
 
     private Map<UrlLimit, ThrottledCounter> createCounters(QueryThrottleProperties queryThrottleProperties) {
@@ -37,7 +39,7 @@ public class ThrottlingInterceptor implements Interceptor {
 
         Map<UrlLimit, ThrottledCounter> result = new HashMap<>();
         for (UrlLimit limit : queryThrottleProperties.getLimits()) {
-            ThrottledCounter counter = new ThrottledCounter(interval, limit.getLimit());
+            ThrottledCounter counter = new ThrottledCounter(limit.getLimit(), interval);
             result.put(limit, counter);
         }
         return result;

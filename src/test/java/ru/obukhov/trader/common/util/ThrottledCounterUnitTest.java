@@ -12,7 +12,7 @@ class ThrottledCounterUnitTest {
     @Test
     void decrementingValue_whenIntervalPassed() throws InterruptedException {
 
-        ThrottledCounter counter = new ThrottledCounter(1000, 3);
+        ThrottledCounter counter = new ThrottledCounter(3, 1000);
         counter.increment();
         int value1 = counter.getValue();
 
@@ -39,7 +39,7 @@ class ThrottledCounterUnitTest {
     @Test
     void waiting_whenValueIsMax() throws InterruptedException {
 
-        ThrottledCounter counter = new ThrottledCounter(1000, 3);
+        ThrottledCounter counter = new ThrottledCounter(3, 1000);
         long start = System.currentTimeMillis();
 
         long elapsed1 = TestUtils.runAndGetElapsedMillis(counter::increment);
