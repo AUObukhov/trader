@@ -89,7 +89,7 @@ class ThrottledCounterUnitTest {
 
     @Test
     void threadSafetyTest() throws InterruptedException {
-        final ThrottledCounter counter = new ThrottledCounter(100, 5);
+        final ThrottledCounter counter = new ThrottledCounter(5, 100);
         AtomicReference<Exception> error = new AtomicReference<>();
 
         final Runnable target = () -> {
