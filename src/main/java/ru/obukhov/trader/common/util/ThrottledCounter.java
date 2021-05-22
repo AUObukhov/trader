@@ -84,9 +84,7 @@ public class ThrottledCounter {
     private class DecrementTask extends TimerTask {
         @Override
         public void run() {
-            synchronized (this) {
-                counterWithMaxValue.decrement();
-            }
+            counterWithMaxValue.decrement();
         }
     }
 

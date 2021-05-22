@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class ThrottledCounterUnitTest {
 
@@ -81,6 +85,34 @@ class ThrottledCounterUnitTest {
         Assertions.assertEquals(2, value5);
         Assertions.assertEquals(1, value6);
         Assertions.assertEquals(0, value7);
+    }
+
+    @Test
+    void threadSafetyTest() throws InterruptedException {
+        final ThrottledCounter counter = new ThrottledCounter(100, 5);
+        AtomicReference<Exception> error = new AtomicReference<>();
+
+        final Runnable target = () -> {
+            try {
+                for (int i = 0; i < 20; i++) {
+                    counter.increment();
+                }
+            } catch (Exception exception) {
+                error.set(exception);
+            }
+        };
+
+        List<Thread> threads = Stream.generate(() -> new Thread(target)).limit(5).collect(Collectors.toList());
+
+        threads.forEach(Thread::start);
+
+        TimeUnit.MILLISECONDS.sleep(3000);
+
+        for (Thread thread : threads) {
+            Assertions.assertEquals(Thread.State.TERMINATED, thread.getState(), "probably deadlock");
+        }
+
+        Assertions.assertNull(error.get());
     }
 
 }
