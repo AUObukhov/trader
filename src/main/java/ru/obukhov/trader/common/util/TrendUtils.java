@@ -25,7 +25,10 @@ public class TrendUtils {
      * Factor, that representing the duration of the restriction line
      * in compare to distance between extremes used to build this line
      */
-    static final double RESTRAINT_DURATION_FACTOR = 2.0;
+    private static final double RESTRAINT_DURATION_FACTOR = 2.0;
+
+    private static final String WINDOW_MUST_BE_POSITIVE_MESSAGE = "window must be positive";
+    private static final String ORDER_MUST_BE_POSITIVE_MESSAGE = "order must be positive";
 
     // region getSimpleMovingAverages
 
@@ -54,7 +57,7 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
-        Assert.isTrue(window > 0, "window must be positive");
+        Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
         int size = values.size();
 
@@ -115,7 +118,7 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window, int order) {
-        Assert.isTrue(order > 0, "order must be positive");
+        Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
 
         List<BigDecimal> averages = new ArrayList<>(values);
         for (int i = 0; i < order; i++) {
@@ -150,7 +153,7 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window) {
-        Assert.isTrue(window > 0, "window must be positive");
+        Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
         List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
@@ -249,7 +252,7 @@ public class TrendUtils {
             double weightDecrease,
             int order
     ) {
-        Assert.isTrue(order > 0, "order must be positive");
+        Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
         Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
                 "weightDecrease must be in range (0; 1]");
 
