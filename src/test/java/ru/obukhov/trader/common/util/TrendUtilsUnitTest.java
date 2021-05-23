@@ -23,7 +23,7 @@ class TrendUtilsUnitTest {
     // region getSimpleMovingAverages tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forGetSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException() {
+    static Stream<Arguments> getData_forGetSimpleMovingAverages_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), -1, "window must be positive"),
                 Arguments.of(Collections.emptyList(), 0, "window must be positive")
@@ -31,23 +31,7 @@ class TrendUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forGetSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException")
-    void getSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
-    ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getSimpleMovingAverages(bigDecimalValues, window),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException")
+    @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
     void getSimpleMovingAverages_withValueExtractor_throwsIllegalArgumentException(
             List<Double> values,
             int window,
@@ -62,6 +46,23 @@ class TrendUtilsUnitTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
+    void getSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException(
+            List<Double> values,
+            int window,
+            String expectedMessage
+    ) {
+        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getSimpleMovingAverages(bigDecimalValues, window),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSimpleMovingAverages() {
         return Stream.of(
                 Arguments.of(
@@ -130,14 +131,14 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
-    void getSimpleMovingAverages_withoutValueExtractor(
+    void getSimpleMovingAverages_withValueExtractor(
             List<Double> values,
             int window,
             List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(bigDecimalValues, window);
+        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
         List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
@@ -152,14 +153,14 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
-    void getSimpleMovingAverages_withValueExtractor(
+    void getSimpleMovingAverages_withoutValueExtractor(
             List<Double> values,
             int window,
             List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(elements, Optional::get, window);
+        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(bigDecimalValues, window);
 
         List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
