@@ -7,14 +7,17 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -48,7 +51,28 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
-    void getSimpleMovingAverages_withoutValueExtractor_throwsIllegalArgumentException(
+    void getSimpleMovingAverages_withKeyValueExtractors_throwsIllegalArgumentException(
+            List<Double> values,
+            int window,
+            String expectedMessage
+    ) {
+        List<Candle> candles = new ArrayList<>(values.size());
+        OffsetDateTime now = OffsetDateTime.now();
+        for (int i = 0; i < values.size(); i++) {
+            Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
+            candles.add(candle);
+        }
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> TrendUtils.getSimpleMovingAverages(candles, Candle::getTime, Candle::getOpenPrice, window),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
+    void getSimpleMovingAverages_withoutExtractors_throwsIllegalArgumentException(
             List<Double> values,
             int window,
             String expectedMessage
@@ -153,7 +177,36 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
-    void getSimpleMovingAverages_withoutValueExtractor(
+    void getSimpleMovingAverages_withKeyValueExtractors(
+            List<Double> values,
+            int window,
+            List<Double> expectedValues
+    ) {
+        List<Candle> candles = new ArrayList<>(values.size());
+        OffsetDateTime now = OffsetDateTime.now();
+        for (int i = 0; i < values.size(); i++) {
+            Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
+            candles.add(candle);
+        }
+
+        Map<OffsetDateTime, BigDecimal> movingAverages =
+                TrendUtils.getSimpleMovingAverages(candles, Candle::getTime, Candle::getOpenPrice, window);
+
+        List<BigDecimal> actualValues = new ArrayList<>(movingAverages.values());
+        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, actualValues);
+
+        for (BigDecimal average : actualValues) {
+            Assertions.assertTrue(
+                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
+                    "expected default scale for all averages"
+            );
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetSimpleMovingAverages")
+    void getSimpleMovingAverages_withoutExtractors(
             List<Double> values,
             int window,
             List<Double> expectedValues

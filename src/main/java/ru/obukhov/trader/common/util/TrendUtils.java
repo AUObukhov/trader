@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,53 @@ public class TrendUtils {
     ) {
         List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getSimpleMovingAverages(values, window);
+    }
+
+    /**
+     * Calculates simple moving averages of given {@code elements}
+     *
+     * @param elements       elements containing values, for which averages are calculated for
+     * @param keyExtractor   function to get key from current element
+     * @param valueExtractor function to get value from current element
+     * @param window         count of values, used for calculation of each average, must be positive
+     * @return map with times as keys and calculated averages as values
+     */
+    public static <T> Map<OffsetDateTime, BigDecimal> getSimpleMovingAverages(
+            List<T> elements,
+            Function<T, OffsetDateTime> keyExtractor,
+            Function<T, BigDecimal> valueExtractor,
+            int window
+    ) {
+        Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
+
+        final int size = elements.size();
+
+        List<OffsetDateTime> keys = elements.stream().map(keyExtractor).collect(Collectors.toList());
+        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        LinkedHashMap<OffsetDateTime, BigDecimal> movingAverages = new LinkedHashMap<>(size, 1.0f);
+        // filling of first {window} averages
+        int count = Math.min(window, size);
+        BigDecimal previousAverage = BigDecimal.ZERO;
+        for (int i = 0; i < count; i++) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (int j = 0; j <= i; j++) {
+                BigDecimal value = values.get(j);
+                sum = sum.add(value);
+            }
+            previousAverage = DecimalUtils.divide(sum, i + 1);
+            movingAverages.put(keys.get(i), previousAverage);
+        }
+
+        // filling of the rest averages
+        for (int i = window; i < size; i++) {
+            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
+            BigDecimal currentAverage = previousAverage.subtract(excludedValue).add(addedValue);
+            movingAverages.put(keys.get(i), currentAverage);
+            previousAverage = currentAverage;
+        }
+
+        return movingAverages;
     }
 
     /**
