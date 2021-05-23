@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
@@ -52,7 +53,7 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsZero() {
         DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(0)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -65,7 +66,7 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsBuy_whenCrossoverIsOne_andThereAreAvailableLots() {
         DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(1)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
@@ -78,7 +79,7 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsOne_andThereAreNoAvailableLots() {
         DecisionData data = TestDataHelper.createDecisionData(1000, 1000, 1);
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(1)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -92,7 +93,7 @@ class GoldenCrossStrategyUnitTest {
         DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(-1)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
@@ -106,7 +107,7 @@ class GoldenCrossStrategyUnitTest {
         DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(-1)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
@@ -120,7 +121,7 @@ class GoldenCrossStrategyUnitTest {
         DecisionData data = TestDataHelper.createDecisionData(200, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
-        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(-1)) {
+        try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -128,7 +129,7 @@ class GoldenCrossStrategyUnitTest {
         }
     }
 
-    private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(int crossover) {
+    private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(Crossover crossover) {
         MockedStatic<TrendUtils> trendUtilsStaticMock =
                 Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
 

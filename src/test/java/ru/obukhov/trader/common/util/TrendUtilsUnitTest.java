@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -1422,87 +1423,87 @@ class TrendUtilsUnitTest {
                         List.of(),
                         List.of(),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 Arguments.of(
                         List.of(4.0),
                         List.of(3.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
-                // crossover from below and it is last
+                // crossover from above and it is last
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(0.0, 1.0, 4.0, 5.0, 7.0),
                         2,
-                        -1
+                        Crossover.ABOVE
                 ),
                 // crossover from below and it is not last because of another crossover
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(0.0, 1.0, 4.0, 5.0, 3.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 // crossover from below and it is not last because of touch
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(0.0, 1.0, 4.0, 4.0, 7.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
-                // crossover from above and it is last
+                // crossover from below and it is last
                 Arguments.of(
                         List.of(0.0, 1.0, 4.0, 5.0, 7.0),
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         2,
-                        1
+                        Crossover.BELOW
                 ),
                 // crossover from above and it is not last because of another crossover
                 Arguments.of(
                         List.of(0.0, 1.0, 4.0, 5.0, 3.0),
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 // crossover from above and it is not last because of touch
                 Arguments.of(
                         List.of(0.0, 1.0, 4.0, 4.0, 7.0),
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 // no crossover because collections are equal
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 // no crossover because values1 is above values2
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(0.0, 1.0, 2.0, 3.0, 4.0),
                         2,
-                        0
+                        Crossover.NONE
                 ),
                 // no crossover because values1 is below values2
                 Arguments.of(
                         List.of(1.0, 2.0, 3.0, 4.0, 5.0),
                         List.of(2.0, 3.0, 4.0, 5.0, 6.0),
                         2,
-                        0
+                        Crossover.NONE
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetCrossoverIfLast")
-    void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, int expectedCrossover) {
+    void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, Crossover expectedCrossover) {
         List<BigDecimal> bigDecimalValues1 = TestDataHelper.getBigDecimalValues(values1);
         List<BigDecimal> bigDecimalValues2 = TestDataHelper.getBigDecimalValues(values2);
 
-        int crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
+        Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
 
         Assertions.assertEquals(expectedCrossover, crossover);
     }

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.common.model.Line;
 import ru.obukhov.trader.common.model.Point;
 
@@ -585,20 +586,20 @@ public class TrendUtils {
     // endregion
 
     /**
-     * @return 0 if not enough values too calculate crossovers or if there is no crossover<br/>
-     * 1 if {@code values1} crosses {@code values2} from below at given {@code index} and
+     * @return - {@link Crossover#NONE} if not enough values too calculate crossovers or if there is no crossover<br/>
+     * - {@link Crossover#ABOVE} if {@code values1} crosses {@code values2} from below at given {@code index} and
      * there are no crossovers or touches after {@code index}<br/>
-     * -1 if {@code values1} crosses {@code values2} from above at given {@code index} and
+     * - {@link Crossover#BELOW} if {@code values1} crosses {@code values2} from above at given {@code index} and
      * there are no crossovers or touches after {@code index}<br/>
      * @throws IllegalArgumentException if {@code values1} and {@code values2} have different sizes
      */
-    public static int getCrossoverIfLast(List<BigDecimal> values1, List<BigDecimal> values2, int index) {
+    public static Crossover getCrossoverIfLast(List<BigDecimal> values1, List<BigDecimal> values2, int index) {
         final int size = values1.size();
 
         Assert.isTrue(size == values2.size(), "Collections must has same size");
 
         if (size < 2) {
-            return 0;
+            return Crossover.NONE;
         }
 
         final int previousIndex1 = index - 1;
@@ -614,16 +615,16 @@ public class TrendUtils {
 
         if (previousComparisonResult > 0 && currentComparisonResult < 0) {
             if (relationIsKept(values1, values2, index + 1, currentComparisonResult)) {
-                return -1;
+                return Crossover.ABOVE;
             }
         } else if (
                 previousComparisonResult < 0 && currentComparisonResult > 0 &&
                         relationIsKept(values1, values2, index + 1, currentComparisonResult)
         ) {
-            return 1;
+            return Crossover.BELOW;
         }
 
-        return 0;
+        return Crossover.NONE;
     }
 
     private static boolean relationIsKept(

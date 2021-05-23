@@ -1,6 +1,7 @@
 package ru.obukhov.trader.bot.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
@@ -52,22 +53,33 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             List<BigDecimal> longAverages = TrendUtils.getSimpleMovingAverages(values, bigWindow);
 
             final int index = (int) (indexCoefficient * (values.size() - 1));
-            final int crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
-            if (crossover == 0) {
-                decision = Decision.WAIT_DECISION;
-                log.debug("No crossover in the end. Decision is {}", decision.toPrettyString());
-            } else if (crossover > 0) {
-                decision = getBuyOrWaitDecision(data);
-            } else {
-                decision = getSellOrWaitDecision(data);
-                if (decision.getAction() == DecisionAction.WAIT) { // todo - really necessary? looks like not but profit is actually greater sometimes
-                    decision = getBuyOrWaitDecision(data);
-                }
-            }
+            final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
+            decision = getDecisionByCrossover(data, crossover);
         }
 
         return decision;
     }
 
+    private Decision getDecisionByCrossover(DecisionData data, Crossover crossover) {
+        Decision decision;
+        switch (crossover) {
+            case NONE:
+                decision = Decision.WAIT_DECISION;
+                log.debug("No crossover in the end. Decision is {}", decision.toPrettyString());
+                break;
+            case BELOW:
+                decision = getBuyOrWaitDecision(data);
+                break;
+            case ABOVE:
+                decision = getSellOrWaitDecision(data);
+                if (decision.getAction() == DecisionAction.WAIT) { // todo - really necessary? looks like not but profit is actually greater sometimes
+                    decision = getBuyOrWaitDecision(data);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown crossover type: " + crossover);
+        }
+        return decision;
+    }
 
 }
