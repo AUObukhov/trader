@@ -2,7 +2,6 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
@@ -13,6 +12,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.obukhov.trader.market.model.Candle;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -28,6 +28,7 @@ import java.util.List;
 public abstract class AbstractBot implements Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
+    private static final CandleResolution CANDLE_RESOLUTION = CandleResolution._1MIN;
 
     protected final TradingStrategy strategy;
     protected final MarketService marketService;
@@ -42,10 +43,13 @@ public abstract class AbstractBot implements Bot {
 
             List<Order> orders = ordersService.getOrders(ticker);
             if (orders.isEmpty()) {
-                fillDecisionData(decisionData, ticker);
-                if (CollectionUtils.isEmpty(decisionData.getCurrentCandles())) {
+                List<Candle> currentCandles =
+                        marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
+
+                if (currentCandles.isEmpty()) {
                     log.info("There are no candles by ticker '{}'. Do nothing", ticker);
                 } else {
+                    fillDecisionData(decisionData, currentCandles, ticker);
                     Decision decision = strategy.decide(decisionData);
                     performOperation(ticker, decision);
                 }
@@ -60,17 +64,14 @@ public abstract class AbstractBot implements Bot {
         }
     }
 
-    private void fillDecisionData(DecisionData decisionData, String ticker) {
+    private void fillDecisionData(DecisionData decisionData, List<Candle> currentCandles, String ticker) {
         MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
-        decisionData.setCurrentCandles(
-                marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CandleResolution._1MIN)
-        );
+        decisionData.setCurrentCandles(currentCandles);
         decisionData.setLastOperations(getLastWeekOperations(ticker));
         decisionData.setInstrument(instrument);
-
     }
 
     private List<Operation> getLastWeekOperations(String ticker) {

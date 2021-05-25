@@ -1,7 +1,6 @@
 package ru.obukhov.trader.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -234,7 +233,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
-        if (decisionData != null && CollectionUtils.isNotEmpty(decisionData.getCurrentCandles())) {
+        if (decisionData != null && !decisionData.getCurrentCandles().isEmpty()) {
             List<Candle> currentCandles = decisionData.getCurrentCandles();
             Candle candle = currentCandles.get(currentCandles.size() - 1);
             if (candle != null) {

@@ -88,6 +88,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
+        mockCandles(ticker, List.of(new Candle()));
         Mockito.when(marketService.getInstrument(ticker)).thenThrow(new IllegalArgumentException());
 
         DecisionData decisionData = bot.processTicker(ticker);
@@ -101,6 +102,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         MarketInstrument instrument = prepareEmptyMockedData(ticker);
+        mockCandles(ticker, List.of(new Candle()));
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
                 .thenThrow(new IllegalArgumentException());
 
@@ -115,6 +117,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
+        mockCandles(ticker, List.of(new Candle()));
         Mockito.when(portfolioService.getPosition(ticker)).thenThrow(new IllegalArgumentException());
 
         DecisionData decisionData = bot.processTicker(ticker);
@@ -145,6 +148,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
+        mockCandles(ticker, List.of(new Candle()));
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
 
@@ -185,20 +189,6 @@ class AbstractBotUnitTest extends BaseMockedTest {
         DecisionData decisionData = bot.processTicker(ticker);
 
         Assertions.assertNull(decisionData);
-    }
-
-    @Test
-    void processTicker_doesNoOrder_whenCurrentCandlesIsNull() {
-        String ticker = "ticker";
-
-        prepareEmptyMockedData(ticker);
-        mockCandles(ticker, null);
-
-        DecisionData decisionData = bot.processTicker(ticker);
-
-        Assertions.assertNotNull(decisionData);
-
-        verifyNoOrdersMade();
     }
 
     @Test
