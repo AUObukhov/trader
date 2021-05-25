@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
@@ -168,6 +169,7 @@ public class MarketServiceImpl implements MarketService {
      * within {@code trading.consecutive-empty-days-limit} days.
      */
     @Override
+    @NotNull
     public List<Candle> getLastCandles(String ticker, int limit, CandleResolution candleResolution) {
 
         OffsetDateTime to = tinkoffService.getCurrentDateTime();

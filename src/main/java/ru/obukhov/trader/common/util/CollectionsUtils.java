@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.Iterator;
@@ -15,6 +16,7 @@ public class CollectionsUtils {
     /**
      * @return list with last {@code size} elements of given {@code list}
      */
+    @NotNull
     public static <T> List<T> getTail(List<T> list, int size) {
         if (size >= list.size()) {
             return list;
