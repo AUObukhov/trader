@@ -201,10 +201,8 @@ public class SimulatorImpl implements Simulator {
 
         do {
             DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
-            if (decisionData != null) {
-                previousStartTime = getStartTime(decisionData);
-                addLastCandle(historicalCandles, decisionData);
-            }
+            previousStartTime = getStartTime(decisionData);
+            addLastCandle(historicalCandles, decisionData);
 
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));

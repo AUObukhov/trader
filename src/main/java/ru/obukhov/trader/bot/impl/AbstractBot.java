@@ -2,6 +2,7 @@ package ru.obukhov.trader.bot.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
@@ -37,34 +38,30 @@ public abstract class AbstractBot implements Bot {
     protected final PortfolioService portfolioService;
 
     @Override
+    @NotNull
     public DecisionData processTicker(String ticker, OffsetDateTime previousStartTime) {
-        try {
-            DecisionData decisionData = new DecisionData();
+        DecisionData decisionData = new DecisionData();
 
-            List<Order> orders = ordersService.getOrders(ticker);
-            if (orders.isEmpty()) {
-                List<Candle> currentCandles =
-                        marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
-                decisionData.setCurrentCandles(currentCandles);
+        List<Order> orders = ordersService.getOrders(ticker);
+        if (orders.isEmpty()) {
+            List<Candle> currentCandles =
+                    marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
+            decisionData.setCurrentCandles(currentCandles);
 
-                if (currentCandles.isEmpty()) {
-                    log.info("There are no candles by ticker '{}'. Do nothing", ticker);
-                } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
-                    log.info("Candles scope already processed for ticker '{}'. Do nothing", ticker);
-                } else {
-                    fillDecisionData(decisionData, ticker);
-                    Decision decision = strategy.decide(decisionData);
-                    performOperation(ticker, decision);
-                }
+            if (currentCandles.isEmpty()) {
+                log.info("There are no candles by ticker '{}'. Do nothing", ticker);
+            } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
+                log.info("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
+                fillDecisionData(decisionData, ticker);
+                Decision decision = strategy.decide(decisionData);
+                performOperation(ticker, decision);
             }
-
-            return decisionData;
-        } catch (Exception ex) {
-            log.error("Exception while process ticker '{}'. No decision data", ticker, ex);
-            return null;
+        } else {
+            log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
         }
+
+        return decisionData;
     }
 
     private void fillDecisionData(DecisionData decisionData, String ticker) {

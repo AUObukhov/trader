@@ -12,6 +12,7 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +57,15 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        tickers.forEach(ticker -> processTicker(ticker, null));
+        tickers.forEach(ticker -> processTickerSafe(ticker, null));
+    }
+
+    public void processTickerSafe(String ticker, OffsetDateTime previousStartTime) {
+        try {
+            processTicker(ticker, previousStartTime);
+        } catch (Exception exception) {
+            log.error("Failed to process ticker '{}'", ticker, exception);
+        }
     }
 
 }

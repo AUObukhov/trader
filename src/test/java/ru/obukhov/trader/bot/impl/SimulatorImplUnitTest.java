@@ -573,53 +573,6 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void simulate_notFillsCandles_whenDecisionDataIsNull() {
-
-        // arrange
-
-        final String ticker = "ticker";
-        final String botName = "botName";
-
-        FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
-
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
-
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
-
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = null;
-
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
-
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
-        final Interval interval = Interval.of(from, to);
-
-        mockNextMinute(from);
-
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
-
-        // act
-
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
-
-        // assert
-
-        Assertions.assertEquals(1, simulationResults.size());
-
-        SimulationResult simulationResult = simulationResults.get(0);
-
-        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
-        Assertions.assertNull(simulationResult.getError());
-
-        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker, null);
-        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
-    }
-
-    @Test
     void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty() {
 
         // arrange
