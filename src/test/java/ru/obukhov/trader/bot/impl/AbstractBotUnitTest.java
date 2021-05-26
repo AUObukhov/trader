@@ -50,7 +50,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
     }
 
     @Test
-    void processTicker_doesNothing_and_returnsEmptyDecisionData_whenThereAreOrders() {
+    void processTicker_doesNothing_andReturnsEmptyDecisionData_whenThereAreOrders() {
         String ticker = "ticker";
 
         List<Order> orders = List.of(new Order());
