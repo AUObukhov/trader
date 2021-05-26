@@ -51,7 +51,7 @@ public abstract class AbstractBot implements Bot {
             if (currentCandles.isEmpty()) {
                 log.info("There are no candles by ticker '{}'. Do nothing", ticker);
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
-                log.info("Candles scope already processed for ticker '{}'. Do nothing", ticker);
+                log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
                 fillDecisionData(decisionData, ticker);
                 Decision decision = strategy.decide(decisionData);
