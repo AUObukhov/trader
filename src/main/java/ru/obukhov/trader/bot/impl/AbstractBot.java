@@ -80,7 +80,7 @@ public abstract class AbstractBot implements Bot {
         return operationsService.getOperations(Interval.of(from, to), ticker);
     }
 
-    protected void performOperation(String ticker, Decision decision) {
+    private void performOperation(String ticker, Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
