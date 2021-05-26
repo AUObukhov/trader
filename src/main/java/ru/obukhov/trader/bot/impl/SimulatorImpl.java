@@ -1,6 +1,7 @@
 package ru.obukhov.trader.bot.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -201,8 +202,13 @@ public class SimulatorImpl implements Simulator {
 
         do {
             DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
-            previousStartTime = getStartTime(decisionData);
-            addLastCandle(historicalCandles, decisionData);
+            final List<Candle> currentCandles = decisionData.getCurrentCandles();
+            if (CollectionUtils.isEmpty(currentCandles)) {
+                previousStartTime = null;
+            } else {
+                previousStartTime = currentCandles.get(0).getTime();
+                addLastCandle(historicalCandles, currentCandles);
+            }
 
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
@@ -210,10 +216,11 @@ public class SimulatorImpl implements Simulator {
         return createResult(bot, interval, ticker, historicalCandles);
     }
 
-    private OffsetDateTime getStartTime(DecisionData decisionData) {
-        return decisionData.getCurrentCandles().isEmpty()
-                ? null
-                : decisionData.getCurrentCandles().get(0).getTime();
+    private void addLastCandle(List<Candle> historicalCandles, List<Candle> currentCandles) {
+        Candle candle = currentCandles.get(currentCandles.size() - 1);
+        if (candle != null) {
+            historicalCandles.add(candle);
+        }
     }
 
     private void moveToNextMinute(
@@ -235,16 +242,6 @@ public class SimulatorImpl implements Simulator {
                 BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
                 log.debug("Incrementing balance {} by {}", currentBalance, totalBalanceIncrement);
                 fakeTinkoffService.incrementBalance(currency, totalBalanceIncrement);
-            }
-        }
-    }
-
-    private void addLastCandle(List<Candle> historicalCandles, DecisionData decisionData) {
-        if (!decisionData.getCurrentCandles().isEmpty()) {
-            List<Candle> currentCandles = decisionData.getCurrentCandles();
-            Candle candle = currentCandles.get(currentCandles.size() - 1);
-            if (candle != null) {
-                historicalCandles.add(candle);
             }
         }
     }
