@@ -203,7 +203,6 @@ public class SimulatorImpl implements Simulator {
             addLastCandle(candles, decisionData);
 
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
-
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createResult(bot, interval, ticker, candles);
@@ -248,7 +247,6 @@ public class SimulatorImpl implements Simulator {
             String ticker,
             List<Candle> candles
     ) {
-
         FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
         List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), candles);
@@ -311,8 +309,10 @@ public class SimulatorImpl implements Simulator {
                 .reduce(balance, BigDecimal::add);
     }
 
-    private BigDecimal getWeightedAverage(SortedMap<OffsetDateTime, BigDecimal> investments,
-                                          OffsetDateTime endDateTime) {
+    private BigDecimal getWeightedAverage(
+            SortedMap<OffsetDateTime, BigDecimal> investments,
+            OffsetDateTime endDateTime
+    ) {
         SortedMap<OffsetDateTime, BigDecimal> totalInvestments = getTotalInvestments(investments);
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }
