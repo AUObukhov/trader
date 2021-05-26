@@ -152,8 +152,11 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
+            mockCandles(ticker1, List.of(new Candle()));
             Mockito.when(ordersService.getOrders(ticker1)).thenThrow(new IllegalArgumentException());
+
             prepareEmptyMockedData(ticker2);
+            mockCandles(ticker2, List.of(new Candle()));
             Mockito.when(ordersService.getOrders(ticker2)).thenThrow(new IllegalArgumentException());
 
             bot.tick();
@@ -178,8 +181,11 @@ class ScheduledBotUnitTest extends BaseMockedTest {
 
             prepareEmptyMockedData(ticker1);
             Mockito.when(marketService.getInstrument(ticker1)).thenThrow(new IllegalArgumentException());
+            mockCandles(ticker1, List.of(new Candle()));
+
             prepareEmptyMockedData(ticker2);
             Mockito.when(marketService.getInstrument(ticker2)).thenThrow(new IllegalArgumentException());
+            mockCandles(ticker2, List.of(new Candle()));
 
             bot.tick();
 
@@ -203,6 +209,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             MarketInstrument instrument1 = prepareEmptyMockedData(ticker1);
             Mockito.when(portfolioService.getAvailableBalance(instrument1.getCurrency()))
                     .thenThrow(new IllegalArgumentException());
+            mockCandles(ticker1, List.of(new Candle()));
 
             bot.tick();
 
@@ -224,6 +231,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
+            mockCandles(ticker1, List.of(new Candle()));
             Mockito.when(portfolioService.getPosition(ticker1)).thenThrow(new IllegalArgumentException());
             Mockito.when(portfolioService.getPosition(ticker2)).thenThrow(new IllegalArgumentException());
 
@@ -279,9 +287,12 @@ class ScheduledBotUnitTest extends BaseMockedTest {
             mockTickers(ticker1, ticker2);
 
             prepareEmptyMockedData(ticker1);
+            mockCandles(ticker1, List.of(new Candle()));
             Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker1)))
                     .thenThrow(new IllegalArgumentException());
+
             prepareEmptyMockedData(ticker2);
+            mockCandles(ticker2, List.of(new Candle()));
             Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker2)))
                     .thenThrow(new IllegalArgumentException());
 
@@ -342,30 +353,6 @@ class ScheduledBotUnitTest extends BaseMockedTest {
                     .thenThrow(new IllegalArgumentException());
 
             bot.tick();
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
-    void tick_whenCurrentCandlesIsNull() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(botConfig.isEnabled()).thenReturn(true);
-            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
-
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
-            mockTickers(ticker1, ticker2);
-
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, null);
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, null);
-
-            bot.tick();
-
-            verifyNoOrdersMade();
         }
     }
 
