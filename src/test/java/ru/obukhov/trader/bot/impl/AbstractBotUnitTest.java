@@ -26,6 +26,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +57,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData.getBalance());
         Assertions.assertNull(decisionData.getPosition());
@@ -75,7 +76,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         prepareEmptyMockedData(ticker);
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
 
@@ -91,7 +92,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         mockCandles(ticker, List.of(new Candle()));
         Mockito.when(marketService.getInstrument(ticker)).thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -106,7 +107,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
                 .thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -120,7 +121,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         mockCandles(ticker, List.of(new Candle()));
         Mockito.when(portfolioService.getPosition(ticker)).thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -137,7 +138,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
                 Mockito.any(CandleResolution.class)
         )).thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -152,7 +153,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -167,7 +168,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
         verifyNoOrdersMade();
@@ -186,7 +187,7 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(ordersService.placeMarketOrder(ticker, decision.getLots(), OperationType.BUY))
                 .thenThrow(new IllegalArgumentException());
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNull(decisionData);
     }
@@ -197,7 +198,24 @@ class AbstractBotUnitTest extends BaseMockedTest {
 
         prepareEmptyMockedData(ticker);
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
+
+        Assertions.assertNotNull(decisionData);
+
+        verifyNoOrdersMade();
+    }
+
+    @Test
+    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
+        String ticker = "ticker";
+
+        prepareEmptyMockedData(ticker);
+
+        final OffsetDateTime previousStartTime = OffsetDateTime.now();
+        final Candle candle = TestDataHelper.createCandleWithTime(previousStartTime);
+        mockCandles(ticker, List.of(candle));
+
+        DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
 
         Assertions.assertNotNull(decisionData);
 
@@ -209,11 +227,12 @@ class AbstractBotUnitTest extends BaseMockedTest {
         String ticker = "ticker";
 
         prepareEmptyMockedData(ticker);
-        mockCandles(ticker, List.of(new Candle()));
+        final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
+        mockCandles(ticker, List.of(candle));
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNotNull(decisionData);
 
@@ -239,13 +258,13 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle());
+        final List<Candle> currentCandles = List.of(TestDataHelper.createCandleWithTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
         Decision decision = new Decision(DecisionAction.BUY, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
@@ -275,13 +294,13 @@ class AbstractBotUnitTest extends BaseMockedTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle());
+        final List<Candle> currentCandles = List.of(TestDataHelper.createCandleWithTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
         Decision decision = new Decision(DecisionAction.SELL, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
 
-        DecisionData decisionData = bot.processTicker(ticker);
+        DecisionData decisionData = bot.processTicker(ticker, null);
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());

@@ -236,7 +236,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(ticker))
+        Mockito.when(fakeBot.processTicker(ticker, null))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -321,7 +321,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(ticker))
+        Mockito.when(fakeBot.processTicker(ticker, null))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -394,7 +394,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(ticker))
+        Mockito.when(fakeBot.processTicker(ticker, null))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -453,7 +453,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(ticker, null)).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -539,7 +539,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(ticker))
+        Mockito.when(fakeBot.processTicker(ticker, null))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -568,7 +568,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         Assertions.assertNull(simulationResult.getError());
 
-        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker, null);
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
@@ -615,7 +615,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
 
-        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker, null);
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
@@ -643,7 +643,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(TestDataHelper.createDecisionData());
+        Mockito.when(fakeBot.processTicker(ticker, null)).thenReturn(TestDataHelper.createDecisionData());
 
         mockNextMinute(from);
 
@@ -664,7 +664,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
 
-        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker);
+        Mockito.verify(fakeBot, Mockito.times(5)).processTicker(ticker, null);
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
@@ -694,7 +694,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(ticker, null)).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -745,7 +745,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(ticker, null)).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -836,7 +836,7 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(ticker)).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(ticker, null)).thenReturn(decisionData);
 
         mockNextMinute(from);
 

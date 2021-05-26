@@ -477,8 +477,8 @@ class ScheduledBotUnitTest extends BaseMockedTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(new Candle());
-        mockCandles(ticker, currentCandles);
+        final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
+        mockCandles(ticker, List.of(candle));
     }
 
     private MarketInstrument prepareEmptyMockedData(String ticker) {

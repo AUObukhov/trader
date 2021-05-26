@@ -56,7 +56,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        tickers.forEach(this::processTicker);
+        tickers.forEach(ticker -> processTicker(ticker, null));
     }
 
 }

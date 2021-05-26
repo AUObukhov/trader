@@ -37,7 +37,7 @@ public abstract class AbstractBot implements Bot {
     protected final PortfolioService portfolioService;
 
     @Override
-    public DecisionData processTicker(String ticker) {
+    public DecisionData processTicker(String ticker, OffsetDateTime previousStartTime) {
         try {
             DecisionData decisionData = new DecisionData();
 
@@ -45,11 +45,14 @@ public abstract class AbstractBot implements Bot {
             if (orders.isEmpty()) {
                 List<Candle> currentCandles =
                         marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
+                decisionData.setCurrentCandles(currentCandles);
 
                 if (currentCandles.isEmpty()) {
                     log.info("There are no candles by ticker '{}'. Do nothing", ticker);
+                } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
+                    log.info("Candles scope already processed for ticker '{}'. Do nothing", ticker);
                 } else {
-                    fillDecisionData(decisionData, currentCandles, ticker);
+                    fillDecisionData(decisionData, ticker);
                     Decision decision = strategy.decide(decisionData);
                     performOperation(ticker, decision);
                 }
@@ -59,17 +62,16 @@ public abstract class AbstractBot implements Bot {
 
             return decisionData;
         } catch (Exception ex) {
-            log.error("Exception while process ticker '{}'. Do nothing", ticker, ex);
+            log.error("Exception while process ticker '{}'. No decision data", ticker, ex);
             return null;
         }
     }
 
-    private void fillDecisionData(DecisionData decisionData, List<Candle> currentCandles, String ticker) {
+    private void fillDecisionData(DecisionData decisionData, String ticker) {
         MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
-        decisionData.setCurrentCandles(currentCandles);
         decisionData.setLastOperations(getLastWeekOperations(ticker));
         decisionData.setInstrument(instrument);
     }

@@ -196,16 +196,26 @@ public class SimulatorImpl implements Simulator {
         }
 
         fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), initialBalance);
-        List<Candle> candles = new ArrayList<>();
+        List<Candle> historicalCandles = new ArrayList<>();
+        OffsetDateTime previousStartTime = null;
 
         do {
-            DecisionData decisionData = bot.processTicker(ticker);
-            addLastCandle(candles, decisionData);
+            DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
+            if (decisionData != null) {
+                previousStartTime = getStartTime(decisionData);
+                addLastCandle(historicalCandles, decisionData);
+            }
 
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(bot, interval, ticker, candles);
+        return createResult(bot, interval, ticker, historicalCandles);
+    }
+
+    private OffsetDateTime getStartTime(DecisionData decisionData) {
+        return decisionData.getCurrentCandles().isEmpty()
+                ? null
+                : decisionData.getCurrentCandles().get(0).getTime();
     }
 
     private void moveToNextMinute(
@@ -231,12 +241,12 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private void addLastCandle(List<Candle> candles, DecisionData decisionData) {
-        if (decisionData != null && !decisionData.getCurrentCandles().isEmpty()) {
+    private void addLastCandle(List<Candle> historicalCandles, DecisionData decisionData) {
+        if (!decisionData.getCurrentCandles().isEmpty()) {
             List<Candle> currentCandles = decisionData.getCurrentCandles();
             Candle candle = currentCandles.get(currentCandles.size() - 1);
             if (candle != null) {
-                candles.add(candle);
+                historicalCandles.add(candle);
             }
         }
     }
