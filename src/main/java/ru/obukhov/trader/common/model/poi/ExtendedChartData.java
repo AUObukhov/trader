@@ -69,26 +69,31 @@ public class ExtendedChartData {
         setMarkerColor(series, markerProperties.getColor());
     }
 
-    @SneakyThrows
+
     private void setMarkerColor(XDDFLineChartData.Series series, Color color) {
         if (color != null) {
             final XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
-            final XDDFShapeProperties shapeProperties = new XDDFShapeProperties();
-            shapeProperties.setFillProperties(fillProperties);
-
             final XDDFLineProperties lineProperties = new XDDFLineProperties();
             lineProperties.setFillProperties(fillProperties);
+
+            final XDDFShapeProperties shapeProperties = new XDDFShapeProperties();
+            shapeProperties.setFillProperties(fillProperties);
             shapeProperties.setLineProperties(lineProperties);
 
-            final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
-            getMarkerMethod.setAccessible(true);
-            final CTMarker marker = (CTMarker) getMarkerMethod.invoke(series);
+            final CTMarker marker = getMarker(series);
             if (marker.isSetSpPr()) {
                 marker.getSpPr().set(shapeProperties.getXmlObject());
             } else {
                 marker.setSpPr(shapeProperties.getXmlObject());
             }
         }
+    }
+
+    @SneakyThrows
+    private CTMarker getMarker(XDDFLineChartData.Series series) {
+        final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
+        getMarkerMethod.setAccessible(true);
+        return (CTMarker) getMarkerMethod.invoke(series);
     }
 
     private void setSeriesColor(XDDFChartData.Series series, Color color) {
