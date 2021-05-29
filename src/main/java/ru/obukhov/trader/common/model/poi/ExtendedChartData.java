@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.model.poi;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -13,9 +14,11 @@ import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 import org.mapstruct.factory.Mappers;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import ru.obukhov.trader.common.util.MathUtils;
 
 import java.awt.Color;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,13 +49,18 @@ public class ExtendedChartData {
             XDDFNumericalDataSource<Number> numericalDataSource,
             short markerSize,
             MarkerStyle markerStyle,
-            Color color
+            Color markerColor,
+            Color seriesColor
     ) {
         XDDFLineChartData.Series series =
                 (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
         series.setMarkerSize(markerSize);
         series.setMarkerStyle(markerStyle);
-        setSeriesColor(series, color);
+        if (markerStyle != MarkerStyle.NONE) {
+            setMarkerColor(series, markerColor);
+        }
+
+        setSeriesColor(series, seriesColor);
     }
 
     public void addSeries(
@@ -61,7 +69,29 @@ public class ExtendedChartData {
             short markerSize,
             MarkerStyle markerStyle
     ) {
-        addSeries(categoryDataSource, numericalDataSource, markerSize, markerStyle, null);
+        addSeries(categoryDataSource, numericalDataSource, markerSize, markerStyle, null, null);
+    }
+
+    @SneakyThrows
+    private void setMarkerColor(XDDFLineChartData.Series series, Color color) {
+        if (color != null) {
+            final XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
+            final XDDFShapeProperties shapeProperties = new XDDFShapeProperties();
+            shapeProperties.setFillProperties(fillProperties);
+
+            final XDDFLineProperties lineProperties = new XDDFLineProperties();
+            lineProperties.setFillProperties(fillProperties);
+            shapeProperties.setLineProperties(lineProperties);
+
+            final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
+            getMarkerMethod.setAccessible(true);
+            final CTMarker marker = (CTMarker) getMarkerMethod.invoke(series);
+            if (marker.isSetSpPr()) {
+                marker.getSpPr().set(shapeProperties.getXmlObject());
+            } else {
+                marker.setSpPr(shapeProperties.getXmlObject());
+            }
+        }
     }
 
     private void setSeriesColor(XDDFChartData.Series series, Color color) {

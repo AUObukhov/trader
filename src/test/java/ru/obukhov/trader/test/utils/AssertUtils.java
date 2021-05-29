@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 import org.mapstruct.factory.Mappers;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ContextConsumer;
@@ -27,6 +29,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import javax.validation.ConstraintViolation;
 import java.awt.Color;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -243,6 +246,15 @@ public class AssertUtils {
                 (XDDFSolidFillProperties) series.getShapeProperties().getFillProperties();
         XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
         AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), xddfColor1.getValue());
+    }
+
+    @SneakyThrows
+    public static void assertSeriesMarkerColor(XDDFLineChartData.Series series, Color color) {
+        final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
+        getMarkerMethod.setAccessible(true);
+        final CTMarker marker = (CTMarker) getMarkerMethod.invoke(series);
+        byte[] colorBytes = marker.getSpPr().getSolidFill().getSrgbClr().getVal();
+        AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), colorBytes);
     }
 
     // endregion

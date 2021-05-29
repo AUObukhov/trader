@@ -320,9 +320,9 @@ public class ExcelServiceImpl implements ExcelService {
         List<OffsetDateTime> times = response.getCandles().stream().map(Candle::getTime).collect(Collectors.toList());
         XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
-        addLine(chartData, timesDataSource, response.getAverages(), MarkerStyle.NONE, Color.BLUE);
-        addExtremesLine(chartData, times, timesDataSource, response.getLocalMinimums(), MarkerStyle.DIAMOND, null);
-        addExtremesLine(chartData, times, timesDataSource, response.getLocalMaximums(), MarkerStyle.TRIANGLE, null);
+        addLine(chartData, timesDataSource, response.getAverages(), MarkerStyle.NONE, null, Color.BLUE);
+        addExtremesLine(chartData, times, timesDataSource, response.getLocalMinimums(), MarkerStyle.DIAMOND, Color.RED, null);
+        addExtremesLine(chartData, times, timesDataSource, response.getLocalMaximums(), MarkerStyle.TRIANGLE, Color.GREEN, null);
         addRestraintLines(chartData, times, timesDataSource, response.getSupportLines(), Color.GREEN);
         addRestraintLines(chartData, times, timesDataSource, response.getResistanceLines(), Color.RED);
 
@@ -381,7 +381,7 @@ public class ExcelServiceImpl implements ExcelService {
         BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
-        addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE, Color.GRAY);
+        addSeries(chartData, timesDataSource, prices, MarkerStyle.NONE, Color.GRAY, null);
     }
 
     private void addLine(
@@ -389,10 +389,11 @@ public class ExcelServiceImpl implements ExcelService {
             XDDFCategoryDataSource timesDataSource,
             List<BigDecimal> values,
             MarkerStyle markerStyle,
-            Color color
+            Color markerColor,
+            Color seriesColor
     ) {
         if (values.stream().anyMatch(Objects::nonNull)) {
-            addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerStyle, color);
+            addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerStyle, markerColor, seriesColor);
         }
     }
 
@@ -402,10 +403,11 @@ public class ExcelServiceImpl implements ExcelService {
             XDDFCategoryDataSource timesDataSource,
             List<Point> extremes,
             MarkerStyle markerStyle,
-            Color color
+            Color markerColor,
+            Color seriesColor
     ) {
         List<BigDecimal> values = getValues(times, extremes);
-        addLine(chartData, timesDataSource, values, markerStyle, color);
+        addLine(chartData, timesDataSource, values, markerStyle, markerColor, seriesColor);
     }
 
     private void addRestraintLines(
@@ -413,11 +415,11 @@ public class ExcelServiceImpl implements ExcelService {
             List<OffsetDateTime> times,
             XDDFCategoryDataSource timesDataSource,
             List<List<Point>> restraintLines,
-            Color color
+            Color seriesColor
     ) {
         for (List<Point> line : restraintLines) {
             List<BigDecimal> values = getValues(times, line);
-            addLine(chartData, timesDataSource, values, MarkerStyle.NONE, color);
+            addLine(chartData, timesDataSource, values, MarkerStyle.NONE, null, seriesColor);
         }
     }
 
@@ -460,10 +462,10 @@ public class ExcelServiceImpl implements ExcelService {
         }
 
         if (buyOperationsExist) { // apache.poi fails when no values in dataSource
-            addSeries(chartData, timesDataSource, buyOperationsPrices, MarkerStyle.TRIANGLE, Color.RED);
+            addSeries(chartData, timesDataSource, buyOperationsPrices, MarkerStyle.TRIANGLE, Color.RED, null);
         }
         if (sellOperationsExist) {
-            addSeries(chartData, timesDataSource, sellOperationsPrices, MarkerStyle.DIAMOND, Color.GREEN);
+            addSeries(chartData, timesDataSource, sellOperationsPrices, MarkerStyle.DIAMOND, Color.GREEN, null);
         }
     }
 
@@ -472,9 +474,17 @@ public class ExcelServiceImpl implements ExcelService {
             XDDFCategoryDataSource timesDataSource,
             BigDecimal[] numbers,
             MarkerStyle markerStyle,
-            Color color
+            Color markerColor,
+            Color seriesColor
     ) {
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
-        chartData.addSeries(timesDataSource, numericalDataSource, OPERATION_MARKER_SIZE, markerStyle, color);
+        chartData.addSeries(
+                timesDataSource,
+                numericalDataSource,
+                OPERATION_MARKER_SIZE,
+                markerStyle,
+                markerColor,
+                seriesColor
+        );
     }
 }

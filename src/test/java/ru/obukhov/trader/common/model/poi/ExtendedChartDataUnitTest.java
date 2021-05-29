@@ -18,44 +18,48 @@ class ExtendedChartDataUnitTest {
 
     @Test
     void addSeries_withColor_andGetSeries() {
-        ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
+        final ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         final String[] category1 = new String[]{"s1", "s2", "s3"};
         final Integer[] values1 = new Integer[]{1, 2, 3};
         final short markerSize1 = (short) 2;
         final MarkerStyle marketStyle1 = MarkerStyle.CIRCLE;
-        final Color color1 = Color.RED;
+        final Color markerColor1 = Color.GREEN;
+        final Color seriesColor1 = Color.RED;
 
         final XDDFCategoryDataSource categoryDataSource1 = XDDFDataSourcesFactory.fromArray(category1);
         final XDDFNumericalDataSource<Number> numericalDataSource1 = XDDFDataSourcesFactory.fromArray(values1);
-        chartData.addSeries(categoryDataSource1, numericalDataSource1, markerSize1, marketStyle1, color1);
+        chartData.addSeries(categoryDataSource1, numericalDataSource1, markerSize1, marketStyle1, markerColor1, seriesColor1);
 
         final String[] category2 = new String[]{"s4", "s5", "s6"};
         final Integer[] values2 = new Integer[]{4, 5, 6};
         final short markerSize2 = (short) 3;
         final MarkerStyle marketStyle2 = MarkerStyle.SQUARE;
-        final Color color2 = Color.BLUE;
+        final Color markerColor2 = Color.CYAN;
+        final Color seriesColor2 = Color.BLUE;
 
         final XDDFCategoryDataSource categoryDataSource2 = XDDFDataSourcesFactory.fromArray(category2);
         final XDDFNumericalDataSource<Number> numericalDataSource2 = XDDFDataSourcesFactory.fromArray(values2);
-        chartData.addSeries(categoryDataSource2, numericalDataSource2, markerSize2, marketStyle2, color2);
+        chartData.addSeries(categoryDataSource2, numericalDataSource2, markerSize2, marketStyle2, markerColor2, seriesColor2);
 
-        List<XDDFChartData.Series> seriesList = chartData.getSeries();
+        final List<XDDFChartData.Series> seriesList = chartData.getSeries();
         Assertions.assertEquals(2, seriesList.size());
 
-        XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.get(0);
+        final XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) seriesList.get(0);
         Assertions.assertSame(categoryDataSource1, series1.getCategoryData());
         Assertions.assertSame(numericalDataSource1, series1.getValuesData());
-        AssertUtils.assertSeriesColor(series1, color1);
+        AssertUtils.assertSeriesColor(series1, seriesColor1);
+        AssertUtils.assertSeriesMarkerColor(series1, markerColor1);
 
-        XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) seriesList.get(1);
+        final XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) seriesList.get(1);
         Assertions.assertSame(categoryDataSource2, series2.getCategoryData());
         Assertions.assertSame(numericalDataSource2, series2.getValuesData());
-        AssertUtils.assertSeriesColor(series2, color2);
+        AssertUtils.assertSeriesColor(series2, seriesColor2);
+        AssertUtils.assertSeriesMarkerColor(series2, markerColor2);
     }
 
     @Test
-    void addSeries_withoutColor_andGetSeries() {
+    void addSeries_withoutColors_andGetSeries() {
         ExtendedChartData chartData = ExcelTestDataHelper.createExtendedChartData();
 
         final String[] category1 = new String[]{"s1", "s2", "s3"};
@@ -101,7 +105,7 @@ class ExtendedChartDataUnitTest {
         XDDFCategoryDataSource categoryDataSource = XDDFDataSourcesFactory.fromArray(category);
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(values);
 
-        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.RED);
+        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.BLUE, Color.RED);
 
         chartData.stretchChart();
 
@@ -120,7 +124,7 @@ class ExtendedChartDataUnitTest {
         XDDFCategoryDataSource categoryDataSource = XDDFDataSourcesFactory.fromArray(category);
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(values);
 
-        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.RED);
+        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.BLUE, Color.RED);
 
         chartData.stretchChart();
 
@@ -139,7 +143,7 @@ class ExtendedChartDataUnitTest {
         XDDFCategoryDataSource categoryDataSource = XDDFDataSourcesFactory.fromArray(category);
         XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(values);
 
-        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.RED);
+        chartData.addSeries(categoryDataSource, numericalDataSource, (short) 2, MarkerStyle.CIRCLE, Color.BLUE, Color.RED);
 
         chartData.stretchChart();
 
