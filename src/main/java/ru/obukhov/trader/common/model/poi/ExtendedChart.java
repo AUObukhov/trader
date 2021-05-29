@@ -19,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFChart;
 public class ExtendedChart extends XDDFChart {
 
     @Getter
-    private final XDDFChart delegate;
+    private final XSSFChart delegate;
 
     // region additional methods
 
