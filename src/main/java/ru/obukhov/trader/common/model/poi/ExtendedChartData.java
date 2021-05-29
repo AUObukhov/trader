@@ -6,7 +6,6 @@ import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
-import org.apache.poi.xddf.usermodel.chart.MarkerStyle;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
@@ -47,29 +46,27 @@ public class ExtendedChartData {
     public void addSeries(
             XDDFCategoryDataSource categoryDataSource,
             XDDFNumericalDataSource<Number> numericalDataSource,
-            short markerSize,
-            MarkerStyle markerStyle,
-            Color markerColor,
+            MarkerProperties markerProperties,
             Color seriesColor
     ) {
         XDDFLineChartData.Series series =
                 (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
-        series.setMarkerSize(markerSize);
-        series.setMarkerStyle(markerStyle);
-        if (markerStyle != MarkerStyle.NONE) {
-            setMarkerColor(series, markerColor);
-        }
-
+        setMarkerProperties(series, markerProperties);
         setSeriesColor(series, seriesColor);
     }
 
     public void addSeries(
             XDDFCategoryDataSource categoryDataSource,
             XDDFNumericalDataSource<Number> numericalDataSource,
-            short markerSize,
-            MarkerStyle markerStyle
+            MarkerProperties markerProperties
     ) {
-        addSeries(categoryDataSource, numericalDataSource, markerSize, markerStyle, null, null);
+        addSeries(categoryDataSource, numericalDataSource, markerProperties, null);
+    }
+
+    private void setMarkerProperties(XDDFLineChartData.Series series, MarkerProperties markerProperties) {
+        series.setMarkerSize(markerProperties.getSize());
+        series.setMarkerStyle(markerProperties.getStyle());
+        setMarkerColor(series, markerProperties.getColor());
     }
 
     @SneakyThrows
