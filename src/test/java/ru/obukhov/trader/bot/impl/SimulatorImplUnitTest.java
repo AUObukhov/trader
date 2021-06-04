@@ -1,13 +1,13 @@
 package ru.obukhov.trader.bot.impl;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.BaseMockedTest;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.bot.model.StrategyConfig;
@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-class SimulatorImplUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
     private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG = new StrategyConfig(StrategyType.CONSERVATIVE);
@@ -55,11 +56,6 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     private FakeTinkoffService fakeTinkoffService;
     @Mock
     private TradingStrategyFactory strategyFactory;
-
-    @BeforeEach
-    void setUp() {
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
-    }
 
     // region constructor tests
 
@@ -150,10 +146,12 @@ class SimulatorImplUnitTest extends BaseMockedTest {
     void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
@@ -169,8 +167,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
@@ -202,13 +207,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -252,14 +259,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertEquals(botName, simulationResult.getBotName());
         Assertions.assertEquals(interval, simulationResult.getInterval());
@@ -287,13 +301,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -337,14 +353,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertNull(simulationResult.getError());
 
@@ -360,13 +383,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -408,14 +433,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         final List<SimulatedPosition> positions = simulationResult.getPositions();
         Assertions.assertEquals(1, positions.size());
@@ -432,13 +464,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -478,14 +512,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         List<SimulatedOperation> resultOperations = simulationResult.getOperations();
         Assertions.assertEquals(1, resultOperations.size());
@@ -505,13 +546,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -549,14 +592,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         List<Candle> candles = simulationResult.getCandles();
         Assertions.assertEquals(5, candles.size());
@@ -577,13 +627,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -605,14 +657,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
@@ -626,13 +685,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -655,14 +716,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertTrue(simulationResult.getCandles().isEmpty());
         Assertions.assertNull(simulationResult.getError());
@@ -676,13 +744,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -709,14 +779,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, true);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                true
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
@@ -727,13 +804,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -760,14 +839,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any(), Mockito.any());
@@ -778,10 +864,12 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         final String mockedExceptionMessage = "mocked exception";
         Mockito.when(fakeBot.getFakeTinkoffService()).thenThrow(new IllegalArgumentException(mockedExceptionMessage));
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
@@ -799,14 +887,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                false
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         String expectedErrorMessage = String.format("Simulation for '%s' with ticker '%s' failed with error: %s",
                 botName, ticker, mockedExceptionMessage);
@@ -818,13 +913,15 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // arrange
 
+        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+
         final String ticker = "ticker";
         final String botName = "botName";
 
-        FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock(botName);
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
 
-        MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -854,14 +951,21 @@ class SimulatorImplUnitTest extends BaseMockedTest {
 
         // act
 
-        List<SimulationResult> simulationResults =
-                simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(
+                ticker,
+                initialBalance,
+                balanceIncrement,
+                BALANCE_INCREMENT_CRON,
+                strategiesConfigs,
+                interval,
+                true
+        );
 
         // assert
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertNull(simulationResult.getError());
     }
