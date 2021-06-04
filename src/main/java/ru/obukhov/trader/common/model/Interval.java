@@ -16,9 +16,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Immutable class of OffsetDateTime interval
+ */
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Interval {
 
@@ -162,6 +165,9 @@ public class Interval {
         return toDuration().toNanos() / NANOSECONDS_IN_DAY;
     }
 
+    /**
+     * @return pretty string representation of current interval, where null values are represented as "-∞" or "∞"
+     */
     public String toPrettyString() {
         String fromString = from == null ? "-∞" : DATE_TIME_FORMATTER.format(from);
         String toString = to == null ? "∞" : DATE_TIME_FORMATTER.format(to);
