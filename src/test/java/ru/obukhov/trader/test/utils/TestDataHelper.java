@@ -10,6 +10,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
+import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -23,6 +24,7 @@ import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
+import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -170,6 +172,11 @@ public class TestDataHelper {
         Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         return instrument;
+    }
+
+    public static void mockEmptyOrder(OrdersService ordersService, String ticker) {
+        Order order = new Order();
+        Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
 
     public static ZoneOffset getNotDefaultOffset() {

@@ -3,9 +3,10 @@ package ru.obukhov.trader.bot.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
@@ -27,10 +28,10 @@ import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
-class AbstractBotUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class AbstractBotUnitTest {
 
     @Mock
     private TradingStrategy strategy;
@@ -73,8 +74,6 @@ class AbstractBotUnitTest extends BaseMockedTest {
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
         String ticker = "ticker";
 
-        prepareEmptyMockedData(ticker);
-
         DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNotNull(decisionData);
@@ -85,8 +84,6 @@ class AbstractBotUnitTest extends BaseMockedTest {
     @Test
     void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
         String ticker = "ticker";
-
-        prepareEmptyMockedData(ticker);
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = TestDataHelper.createCandleWithTime(previousStartTime);
@@ -103,7 +100,8 @@ class AbstractBotUnitTest extends BaseMockedTest {
     void processTicker_doesNoOrder_whenDecisionIsWait() {
         String ticker = "ticker";
 
-        prepareEmptyMockedData(ticker);
+        TestDataHelper.createAndMockInstrument(marketService, ticker);
+
         final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
@@ -189,25 +187,6 @@ class AbstractBotUnitTest extends BaseMockedTest {
                 .placeMarketOrder(ticker, decision.getLots(), OperationType.SELL);
     }
 
-    private MarketInstrument prepareEmptyMockedData(String ticker) {
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(Collections.emptyList());
-
-        MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
-
-        Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
-                .thenReturn(BigDecimal.ZERO);
-
-        Mockito.when(portfolioService.getPosition(ticker))
-                .thenReturn(TestDataHelper.createPortfolioPosition(ticker, 0));
-
-        mockCandles(ticker, Collections.emptyList());
-
-        Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
-                .thenReturn(Collections.emptyList());
-
-        return instrument;
-    }
-
     private void mockCandles(String ticker, List<Candle> candles) {
         Mockito.when(marketService.getLastCandles(
                 Mockito.eq(ticker),
@@ -222,7 +201,6 @@ class AbstractBotUnitTest extends BaseMockedTest {
     }
 
     private static class TestBot extends AbstractBot {
-
         public TestBot(
                 TradingStrategy strategy,
                 MarketService marketService,
