@@ -71,6 +71,19 @@ class AbstractBotUnitTest {
     }
 
     @Test
+    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
+        String ticker = "ticker";
+
+        TestDataHelper.mockEmptyOrder(ordersService, ticker);
+
+        DecisionData decisionData = bot.processTicker(ticker, null);
+
+        Assertions.assertNotNull(decisionData);
+
+        verifyNoOrdersMade();
+    }
+
+    @Test
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
         String ticker = "ticker";
 
