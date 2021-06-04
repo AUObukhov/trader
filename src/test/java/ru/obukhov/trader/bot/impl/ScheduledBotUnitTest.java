@@ -2,10 +2,11 @@ package ru.obukhov.trader.bot.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
@@ -22,6 +23,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -34,7 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-class ScheduledBotUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class ScheduledBotUnitTest {
 
     @Mock
     private TradingStrategy strategy;
@@ -85,7 +88,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNothing_whenNotWorkTime() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().plusHours(1));
@@ -100,7 +103,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNothing_whenNoNoTickers() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
@@ -116,14 +119,14 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNothing_whenThereAreOrders() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
             List<Order> orders1 = List.of(new Order());
@@ -140,127 +143,22 @@ class ScheduledBotUnitTest extends BaseMockedTest {
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNothing_whenGetOrdersThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(botConfig.isEnabled()).thenReturn(true);
-            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
-
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
-            mockTickers(ticker1, ticker2);
-
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            Mockito.when(ordersService.getOrders(ticker1)).thenThrow(new IllegalArgumentException());
-
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, List.of(new Candle()));
-            Mockito.when(ordersService.getOrders(ticker2)).thenThrow(new IllegalArgumentException());
-
-            bot.tick();
-
-            Mockito.verifyNoMoreInteractions(strategy, operationsService, marketService, portfolioService);
-            verifyNoOrdersMade();
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetInstrumentThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(botConfig.isEnabled()).thenReturn(true);
-            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
-
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
-            mockTickers(ticker1, ticker2);
-
-            prepareEmptyMockedData(ticker1);
-            Mockito.when(marketService.getInstrument(ticker1)).thenThrow(new IllegalArgumentException());
-            mockCandles(ticker1, List.of(new Candle()));
-
-            prepareEmptyMockedData(ticker2);
-            Mockito.when(marketService.getInstrument(ticker2)).thenThrow(new IllegalArgumentException());
-            mockCandles(ticker2, List.of(new Candle()));
-
-            bot.tick();
-
-            verifyNoOrdersMade();
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetAvailableBalanceThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(botConfig.isEnabled()).thenReturn(true);
-            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
-
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
-            mockTickers(ticker1, ticker2);
-
-            MarketInstrument instrument1 = prepareEmptyMockedData(ticker1);
-            Mockito.when(portfolioService.getAvailableBalance(instrument1.getCurrency()))
-                    .thenThrow(new IllegalArgumentException());
-            mockCandles(ticker1, List.of(new Candle()));
-
-            bot.tick();
-
-            verifyNoOrdersMade();
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetPositionThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(botConfig.isEnabled()).thenReturn(true);
-            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
-
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
-            mockTickers(ticker1, ticker2);
-
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            Mockito.when(portfolioService.getPosition(ticker1)).thenThrow(new IllegalArgumentException());
-            Mockito.when(portfolioService.getPosition(ticker2)).thenThrow(new IllegalArgumentException());
-
-            bot.tick();
-
-            verifyNoOrdersMade();
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
     void tick_doesNoOrder_whenGetLastCandlesThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
             Mockito.when(marketService.getLastCandles(
                     Mockito.eq(ticker1),
                     Mockito.anyInt(),
                     Mockito.any(CandleResolution.class)
             )).thenThrow(new IllegalArgumentException());
-            prepareEmptyMockedData(ticker2);
             Mockito.when(marketService.getLastCandles(
                     Mockito.eq(ticker2),
                     Mockito.anyInt(),
@@ -275,24 +173,137 @@ class ScheduledBotUnitTest extends BaseMockedTest {
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetOperationsThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+    void tick_doesNothing_whenGetOrdersThrowsException() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker1)))
+            Mockito.when(ordersService.getOrders(ticker1)).thenThrow(new IllegalArgumentException());
+            Mockito.when(ordersService.getOrders(ticker2)).thenThrow(new IllegalArgumentException());
+
+            bot.tick();
+
+            Mockito.verifyNoMoreInteractions(strategy, operationsService, marketService, portfolioService);
+            verifyNoOrdersMade();
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void tick_doesNoOrder_whenGetInstrumentThrowsException() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            Mockito.when(botConfig.isEnabled()).thenReturn(true);
+            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
+            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
+            mockTickers(ticker1, ticker2);
+
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            Mockito.when(marketService.getInstrument(ticker1)).thenThrow(new IllegalArgumentException());
+            Mockito.when(marketService.getInstrument(ticker2)).thenThrow(new IllegalArgumentException());
+
+            bot.tick();
+
+            verifyNoOrdersMade();
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void tick_doesNoOrder_whenGetAvailableBalanceThrowsException() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            Mockito.when(botConfig.isEnabled()).thenReturn(true);
+            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
+            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
+            mockTickers(ticker1, ticker2);
+
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
+
+            Mockito.when(portfolioService.getAvailableBalance(Mockito.any(Currency.class)))
                     .thenThrow(new IllegalArgumentException());
 
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, List.of(new Candle()));
+            bot.tick();
+
+            verifyNoOrdersMade();
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void tick_doesNoOrder_whenGetPositionThrowsException() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            Mockito.when(botConfig.isEnabled()).thenReturn(true);
+            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
+            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
+            mockTickers(ticker1, ticker2);
+
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
+
+            Mockito.when(portfolioService.getPosition(ticker1)).thenThrow(new IllegalArgumentException());
+            Mockito.when(portfolioService.getPosition(ticker2)).thenThrow(new IllegalArgumentException());
+
+            bot.tick();
+
+            verifyNoOrdersMade();
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void tick_doesNoOrder_whenGetOperationsThrowsException() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            Mockito.when(botConfig.isEnabled()).thenReturn(true);
+            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
+            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
+            mockTickers(ticker1, ticker2);
+
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
+
+            Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker1)))
+                    .thenThrow(new IllegalArgumentException());
             Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker2)))
                     .thenThrow(new IllegalArgumentException());
 
@@ -305,20 +316,23 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNoOrder_whenDecideThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, List.of(new Candle()));
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenThrow(new IllegalArgumentException());
 
@@ -331,20 +345,23 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings({"unused", "java:S2699"})
     void tick_catchesException_whenPlaceMarketOrderThrowsException() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, List.of(new Candle()));
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
             Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
@@ -358,19 +375,38 @@ class ScheduledBotUnitTest extends BaseMockedTest {
 
     @Test
     @SuppressWarnings("unused")
-    void tick_whenCurrentCandlesIsEmpty() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+    void tick_doesNoOrder_whenThereAreOrders() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
-            prepareEmptyMockedData(ticker2);
+            TestDataHelper.mockEmptyOrder(ordersService, ticker1);
+            TestDataHelper.mockEmptyOrder(ordersService, ticker2);
+
+            bot.tick();
+
+            verifyNoOrdersMade();
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void tick_doesNoOrder_whenCurrentCandlesIsEmpty() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            Mockito.when(botConfig.isEnabled()).thenReturn(true);
+            Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
+            Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
+            mockTickers(ticker1, ticker2);
 
             bot.tick();
 
@@ -381,20 +417,23 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNoOrder_whenDecisionIsWait() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            prepareEmptyMockedData(ticker1);
-            mockCandles(ticker1, List.of(new Candle()));
-            prepareEmptyMockedData(ticker2);
-            mockCandles(ticker2, List.of(new Candle()));
+            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker1, List.of(candle1));
+            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            mockCandles(ticker2, List.of(candle2));
+
+            TestDataHelper.createAndMockInstrument(marketService, ticker1);
+            TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
 
@@ -407,14 +446,14 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
             mockData(ticker1);
             mockData(ticker2);
@@ -434,14 +473,14 @@ class ScheduledBotUnitTest extends BaseMockedTest {
     @Test
     @SuppressWarnings("unused")
     void tick_andPlacesSellOrder_whenDecisionIsSell() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             Mockito.when(botConfig.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            String ticker1 = "ticker1";
-            String ticker2 = "ticker2";
+            final String ticker1 = "ticker1";
+            final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
             mockData(ticker1);
             mockData(ticker2);
@@ -462,7 +501,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
         Mockito.when(botConfig.getTickers()).thenReturn(Set.of(tickers));
     }
 
-    private void mockData(String ticker) {
+    private void mockData(final String ticker) {
         MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
@@ -481,7 +520,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
         mockCandles(ticker, List.of(candle));
     }
 
-    private MarketInstrument prepareEmptyMockedData(String ticker) {
+    private MarketInstrument prepareEmptyMockedData(final String ticker) {
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(Collections.emptyList());
 
         MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
@@ -500,7 +539,7 @@ class ScheduledBotUnitTest extends BaseMockedTest {
         return instrument;
     }
 
-    private void mockCandles(String ticker, List<Candle> candles) {
+    private void mockCandles(final String ticker, List<Candle> candles) {
         Mockito.when(marketService.getLastCandles(
                 Mockito.eq(ticker),
                 Mockito.anyInt(),
