@@ -188,6 +188,184 @@ class IntervalUnitTest {
 
     // endregion
 
+    // region hashCode tests
+
+    @Test
+    void hashCode_returnsEqualValuesForEqualIntervals() {
+        Interval interval1 = Interval.of(
+                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+        );
+        Interval interval2 = Interval.of(
+                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+        );
+
+        Assertions.assertEquals(interval1.hashCode(), interval2.hashCode());
+    }
+
+    // endregion
+
+    // region equals tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forEquals() {
+        return Stream.of(
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        true
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 41),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 41),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 51)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 41),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 41),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 51)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 41),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 51)
+                        ),
+                        false
+                ),
+
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2019, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2019, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2021, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2021, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2019, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2019, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                ),
+                Arguments.of(
+                        Interval.of(
+                                DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                        ),
+                        Interval.of(
+                                DateUtils.getDateTime(2021, 10, 5, 10, 20, 30, 40),
+                                DateUtils.getDateTime(2021, 10, 5, 11, 30, 40, 50)
+                        ),
+                        false
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forEquals")
+    void equals(Interval interval1, Interval interval2, boolean expected) {
+        Assertions.assertEquals(expected, interval1.equals(interval2));
+    }
+
+    // endregion
+
     // region equalDates tests
 
     @SuppressWarnings("unused")
