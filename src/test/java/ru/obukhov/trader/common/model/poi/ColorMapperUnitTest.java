@@ -13,20 +13,18 @@ class ColorMapperUnitTest {
 
     @Test
     void mapToBytes() {
+        final byte[] expectedBytes = {(byte) 255, 0, 0};
 
-        byte[] expectedBytes = {(byte) 255, 0, 0};
-
-        byte[] bytes = colorMapper.mapToBytes(Color.RED);
+        final byte[] bytes = colorMapper.mapToBytes(Color.RED);
 
         AssertUtils.assertEquals(expectedBytes, bytes);
     }
 
     @Test
     void mapToXDDFColor() {
+        final byte[] expectedBytes = {(byte) 255, 0, 0};
 
-        byte[] expectedBytes = {(byte) 255, 0, 0};
-
-        XDDFColorRgbBinary xddfColor = (XDDFColorRgbBinary) colorMapper.mapToXDDFColor(Color.RED);
+        final XDDFColorRgbBinary xddfColor = (XDDFColorRgbBinary) colorMapper.mapToXDDFColor(Color.RED);
 
         AssertUtils.assertEquals(expectedBytes, xddfColor.getValue());
     }
