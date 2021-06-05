@@ -19,18 +19,18 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEmptyList_whenSizeIsZero() {
-        List<Integer> list = List.of(0, 1, 2, 3, 4);
+        final List<Integer> list = List.of(0, 1, 2, 3, 4);
 
-        List<Integer> result = CollectionsUtils.getTail(list, 0);
+        final List<Integer> result = CollectionsUtils.getTail(list, 0);
 
         Assertions.assertTrue(result.isEmpty());
     }
 
     @Test
     void getTail_returnsTail_whenSizeIsLowerThanListSize() {
-        List<Integer> list = List.of(0, 1, 2, 3, 4);
-        int size = 3;
-        List<Integer> result = CollectionsUtils.getTail(list, size);
+        final List<Integer> list = List.of(0, 1, 2, 3, 4);
+        final int size = 3;
+        final List<Integer> result = CollectionsUtils.getTail(list, size);
 
         Assertions.assertEquals(size, result.size());
         Assertions.assertEquals(Integer.valueOf(2), result.get(0));
@@ -40,9 +40,9 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEqualList_whenSizeIsEqualToListSize() {
-        List<Integer> list = List.of(0, 1, 2, 3, 4);
-        int size = 5;
-        List<Integer> result = CollectionsUtils.getTail(list, size);
+        final List<Integer> list = List.of(0, 1, 2, 3, 4);
+        final int size = 5;
+        final List<Integer> result = CollectionsUtils.getTail(list, size);
 
         Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
@@ -52,9 +52,9 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void getTail_returnsEqualList_whenSizeIsGreaterThanListSize() {
-        List<Integer> list = List.of(0, 1, 2, 3, 4);
-        int size = 6;
-        List<Integer> result = CollectionsUtils.getTail(list, size);
+        final List<Integer> list = List.of(0, 1, 2, 3, 4);
+        final int size = 6;
+        final List<Integer> result = CollectionsUtils.getTail(list, size);
 
         Assertions.assertEquals(list.size(), result.size());
         for (int i = 0; i < list.size(); i++) {
@@ -78,7 +78,7 @@ class CollectionsUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLast")
     <T> void getLast_returnsLastItem_whenIterablesIsNotEmpty(Iterable<T> iterable, T expectedLastItem) {
-        T lastItem = CollectionsUtils.getLast(iterable);
+        final T lastItem = CollectionsUtils.getLast(iterable);
 
         Assertions.assertEquals(expectedLastItem, lastItem);
     }
@@ -89,8 +89,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
-        List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
-        int index = -1;
+        final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
+        final int index = -1;
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
@@ -101,8 +101,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
-        List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
-        int index = 3;
+        final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
+        final int index = 3;
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
@@ -113,8 +113,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenListIsEmpty() {
-        List<BigDecimal> list = new ArrayList<>();
-        int index = 0;
+        final List<BigDecimal> list = new ArrayList<>();
+        final int index = 0;
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
@@ -125,8 +125,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
-        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
-        int index = 0;
+        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
+        final int index = 0;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
@@ -138,8 +138,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
-        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
-        int index = 2;
+        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
+        final int index = 2;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
@@ -151,8 +151,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
-        List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10, 0);
-        int index = 1;
+        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10, 0);
+        final int index = 1;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
 
@@ -169,8 +169,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void containsList_throwsIllegalArgumentException_whenListIsNull() {
-        List<String> list = null;
-        List<String> searchedList = List.of("0", "1");
+        final List<String> list = null;
+        final List<String> searchedList = List.of("0", "1");
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.containsList(list, searchedList),
@@ -181,8 +181,8 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
-        List<String> list = List.of("0", "1");
-        List<String> searchedList = null;
+        final List<String> list = List.of("0", "1");
+        final List<String> searchedList = null;
 
         AssertUtils.assertThrowsWithMessage(
                 () -> CollectionsUtils.containsList(list, searchedList),
@@ -210,7 +210,7 @@ class CollectionsUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forContainsList")
     void containsList(List<String> list, List<String> searchedList, boolean expectedResult) {
-        boolean result = CollectionsUtils.containsList(list, searchedList);
+        final boolean result = CollectionsUtils.containsList(list, searchedList);
 
         Assertions.assertEquals(expectedResult, result);
     }
