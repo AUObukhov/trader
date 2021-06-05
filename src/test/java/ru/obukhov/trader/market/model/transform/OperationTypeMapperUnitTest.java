@@ -12,18 +12,18 @@ class OperationTypeMapperUnitTest {
 
     @Test
     void mapsBuyOperation() {
-        OperationType source = OperationType.BUY;
+        final OperationType source = OperationType.BUY;
 
-        OperationTypeWithCommission target = operationTypeMapper.map(source);
+        final OperationTypeWithCommission target = operationTypeMapper.map(source);
 
         Assertions.assertEquals(OperationTypeWithCommission.BUY, target);
     }
 
     @Test
     void mapsSellOperation() {
-        OperationType source = OperationType.SELL;
+        final OperationType source = OperationType.SELL;
 
-        OperationTypeWithCommission target = operationTypeMapper.map(source);
+        final OperationTypeWithCommission target = operationTypeMapper.map(source);
 
         Assertions.assertEquals(OperationTypeWithCommission.SELL, target);
     }
