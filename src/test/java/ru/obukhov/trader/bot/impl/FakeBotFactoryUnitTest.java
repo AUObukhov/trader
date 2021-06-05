@@ -2,8 +2,9 @@ package ru.obukhov.trader.bot.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.interfaces.FakeBot;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
@@ -12,7 +13,8 @@ import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 
-class FakeBotFactoryUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class FakeBotFactoryUnitTest {
 
     @Mock
     private TradingProperties tradingProperties;
