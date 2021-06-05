@@ -37,7 +37,7 @@ import java.time.OffsetDateTime;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         args = "--trading.token=i identify myself as token"
 )
-class TraderExceptionHandlerIntegrationTest {
+class TraderExceptionHandlerWebTest {
 
     private final TestController controller = new TestController();
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)
@@ -47,10 +47,11 @@ class TraderExceptionHandlerIntegrationTest {
     @Test
     @SuppressWarnings("unused")
     void handlesMethodArgumentNotValidException() throws Exception {
-        OffsetDateTime mockedNow =
+        final OffsetDateTime mockedNow =
                 DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            String expectedResponse = ResourceUtils.getResourceAsString("test-data/TestValidationResponse.json");
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final String expectedResponse =
+                    ResourceUtils.getResourceAsString("test-data/TestValidationResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -63,10 +64,11 @@ class TraderExceptionHandlerIntegrationTest {
     @Test
     @SuppressWarnings("unused")
     void handlesRuntimeException() throws Exception {
-        OffsetDateTime mockedNow =
+        final OffsetDateTime mockedNow =
                 DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            String expectedResponse = ResourceUtils.getResourceAsString("test-data/RuntimeExceptionResponse.json");
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final String expectedResponse =
+                    ResourceUtils.getResourceAsString("test-data/RuntimeExceptionResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/runtime")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -87,10 +89,10 @@ class TraderExceptionHandlerIntegrationTest {
         public void throwMethodArgumentNotValidException()
                 throws MethodArgumentNotValidException, NoSuchMethodException {
 
-            Method method = this.getClass().getMethod("throwMethodArgumentNotValidException");
-            MethodParameter parameter = new MethodParameter(method, -1);
+            final Method method = this.getClass().getMethod("throwMethodArgumentNotValidException");
+            final MethodParameter parameter = new MethodParameter(method, -1);
 
-            BindingResult bindingResult = new BeanPropertyBindingResult(null, StringUtils.EMPTY);
+            final BindingResult bindingResult = new BeanPropertyBindingResult(null, StringUtils.EMPTY);
             bindingResult.addError(new ObjectError("objectName1", "validation error1"));
             bindingResult.addError(new ObjectError("objectName2", "validation error2"));
 
