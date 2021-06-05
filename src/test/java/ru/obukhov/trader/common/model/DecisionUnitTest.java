@@ -14,20 +14,16 @@ class DecisionUnitTest {
 
     @Test
     void toPrettyString_whenDecisionIsBuy() {
-
-        String prettyString = new Decision(DecisionAction.BUY, 100).toPrettyString();
+        final String prettyString = new Decision(DecisionAction.BUY, 100).toPrettyString();
 
         Assertions.assertEquals("Buy 100 lots", prettyString);
-
     }
 
     @Test
     void toPrettyString_whenDecisionIsSell() {
-
-        String prettyString = new Decision(DecisionAction.SELL, 100).toPrettyString();
+        final String prettyString = new Decision(DecisionAction.SELL, 100).toPrettyString();
 
         Assertions.assertEquals("Sell 100 lots", prettyString);
-
     }
 
 }
