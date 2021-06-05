@@ -12,9 +12,9 @@ class UrlLimitUnitTests {
 
     @Test
     void matchesUrl_returnsTrue_whenMatches() {
-        List<String> segments = List.of("market", "order");
-        UrlLimit urlLimit = new UrlLimit(segments, 100);
-        HttpUrl httpUrl = new HttpUrl.Builder()
+        final List<String> segments = List.of("market", "order");
+        final UrlLimit urlLimit = new UrlLimit(segments, 100);
+        final HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
                 .host("localhost")
                 .addPathSegment("openapi")
@@ -28,8 +28,8 @@ class UrlLimitUnitTests {
 
     @Test
     void matchesUrl_returnsFalse_whenDoesNotMatches() {
-        List<String> segments = List.of("market", "candles");
-        UrlLimit urlLimit = new UrlLimit(segments, 100);
+        final List<String> segments = List.of("market", "candles");
+        final UrlLimit urlLimit = new UrlLimit(segments, 100);
         HttpUrl httpUrl = new HttpUrl.Builder()
                 .scheme("https")
                 .host("localhost")
@@ -48,8 +48,8 @@ class UrlLimitUnitTests {
 
     @Test
     void getUrl_returnsProperUrl() {
-        List<String> segments = List.of("market", "candles");
-        UrlLimit urlLimit = new UrlLimit(segments, 100);
+        final List<String> segments = List.of("market", "candles");
+        final UrlLimit urlLimit = new UrlLimit(segments, 100);
 
         Assertions.assertEquals("/market/candles", urlLimit.getUrl());
     }
