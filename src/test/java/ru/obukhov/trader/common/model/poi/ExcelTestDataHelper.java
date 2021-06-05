@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ExcelTestDataHelper {
 
     public static ExtendedWorkbook createExtendedWorkbook() {
-        Workbook workbook = new XSSFWorkbook();
+        final Workbook workbook = new XSSFWorkbook();
         return new ExtendedWorkbook(workbook);
     }
 
@@ -25,17 +25,17 @@ public class ExcelTestDataHelper {
     }
 
     public static XSSFSheet createXSSFSheet() {
-        Workbook workbook = new XSSFWorkbook();
+        final Workbook workbook = new XSSFWorkbook();
         return (XSSFSheet) workbook.createSheet();
     }
 
     public static ExtendedChart createExtendedChart() {
-        ExtendedSheet extendedSheet = createExtendedSheet();
+        final ExtendedSheet extendedSheet = createExtendedSheet();
         return extendedSheet.createChart(0, 0, 1, 1);
     }
 
     public static ExtendedChartData createExtendedChartData() {
-        ExtendedChart extendedChart = createExtendedChart();
+        final ExtendedChart extendedChart = createExtendedChart();
         return extendedChart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
     }
 
@@ -44,7 +44,7 @@ public class ExcelTestDataHelper {
     }
 
     public static void addRow(Sheet sheet, int columnCount) {
-        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+        final Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         for (int column = 0; column < columnCount; column++) {
             row.createCell(column);
         }
@@ -63,7 +63,7 @@ public class ExcelTestDataHelper {
     }
 
     public static Cell createCell(Row row, int column, String value) {
-        Cell cell = row.createCell(column);
+        final Cell cell = row.createCell(column);
         cell.setCellValue(value);
         return cell;
     }
