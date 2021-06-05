@@ -13,34 +13,40 @@ class ExtendedCellUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenRowIsNull() {
-        Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
+        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Row row = sheet.createRow(0);
+        final Cell cell = row.createCell(0);
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedCell(null, cell),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedCell(null, cell),
                 IllegalArgumentException.class,
-                "row can't be null");
+                "row can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExtendedRow extendedRow = extendedSheet.addRow();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedRow extendedRow = extendedSheet.addRow();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedCell(extendedRow, null),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedCell(extendedRow, null),
                 IllegalArgumentException.class,
-                "delegate can't be null");
+                "delegate can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExtendedRow extendedRow = extendedSheet.addRow();
-        Cell extendedCell = extendedRow.createCell(0);
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedRow extendedRow = extendedSheet.addRow();
+        final Cell extendedCell = extendedRow.createCell(0);
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedCell(extendedRow, extendedCell),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedCell(extendedRow, extendedCell),
                 IllegalArgumentException.class,
-                "delegate can't be ExtendedCell");
+                "delegate can't be ExtendedCell"
+        );
     }
 
     // endregion
@@ -49,11 +55,11 @@ class ExtendedCellUnitTest {
 
     @Test
     void getWorkbook_returnsParentWorkbook() {
-        ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
-        ExtendedSheet extendedSheet = (ExtendedSheet) parentExtendedWorkbook.createSheet();
-        ExtendedCell extendedCell = (ExtendedCell) extendedSheet.addRow().createCell(0);
+        final ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedSheet extendedSheet = (ExtendedSheet) parentExtendedWorkbook.createSheet();
+        final ExtendedCell extendedCell = (ExtendedCell) extendedSheet.addRow().createCell(0);
 
-        ExtendedWorkbook returnedExtendedWorkbook = extendedCell.getWorkbook();
+        final ExtendedWorkbook returnedExtendedWorkbook = extendedCell.getWorkbook();
 
         Assertions.assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
     }
