@@ -10,11 +10,11 @@ class ExtendedChartUnitTest {
 
     @Test
     void createChartData() {
-        ExtendedChart chart = ExcelTestDataHelper.createExtendedChart();
-        AxisPosition categoryAxisPosition = AxisPosition.BOTTOM;
-        AxisPosition valueAxisPosition = AxisPosition.LEFT;
+        final ExtendedChart chart = ExcelTestDataHelper.createExtendedChart();
+        final AxisPosition categoryAxisPosition = AxisPosition.BOTTOM;
+        final AxisPosition valueAxisPosition = AxisPosition.LEFT;
 
-        ExtendedChartData chartData = chart.createChartData(categoryAxisPosition, valueAxisPosition, ChartTypes.LINE);
+        final ExtendedChartData chartData = chart.createChartData(categoryAxisPosition, valueAxisPosition, ChartTypes.LINE);
 
         Assertions.assertNotNull(chartData);
         Assertions.assertNotNull(chartData.getDelegate());
@@ -22,7 +22,6 @@ class ExtendedChartUnitTest {
         Assertions.assertEquals(1, chartData.getValueAxes().size());
         Assertions.assertEquals(valueAxisPosition, chartData.getValueAxes().get(0).getPosition());
         Assertions.assertEquals(XDDFLineChartData.class, chartData.getDelegate().getClass());
-
     }
 
 }
