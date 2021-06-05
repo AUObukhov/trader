@@ -3,18 +3,20 @@ package ru.obukhov.trader.common.model.transform;
 import com.fasterxml.jackson.core.JsonGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
-class BigDecimalSerializerUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class BigDecimalSerializerUnitTest {
 
     private final BigDecimalSerializer serializer = new BigDecimalSerializer();
 
