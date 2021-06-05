@@ -8,11 +8,11 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,24 +49,19 @@ class ExcelServiceImplUnitTest {
     @Mock
     private ExcelFileService excelFileService;
 
+    @InjectMocks
     private ExcelServiceImpl excelService;
-
-    @BeforeEach
-    public void setUp() {
-        this.excelService = new ExcelServiceImpl(excelFileService);
-    }
 
     // region saveSimulationResult tests
 
     @Test
     void saveSimulationResult_savesMultipleResults() throws IOException {
-
         final String ticker = "ticker";
 
-        SimulationResult result1 = createSimulationResult(ticker, "bot1");
-        SimulationResult result2 = createSimulationResult(ticker, "bot2");
-        SimulationResult result3 = createSimulationResult(ticker, "bot3");
-        List<SimulationResult> results = List.of(result1, result2, result3);
+        final SimulationResult result1 = createSimulationResult(ticker, "bot1");
+        final SimulationResult result2 = createSimulationResult(ticker, "bot2");
+        final SimulationResult result3 = createSimulationResult(ticker, "bot3");
+        final List<SimulationResult> results = List.of(result1, result2, result3);
 
         excelService.saveSimulationResults(ticker, results);
 
@@ -74,21 +69,21 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(3))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        List<ExtendedWorkbook> workbooks = workbookArgumentCaptor.getAllValues();
+        final List<ExtendedWorkbook> workbooks = workbookArgumentCaptor.getAllValues();
         Assertions.assertEquals(results.size(), workbooks.size());
 
         for (int i = 0; i < results.size(); i++) {
-            SimulationResult result = results.get(i);
+            final SimulationResult result = results.get(i);
 
-            ExtendedWorkbook workbook = workbooks.get(i);
+            final ExtendedWorkbook workbook = workbooks.get(i);
             Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-            ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+            final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-            int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+            final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
             Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-            Iterator<Row> rowIterator = sheet.iterator();
+            final Iterator<Row> rowIterator = sheet.iterator();
             assertCommonStatistics(ticker, result, rowIterator);
             assertPositions(result, rowIterator);
             assertOperations(result, rowIterator);
@@ -101,7 +96,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
-        SimulationResult result = createSimulationResult(ticker, "bot");
+        final SimulationResult result = createSimulationResult(ticker, "bot");
 
         excelService.saveSimulationResults(ticker, List.of(result));
 
@@ -109,15 +104,15 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -129,7 +124,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
-        SimulationResult result = createSimulationResult(ticker, "bot");
+        final SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(StringUtils.EMPTY);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -138,15 +133,15 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -159,7 +154,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
         final String error = "error";
 
-        SimulationResult result = createSimulationResult(ticker, "bot");
+        final SimulationResult result = createSimulationResult(ticker, "bot");
         result.setError(error);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -168,15 +163,15 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 18 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = 18 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         assertCommonStatistics(ticker, result, rowIterator);
         AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.getError());
 
@@ -189,10 +184,9 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveSimulationResult_skipsChart_whenCandlesAreNull() throws IOException {
-
         final String ticker = "ticker";
 
-        SimulationResult result = createSimulationResult(ticker, "bot");
+        final SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(null);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -201,15 +195,15 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -220,10 +214,9 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveSimulationResult_skipsChart_whenCandlesAreEmpty() throws IOException {
-
         final String ticker = "ticker";
 
-        SimulationResult result = createSimulationResult(ticker, "bot");
+        final SimulationResult result = createSimulationResult(ticker, "bot");
         result.setCandles(Collections.emptyList());
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -232,15 +225,15 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
 
-        int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -253,13 +246,12 @@ class ExcelServiceImplUnitTest {
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
     void saveSimulationResult_catchesIOExceptionOfFileSaving() throws IOException {
-
         final String ticker = "ticker";
 
-        SimulationResult result1 = createSimulationResult(ticker, "bot1");
-        SimulationResult result2 = createSimulationResult(ticker, "bot2");
-        SimulationResult result3 = createSimulationResult(ticker, "bot3");
-        List<SimulationResult> results = List.of(result1, result2, result3);
+        final SimulationResult result1 = createSimulationResult(ticker, "bot1");
+        final SimulationResult result2 = createSimulationResult(ticker, "bot2");
+        final SimulationResult result3 = createSimulationResult(ticker, "bot3");
+        final List<SimulationResult> results = List.of(result1, result2, result3);
 
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.doThrow(new IOException())
@@ -312,7 +304,7 @@ class ExcelServiceImplUnitTest {
     }
 
     private void assertMergedRegions(ExtendedSheet sheet) {
-        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        final List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
         Assertions.assertEquals(3, mergedRegions.size());
     }
 
@@ -334,13 +326,13 @@ class ExcelServiceImplUnitTest {
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
-        ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
+        final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
-        ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
 
         Assertions.assertEquals(10, sheet.getRowsCount());
 
-        Iterator<Row> rowIterator = sheet.iterator();
+        final Iterator<Row> rowIterator = sheet.iterator();
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next());
@@ -406,8 +398,8 @@ class ExcelServiceImplUnitTest {
     }
 
     private Interval createInterval() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 1);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 15);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 1);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 15);
         return Interval.of(from, to);
     }
 
@@ -456,23 +448,23 @@ class ExcelServiceImplUnitTest {
     }
 
     private List<Candle> createCandles() {
-        Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 150,
                 DateUtils.getDateTime(2020, 10, 1, 10, 0, 0)
         );
-        Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 160,
                 DateUtils.getDateTime(2020, 10, 1, 11, 0, 0)
         );
-        Candle candle3 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle3 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 180,
                 DateUtils.getDateTime(2020, 10, 5, 10, 11, 0)
         );
-        Candle candle4 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle4 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 160,
                 DateUtils.getDateTime(2020, 10, 10, 10, 50, 0)
         );
-        Candle candle5 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle5 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 120,
                 DateUtils.getDateTime(2020, 11, 1, 10, 0, 0)
         );
@@ -487,20 +479,20 @@ class ExcelServiceImplUnitTest {
         final Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
         final List<BigDecimal> averages = TrendUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
 
-        List<Integer> localMinimumsIndices =
+        final List<Integer> localMinimumsIndices =
                 TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
-        List<Point> localMinimums = localMinimumsIndices.stream()
+        final List<Point> localMinimums = localMinimumsIndices.stream()
                 .map(minimum -> TestDataHelper.createPoint(candles.get(minimum)))
                 .collect(Collectors.toList());
 
-        List<Integer> localMaximumsIndices =
+        final List<Integer> localMaximumsIndices =
                 TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
-        List<Point> localMaximums = localMaximumsIndices.stream()
+        final List<Point> localMaximums = localMaximumsIndices.stream()
                 .map(maximum -> TestDataHelper.createPoint(candles.get(maximum)))
                 .collect(Collectors.toList());
 
-        List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
-        List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
+        final List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
+        final List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
 
         return new GetCandlesResponse(
                 candles,
@@ -513,13 +505,13 @@ class ExcelServiceImplUnitTest {
     }
 
     private void assertChartCreated(ExtendedSheet sheet) {
-        Iterator<?> iterator = sheet.getDrawingPatriarch().iterator();
-        XSSFGraphicFrame frame = (XSSFGraphicFrame) iterator.next();
+        final Iterator<?> iterator = sheet.getDrawingPatriarch().iterator();
+        final XSSFGraphicFrame frame = (XSSFGraphicFrame) iterator.next();
         Assertions.assertFalse(iterator.hasNext());
-        List<XSSFChart> charts = frame.getDrawing().getCharts();
+        final List<XSSFChart> charts = frame.getDrawing().getCharts();
         Assertions.assertEquals(1, charts.size());
-        XSSFChart chart = charts.get(0);
-        List<? extends XDDFChartAxis> axes = chart.getAxes();
+        final XSSFChart chart = charts.get(0);
+        final List<? extends XDDFChartAxis> axes = chart.getAxes();
         Assertions.assertEquals(2, axes.size());
         AssertUtils.assertEquals(120, axes.get(1).getMinimum());
         AssertUtils.assertEquals(180, axes.get(1).getMaximum());
