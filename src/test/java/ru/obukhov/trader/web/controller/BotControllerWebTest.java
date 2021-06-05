@@ -45,14 +45,14 @@ class BotControllerWebTest extends ControllerIntegrationTest {
     void simulate_returnsSimulationResults() throws Exception {
         final String ticker = "ticker";
 
-        String request = ResourceUtils.getResourceAsString("test-data/SimulateRequest.json");
+        final String request = ResourceUtils.getResourceAsString("test-data/SimulateRequest.json");
 
-        List<SimulationResult> simulationResults = new ArrayList<>();
+        final List<SimulationResult> simulationResults = new ArrayList<>();
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
         final Interval interval = Interval.of(from, to);
 
-        SimulatedOperation operation = new SimulatedOperation(
+        final SimulatedOperation operation = new SimulatedOperation(
                 ticker,
                 from,
                 OperationType.BUY,
@@ -60,14 +60,14 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 1,
                 BigDecimal.valueOf(300)
         );
-        Candle candle = TestDataHelper.createCandle(
+        final Candle candle = TestDataHelper.createCandle(
                 10000, 20000, 30000, 5000, from, CandleResolution.DAY
         );
 
         final BigDecimal initialBalance = BigDecimal.valueOf(1000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(100);
         final CronExpression balanceIncrementCron = new CronExpression("0 0 0 1 * ?");
-        SimulationResult simulationResult1 = SimulationResult.builder()
+        final SimulationResult simulationResult1 = SimulationResult.builder()
                 .botName("bot1")
                 .interval(interval)
                 .initialBalance(initialBalance)
@@ -82,8 +82,8 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 .candles(List.of(candle))
                 .build();
 
-        SimulatedPosition simulatedPosition1 = new SimulatedPosition(ticker, BigDecimal.valueOf(100000), 10);
-        SimulationResult simulationResult2 = SimulationResult.builder()
+        final SimulatedPosition simulatedPosition1 = new SimulatedPosition(ticker, BigDecimal.valueOf(100000), 10);
+        final SimulationResult simulationResult2 = SimulationResult.builder()
                 .botName("bot2")
                 .interval(interval)
                 .initialBalance(initialBalance)
@@ -97,9 +97,9 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 .positions(List.of(simulatedPosition1))
                 .build();
 
-        SimulatedPosition simulatedPosition2 = new SimulatedPosition(ticker, BigDecimal.valueOf(100), 10);
-        SimulatedPosition simulatedPosition3 = new SimulatedPosition(ticker, BigDecimal.valueOf(1000), 1);
-        SimulationResult simulationResult3 = SimulationResult.builder()
+        final SimulatedPosition simulatedPosition2 = new SimulatedPosition(ticker, BigDecimal.valueOf(100), 10);
+        final SimulatedPosition simulatedPosition3 = new SimulatedPosition(ticker, BigDecimal.valueOf(1000), 1);
+        final SimulationResult simulationResult3 = SimulationResult.builder()
                 .botName("bot3")
                 .interval(interval)
                 .initialBalance(initialBalance)
@@ -130,7 +130,7 @@ class BotControllerWebTest extends ControllerIntegrationTest {
                 )
         ).thenReturn(simulationResults);
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/SimulateResponse.json");
+        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/SimulateResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate")
                 .content(request)
@@ -173,7 +173,7 @@ class BotControllerWebTest extends ControllerIntegrationTest {
 
     @Test
     void setTickers_setsTickers() throws Exception {
-        String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
+        final String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers")
                 .content(tickers)
@@ -183,7 +183,7 @@ class BotControllerWebTest extends ControllerIntegrationTest {
         Mockito.verify(botConfig, Mockito.times(1))
                 .setTickers(stringListArgumentCaptor.capture());
 
-        List<String> tickersList = stringListArgumentCaptor.getValue();
+        final List<String> tickersList = stringListArgumentCaptor.getValue();
         Assertions.assertEquals(3, tickersList.size());
         Assertions.assertEquals("ticker1", tickersList.get(0));
         Assertions.assertEquals("ticker2", tickersList.get(1));
