@@ -16,9 +16,9 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsConservativeStrategy() {
-        StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
 
-        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+        final TradingStrategy strategy = factory.createStrategy(strategyConfig);
 
         Assertions.assertEquals(ConservativeStrategy.class, strategy.getClass());
     }
@@ -27,7 +27,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsGoldenCrossStrategy() {
-        StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100,
@@ -41,7 +41,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndSmallWindowIsNull() {
-        StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "bigWindow", 100,
                 "indexCoefficient", 0.5
@@ -52,7 +52,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndBigWindowIsNull() {
-        StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "indexCoefficient", 0.5
@@ -63,7 +63,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndIndexCoefficientIsNull() {
-        StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100
