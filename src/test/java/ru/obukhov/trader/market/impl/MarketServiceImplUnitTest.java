@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,17 +25,20 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class MarketServiceImplUnitTest {
 
-    private TradingProperties tradingProperties;
+    private static TradingProperties tradingProperties;
     @Mock
     private TinkoffService tinkoffService;
 
     private MarketServiceImpl service;
 
-    @BeforeEach
-    public void setUp() {
-        this.tradingProperties = new TradingProperties();
-        this.tradingProperties.setConsecutiveEmptyDaysLimit(7);
+    @BeforeAll
+    public static void setUpAll() {
+        tradingProperties = new TradingProperties();
+        tradingProperties.setConsecutiveEmptyDaysLimit(7);
+    }
 
+    @BeforeEach
+    public void setUpEach() {
         this.service = new MarketServiceImpl(tradingProperties, tinkoffService);
     }
 
