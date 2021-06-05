@@ -17,7 +17,7 @@ public class CollectionsUtils {
      * @return list with last {@code size} elements of given {@code list}
      */
     @NotNull
-    public static <T> List<T> getTail(List<T> list, int size) {
+    public static <T> List<T> getTail(final List<T> list, final int size) {
         if (size >= list.size()) {
             return list;
         }
@@ -28,12 +28,12 @@ public class CollectionsUtils {
     /**
      * @return last item of given {@code iterable} or null if {@code iterable} is null or empty
      */
-    public static <T> T getLast(Iterable<T> iterable) {
+    public static <T> T getLast(final Iterable<T> iterable) {
         if (iterable == null) {
             return null;
         }
 
-        Iterator<T> iterator = iterable.iterator();
+        final Iterator<T> iterator = iterable.iterator();
         T last = null;
         while (iterator.hasNext()) {
             last = iterator.next();
@@ -52,7 +52,11 @@ public class CollectionsUtils {
      * @throws IllegalArgumentException {@code index} is negative or greater then size of list
      * @throws IllegalArgumentException {@code list} is empty
      */
-    public static <T> void insertInterpolated(List<T> list, int index, BinaryOperator<T> interpolator) {
+    public static <T> void insertInterpolated(
+            final List<T> list,
+            final int index,
+            final BinaryOperator<T> interpolator
+    ) {
         Assert.isTrue(index >= 0, "index can't be negative");
         Assert.isTrue(index <= list.size(), "index can't be greater than size of list");
         Assert.isTrue(!list.isEmpty(), "list can't be empty");
@@ -72,7 +76,7 @@ public class CollectionsUtils {
      * Elements compared by {@link Objects#equals(Object, Object)}
      * @throws IllegalArgumentException when any of given lists is null
      */
-    public static <T> boolean containsList(List<T> list, List<T> searchedList) {
+    public static <T> boolean containsList(final List<T> list, final List<T> searchedList) {
         Assert.notNull(list, "list must not be null");
         Assert.notNull(searchedList, "searchedList must not be null");
 
@@ -92,7 +96,11 @@ public class CollectionsUtils {
         return false;
     }
 
-    private static <T> boolean containsList(List<T> list, List<T> searchedList, int searchStartPosition) {
+    private static <T> boolean containsList(
+            final List<T> list,
+            final List<T> searchedList,
+            final int searchStartPosition
+    ) {
         for (int j = 0; j < searchedList.size(); j++) {
             if (!Objects.equals(list.get(searchStartPosition + j), searchedList.get(j))) {
                 return false;

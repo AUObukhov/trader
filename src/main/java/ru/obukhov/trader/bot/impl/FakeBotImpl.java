@@ -22,12 +22,12 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     }
 
     public FakeBotImpl(
-            TradingStrategy strategy,
-            MarketService marketService,
-            OperationsService operationsService,
-            OrdersService ordersService,
-            PortfolioService portfolioService,
-            FakeTinkoffService fakeTinkoffService
+            final TradingStrategy strategy,
+            final MarketService marketService,
+            final OperationsService operationsService,
+            final OrdersService ordersService,
+            final PortfolioService portfolioService,
+            final FakeTinkoffService fakeTinkoffService
     ) {
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 

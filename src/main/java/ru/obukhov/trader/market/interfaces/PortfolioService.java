@@ -12,9 +12,9 @@ public interface PortfolioService {
 
     Collection<PortfolioPosition> getPositions();
 
-    PortfolioPosition getPosition(String ticker);
+    PortfolioPosition getPosition(final String ticker);
 
-    BigDecimal getAvailableBalance(Currency currency);
+    BigDecimal getAvailableBalance(final Currency currency);
 
     List<CurrencyPosition> getCurrencies();
 

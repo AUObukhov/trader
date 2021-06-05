@@ -12,7 +12,7 @@ public class ReportProperties {
     @Getter
     private final String saveDirectory;
 
-    public ReportProperties(String saveDirectory) {
+    public ReportProperties(final String saveDirectory) {
         this.saveDirectory = !StringUtils.hasLength(saveDirectory)
                 ? System.getProperty("user.home")
                 : saveDirectory;

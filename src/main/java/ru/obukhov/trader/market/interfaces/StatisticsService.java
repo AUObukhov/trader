@@ -12,10 +12,14 @@ import java.util.List;
 
 public interface StatisticsService {
 
-    List<Candle> getCandles(String ticker, Interval interval, CandleResolution candleInterval);
+    List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution);
 
-    GetCandlesResponse getExtendedCandles(String ticker, Interval interval, CandleResolution candleInterval);
+    GetCandlesResponse getExtendedCandles(
+            final String ticker,
+            final Interval interval,
+            final CandleResolution candleResolution
+    );
 
-    List<MarketInstrument> getInstruments(@Nullable TickerType type);
+    List<MarketInstrument> getInstruments(@Nullable final TickerType type);
 
 }

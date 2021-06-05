@@ -11,19 +11,23 @@ import java.util.List;
 
 public interface OrdersService {
 
-    List<Order> getOrders(String ticker);
+    List<Order> getOrders(final String ticker);
 
     List<Order> getOrders();
 
-    PlacedMarketOrder placeMarketOrder(@NotNull String ticker,
-                                       int lots,
-                                       @NotNull OperationType operationType);
+    PlacedMarketOrder placeMarketOrder(
+            @NotNull final String ticker,
+            final int lots,
+            @NotNull final OperationType operationType
+    );
 
-    PlacedLimitOrder placeLimitOrder(@NotNull String ticker,
-                                     int lots,
-                                     @NotNull OperationType operationType,
-                                     BigDecimal price);
+    PlacedLimitOrder placeLimitOrder(
+            @NotNull final String ticker,
+            final int lots,
+            @NotNull final OperationType operationType,
+            final BigDecimal price
+    );
 
-    void cancelOrder(@NotNull String orderId);
+    void cancelOrder(@NotNull final String orderId);
 
 }

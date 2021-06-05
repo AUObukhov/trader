@@ -23,7 +23,7 @@ public class BotConfig {
         return new HashSet<>(tickers);
     }
 
-    public synchronized void setTickers(Collection<String> tickers) {
+    public synchronized void setTickers(final Collection<String> tickers) {
         this.tickers = new HashSet<>(tickers);
     }
 

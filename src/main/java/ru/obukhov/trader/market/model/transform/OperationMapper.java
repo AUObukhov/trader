@@ -13,10 +13,10 @@ public interface OperationMapper {
 
     @Mapping(target = "dateTime", source = "date")
     @Mapping(target = "commission", source = "commission.value")
-    SimulatedOperation map(Operation source);
+    SimulatedOperation map(final Operation source);
 
     @Mapping(target = "date", source = "dateTime")
     @Mapping(target = "commission.value", source = "commission")
-    Operation map(SimulatedOperation source);
+    Operation map(final SimulatedOperation source);
 
 }

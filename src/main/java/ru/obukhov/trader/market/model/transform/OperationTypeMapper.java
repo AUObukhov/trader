@@ -10,13 +10,13 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 @Mapper
 public interface OperationTypeMapper {
 
-    default OperationTypeWithCommission map(OperationType source) {
+    default OperationTypeWithCommission map(final OperationType source) {
         return source == OperationType.BUY
                 ? OperationTypeWithCommission.BUY
                 : OperationTypeWithCommission.SELL;
     }
 
-    default OperationType map(OperationTypeWithCommission source) {
+    default OperationType map(final OperationTypeWithCommission source) {
         switch (source) {
             case BUY:
                 return OperationType.BUY;

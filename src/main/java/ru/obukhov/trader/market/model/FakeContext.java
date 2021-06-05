@@ -31,7 +31,7 @@ public class FakeContext {
     private final Map<String, PortfolioPosition> tickersToPositions;
     private final Set<SimulatedOperation> operations;
 
-    public FakeContext(OffsetDateTime currentDateTime) {
+    public FakeContext(final OffsetDateTime currentDateTime) {
         this.currentDateTime = currentDateTime;
 
         this.balances = new EnumMap<>(Currency.class);
@@ -44,11 +44,11 @@ public class FakeContext {
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current
      * dateTime
      */
-    public void addInvestment(Currency currency, BigDecimal amount) {
+    public void addInvestment(final Currency currency, final BigDecimal amount) {
         computeIfAbsentFakeBalance(currency).addInvestment(currentDateTime, amount);
     }
 
-    public BigDecimal getBalance(Currency currency) {
+    public BigDecimal getBalance(final Currency currency) {
         return computeIfAbsentFakeBalance(currency).getCurrentAmount();
     }
 
@@ -57,15 +57,15 @@ public class FakeContext {
                 .collect(Collectors.toMap(currency -> currency, this::getBalance));
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(Currency currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final Currency currency) {
         return computeIfAbsentFakeBalance(currency).getInvestments();
     }
 
-    public void setCurrentBalance(Currency currency, BigDecimal amount) {
+    public void setCurrentBalance(final Currency currency, final BigDecimal amount) {
         computeIfAbsentFakeBalance(currency).setCurrentAmount(amount);
     }
 
-    public void addOperation(SimulatedOperation operation) {
+    public void addOperation(final SimulatedOperation operation) {
         operations.add(operation);
     }
 
@@ -73,15 +73,15 @@ public class FakeContext {
         return new HashSet<>(operations);
     }
 
-    public void addPosition(String ticker, PortfolioPosition position) {
+    public void addPosition(final String ticker, PortfolioPosition position) {
         tickersToPositions.put(ticker, position);
     }
 
-    public void removePosition(String ticker) {
+    public void removePosition(final String ticker) {
         tickersToPositions.remove(ticker);
     }
 
-    public PortfolioPosition getPosition(String ticker) {
+    public PortfolioPosition getPosition(final String ticker) {
         return tickersToPositions.get(ticker);
     }
 
@@ -89,7 +89,7 @@ public class FakeContext {
         return new ArrayList<>(tickersToPositions.values());
     }
 
-    private FakeBalance computeIfAbsentFakeBalance(Currency currency) {
+    private FakeBalance computeIfAbsentFakeBalance(final Currency currency) {
         return balances.computeIfAbsent(currency, currencyKey -> new FakeBalance());
     }
 

@@ -24,7 +24,7 @@ public class ThrottledCounter {
      * @param maxValue maximum value of counter
      * @param interval delay before decrement after increment in milliseconds
      */
-    public ThrottledCounter(int maxValue, long interval) {
+    public ThrottledCounter(final int maxValue, final long interval) {
         this.counterWithMaxValue = new CounterWithMaxValue(maxValue);
         this.interval = interval;
         this.timer = new Timer();
@@ -48,7 +48,7 @@ public class ThrottledCounter {
 
         private final int maxValue;
 
-        private CounterWithMaxValue(int maxValue) {
+        private CounterWithMaxValue(final int maxValue) {
             this.maxValue = maxValue;
         }
 

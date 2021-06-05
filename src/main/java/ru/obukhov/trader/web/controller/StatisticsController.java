@@ -29,11 +29,10 @@ public class StatisticsController {
     private final ExcelService excelService;
 
     @GetMapping("/candles")
-    public GetCandlesResponse getCandles(@RequestBody GetCandlesRequest request) {
-
+    public GetCandlesResponse getCandles(@RequestBody final GetCandlesRequest request) {
         final String ticker = request.getTicker();
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
-        GetCandlesResponse response = statisticsService.getExtendedCandles(
+        final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,
                 interval,
                 request.getCandleInterval()
@@ -44,10 +43,9 @@ public class StatisticsController {
         }
 
         return response;
-
     }
 
-    private void saveCandlesSafe(String ticker, Interval interval, GetCandlesResponse response) {
+    private void saveCandlesSafe(final String ticker, final Interval interval, final GetCandlesResponse response) {
         try {
             log.debug("Saving candles for ticker {} to file", ticker);
             excelService.saveCandles(ticker, interval, response);
@@ -57,12 +55,10 @@ public class StatisticsController {
     }
 
     @GetMapping("/instruments")
-    public GetInstrumentsResponse getInstruments(@Valid @RequestBody GetInstrumentsRequest request) {
-
+    public GetInstrumentsResponse getInstruments(@Valid @RequestBody final GetInstrumentsRequest request) {
         List<MarketInstrument> instruments = statisticsService.getInstruments(request.getTickerType());
 
         return new GetInstrumentsResponse(instruments);
-
     }
 
 }

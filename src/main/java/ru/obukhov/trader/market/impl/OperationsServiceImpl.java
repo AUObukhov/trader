@@ -13,12 +13,12 @@ public class OperationsServiceImpl implements OperationsService {
 
     private final TinkoffService tinkoffService;
 
-    public OperationsServiceImpl(TinkoffService tinkoffService) {
+    public OperationsServiceImpl(final TinkoffService tinkoffService) {
         this.tinkoffService = tinkoffService;
     }
 
     @Override
-    public List<Operation> getOperations(@NotNull Interval interval, @Nullable String ticker) {
+    public List<Operation> getOperations(@NotNull final Interval interval, @Nullable final String ticker) {
         return tinkoffService.getOperations(interval, ticker);
     }
 

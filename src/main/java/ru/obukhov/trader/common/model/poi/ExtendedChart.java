@@ -24,13 +24,13 @@ public class ExtendedChart extends XDDFChart {
     // region additional methods
 
     public ExtendedChartData createChartData(
-            AxisPosition categoryAxisPosition,
-            AxisPosition valueAxisPosition,
-            ChartTypes chartType
+            final AxisPosition categoryAxisPosition,
+            final AxisPosition valueAxisPosition,
+            final ChartTypes chartType
     ) {
-        XDDFCategoryAxis categoryAxis = delegate.createCategoryAxis(categoryAxisPosition);
-        XDDFValueAxis valueAxis = delegate.createValueAxis(valueAxisPosition);
-        XDDFChartData xddfChartData = delegate.createData(chartType, categoryAxis, valueAxis);
+        final XDDFCategoryAxis categoryAxis = delegate.createCategoryAxis(categoryAxisPosition);
+        final XDDFValueAxis valueAxis = delegate.createValueAxis(valueAxisPosition);
+        final XDDFChartData xddfChartData = delegate.createData(chartType, categoryAxis, valueAxis);
         return new ExtendedChartData(xddfChartData, this);
     }
 
@@ -38,7 +38,7 @@ public class ExtendedChart extends XDDFChart {
 
     // region XSSFChart delegations
 
-    public void plot(ExtendedChartData chartData) {
+    public void plot(final ExtendedChartData chartData) {
         delegate.plot(chartData.getDelegate());
     }
 

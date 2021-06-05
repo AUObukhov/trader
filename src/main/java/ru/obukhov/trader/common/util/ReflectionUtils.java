@@ -13,8 +13,8 @@ public class ReflectionUtils {
      * @return value of field with given {@code fieldName} from given {@code object} if it has read method
      */
     @SneakyThrows
-    public static Object getFieldValueByReadMethod(Object object, String fieldName) {
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(fieldName, object.getClass());
+    public static Object getFieldValueByReadMethod(final Object object, final String fieldName) {
+        final PropertyDescriptor propertyDescriptor = new PropertyDescriptor(fieldName, object.getClass());
         return propertyDescriptor.getReadMethod().invoke(object);
     }
 

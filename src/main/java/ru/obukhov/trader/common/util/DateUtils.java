@@ -29,42 +29,73 @@ public class DateUtils {
     /**
      * @return OffsetDateTime with by params, 0 nanoseconds and UTC zone
      */
-    public static OffsetDateTime getDateTime(int year, int month, int dayOfMonth, int hour, int minute, int second) {
-        return OffsetDateTime.of(year, month, dayOfMonth,
-                hour, minute, second, 0,
-                DEFAULT_OFFSET);
+    public static OffsetDateTime getDateTime(
+            final int year,
+            final int month,
+            final int dayOfMonth,
+            final int hour,
+            final int minute,
+            final int second
+    ) {
+        return OffsetDateTime.of(
+                year,
+                month,
+                dayOfMonth,
+                hour,
+                minute,
+                second,
+                0,
+                DEFAULT_OFFSET
+        );
     }
 
     /**
      * @return OffsetDateTime with by params and UTC zone
      */
-    public static OffsetDateTime getDateTime(int year, int month, int dayOfMonth,
-                                             int hour, int minute, int second, int nanoOfSecond) {
-        return OffsetDateTime.of(year, month, dayOfMonth,
-                hour, minute, second, nanoOfSecond,
-                DEFAULT_OFFSET);
+    public static OffsetDateTime getDateTime(
+            final int year,
+            final int month,
+            final int dayOfMonth,
+            final int hour,
+            final int minute,
+            final int second,
+            final int nanoOfSecond
+    ) {
+        return OffsetDateTime.of(
+                year,
+                month,
+                dayOfMonth,
+                hour,
+                minute,
+                second,
+                nanoOfSecond,
+                DEFAULT_OFFSET
+        );
     }
 
     /**
      * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds and UTC zone
      */
-    public static OffsetDateTime getDate(int year, int month, int dayOfMonth) {
+    public static OffsetDateTime getDate(final int year, final int month, final int dayOfMonth) {
         return getDateTime(year, month, dayOfMonth, 0, 0, 0);
     }
 
     /**
      * @return OffsetDateTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and UTC zone
      */
-    public static OffsetDateTime getTime(int hour, int minute, int second) {
+    public static OffsetDateTime getTime(final int hour, final int minute, final int second) {
         return getDateTime(0, 1, 1, hour, minute, second);
     }
 
     /**
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
      */
-    public static Interval getIntervalWithDefaultOffsets(@Nullable OffsetDateTime from, @Nullable OffsetDateTime to) {
-        OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
-        OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
+    public static Interval getIntervalWithDefaultOffsets(
+            @Nullable final OffsetDateTime from,
+            @Nullable final OffsetDateTime to
+    ) {
+        final OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
+        final OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
 
         return Interval.of(innerFrom, innerTo);
     }
@@ -72,25 +103,25 @@ public class DateUtils {
     /**
      * @return passed value if it is not null or current dateTime otherways
      */
-    public static OffsetDateTime getDefaultToIfNull(OffsetDateTime to) {
+    public static OffsetDateTime getDefaultToIfNull(final OffsetDateTime to) {
         return ObjectUtils.defaultIfNull(to, OffsetDateTime.now());
     }
 
     /**
      * @return true if passed date is for Monday, Tuesday, Wednesday, Thursday or Friday, or else false
      */
-    public static boolean isWorkDay(OffsetDateTime date) {
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
+    public static boolean isWorkDay(final OffsetDateTime date) {
+        final DayOfWeek dayOfWeek = date.getDayOfWeek();
         return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
 
     /**
      * @return next work day after given {@code dateTime}
      */
-    public static OffsetDateTime getNextWorkDay(OffsetDateTime dateTime) {
-        DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
-        int daysAfterLastWorkDay = dayOfWeek.getValue() - DayOfWeek.FRIDAY.getValue();
-        int adjustment = daysAfterLastWorkDay < 0
+    public static OffsetDateTime getNextWorkDay(final OffsetDateTime dateTime) {
+        final DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
+        final int daysAfterLastWorkDay = dayOfWeek.getValue() - DayOfWeek.FRIDAY.getValue();
+        final int adjustment = daysAfterLastWorkDay < 0
                 ? 1
                 : 3 - daysAfterLastWorkDay;
         return dateTime.plusDays(adjustment);
@@ -106,7 +137,7 @@ public class DateUtils {
     /**
      * @return last work day not after given {@code dateTime}
      */
-    public static OffsetDateTime getLastWorkDay(OffsetDateTime dateTime) {
+    public static OffsetDateTime getLastWorkDay(final OffsetDateTime dateTime) {
         OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         while (!isWorkDay(date)) {
             date = date.minusDays(1);
@@ -118,7 +149,7 @@ public class DateUtils {
      * @return earliest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.
      * If one of parameters is null, returns another.
      */
-    public static OffsetDateTime getEarliestDateTime(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+    public static OffsetDateTime getEarliestDateTime(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         if (dateTime1 == null) {
             return dateTime2;
         } else if (dateTime2 == null) {
@@ -132,7 +163,7 @@ public class DateUtils {
      * @return latest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.
      * If one of parameters is null, returns another.
      */
-    public static OffsetDateTime getLatestDateTime(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+    public static OffsetDateTime getLatestDateTime(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         if (dateTime1 == null) {
             return dateTime2;
         } else if (dateTime2 == null) {
@@ -145,7 +176,7 @@ public class DateUtils {
     /**
      * @return average dateTime between given {@code dateTime1} and {@code dateTime2}
      */
-    public static OffsetDateTime getAverage(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+    public static OffsetDateTime getAverage(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         Duration halfOfDuration = Duration.between(dateTime1, dateTime2).dividedBy(2);
         return dateTime1.plus(halfOfDuration);
     }
@@ -153,20 +184,24 @@ public class DateUtils {
     /**
      * Same as {@link OffsetDateTime#plus}, but if result is after {@code maxDateTime}, then returns {@code maxDateTime}
      */
-    public static OffsetDateTime plusLimited(OffsetDateTime dateTime,
-                                             long amountToAdd,
-                                             TemporalUnit temporalUnit,
-                                             @Nullable OffsetDateTime maxDateTime) {
+    public static OffsetDateTime plusLimited(
+            final OffsetDateTime dateTime,
+            final long amountToAdd,
+            final TemporalUnit temporalUnit,
+            final @Nullable OffsetDateTime maxDateTime
+    ) {
         return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
     }
 
     /**
      * Same as {@link OffsetDateTime#minus}, but if result is before {@code minDateTime}, then returns {@code minDateTime}
      */
-    public static OffsetDateTime minusLimited(OffsetDateTime dateTime,
-                                              long amountToSubtract,
-                                              TemporalUnit temporalUnit,
-                                              @Nullable OffsetDateTime minDateTime) {
+    public static OffsetDateTime minusLimited(
+            final OffsetDateTime dateTime,
+            final long amountToSubtract,
+            final TemporalUnit temporalUnit,
+            final @Nullable OffsetDateTime minDateTime
+    ) {
         return DateUtils.getLatestDateTime(dateTime.minus(amountToSubtract, temporalUnit), minDateTime);
     }
 
@@ -175,7 +210,7 @@ public class DateUtils {
      *
      * @return dateTime with updated time fields values
      */
-    public static OffsetDateTime setTime(OffsetDateTime dateTime, OffsetTime time) {
+    public static OffsetDateTime setTime(final OffsetDateTime dateTime, final OffsetTime time) {
         return dateTime.withHour(time.getHour())
                 .withMinute(time.getMinute())
                 .withSecond(time.getSecond())
@@ -186,14 +221,14 @@ public class DateUtils {
      * @return dateTime with same instant as in given {@code dateTime},
      * but with offset equals to {@link DateUtils#DEFAULT_OFFSET}
      */
-    public static OffsetDateTime setDefaultOffsetSameInstant(OffsetDateTime dateTime) {
+    public static OffsetDateTime setDefaultOffsetSameInstant(final OffsetDateTime dateTime) {
         return dateTime.withOffsetSameInstant(DEFAULT_OFFSET);
     }
 
     /**
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
-    public static ChronoUnit getPeriodByCandleInterval(CandleResolution candleInterval) {
+    public static ChronoUnit getPeriodByCandleInterval(final CandleResolution candleInterval) {
         return candleInterval == CandleResolution.DAY
                 || candleInterval == CandleResolution.WEEK
                 || candleInterval == CandleResolution.MONTH
@@ -206,11 +241,11 @@ public class DateUtils {
      *
      * @return true, if {@code dateTime2} is null, or else result of {@link OffsetDateTime#isAfter}
      */
-    public static boolean isAfter(OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+    public static boolean isAfter(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
-    public static OffsetDateTime roundUpToDay(OffsetDateTime dateTime) {
+    public static OffsetDateTime roundUpToDay(final OffsetDateTime dateTime) {
         OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         if (!date.equals(dateTime)) {
             date = date.plusDays(1);
@@ -225,7 +260,7 @@ public class DateUtils {
      *
      * @return moved date
      */
-    public static OffsetDateTime roundDownToYear(OffsetDateTime dateTime) {
+    public static OffsetDateTime roundDownToYear(final OffsetDateTime dateTime) {
         return dateTime.withDayOfYear(1).truncatedTo(ChronoUnit.DAYS);
     }
 
@@ -235,7 +270,7 @@ public class DateUtils {
      *
      * @return moved date
      */
-    public static OffsetDateTime roundUpToYear(OffsetDateTime dateTime) {
+    public static OffsetDateTime roundUpToYear(final OffsetDateTime dateTime) {
         OffsetDateTime date = roundDownToYear(dateTime);
         if (!date.equals(dateTime)) {
             date = date.plusYears(1);
@@ -249,7 +284,7 @@ public class DateUtils {
      * @param duration  duration or work period
      * @return true if today is work day and current time is between {@code startTime} and {@code startTime + duration}
      */
-    public static boolean isWorkTimeNow(OffsetTime startTime, Duration duration) {
+    public static boolean isWorkTimeNow(final OffsetTime startTime, final Duration duration) {
         return isWorkTime(OffsetDateTime.now(), startTime, duration);
     }
 
@@ -264,13 +299,16 @@ public class DateUtils {
      * @return true if given {@code dateTime} is work time, or else false
      * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
-    public static boolean isWorkTime(OffsetDateTime dateTime, OffsetTime workStartTime, Duration workTimeDuration) {
-
+    public static boolean isWorkTime(
+            final OffsetDateTime dateTime,
+            final OffsetTime workStartTime,
+            final Duration workTimeDuration
+    ) {
         validateWorkTimeDuration(workTimeDuration);
 
-        OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
-        boolean livingAfterMidnight = workStartTime.isAfter(workEndTime);
-        OffsetTime time = dateTime.toOffsetTime();
+        final OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
+        final boolean livingAfterMidnight = workStartTime.isAfter(workEndTime);
+        final OffsetTime time = dateTime.toOffsetTime();
 
         if (!isWorkDay(dateTime)) {
             return livingAfterMidnight
@@ -290,10 +328,11 @@ public class DateUtils {
      * @param workTimeDuration duration of work period
      * @return first minute of work time not before {@code dateTime}
      */
-    public static OffsetDateTime getNearestWorkTime(OffsetDateTime dateTime,
-                                                    OffsetTime workStartTime,
-                                                    Duration workTimeDuration) {
-
+    public static OffsetDateTime getNearestWorkTime(
+            final OffsetDateTime dateTime,
+            final OffsetTime workStartTime,
+            final Duration workTimeDuration
+    ) {
         validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
@@ -308,13 +347,15 @@ public class DateUtils {
      * @param workTimeDuration duration of work period
      * @return next minute of work time after {@code dateTime}
      */
-    public static OffsetDateTime getNextWorkMinute(OffsetDateTime dateTime,
-                                                   OffsetTime workStartTime,
-                                                   Duration workTimeDuration) {
+    public static OffsetDateTime getNextWorkMinute(
+            final OffsetDateTime dateTime,
+            final OffsetTime workStartTime,
+            final Duration workTimeDuration
+    ) {
         validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
-            OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
+            final OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
             if (isWorkTime(nextDateTime, workStartTime, workTimeDuration)) {
                 return nextDateTime;
             }
@@ -323,7 +364,7 @@ public class DateUtils {
         return toWorkStartTime(dateTime, workStartTime);
     }
 
-    private static OffsetDateTime toWorkStartTime(OffsetDateTime dateTime, OffsetTime workStartTime) {
+    private static OffsetDateTime toWorkStartTime(final OffsetDateTime dateTime, final OffsetTime workStartTime) {
         if (dateTime.toOffsetTime().isBefore(workStartTime)) {
             return setTime(dateTime, workStartTime);
         }
@@ -331,7 +372,7 @@ public class DateUtils {
         return setTime(getNextWorkDay(dateTime), workStartTime);
     }
 
-    private static void validateWorkTimeDuration(Duration workTimeDuration) {
+    private static void validateWorkTimeDuration(final Duration workTimeDuration) {
         Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
         Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0,
                 "workTimeDuration must be less than 1 day");
@@ -340,7 +381,7 @@ public class DateUtils {
     /**
      * @return value of given {@code dateTime} with minimum hours, minutes, seconds and nanos of this date
      */
-    public static OffsetDateTime atStartOfDay(OffsetDateTime dateTime) {
+    public static OffsetDateTime atStartOfDay(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MIN.getHour(), OffsetTime.MIN.getMinute(), OffsetTime.MIN.getSecond(),
                 OffsetTime.MIN.getNano(), dateTime.getOffset());
@@ -349,7 +390,7 @@ public class DateUtils {
     /**
      * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
      */
-    public static OffsetDateTime atEndOfDay(OffsetDateTime dateTime) {
+    public static OffsetDateTime atEndOfDay(final OffsetDateTime dateTime) {
         return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
                 OffsetTime.MAX.getNano(), dateTime.getOffset());
@@ -358,7 +399,7 @@ public class DateUtils {
     /**
      * @return dateTime equals to given {@code dateTime}, but with system default offset
      */
-    public static OffsetDateTime withDefaultOffset(OffsetDateTime dateTime) {
+    public static OffsetDateTime withDefaultOffset(final OffsetDateTime dateTime) {
         return dateTime.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
     }
 
@@ -366,23 +407,23 @@ public class DateUtils {
      * @throws IllegalArgumentException when given {@code dateTime} is not null and after given {@code now}
      */
     public static void assertDateTimeNotFuture(
-            @Nullable OffsetDateTime dateTime,
-            OffsetDateTime now,
-            String name
+            @Nullable final OffsetDateTime dateTime,
+            final OffsetDateTime now,
+            final String name
     ) {
         if (dateTime != null && dateTime.isAfter(now)) {
-            String message = String.format("'%s' (%s) can't be in future. Now is %s", name, dateTime, now);
+            final String message = String.format("'%s' (%s) can't be in future. Now is %s", name, dateTime, now);
             throw new IllegalArgumentException(message);
         }
     }
 
-    public static Date toDate(OffsetDateTime dateTime) {
+    public static Date toDate(final OffsetDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
 
-        ZoneOffset zoneOffset = ZoneOffset.of(dateTime.getOffset().getId());
-        Instant instant = dateTime.toLocalDateTime().toInstant(zoneOffset);
+        final ZoneOffset zoneOffset = ZoneOffset.of(dateTime.getOffset().getId());
+        final Instant instant = dateTime.toLocalDateTime().toInstant(zoneOffset);
         return Date.from(instant);
     }
 
@@ -390,7 +431,11 @@ public class DateUtils {
      * @return number of dates which match given {@code expression} and between given {@code from} exclusively and {@code to}
      * inclusively
      */
-    public static int getCronHitsBetweenDates(CronExpression expression, OffsetDateTime from, OffsetDateTime to) {
+    public static int getCronHitsBetweenDates(
+            final CronExpression expression,
+            final OffsetDateTime from,
+            final OffsetDateTime to
+    ) {
         Assert.isTrue(from.isBefore(to), "from must be before to");
 
         final Date dateFrom = DateUtils.toDate(from);

@@ -29,41 +29,49 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Searches candles by conditions
      *
-     * @param ticker         ticker of candles
-     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
-     * @param candleInterval candle interval
+     * @param ticker           ticker of candles
+     * @param interval         search interval, default interval.from is start of trading, default interval.to is now
+     * @param candleResolution candle interval
      * @return list of found candles
      */
     @Override
-    public List<Candle> getCandles(String ticker, Interval interval, CandleResolution candleInterval) {
-        return marketService.getCandles(ticker, interval, candleInterval);
+    public List<Candle> getCandles(
+            final String ticker,
+            final Interval interval,
+            final CandleResolution candleResolution
+    ) {
+        return marketService.getCandles(ticker, interval, candleResolution);
     }
 
     /**
      * Searches candles by conditions and calculates extra data by them
      *
-     * @param ticker         ticker of candles
-     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
-     * @param candleInterval candle interval
+     * @param ticker           ticker of candles
+     * @param interval         search interval, default interval.from is start of trading, default interval.to is now
+     * @param candleResolution candle interval
      * @return data structure with list of found candles and extra data
      */
     @Override
-    public GetCandlesResponse getExtendedCandles(String ticker, Interval interval, CandleResolution candleInterval) {
-        List<Candle> candles = marketService.getCandles(ticker, interval, candleInterval);
+    public GetCandlesResponse getExtendedCandles(
+            final String ticker,
+            final Interval interval,
+            final CandleResolution candleResolution
+    ) {
+        final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
         return extendCandles(candles);
     }
 
-    private GetCandlesResponse extendCandles(List<Candle> candles) {
-        List<BigDecimal> averages = getAverages(candles);
+    private GetCandlesResponse extendCandles(final List<Candle> candles) {
+        final List<BigDecimal> averages = getAverages(candles);
 
-        List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
-        List<Integer> localMinimumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.reverseOrder());
-        List<Integer> localMaximumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.naturalOrder());
+        final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
+        final List<Integer> localMinimumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.reverseOrder());
+        final List<Integer> localMaximumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.naturalOrder());
 
-        List<Point> localMinimumsPoints = TrendUtils.getLocalExtremes(averages, times, localMinimumsIndices);
-        List<Point> localMaximumsPoints = TrendUtils.getLocalExtremes(averages, times, localMaximumsIndices);
-        List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
-        List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
+        final List<Point> localMinimumsPoints = TrendUtils.getLocalExtremes(averages, times, localMinimumsIndices);
+        final List<Point> localMaximumsPoints = TrendUtils.getLocalExtremes(averages, times, localMaximumsIndices);
+        final List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
+        final List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
 
         return new GetCandlesResponse(
                 candles,
@@ -75,7 +83,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         );
     }
 
-    private List<BigDecimal> getAverages(List<Candle> candles) {
+    private List<BigDecimal> getAverages(final List<Candle> candles) {
         return TrendUtils.getExponentialWeightedMovingAverages(
                 candles,
                 Candle::getOpenPrice,
@@ -89,7 +97,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
      */
     @Override
-    public List<MarketInstrument> getInstruments(@Nullable TickerType type) {
+    public List<MarketInstrument> getInstruments(@Nullable final TickerType type) {
         return marketService.getInstruments(type);
     }
 

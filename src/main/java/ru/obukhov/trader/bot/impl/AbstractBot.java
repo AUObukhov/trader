@@ -39,12 +39,12 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     @NotNull
-    public DecisionData processTicker(String ticker, OffsetDateTime previousStartTime) {
-        DecisionData decisionData = new DecisionData();
+    public DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime) {
+        final DecisionData decisionData = new DecisionData();
 
-        List<Order> orders = ordersService.getOrders(ticker);
+        final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            List<Candle> currentCandles =
+            final List<Candle> currentCandles =
                     marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
             decisionData.setCurrentCandles(currentCandles);
 
@@ -54,7 +54,7 @@ public abstract class AbstractBot implements Bot {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
                 fillDecisionData(decisionData, ticker);
-                Decision decision = strategy.decide(decisionData);
+                final Decision decision = strategy.decide(decisionData);
                 performOperation(ticker, decision);
             }
         } else {
@@ -64,8 +64,8 @@ public abstract class AbstractBot implements Bot {
         return decisionData;
     }
 
-    private void fillDecisionData(DecisionData decisionData, String ticker) {
-        MarketInstrument instrument = marketService.getInstrument(ticker);
+    private void fillDecisionData(final DecisionData decisionData, final String ticker) {
+        final MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
@@ -73,20 +73,20 @@ public abstract class AbstractBot implements Bot {
         decisionData.setInstrument(instrument);
     }
 
-    private List<Operation> getLastWeekOperations(String ticker) {
-        OffsetDateTime to = OffsetDateTime.now();
-        OffsetDateTime from = to.minusWeeks(1);
+    private List<Operation> getLastWeekOperations(final String ticker) {
+        final OffsetDateTime to = OffsetDateTime.now();
+        final OffsetDateTime from = to.minusWeeks(1);
         return operationsService.getOperations(Interval.of(from, to), ticker);
     }
 
-    private void performOperation(String ticker, Decision decision) {
+    private void performOperation(final String ticker, final Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
         }
 
-        OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
-        PlacedMarketOrder order = ordersService.placeMarketOrder(ticker, decision.getLots(), operation);
+        final OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
+        final PlacedMarketOrder order = ordersService.placeMarketOrder(ticker, decision.getLots(), operation);
         log.info("Placed order {}", order);
     }
 

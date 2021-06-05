@@ -20,14 +20,14 @@ public class OrdersServiceImpl implements OrdersService {
     private final TinkoffService tinkoffService;
     private final MarketService marketService;
 
-    public OrdersServiceImpl(TinkoffService tinkoffService, MarketService marketService) {
+    public OrdersServiceImpl(final TinkoffService tinkoffService, final MarketService marketService) {
         this.tinkoffService = tinkoffService;
         this.marketService = marketService;
     }
 
     @Override
-    public List<Order> getOrders(String ticker) {
-        String figi = marketService.getFigi(ticker);
+    public List<Order> getOrders(final String ticker) {
+        final String figi = marketService.getFigi(ticker);
         return getOrders().stream()
                 .filter(order -> figi.equals(order.getFigi()))
                 .collect(Collectors.toList());
@@ -40,11 +40,11 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public PlacedMarketOrder placeMarketOrder(
-            @NotNull String ticker,
-            int lots,
-            @NotNull OperationType operationType
+            @NotNull final String ticker,
+            final int lots,
+            @NotNull final OperationType operationType
     ) {
-        MarketOrderRequest orderRequest = new MarketOrderRequest()
+        final MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);
         return tinkoffService.placeMarketOrder(ticker, orderRequest);
@@ -53,12 +53,12 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Override
     public PlacedLimitOrder placeLimitOrder(
-            @NotNull String ticker,
-            int lots,
-            @NotNull OperationType operationType,
-            BigDecimal price
+            @NotNull final String ticker,
+            final int lots,
+            @NotNull final OperationType operationType,
+            final BigDecimal price
     ) {
-        LimitOrderRequest orderRequest = new LimitOrderRequest()
+        final LimitOrderRequest orderRequest = new LimitOrderRequest()
                 .lots(lots)
                 .operation(operationType)
                 .price(price);

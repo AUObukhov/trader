@@ -17,8 +17,8 @@ public interface PortfolioPositionMapper {
     @Mapping(source = "lots", target = "lotsCount")
     @Mapping(source = "averagePositionPrice.value", target = "averagePositionPrice")
     @Mapping(source = "averagePositionPriceNoNkd.value", target = "averagePositionPriceNoNkd")
-    PortfolioPosition map(ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source);
+    PortfolioPosition map(final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source);
 
-    Collection<PortfolioPosition> map(Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source);
+    Collection<PortfolioPosition> map(final Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source);
 
 }

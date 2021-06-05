@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class OffsetTimeConverter implements Converter<String, OffsetTime> {
 
     @Override
-    public OffsetTime convert(@NotNull String source) {
+    public OffsetTime convert(@NotNull final String source) {
         return OffsetTime.parse(source, DateTimeFormatter.ISO_OFFSET_TIME);
     }
 }

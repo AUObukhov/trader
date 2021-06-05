@@ -22,9 +22,9 @@ public class ExcelFileServiceImpl implements ExcelFileService {
     private final ReportProperties reportProperties;
 
     @Override
-    public void saveToFile(Workbook book, String fileName) throws IOException {
+    public void saveToFile(final Workbook book, final String fileName) throws IOException {
         final File file = createFile(fileName);
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+        try (final FileOutputStream outputStream = new FileOutputStream(file)) {
             book.write(outputStream);
             book.close();
         }
@@ -32,13 +32,13 @@ public class ExcelFileServiceImpl implements ExcelFileService {
         openFile(file);
     }
 
-    private void openFile(File file) throws IOException {
+    private void openFile(final File file) throws IOException {
         final String path = file.getAbsolutePath();
         log.debug("Opening file {}", path);
         Runtime.getRuntime().exec(new String[]{"explorer", path});
     }
 
-    private File createFile(String fileName) throws IOException {
+    private File createFile(final String fileName) throws IOException {
         final File file = new File(reportProperties.getSaveDirectory(), fileName);
         if (!file.createNewFile()) {
             throw new IllegalStateException("Failed to create file " + file.getAbsolutePath());

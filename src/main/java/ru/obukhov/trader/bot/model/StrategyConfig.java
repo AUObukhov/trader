@@ -17,7 +17,7 @@ public class StrategyConfig {
 
     private Map<String, Object> params;
 
-    public StrategyConfig(StrategyType strategyType) {
+    public StrategyConfig(final StrategyType strategyType) {
         this.type = strategyType;
     }
 

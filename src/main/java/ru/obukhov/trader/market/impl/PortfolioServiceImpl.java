@@ -22,8 +22,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public PortfolioPosition getPosition(String ticker) {
-        Collection<PortfolioPosition> allPositions = getPositions();
+    public PortfolioPosition getPosition(final String ticker) {
+        final Collection<PortfolioPosition> allPositions = getPositions();
         return allPositions.stream()
                 .filter(position -> ticker.equals(position.getTicker()))
                 .findFirst()
@@ -31,7 +31,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public BigDecimal getAvailableBalance(Currency currency) {
+    public BigDecimal getAvailableBalance(final Currency currency) {
         return getCurrencies().stream()
                 .filter(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)
                 .findFirst()
@@ -39,7 +39,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                 .orElseThrow();
     }
 
-    private BigDecimal getAvailableBalance(CurrencyPosition currency) {
+    private BigDecimal getAvailableBalance(final CurrencyPosition currency) {
         return currency.getBlocked() == null
                 ? currency.getBalance()
                 : currency.getBalance().subtract(currency.getBlocked());

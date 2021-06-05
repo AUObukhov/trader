@@ -12,12 +12,12 @@ import ru.obukhov.trader.config.TradingProperties;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(TradingProperties tradingProperties) {
+    public ConservativeStrategy(final TradingProperties tradingProperties) {
         super("Conservative", tradingProperties);
     }
 
     @Override
-    public Decision decide(DecisionData data) {
+    public Decision decide(final DecisionData data) {
         Decision decision;
         if (existsOperationInProgress(data)) {
             decision = Decision.WAIT_DECISION;

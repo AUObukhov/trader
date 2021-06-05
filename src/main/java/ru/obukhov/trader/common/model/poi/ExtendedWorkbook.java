@@ -44,7 +44,7 @@ public class ExtendedWorkbook implements Workbook {
 
     // region constructor
 
-    public ExtendedWorkbook(Workbook delegate) {
+    public ExtendedWorkbook(final Workbook delegate) {
         Assert.isTrue(delegate != null, "delegate can't be null");
         Assert.isTrue(!(delegate instanceof ExtendedWorkbook), "delegate can't be ExtendedWorkbook");
 
@@ -53,16 +53,16 @@ public class ExtendedWorkbook implements Workbook {
         this.cellStyles = initCellStyles(delegate);
     }
 
-    private static Map<String, CellStyle> initCellStyles(Workbook workbook) {
+    private static Map<String, CellStyle> initCellStyles(final Workbook workbook) {
         final Map<String, CellStyle> cellStyles = new HashMap<>();
         for (int i = 0; i < workbook.getNumCellStyles(); i++) {
-            CellStyle cellStyle = workbook.getCellStyleAt(i);
+            final CellStyle cellStyle = workbook.getCellStyleAt(i);
             cellStyles.put(getNewUniqueCellStyleName(cellStyles), cellStyle);
         }
         return cellStyles;
     }
 
-    private static String getNewUniqueCellStyleName(Map<String, CellStyle> cellStyles) {
+    private static String getNewUniqueCellStyleName(final Map<String, CellStyle> cellStyles) {
         int noNameCellStylesCount = 0;
         String cellStyleName;
 
@@ -74,13 +74,13 @@ public class ExtendedWorkbook implements Workbook {
         return cellStyleName;
     }
 
-    private List<ExtendedSheet> initSheets(Workbook delegate) {
+    private List<ExtendedSheet> initSheets(final Workbook delegate) {
         return StreamSupport.stream(delegate.spliterator(), false)
                 .map(this::createSheet)
                 .collect(Collectors.toList());
     }
 
-    private ExtendedSheet createSheet(Sheet sheet) {
+    private ExtendedSheet createSheet(final Sheet sheet) {
         return new ExtendedSheet(this, sheet);
     }
 
@@ -94,12 +94,12 @@ public class ExtendedWorkbook implements Workbook {
      * @return created style
      * @throws IllegalArgumentException when style with given {@code name} already exists
      */
-    public CellStyle createCellStyle(String name) {
+    public CellStyle createCellStyle(final String name) {
         if (cellStyles.containsKey(name)) {
             throw new IllegalArgumentException("Cell style '" + name + "' already exists");
         }
 
-        CellStyle cellStyle = delegate.createCellStyle();
+        final CellStyle cellStyle = delegate.createCellStyle();
         cellStyles.put(name, cellStyle);
 
         return cellStyle;
@@ -109,7 +109,7 @@ public class ExtendedWorkbook implements Workbook {
      * @return cell style with given {@code name} or null if it does not exists
      */
     @Nullable
-    public CellStyle getCellStyle(String name) {
+    public CellStyle getCellStyle(final String name) {
         return cellStyles.get(name);
     }
 
@@ -118,7 +118,7 @@ public class ExtendedWorkbook implements Workbook {
      *
      * @return created or existing style
      */
-    public CellStyle getOrCreateCellStyle(String name) {
+    public CellStyle getOrCreateCellStyle(final String name) {
         return cellStyles.computeIfAbsent(name, key -> delegate.createCellStyle());
     }
 

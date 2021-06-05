@@ -17,43 +17,39 @@ public class SandboxServiceImpl implements SandboxService {
     private final MarketService marketService;
     private final SandboxContext sandboxContext;
 
-    public SandboxServiceImpl(OpenApi opeApi, MarketService marketService) {
+    public SandboxServiceImpl(final OpenApi opeApi, final MarketService marketService) {
         this.marketService = marketService;
         this.sandboxContext = opeApi.getSandboxContext();
     }
 
     @Override
     public void setCurrencyBalance(
-            @NotNull SandboxCurrency currency,
-            @NotNull BigDecimal balance,
-            @Nullable String brokerAccountId
+            @NotNull final SandboxCurrency currency,
+            @NotNull final BigDecimal balance,
+            @Nullable final String brokerAccountId
     ) {
-
-        SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest()
+        final SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest()
                 .currency(currency)
                 .balance(balance);
 
         sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId).join();
-
     }
 
     @Override
     public void setPositionBalance(
-            @NotNull String ticker,
-            @NotNull BigDecimal balance,
-            @Nullable String brokerAccountId
+            @NotNull final String ticker,
+            @NotNull final BigDecimal balance,
+            @Nullable final String brokerAccountId
     ) {
-
-        SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
+        final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
                 .figi(marketService.getFigi(ticker))
                 .balance(balance);
 
         sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId).join();
-
     }
 
     @Override
-    public void clearAll(@Nullable String brokerAccountId) {
+    public void clearAll(@Nullable final String brokerAccountId) {
         sandboxContext.clearAll(brokerAccountId).join();
     }
 

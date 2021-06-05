@@ -19,15 +19,15 @@ public class Point {
 
     private BigDecimal value;
 
-    public static Point of(OffsetDateTime time, BigDecimal value) {
+    public static Point of(final OffsetDateTime time, final BigDecimal value) {
         return new Point(time, DecimalUtils.setDefaultScale(value));
     }
 
-    public static Point of(OffsetDateTime time, Double value) {
+    public static Point of(final OffsetDateTime time, final Double value) {
         return new Point(time, DecimalUtils.setDefaultScale(value));
     }
 
-    public static Point of(OffsetDateTime time, Integer value) {
+    public static Point of(final OffsetDateTime time, final Integer value) {
         return new Point(time, DecimalUtils.setDefaultScale(value));
     }
 

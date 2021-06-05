@@ -12,19 +12,19 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Candle> getCandles(String ticker, Interval interval, CandleResolution candleInterval);
+    List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleInterval);
 
-    Candle getLastCandle(String ticker);
+    Candle getLastCandle(final String ticker);
 
-    Candle getLastCandle(String ticker, OffsetDateTime to);
+    Candle getLastCandle(final String ticker, final OffsetDateTime to);
 
     @NotNull
-    List<Candle> getLastCandles(String ticker, int limit, CandleResolution candleResolution);
+    List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution);
 
-    MarketInstrument getInstrument(String ticker);
+    MarketInstrument getInstrument(final String ticker);
 
-    List<MarketInstrument> getInstruments(TickerType type);
+    List<MarketInstrument> getInstruments(final TickerType type);
 
-    String getFigi(String ticker);
+    String getFigi(final String ticker);
 
 }

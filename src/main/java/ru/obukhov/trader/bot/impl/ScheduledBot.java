@@ -24,13 +24,13 @@ public class ScheduledBot extends AbstractBot {
     private final TradingProperties tradingProperties;
 
     public ScheduledBot(
-            TradingStrategy strategy,
-            MarketService marketService,
-            OperationsService operationsService,
-            OrdersService ordersService,
-            PortfolioService portfolioService,
-            BotConfig botConfig,
-            TradingProperties tradingProperties
+            final TradingStrategy strategy,
+            final MarketService marketService,
+            final OperationsService operationsService,
+            final OrdersService ordersService,
+            final PortfolioService portfolioService,
+            final BotConfig botConfig,
+            final TradingProperties tradingProperties
     ) {
         super(strategy, marketService, operationsService, ordersService, portfolioService);
 
@@ -51,7 +51,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        Set<String> tickers = new HashSet<>(botConfig.getTickers());
+        final Set<String> tickers = new HashSet<>(botConfig.getTickers());
         if (tickers.isEmpty()) {
             log.warn("No tickers configured for bot. Do nothing");
             return;

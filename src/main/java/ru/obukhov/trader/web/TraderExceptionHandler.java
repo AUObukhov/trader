@@ -21,21 +21,23 @@ import java.util.stream.Collectors;
 public class TraderExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<Map<String, Object>> handleValidationException(
+            final MethodArgumentNotValidException exception
+    ) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(createResponseMap(exception));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception exception) {
+    public ResponseEntity<Map<String, Object>> handleException(final Exception exception) {
         log.error("Unknown exception", exception);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(createResponseMap(exception));
     }
 
-    private Map<String, Object> createResponseMap(MethodArgumentNotValidException exception) {
+    private Map<String, Object> createResponseMap(final MethodArgumentNotValidException exception) {
         List<String> errors = exception.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
                 .collect(Collectors.toList());
@@ -43,12 +45,12 @@ public class TraderExceptionHandler {
         return createResponseMap("Invalid request", errors);
     }
 
-    private Map<String, Object> createResponseMap(Exception exception) {
+    private Map<String, Object> createResponseMap(final Exception exception) {
         return createResponseMap(exception.getMessage(), null);
     }
 
-    private Map<String, Object> createResponseMap(String message, List<String> errors) {
-        Map<String, Object> result = new HashMap<>();
+    private Map<String, Object> createResponseMap(final String message, final List<String> errors) {
+        final Map<String, Object> result = new HashMap<>();
         result.put("message", message);
         if (CollectionUtils.isNotEmpty(errors)) {
             result.put("errors", errors);

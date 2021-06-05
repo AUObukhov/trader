@@ -49,7 +49,7 @@ public class ExtendedSheet implements Sheet {
 
     // region constructor
 
-    public ExtendedSheet(ExtendedWorkbook workbook, Sheet delegate) {
+    public ExtendedSheet(final ExtendedWorkbook workbook, final Sheet delegate) {
         Assert.isTrue(workbook != null, "workbook can't be null");
         Assert.isTrue(delegate != null, "delegate can't be null");
         Assert.isTrue(!(delegate instanceof ExtendedSheet), "delegate can't be ExtendedSheet");
@@ -59,13 +59,13 @@ public class ExtendedSheet implements Sheet {
         this.rows = initRows(delegate);
     }
 
-    private TreeMap<Integer, ExtendedRow> initRows(Sheet delegate) {
-        Map<Integer, ExtendedRow> map = StreamSupport.stream(delegate.spliterator(), false)
+    private TreeMap<Integer, ExtendedRow> initRows(final Sheet delegate) {
+        final Map<Integer, ExtendedRow> map = StreamSupport.stream(delegate.spliterator(), false)
                 .collect(Collectors.toMap(Row::getRowNum, this::createRow));
         return new TreeMap<>(map);
     }
 
-    private ExtendedRow createRow(Row row) {
+    private ExtendedRow createRow(final Row row) {
         return new ExtendedRow(this, row);
     }
 
@@ -109,18 +109,18 @@ public class ExtendedSheet implements Sheet {
         return (ExtendedRow) createRow(getLastRowNum() + 1);
     }
 
-    public ExtendedChart createChart(int column1, int row1, int column2, int row2) {
-        XSSFDrawing drawing = (XSSFDrawing) createDrawingPatriarch();
-        ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, column1, row1, column2, row2);
-        XSSFChart chart = drawing.createChart(anchor);
+    public ExtendedChart createChart(final int column1, final int row1, final int column2, final int row2) {
+        final XSSFDrawing drawing = (XSSFDrawing) createDrawingPatriarch();
+        final ClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, column1, row1, column2, row2);
+        final XSSFChart chart = drawing.createChart(anchor);
         return new ExtendedChart(chart);
     }
 
     /**
      * Same as {@link Sheet#addMergedRegion(CellRangeAddress)}, but with exact values of cell range address fields
      */
-    public int addMergedRegion(int firstRow, int lastRow, int firstCol, int lastCol) {
-        CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+    public int addMergedRegion(final int firstRow, final int lastRow, final int firstCol, final int lastCol) {
+        final CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
         return addMergedRegion(cellRangeAddress);
     }
 

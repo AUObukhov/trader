@@ -19,7 +19,7 @@ public class Line {
     /**
      * Creates a new line passing through the points with the given coordinates
      */
-    public Line(int x1, BigDecimal y1, int x2, BigDecimal y2) {
+    public Line(final int x1, final BigDecimal y1, final int x2, final BigDecimal y2) {
         Assert.isTrue(x1 != x2, "x1 and x2 can't be equal");
 
         this.a = y2.subtract(y1); // a is actually y1 - y2, but it is always used with opposite sign, so it is inverted from the beginning
@@ -30,7 +30,7 @@ public class Line {
     /**
      * @return value of {@code y} of point with given {@code x}
      */
-    public BigDecimal getValue(int x) {
+    public BigDecimal getValue(final int x) {
         return DecimalUtils.divide(DecimalUtils.multiply(a, x).subtract(c), b);
     }
 

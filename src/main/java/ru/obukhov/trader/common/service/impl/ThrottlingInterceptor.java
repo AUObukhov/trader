@@ -25,7 +25,7 @@ public class ThrottlingInterceptor implements Interceptor {
     private final Map<UrlLimit, ThrottledCounter> counters;
     private final ThrottledCounter defaultCounter;
 
-    public ThrottlingInterceptor(QueryThrottleProperties queryThrottleProperties) {
+    public ThrottlingInterceptor(final QueryThrottleProperties queryThrottleProperties) {
         this.queryThrottleProperties = queryThrottleProperties;
         this.counters = createCounters(queryThrottleProperties);
         this.defaultCounter = new ThrottledCounter(
@@ -34,12 +34,12 @@ public class ThrottlingInterceptor implements Interceptor {
         );
     }
 
-    private Map<UrlLimit, ThrottledCounter> createCounters(QueryThrottleProperties queryThrottleProperties) {
-        long interval = queryThrottleProperties.getInterval();
+    private Map<UrlLimit, ThrottledCounter> createCounters(final QueryThrottleProperties queryThrottleProperties) {
+        final long interval = queryThrottleProperties.getInterval();
 
-        Map<UrlLimit, ThrottledCounter> result = new HashMap<>();
+        final Map<UrlLimit, ThrottledCounter> result = new HashMap<>();
         for (UrlLimit limit : queryThrottleProperties.getLimits()) {
-            ThrottledCounter counter = new ThrottledCounter(limit.getLimit(), interval);
+            final ThrottledCounter counter = new ThrottledCounter(limit.getLimit(), interval);
             result.put(limit, counter);
         }
         return result;
@@ -47,8 +47,8 @@ public class ThrottlingInterceptor implements Interceptor {
 
     @NotNull
     @Override
-    public Response intercept(Interceptor.Chain chain) {
-        HttpUrl url = chain.request().url();
+    public Response intercept(final Interceptor.Chain chain) {
+        final HttpUrl url = chain.request().url();
 
         if (URL_FIRST_SEGMENT.equals(url.pathSegments().get(0))) {
             incrementCounters(url);
@@ -59,13 +59,13 @@ public class ThrottlingInterceptor implements Interceptor {
         return proceed(chain);
     }
 
-    private Response proceed(Interceptor.Chain chain) {
+    private Response proceed(final Interceptor.Chain chain) {
         return proceed(chain, 1);
     }
 
-    private Response proceed(Interceptor.Chain chain, int attemptNumber) {
+    private Response proceed(final Interceptor.Chain chain, final int attemptNumber) {
         if (attemptNumber > queryThrottleProperties.getAttemptsCount()) {
-            String message = String.format("Failed to retry for %s times", queryThrottleProperties.getAttemptsCount());
+            final String message = String.format("Failed to retry for %s times", queryThrottleProperties.getAttemptsCount());
             throw new IllegalStateException(message);
         }
 
@@ -86,8 +86,8 @@ public class ThrottlingInterceptor implements Interceptor {
         }
     }
 
-    private void incrementCounters(HttpUrl url) {
-        Map<UrlLimit, ThrottledCounter> matchingCounters = counters.entrySet().stream()
+    private void incrementCounters(final HttpUrl url) {
+        final Map<UrlLimit, ThrottledCounter> matchingCounters = counters.entrySet().stream()
                 .filter(entry -> entry.getKey().matchesUrl(url))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 

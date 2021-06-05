@@ -11,11 +11,11 @@ import java.awt.Color;
 @Mapper
 public interface ColorMapper {
 
-    default byte[] mapToBytes(Color source) {
+    default byte[] mapToBytes(final Color source) {
         return new byte[]{(byte) source.getRed(), (byte) source.getGreen(), (byte) source.getBlue()};
     }
 
-    default XDDFColor mapToXDDFColor(Color source) {
+    default XDDFColor mapToXDDFColor(final Color source) {
         return XDDFColor.from(mapToBytes(source));
     }
 

@@ -27,7 +27,7 @@ public class ExtendedCell implements Cell {
     @Getter
     private final Cell delegate;
 
-    public ExtendedCell(ExtendedRow row, Cell delegate) {
+    public ExtendedCell(final ExtendedRow row, final Cell delegate) {
         Assert.isTrue(row != null, "row can't be null");
         Assert.isTrue(delegate != null, "delegate can't be null");
         Assert.isTrue(!(delegate instanceof ExtendedCell), "delegate can't be ExtendedCell");

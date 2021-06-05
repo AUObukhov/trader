@@ -38,7 +38,7 @@ public class Interval {
      * @return new Interval with given {@code from} and {@code to}
      * @throws IllegalArgumentException if {@code from} is after {@code to}
      */
-    public static Interval of(@Nullable OffsetDateTime from, @Nullable OffsetDateTime to) {
+    public static Interval of(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {
         Assert.isTrue(from == null || to == null || !from.isAfter(to), "from can't be after to");
 
         return new Interval(from, to);
@@ -50,18 +50,18 @@ public class Interval {
      * @param dayOfMonth day of month of given date
      * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
      */
-    public static Interval ofDay(int year, int month, int dayOfMonth) {
-        OffsetDateTime from = DateUtils.getDate(year, month, dayOfMonth);
-        OffsetDateTime to = DateUtils.atEndOfDay(from);
+    public static Interval ofDay(final int year, final int month, final int dayOfMonth) {
+        final OffsetDateTime from = DateUtils.getDate(year, month, dayOfMonth);
+        final OffsetDateTime to = DateUtils.atEndOfDay(from);
         return new Interval(from, to);
     }
 
     /**
      * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
      */
-    public static Interval ofDay(@NotNull OffsetDateTime dateTime) {
-        OffsetDateTime from = DateUtils.atStartOfDay(dateTime);
-        OffsetDateTime to = DateUtils.atEndOfDay(from);
+    public static Interval ofDay(@NotNull final OffsetDateTime dateTime) {
+        final OffsetDateTime from = DateUtils.atStartOfDay(dateTime);
+        final OffsetDateTime to = DateUtils.atEndOfDay(from);
         return new Interval(from, to);
     }
 
@@ -80,13 +80,13 @@ public class Interval {
      * {@code to} is earliest dateTime between end of day of current {@code to} and current dateTime
      * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day
      */
-    public Interval extendToWholeDay(boolean notFuture) {
+    public Interval extendToWholeDay(final boolean notFuture) {
         Assert.isTrue(equalDates(), "'from' and 'to' must be at same day");
 
-        OffsetDateTime extendedFrom = DateUtils.atStartOfDay(from);
+        final OffsetDateTime extendedFrom = DateUtils.atStartOfDay(from);
         OffsetDateTime extendedTo = DateUtils.atEndOfDay(to);
         if (notFuture) {
-            OffsetDateTime now = OffsetDateTime.now();
+            final OffsetDateTime now = OffsetDateTime.now();
             DateUtils.assertDateTimeNotFuture(from, now, "from");
             extendedTo = DateUtils.getEarliestDateTime(extendedTo, now);
         }
@@ -108,7 +108,7 @@ public class Interval {
     /**
      * @return true if {@code dateTime} is in current interval including extreme values
      */
-    public boolean contains(OffsetDateTime dateTime) {
+    public boolean contains(final OffsetDateTime dateTime) {
         return from != null && to != null
                 && !dateTime.isBefore(from) && !dateTime.isAfter(to);
     }
@@ -119,7 +119,7 @@ public class Interval {
      * and
      * same value of current {@code to} or given {@code defaultTo} if current {@code to} is null
      */
-    public Interval getDefault(OffsetDateTime defaultFrom, OffsetDateTime defaultTo) {
+    public Interval getDefault(final OffsetDateTime defaultFrom, final OffsetDateTime defaultTo) {
         return new Interval(from == null ? defaultFrom : from,
                 to == null ? defaultTo : to);
     }
@@ -135,7 +135,7 @@ public class Interval {
      * {@code to} of other intervals are at end of day.
      */
     public List<Interval> splitIntoDailyIntervals() {
-        List<Interval> result = new ArrayList<>();
+        final List<Interval> result = new ArrayList<>();
 
         OffsetDateTime currentFrom = from;
         OffsetDateTime endOfDay = DateUtils.atEndOfDay(from);
@@ -169,8 +169,8 @@ public class Interval {
      * @return pretty string representation of current interval, where null values are represented as "-∞" or "∞"
      */
     public String toPrettyString() {
-        String fromString = from == null ? "-∞" : DATE_TIME_FORMATTER.format(from);
-        String toString = to == null ? "∞" : DATE_TIME_FORMATTER.format(to);
+        final String fromString = from == null ? "-∞" : DATE_TIME_FORMATTER.format(from);
+        final String toString = to == null ? "∞" : DATE_TIME_FORMATTER.format(to);
 
         return fromString + " — " + toString;
     }

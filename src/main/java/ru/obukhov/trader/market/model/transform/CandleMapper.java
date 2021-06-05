@@ -26,13 +26,13 @@ public abstract class CandleMapper {
     @Mapping(target = "lowestPrice", source = "l")
     public abstract Candle map(ru.tinkoff.invest.openapi.model.rest.Candle source);
 
-    public List<Candle> map(Candles source) {
+    public List<Candle> map(final Candles source) {
         return source.getCandles().stream()
                 .map(this::map)
                 .collect(Collectors.toList());
     }
 
-    protected OffsetDateTime mapOffsetDateTime(OffsetDateTime source) {
+    protected OffsetDateTime mapOffsetDateTime(final OffsetDateTime source) {
         return DateUtils.withDefaultOffset(source);
     }
 }

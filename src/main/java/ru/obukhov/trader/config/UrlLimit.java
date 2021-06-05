@@ -31,7 +31,7 @@ public class UrlLimit {
      * @return true, if given {@code url} contains all segments of current {@code UrlLimit} in same order,
      * otherwise false
      */
-    public boolean matchesUrl(HttpUrl url) {
+    public boolean matchesUrl(final HttpUrl url) {
         return CollectionsUtils.containsList(url.pathSegments(), segments);
     }
 

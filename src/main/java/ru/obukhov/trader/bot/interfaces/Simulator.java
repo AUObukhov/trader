@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface Simulator {
     List<SimulationResult> simulate(
-            String ticker,
-            BigDecimal initialBalance,
-            BigDecimal balanceIncrement,
-            CronExpression balanceIncrementCron,
-            List<StrategyConfig> strategiesConfigs,
-            Interval interval,
-            boolean saveToFiles
+            final String ticker,
+            final BigDecimal initialBalance,
+            final BigDecimal balanceIncrement,
+            final CronExpression balanceIncrementCron,
+            final List<StrategyConfig> strategiesConfigs,
+            final Interval interval,
+            final boolean saveToFiles
     );
 }

@@ -9,13 +9,17 @@ import java.math.BigDecimal;
 public interface SandboxService {
 
     void setCurrencyBalance(
-            @NotNull SandboxCurrency currency,
-            @NotNull BigDecimal balance,
-            @Nullable String brokerAccountId
+            @NotNull final SandboxCurrency currency,
+            @NotNull final BigDecimal balance,
+            @Nullable final String brokerAccountId
     );
 
-    void setPositionBalance(@NotNull String ticker, @NotNull BigDecimal balance, @Nullable String brokerAccountId);
+    void setPositionBalance(
+            @NotNull final String ticker,
+            @NotNull final BigDecimal balance,
+            @Nullable final String brokerAccountId
+    );
 
-    void clearAll(@Nullable String brokerAccountId);
+    void clearAll(@Nullable final String brokerAccountId);
 
 }

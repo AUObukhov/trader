@@ -18,17 +18,15 @@ public class OrdersController {
 
     private final OrdersService ordersService;
 
-    public OrdersController(OrdersService ordersService) {
+    public OrdersController(final OrdersService ordersService) {
         this.ordersService = ordersService;
     }
 
     @GetMapping("/get")
     public GetOrdersResponse getOrders() {
-
-        List<Order> orders = ordersService.getOrders();
+        final List<Order> orders = ordersService.getOrders();
 
         return new GetOrdersResponse(orders);
-
     }
 
 }

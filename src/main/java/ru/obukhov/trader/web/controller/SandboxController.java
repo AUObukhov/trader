@@ -23,23 +23,17 @@ public class SandboxController {
     private final SandboxService sandboxService;
 
     @PostMapping("/currency-balance")
-    public void setCurrencyBalance(@RequestBody SetCurrencyBalanceRequest request) {
-
+    public void setCurrencyBalance(@RequestBody final SetCurrencyBalanceRequest request) {
         sandboxService.setCurrencyBalance(request.getCurrency(), request.getBalance(), request.getBrokerAccountId());
-
     }
 
     @PostMapping("/position-balance")
-    public void setPositionBalance(@RequestBody SetPositionBalanceRequest request) {
-
+    public void setPositionBalance(@RequestBody final SetPositionBalanceRequest request) {
         sandboxService.setPositionBalance(request.getTicker(), request.getBalance(), request.getBrokerAccountId());
-
     }
 
     @PostMapping("/clear")
-    public void clearAll(@RequestBody ClearAllRequest request) {
-
+    public void clearAll(@RequestBody final ClearAllRequest request) {
         sandboxService.clearAll(request.getBrokerAccountId());
-
     }
 }

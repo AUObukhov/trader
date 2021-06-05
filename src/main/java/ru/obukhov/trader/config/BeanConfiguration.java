@@ -30,43 +30,52 @@ import ru.tinkoff.invest.openapi.OpenApi;
 public class BeanConfiguration {
 
     @Bean
-    public TinkoffService realTinkoffService(OpenApi opeApi) {
+    public TinkoffService realTinkoffService(final OpenApi opeApi) {
         return new RealTinkoffService(opeApi);
     }
 
     @Bean
-    public MarketService realMarketService(TradingProperties tradingProperties, TinkoffService realTinkoffService) {
+    public MarketService realMarketService(
+            final TradingProperties tradingProperties,
+            final TinkoffService realTinkoffService
+    ) {
         return new MarketServiceImpl(tradingProperties, realTinkoffService);
     }
 
     @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(OpenApi opeApi, MarketService realMarketService) {
+    public SandboxService sandboxService(final OpenApi opeApi, final MarketService realMarketService) {
         return new SandboxServiceImpl(opeApi, realMarketService);
     }
 
     @Bean
-    public OperationsService realOperationsService(TinkoffService realTinkoffService) {
+    public OperationsService realOperationsService(final TinkoffService realTinkoffService) {
         return new OperationsServiceImpl(realTinkoffService);
     }
 
     @Bean
-    public OrdersService realOrdersService(TinkoffService realTinkoffService, MarketService realMarketService) {
+    public OrdersService realOrdersService(
+            final TinkoffService realTinkoffService,
+            final MarketService realMarketService
+    ) {
         return new OrdersServiceImpl(realTinkoffService, realMarketService);
     }
 
     @Bean
-    public PortfolioService realPortfolioService(TinkoffService realTinkoffService) {
+    public PortfolioService realPortfolioService(final TinkoffService realTinkoffService) {
         return new PortfolioServiceImpl(realTinkoffService);
     }
 
     @Bean
-    public StatisticsService statisticsService(MarketService realMarketService) {
+    public StatisticsService statisticsService(final MarketService realMarketService) {
         return new StatisticsServiceImpl(realMarketService);
     }
 
     @Bean
-    public TradingStrategy tradingStrategy(TradingStrategyFactory strategyFactory, StrategyConfig strategyConfig) {
+    public TradingStrategy tradingStrategy(
+            final TradingStrategyFactory strategyFactory,
+            final StrategyConfig strategyConfig
+    ) {
         return strategyFactory.createStrategy(strategyConfig);
     }
 

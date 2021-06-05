@@ -30,12 +30,12 @@ public class BotController {
     private final BotConfig botConfig;
 
     @PostMapping("/simulate")
-    public SimulateResponse simulate(@Valid @RequestBody SimulateRequest request) {
+    public SimulateResponse simulate(@Valid @RequestBody final SimulateRequest request) {
 
-        Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
-        boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
+        final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
+        final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        List<SimulationResult> results = simulator.simulate(
+        final List<SimulationResult> results = simulator.simulate(
                 request.getTicker(),
                 request.getInitialBalance(),
                 request.getBalanceIncrement(),
@@ -60,7 +60,7 @@ public class BotController {
     }
 
     @PostMapping("/tickers")
-    public void setTickers(@RequestBody Collection<String> tickers) {
+    public void setTickers(@RequestBody final Collection<String> tickers) {
         botConfig.setTickers(tickers);
     }
 

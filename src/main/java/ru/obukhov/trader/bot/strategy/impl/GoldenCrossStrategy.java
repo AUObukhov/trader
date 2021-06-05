@@ -27,10 +27,10 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     private final float indexCoefficient;
 
     public GoldenCrossStrategy(
-            TradingProperties tradingProperties,
-            int smallWindow,
-            int bigWindow,
-            float indexCoefficient
+            final TradingProperties tradingProperties,
+            final int smallWindow,
+            final int bigWindow,
+            final float indexCoefficient
     ) {
         super(String.format("Golden cross (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient), tradingProperties);
 
@@ -46,11 +46,11 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             decision = Decision.WAIT_DECISION;
             log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {
-            List<BigDecimal> values = data.getCurrentCandles().stream()
+            final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
-            List<BigDecimal> shortAverages = TrendUtils.getSimpleMovingAverages(values, smallWindow);
-            List<BigDecimal> longAverages = TrendUtils.getSimpleMovingAverages(values, bigWindow);
+            final List<BigDecimal> shortAverages = TrendUtils.getSimpleMovingAverages(values, smallWindow);
+            final List<BigDecimal> longAverages = TrendUtils.getSimpleMovingAverages(values, bigWindow);
 
             final int index = (int) (indexCoefficient * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);

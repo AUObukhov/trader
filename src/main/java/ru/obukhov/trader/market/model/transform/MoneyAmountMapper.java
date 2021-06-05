@@ -9,8 +9,8 @@ import ru.obukhov.trader.market.model.MoneyAmount;
 @Mapper
 public interface MoneyAmountMapper {
 
-    MoneyAmount map(ru.tinkoff.invest.openapi.model.rest.MoneyAmount source);
+    MoneyAmount map(final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source);
 
-    ru.tinkoff.invest.openapi.model.rest.MoneyAmount map(MoneyAmount source);
+    ru.tinkoff.invest.openapi.model.rest.MoneyAmount map(final MoneyAmount source);
 
 }

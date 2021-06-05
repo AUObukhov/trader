@@ -44,11 +44,11 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getSimpleMovingAverages(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            int window
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final int window
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getSimpleMovingAverages(values, window);
     }
 
@@ -62,25 +62,25 @@ public class TrendUtils {
      * @return map with times as keys and calculated averages as values
      */
     public static <T> Map<OffsetDateTime, BigDecimal> getSimpleMovingAverages(
-            List<T> elements,
-            Function<T, OffsetDateTime> keyExtractor,
-            Function<T, BigDecimal> valueExtractor,
-            int window
+            final List<T> elements,
+            final Function<T, OffsetDateTime> keyExtractor,
+            final Function<T, BigDecimal> valueExtractor,
+            final int window
     ) {
         Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
         final int size = elements.size();
 
-        List<OffsetDateTime> keys = elements.stream().map(keyExtractor).collect(Collectors.toList());
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        LinkedHashMap<OffsetDateTime, BigDecimal> movingAverages = new LinkedHashMap<>(size, 1.0f);
+        final List<OffsetDateTime> keys = elements.stream().map(keyExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final LinkedHashMap<OffsetDateTime, BigDecimal> movingAverages = new LinkedHashMap<>(size, 1.0f);
         // filling of first {window} averages
-        int count = Math.min(window, size);
+        final int count = Math.min(window, size);
         BigDecimal previousAverage = BigDecimal.ZERO;
         for (int i = 0; i < count; i++) {
             BigDecimal sum = BigDecimal.ZERO;
             for (int j = 0; j <= i; j++) {
-                BigDecimal value = values.get(j);
+                final BigDecimal value = values.get(j);
                 sum = sum.add(value);
             }
             previousAverage = DecimalUtils.divide(sum, i + 1);
@@ -89,9 +89,9 @@ public class TrendUtils {
 
         // filling of the rest averages
         for (int i = window; i < size; i++) {
-            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
-            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
-            BigDecimal currentAverage = previousAverage.subtract(excludedValue).add(addedValue);
+            final BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            final BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
+            final BigDecimal currentAverage = previousAverage.subtract(excludedValue).add(addedValue);
             movingAverages.put(keys.get(i), currentAverage);
             previousAverage = currentAverage;
         }
@@ -106,18 +106,18 @@ public class TrendUtils {
      * @param window count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getSimpleMovingAverages(List<BigDecimal> values, int window) {
+    public static List<BigDecimal> getSimpleMovingAverages(final List<BigDecimal> values, final int window) {
         Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
-        int size = values.size();
+        final int size = values.size();
 
         // filling of first {window} averages
-        List<BigDecimal> movingAverages = new ArrayList<>(size);
-        int count = Math.min(window, size);
+        final List<BigDecimal> movingAverages = new ArrayList<>(size);
+        final int count = Math.min(window, size);
         for (int i = 0; i < count; i++) {
             BigDecimal sum = BigDecimal.ZERO;
             for (int j = 0; j <= i; j++) {
-                BigDecimal value = values.get(j);
+                final BigDecimal value = values.get(j);
                 sum = sum.add(value);
             }
 
@@ -126,9 +126,9 @@ public class TrendUtils {
 
         // filling of the rest averages
         for (int i = window; i < size; i++) {
-            BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
-            BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
-            BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
+            final BigDecimal excludedValue = DecimalUtils.divide(values.get(i - window), window);
+            final BigDecimal addedValue = DecimalUtils.divide(values.get(i), window);
+            final BigDecimal currentAverage = movingAverages.get(i - 1).subtract(excludedValue).add(addedValue);
             movingAverages.add(currentAverage);
         }
 
@@ -149,12 +149,12 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            int window,
-            int order
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final int window,
+            final int order
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
 
         return getLinearWeightedMovingAverages(values, window, order);
     }
@@ -167,7 +167,11 @@ public class TrendUtils {
      * @param order  order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window, int order) {
+    public static List<BigDecimal> getLinearWeightedMovingAverages(
+            final List<BigDecimal> values,
+            final int window,
+            final int order
+    ) {
         Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
 
         List<BigDecimal> averages = new ArrayList<>(values);
@@ -187,11 +191,11 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            int window
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final int window
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getLinearWeightedMovingAverages(values, window);
     }
 
@@ -202,10 +206,10 @@ public class TrendUtils {
      * @param window count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
-    public static List<BigDecimal> getLinearWeightedMovingAverages(List<BigDecimal> values, int window) {
+    public static List<BigDecimal> getLinearWeightedMovingAverages(final List<BigDecimal> values, final int window) {
         Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
-        List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
+        final List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
         for (int i = 0; i < values.size(); i++) {
             weightedMovingAverages.add(getLinearWeightedMovingAverage(values, i, window));
         }
@@ -214,7 +218,7 @@ public class TrendUtils {
     }
 
     private static BigDecimal getLinearWeightedMovingAverage(
-            List<BigDecimal> values,
+            final List<BigDecimal> values,
             final int index,
             final int window
     ) {
@@ -229,7 +233,7 @@ public class TrendUtils {
             weightsSum = weightsSum.add(BigDecimal.valueOf(weight));
         }
 
-        double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
+        final double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
         return DecimalUtils.divide(sum, divisor);
     }
 
@@ -246,11 +250,11 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getExponentialWeightedMovingAverages(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            double weightDecrease
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final double weightDecrease
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
     }
 
@@ -262,8 +266,8 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static List<BigDecimal> getExponentialWeightedMovingAverages(
-            List<BigDecimal> values,
-            double weightDecrease
+            final List<BigDecimal> values,
+            final double weightDecrease
     ) {
         return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
     }
@@ -279,12 +283,12 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getExponentialWeightedMovingAverages(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            double weightDecrease,
-            int order
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final double weightDecrease,
+            final int order
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getExponentialWeightedMovingAverages(values, weightDecrease, order);
     }
 
@@ -298,16 +302,16 @@ public class TrendUtils {
      * @return list of calculated averages
      */
     public static List<BigDecimal> getExponentialWeightedMovingAverages(
-            List<BigDecimal> values,
-            double weightDecrease,
-            int order
+            final List<BigDecimal> values,
+            final double weightDecrease,
+            final int order
     ) {
         Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
         Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
                 "weightDecrease must be in range (0; 1]");
 
-        double revertedWeightDecrease = 1 - weightDecrease;
-        List<BigDecimal> averages = new ArrayList<>(values);
+        final double revertedWeightDecrease = 1 - weightDecrease;
+        final List<BigDecimal> averages = new ArrayList<>(values);
         if (averages.isEmpty()) {
             return averages;
         }
@@ -320,9 +324,9 @@ public class TrendUtils {
     }
 
     private static void updateExponentialMovingAverages(
-            List<BigDecimal> averages,
-            double weightDecrease,
-            double revertedWeightDecrease
+            final List<BigDecimal> averages,
+            final double weightDecrease,
+            final double revertedWeightDecrease
     ) {
         BigDecimal average = averages.get(0);
         final int size = averages.size();
@@ -332,14 +336,14 @@ public class TrendUtils {
     }
 
     private static BigDecimal updateExponentialMovingAverage(
-            List<BigDecimal> averages,
-            BigDecimal average,
-            int index,
-            double weightDecrease,
-            double revertedWeightDecrease
+            final List<BigDecimal> averages,
+            final BigDecimal previousAverage,
+            final int index,
+            final double weightDecrease,
+            final double revertedWeightDecrease
     ) {
-        average = DecimalUtils.multiply(averages.get(index), weightDecrease)
-                .add(DecimalUtils.multiply(average, revertedWeightDecrease));
+        final BigDecimal average = DecimalUtils.multiply(averages.get(index), weightDecrease)
+                .add(DecimalUtils.multiply(previousAverage, revertedWeightDecrease));
         averages.set(index, average);
         return average;
     }
@@ -358,11 +362,11 @@ public class TrendUtils {
      * @return calculated extremes
      */
     public static <T> List<Integer> getLocalExtremes(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            Comparator<BigDecimal> comparator
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getLocalExtremes(values, comparator);
     }
 
@@ -374,9 +378,12 @@ public class TrendUtils {
      * @param comparator comparator of elements, defining character of extremes
      * @return calculated extremes
      */
-    public static List<Integer> getLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
-        int size = values.size();
-        List<Integer> extremes = new ArrayList<>(size);
+    public static List<Integer> getLocalExtremes(
+            final List<BigDecimal> values,
+            final Comparator<BigDecimal> comparator
+    ) {
+        final int size = values.size();
+        final List<Integer> extremes = new ArrayList<>(size);
         if (values.isEmpty()) {
             return extremes;
         }
@@ -384,7 +391,7 @@ public class TrendUtils {
         boolean isGrowing = true;
         BigDecimal previousValue = values.get(0);
         for (int i = 0; i < size; i++) {
-            BigDecimal currentValue = values.get(i);
+            final BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
                 isGrowing = true;
             } else if (isGrowing) {
@@ -404,9 +411,9 @@ public class TrendUtils {
     // endregion
 
     public static List<Point> getLocalExtremes(
-            List<BigDecimal> values,
-            List<OffsetDateTime> times,
-            List<Integer> localExtremesIndices
+            final List<BigDecimal> values,
+            final List<OffsetDateTime> times,
+            final List<Integer> localExtremesIndices
     ) {
         return localExtremesIndices.stream()
                 .map(extremum -> Point.of(times.get(extremum), values.get(extremum)))
@@ -425,11 +432,11 @@ public class TrendUtils {
      * @return calculated extremes in order, opposite to {@code comparator} order
      */
     public static <T> List<Integer> getSortedLocalExtremes(
-            List<T> elements,
-            Function<T, BigDecimal> valueExtractor,
-            Comparator<BigDecimal> comparator
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
         return getSortedLocalExtremes(values, comparator);
     }
 
@@ -441,18 +448,21 @@ public class TrendUtils {
      * @param comparator comparator of elements, defining character of extremes
      * @return calculated extremes in order, opposite to {@code comparator} order
      */
-    public static List<Integer> getSortedLocalExtremes(List<BigDecimal> values, Comparator<BigDecimal> comparator) {
+    public static List<Integer> getSortedLocalExtremes(
+            final List<BigDecimal> values,
+            final Comparator<BigDecimal> comparator
+    ) {
         if (values.isEmpty()) {
             return new ArrayList<>();
         }
 
-        int size = values.size();
-        List<Pair<Integer, BigDecimal>> extremes = new ArrayList<>(size);
+        final int size = values.size();
+        final List<Pair<Integer, BigDecimal>> extremes = new ArrayList<>(size);
 
         boolean isGrowing = true;
         BigDecimal previousValue = values.get(0);
         for (int i = 0; i < size; i++) {
-            BigDecimal currentValue = values.get(i);
+            final BigDecimal currentValue = values.get(i);
             if (comparator.compare(currentValue, previousValue) >= 0) {
                 isGrowing = true;
             } else if (isGrowing) {
@@ -486,15 +496,15 @@ public class TrendUtils {
      * @return list of calculated lines, each line is list of points
      */
     public static List<List<Point>> getRestraintLines(
-            List<OffsetDateTime> times,
-            List<BigDecimal> values,
-            List<Integer> localExtremes
+            final List<OffsetDateTime> times,
+            final List<BigDecimal> values,
+            final List<Integer> localExtremes
     ) {
         Assert.isTrue(times.size() == values.size(), "times and values must have same size");
         Assert.isTrue(times.size() >= localExtremes.size(),
                 "localExtremes can't be longer than times and values");
 
-        List<List<Point>> lines = new ArrayList<>();
+        final List<List<Point>> lines = new ArrayList<>();
         if (localExtremes.isEmpty()) {
             return lines;
         }
@@ -505,26 +515,31 @@ public class TrendUtils {
         for (int i = 0; i < count; i++) {
             currentExtremum = nextExtremum;
             nextExtremum = localExtremes.get(i + 1);
-            Line line = getLine(values, currentExtremum, nextExtremum);
-            List<Point> points = getPoints(times, currentExtremum, nextExtremum, line);
+            final Line line = getLine(values, currentExtremum, nextExtremum);
+            final List<Point> points = getPoints(times, currentExtremum, nextExtremum, line);
             lines.add(points);
         }
         return lines;
     }
 
-    private static Line getLine(List<BigDecimal> values, Integer x1, Integer x2) {
-        BigDecimal y1 = values.get(x1);
-        BigDecimal y2 = values.get(x2);
+    private static Line getLine(final List<BigDecimal> values, final Integer x1, final Integer x2) {
+        final BigDecimal y1 = values.get(x1);
+        final BigDecimal y2 = values.get(x2);
 
         return new Line(x1, y1, x2, y2);
     }
 
-    private static List<Point> getPoints(List<OffsetDateTime> times, Integer x1, Integer x2, Line line) {
-        List<Point> points = new ArrayList<>();
-        int futureX = Math.min(times.size() - 1, x1 + (int) ((x2 - x1) * RESTRAINT_DURATION_FACTOR));
+    private static List<Point> getPoints(
+            final List<OffsetDateTime> times,
+            final Integer x1,
+            final Integer x2,
+            final Line line
+    ) {
+        final List<Point> points = new ArrayList<>();
+        final int futureX = Math.min(times.size() - 1, x1 + (int) ((x2 - x1) * RESTRAINT_DURATION_FACTOR));
         for (int x = x1; x <= futureX; x++) {
-            OffsetDateTime time = times.get(x);
-            BigDecimal value = line.getValue(x);
+            final OffsetDateTime time = times.get(x);
+            final BigDecimal value = line.getValue(x);
             points.add(Point.of(time, value));
         }
         return points;
@@ -541,11 +556,11 @@ public class TrendUtils {
      *
      * @return indices of crossovers
      */
-    public static List<Integer> getCrossovers(List<BigDecimal> values1, List<BigDecimal> values2) {
+    public static List<Integer> getCrossovers(final List<BigDecimal> values1, final List<BigDecimal> values2) {
         final int size = values1.size();
         Assert.isTrue(size == values2.size(), "values1 and values2 must have same size");
 
-        List<Integer> crossovers = new ArrayList<>();
+        final List<Integer> crossovers = new ArrayList<>();
         if (values1.isEmpty()) {
             return crossovers;
         }
@@ -569,7 +584,7 @@ public class TrendUtils {
         return crossovers;
     }
 
-    private static int getFirstDifferenceIndex(List<BigDecimal> values1, List<BigDecimal> values2) {
+    private static int getFirstDifferenceIndex(final List<BigDecimal> values1, final List<BigDecimal> values2) {
         for (int i = 0; i < values1.size(); i++) {
             if (values1.get(i).compareTo(values2.get(i)) != 0) {
                 return i;
@@ -579,7 +594,7 @@ public class TrendUtils {
         return -1;
     }
 
-    private static boolean isCrossover(int previousDifference, int currentDifference) {
+    private static boolean isCrossover(final int previousDifference, final int currentDifference) {
         return previousDifference != currentDifference && currentDifference != 0;
     }
 
@@ -593,7 +608,11 @@ public class TrendUtils {
      * there are no crossovers or touches after {@code index}<br/>
      * @throws IllegalArgumentException if {@code values1} and {@code values2} have different sizes
      */
-    public static Crossover getCrossoverIfLast(List<BigDecimal> values1, List<BigDecimal> values2, int index) {
+    public static Crossover getCrossoverIfLast(
+            final List<BigDecimal> values1,
+            final List<BigDecimal> values2,
+            final int index
+    ) {
         final int size = values1.size();
 
         Assert.isTrue(size == values2.size(), "Collections must has same size");
@@ -628,10 +647,10 @@ public class TrendUtils {
     }
 
     private static boolean relationIsKept(
-            List<BigDecimal> values1,
-            List<BigDecimal> values2,
-            int index,
-            int relation
+            final List<BigDecimal> values1,
+            final List<BigDecimal> values2,
+            final int index,
+            final int relation
     ) {
         for (int i = index; i < values1.size(); i++) {
             if (values1.get(i).compareTo(values2.get(i)) != relation) {

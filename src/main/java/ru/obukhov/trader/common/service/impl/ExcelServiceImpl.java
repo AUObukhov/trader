@@ -71,24 +71,24 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResults(String ticker, Collection<SimulationResult> results) {
+    public void saveSimulationResults(final String ticker, final Collection<SimulationResult> results) {
         for (SimulationResult result : results) {
-            ExtendedWorkbook workBook = createWorkBook();
+            final ExtendedWorkbook workBook = createWorkBook();
             createSheet(workBook, ticker, result);
             saveToFile(workBook, "SimulationResult for '" + ticker + "' by '" + result.getBotName() + "'");
         }
     }
 
     @Override
-    public void saveCandles(String ticker, Interval interval, GetCandlesResponse response) {
-        ExtendedWorkbook workBook = createWorkBook();
+    public void saveCandles(final String ticker, final Interval interval, final GetCandlesResponse response) {
+        final ExtendedWorkbook workBook = createWorkBook();
         createSheet(workBook, ticker, interval, response);
 
         saveToFile(workBook, "Candles for '" + ticker + "'");
     }
 
-    private void saveToFile(ExtendedWorkbook workBook, String fileName) {
-        String extendedFileName = fileName + " " + LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER) + ".xlsx";
+    private void saveToFile(final ExtendedWorkbook workBook, final String fileName) {
+        final String extendedFileName = fileName + " " + LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER) + ".xlsx";
         try {
             log.info("Creating file \"{}\"", extendedFileName);
             excelFileService.saveToFile(workBook, extendedFileName);
@@ -100,26 +100,26 @@ public class ExcelServiceImpl implements ExcelService {
 
     @NotNull
     private ExtendedWorkbook createWorkBook() {
-        ExtendedWorkbook workbook = new ExtendedWorkbook(new XSSFWorkbook());
+        final ExtendedWorkbook workbook = new ExtendedWorkbook(new XSSFWorkbook());
 
         createCellStyles(workbook);
 
         return workbook;
     }
 
-    private void createCellStyles(ExtendedWorkbook workbook) {
+    private void createCellStyles(final ExtendedWorkbook workbook) {
         workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.STRING);
         workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC);
 
-        CellStyle dateTimeCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME);
+        final CellStyle dateTimeCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME);
         dateTimeCellStyle.setDataFormat(workbook.createDataFormat().getFormat(DATE_TIME_FORMAT));
 
-        CellStyle percentCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+        final CellStyle percentCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
     }
 
-    private void createSheet(ExtendedWorkbook workbook, String ticker, SimulationResult result) {
-        ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
+    private void createSheet(final ExtendedWorkbook workbook, final String ticker, final SimulationResult result) {
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
 
         putCommonStatistics(sheet, ticker, result);
         putPositions(sheet, result.getPositions());
@@ -131,13 +131,12 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void createSheet(
-            ExtendedWorkbook workbook,
-            String ticker,
-            Interval interval,
-            GetCandlesResponse response
+            final ExtendedWorkbook workbook,
+            final String ticker,
+            final Interval interval,
+            final GetCandlesResponse response
     ) {
-
-        ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
 
         putTicker(sheet, ticker);
         putInterval(sheet, interval);
@@ -148,8 +147,8 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithAverages(sheet, response);
     }
 
-    private void putCommonStatistics(ExtendedSheet sheet, String ticker, SimulationResult result) {
-        ExtendedRow labelRow = sheet.addRow();
+    private void putCommonStatistics(final ExtendedSheet sheet, final String ticker, final SimulationResult result) {
+        final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
         putTicker(sheet, ticker);
@@ -166,98 +165,98 @@ public class ExcelServiceImpl implements ExcelService {
         putError(sheet, result.getError());
     }
 
-    private void putTicker(ExtendedSheet sheet, String ticker) {
-        ExtendedRow row = sheet.addRow();
+    private void putTicker(final ExtendedSheet sheet, final String ticker) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Тикер", ticker);
     }
 
-    private void putInterval(ExtendedSheet sheet, Interval interval) {
-        ExtendedRow row = sheet.addRow();
+    private void putInterval(final ExtendedSheet sheet, final Interval interval) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Интервал", interval.toPrettyString());
     }
 
-    private void putInitialBalance(ExtendedSheet sheet, BigDecimal initialBalance) {
-        ExtendedRow row = sheet.addRow();
+    private void putInitialBalance(final ExtendedSheet sheet, final BigDecimal initialBalance) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Начальный баланс", initialBalance);
     }
 
-    private void putTotalInvestment(ExtendedSheet sheet, BigDecimal totalInvestment) {
-        ExtendedRow row = sheet.addRow();
+    private void putTotalInvestment(final ExtendedSheet sheet, final BigDecimal totalInvestment) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Вложения", totalInvestment);
     }
 
-    private void putFinalTotalBalance(ExtendedSheet sheet, BigDecimal totalBalance) {
-        ExtendedRow row = sheet.addRow();
+    private void putFinalTotalBalance(final ExtendedSheet sheet, final BigDecimal totalBalance) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Итоговый общий баланс", totalBalance);
     }
 
-    private void putWeightedAverageInvestment(ExtendedSheet sheet, BigDecimal weightedAverageInvestment) {
-        ExtendedRow row = sheet.addRow();
+    private void putWeightedAverageInvestment(final ExtendedSheet sheet, final BigDecimal weightedAverageInvestment) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Средневзвешенные вложения", weightedAverageInvestment);
     }
 
-    private void putFinalBalance(ExtendedSheet sheet, BigDecimal currencyBalance) {
-        ExtendedRow row = sheet.addRow();
+    private void putFinalBalance(final ExtendedSheet sheet, final BigDecimal currencyBalance) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Итоговый валютный баланс", currencyBalance);
     }
 
-    private void putAbsoluteProfit(ExtendedSheet sheet, BigDecimal absoluteProfit) {
-        ExtendedRow row = sheet.addRow();
+    private void putAbsoluteProfit(final ExtendedSheet sheet, final BigDecimal absoluteProfit) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells("Абсолютный доход", absoluteProfit);
     }
 
-    private void putRelativeProfit(ExtendedSheet sheet, double relativeProfit) {
-        ExtendedRow row = sheet.addRow();
-        List<ExtendedCell> cells = row.createCells("Относительный доход", relativeProfit);
-        ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
-        CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+    private void putRelativeProfit(final ExtendedSheet sheet, final double relativeProfit) {
+        final ExtendedRow row = sheet.addRow();
+        final List<ExtendedCell> cells = row.createCells("Относительный доход", relativeProfit);
+        final ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
+        final CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         cells.get(1).setCellStyle(style);
     }
 
-    private void putRelativeYearProfit(ExtendedSheet sheet, double relativeYearProfit) {
-        ExtendedRow row = sheet.addRow();
-        List<ExtendedCell> cells = row.createCells("Относительный годовой доход", relativeYearProfit);
-        ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
-        CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
+    private void putRelativeYearProfit(final ExtendedSheet sheet, final double relativeYearProfit) {
+        final ExtendedRow row = sheet.addRow();
+        final List<ExtendedCell> cells = row.createCells("Относительный годовой доход", relativeYearProfit);
+        final ExtendedWorkbook workbook = (ExtendedWorkbook) sheet.getWorkbook();
+        final CellStyle style = workbook.getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         cells.get(1).setCellStyle(style);
     }
 
-    private void putError(ExtendedSheet sheet, String error) {
+    private void putError(final ExtendedSheet sheet, final String error) {
         if (StringUtils.hasLength(error)) {
-            ExtendedRow row = sheet.addRow();
+            final ExtendedRow row = sheet.addRow();
             row.createCells("Текст ошибки", error);
         }
     }
 
-    private void putPositions(ExtendedSheet sheet, List<SimulatedPosition> positions) {
+    private void putPositions(final ExtendedSheet sheet, final List<SimulatedPosition> positions) {
         sheet.addRow();
-        ExtendedRow labelRow = sheet.addRow();
+        final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(positions)) {
             labelRow.createCells("Позиции отсутствуют");
         } else {
             labelRow.createUnitedCell("Позиции", 3);
-            ExtendedRow headersRow = sheet.addRow();
+            final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Цена", "Количество");
             for (SimulatedPosition position : positions) {
-                ExtendedRow row = sheet.addRow();
+                final ExtendedRow row = sheet.addRow();
                 row.createCells(position.getPrice(), position.getQuantity());
             }
         }
     }
 
-    private void putOperations(ExtendedSheet sheet, List<SimulatedOperation> operations) {
+    private void putOperations(final ExtendedSheet sheet, final List<SimulatedOperation> operations) {
         sheet.addRow();
-        ExtendedRow labelRow = sheet.addRow();
+        final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(operations)) {
             labelRow.createCells("Операции отсутствуют");
         } else {
             labelRow.createUnitedCell("Операции", 6);
-            ExtendedRow headersRow = sheet.addRow();
+            final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
             for (SimulatedOperation operation : operations) {
-                ExtendedRow row = sheet.addRow();
+                final ExtendedRow row = sheet.addRow();
                 row.createCells(operation.getDateTime(),
                         operation.getOperationType().name(),
                         operation.getPrice(),
@@ -267,7 +266,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCandles(ExtendedSheet sheet, List<Candle> candles) {
+    private void putCandles(final ExtendedSheet sheet, final List<Candle> candles) {
         sheet.addRow();
         sheet.addRow().createUnitedCell("Свечи", 6);
         sheet.addRow().createCells(
@@ -283,8 +282,8 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCandle(ExtendedSheet sheet, Candle candle) {
-        ExtendedRow row = sheet.addRow();
+    private void putCandle(final ExtendedSheet sheet, final Candle candle) {
+        final ExtendedRow row = sheet.addRow();
         row.createCells(
                 candle.getTime(),
                 candle.getOpenPrice(),
@@ -294,37 +293,37 @@ public class ExcelServiceImpl implements ExcelService {
         );
     }
 
-    private void putChartWithAverages(ExtendedSheet sheet, GetCandlesResponse response) {
-        ExtendedChart chart = createChart(sheet);
-        ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+    private void putChartWithAverages(final ExtendedSheet sheet, final GetCandlesResponse response) {
+        final ExtendedChart chart = createChart(sheet);
+        final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandles(chartData, response);
         chart.plot(chartData);
     }
 
     private void putChartWithOperations(
-            ExtendedSheet sheet,
-            List<Candle> candles,
-            List<SimulatedOperation> operations
+            final ExtendedSheet sheet,
+            final List<Candle> candles,
+            final List<SimulatedOperation> operations
     ) {
         if (CollectionUtils.isNotEmpty(candles)) {
-            ExtendedChart chart = createChart(sheet);
-            ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+            final ExtendedChart chart = createChart(sheet);
+            final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
             addCandlesAndPricesAndOperations(chartData, candles, operations);
             chart.plot(chartData);
         }
     }
 
-    private ExtendedChart createChart(ExtendedSheet sheet) {
-        int column1 = sheet.getColumnsCount() + 1;
-        int row1 = 0;
-        int column2 = column1 + CHART_WIDTH;
-        int row2 = row1 + CHART_HEIGHT;
+    private ExtendedChart createChart(final ExtendedSheet sheet) {
+        final int column1 = sheet.getColumnsCount() + 1;
+        final int row1 = 0;
+        final int column2 = column1 + CHART_WIDTH;
+        final int row2 = row1 + CHART_HEIGHT;
         return sheet.createChart(column1, row1, column2, row2);
     }
 
-    private void addCandles(ExtendedChartData chartData, GetCandlesResponse response) {
-        List<OffsetDateTime> times = response.getCandles().stream().map(Candle::getTime).collect(Collectors.toList());
-        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
+    private void addCandles(final ExtendedChartData chartData, final GetCandlesResponse response) {
+        final List<OffsetDateTime> times = response.getCandles().stream().map(Candle::getTime).collect(Collectors.toList());
+        final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
         addLine(chartData, timesDataSource, response.getAverages(), MarkerProperties.NO_MARKER, Color.BLUE);
         addExtremesLine(chartData, times, timesDataSource, response.getLocalMinimums(), MINIMUMS_MARKER_PROPERTIES);
@@ -336,17 +335,17 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addCandlesAndPricesAndOperations(
-            ExtendedChartData chartData,
-            List<Candle> candles,
-            List<SimulatedOperation> operations
+            final ExtendedChartData chartData,
+            final List<Candle> candles,
+            final List<SimulatedOperation> operations
     ) {
-        List<Candle> innerCandles = new ArrayList<>(candles);
+        final List<Candle> innerCandles = new ArrayList<>(candles);
 
         // interpolating candles and computing operationsIndices for future processing
-        List<Integer> operationsIndices = new ArrayList<>();
+        final List<Integer> operationsIndices = new ArrayList<>();
         for (SimulatedOperation operation : operations) {
-            OffsetDateTime operationDateTime = operation.getDateTime();
-            Candle keyCandle = new Candle();
+            final OffsetDateTime operationDateTime = operation.getDateTime();
+            final Candle keyCandle = new Candle();
             keyCandle.setTime(operationDateTime);
             int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime));
             if (index < 0) {
@@ -357,22 +356,22 @@ public class ExcelServiceImpl implements ExcelService {
             operationsIndices.add(index);
         }
 
-        XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromCandles(innerCandles);
+        final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromCandles(innerCandles);
         addOpenPrices(chartData, timesDataSource, innerCandles);
         addOperations(chartData, timesDataSource, operations, operationsIndices);
 
         chartData.stretchChart();
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(List<OffsetDateTime> times) {
-        String[] timesArray = times.stream()
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<OffsetDateTime> times) {
+        final String[] timesArray = times.stream()
                 .map(DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(timesArray);
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(List<Candle> innerCandles) {
-        String[] times = innerCandles.stream()
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(final List<Candle> innerCandles) {
+        final String[] times = innerCandles.stream()
                 .map(Candle::getTime)
                 .map(DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
@@ -380,22 +379,22 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addOpenPrices(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            List<Candle> candles
+            final ExtendedChartData chartData,
+            final XDDFCategoryDataSource timesDataSource,
+            final List<Candle> candles
     ) {
-        BigDecimal[] prices = candles.stream()
+        final BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, prices, MarkerProperties.NO_MARKER);
     }
 
     private void addLine(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            List<BigDecimal> values,
-            MarkerProperties markerProperties,
-            Color seriesColor
+            final ExtendedChartData chartData,
+            final XDDFCategoryDataSource timesDataSource,
+            final List<BigDecimal> values,
+            final MarkerProperties markerProperties,
+            final Color seriesColor
     ) {
         if (values.stream().anyMatch(Objects::nonNull)) {
             addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerProperties, seriesColor);
@@ -403,37 +402,37 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addExtremesLine(
-            ExtendedChartData chartData,
-            List<OffsetDateTime> times,
-            XDDFCategoryDataSource timesDataSource,
-            List<Point> extremes,
-            MarkerProperties markerProperties
+            final ExtendedChartData chartData,
+            final List<OffsetDateTime> times,
+            final XDDFCategoryDataSource timesDataSource,
+            final List<Point> extremes,
+            final MarkerProperties markerProperties
     ) {
-        List<BigDecimal> values = getValues(times, extremes);
+        final List<BigDecimal> values = getValues(times, extremes);
         addLine(chartData, timesDataSource, values, markerProperties, null);
     }
 
     private void addRestraintLines(
-            ExtendedChartData chartData,
-            List<OffsetDateTime> times,
-            XDDFCategoryDataSource timesDataSource,
-            List<List<Point>> restraintLines,
-            Color seriesColor
+            final ExtendedChartData chartData,
+            final List<OffsetDateTime> times,
+            final XDDFCategoryDataSource timesDataSource,
+            final List<List<Point>> restraintLines,
+            final Color seriesColor
     ) {
         for (List<Point> line : restraintLines) {
-            List<BigDecimal> values = getValues(times, line);
+            final List<BigDecimal> values = getValues(times, line);
             addLine(chartData, timesDataSource, values, MarkerProperties.NO_MARKER, seriesColor);
         }
     }
 
-    private List<BigDecimal> getValues(List<OffsetDateTime> times, List<Point> points) {
+    private List<BigDecimal> getValues(final List<OffsetDateTime> times, final List<Point> points) {
         return times.stream()
                 .map(time -> getValueAtTime(points, time))
                 .collect(Collectors.toList());
     }
 
     @Nullable
-    private BigDecimal getValueAtTime(List<Point> points, OffsetDateTime time) {
+    private BigDecimal getValueAtTime(final List<Point> points, final OffsetDateTime time) {
         return points.stream()
                 .filter(extreme -> extreme.getTime().equals(time))
                 .findFirst()
@@ -442,19 +441,19 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addOperations(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            List<SimulatedOperation> operations,
-            List<Integer> operationsIndices
+            final ExtendedChartData chartData,
+            final XDDFCategoryDataSource timesDataSource,
+            final List<SimulatedOperation> operations,
+            final List<Integer> operationsIndices
     ) {
 
-        BigDecimal[] buyOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
-        BigDecimal[] sellOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
+        final BigDecimal[] buyOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
+        final BigDecimal[] sellOperationsPrices = new BigDecimal[timesDataSource.getPointCount()];
         boolean buyOperationsExist = false;
         boolean sellOperationsExist = false;
         for (int i = 0; i < operations.size(); i++) {
-            SimulatedOperation operation = operations.get(i);
-            int index = operationsIndices.get(i);
+            final SimulatedOperation operation = operations.get(i);
+            final int index = operationsIndices.get(i);
             if (operation.getOperationType() == OperationType.BUY) {
                 buyOperationsPrices[index] = operation.getPrice();
                 buyOperationsExist = true;
@@ -473,22 +472,22 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addSeries(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            BigDecimal[] numbers,
-            MarkerProperties markerProperties
+            final ExtendedChartData chartData,
+            final XDDFCategoryDataSource timesDataSource,
+            final BigDecimal[] numbers,
+            final MarkerProperties markerProperties
     ) {
         addSeries(chartData, timesDataSource, numbers, markerProperties, null);
     }
 
     private void addSeries(
-            ExtendedChartData chartData,
-            XDDFCategoryDataSource timesDataSource,
-            BigDecimal[] numbers,
-            MarkerProperties markerProperties,
-            Color seriesColor
+            final ExtendedChartData chartData,
+            final XDDFCategoryDataSource timesDataSource,
+            final BigDecimal[] numbers,
+            final MarkerProperties markerProperties,
+            final Color seriesColor
     ) {
-        XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
+        final XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
         chartData.addSeries(timesDataSource, numericalDataSource, markerProperties, seriesColor);
     }
 }

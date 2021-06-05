@@ -19,21 +19,21 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 public class FakeBotFactory extends AbstractBotFactory {
 
     public FakeBotFactory(
-            TradingProperties tradingProperties,
-            MarketService realMarketService,
-            RealTinkoffService realTinkoffService
+            final TradingProperties tradingProperties,
+            final MarketService realMarketService,
+            final RealTinkoffService realTinkoffService
     ) {
         super(tradingProperties, realMarketService, realTinkoffService);
     }
 
     @Override
-    public Bot createBot(TradingStrategy strategy) {
-        FakeTinkoffService fakeTinkoffService =
+    public Bot createBot(final TradingStrategy strategy) {
+        final FakeTinkoffService fakeTinkoffService =
                 new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
-        MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
-        OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
-        OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
-        PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
+        final MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+        final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
+        final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
+        final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
         return new FakeBotImpl(
                 strategy,

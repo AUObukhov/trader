@@ -7,6 +7,6 @@ public interface TradingStrategy {
 
     String getName();
 
-    Decision decide(DecisionData data);
+    Decision decide(final DecisionData data);
 
 }

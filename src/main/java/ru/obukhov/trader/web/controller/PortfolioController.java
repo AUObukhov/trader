@@ -21,25 +21,21 @@ public class PortfolioController {
 
     private final PortfolioService portfolioService;
 
-    public PortfolioController(PortfolioService portfolioService) {
+    public PortfolioController(final PortfolioService portfolioService) {
         this.portfolioService = portfolioService;
     }
 
     @GetMapping("/positions")
     public GetPortfolioPositionsResponse getPositions() {
-
-        Collection<PortfolioPosition> positions = portfolioService.getPositions();
+        final Collection<PortfolioPosition> positions = portfolioService.getPositions();
 
         return new GetPortfolioPositionsResponse(positions);
-
     }
 
     @GetMapping("/currencies")
     public GetPortfolioCurrenciesResponse getCurrencies() {
-
-        List<CurrencyPosition> currencies = portfolioService.getCurrencies();
+        final List<CurrencyPosition> currencies = portfolioService.getCurrencies();
 
         return new GetPortfolioCurrenciesResponse(currencies);
-
     }
 }

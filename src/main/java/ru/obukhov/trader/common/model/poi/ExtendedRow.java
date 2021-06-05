@@ -35,7 +35,7 @@ public class ExtendedRow implements Row {
 
     // region constructor
 
-    public ExtendedRow(ExtendedSheet sheet, Row delegate) {
+    public ExtendedRow(final ExtendedSheet sheet, final Row delegate) {
         Assert.isTrue(sheet != null, "sheet can't be null");
         Assert.isTrue(delegate != null, "delegate can't be null");
         Assert.isTrue(!(delegate instanceof ExtendedRow), "delegate can't be ExtendedRow");
@@ -45,13 +45,13 @@ public class ExtendedRow implements Row {
         this.cells = initCells(delegate);
     }
 
-    private TreeMap<Integer, ExtendedCell> initCells(Row delegate) {
-        Map<Integer, ExtendedCell> map = StreamSupport.stream(delegate.spliterator(), false)
+    private TreeMap<Integer, ExtendedCell> initCells(final Row delegate) {
+        final Map<Integer, ExtendedCell> map = StreamSupport.stream(delegate.spliterator(), false)
                 .collect(Collectors.toMap(Cell::getColumnIndex, this::initCell));
         return new TreeMap<>(map);
     }
 
-    private ExtendedCell initCell(Cell cell) {
+    private ExtendedCell initCell(final Cell cell) {
         return new ExtendedCell(this, cell);
     }
 
@@ -64,7 +64,7 @@ public class ExtendedRow implements Row {
      *
      * @return list of created cells
      */
-    public List<ExtendedCell> createCells(Object... values) {
+    public List<ExtendedCell> createCells(final Object... values) {
         return createCells(0, values);
     }
 
@@ -73,8 +73,8 @@ public class ExtendedRow implements Row {
      *
      * @return list of created cells
      */
-    public List<ExtendedCell> createCells(int column, Object... values) {
-        List<ExtendedCell> extendedCells = new ArrayList<>(values.length);
+    public List<ExtendedCell> createCells(final int column, final Object... values) {
+        final List<ExtendedCell> extendedCells = new ArrayList<>(values.length);
         int currentColumn = column;
         for (Object value : values) {
             extendedCells.add(createCell(currentColumn, value));
@@ -86,7 +86,7 @@ public class ExtendedRow implements Row {
     /**
      * Same as {@link ExtendedRow#createUnitedCell(int, Object, int)} with first parameter = 0
      */
-    public ExtendedCell createUnitedCell(@Nullable Object value, int width) {
+    public ExtendedCell createUnitedCell(@Nullable final Object value, final int width) {
         return createUnitedCell(0, value, width);
     }
 
@@ -96,10 +96,10 @@ public class ExtendedRow implements Row {
      *
      * @param width count of united cells, can't be negative
      */
-    public ExtendedCell createUnitedCell(int column, @Nullable Object value, int width) {
+    public ExtendedCell createUnitedCell(final int column, @Nullable final Object value, final int width) {
         Assert.isTrue(width >= 0, "width can't be negative");
 
-        int rowNum = getRowNum();
+        final int rowNum = getRowNum();
         sheet.addMergedRegion(rowNum, rowNum, column, column + width - 1);
         return createCell(column, value);
     }
@@ -127,7 +127,7 @@ public class ExtendedRow implements Row {
      * @return created cell
      * @throws IllegalArgumentException {@code value} have invalid type
      */
-    public ExtendedCell createCell(int column, @Nullable Object value) {
+    public ExtendedCell createCell(final int column, @Nullable final Object value) {
         if (value == null) {
             return (ExtendedCell) createCell(column);
         } else if (value instanceof String) {
@@ -154,8 +154,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, String value) {
-        ExtendedCell cell = (ExtendedCell) createCell(column, CellType.STRING);
+    public ExtendedCell createCell(final int column, final String value) {
+        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.STRING);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.STRING));
         if (value != null) {
             cell.setCellValue(value);
@@ -170,8 +170,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, BigDecimal value) {
-        Double doubleValue = value == null ? null : value.doubleValue();
+    public ExtendedCell createCell(final int column, final BigDecimal value) {
+        final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }
 
@@ -182,8 +182,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, Double value) {
-        ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
+    public ExtendedCell createCell(final int column, final Double value) {
+        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC));
         if (value != null) {
             cell.setCellValue(value);
@@ -198,8 +198,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, Integer value) {
-        Double doubleValue = value == null ? null : value.doubleValue();
+    public ExtendedCell createCell(final int column, final Integer value) {
+        final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }
 
@@ -210,8 +210,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, LocalDateTime value) {
-        ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
+    public ExtendedCell createCell(final int column, final LocalDateTime value) {
+        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.NUMERIC);
         cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME));
         if (value != null) {
             cell.setCellValue(value);
@@ -226,8 +226,8 @@ public class ExtendedRow implements Row {
      *
      * @return created cell
      */
-    public ExtendedCell createCell(int column, OffsetDateTime value) {
-        LocalDateTime localDateTime = value == null ? null : value.toLocalDateTime();
+    public ExtendedCell createCell(final int column, final OffsetDateTime value) {
+        final LocalDateTime localDateTime = value == null ? null : value.toLocalDateTime();
         return createCell(column, localDateTime);
     }
 

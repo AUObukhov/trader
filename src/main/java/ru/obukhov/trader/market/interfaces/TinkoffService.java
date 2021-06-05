@@ -31,21 +31,25 @@ public interface TinkoffService {
 
     List<MarketInstrument> getMarketCurrencies();
 
-    Orderbook getMarketOrderbook(String ticker, int depth);
+    Orderbook getMarketOrderbook(final String ticker, final int depth);
 
-    List<Candle> getMarketCandles(String ticker, Interval interval, CandleResolution candleInterval);
+    List<Candle> getMarketCandles(
+            final String ticker,
+            final Interval interval,
+            final CandleResolution candleResolution
+    );
 
-    MarketInstrument searchMarketInstrument(String ticker);
+    MarketInstrument searchMarketInstrument(final String ticker);
 
-    List<Operation> getOperations(Interval interval, String ticker);
+    List<Operation> getOperations(final Interval interval, final String ticker);
 
     List<Order> getOrders();
 
-    PlacedLimitOrder placeLimitOrder(String ticker, LimitOrderRequest orderRequest);
+    PlacedLimitOrder placeLimitOrder(final String ticker, final LimitOrderRequest orderRequest);
 
-    PlacedMarketOrder placeMarketOrder(String ticker, MarketOrderRequest orderRequest);
+    PlacedMarketOrder placeMarketOrder(final String ticker, final MarketOrderRequest orderRequest);
 
-    void cancelOrder(String orderId);
+    void cancelOrder(final String orderId);
 
     Collection<PortfolioPosition> getPortfolioPositions();
 

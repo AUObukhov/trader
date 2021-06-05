@@ -36,7 +36,7 @@ public class ExtendedChartData {
 
     private final ColorMapper colorMapper = Mappers.getMapper(ColorMapper.class);
 
-    public ExtendedChartData(XDDFChartData delegate, ExtendedChart chart) {
+    public ExtendedChartData(final XDDFChartData delegate, final ExtendedChart chart) {
         this.delegate = delegate;
         this.chart = chart;
     }
@@ -44,33 +44,33 @@ public class ExtendedChartData {
     // region additional methods
 
     public void addSeries(
-            XDDFCategoryDataSource categoryDataSource,
-            XDDFNumericalDataSource<Number> numericalDataSource,
-            MarkerProperties markerProperties,
-            Color seriesColor
+            final XDDFCategoryDataSource categoryDataSource,
+            final XDDFNumericalDataSource<Number> numericalDataSource,
+            final MarkerProperties markerProperties,
+            final Color seriesColor
     ) {
-        XDDFLineChartData.Series series =
+        final XDDFLineChartData.Series series =
                 (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
         setMarkerProperties(series, markerProperties);
         setSeriesColor(series, seriesColor);
     }
 
     public void addSeries(
-            XDDFCategoryDataSource categoryDataSource,
-            XDDFNumericalDataSource<Number> numericalDataSource,
-            MarkerProperties markerProperties
+            final XDDFCategoryDataSource categoryDataSource,
+            final XDDFNumericalDataSource<Number> numericalDataSource,
+            final MarkerProperties markerProperties
     ) {
         addSeries(categoryDataSource, numericalDataSource, markerProperties, null);
     }
 
-    private void setMarkerProperties(XDDFLineChartData.Series series, MarkerProperties markerProperties) {
+    private void setMarkerProperties(final XDDFLineChartData.Series series, final MarkerProperties markerProperties) {
         series.setMarkerSize(markerProperties.getSize());
         series.setMarkerStyle(markerProperties.getStyle());
         setMarkerColor(series, markerProperties.getColor());
     }
 
 
-    private void setMarkerColor(XDDFLineChartData.Series series, Color color) {
+    private void setMarkerColor(final XDDFLineChartData.Series series, final Color color) {
         if (color != null) {
             final XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
             final XDDFLineProperties lineProperties = new XDDFLineProperties();
@@ -90,16 +90,16 @@ public class ExtendedChartData {
     }
 
     @SneakyThrows
-    private CTMarker getMarker(XDDFLineChartData.Series series) {
+    private CTMarker getMarker(final XDDFLineChartData.Series series) {
         final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
         getMarkerMethod.setAccessible(true);
         return (CTMarker) getMarkerMethod.invoke(series);
     }
 
-    private void setSeriesColor(XDDFChartData.Series series, Color color) {
+    private void setSeriesColor(final XDDFChartData.Series series, final Color color) {
         if (color != null) {
-            XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
-            XDDFLineProperties lineProperties = new XDDFLineProperties(fillProperties);
+            final XDDFFillProperties fillProperties = new XDDFSolidFillProperties(colorMapper.mapToXDDFColor(color));
+            final XDDFLineProperties lineProperties = new XDDFLineProperties(fillProperties);
 
             XDDFShapeProperties shapeProperties = series.getShapeProperties();
             if (shapeProperties == null) {
@@ -116,7 +116,7 @@ public class ExtendedChartData {
      */
     @SuppressWarnings("ConstantConditions")
     public void stretchChart() {
-        List<Double> values = getSeries().stream()
+        final List<Double> values = getSeries().stream()
                 .map(this::getSeriesValues)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
@@ -124,8 +124,8 @@ public class ExtendedChartData {
                 .collect(Collectors.toList());
 
         if (!values.isEmpty()) {
-            Double minimum = MathUtils.min(values);
-            Double maximum = MathUtils.max(values);
+            final Double minimum = MathUtils.min(values);
+            final Double maximum = MathUtils.max(values);
             getValueAxes().forEach(axis -> {
                 axis.setMinimum(minimum);
                 axis.setMaximum(maximum);
@@ -133,9 +133,9 @@ public class ExtendedChartData {
         }
     }
 
-    private List<Number> getSeriesValues(XDDFChartData.Series series) {
-        List<Number> values = new ArrayList<>();
-        XDDFNumericalDataSource<? extends Number> valuesData = series.getValuesData();
+    private List<Number> getSeriesValues(final XDDFChartData.Series series) {
+        final List<Number> values = new ArrayList<>();
+        final XDDFNumericalDataSource<? extends Number> valuesData = series.getValuesData();
         for (int index = 0; index < valuesData.getPointCount(); index++) {
             values.add(valuesData.getPointAt(index));
         }
@@ -155,8 +155,8 @@ public class ExtendedChartData {
     }
 
     public List<XDDFChartData.Series> getSeries() {
-        int count = delegate.getSeriesCount();
-        List<XDDFChartData.Series> series = new ArrayList<>(count);
+        final int count = delegate.getSeriesCount();
+        final List<XDDFChartData.Series> series = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             series.add(delegate.getSeries(i));
         }

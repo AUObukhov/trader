@@ -24,7 +24,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     protected final String name;
     protected final TradingProperties tradingProperties;
 
-    protected AbstractTradingStrategy(String name, TradingProperties tradingProperties) {
+    protected AbstractTradingStrategy(final String name, final TradingProperties tradingProperties) {
         if (name.length() >= NAME_LENGTH_LIMIT) {
             throw new IllegalArgumentException("name must be shorter than " + NAME_LENGTH_LIMIT);
         }
@@ -36,9 +36,9 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return decision to buy all available lots or decision to wait if no lots available
      */
-    protected Decision getBuyOrWaitDecision(DecisionData data) {
+    protected Decision getBuyOrWaitDecision(final DecisionData data) {
         Decision decision;
-        int availableLots = getAvailableLots(data);
+        final int availableLots = getAvailableLots(data);
         if (availableLots > 0) {
             decision = new Decision(DecisionAction.BUY, availableLots);
             log.debug("No position and current balance {} allows to buy {} lots. Decision is {}",
@@ -55,8 +55,8 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
      * @return decision to sell all position if it is profitable with commission
      * or decision to wait otherwise
      */
-    protected Decision getSellOrWaitDecision(DecisionData data) {
-        double profit = getProfit(data);
+    protected Decision getSellOrWaitDecision(final DecisionData data) {
+        final double profit = getProfit(data);
 
         Decision decision;
         if (profit < MINIMUM_PROFIT) {
@@ -75,21 +75,21 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
-    protected double getProfit(DecisionData data) {
+    protected double getProfit(final DecisionData data) {
         if (data.getPosition() == null) {
             log.debug("no position - no profit");
             return 0.0;
         }
 
         final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
-        BigDecimal buyPricePlusCommission =
+        final BigDecimal buyPricePlusCommission =
                 DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());
 
         final BigDecimal currentPrice = data.getCurrentPrice();
-        BigDecimal sellPriceMinusCommission =
+        final BigDecimal sellPriceMinusCommission =
                 DecimalUtils.subtractFraction(currentPrice, tradingProperties.getCommission());
 
-        double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
+        final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
                 .doubleValue();
 
         log.debug(
@@ -104,14 +104,14 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return profit;
     }
 
-    protected static boolean existsOperationInProgress(DecisionData data) {
+    protected static boolean existsOperationInProgress(final DecisionData data) {
         return data.getLastOperations().stream()
                 .anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
     }
 
-    protected int getAvailableLots(DecisionData data) {
-        BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        BigDecimal currentLotPriceWithCommission =
+    protected int getAvailableLots(final DecisionData data) {
+        final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        final BigDecimal currentLotPriceWithCommission =
                 DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
         return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
