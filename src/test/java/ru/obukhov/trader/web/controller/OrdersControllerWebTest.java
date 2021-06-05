@@ -23,7 +23,7 @@ class OrdersControllerWebTest extends ControllerWebTest {
 
     @Test
     void getOrders_requestsAndReturnsOrders() throws Exception {
-        Order order1 = new Order()
+        final Order order1 = new Order()
                 .orderId("order1")
                 .figi("figi1")
                 .operation(OperationType.BUY)
@@ -33,7 +33,7 @@ class OrdersControllerWebTest extends ControllerWebTest {
                 .type(OrderType.LIMIT)
                 .price(BigDecimal.valueOf(100));
 
-        Order order2 = new Order()
+        final Order order2 = new Order()
                 .orderId("order2")
                 .figi("figi2")
                 .operation(OperationType.SELL)
@@ -45,7 +45,7 @@ class OrdersControllerWebTest extends ControllerWebTest {
 
         Mockito.when(ordersService.getOrders()).thenReturn(List.of(order1, order2));
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetOrdersResponse.json");
+        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetOrdersResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/orders/get")
                 .contentType(MediaType.APPLICATION_JSON))
