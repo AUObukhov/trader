@@ -133,7 +133,8 @@ class SimulatorImplUnitTest {
 
         final String expectedMessagePattern = String.format(
                 "^'to' \\(%1$s\\) can't be in future. Now is %1$s$",
-                DATE_TIME_REGEX_PATTERN);
+                DATE_TIME_REGEX_PATTERN
+        );
 
         AssertUtils.assertThrowsWithMessagePattern(
                 () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false),
@@ -181,7 +182,7 @@ class SimulatorImplUnitTest {
 
         Assertions.assertEquals(1, simulationResults.size());
 
-        SimulationResult simulationResult = simulationResults.get(0);
+        final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertEquals(botName, simulationResult.getBotName());
         Assertions.assertEquals(interval, simulationResult.getInterval());
@@ -194,7 +195,7 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
-        String expectedError = String.format(
+        final String expectedError = String.format(
                 "Simulation for '%1$s' with ticker '%2$s' failed with error: Not found instrument for ticker '%2$s'",
                 botName,
                 ticker
@@ -971,7 +972,7 @@ class SimulatorImplUnitTest {
     }
 
     private FakeBot createFakeBotMock(String botName) {
-        FakeBot fakeBot = Mockito.mock(FakeBot.class);
+        final FakeBot fakeBot = Mockito.mock(FakeBot.class);
         Mockito.when(fakeBot.getStrategyName()).thenReturn(botName);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
@@ -981,8 +982,8 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(from);
 
         Mockito.when(fakeTinkoffService.nextMinute()).thenAnswer(invocationOnMock -> {
-            OffsetDateTime currentDateTime = fakeTinkoffService.getCurrentDateTime();
-            OffsetDateTime nextMinute = currentDateTime.plusMinutes(1);
+            final OffsetDateTime currentDateTime = fakeTinkoffService.getCurrentDateTime();
+            final OffsetDateTime nextMinute = currentDateTime.plusMinutes(1);
             Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(nextMinute);
             return nextMinute;
         });
