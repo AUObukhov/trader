@@ -16,10 +16,10 @@ class MoneyAmountMapperUnitTest {
 
     @Test
     void mapsTinkoffToCustom() {
-        ru.tinkoff.invest.openapi.model.rest.MoneyAmount source =
+        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source =
                 TestDataHelper.createMoneyAmount(Currency.RUB, 100);
 
-        MoneyAmount target = mapper.map(source);
+        final MoneyAmount target = mapper.map(source);
 
         Assertions.assertEquals(source.getCurrency(), target.getCurrency());
         AssertUtils.assertEquals(source.getValue(), target.getValue());
@@ -27,12 +27,12 @@ class MoneyAmountMapperUnitTest {
 
     @Test
     void mapsCustomToTinkoff() {
-        Currency currency = Currency.RUB;
-        BigDecimal value = BigDecimal.valueOf(100);
+        final Currency currency = Currency.RUB;
+        final BigDecimal value = BigDecimal.valueOf(100);
 
-        MoneyAmount source = new MoneyAmount(currency, value);
+        final MoneyAmount source = new MoneyAmount(currency, value);
 
-        ru.tinkoff.invest.openapi.model.rest.MoneyAmount target = mapper.map(source);
+        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount target = mapper.map(source);
 
         Assertions.assertEquals(currency, target.getCurrency());
         AssertUtils.assertEquals(value, target.getValue());
