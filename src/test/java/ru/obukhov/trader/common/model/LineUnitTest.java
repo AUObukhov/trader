@@ -18,11 +18,11 @@ class LineUnitTest {
 
     @Test
     void getValue_returnsProperValue() {
-        Line line = new Line(10, BigDecimal.valueOf(20), 30, BigDecimal.valueOf(-45));
+        final Line line = new Line(10, BigDecimal.valueOf(20), 30, BigDecimal.valueOf(-45));
 
-        BigDecimal value = line.getValue(20);
+        final BigDecimal value = line.getValue(20);
 
-        BigDecimal expectedValue = BigDecimal.valueOf(-12.5);
+        final BigDecimal expectedValue = BigDecimal.valueOf(-12.5);
 
         AssertUtils.assertEquals(expectedValue, value);
     }
