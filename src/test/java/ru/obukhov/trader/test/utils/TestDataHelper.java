@@ -1,5 +1,7 @@
 package ru.obukhov.trader.test.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.MockedStatic;
@@ -38,23 +40,24 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestDataHelper {
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
-            double openPrice,
-            double closePrice,
-            double highestPrice,
-            double lowestPrice
+            final double openPrice,
+            final double closePrice,
+            final double highestPrice,
+            final double lowestPrice
     ) {
         return createTinkoffCandle(CandleResolution.DAY, openPrice, closePrice, highestPrice, lowestPrice);
     }
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
-            CandleResolution interval,
-            double openPrice,
-            double closePrice,
-            double highestPrice,
-            double lowestPrice
+            final CandleResolution interval,
+            final double openPrice,
+            final double closePrice,
+            final double highestPrice,
+            final double lowestPrice
     ) {
         return createTinkoffCandle(
                 interval,
@@ -67,12 +70,12 @@ public class TestDataHelper {
     }
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
-            CandleResolution interval,
-            double openPrice,
-            double closePrice,
-            double highestPrice,
-            double lowestPrice,
-            OffsetDateTime time
+            final CandleResolution interval,
+            final double openPrice,
+            final double closePrice,
+            final double highestPrice,
+            final double lowestPrice,
+            final OffsetDateTime time
     ) {
         return new ru.tinkoff.invest.openapi.model.rest.Candle()
                 .figi(StringUtils.EMPTY)
@@ -86,12 +89,12 @@ public class TestDataHelper {
     }
 
     public static Candle createCandle(
-            double openPrice,
-            double closePrice,
-            double highestPrice,
-            double lowestPrice,
-            OffsetDateTime time,
-            CandleResolution interval
+            final double openPrice,
+            final double closePrice,
+            final double highestPrice,
+            final double lowestPrice,
+            final OffsetDateTime time,
+            final CandleResolution interval
     ) {
         return new Candle(
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),
@@ -103,51 +106,51 @@ public class TestDataHelper {
         );
     }
 
-    public static Candle createCandleWithOpenPrice(double openPrice) {
+    public static Candle createCandleWithOpenPrice(final double openPrice) {
         return createCandleWithOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }
 
-    public static Candle createCandleWithOpenPrice(BigDecimal openPrice) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithOpenPrice(final BigDecimal openPrice) {
+        final Candle candle = new Candle();
         candle.setOpenPrice(openPrice);
         return candle;
     }
 
-    public static Candle createCandleWithClosePrice(double closePrice) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithClosePrice(final double closePrice) {
+        final Candle candle = new Candle();
         candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
         return candle;
     }
 
-    public static Candle createCandleWithTime(OffsetDateTime time) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithTime(final OffsetDateTime time) {
+        final Candle candle = new Candle();
         candle.setTime(time);
         return candle;
     }
 
-    public static Candle createCandleWithOpenPriceAndTime(double openPrice, OffsetDateTime time) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithOpenPriceAndTime(final double openPrice, final OffsetDateTime time) {
+        final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setTime(time);
         return candle;
     }
 
-    public static Candle createCandleWithClosePriceAndTime(double closePrice, OffsetDateTime time) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithClosePriceAndTime(final double closePrice, final OffsetDateTime time) {
+        final Candle candle = new Candle();
         candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
         candle.setTime(time);
         return candle;
     }
 
-    public static Candle createCandleWithTimeAndInterval(OffsetDateTime time, CandleResolution interval) {
-        Candle candle = new Candle();
+    public static Candle createCandleWithTimeAndInterval(final OffsetDateTime time, final CandleResolution interval) {
+        final Candle candle = new Candle();
         candle.setTime(time);
         candle.setInterval(interval);
         return candle;
     }
 
-    public static MarketInstrument createAndMockInstrument(TinkoffService tinkoffService, String ticker) {
-        MarketInstrument instrument = new MarketInstrument()
+    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker) {
+        final MarketInstrument instrument = new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
                 .lot(0)
@@ -160,8 +163,8 @@ public class TestDataHelper {
         return instrument;
     }
 
-    public static MarketInstrument createAndMockInstrument(MarketService marketService, String ticker) {
-        MarketInstrument instrument = new MarketInstrument()
+    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker) {
+        final MarketInstrument instrument = new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
                 .lot(0)
@@ -174,40 +177,40 @@ public class TestDataHelper {
         return instrument;
     }
 
-    public static void mockEmptyOrder(OrdersService ordersService, String ticker) {
-        Order order = new Order();
+    public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) {
+        final Order order = new Order();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
 
     public static ZoneOffset getNotDefaultOffset() {
-        ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
-        int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
+        final ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
+        final int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
         return ZoneOffset.ofTotalSeconds(totalSeconds);
     }
 
-    public static MockedStatic<OffsetDateTime> mockNow(OffsetDateTime mockedNow) {
-        MockedStatic<OffsetDateTime> offsetDateTimeStaticMock =
+    public static MockedStatic<OffsetDateTime> mockNow(final OffsetDateTime mockedNow) {
+        final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock =
                 Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
         offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
         return offsetDateTimeStaticMock;
     }
 
-    public static DecisionData createDecisionData(Candle... candles) {
-        DecisionData decisionData = new DecisionData();
+    public static DecisionData createDecisionData(final Candle... candles) {
+        final DecisionData decisionData = new DecisionData();
         decisionData.setCurrentCandles(List.of(candles));
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(double averagePositionPrice, double currentPrice) {
-        DecisionData decisionData = new DecisionData();
+    public static DecisionData createDecisionData(final double averagePositionPrice, final double currentPrice) {
+        final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
 
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(double balance, double currentPrice, int lotSize) {
-        DecisionData decisionData = new DecisionData();
+    public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize) {
+        final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
@@ -216,11 +219,11 @@ public class TestDataHelper {
         return decisionData;
     }
 
-    public static PortfolioPosition createPortfolioPosition(String ticker) {
+    public static PortfolioPosition createPortfolioPosition(final String ticker) {
         return createPortfolioPosition(ticker, 1);
     }
 
-    public static PortfolioPosition createPortfolioPosition(double averagePositionPrice) {
+    public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice) {
         return new PortfolioPosition(
                 StringUtils.EMPTY,
                 BigDecimal.ZERO,
@@ -234,7 +237,7 @@ public class TestDataHelper {
         );
     }
 
-    public static PortfolioPosition createPortfolioPosition(double averagePositionPrice, int lotsCount) {
+    public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice, final int lotsCount) {
         return new PortfolioPosition(
                 StringUtils.EMPTY,
                 BigDecimal.ZERO,
@@ -248,7 +251,7 @@ public class TestDataHelper {
         );
     }
 
-    public static PortfolioPosition createPortfolioPosition(String ticker, int lotsCount) {
+    public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
         return new PortfolioPosition(
                 ticker,
                 BigDecimal.ZERO,
@@ -263,11 +266,11 @@ public class TestDataHelper {
     }
 
     public static Operation createTinkoffOperation(
-            OffsetDateTime operationDateTime,
-            OperationTypeWithCommission operationType,
-            BigDecimal operationPrice,
-            int operationQuantity,
-            BigDecimal commissionValue
+            final OffsetDateTime operationDateTime,
+            final OperationTypeWithCommission operationType,
+            final BigDecimal operationPrice,
+            final int operationQuantity,
+            final BigDecimal commissionValue
     ) {
         return new Operation()
                 .id(StringUtils.EMPTY)
@@ -283,45 +286,51 @@ public class TestDataHelper {
     }
 
     public static void mockTinkoffOperations(
-            TinkoffService tinkoffService,
-            String ticker,
-            Interval interval,
-            Operation... operations
+            final TinkoffService tinkoffService,
+            final String ticker,
+            final Interval interval,
+            final Operation... operations
     ) {
         Mockito.when(tinkoffService.getOperations(interval, ticker))
                 .thenReturn(List.of(operations));
     }
 
-    public static CurrencyPosition createCurrencyPosition(Currency currency, long balance) {
+    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
         return new CurrencyPosition()
                 .currency(currency)
                 .balance(DecimalUtils.setDefaultScale(balance));
     }
 
-    public static CurrencyPosition createCurrencyPosition(Currency currency, long balance, long blocked) {
+    public static CurrencyPosition createCurrencyPosition(
+            final Currency currency,
+            final long balance,
+            final long blocked
+    ) {
         return new CurrencyPosition()
                 .currency(currency)
                 .balance(DecimalUtils.setDefaultScale(balance))
                 .blocked(DecimalUtils.setDefaultScale(blocked));
     }
 
-    public static MoneyAmount createMoneyAmount(Currency currency, long value) {
+    public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
         return new MoneyAmount()
                 .currency(currency)
                 .value(BigDecimal.valueOf(value));
     }
 
-    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(MarketInstrument... instruments) {
-        List<MarketInstrument> instrumentList = List.of(instruments);
-        MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
+    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(
+            final MarketInstrument... instruments
+    ) {
+        final List<MarketInstrument> instrumentList = List.of(instruments);
+        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
     }
 
-    public static List<BigDecimal> getBigDecimalValues(List<Double> values) {
+    public static List<BigDecimal> getBigDecimalValues(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<Optional<BigDecimal>> getOptionalBigDecimalValues(List<Double> values) {
+    public static List<Optional<BigDecimal>> getOptionalBigDecimalValues(final List<Double> values) {
         return values.stream()
                 .map(DecimalUtils::setDefaultScale)
                 .map(Optional::of)
@@ -329,27 +338,27 @@ public class TestDataHelper {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static MockedStatic<Runtime> mockRuntime(Runtime runtime) {
-        MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
+    public static MockedStatic<Runtime> mockRuntime(final Runtime runtime) {
+        final MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
         runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
         return runtimeStaticMock;
     }
 
-    public static Point createPoint(Candle candle) {
+    public static Point createPoint(final Candle candle) {
         return Point.of(candle.getTime(), candle.getOpenPrice());
     }
 
-    public static List<BigDecimal> createBigDecimalsList(Double... values) {
+    public static List<BigDecimal> createBigDecimalsList(final Double... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createBigDecimalsList(Integer... values) {
+    public static List<BigDecimal> createBigDecimalsList(final Integer... values) {
         return Stream.of(values).map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<BigDecimal> createRandomBigDecimalsList(int size) {
+    public static List<BigDecimal> createRandomBigDecimalsList(final int size) {
         final Random random = new Random();
-        List<BigDecimal> values = new ArrayList<>(size);
+        final List<BigDecimal> values = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
             values.add(DecimalUtils.setDefaultScale(random.nextDouble()));
         }
