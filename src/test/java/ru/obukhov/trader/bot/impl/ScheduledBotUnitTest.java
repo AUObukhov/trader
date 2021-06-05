@@ -1,8 +1,8 @@
 package ru.obukhov.trader.bot.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -60,20 +60,8 @@ class ScheduledBotUnitTest {
     @Mock
     private TradingProperties tradingProperties;
 
+    @InjectMocks
     private ScheduledBot bot;
-
-    @BeforeEach
-    void setUp() {
-        this.bot = new ScheduledBot(
-                strategy,
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                botConfig,
-                tradingProperties
-        );
-    }
 
     @Test
     @SuppressWarnings("unused")
@@ -129,9 +117,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            List<Order> orders1 = List.of(new Order());
+            final List<Order> orders1 = List.of(new Order());
             Mockito.when(ordersService.getOrders(ticker1)).thenReturn(orders1);
-            List<Order> orders2 = List.of(new Order());
+            final List<Order> orders2 = List.of(new Order());
             Mockito.when(ordersService.getOrders(ticker2)).thenReturn(orders2);
 
             bot.tick();
@@ -363,7 +351,7 @@ class ScheduledBotUnitTest {
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
             TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
-            Decision decision = new Decision(DecisionAction.BUY, 5);
+            final Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
 
             Mockito.when(ordersService.placeMarketOrder(ticker1, decision.getLots(), OperationType.BUY))
@@ -458,7 +446,7 @@ class ScheduledBotUnitTest {
             mockData(ticker1);
             mockData(ticker2);
 
-            Decision decision = new Decision(DecisionAction.BUY, 5);
+            final Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
 
             bot.tick();
@@ -485,7 +473,7 @@ class ScheduledBotUnitTest {
             mockData(ticker1);
             mockData(ticker2);
 
-            Decision decision = new Decision(DecisionAction.SELL, 5);
+            final Decision decision = new Decision(DecisionAction.SELL, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
 
             bot.tick();
@@ -502,7 +490,7 @@ class ScheduledBotUnitTest {
     }
 
     private void mockData(final String ticker) {
-        MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
+        final MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
