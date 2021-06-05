@@ -10,11 +10,12 @@ import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
@@ -40,7 +41,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-class ExcelServiceImplUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class ExcelServiceImplUnitTest {
 
     @Captor
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
