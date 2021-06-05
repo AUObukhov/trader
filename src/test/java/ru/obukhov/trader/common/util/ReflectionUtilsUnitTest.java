@@ -13,20 +13,20 @@ class ReflectionUtilsUnitTest {
 
     @Test
     void getFieldByReadMethod_returnsFieldValue_whenFieldExistsAndHaveReadMethod() {
-        String fieldWithReadMethodValue = "fieldWithReadMethodValue";
-        String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
-        FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
+        final String fieldWithReadMethodValue = "fieldWithReadMethodValue";
+        final String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
+        final FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
 
-        Object readValue = ReflectionUtils.getFieldValueByReadMethod(container, "fieldWithReadMethod");
+        final Object readValue = ReflectionUtils.getFieldValueByReadMethod(container, "fieldWithReadMethod");
 
         Assertions.assertEquals(fieldWithReadMethodValue, readValue);
     }
 
     @Test
     void getFieldByReadMethod_throwsIntrospectionException_whenFieldNotExists() {
-        String fieldWithReadMethodValue = "fieldWithReadMethodValue";
-        String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
-        FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
+        final String fieldWithReadMethodValue = "fieldWithReadMethodValue";
+        final String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
+        final FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> ReflectionUtils.getFieldValueByReadMethod(container, "notExistingField"),
@@ -36,9 +36,9 @@ class ReflectionUtilsUnitTest {
 
     @Test
     void getFieldByReadMethod_returnsFieldValue_whenFieldExistsButDoesNotHaveReadMethod() {
-        String fieldWithReadMethodValue = "fieldWithReadMethodValue";
-        String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
-        FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
+        final String fieldWithReadMethodValue = "fieldWithReadMethodValue";
+        final String fieldWithoutReadMethodValue = "fieldWithReadMethodValue";
+        final FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> ReflectionUtils.getFieldValueByReadMethod(container, "fieldWithoutReadMethod"),
