@@ -12,7 +12,7 @@ class DecimalUtilsUnitTest {
 
     @Test
     void subtract() {
-        BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(100.1), 1.5);
+        final BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(100.1), 1.5);
 
         AssertUtils.assertEquals(98.6, result);
     }
@@ -21,14 +21,14 @@ class DecimalUtilsUnitTest {
 
     @Test
     void multiplyByDouble() {
-        BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
+        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
 
         AssertUtils.assertEquals(150.15, result);
     }
 
     @Test
     void multiplyByInteger() {
-        BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 2);
+        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 2);
 
         AssertUtils.assertEquals(200.2, result);
     }
@@ -39,28 +39,28 @@ class DecimalUtilsUnitTest {
 
     @Test
     void divideBigDecimalByInteger() {
-        BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
+        final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
 
         AssertUtils.assertEquals(33.33333, result);
     }
 
     @Test
     void divideBigDecimalByDouble() {
-        BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3.5);
+        final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3.5);
 
         AssertUtils.assertEquals(28.57143, result);
     }
 
     @Test
     void divideDoubleByDouble() {
-        BigDecimal result = DecimalUtils.divide(100., 3.5);
+        final BigDecimal result = DecimalUtils.divide(100., 3.5);
 
         AssertUtils.assertEquals(28.57143, result);
     }
 
     @Test
     void divideBigDecimalByBigDecimal() {
-        BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
+        final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
 
         AssertUtils.assertEquals(28.57143, result);
     }
@@ -76,7 +76,7 @@ class DecimalUtilsUnitTest {
             "1.234567, 9.87654321, 5.55556"
     })
     void getAverage(BigDecimal value1, BigDecimal value2, BigDecimal expectedAverage) {
-        BigDecimal average = DecimalUtils.getAverage(value1, value2);
+        final BigDecimal average = DecimalUtils.getAverage(value1, value2);
 
         AssertUtils.assertEquals(expectedAverage, average);
     }
@@ -84,35 +84,35 @@ class DecimalUtilsUnitTest {
     @ParameterizedTest
     @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
     void getIntegerQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
-        int result = DecimalUtils.getIntegerQuotient(dividend, divisor);
+        final int result = DecimalUtils.getIntegerQuotient(dividend, divisor);
 
         Assertions.assertEquals(expectedQuotient, result);
     }
 
     @Test
     void getFraction() {
-        BigDecimal result = DecimalUtils.getFraction(BigDecimal.valueOf(765), 0.003);
+        final BigDecimal result = DecimalUtils.getFraction(BigDecimal.valueOf(765), 0.003);
 
         AssertUtils.assertEquals(2.295, result);
     }
 
     @Test
     void addFraction() {
-        BigDecimal result = DecimalUtils.addFraction(BigDecimal.valueOf(765), 0.003);
+        final BigDecimal result = DecimalUtils.addFraction(BigDecimal.valueOf(765), 0.003);
 
         AssertUtils.assertEquals(767.295, result);
     }
 
     @Test
     void subtractFraction() {
-        BigDecimal result = DecimalUtils.subtractFraction(BigDecimal.valueOf(765), 0.003);
+        final BigDecimal result = DecimalUtils.subtractFraction(BigDecimal.valueOf(765), 0.003);
 
         AssertUtils.assertEquals(762.705, result);
     }
 
     @Test
     void getFractionDifference() {
-        BigDecimal result = DecimalUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
+        final BigDecimal result = DecimalUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
 
         AssertUtils.assertEquals(0.00301, result);
     }
@@ -122,7 +122,7 @@ class DecimalUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void setDefaultScale_withBigDecimal_returnsNull_whenNumberIsNull() {
-        BigDecimal number = null;
+        final BigDecimal number = null;
 
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
@@ -134,9 +134,9 @@ class DecimalUtilsUnitTest {
             "10, 6"
     })
     void setDefaultScale_withBigDecimal(long unscaledVal, int scale) {
-        BigDecimal number = BigDecimal.valueOf(unscaledVal, scale);
+        final BigDecimal number = BigDecimal.valueOf(unscaledVal, scale);
 
-        BigDecimal result = DecimalUtils.setDefaultScale(number);
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
     }
@@ -147,7 +147,7 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withDouble_returnsNull_whenNumberIsNull() {
-        Double number = null;
+        final Double number = null;
 
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
@@ -159,7 +159,7 @@ class DecimalUtilsUnitTest {
             "10.000005, 10.00001"
     })
     void setDefaultScale_withDouble(Double number, double expectedValue) {
-        BigDecimal result = DecimalUtils.setDefaultScale(number);
+        final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
         AssertUtils.assertEquals(BigDecimal.valueOf(expectedValue), result);
@@ -171,14 +171,14 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withLong_returnsNull_whenNumberIsNull() {
-        Long number = null;
+        final Long number = null;
 
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
     @Test
     void setDefaultScale_withLong_setsDefaultScale() {
-        Long number = 10L;
+        final Long number = 10L;
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
@@ -192,14 +192,14 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withInteger_returnsNull_whenNumberIsNull() {
-        Integer number = null;
+        final Integer number = null;
 
         Assertions.assertNull(DecimalUtils.setDefaultScale(number));
     }
 
     @Test
     void setDefaultScale_withInteger_setsDefaultScale() {
-        Integer number = 10;
+        final Integer number = 10;
 
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
@@ -221,7 +221,7 @@ class DecimalUtilsUnitTest {
             "11, 100, false"
     })
     void numbersEqual_withBigDecimal(BigDecimal value1, BigDecimal value2, boolean expectedResult) {
-        boolean result = DecimalUtils.numbersEqual(value1, value2);
+        final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -232,7 +232,7 @@ class DecimalUtilsUnitTest {
             "11, 100, false",
     })
     void numbersEqual_withInt(BigDecimal value1, int value2, boolean expectedResult) {
-        boolean result = DecimalUtils.numbersEqual(value1, value2);
+        final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -243,7 +243,7 @@ class DecimalUtilsUnitTest {
             "11, 100, false",
     })
     void numbersEqual_withDouble(BigDecimal value1, double value2, boolean expectedResult) {
-        boolean result = DecimalUtils.numbersEqual(value1, value2);
+        final boolean result = DecimalUtils.numbersEqual(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -257,7 +257,7 @@ class DecimalUtilsUnitTest {
             "150, 149, true"
     })
     void isGreater(BigDecimal value1, long value2, boolean expectedResult) {
-        boolean result = DecimalUtils.isGreater(value1, value2);
+        final boolean result = DecimalUtils.isGreater(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -269,7 +269,7 @@ class DecimalUtilsUnitTest {
             "150, 151, true"
     })
     void isLower(BigDecimal value1, long value2, boolean expectedResult) {
-        boolean result = DecimalUtils.isLower(value1, value2);
+        final boolean result = DecimalUtils.isLower(value1, value2);
 
         Assertions.assertEquals(expectedResult, result);
     }
