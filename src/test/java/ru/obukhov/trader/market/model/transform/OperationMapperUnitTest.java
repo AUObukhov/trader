@@ -18,9 +18,9 @@ class OperationMapperUnitTest {
 
     @Test
     void mapsOperationToSimulatedOperation() {
-        Operation source = new Operation();
+        final Operation source = new Operation();
 
-        MoneyAmount commission = new MoneyAmount();
+        final MoneyAmount commission = new MoneyAmount();
         commission.setValue(BigDecimal.ONE);
         source.setCommission(commission);
 
@@ -29,7 +29,7 @@ class OperationMapperUnitTest {
         source.setDate(OffsetDateTime.now());
         source.setOperationType(OperationTypeWithCommission.BUY);
 
-        SimulatedOperation target = operationMapper.map(source);
+        final SimulatedOperation target = operationMapper.map(source);
 
         Assertions.assertEquals(source.getDate(), target.getDateTime());
         Assertions.assertEquals(OperationType.BUY, target.getOperationType());
@@ -41,7 +41,7 @@ class OperationMapperUnitTest {
 
     @Test
     void mapsSimulatedOperationToOperation() {
-        SimulatedOperation source = SimulatedOperation.builder()
+        final SimulatedOperation source = SimulatedOperation.builder()
                 .dateTime(OffsetDateTime.now())
                 .operationType(OperationType.BUY)
                 .price(BigDecimal.TEN)
@@ -49,7 +49,7 @@ class OperationMapperUnitTest {
                 .commission(BigDecimal.ONE)
                 .build();
 
-        Operation target = operationMapper.map(source);
+        final Operation target = operationMapper.map(source);
 
         Assertions.assertEquals(source.getDateTime(), target.getDate());
         Assertions.assertEquals(OperationTypeWithCommission.BUY, target.getOperationType());
