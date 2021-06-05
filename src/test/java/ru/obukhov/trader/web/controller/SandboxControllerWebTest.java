@@ -15,9 +15,11 @@ import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;
 
 import java.math.BigDecimal;
 
-@SpringBootTest(classes = Application.class,
+@SpringBootTest(
+        classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        args = {"--trading.token=i identify myself as token", "--trading.sandbox=true"})
+        args = {"--trading.token=i identify myself as token", "--trading.sandbox=true"}
+)
 class SandboxControllerWebTest extends ControllerWebTest {
 
     @MockBean
@@ -27,7 +29,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void setCurrencyBalance_setsBalance() throws Exception {
-        String request = ResourceUtils.getResourceAsString("test-data/SetCurrencyBalanceRequest.json");
+        final String request = ResourceUtils.getResourceAsString("test-data/SetCurrencyBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/currency-balance")
                 .content(request)
@@ -40,7 +42,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void setPositionBalance_setsBalance() throws Exception {
-        String request = ResourceUtils.getResourceAsString("test-data/SetPositionBalanceRequest.json");
+        final String request = ResourceUtils.getResourceAsString("test-data/SetPositionBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
                 .content(request)
@@ -53,7 +55,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void clearAll_clears() throws Exception {
-        String request = ResourceUtils.getResourceAsString("test-data/ClearAllRequest.json");
+        final String request = ResourceUtils.getResourceAsString("test-data/ClearAllRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/clear")
                 .content(request)
