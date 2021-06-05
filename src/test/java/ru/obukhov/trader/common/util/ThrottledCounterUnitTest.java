@@ -15,23 +15,22 @@ class ThrottledCounterUnitTest {
 
     @Test
     void decrementingValue_whenIntervalPassed() throws InterruptedException {
-
-        ThrottledCounter counter = new ThrottledCounter(3, 1000);
+        final ThrottledCounter counter = new ThrottledCounter(3, 1000);
         counter.increment();
-        int value1 = counter.getValue();
+        final int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(500);
-        int value2 = counter.getValue();
+        final int value2 = counter.getValue();
 
         counter.increment();
         counter.increment();
-        int value3 = counter.getValue();
+        final int value3 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(750);
-        int value4 = counter.getValue();
+        final int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(500);
-        int value5 = counter.getValue();
+        final int value5 = counter.getValue();
 
         Assertions.assertEquals(1, value1);
         Assertions.assertEquals(1, value2);
@@ -43,34 +42,34 @@ class ThrottledCounterUnitTest {
     @Test
     void waiting_whenValueIsMax() throws InterruptedException {
 
-        ThrottledCounter counter = new ThrottledCounter(3, 1000);
-        long start = System.currentTimeMillis();
+        final ThrottledCounter counter = new ThrottledCounter(3, 1000);
+        final long start = System.currentTimeMillis();
 
-        long elapsed1 = TestUtils.runAndGetElapsedMillis(counter::increment);
-        int value1 = counter.getValue();
-
-        TimeUnit.MILLISECONDS.sleep(250); // not changing
-        long elapsed2 = TestUtils.runAndGetElapsedMillis(counter::increment);
-        int value2 = counter.getValue();
+        final long elapsed1 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        long elapsed3 = TestUtils.runAndGetElapsedMillis(counter::increment);
-        int value3 = counter.getValue();
+        final long elapsed2 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final int value2 = counter.getValue();
 
-        long elapsed4 = TestUtils.runAndGetElapsedMillis(counter::increment); // should wait for ~500 milliseconds until -1, then +1
-        int value4 = counter.getValue();
+        TimeUnit.MILLISECONDS.sleep(250); // not changing
+        final long elapsed3 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final int value3 = counter.getValue();
+
+        final long elapsed4 = TestUtils.runAndGetElapsedMillis(counter::increment); // should wait for ~500 milliseconds until -1, then +1
+        final int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
         TimeUnit.MILLISECONDS.sleep(250); // -1
-        int value5 = counter.getValue();
+        final int value5 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // -1
-        int value6 = counter.getValue();
+        final int value6 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(500);
-        int value7 = counter.getValue();
+        final int value7 = counter.getValue();
 
-        long elapsedOverall = System.currentTimeMillis() - start;
+        final long elapsedOverall = System.currentTimeMillis() - start;
 
         Assertions.assertTrue(elapsed1 <= 1);
         Assertions.assertTrue(elapsed2 <= 1);
@@ -102,7 +101,7 @@ class ThrottledCounterUnitTest {
             }
         };
 
-        List<Thread> threads = Stream.generate(() -> new Thread(target)).limit(5).collect(Collectors.toList());
+        final List<Thread> threads = Stream.generate(() -> new Thread(target)).limit(5).collect(Collectors.toList());
 
         threads.forEach(Thread::start);
 
