@@ -1,13 +1,12 @@
 package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -23,24 +22,18 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(MockitoJUnitRunner.class)
-class StatisticsServiceImplUnitTest extends BaseMockedTest {
-
-    private static final String TICKER = "ticker";
+@ExtendWith(MockitoExtension.class)
+class StatisticsServiceImplUnitTest {
 
     @Mock
     private MarketService marketService;
 
+    @InjectMocks
     private StatisticsServiceImpl service;
-
-    @BeforeEach
-    public void setUp() {
-        service = new StatisticsServiceImpl(marketService);
-    }
 
     @Test
     void getCandles_returnsCandlesFromMarketService() {
-        final String ticker = TICKER;
+        final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
@@ -59,7 +52,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
     @Test
     void getExtendedCandles_extendsCandles_withoutExtremes() {
-        final String ticker = TICKER;
+        final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
@@ -68,7 +61,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         final CandleResolution candleInterval = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
-        OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
         candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, candleInterval));
         candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleInterval));
@@ -82,15 +75,15 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
-        List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.00000, 10.13500, 10.55350);
+        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.00000, 10.13500, 10.55350);
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
-        List<Point> expectedMinimums = List.of(
+        final List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 10.00000)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
-        List<Point> expectedMaximums = List.of(
+        final List<Point> expectedMaximums = List.of(
                 Point.of(candles.get(2).getTime(), 10.55350)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
@@ -101,7 +94,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
     @Test
     void getExtendedCandles_extendsCandles_withExtremes() {
-        final String ticker = TICKER;
+        final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
@@ -110,7 +103,7 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         final CandleResolution candleInterval = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
-        OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
         candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleInterval));
         candles.add(TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleInterval));
@@ -131,27 +124,27 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
 
         // expectedAverages are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
         // with weightDecrease = 0.3 and order = 3
-        List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(
+        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(
                 80.00000, 104.84000, 131.89400, 151.38260, 161.32940,
                 161.76896, 156.91483, 174.05676, 191.96114, 201.88675
         );
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
-        List<Point> expectedMinimums = List.of(
+        final List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 80.00000),
                 Point.of(candles.get(6).getTime(), 156.91483)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
-        List<Point> expectedMaximums = List.of(
+        final List<Point> expectedMaximums = List.of(
                 Point.of(candles.get(5).getTime(), 161.76896),
                 Point.of(candles.get(9).getTime(), 201.88675)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
 
-        List<List<Point>> supportLines = response.getSupportLines();
+        final List<List<Point>> supportLines = response.getSupportLines();
         Assertions.assertEquals(1, supportLines.size());
-        List<Point> expectedSupportLine = List.of(
+        final List<Point> expectedSupportLine = List.of(
                 Point.of(candles.get(0).getTime(), 80.00000),
                 Point.of(candles.get(1).getTime(), 92.81914),
                 Point.of(candles.get(2).getTime(), 105.63828),
@@ -165,9 +158,9 @@ class StatisticsServiceImplUnitTest extends BaseMockedTest {
         );
         AssertUtils.assertListsAreEqual(expectedSupportLine, supportLines.get(0));
 
-        List<List<Point>> resistanceLines = response.getResistanceLines();
+        final List<List<Point>> resistanceLines = response.getResistanceLines();
         Assertions.assertEquals(1, resistanceLines.size());
-        List<Point> expectedResistanceLine = List.of(
+        final List<Point> expectedResistanceLine = List.of(
                 Point.of(candles.get(5).getTime(), 161.76896),
                 Point.of(candles.get(6).getTime(), 171.79841),
                 Point.of(candles.get(7).getTime(), 181.82786),
