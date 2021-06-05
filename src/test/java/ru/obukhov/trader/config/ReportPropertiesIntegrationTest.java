@@ -13,32 +13,28 @@ class ReportPropertiesIntegrationTest {
 
     @Test
     void saveDirectoryRead_whenSaveDirectoryFilled() {
-
         this.contextRunner
                 .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
                 .withInitializer(new ConfigDataApplicationContextInitializer())
                 .run(context -> {
                     Assertions.assertNull(context.getStartupFailure());
 
-                    ReportProperties reportProperties = context.getBean(ReportProperties.class);
+                    final ReportProperties reportProperties = context.getBean(ReportProperties.class);
 
                     Assertions.assertEquals("D:\\test", reportProperties.getSaveDirectory());
                 });
-
     }
 
     @Test
     void saveDirectorySetDefault_whenSaveDirectoryNotFilled() {
-
         this.contextRunner
                 .run(context -> {
                     Assertions.assertNull(context.getStartupFailure());
 
-                    ReportProperties reportProperties = context.getBean(ReportProperties.class);
+                    final ReportProperties reportProperties = context.getBean(ReportProperties.class);
 
                     Assertions.assertEquals(System.getProperty("user.home"), reportProperties.getSaveDirectory());
                 });
-
     }
 
     @EnableConfigurationProperties(ReportProperties.class)
