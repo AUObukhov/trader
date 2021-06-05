@@ -23,7 +23,7 @@ class PortfolioPositionMapperUnitTest {
     void mapsSinglePosition() {
         final Currency currency = Currency.RUB;
 
-        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source =
+        final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
                         .figi("figi")
                         .ticker("ticker")
@@ -32,20 +32,20 @@ class PortfolioPositionMapperUnitTest {
                         .balance(BigDecimal.valueOf(1000))
                         .blocked(BigDecimal.valueOf(500));
 
-        MoneyAmount expectedYield = TestDataHelper.createMoneyAmount(currency, 200);
+        final MoneyAmount expectedYield = TestDataHelper.createMoneyAmount(currency, 200);
         source.setExpectedYield(expectedYield);
 
         source.setLots(10);
 
-        MoneyAmount averagePositionPrice = TestDataHelper.createMoneyAmount(currency, 100);
+        final MoneyAmount averagePositionPrice = TestDataHelper.createMoneyAmount(currency, 100);
         source.setAveragePositionPrice(averagePositionPrice);
 
-        MoneyAmount averagePositionPriceNoNkd = TestDataHelper.createMoneyAmount(currency, 50);
+        final MoneyAmount averagePositionPriceNoNkd = TestDataHelper.createMoneyAmount(currency, 50);
         source.setAveragePositionPriceNoNkd(averagePositionPriceNoNkd);
 
         source.setName("name");
 
-        PortfolioPosition target = mapper.map(source);
+        final PortfolioPosition target = mapper.map(source);
 
         Assertions.assertEquals(source.getTicker(), target.getTicker());
         Assertions.assertEquals(source.getBalance(), target.getBalance());
@@ -64,7 +64,7 @@ class PortfolioPositionMapperUnitTest {
         final MoneyAmount averagePositionPrice1 = TestDataHelper.createMoneyAmount(currency1, 100);
         final MoneyAmount averagePositionPriceNoNkd1 = TestDataHelper.createMoneyAmount(currency1, 50);
 
-        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source1 =
+        final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source1 =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
                         .figi("figi1")
                         .ticker("ticker1")
@@ -83,7 +83,7 @@ class PortfolioPositionMapperUnitTest {
         final MoneyAmount averagePositionPrice2 = TestDataHelper.createMoneyAmount(currency2, 200);
         final MoneyAmount averagePositionPriceNoNkd2 = TestDataHelper.createMoneyAmount(currency2, 100);
 
-        ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source2 =
+        final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source2 =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
                         .figi("figi2")
                         .ticker("ticker2")
@@ -97,12 +97,12 @@ class PortfolioPositionMapperUnitTest {
                         .averagePositionPriceNoNkd(averagePositionPriceNoNkd2)
                         .name("name2");
 
-        Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source = List.of(source1, source2);
+        final Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source = List.of(source1, source2);
 
-        Collection<PortfolioPosition> target = mapper.map(source);
+        final Collection<PortfolioPosition> target = mapper.map(source);
 
-        Iterator<PortfolioPosition> iterator = target.iterator();
-        PortfolioPosition target1 = iterator.next();
+        final Iterator<PortfolioPosition> iterator = target.iterator();
+        final PortfolioPosition target1 = iterator.next();
         Assertions.assertEquals(source1.getTicker(), target1.getTicker());
         Assertions.assertEquals(source1.getBalance(), target1.getBalance());
         Assertions.assertEquals(source1.getBlocked(), target1.getBlocked());
@@ -112,7 +112,7 @@ class PortfolioPositionMapperUnitTest {
         Assertions.assertEquals(averagePositionPriceNoNkd1.getValue(), target1.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(source1.getName(), target1.getName());
 
-        PortfolioPosition target2 = iterator.next();
+        final PortfolioPosition target2 = iterator.next();
         Assertions.assertEquals(source2.getTicker(), target2.getTicker());
         Assertions.assertEquals(source2.getBalance(), target2.getBalance());
         Assertions.assertEquals(source2.getBlocked(), target2.getBlocked());
