@@ -21,8 +21,8 @@ class IntervalUnitTest {
 
     @Test
     void of_throwsIllegalArgumentException_whenFromIsAfterTo() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 5);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> Interval.of(from, to),
@@ -33,7 +33,7 @@ class IntervalUnitTest {
 
     @Test
     void of_returnsInterval_whenFromAndToAreNull() {
-        Interval interval = Interval.of(null, null);
+        final Interval interval = Interval.of(null, null);
 
         Assertions.assertNull(interval.getFrom());
         Assertions.assertNull(interval.getTo());
@@ -41,9 +41,9 @@ class IntervalUnitTest {
 
     @Test
     void of_returnsInterval_whenFromIsNull() {
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
 
-        Interval interval = Interval.of(null, to);
+        final Interval interval = Interval.of(null, to);
 
         Assertions.assertNull(interval.getFrom());
         Assertions.assertEquals(to, interval.getTo());
@@ -51,9 +51,9 @@ class IntervalUnitTest {
 
     @Test
     void of_returnsInterval_whenToIsNull() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
 
-        Interval interval = Interval.of(from, null);
+        final Interval interval = Interval.of(from, null);
 
         Assertions.assertEquals(from, interval.getFrom());
         Assertions.assertNull(interval.getTo());
@@ -61,10 +61,10 @@ class IntervalUnitTest {
 
     @Test
     void of_returnsInterval_whenFromAndToAreNotNull() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
 
-        Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, to);
 
         Assertions.assertEquals(from, interval.getFrom());
         Assertions.assertEquals(to, interval.getTo());
@@ -76,22 +76,21 @@ class IntervalUnitTest {
 
     @Test
     void ofDay_withYearMonthDayOfMonth_returnsProperInterval() {
-        Interval interval = Interval.ofDay(2020, 10, 10);
+        final Interval interval = Interval.ofDay(2020, 10, 10);
 
-        OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 10);
-        OffsetDateTime expectedToo = DateUtils.atEndOfDay(expectedFrom);
+        final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime expectedToo = DateUtils.atEndOfDay(expectedFrom);
         Assertions.assertEquals(expectedFrom, interval.getFrom());
         Assertions.assertEquals(expectedToo, interval.getTo());
     }
 
     @Test
     void ofDay_withDateTime_returnsProperInterval() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 11, 12, 13);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 11, 12, 13);
+        final Interval interval = Interval.ofDay(dateTime);
 
-        Interval interval = Interval.ofDay(dateTime);
-
-        OffsetDateTime expectedFrom = DateUtils.atStartOfDay(dateTime);
-        OffsetDateTime expectedToo = DateUtils.atEndOfDay(dateTime);
+        final OffsetDateTime expectedFrom = DateUtils.atStartOfDay(dateTime);
+        final OffsetDateTime expectedToo = DateUtils.atEndOfDay(dateTime);
         Assertions.assertEquals(expectedFrom, interval.getFrom());
         Assertions.assertEquals(expectedToo, interval.getTo());
     }
@@ -102,11 +101,11 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_setToToNow_whenToIsNull() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime to = null;
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = null;
 
-        Interval interval = Interval.of(from, to);
-        Interval newInterval = interval.limitByNowIfNull();
+        final Interval interval = Interval.of(from, to);
+        final Interval newInterval = interval.limitByNowIfNull();
 
         Assertions.assertEquals(interval.getFrom(), newInterval.getFrom());
         Assertions.assertNotNull(newInterval.getTo());
@@ -114,11 +113,11 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_notChangesTo_whenToIsNotNull() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
 
-        Interval interval = Interval.of(from, to);
-        Interval newInterval = interval.limitByNowIfNull();
+        final Interval interval = Interval.of(from, to);
+        final Interval newInterval = interval.limitByNowIfNull();
 
         Assertions.assertEquals(interval.getFrom(), newInterval.getFrom());
         Assertions.assertEquals(interval.getTo(), newInterval.getTo());
@@ -130,9 +129,9 @@ class IntervalUnitTest {
 
     @Test
     void extendToWholeDay_throwsIllegalArgumentException_whenNotEqualsDates() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 11, 30, 40);
-        Interval interval = Interval.of(from, to);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 11, 30, 40);
+        final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> interval.extendToWholeDay(false),
@@ -143,14 +142,14 @@ class IntervalUnitTest {
 
     @Test
     void extendToWholeDay_throwsIllegalArgumentException_whenNotFutureIsTrueAndFromIsInFuture() {
-        OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
 
-        OffsetDateTime from = mockedNow.plusHours(1);
-        OffsetDateTime to = from.plusMinutes(10);
-        Interval interval = Interval.of(from, to);
+        final OffsetDateTime from = mockedNow.plusHours(1);
+        final OffsetDateTime to = from.plusMinutes(10);
+        final Interval interval = Interval.of(from, to);
 
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            String expectedMessage =
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final String expectedMessage =
                     "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(
                     () -> interval.extendToWholeDay(true),
@@ -162,11 +161,11 @@ class IntervalUnitTest {
 
     @Test
     void extendToWholeDay_extendsToWholeDay_whenEqualsDates_andNotFuture() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 11, 30, 40);
-        Interval interval = Interval.of(from, to);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 11, 30, 40);
+        final Interval interval = Interval.of(from, to);
 
-        Interval extendedInterval = interval.extendToWholeDay(false);
+        final Interval extendedInterval = interval.extendToWholeDay(false);
 
         OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 5);
         OffsetDateTime expectedTo = DateUtils.atEndOfDay(expectedFrom);
@@ -176,11 +175,11 @@ class IntervalUnitTest {
 
     @Test
     void extendToWholeDay_extendsToWholeDay_whenEqualsDates_andFuture() {
-        OffsetDateTime from = OffsetDateTime.now();
-        OffsetDateTime to = from.plusHours(1);
-        Interval interval = Interval.of(from, to);
+        final OffsetDateTime from = OffsetDateTime.now();
+        final OffsetDateTime to = from.plusHours(1);
+        final Interval interval = Interval.of(from, to);
 
-        Interval extendedInterval = interval.extendToWholeDay(true);
+        final Interval extendedInterval = interval.extendToWholeDay(true);
 
         Assertions.assertEquals(DateUtils.atStartOfDay(from), extendedInterval.getFrom());
         Assertions.assertTrue(to.isAfter(extendedInterval.getTo()));
@@ -192,11 +191,11 @@ class IntervalUnitTest {
 
     @Test
     void hashCode_returnsEqualValuesForEqualIntervals() {
-        Interval interval1 = Interval.of(
+        final Interval interval1 = Interval.of(
                 DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
                 DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
         );
-        Interval interval2 = Interval.of(
+        final Interval interval2 = Interval.of(
                 DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
                 DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
         );
@@ -407,7 +406,7 @@ class IntervalUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forEqualDates")
     void equalDates(OffsetDateTime from, OffsetDateTime to, boolean expected) {
-        boolean result = Interval.of(from, to).equalDates();
+        final boolean result = Interval.of(from, to).equalDates();
 
         Assertions.assertEquals(expected, result);
     }
@@ -490,13 +489,13 @@ class IntervalUnitTest {
 
     @Test
     void getDefault_returnsSameValues_whenValuesAreNotNull() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 11);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 11);
 
-        OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
-        OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
+        final OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
+        final OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
 
-        Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
+        final Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
 
         Assertions.assertEquals(from, interval.getFrom());
         Assertions.assertEquals(to, interval.getTo());
@@ -504,13 +503,13 @@ class IntervalUnitTest {
 
     @Test
     void getDefault_returnsDefaultValues_whenValuesAreNull() {
-        OffsetDateTime from = null;
-        OffsetDateTime to = null;
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
 
-        OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
-        OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
+        final OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
+        final OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
 
-        Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
+        final Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
 
         Assertions.assertEquals(defaultFrom, interval.getFrom());
         Assertions.assertEquals(defaultTo, interval.getTo());
@@ -522,10 +521,10 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoDailyIntervals_returnsOnePair_whenFromAndToAreEqual() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(1, intervals.size());
 
@@ -535,10 +534,10 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoDailyIntervals_returnsOnePair_whenFromAndToInOneDay() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 12, 20, 30);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 12, 20, 30);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(1, intervals.size());
 
@@ -548,10 +547,10 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoDailyIntervals_returnsOnePair_whenFromAndToInOneWholeDay() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(1, intervals.size());
 
@@ -561,76 +560,76 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToDiffersInOneDay() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 12, 20, 30);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 12, 20, 30);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        final OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToAreAtStartOfNeighbourDays() {
-        OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime to = DateUtils.getDate(2020, 10, 6);
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 6);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        final OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourDays() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
         Assertions.assertEquals(from, intervals.get(0).getTo());
 
-        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        final OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoDailyIntervals_returnsThreePairs_whenFromAndToDiffersInTwoDay() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
 
-        List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
+        final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
         Assertions.assertEquals(3, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
+        final OffsetDateTime expectedLeft1 = DateUtils.getDate(2020, 10, 6);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        OffsetDateTime expectedRight1 = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight1 = DateUtils.getDateTime(2020, 10, 6, 23, 59, 59, 999999999);
         Assertions.assertEquals(expectedRight1, intervals.get(1).getTo());
 
-        OffsetDateTime expectedLeft2 = DateUtils.getDate(2020, 10, 7);
+        final OffsetDateTime expectedLeft2 = DateUtils.getDate(2020, 10, 7);
         Assertions.assertEquals(expectedLeft2, intervals.get(2).getFrom());
         Assertions.assertEquals(to, intervals.get(2).getTo());
     }
@@ -641,12 +640,12 @@ class IntervalUnitTest {
 
     @Test
     void toDuration_returnsProperDuration() {
-        OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
-        OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 7, 12, 20, 30);
 
-        Duration duration = Interval.of(from, to).toDuration();
+        final Duration duration = Interval.of(from, to).toDuration();
 
-        Duration expectedDuration = Duration.between(from, to);
+        final Duration expectedDuration = Duration.between(from, to);
         Assertions.assertEquals(expectedDuration, duration);
     }
 
@@ -683,7 +682,7 @@ class IntervalUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forToPrettyString")
     void toPrettyString(OffsetDateTime from, OffsetDateTime to, String expected) {
-        Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, to);
 
         Assertions.assertEquals(expected, interval.toPrettyString());
     }
@@ -716,7 +715,7 @@ class IntervalUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forToDays")
     void toDays(OffsetDateTime from, OffsetDateTime to, double expected) {
-        Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertEquals(expected, interval.toDays());
     }
