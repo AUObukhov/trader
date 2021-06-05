@@ -17,33 +17,33 @@ import java.util.function.Predicate;
 
 class PredicateConstraintValidatorUnitTest {
 
+    private final PredicateConstraintValidator validator = new PredicateConstraintValidator();
+
     @Test
     void isValid_returnsTrue_whenPredicateReturnsTrue() {
-        PredicateConstraintValidator validator = new PredicateConstraintValidator();
-        TestClass testObject = new TestClass("value", "value");
+        final TestClass testObject = new TestClass("value", "value");
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void isValid_returnsFalse_whenPredicateReturnsFalse() {
-        PredicateConstraintValidator validator = new PredicateConstraintValidator();
-        TestClass testObject = new TestClass("value1", "value2");
+        final TestClass testObject = new TestClass("value1", "value2");
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertFalse(result);
     }
 
     private ConstraintValidatorContext createValidationContext() {
-        PredicateConstraint annotation = TestClass.class.getAnnotation(PredicateConstraint.class);
+        final PredicateConstraint annotation = TestClass.class.getAnnotation(PredicateConstraint.class);
 
-        ConstraintAnnotationDescriptor<PredicateConstraint> constraintAnnotationDescriptor =
+        final ConstraintAnnotationDescriptor<PredicateConstraint> constraintAnnotationDescriptor =
                 new ConstraintAnnotationDescriptor<>(annotation);
 
-        ConstraintDescriptor<PredicateConstraint> constraintDescriptor = new ConstraintDescriptorImpl<>(
+        final ConstraintDescriptor<PredicateConstraint> constraintDescriptor = new ConstraintDescriptorImpl<>(
                 ConstraintHelper.forAllBuiltinConstraints(),
                 null,
                 constraintAnnotationDescriptor,
