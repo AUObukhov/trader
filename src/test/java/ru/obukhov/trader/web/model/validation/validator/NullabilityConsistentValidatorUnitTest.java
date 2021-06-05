@@ -18,58 +18,62 @@ class NullabilityConsistentValidatorUnitTest {
 
     @Test
     void isValid_returnsTrue_whenAllValidatedFieldsAreNull() {
-        NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
-        TestClass testObject = new TestClass(null, null, null, "field4Value");
+        final NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
+        final TestClass testObject = new TestClass(null, null, null, "field4Value");
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void isValid_returnsTrue_whenAllValidatedFieldsAreNotNull() {
-        NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
-        TestClass testObject = new TestClass("field1Value", "field2Value", "field3Value", null);
+        final NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
+        final TestClass testObject = new TestClass("field1Value", "field2Value", "field3Value", null);
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void isValid_returnsFalse_whenOnlyOneOfValidatedFieldsIsNull() {
-        NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
-        TestClass testObject = new TestClass(null, "field2Value", "field3Value", null);
+        final NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
+        final TestClass testObject = new TestClass(null, "field2Value", "field3Value", null);
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertFalse(result);
     }
 
     @Test
     void isValid_returnsFalse_whenOnlyOneOfValidatedFieldsIsNotNull() {
-        NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
-        TestClass testObject = new TestClass("field1Value", null, null, null);
+        final NullabilityConsistentValidator validator = new NullabilityConsistentValidator();
+        final TestClass testObject = new TestClass("field1Value", null, null, null);
 
-        boolean result = validator.isValid(testObject, createValidationContext());
+        final boolean result = validator.isValid(testObject, createValidationContext());
 
         Assertions.assertFalse(result);
     }
 
     private ConstraintValidatorContext createValidationContext() {
-        NullabilityConsistent annotation = TestClass.class.getAnnotation(NullabilityConsistent.class);
+        final NullabilityConsistent annotation = TestClass.class.getAnnotation(NullabilityConsistent.class);
 
-        ConstraintAnnotationDescriptor<NullabilityConsistent> constraintAnnotationDescriptor =
+        final ConstraintAnnotationDescriptor<NullabilityConsistent> constraintAnnotationDescriptor =
                 new ConstraintAnnotationDescriptor<>(annotation);
 
-        ConstraintDescriptor<NullabilityConsistent> constraintDescriptor = new ConstraintDescriptorImpl<>(
+        final ConstraintDescriptor<NullabilityConsistent> constraintDescriptor = new ConstraintDescriptorImpl<>(
                 ConstraintHelper.forAllBuiltinConstraints(),
                 null,
                 constraintAnnotationDescriptor,
                 ConstraintLocation.ConstraintLocationKind.TYPE);
 
         return new ConstraintValidatorContextImpl(
-                null, null, constraintDescriptor, null);
+                null,
+                null,
+                constraintDescriptor,
+                null
+        );
     }
 
     @Data
