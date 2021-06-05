@@ -31,10 +31,10 @@ class MathUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverage_withCollection")
-    void getAverage_withCollection(List<Double> values, Double expectedAverage) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+    void getAverage_withCollection(final List<Double> values, final Double expectedAverage) {
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        BigDecimal average = MathUtils.getAverage(bigDecimalValues);
+        final BigDecimal average = MathUtils.getAverage(bigDecimalValues);
 
         AssertUtils.assertEquals(expectedAverage, average);
     }
@@ -45,35 +45,29 @@ class MathUtilsUnitTest {
 
     @Test
     void getAverage_withVarArgs_returnsZero_whenNoArguments() {
-
-        BigDecimal average = MathUtils.getAverage();
+        final BigDecimal average = MathUtils.getAverage();
 
         AssertUtils.assertEquals(0, average);
-
     }
 
     @Test
     void getAverage_withVarArgs_returnsNumber_whenSingleArguments() {
+        final BigDecimal number = BigDecimal.TEN;
 
-        BigDecimal number = BigDecimal.TEN;
-
-        BigDecimal average = MathUtils.getAverage(number);
+        final BigDecimal average = MathUtils.getAverage(number);
 
         AssertUtils.assertEquals(number, average);
-
     }
 
     @Test
     void getAverage_withVarArgs_returnsAverage_whenMultipleNumbersInCollection() {
-
-        BigDecimal average = MathUtils.getAverage(
+        final BigDecimal average = MathUtils.getAverage(
                 BigDecimal.valueOf(100),
                 BigDecimal.valueOf(200),
                 BigDecimal.valueOf(1000)
         );
 
         AssertUtils.assertEquals(433.33333, average);
-
     }
 
     // endregion
@@ -82,17 +76,17 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
-        SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
-        OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 11, 12, 13);
+        final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
+        final OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 11, 12, 13);
 
-        BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
         AssertUtils.assertEquals(0, weightedAverage);
     }
 
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
-        SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
+        final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
         dateTimesToAmounts.put(
                 DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
                 BigDecimal.valueOf(100000)
@@ -105,9 +99,9 @@ class MathUtilsUnitTest {
                 DateUtils.getDateTime(2021, 3, 1, 10, 0, 0),
                 BigDecimal.valueOf(120000)
         );
-        OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 10, 0, 0);
+        final OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 10, 0, 0);
 
-        BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
         AssertUtils.assertEquals(106764.70588, weightedAverage);
     }
@@ -118,14 +112,14 @@ class MathUtilsUnitTest {
 
     @Test
     void max_returnsNull_whenValuesIsEmpty() {
-        Double max = MathUtils.max(Collections.emptyList());
+        final Double max = MathUtils.max(Collections.emptyList());
 
         Assertions.assertNull(max);
     }
 
     @Test
     void max_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = List.of(-100d, 21d, 10d, 20d);
+        final List<Double> values = List.of(-100d, 21d, 10d, 20d);
 
         Double max = MathUtils.max(values);
 
@@ -138,16 +132,16 @@ class MathUtilsUnitTest {
 
     @Test
     void min_returnsNull_whenValuesIsEmpty() {
-        Double min = MathUtils.min(Collections.emptyList());
+        final Double min = MathUtils.min(Collections.emptyList());
 
         Assertions.assertNull(min);
     }
 
     @Test
     void min_returnsMaxValue_whenValuesIsNotEmpty() {
-        List<Double> values = List.of(100d, -21d, 10d, 20d);
+        final List<Double> values = List.of(100d, -21d, 10d, 20d);
 
-        Double min = MathUtils.min(values);
+        final Double min = MathUtils.min(values);
 
         Assertions.assertEquals(min, Double.valueOf(-21));
     }
