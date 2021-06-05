@@ -15,26 +15,25 @@ import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
-    private static final double COMMISSION = 0.003;
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
     private final ConservativeStrategy strategy = new ConservativeStrategy(TRADING_PROPERTIES);
 
     @BeforeAll
     static void setUp() {
-        TRADING_PROPERTIES.setCommission(COMMISSION);
+        TRADING_PROPERTIES.setCommission(0.003);
     }
 
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
-        Operation operation1 = new Operation().status(OperationStatus.DONE);
-        Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
-        Operation operation3 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = new Operation().status(OperationStatus.DONE);
+        final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
+        final Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData();
+        final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
 
-        Decision decision = strategy.decide(data);
+        final Decision decision = strategy.decide(data);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -42,9 +41,9 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(2000, 2000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(2000, 2000, 1);
 
-        Decision decision = strategy.decide(data);
+        final Decision decision = strategy.decide(data);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -52,9 +51,9 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(10000, 2000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(10000, 2000, 1);
 
-        Decision decision = strategy.decide(data);
+        final Decision decision = strategy.decide(data);
 
         Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
         Assertions.assertEquals(4, decision.getLots());
