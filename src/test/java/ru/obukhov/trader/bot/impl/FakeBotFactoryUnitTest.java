@@ -3,6 +3,7 @@ package ru.obukhov.trader.bot.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.interfaces.Bot;
@@ -23,13 +24,14 @@ class FakeBotFactoryUnitTest {
     @Mock
     private RealTinkoffService tinkoffService;
 
+    @InjectMocks
+    private FakeBotFactory factory;
+
     @Test
     void createBot_createsFakeBot() {
-        TradingStrategy strategy = new ConservativeStrategy(tradingProperties);
+        final TradingStrategy strategy = new ConservativeStrategy(tradingProperties);
 
-        FakeBotFactory factory = new FakeBotFactory(tradingProperties, marketService, tinkoffService);
-
-        Bot bot = factory.createBot(strategy);
+        final Bot bot = factory.createBot(strategy);
 
         Assertions.assertTrue(bot instanceof FakeBot);
     }
