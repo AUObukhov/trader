@@ -19,45 +19,51 @@ class ExtendedRowUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenSheetIsNull() {
-        Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
-        Row row = sheet.createRow(0);
+        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Row row = sheet.createRow(0);
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(null, row),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedRow(null, row),
                 IllegalArgumentException.class,
-                "sheet can't be null");
+                "sheet can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(extendedSheet, null),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedRow(extendedSheet, null),
                 IllegalArgumentException.class,
-                "delegate can't be null");
+                "delegate can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedRow() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExtendedRow extendedRow = extendedSheet.addRow();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedRow extendedRow = extendedSheet.addRow();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedRow(extendedSheet, extendedRow),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedRow(extendedSheet, extendedRow),
                 IllegalArgumentException.class,
-                "delegate can't be ExtendedRow");
+                "delegate can't be ExtendedRow"
+        );
     }
 
     @Test
     void constructor_CopiesCells() {
-        Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
-        Row row = sheet.createRow(0);
+        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Row row = sheet.createRow(0);
 
-        String value0 = "cell0";
-        String value1 = "cell1";
+        final String value0 = "cell0";
+        final String value1 = "cell1";
         ExcelTestDataHelper.createCell(row, 0, value0);
         ExcelTestDataHelper.createCell(row, 1, value1);
 
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExtendedRow extendedRow = new ExtendedRow(extendedSheet, row);
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedRow extendedRow = new ExtendedRow(extendedSheet, row);
 
         AssertUtils.assertRowValues(extendedRow, value0, value1);
     }
@@ -68,8 +74,8 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCells_withNoColumn() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        Object[] values = {
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final Object[] values = {
                 null,
                 "value",
                 BigDecimal.TEN,
@@ -78,7 +84,7 @@ class ExtendedRowUnitTest {
                 OffsetDateTime.now().toLocalDateTime()
         };
 
-        List<ExtendedCell> cells = extendedRow.createCells(values);
+        final List<ExtendedCell> cells = extendedRow.createCells(values);
 
         Assertions.assertEquals(values.length, cells.size());
 
@@ -139,9 +145,9 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCells_withColumn() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object[] values = {
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object[] values = {
                 null,
                 "value",
                 BigDecimal.TEN,
@@ -150,7 +156,7 @@ class ExtendedRowUnitTest {
                 OffsetDateTime.now().toLocalDateTime()
         };
 
-        List<ExtendedCell> cells = extendedRow.createCells(column, values);
+        final List<ExtendedCell> cells = extendedRow.createCells(column, values);
 
         Assertions.assertEquals(values.length, cells.size());
 
@@ -215,16 +221,16 @@ class ExtendedRowUnitTest {
 
     @Test
     void createUnitedCell_createsMergedRegion() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = "value";
-        int width = 4;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = "value";
+        final int width = 4;
 
         extendedRow.createUnitedCell(column, value, width);
 
-        List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
+        final List<CellRangeAddress> mergedRegions = extendedRow.getSheet().getMergedRegions();
         Assertions.assertEquals(1, mergedRegions.size());
-        CellRangeAddress mergedRegion = mergedRegions.get(0);
+        final CellRangeAddress mergedRegion = mergedRegions.get(0);
         Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getFirstRow());
         Assertions.assertEquals(extendedRow.getRowNum(), mergedRegion.getLastRow());
         Assertions.assertEquals(column, mergedRegion.getFirstColumn());
@@ -237,11 +243,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -255,11 +261,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsString() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = "value";
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = "value";
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -273,11 +279,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsBigDecimal() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = BigDecimal.TEN;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = BigDecimal.TEN;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -291,11 +297,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsInteger() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = 10;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = 10;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -309,12 +315,12 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsLocalDateTime() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        OffsetDateTime offsetDateTime = OffsetDateTime.now();
-        Object value = offsetDateTime.toLocalDateTime();
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        final Object value = offsetDateTime.toLocalDateTime();
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -328,11 +334,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsOffsetDateTime() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Object value = OffsetDateTime.now();
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Object value = OffsetDateTime.now();
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -350,11 +356,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withStringValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        String value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final String value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -368,11 +374,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withStringValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        String value = "value";
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final String value = "value";
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -390,11 +396,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBigDecimalValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        BigDecimal value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final BigDecimal value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -408,11 +414,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBigDecimalValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        BigDecimal value = BigDecimal.TEN;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final BigDecimal value = BigDecimal.TEN;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -430,11 +436,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withDoubleValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Double value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Double value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -448,11 +454,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withDoubleValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Double value = 10d;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Double value = 10d;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -470,11 +476,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withIntegerValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Integer value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Integer value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -488,11 +494,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withIntegerValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        Integer value = 10;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Integer value = 10;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -510,11 +516,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withLocalDateTimeValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        LocalDateTime value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final LocalDateTime value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -528,12 +534,12 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withLocalDateTimeValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        OffsetDateTime offsetDateTime = OffsetDateTime.now();
-        LocalDateTime value = offsetDateTime.toLocalDateTime();
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final OffsetDateTime offsetDateTime = OffsetDateTime.now();
+        final LocalDateTime value = offsetDateTime.toLocalDateTime();
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -551,11 +557,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withOffsetDateTimeValue_whenValueIsNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        OffsetDateTime value = null;
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final OffsetDateTime value = null;
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -569,11 +575,11 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withOffsetDateTimeValue_whenValueIsNotNull() {
-        ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
-        int column = 5;
-        OffsetDateTime value = OffsetDateTime.now();
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final OffsetDateTime value = OffsetDateTime.now();
 
-        ExtendedCell cell = extendedRow.createCell(column, value);
+        final ExtendedCell cell = extendedRow.createCell(column, value);
 
         AssertUtils.assertCellAttributes(
                 cell,
@@ -591,10 +597,10 @@ class ExtendedRowUnitTest {
 
     @Test
     void getWorkbook_returnsParentWorkbook() {
-        ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
-        ExtendedRow extendedRow = (ExtendedRow) parentExtendedWorkbook.createSheet().createRow(0);
+        final ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedRow extendedRow = (ExtendedRow) parentExtendedWorkbook.createSheet().createRow(0);
 
-        ExtendedWorkbook returnedExtendedWorkbook = extendedRow.getWorkbook();
+        final ExtendedWorkbook returnedExtendedWorkbook = extendedRow.getWorkbook();
 
         Assertions.assertSame(parentExtendedWorkbook, returnedExtendedWorkbook);
     }
