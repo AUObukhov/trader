@@ -22,45 +22,51 @@ class ExtendedSheetUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenWorkbookIsNull() {
-        ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
-        Sheet sheet = extendedWorkbook.createSheet();
+        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final Sheet sheet = extendedWorkbook.createSheet();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(null, sheet),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedSheet(null, sheet),
                 IllegalArgumentException.class,
-                "workbook can't be null");
+                "workbook can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(extendedWorkbook, null),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedSheet(extendedWorkbook, null),
                 IllegalArgumentException.class,
-                "delegate can't be null");
+                "delegate can't be null"
+        );
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedSheet() {
-        ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
-        Sheet sheet = extendedWorkbook.createSheet();
+        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final Sheet sheet = extendedWorkbook.createSheet();
 
-        AssertUtils.assertThrowsWithMessage(() -> new ExtendedSheet(extendedWorkbook, sheet),
+        AssertUtils.assertThrowsWithMessage(
+                () -> new ExtendedSheet(extendedWorkbook, sheet),
                 IllegalArgumentException.class,
-                "delegate can't be ExtendedSheet");
+                "delegate can't be ExtendedSheet"
+        );
     }
 
     @Test
     void constructor_CopiesRows() {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet();
-        String value0 = "row0cell";
+        final Workbook workbook = new XSSFWorkbook();
+        final Sheet sheet = workbook.createSheet();
+        final String value0 = "row0cell";
         sheet.createRow(0).createCell(0).setCellValue(value0);
-        String value1 = "row1cell";
+        final String value1 = "row1cell";
         sheet.createRow(1).createCell(0).setCellValue(value1);
 
-        ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
+        final ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
-        ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheet);
+        final ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheet);
 
         Assertions.assertEquals(2, extendedSheet.getRowsCount());
         Assertions.assertEquals(value0, extendedSheet.getRow(0).getCell(0).getStringCellValue());
@@ -73,7 +79,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getRowsCount_returnProperRowsCount_whenThereIsNoGapBetweenRows() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 3);
 
         Assertions.assertEquals(4, extendedSheet.getRowsCount());
@@ -81,7 +87,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getRowsCount_returnProperRowsCount_whenThereIsGapBetweenRows() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 10);
 
         Assertions.assertEquals(4, extendedSheet.getRowsCount());
@@ -91,16 +97,16 @@ class ExtendedSheetUnitTest {
 
     @Test
     void autoSizeColumns_callsAutoSizeColumnOfDelegate() {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet();
+        final Workbook workbook = new XSSFWorkbook();
+        final Sheet sheet = workbook.createSheet();
         ExcelTestDataHelper.addRow(sheet, 2);
         ExcelTestDataHelper.addRow(sheet, 3);
         ExcelTestDataHelper.addRow(sheet, 1);
 
-        Sheet sheetMock = Mockito.mock(Sheet.class);
+        final Sheet sheetMock = Mockito.mock(Sheet.class);
         Mockito.when(sheetMock.spliterator()).thenReturn(sheet.spliterator());
 
-        ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheetMock);
 
         extendedSheet.autoSizeColumns();
@@ -114,21 +120,21 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getColumnsCount_returnsZero_whenNoRows() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
 
-        int columnsCount = extendedSheet.getColumnsCount();
+        final int columnsCount = extendedSheet.getColumnsCount();
 
         Assertions.assertEquals(0, columnsCount);
     }
 
     @Test
     void getColumnsCount_returnsMaxColumnsCountBetweenRows() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         ExcelTestDataHelper.addRow(extendedSheet, 2);
         ExcelTestDataHelper.addRow(extendedSheet, 3);
         ExcelTestDataHelper.addRow(extendedSheet, 1);
 
-        int columnsCount = extendedSheet.getColumnsCount();
+        final int columnsCount = extendedSheet.getColumnsCount();
 
         Assertions.assertEquals(3, columnsCount);
     }
@@ -137,12 +143,12 @@ class ExtendedSheetUnitTest {
 
     @Test
     void addRow_addsRowAfterLastRow() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         extendedSheet.createRow(0);
         extendedSheet.createRow(1);
         extendedSheet.createRow(4);
 
-        ExtendedRow extendedRow = extendedSheet.addRow();
+        final ExtendedRow extendedRow = extendedSheet.addRow();
 
         Assertions.assertEquals(5, extendedRow.getRowNum());
         Assertions.assertEquals(5, extendedSheet.getLastRowNum());
@@ -151,28 +157,28 @@ class ExtendedSheetUnitTest {
 
     @Test
     void createChart() {
-        ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        int column1 = 1;
-        int row1 = 2;
-        int column2 = 3;
-        int row2 = 4;
+        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final int column1 = 1;
+        final int row1 = 2;
+        final int column2 = 3;
+        final int row2 = 4;
 
-        ExtendedChart chart = extendedSheet.createChart(column1, row1, column2, row2);
+        final ExtendedChart chart = extendedSheet.createChart(column1, row1, column2, row2);
 
         Assertions.assertNotNull(chart);
 
-        Drawing<?> drawing = extendedSheet.getDrawingPatriarch();
-        List<?> frames = IteratorUtils.toList(drawing.iterator());
+        final Drawing<?> drawing = extendedSheet.getDrawingPatriarch();
+        final List<?> frames = IteratorUtils.toList(drawing.iterator());
         Assertions.assertEquals(1, frames.size());
-        XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.get(0);
+        final XSSFGraphicFrame frame = (XSSFGraphicFrame) frames.get(0);
 
-        ClientAnchor anchor = frame.getAnchor();
+        final ClientAnchor anchor = frame.getAnchor();
         Assertions.assertEquals(column1, anchor.getCol1());
         Assertions.assertEquals(row1, anchor.getRow1());
         Assertions.assertEquals(column2, anchor.getCol2());
         Assertions.assertEquals(row2, anchor.getRow2());
 
-        List<XSSFChart> charts = ((XSSFDrawing) drawing).getCharts();
+        final List<XSSFChart> charts = ((XSSFDrawing) drawing).getCharts();
         Assertions.assertEquals(1, charts.size());
         Assertions.assertEquals(chart.getDelegate(), charts.get(0));
     }
