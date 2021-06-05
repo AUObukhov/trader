@@ -30,7 +30,7 @@ public class CandleMocker {
     private final Answer<List<Candle>> answer = new Answer<>() {
         @Override
         public List<Candle> answer(InvocationOnMock invocation) {
-            Interval interval = invocation.getArgument(1);
+            final Interval interval = invocation.getArgument(1);
             if (intervals.containsKey(interval)) {
                 return List.copyOf(intervals.get(interval));
             } else if (lenient) {
@@ -58,55 +58,67 @@ public class CandleMocker {
         return this;
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull Integer... openPrices) {
+    public CandleMocker add(
+            @NotNull final OffsetDateTime from,
+            @NotNull final OffsetDateTime to,
+            @NotNull final Integer... openPrices
+    ) {
         return add(Interval.of(from, to), createCandles(from, openPrices));
     }
 
-    public CandleMocker add(@NotNull Interval interval, @NotNull Integer... openPrices) {
+    public CandleMocker add(@NotNull final Interval interval, @NotNull final Integer... openPrices) {
         return add(interval, createCandles(interval.getFrom(), openPrices));
     }
 
     public CandleMocker add(
-            @NotNull Interval interval,
-            @NotNull Integer openPrice,
-            @NotNull OffsetDateTime time
+            @NotNull final Interval interval,
+            @NotNull final Integer openPrice,
+            @NotNull final OffsetDateTime time
     ) {
         return add(interval, createCandles(openPrice, time));
     }
 
     public CandleMocker add(
-            @NotNull Interval interval,
-            @NotNull List<Integer> openPrices,
-            @NotNull List<OffsetDateTime> times
+            @NotNull final Interval interval,
+            @NotNull final List<Integer> openPrices,
+            @NotNull final List<OffsetDateTime> times
     ) {
         return add(interval, createCandles(openPrices, times));
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime day, @NotNull Integer... openPrices) {
+    public CandleMocker add(@NotNull final OffsetDateTime day, @NotNull final Integer... openPrices) {
         return add(Interval.ofDay(day), createCandles(day, openPrices));
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime day, @NotNull Candle candle) {
+    public CandleMocker add(@NotNull final OffsetDateTime day, @NotNull final Candle candle) {
         return add(Interval.ofDay(day), List.of(candle));
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull Candle candle) {
+    public CandleMocker add(
+            @NotNull final OffsetDateTime from,
+            @NotNull final OffsetDateTime to,
+            @NotNull final Candle candle
+    ) {
         return add(Interval.of(from, to), List.of(candle));
     }
 
-    public CandleMocker add(@NotNull Interval interval, @NotNull Candle candle) {
+    public CandleMocker add(@NotNull final Interval interval, @NotNull final Candle candle) {
         return add(interval, List.of(candle));
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime day, @NotNull List<Candle> candles) {
+    public CandleMocker add(@NotNull final OffsetDateTime day, @NotNull final List<Candle> candles) {
         return add(Interval.ofDay(day), candles);
     }
 
-    public CandleMocker add(@NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull List<Candle> candles) {
+    public CandleMocker add(
+            @NotNull final OffsetDateTime from,
+            @NotNull final OffsetDateTime to,
+            @NotNull final List<Candle> candles
+    ) {
         return add(Interval.of(from, to), candles);
     }
 
-    public CandleMocker add(@NotNull Interval interval, @NotNull List<Candle> candles) {
+    public CandleMocker add(@NotNull final Interval interval, @NotNull final List<Candle> candles) {
         Assert.notNull(interval.getFrom(), "interval.from is not nullable");
         Assert.notNull(interval.getTo(), "interval.to is not nullable");
 
@@ -120,7 +132,7 @@ public class CandleMocker {
         return this;
     }
 
-    private List<Candle> createCandles(OffsetDateTime date, Integer... openPrices) {
+    private List<Candle> createCandles(final OffsetDateTime date, final Integer... openPrices) {
         final Interval interval = Interval.of(date, date).extendToWholeDay(false);
 
         final List<Integer> prices = List.of(openPrices);
@@ -129,11 +141,11 @@ public class CandleMocker {
         return createCandles(prices, times);
     }
 
-    private List<Candle> createCandles(Integer openPrice, OffsetDateTime time) {
+    private List<Candle> createCandles(final Integer openPrice, final OffsetDateTime time) {
         return List.of(createCandleWithOpenPriceAndTime(openPrice, time));
     }
 
-    private List<Candle> createCandles(List<Integer> openPrices, List<OffsetDateTime> times) {
+    private List<Candle> createCandles(final List<Integer> openPrices, final List<OffsetDateTime> times) {
         Assertions.assertEquals(times.size(), openPrices.size(), "times and openPrices must have same size");
 
         final List<Candle> candles = new ArrayList<>(openPrices.size());
@@ -144,8 +156,8 @@ public class CandleMocker {
         return candles;
     }
 
-    private Candle createCandleWithOpenPriceAndTime(Integer openPrice, OffsetDateTime time) {
-        Candle candle = new Candle();
+    private Candle createCandleWithOpenPriceAndTime(final Integer openPrice, final OffsetDateTime time) {
+        final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setTime(time);
         candle.setInterval(candleResolution);
