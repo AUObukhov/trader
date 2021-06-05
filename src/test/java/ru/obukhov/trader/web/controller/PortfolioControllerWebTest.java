@@ -15,7 +15,7 @@ import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 import java.math.BigDecimal;
 import java.util.List;
 
-class PortfolioControllerWebTest extends ControllerIntegrationTest {
+class PortfolioControllerWebTest extends ControllerWebTest {
 
     @MockBean
     private PortfolioService portfolioService;

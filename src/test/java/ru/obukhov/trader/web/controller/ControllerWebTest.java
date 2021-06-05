@@ -13,7 +13,7 @@ import ru.obukhov.trader.Application;
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         args = "--trading.token=i identify myself as token")
-abstract class ControllerIntegrationTest {
+abstract class ControllerWebTest {
 
     @Autowired
     protected MockMvc mockMvc;

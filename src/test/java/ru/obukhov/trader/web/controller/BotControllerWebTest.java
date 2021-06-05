@@ -31,7 +31,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-class BotControllerWebTest extends ControllerIntegrationTest {
+class BotControllerWebTest extends ControllerWebTest {
 
     @Captor
     private ArgumentCaptor<List<String>> stringListArgumentCaptor;

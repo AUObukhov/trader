@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @SpringBootTest(classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         args = {"--trading.token=i identify myself as token", "--trading.sandbox=true"})
-class SandboxControllerWebTest extends ControllerIntegrationTest {
+class SandboxControllerWebTest extends ControllerWebTest {
 
     @MockBean
     private SandboxService sandboxService;

@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-class StatisticsControllerWebTest extends ControllerIntegrationTest {
+class StatisticsControllerWebTest extends ControllerWebTest {
 
     @MockBean
     private StatisticsService statisticsService;
