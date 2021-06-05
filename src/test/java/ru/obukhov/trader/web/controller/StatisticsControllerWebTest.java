@@ -38,7 +38,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_returnsCandles() throws Exception {
         final String ticker = "ticker";
 
-        Candle candle1 = TestDataHelper.createCandle(
+        final Candle candle1 = TestDataHelper.createCandle(
                 12000,
                 8000,
                 15000,
@@ -47,7 +47,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 CandleResolution._1MIN
         );
 
-        Candle candle2 = TestDataHelper.createCandle(
+        final Candle candle2 = TestDataHelper.createCandle(
                 1200,
                 800,
                 1500,
@@ -56,7 +56,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 CandleResolution._1MIN
         );
 
-        Candle candle3 = TestDataHelper.createCandle(
+        final Candle candle3 = TestDataHelper.createCandle(
                 120,
                 80,
                 150,
@@ -65,36 +65,36 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 CandleResolution._1MIN
         );
 
-        List<BigDecimal> averages = List.of(
+        final List<BigDecimal> averages = List.of(
                 BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(100)
         );
 
-        List<Point> localMinimums = List.of(TestDataHelper.createPoint(candle1));
-        List<Point> localMaximums = List.of(TestDataHelper.createPoint(candle3));
+        final List<Point> localMinimums = List.of(TestDataHelper.createPoint(candle1));
+        final List<Point> localMaximums = List.of(TestDataHelper.createPoint(candle3));
 
-        List<Point> supportLine1 = List.of(
+        final List<Point> supportLine1 = List.of(
                 Point.of(candle1.getTime(), 9000),
                 Point.of(candle1.getTime(), 900)
         );
-        List<Point> supportLine2 = List.of(
+        final List<Point> supportLine2 = List.of(
                 Point.of(candle1.getTime(), 900),
                 Point.of(candle1.getTime(), 90)
         );
-        List<List<Point>> supportLines = List.of(supportLine1, supportLine2);
+        final List<List<Point>> supportLines = List.of(supportLine1, supportLine2);
 
-        List<Point> resistanceLine1 = List.of(
+        final List<Point> resistanceLine1 = List.of(
                 Point.of(candle1.getTime(), 11000),
                 Point.of(candle1.getTime(), 1100)
         );
-        List<Point> resistanceLine2 = List.of(
+        final List<Point> resistanceLine2 = List.of(
                 Point.of(candle1.getTime(), 1100),
                 Point.of(candle1.getTime(), 110)
         );
-        List<List<Point>> resistanceLines = List.of(resistanceLine1, resistanceLine2);
+        final List<List<Point>> resistanceLines = List.of(resistanceLine1, resistanceLine2);
 
-        GetCandlesResponse response = new GetCandlesResponse(
+        final GetCandlesResponse response = new GetCandlesResponse(
                 List.of(candle1, candle2, candle3),
                 averages,
                 localMinimums,
@@ -107,8 +107,8 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
+        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -127,7 +127,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
 
-        GetCandlesResponse response = new GetCandlesResponse(
+        final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -139,7 +139,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -155,7 +155,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
 
-        GetCandlesResponse response = new GetCandlesResponse(
+        final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -167,7 +167,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
         Mockito.doThrow(new RuntimeException())
                 .when(excelService)
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
@@ -186,7 +186,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
         final String ticker = "ticker";
 
-        GetCandlesResponse response = new GetCandlesResponse(
+        final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
@@ -198,7 +198,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest2.json");
+        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest2.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -214,8 +214,8 @@ class StatisticsControllerWebTest extends ControllerWebTest {
 
     @Test
     void getInstruments() throws Exception {
-        String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetInstrumentsRequest.json");
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetInstrumentsResponse.json");
+        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetInstrumentsRequest.json");
+        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetInstrumentsResponse.json");
 
         MarketInstrument instrument1 = new MarketInstrument()
                 .figi("figi1")
