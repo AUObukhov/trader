@@ -20,17 +20,16 @@ import java.util.List;
 
 class AbstractTradingStrategyUnitTest {
 
-    private static final double COMMISSION = 0.003;
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
     @BeforeAll
     static void setUp() {
-        TRADING_PROPERTIES.setCommission(COMMISSION);
+        TRADING_PROPERTIES.setCommission(0.003);
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenNameIsTooLong() {
-        String name = "abcdefghijklmnopqrstuvwxyz123456";
+        final String name = "abcdefghijklmnopqrstuvwxyz123456";
 
         AssertUtils.assertThrowsWithMessage(
                 () -> new TestStrategy(name, TRADING_PROPERTIES),
@@ -44,9 +43,9 @@ class AbstractTradingStrategyUnitTest {
     @Test
     void getProfit_returnsZero_whenPositionIsNull() {
         final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        DecisionData decisionData = new DecisionData();
+        final DecisionData decisionData = new DecisionData();
 
-        double profit = strategy.getProfit(decisionData);
+        final double profit = strategy.getProfit(decisionData);
 
         AssertUtils.assertEquals(0.0, profit);
     }
@@ -58,7 +57,7 @@ class AbstractTradingStrategyUnitTest {
     })
     void getProfit(double averagePositionPrice, double currentPrice, double expectedProfit) {
         final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        DecisionData data = TestDataHelper.createDecisionData(averagePositionPrice, currentPrice);
+        final DecisionData data = TestDataHelper.createDecisionData(averagePositionPrice, currentPrice);
 
         double profit = strategy.getProfit(data);
 
@@ -71,11 +70,11 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsTrue_whenOperationInProgressExists() {
-        Operation operation1 = new Operation().status(OperationStatus.DONE);
-        Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
-        Operation operation3 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = new Operation().status(OperationStatus.DONE);
+        final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
+        final Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData();
+        final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
 
         Assertions.assertTrue(TestStrategy.existsOperationInProgress(data));
@@ -83,10 +82,10 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsFalse_whenOperationInProgressDoesNotExists() {
-        Operation operation1 = new Operation().status(OperationStatus.DONE);
-        Operation operation2 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = new Operation().status(OperationStatus.DONE);
+        final Operation operation2 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData();
+        final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2));
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(data));
@@ -94,7 +93,7 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsFalse_whenNoOperations() {
-        DecisionData data = new DecisionData();
+        final DecisionData data = new DecisionData();
         data.setLastOperations(Collections.emptyList());
 
         Assertions.assertFalse(TestStrategy.existsOperationInProgress(data));
@@ -111,9 +110,9 @@ class AbstractTradingStrategyUnitTest {
     })
     void getAvailableLots(double currentPrice, int lotSize, double balance, int expectedAvailableLots) {
         final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
+        final DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
 
-        int availableLots = strategy.getAvailableLots(data);
+        final int availableLots = strategy.getAvailableLots(data);
 
         Assertions.assertEquals(expectedAvailableLots, availableLots);
     }
