@@ -18,16 +18,16 @@ import java.math.BigDecimal;
 @ExtendWith(MockitoExtension.class)
 class BigDecimalSerializerUnitTest {
 
-    private final BigDecimalSerializer serializer = new BigDecimalSerializer();
-
     @Mock
     private JsonGenerator generator;
     @Captor
     private ArgumentCaptor<BigDecimal> argumentCaptor;
 
+    private final BigDecimalSerializer serializer = new BigDecimalSerializer();
+
     @Test
     void serialize_passesNull_whenValueIsNull() throws IOException {
-        BigDecimal value = null;
+        final BigDecimal value = null;
 
         serializer.serialize(value, generator, null);
 
