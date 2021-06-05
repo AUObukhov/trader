@@ -3,11 +3,12 @@ package ru.obukhov.trader.common.service.impl;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.ReportProperties;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
@@ -15,7 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-class ExcelFileServiceImplUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class ExcelFileServiceImplUnitTest {
 
     @Mock
     private ReportProperties reportProperties;
