@@ -35,14 +35,14 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
-        Operation operation1 = new Operation().status(OperationStatus.DONE);
-        Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
-        Operation operation3 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = new Operation().status(OperationStatus.DONE);
+        final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
+        final Operation operation3 = new Operation().status(OperationStatus.DECLINE);
 
-        DecisionData data = new DecisionData();
+        final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
 
-        Decision decision = strategy.decide(data);
+        final Decision decision = strategy.decide(data);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -51,10 +51,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsZero() {
-        DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
@@ -64,10 +64,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsOne_andThereAreAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
             Assertions.assertEquals(9, decision.getLots());
@@ -77,10 +77,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsOne_andThereAreNoAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(1000, 1000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000, 1000, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
@@ -90,11 +90,11 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsMinusOne_andSellProfitIsGreaterThanMinimum() {
-        DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
             Assertions.assertEquals(10, decision.getLots());
@@ -104,11 +104,11 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
             Assertions.assertEquals(4, decision.getLots());
@@ -118,11 +118,11 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
-        DecisionData data = TestDataHelper.createDecisionData(200, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(200, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data);
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
@@ -130,7 +130,7 @@ class GoldenCrossStrategyUnitTest {
     }
 
     private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(Crossover crossover) {
-        MockedStatic<TrendUtils> trendUtilsStaticMock =
+        final MockedStatic<TrendUtils> trendUtilsStaticMock =
                 Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
 
         trendUtilsStaticMock.when(
