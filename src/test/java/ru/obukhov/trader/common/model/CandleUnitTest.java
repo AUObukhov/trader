@@ -14,56 +14,60 @@ class CandleUnitTest {
 
     @Test
     void createAverage_throwsIllegalArgumentException_whenLeftCandleAfterRightCandle() {
-        Candle leftCandle = TestDataHelper.createCandleWithTime(
+        final Candle leftCandle = TestDataHelper.createCandleWithTime(
                 DateUtils.getDateTime(2020, 10, 11, 1, 0, 0)
         );
 
-        Candle rightCandle = TestDataHelper.createCandleWithTime(
+        final Candle rightCandle = TestDataHelper.createCandleWithTime(
                 DateUtils.getDateTime(2020, 10, 10, 2, 0, 0)
         );
 
-        AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
+        AssertUtils.assertThrowsWithMessage(
+                () -> Candle.createAverage(leftCandle, rightCandle),
                 IllegalArgumentException.class,
-                "leftCandle can't be after rightCandle");
+                "leftCandle can't be after rightCandle"
+        );
     }
 
     @Test
     void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
-        Candle leftCandle = TestDataHelper.createCandleWithTimeAndInterval(
+        final Candle leftCandle = TestDataHelper.createCandleWithTimeAndInterval(
                 DateUtils.getDateTime(2020, 10, 10, 1, 0, 0),
                 CandleResolution.DAY
         );
 
-        Candle rightCandle = TestDataHelper.createCandleWithTimeAndInterval(
+        final Candle rightCandle = TestDataHelper.createCandleWithTimeAndInterval(
                 DateUtils.getDateTime(2020, 10, 11, 2, 0, 0),
                 CandleResolution.HOUR
         );
 
-        AssertUtils.assertThrowsWithMessage(() -> Candle.createAverage(leftCandle, rightCandle),
+        AssertUtils.assertThrowsWithMessage(
+                () -> Candle.createAverage(leftCandle, rightCandle),
                 IllegalArgumentException.class,
-                "Candle intervals must be equal");
+                "Candle intervals must be equal"
+        );
     }
 
     @Test
     void createAverage() {
-        Candle candle1 = TestDataHelper.createCandleWithClosePriceAndTime(
+        final Candle candle1 = TestDataHelper.createCandleWithClosePriceAndTime(
                 100,
                 DateUtils.getDateTime(2020, 10, 10, 1, 0, 0)
         );
 
-        Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
+        final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 200,
                 DateUtils.getDateTime(2020, 10, 11, 2, 0, 0)
         );
 
-        Candle averageCandle = Candle.createAverage(candle1, candle2);
+        final Candle averageCandle = Candle.createAverage(candle1, candle2);
 
         AssertUtils.assertEquals(100, averageCandle.getOpenPrice());
         AssertUtils.assertEquals(200, averageCandle.getClosePrice());
         AssertUtils.assertEquals(200, averageCandle.getHighestPrice());
         AssertUtils.assertEquals(100, averageCandle.getLowestPrice());
 
-        OffsetDateTime expectedTime = DateUtils.getDateTime(2020, 10, 10, 13, 30, 0);
+        final OffsetDateTime expectedTime = DateUtils.getDateTime(2020, 10, 10, 13, 30, 0);
         Assertions.assertEquals(expectedTime, averageCandle.getTime());
     }
 
