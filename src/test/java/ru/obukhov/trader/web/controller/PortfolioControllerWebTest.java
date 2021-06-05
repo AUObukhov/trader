@@ -22,7 +22,7 @@ class PortfolioControllerWebTest extends ControllerWebTest {
 
     @Test
     void getPositions() throws Exception {
-        PortfolioPosition position1 = new PortfolioPosition(
+        final PortfolioPosition position1 = new PortfolioPosition(
                 "ticker1",
                 BigDecimal.valueOf(10000),
                 null,
@@ -34,7 +34,7 @@ class PortfolioControllerWebTest extends ControllerWebTest {
                 "name1"
         );
 
-        PortfolioPosition position2 = new PortfolioPosition(
+        final PortfolioPosition position2 = new PortfolioPosition(
                 "ticker2",
                 BigDecimal.valueOf(20000),
                 null,
@@ -48,7 +48,7 @@ class PortfolioControllerWebTest extends ControllerWebTest {
 
         Mockito.when(portfolioService.getPositions()).thenReturn(List.of(position1, position2));
 
-        String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetPortfolioPositionsResponse.json");
+        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetPortfolioPositionsResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/positions")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -61,18 +61,18 @@ class PortfolioControllerWebTest extends ControllerWebTest {
 
     @Test
     void getCurrencies() throws Exception {
-        CurrencyPosition currencyPosition1 = new CurrencyPosition()
+        final CurrencyPosition currencyPosition1 = new CurrencyPosition()
                 .currency(Currency.RUB)
                 .balance(BigDecimal.valueOf(10000))
                 .blocked(BigDecimal.ZERO);
-        CurrencyPosition currencyPosition2 = new CurrencyPosition()
+        final CurrencyPosition currencyPosition2 = new CurrencyPosition()
                 .currency(Currency.EUR)
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(BigDecimal.valueOf(100));
 
         Mockito.when(portfolioService.getCurrencies()).thenReturn(List.of(currencyPosition1, currencyPosition2));
 
-        String expectedResponse =
+        final String expectedResponse =
                 ResourceUtils.getResourceAsString("test-data/getPortfolioCurrenciesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/currencies")
