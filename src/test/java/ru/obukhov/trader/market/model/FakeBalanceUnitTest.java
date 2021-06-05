@@ -11,7 +11,7 @@ class FakeBalanceUnitTest {
 
     @Test
     void constructor_initializesFields() {
-        FakeBalance fakeBalance = new FakeBalance();
+        final FakeBalance fakeBalance = new FakeBalance();
 
         AssertUtils.assertEquals(0, fakeBalance.getCurrentAmount());
         Assertions.assertTrue(fakeBalance.getInvestments().isEmpty());
@@ -21,50 +21,56 @@ class FakeBalanceUnitTest {
 
     @Test
     void addInvestment_throwsIllegalArgumentException_whenAmountIsNegative() {
-        OffsetDateTime currentDateTime = OffsetDateTime.now();
-        BigDecimal amount = BigDecimal.valueOf(-20);
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final BigDecimal amount = BigDecimal.valueOf(-20);
 
-        FakeBalance fakeBalance = new FakeBalance();
+        final FakeBalance fakeBalance = new FakeBalance();
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeBalance.addInvestment(currentDateTime, amount),
+        AssertUtils.assertThrowsWithMessage(
+                () -> fakeBalance.addInvestment(currentDateTime, amount),
                 IllegalArgumentException.class,
-                "expected positive investment amount");
+                "expected positive investment amount"
+        );
     }
 
     @Test
     void addInvestment_throwsIllegalArgumentException_whenAmountIsZero() {
-        OffsetDateTime currentDateTime = OffsetDateTime.now();
-        BigDecimal amount = BigDecimal.ZERO;
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final BigDecimal amount = BigDecimal.ZERO;
 
-        FakeBalance fakeBalance = new FakeBalance();
+        final FakeBalance fakeBalance = new FakeBalance();
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeBalance.addInvestment(currentDateTime, amount),
+        AssertUtils.assertThrowsWithMessage(
+                () -> fakeBalance.addInvestment(currentDateTime, amount),
                 IllegalArgumentException.class,
-                "expected positive investment amount");
+                "expected positive investment amount"
+        );
     }
 
     @Test
     void addInvestment_throwsIllegalArgumentException_whenInvestmentWithCurrentDateTimeAlreadyExists() {
-        OffsetDateTime currentDateTime = OffsetDateTime.now();
-        BigDecimal amount1 = BigDecimal.valueOf(100);
-        BigDecimal amount2 = BigDecimal.valueOf(20);
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final BigDecimal amount1 = BigDecimal.valueOf(100);
+        final BigDecimal amount2 = BigDecimal.valueOf(20);
 
-        FakeBalance fakeBalance = new FakeBalance();
+        final FakeBalance fakeBalance = new FakeBalance();
         fakeBalance.addInvestment(currentDateTime, amount1);
 
-        AssertUtils.assertThrowsWithMessage(() -> fakeBalance.addInvestment(currentDateTime, amount2),
+        AssertUtils.assertThrowsWithMessage(
+                () -> fakeBalance.addInvestment(currentDateTime, amount2),
                 IllegalArgumentException.class,
-                "investment at " + currentDateTime + " alreadyExists");
+                "investment at " + currentDateTime + " alreadyExists"
+        );
     }
 
     @Test
     void addInvestment_changesInvestmentsAndCurrentBalance() {
-        BigDecimal amount1 = BigDecimal.valueOf(20);
-        BigDecimal amount2 = BigDecimal.valueOf(50);
-        OffsetDateTime investment1DateTime = OffsetDateTime.now();
-        OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
+        final BigDecimal amount1 = BigDecimal.valueOf(20);
+        final BigDecimal amount2 = BigDecimal.valueOf(50);
+        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
+        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
-        FakeBalance fakeBalance = new FakeBalance();
+        final FakeBalance fakeBalance = new FakeBalance();
 
         fakeBalance.addInvestment(investment1DateTime, amount1);
         fakeBalance.addInvestment(investment2DateTime, amount2);
