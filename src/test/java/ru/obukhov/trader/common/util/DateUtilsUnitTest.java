@@ -28,14 +28,14 @@ class DateUtilsUnitTest {
 
     @Test
     void getDateTime() {
-        int year = 2020;
-        int month = 5;
-        int dayOfMonth = 10;
-        int hour = 12;
-        int minute = 30;
-        int second = 15;
+        final int year = 2020;
+        final int month = 5;
+        final int dayOfMonth = 10;
+        final int hour = 12;
+        final int minute = 30;
+        final int second = 15;
 
-        OffsetDateTime dateTime = DateUtils.getDateTime(year, month, dayOfMonth, hour, minute, second);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(year, month, dayOfMonth, hour, minute, second);
 
         Assertions.assertEquals(year, dateTime.getYear());
         Assertions.assertEquals(month, dateTime.getMonth().getValue());
@@ -48,11 +48,11 @@ class DateUtilsUnitTest {
 
     @Test
     void getDate_fillsDateOnly() {
-        int year = 2020;
-        int month = 5;
-        int dayOfMonth = 10;
+        final int year = 2020;
+        final int month = 5;
+        final int dayOfMonth = 10;
 
-        OffsetDateTime dateTime = DateUtils.getDate(year, month, dayOfMonth);
+        final OffsetDateTime dateTime = DateUtils.getDate(year, month, dayOfMonth);
 
         Assertions.assertEquals(year, dateTime.getYear());
         Assertions.assertEquals(month, dateTime.getMonth().getValue());
@@ -65,11 +65,11 @@ class DateUtilsUnitTest {
 
     @Test
     void getTime_fillsTimeOnly() {
-        int hour = 12;
-        int minute = 30;
-        int second = 15;
+        final int hour = 12;
+        final int minute = 30;
+        final int second = 15;
 
-        OffsetDateTime dateTime = DateUtils.getTime(hour, minute, second);
+        final OffsetDateTime dateTime = DateUtils.getTime(hour, minute, second);
 
         Assertions.assertEquals(0, dateTime.getYear());
         Assertions.assertEquals(1, dateTime.getMonth().getValue());
@@ -84,7 +84,7 @@ class DateUtilsUnitTest {
 
     @Test
     void getIntervalWithDefaultOffsets_returnsIntervalWithNulls_whenArgumentsAreNull() {
-        Interval result = DateUtils.getIntervalWithDefaultOffsets(null, null);
+        final Interval result = DateUtils.getIntervalWithDefaultOffsets(null, null);
 
         Assertions.assertNull(result.getFrom());
         Assertions.assertNull(result.getTo());
@@ -92,19 +92,19 @@ class DateUtilsUnitTest {
 
     @Test
     void getIntervalWithDefaultOffsets_changesOffsets_whenOffsetsAreNotDefault() {
-        OffsetDateTime from = OffsetDateTime.of(2021, 1, 1,
+        final OffsetDateTime from = OffsetDateTime.of(2021, 1, 1,
                 10, 0, 0, 0,
                 ZoneOffset.UTC);
-        OffsetDateTime to = OffsetDateTime.of(2021, 1, 2,
+        final OffsetDateTime to = OffsetDateTime.of(2021, 1, 2,
                 11, 0, 0, 0,
                 ZoneOffset.UTC);
 
-        Interval result = DateUtils.getIntervalWithDefaultOffsets(from, to);
+        final Interval result = DateUtils.getIntervalWithDefaultOffsets(from, to);
 
-        OffsetDateTime expectedFrom = OffsetDateTime.of(2021, 1, 1,
+        final OffsetDateTime expectedFrom = OffsetDateTime.of(2021, 1, 1,
                 13, 0, 0, 0,
                 DateUtils.DEFAULT_OFFSET);
-        OffsetDateTime expectedTo = OffsetDateTime.of(2021, 1, 2,
+        final OffsetDateTime expectedTo = OffsetDateTime.of(2021, 1, 2,
                 14, 0, 0, 0,
                 DateUtils.DEFAULT_OFFSET);
         Assertions.assertEquals(expectedFrom, result.getFrom());
@@ -117,20 +117,20 @@ class DateUtilsUnitTest {
 
     @Test
     void getDefaultToIfNull_returnsValue_whenNotNull() {
-        OffsetDateTime to = OffsetDateTime.now().minusYears(1);
+        final OffsetDateTime to = OffsetDateTime.now().minusYears(1);
 
-        OffsetDateTime result = DateUtils.getDefaultToIfNull(to);
+        final OffsetDateTime result = DateUtils.getDefaultToIfNull(to);
 
         Assertions.assertEquals(to, result);
     }
 
     @Test
     void getDefaultToIfNull_returnsNow_whenNull() {
-        OffsetDateTime start = OffsetDateTime.now();
+        final OffsetDateTime start = OffsetDateTime.now();
 
-        OffsetDateTime result = DateUtils.getDefaultToIfNull(null);
+        final OffsetDateTime result = DateUtils.getDefaultToIfNull(null);
 
-        OffsetDateTime end = OffsetDateTime.now();
+        final OffsetDateTime end = OffsetDateTime.now();
 
         Assertions.assertTrue(!start.isAfter(result) && !end.isBefore(result));
     }
@@ -151,8 +151,8 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forIsWorkDay")
-    void isWorkDay(OffsetDateTime date, boolean expectedResult) {
-        boolean result = DateUtils.isWorkDay(date);
+    void isWorkDay(final OffsetDateTime date, final boolean expectedResult) {
+        final boolean result = DateUtils.isWorkDay(date);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -181,8 +181,8 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetNextWorkDay_returnsNextDay")
-    void getNextWorkDay(OffsetDateTime dateTime, OffsetDateTime expectedNextWorkDay) {
-        OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
+    void getNextWorkDay(final OffsetDateTime dateTime, final OffsetDateTime expectedNextWorkDay) {
+        final OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
 
         Assertions.assertEquals(expectedNextWorkDay, nextWorkDay);
     }
@@ -194,10 +194,9 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("unused")
     void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
-        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-
-            OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
+        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
 
             Assertions.assertEquals(mockedNow, lastWorkDay);
         }
@@ -206,11 +205,10 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("unused")
     void getLastWorkDay_returnsNow_whenTodayIsWeekend() {
-        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
-        OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-
-            OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
+        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
+        final OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
 
             Assertions.assertEquals(expected, lastWorkDay);
         }
@@ -222,19 +220,19 @@ class DateUtilsUnitTest {
 
     @Test
     void getLastWorkDayDateTime_returnsNow_whenWorkDay() {
-        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
+        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
 
-        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
+        final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
 
         Assertions.assertEquals(mockedNow, lastWorkDay);
     }
 
     @Test
     void getLastWorkDayDateTime_returnsNow_whenWeekend() {
-        OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
-        OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
+        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
+        final OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
 
-        OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
+        final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay(mockedNow);
 
         Assertions.assertEquals(expected, lastWorkDay);
     }
@@ -245,10 +243,10 @@ class DateUtilsUnitTest {
 
     @Test
     void getLatestDateTime_returnsFirst_whenEquals() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
 
-        OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
 
         Assertions.assertSame(dateTime1, result);
     }
@@ -256,10 +254,10 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void getLatestDateTime_returnsFirst_whenSecondIsNull() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = null;
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime2 = null;
 
-        OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
 
         Assertions.assertSame(dateTime1, result);
     }
@@ -267,10 +265,10 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void getLatestDateTime_returnsSecond_whenFirstIsNull() {
-        OffsetDateTime dateTime1 = null;
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime1 = null;
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
 
-        OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
 
         Assertions.assertSame(dateTime2, result);
     }
@@ -278,30 +276,30 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void getLatestDateTime_returnsNull_whenBothAreNull() {
-        OffsetDateTime dateTime1 = null;
-        OffsetDateTime dateTime2 = null;
+        final OffsetDateTime dateTime1 = null;
+        final OffsetDateTime dateTime2 = null;
 
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
 
         Assertions.assertNull(result);
     }
 
     @Test
     void getLatestDateTime_returnsSecond_whenSecondIsLater() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 2);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 2);
 
-        OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
 
         Assertions.assertSame(dateTime2, result);
     }
 
     @Test
     void getLatestDateTime_returnsFirst_whenFirstIsLater() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 2);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 2);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
 
-        OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getLatestDateTime(dateTime1, dateTime2);
 
         Assertions.assertSame(dateTime1, result);
     }
@@ -312,22 +310,22 @@ class DateUtilsUnitTest {
 
     @Test
     void getAverage_returnsEqualsDate_whenDatesAreEqual() {
-        OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
 
         Assertions.assertEquals(dateTime1, result);
     }
 
     @Test
     void getAverage_returnsAverageDate_whenDatesAreNotEqual() {
-        OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-        OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 2, 10, 30, 0);
+        final OffsetDateTime dateTime1 = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime dateTime2 = DateUtils.getDateTime(2020, 1, 2, 10, 30, 0);
 
-        OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
+        final OffsetDateTime result = DateUtils.getAverage(dateTime1, dateTime2);
 
-        OffsetDateTime expected = DateUtils.getDateTime(2020, 1, 1, 22, 15, 0);
+        final OffsetDateTime expected = DateUtils.getDateTime(2020, 1, 1, 22, 15, 0);
         Assertions.assertEquals(expected, result);
     }
 
@@ -335,67 +333,52 @@ class DateUtilsUnitTest {
 
     // region getEarliestDateTime tests
 
-    @Test
-    void getEarliestDateTime_returnsFirst_whenEquals() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
-
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertSame(dateTime1, result);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetEarliestDateTime() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDate(2020, 1, 1),
+                        DateUtils.getDate(2020, 1, 1),
+                        DateUtils.getDate(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2020, 1, 1),
+                        null,
+                        DateUtils.getDate(2020, 1, 1)
+                ),
+                Arguments.of(
+                        null,
+                        DateUtils.getDate(2020, 1, 1),
+                        DateUtils.getDate(2020, 1, 1)
+                ),
+                Arguments.of(
+                        null,
+                        null,
+                        null
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2020, 1, 1),
+                        DateUtils.getDate(2020, 1, 2),
+                        DateUtils.getDate(2020, 1, 1)
+                ),
+                Arguments.of(
+                        DateUtils.getDate(2020, 1, 2),
+                        DateUtils.getDate(2020, 1, 1),
+                        DateUtils.getDate(2020, 1, 1)
+                )
+        );
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void getEarliestDateTime_returnsFirst_whenSecondIsNull() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = null;
+    @ParameterizedTest
+    @MethodSource("getData_forGetEarliestDateTime")
+    void getEarliestDateTime(
+            final OffsetDateTime dateTime1,
+            final OffsetDateTime dateTime2,
+            final OffsetDateTime expected
+    ) {
+        final OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
 
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertSame(dateTime1, result);
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void getEarliestDateTime_returnsSecond_whenFirstIsNull() {
-        OffsetDateTime dateTime1 = null;
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
-
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertSame(dateTime2, result);
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void getEarliestDateTime_returnsNull_whenBothAreNull() {
-        OffsetDateTime dateTime1 = null;
-        OffsetDateTime dateTime2 = null;
-
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertNull(result);
-    }
-
-    @Test
-    void getEarliestDateTime_returnsFirst_whenFirstIsEarlier() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 2);
-
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertSame(dateTime1, result);
-    }
-
-    @Test
-    void getEarliestDateTime_returnsSecond_whenFirstIsLater() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 2);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
-
-        OffsetDateTime result = DateUtils.getEarliestDateTime(dateTime1, dateTime2);
-
-        Assertions.assertSame(dateTime2, result);
+        Assertions.assertEquals(expected, result);
     }
 
     // endregion
@@ -404,10 +387,10 @@ class DateUtilsUnitTest {
 
     @Test
     void plusLimited_returnsIncrementedDateTime_whenMaxDateTimeIsAfterThanIncrementedDateTime() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
 
-        OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.DAYS, maxDateTime);
+        final OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.DAYS, maxDateTime);
 
         Assertions.assertNotSame(maxDateTime, result);
         Assertions.assertTrue(dateTime.isBefore(result));
@@ -416,19 +399,19 @@ class DateUtilsUnitTest {
 
     @Test
     void plusLimited_returnsIncrementedDateTime_whenMaxDateTimeIsNull() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
 
-        OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.DAYS, null);
+        final OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.DAYS, null);
 
         Assertions.assertTrue(dateTime.isBefore(result));
     }
 
     @Test
     void plusLimited_returnsMaxDateTime_whenMaxDateTimeIsBeforeThanIncrementedDateTime() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime maxDateTime = DateUtils.getDate(2020, 2, 1);
 
-        OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.MONTHS, maxDateTime);
+        final OffsetDateTime result = DateUtils.plusLimited(dateTime, 2, ChronoUnit.MONTHS, maxDateTime);
 
         Assertions.assertSame(maxDateTime, result);
     }
@@ -439,10 +422,10 @@ class DateUtilsUnitTest {
 
     @Test
     void minusLimited_returnsDecrementedDateTime_whenMinDateTimeIsBeforeThanDecrementedDateTime() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
-        OffsetDateTime minDateTime = DateUtils.getDate(2020, 1, 2);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime minDateTime = DateUtils.getDate(2020, 1, 2);
 
-        OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.DAYS, minDateTime);
+        final OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.DAYS, minDateTime);
 
         Assertions.assertNotSame(minDateTime, result);
         Assertions.assertTrue(dateTime.isAfter(result));
@@ -451,19 +434,19 @@ class DateUtilsUnitTest {
 
     @Test
     void minusLimited_returnsDecrementedDateTime_whenMinDateTimeIsNull() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
 
-        OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.DAYS, null);
+        final OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.DAYS, null);
 
         Assertions.assertTrue(dateTime.isAfter(result));
     }
 
     @Test
     void minusLimited_returnsMinDateTime_whenMinDateTimeIsAfterThanDecrementedDateTime() {
-        OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
-        OffsetDateTime minDateTime = DateUtils.getDate(2020, 1, 4);
+        final OffsetDateTime dateTime = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime minDateTime = DateUtils.getDate(2020, 1, 4);
 
-        OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.MONTHS, minDateTime);
+        final OffsetDateTime result = DateUtils.minusLimited(dateTime, 2, ChronoUnit.MONTHS, minDateTime);
 
         Assertions.assertSame(minDateTime, result);
     }
@@ -472,9 +455,9 @@ class DateUtilsUnitTest {
 
     @Test
     void setTime_setsTime() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 10, 10, 10);
-        OffsetTime time = DateUtils.getTime(5, 30, 0).toOffsetTime();
-        OffsetDateTime result = DateUtils.setTime(dateTime, time);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 10, 10, 10);
+        final OffsetTime time = DateUtils.getTime(5, 30, 0).toOffsetTime();
+        final OffsetDateTime result = DateUtils.setTime(dateTime, time);
 
         Assertions.assertEquals(dateTime.getYear(), result.getYear());
         Assertions.assertEquals(dateTime.getMonth(), result.getMonth());
@@ -487,15 +470,17 @@ class DateUtilsUnitTest {
 
     @Test
     void setDefaultOffsetSameInstant() {
-        OffsetDateTime dateTime = OffsetDateTime.of(2021, 1, 5,
+        final OffsetDateTime dateTime = OffsetDateTime.of(2021, 1, 5,
                 10, 0, 0, 0,
                 ZoneOffset.UTC);
 
-        OffsetDateTime result = DateUtils.setDefaultOffsetSameInstant(dateTime);
+        final OffsetDateTime result = DateUtils.setDefaultOffsetSameInstant(dateTime);
 
-        OffsetDateTime expected = OffsetDateTime.of(2021, 1, 5,
+        final OffsetDateTime expected = OffsetDateTime.of(
+                2021, 1, 5,
                 13, 0, 0, 0,
-                DateUtils.DEFAULT_OFFSET);
+                DateUtils.DEFAULT_OFFSET
+        );
 
         Assertions.assertEquals(expected, result);
     }
@@ -504,16 +489,14 @@ class DateUtilsUnitTest {
 
     @Test
     void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
-
-        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.HOUR);
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.HOUR);
 
         Assertions.assertEquals(ChronoUnit.DAYS, unit);
     }
 
     @Test
     void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
-
-        TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.DAY);
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.DAY);
 
         Assertions.assertEquals(ChronoUnit.YEARS, unit);
     }
@@ -525,39 +508,39 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void isAfter_returnsTrue_whenDateTime2IsNull() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 5);
 
-        boolean result = DateUtils.isAfter(dateTime1, null);
+        final boolean result = DateUtils.isAfter(dateTime1, null);
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void isAfter_returnsTrue_whenDateTime1IsAfterDateTime2() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 5);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
 
-        boolean result = DateUtils.isAfter(dateTime1, dateTime2);
+        final boolean result = DateUtils.isAfter(dateTime1, dateTime2);
 
         Assertions.assertTrue(result);
     }
 
     @Test
     void isAfter_returnsFalse_whenDateTime1EqualsAfterDateTime2() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 1);
 
-        boolean result = DateUtils.isAfter(dateTime1, dateTime2);
+        final boolean result = DateUtils.isAfter(dateTime1, dateTime2);
 
         Assertions.assertFalse(result);
     }
 
     @Test
     void isAfter_returnsFalse_whenDateTime1isBeforeAfterDateTime2() {
-        OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
-        OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 5);
+        final OffsetDateTime dateTime1 = DateUtils.getDate(2020, 1, 1);
+        final OffsetDateTime dateTime2 = DateUtils.getDate(2020, 1, 5);
 
-        boolean result = DateUtils.isAfter(dateTime1, dateTime2);
+        final boolean result = DateUtils.isAfter(dateTime1, dateTime2);
 
         Assertions.assertFalse(result);
     }
@@ -568,22 +551,22 @@ class DateUtilsUnitTest {
 
     @Test
     void roundUpToDay_doesNotChangesDateTime_whenDateTimeIsStartOfDay() {
-        OffsetDateTime dateTime = DateUtils.getDate(2019, 1, 1);
+        final OffsetDateTime dateTime = DateUtils.getDate(2019, 1, 1);
 
-        OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
+        final OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
 
-        OffsetDateTime expected = DateUtils.getDate(2019, 1, 1);
+        final OffsetDateTime expected = DateUtils.getDate(2019, 1, 1);
         Assertions.assertEquals(expected, result);
     }
 
     @Test
     void roundUpToDay_movesDateTimeToNextDay_whenDateTimeIsAfterStartOfDay() {
-        OffsetDateTime dateTime =
+        final OffsetDateTime dateTime =
                 DateUtils.getDateTime(2020, 5, 5, 4, 6, 7);
 
-        OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
+        final OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
 
-        OffsetDateTime expected = DateUtils.getDate(2020, 5, 6);
+        final OffsetDateTime expected = DateUtils.getDate(2020, 5, 6);
         Assertions.assertEquals(expected, result);
     }
 
@@ -591,6 +574,7 @@ class DateUtilsUnitTest {
 
     // region roundDownToYear tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forRoundDownToYear() {
         return Stream.of(
                 Arguments.of(
@@ -610,8 +594,8 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forRoundDownToYear")
-    void roundDownToYear(OffsetDateTime dateTime, OffsetDateTime expectedResult) {
-        OffsetDateTime result = DateUtils.roundDownToYear(dateTime);
+    void roundDownToYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime result = DateUtils.roundDownToYear(dateTime);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -620,6 +604,7 @@ class DateUtilsUnitTest {
 
     // region roundUpToYear tests
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forRoundUpToYear() {
         return Stream.of(
                 Arguments.of(
@@ -639,8 +624,8 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forRoundUpToYear")
-    void roundUpToYear(OffsetDateTime dateTime, OffsetDateTime expectedResult) {
-        OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
+    void roundUpToYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -651,46 +636,54 @@ class DateUtilsUnitTest {
 
     @Test
     void isWorkTime_throwsIllegalArgumentException_whenDurationIsNegative() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(-1);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be positive");
+                "workTimeDuration must be positive"
+        );
     }
 
     @Test
     void isWorkTime_throwsIllegalArgumentException_whenDurationIsZero() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(0);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(0);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be positive");
+                "workTimeDuration must be positive"
+        );
     }
 
     @Test
     void isWorkTime_throwsIllegalArgumentException_whenDurationIsOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofDays(1);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofDays(1);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
+                "workTimeDuration must be less than 1 day"
+        );
     }
 
     @Test
     void isWorkTime_throwsIllegalArgumentException_whenDurationIsMoreThanOneDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(25);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(25);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.isWorkTime(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day");
+                "workTimeDuration must be less than 1 day"
+        );
     }
 
     @SuppressWarnings("unused")
@@ -841,8 +834,13 @@ class DateUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_isWorkTime")
-    void isWorkTime(OffsetDateTime dateTime, OffsetTime startTime, Duration duration, boolean expectedResult) {
-        boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+    void isWorkTime(
+            final OffsetDateTime dateTime,
+            final OffsetTime startTime,
+            final Duration duration,
+            final boolean expectedResult
+    ) {
+        final boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -853,13 +851,15 @@ class DateUtilsUnitTest {
 
     @Test
     void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(-1);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be positive");
+                "workTimeDuration must be positive"
+        );
     }
 
     @SuppressWarnings("unused")
@@ -889,10 +889,10 @@ class DateUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
     void getNearestWorkTime_throwsIllegalArgumentException(
-            OffsetDateTime dateTime,
-            OffsetTime startTime,
-            Duration duration,
-            String expectedErrorMessage
+            final OffsetDateTime dateTime,
+            final OffsetTime startTime,
+            final Duration duration,
+            final String expectedErrorMessage
     ) {
         AssertUtils.assertThrowsWithMessage(
                 () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
@@ -903,34 +903,34 @@ class DateUtilsUnitTest {
 
     @Test
     void getNearestWorkTime_returnsCurrentMinute_whenMiddleOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
         Assertions.assertEquals(dateTime, nextWorkMinute);
     }
 
     @Test
     void getNearestWorkTime_returnsStartOfNextDay_whenAtEndOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNearestWorkTime_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -938,11 +938,11 @@ class DateUtilsUnitTest {
 
     @Test
     void getNearestWorkTime_returnsStartOfNextWeek_whenEndOfWorkWeek() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -950,25 +950,25 @@ class DateUtilsUnitTest {
 
     @Test
     void getNearestWorkTime_returnsStartOfNextWeek_whenAtWeekend() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNearestWorkTime_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
@@ -978,22 +978,24 @@ class DateUtilsUnitTest {
 
     @Test
     void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(-1);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
                 IllegalArgumentException.class,
-                "workTimeDuration must be positive");
+                "workTimeDuration must be positive"
+        );
     }
 
     @ParameterizedTest
     @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
     void getNextWorkMinute_throwsIllegalArgumentException(
-            OffsetDateTime dateTime,
-            OffsetTime startTime,
-            Duration duration,
-            String expectedErrorMessage
+            final OffsetDateTime dateTime,
+            final OffsetTime startTime,
+            final Duration duration,
+            final String expectedErrorMessage
     ) {
         AssertUtils.assertThrowsWithMessage(
                 () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
@@ -1003,73 +1005,73 @@ class DateUtilsUnitTest {
 
     @Test
     void getNextWorkMinute_returnsNextMinute_whenMiddleOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = dateTime.plusMinutes(1);
+        final OffsetDateTime expected = dateTime.plusMinutes(1);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNextWorkMinute_returnsStartOfNextDay_whenAtEndOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNextWorkMinute_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNextWorkMinute_returnsStartOfNextWeek_whenEndOfWorkWeek() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNextWorkMinute_returnsStartOfNextWeek_whenAtWeekend() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
     @Test
     void getNextWorkMinute_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
-        OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
-        Duration duration = Duration.ofHours(9);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
+        final OffsetTime startTime = DateUtils.getTime(10, 0, 0).toOffsetTime();
+        final Duration duration = Duration.ofHours(9);
 
-        OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
+        final OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
     }
 
@@ -1079,12 +1081,11 @@ class DateUtilsUnitTest {
 
     @Test
     void atStartOfDay() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
 
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+        final OffsetDateTime startOfDay = DateUtils.atStartOfDay(dateTime);
 
-        OffsetDateTime startOfDay = DateUtils.atStartOfDay(dateTime);
-
-        OffsetDateTime expected = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime expected = DateUtils.getDate(2020, 10, 5);
 
         Assertions.assertEquals(expected, startOfDay);
     }
@@ -1095,12 +1096,11 @@ class DateUtilsUnitTest {
 
     @Test
     void atEndOfDay() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
 
-        OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+        final OffsetDateTime endOfDay = DateUtils.atEndOfDay(dateTime);
 
-        OffsetDateTime endOfDay = DateUtils.atEndOfDay(dateTime);
-
-        OffsetDateTime expected = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expected = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
 
         Assertions.assertEquals(expected, endOfDay);
     }
@@ -1111,10 +1111,10 @@ class DateUtilsUnitTest {
 
     @Test
     void withDefaultOffset() {
-        ZoneOffset testOffset = TestDataHelper.getNotDefaultOffset();
+        final ZoneOffset testOffset = TestDataHelper.getNotDefaultOffset();
 
-        OffsetDateTime dateTimeWithTestOffset = OffsetDateTime.now().withOffsetSameInstant(testOffset);
-        OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
+        final OffsetDateTime dateTimeWithTestOffset = OffsetDateTime.now().withOffsetSameInstant(testOffset);
+        final OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
 
         Assertions.assertEquals(DateUtils.DEFAULT_OFFSET, dateTimeWithDefaultOffset.getOffset());
     }
@@ -1125,26 +1125,28 @@ class DateUtilsUnitTest {
 
     @Test
     void assertDateTimeNotFuture_throwsException_whenDateTimeIsInFuture() {
-        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
+        final OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
                 IllegalArgumentException.class,
-                "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00");
+                "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00"
+        );
     }
 
     @Test
     void assertDateTimeNotFuture_notThrowsException_whenDateTimeIsInPast() {
-        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        final OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 1);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
 
         DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
     }
 
     @Test
     void assertDateTimeNotFuture_notThrowsException_whenDateTimeIsEqualsToNow() {
-        OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        final OffsetDateTime now = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
 
         DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
     }
@@ -1156,9 +1158,9 @@ class DateUtilsUnitTest {
     @Test
     @SuppressWarnings("ConstantConditions")
     void toDate_returnsNull_whenDateTimeIsNull() {
-        OffsetDateTime dateTime = null;
+        final OffsetDateTime dateTime = null;
 
-        Date date = DateUtils.toDate(dateTime);
+        final Date date = DateUtils.toDate(dateTime);
 
         Assertions.assertNull(date);
     }
@@ -1172,11 +1174,11 @@ class DateUtilsUnitTest {
         final int minute = 13;
         final int second = 14;
 
-        OffsetDateTime dateTime = DateUtils.getDateTime(year, month, dayOfMonth, hour, minute, second);
+        final OffsetDateTime dateTime = DateUtils.getDateTime(year, month, dayOfMonth, hour, minute, second);
 
-        Date date = DateUtils.toDate(dateTime);
+        final Date date = DateUtils.toDate(dateTime);
 
-        Calendar calendar = new GregorianCalendar();
+        final Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         Assertions.assertEquals(year, calendar.get(Calendar.YEAR));
         Assertions.assertEquals(month, calendar.get(Calendar.MONTH) + 1);
@@ -1192,55 +1194,59 @@ class DateUtilsUnitTest {
 
     @Test
     void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsEqualToTo() throws ParseException {
-        CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
-        OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getCronHitsBetweenDates(expression, from, to),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getCronHitsBetweenDates(expression, from, to),
                 IllegalArgumentException.class,
-                "from must be before to");
+                "from must be before to"
+        );
     }
 
     @Test
     void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsAfterTo() throws ParseException {
-        CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 15);
-        OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 15);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
 
-        AssertUtils.assertThrowsWithMessage(() -> DateUtils.getCronHitsBetweenDates(expression, from, to),
+        AssertUtils.assertThrowsWithMessage(
+                () -> DateUtils.getCronHitsBetweenDates(expression, from, to),
                 IllegalArgumentException.class,
-                "from must be before to");
+                "from must be before to"
+        );
     }
 
     @Test
     void getCronHitsBetweenDates_returnsProperCount_whenValidDatesAreBetweenFromAndTo() throws ParseException {
-        CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
-        OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
+        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
 
-        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
 
         Assertions.assertEquals(2, count);
     }
 
     @Test
     void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToFrom() throws ParseException {
-        CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 1, 0, 0, 0);
-        OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
+        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 10, 1, 0, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 12, 11, 12, 13, 14);
 
-        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
 
         Assertions.assertEquals(2, count);
     }
 
     @Test
     void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToTo() throws ParseException {
-        CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
-        OffsetDateTime to = DateUtils.getDateTime(2022, 1, 1, 0, 0, 0);
+        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 10, 11, 12, 13, 14);
+        final OffsetDateTime to = DateUtils.getDateTime(2022, 1, 1, 0, 0, 0);
 
-        int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
 
         Assertions.assertEquals(3, count);
     }
