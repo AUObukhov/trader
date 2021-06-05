@@ -1,5 +1,7 @@
 package ru.obukhov.trader.test.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,49 +43,53 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
 
-    public static void assertEquals(double expected, double actual) {
+    public static void assertEquals(final double expected, final double actual) {
         Assertions.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
     }
 
-    public static void assertEquals(BigDecimal expected, BigDecimal actual) {
+    public static void assertEquals(final BigDecimal expected, final BigDecimal actual) {
         if (!DecimalUtils.numbersEqual(actual, expected)) {
-            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
     }
 
-    public static void assertEquals(@Nullable Integer expected, BigDecimal actual) {
+    public static void assertEquals(final @Nullable Integer expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
     }
 
-    public static void assertEquals(@Nullable Long expected, BigDecimal actual) {
+    public static void assertEquals(final @Nullable Long expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
     }
 
-    public static void assertEquals(@Nullable Double expected, BigDecimal actual) {
+    public static void assertEquals(final @Nullable Double expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            String message = String.format("expected: <%s> but was: <%s>", expected, actual);
+            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
             Assertions.fail(message);
         }
     }
 
-    public static void assertEquals(ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle, Candle candle) {
+    public static void assertEquals(
+            final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle,
+            final Candle candle
+    ) {
         Assertions.assertEquals(tinkoffCandle.getInterval(), candle.getInterval());
         AssertUtils.assertEquals(tinkoffCandle.getO(), candle.getOpenPrice());
         AssertUtils.assertEquals(tinkoffCandle.getC(), candle.getClosePrice());
@@ -92,7 +98,10 @@ public class AssertUtils {
         Assertions.assertEquals(tinkoffCandle.getTime(), candle.getTime());
     }
 
-    public static void assertEquals(ru.tinkoff.invest.openapi.model.rest.PortfolioPosition expected, PortfolioPosition actual) {
+    public static void assertEquals(
+            final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition expected,
+            final PortfolioPosition actual
+    ) {
         Assertions.assertEquals(expected.getTicker(), actual.getTicker());
         AssertUtils.assertEquals(expected.getBalance(), actual.getBalance());
         AssertUtils.assertEquals(expected.getBlocked(), actual.getBlocked());
@@ -104,78 +113,79 @@ public class AssertUtils {
         Assertions.assertEquals(expected.getName(), actual.getName());
     }
 
-    public static void assertEquals(byte[] expected, byte[] actual) {
+    public static void assertEquals(final byte[] expected, final byte[] actual) {
         Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < actual.length; i++) {
             Assertions.assertEquals(expected[i], actual[i]);
         }
     }
 
-    public static void assertRangeInclusive(long expectedMin, long expectedMax, long actual) {
+    public static void assertRangeInclusive(final long expectedMin, final long expectedMax, final long actual) {
         Assertions.assertTrue(actual >= expectedMin);
         Assertions.assertTrue(actual <= expectedMax);
     }
 
-    public static void assertListsAreEqual(List<?> expected, List<?> actual) {
+    public static void assertListsAreEqual(final List<?> expected, final List<?> actual) {
         assertListSize(expected, actual);
         for (int i = 0; i < expected.size(); i++) {
-            Object expectedValue = expected.get(i);
-            Object actualValue = actual.get(i);
+            final Object expectedValue = expected.get(i);
+            final Object actualValue = actual.get(i);
             if (!Objects.equals(expectedValue, actualValue)) {
-                String message = String.format("expected: <%s> at position <%s> but was: <%s>",
+                final String message = String.format("expected: <%s> at position <%s> but was: <%s>",
                         expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
     }
 
-    public static void assertBigDecimalListsAreEqual(List<BigDecimal> expected, List<BigDecimal> actual) {
+    public static void assertBigDecimalListsAreEqual(final List<BigDecimal> expected, final List<BigDecimal> actual) {
         assertListSize(expected, actual);
         for (int i = 0; i < expected.size(); i++) {
-            BigDecimal expectedValue = expected.get(i);
-            BigDecimal actualValue = actual.get(i);
+            final BigDecimal expectedValue = expected.get(i);
+            final BigDecimal actualValue = actual.get(i);
             if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
-                String message = String.format("expected: <%s> at position <%s> but was: <%s>",
+                final String message = String.format("expected: <%s> at position <%s> but was: <%s>",
                         expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
     }
 
-    private static void assertListSize(List<?> expected, List<?> actual) {
+    private static void assertListSize(final List<?> expected, final List<?> actual) {
         if (expected.size() != actual.size()) {
-            String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
+            final String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
             Assertions.fail(message);
         }
     }
 
     // region apache poi assertions
 
-    public static void assertRowValues(Row row, Object... values) {
+    public static void assertRowValues(final Row row, final Object... values) {
         Assertions.assertEquals(values.length, row.getPhysicalNumberOfCells());
         for (int index = 0; index < values.length; index++) {
             assertCellValue(row.getCell(index), values[index]);
         }
     }
 
-    public static void assertCellAttributes(ExtendedCell cell,
-                                            ExtendedRow extendedRow,
-                                            int column,
-                                            CellType cellType,
-                                            String cellStyleName,
-                                            Object value) {
-
+    public static void assertCellAttributes(
+            final ExtendedCell cell,
+            final ExtendedRow extendedRow,
+            final int column,
+            final CellType cellType,
+            final String cellStyleName,
+            final Object value
+    ) {
         Assertions.assertSame(extendedRow, cell.getRow());
         Assertions.assertEquals(column, cell.getColumnIndex());
         Assertions.assertEquals(cellType, cell.getCellType());
 
-        CellStyle expectedCellStyle = extendedRow.getWorkbook().getCellStyle(cellStyleName);
+        final CellStyle expectedCellStyle = extendedRow.getWorkbook().getCellStyle(cellStyleName);
         Assertions.assertEquals(expectedCellStyle, cell.getCellStyle());
 
         assertCellValue(cell, value);
     }
 
-    public static void assertCellValue(Cell cell, Object value) {
+    public static void assertCellValue(final Cell cell, final Object value) {
         switch (cell.getCellType()) {
             case BLANK:
                 Assertions.assertEquals(StringUtils.EMPTY, cell.getStringCellValue());
@@ -210,50 +220,50 @@ public class AssertUtils {
         }
     }
 
-    public static void assertCellValue(Cell cell, String value) {
-        String exceptedValue = value == null ? StringUtils.EMPTY : value;
+    public static void assertCellValue(final Cell cell, final String value) {
+        final String exceptedValue = value == null ? StringUtils.EMPTY : value;
         Assertions.assertEquals(exceptedValue, cell.getStringCellValue());
     }
 
-    public static void assertCellValue(Cell cell, BigDecimal value) {
-        double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+    public static void assertCellValue(final Cell cell, final BigDecimal value) {
+        final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }
 
-    public static void assertCellValue(Cell cell, Double value) {
-        double expectedValue = ObjectUtils.defaultIfNull(value, NumberUtils.DOUBLE_ZERO);
+    public static void assertCellValue(final Cell cell, final Double value) {
+        final double expectedValue = ObjectUtils.defaultIfNull(value, NumberUtils.DOUBLE_ZERO);
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }
 
-    public static void assertCellValue(Cell cell, Integer value) {
-        double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+    public static void assertCellValue(final Cell cell, final Integer value) {
+        final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }
 
-    private static void assetCellValue(Cell cell, LocalDateTime value) {
-        ZoneOffset offset = OffsetDateTime.now().getOffset();
-        Date expectedValue = Date.from(value.toInstant(offset));
+    private static void assetCellValue(final Cell cell, final LocalDateTime value) {
+        final ZoneOffset offset = OffsetDateTime.now().getOffset();
+        final Date expectedValue = Date.from(value.toInstant(offset));
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
-    public static void assertCellValue(Cell cell, OffsetDateTime value) {
-        Date expectedValue = Date.from(value.toInstant());
+    public static void assertCellValue(final Cell cell, final OffsetDateTime value) {
+        final Date expectedValue = Date.from(value.toInstant());
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 
-    public static void assertSeriesColor(XDDFLineChartData.Series series, Color color) {
-        XDDFSolidFillProperties fillProperties1 =
+    public static void assertSeriesColor(final XDDFLineChartData.Series series, final Color color) {
+        final XDDFSolidFillProperties fillProperties1 =
                 (XDDFSolidFillProperties) series.getShapeProperties().getFillProperties();
-        XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
+        final XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
         AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), xddfColor1.getValue());
     }
 
     @SneakyThrows
-    public static void assertSeriesMarkerColor(XDDFLineChartData.Series series, Color color) {
+    public static void assertSeriesMarkerColor(final XDDFLineChartData.Series series, final Color color) {
         final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
         getMarkerMethod.setAccessible(true);
         final CTMarker marker = (CTMarker) getMarkerMethod.invoke(series);
-        byte[] colorBytes = marker.getSpPr().getSolidFill().getSrgbClr().getVal();
+        final byte[] colorBytes = marker.getSpPr().getSolidFill().getSrgbClr().getVal();
         AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), colorBytes);
     }
 
@@ -261,15 +271,15 @@ public class AssertUtils {
 
     // region execution time assertions
 
-    public static void assertFaster(Runnable runnable, long maxTime) {
-        long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
+    public static void assertFaster(final Runnable runnable, final long maxTime) {
+        final long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed > maxTime) {
             Assertions.fail("Expected execution within maximum " + maxTime + " ms. Actual is " + elapsed + " ms");
         }
     }
 
-    public static void assertSlower(Runnable runnable, long minTime) {
-        long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
+    public static void assertSlower(final Runnable runnable, final long minTime) {
+        final long elapsed = TestUtils.runAndGetElapsedMillis(runnable);
         if (elapsed < minTime) {
             Assertions.fail("Expected execution within minimum " + minTime + " ms. Actual is " + elapsed + " ms");
         }
@@ -277,49 +287,55 @@ public class AssertUtils {
 
     // endregion
 
-    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(String message) {
+    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(
+            final String message
+    ) {
         return context -> AssertUtils.assertContextStartupFailedWithMessage(context, message);
     }
 
-    public static void assertContextStartupFailedWithMessage(AssertableApplicationContext context, String message) {
-        Throwable startupFailure = context.getStartupFailure();
+    public static void assertContextStartupFailedWithMessage(
+            final AssertableApplicationContext context,
+            final String message
+    ) {
+        final Throwable startupFailure = context.getStartupFailure();
 
         Assertions.assertNotNull(startupFailure, "context startup not failed as expected");
 
-        BindValidationException bindValidationException =
+        final BindValidationException bindValidationException =
                 (BindValidationException) startupFailure.getCause().getCause();
-        List<ObjectError> errors = bindValidationException.getValidationErrors().getAllErrors();
+        final List<ObjectError> errors = bindValidationException.getValidationErrors().getAllErrors();
 
         Assertions.assertEquals(1, errors.size());
         Assertions.assertEquals(message, errors.get(0).getDefaultMessage());
     }
 
-    public static <T> void assertViolation(Set<ConstraintViolation<T>> violations, String expectedMessage) {
+    public static <T> void assertViolation(final Set<ConstraintViolation<T>> violations, final String expectedMessage) {
         Assertions.assertEquals(1, violations.size(), "expected single violation");
         Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
     }
 
-    public static <T extends Throwable> void assertThrowsWithMessage(Executable executable,
-                                                                     Class<T> expectedType,
-                                                                     String expectedMessage) {
-
-        Throwable throwable = Assertions.assertThrows(expectedType, executable);
+    public static <T extends Throwable> void assertThrowsWithMessage(
+            final Executable executable,
+            final Class<T> expectedType,
+            final String expectedMessage
+    ) {
+        final Throwable throwable = Assertions.assertThrows(expectedType, executable);
         Assertions.assertEquals(expectedMessage, throwable.getMessage());
     }
 
-    public static <T extends Throwable> void assertThrowsWithMessagePattern(Executable executable,
-                                                                            Class<T> expectedType,
-                                                                            String expectedMessagePattern) {
-
-        Throwable throwable = Assertions.assertThrows(expectedType, executable);
-        Pattern pattern = Pattern.compile(expectedMessagePattern);
-        Matcher matcher = pattern.matcher(throwable.getMessage());
+    public static <T extends Throwable> void assertThrowsWithMessagePattern(
+            final Executable executable,
+            final Class<T> expectedType,
+            final String expectedMessagePattern
+    ) {
+        final Throwable throwable = Assertions.assertThrows(expectedType, executable);
+        final Pattern pattern = Pattern.compile(expectedMessagePattern);
+        final Matcher matcher = pattern.matcher(throwable.getMessage());
 
         if (!matcher.matches()) {
-            String message = String.format("pattern:\n%s\nactual:\n%s", expectedMessagePattern, throwable.getMessage());
+            final String message = String.format("pattern:\n%s\nactual:\n%s", expectedMessagePattern, throwable.getMessage());
             Assertions.fail(message);
         }
     }
-
 
 }
