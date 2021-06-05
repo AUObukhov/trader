@@ -3,13 +3,13 @@ package ru.obukhov.trader.common.service.impl;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.QueryThrottleProperties;
 import ru.obukhov.trader.config.UrlLimit;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -17,14 +17,13 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import java.io.IOException;
 import java.util.List;
 
-class ThrottlingInterceptorUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class ThrottlingInterceptorUnitTest {
 
     @Mock
     private HttpUrl url;
     @Mock
     private Request request;
-    @Mock
-    private Response response;
     @Mock
     private Interceptor.Chain chain;
 
@@ -32,12 +31,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
     public void setUp() throws IOException {
         Mockito.when(request.url()).thenReturn(url);
         Mockito.when(chain.request()).thenReturn(request);
-        Mockito.when(chain.proceed(ArgumentMatchers.any(Request.class))).thenReturn(response);
     }
 
     @Test
     void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws IOException {
-
         Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -50,15 +47,15 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
                 .thenThrow(new RuntimeException("exception for test"));
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
-        AssertUtils.assertThrowsWithMessage(() -> interceptor.intercept(chain),
+        AssertUtils.assertThrowsWithMessage(
+                () -> interceptor.intercept(chain),
                 IllegalStateException.class,
-                "Failed to retry for 30 times");
-
+                "Failed to retry for 30 times"
+        );
     }
 
     @Test
     void intercept_doesNotThrottle_whenNoOpenApiPrefix() {
-
         Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -75,12 +72,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         for (int i = 0; i < limit; i++) {
             AssertUtils.assertFaster(() -> interceptor.intercept(chain), maximumNotThrottledTime);
         }
-
     }
 
     @Test
     void intercept_throttles_onlyWhenLimitIsReached() {
-
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -100,12 +95,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         }
 
         AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
-
     }
 
     @Test
     void intercept_throttlesByLowestLimit() {
-
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -126,12 +119,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         }
 
         AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
-
     }
 
     @Test
     void intercept_throttlesByCommonLimit() {
-
         final List<String> limitOrderSegments = List.of("openapi", "orders", "limit-order");
         final List<String> marketOrderSegments = List.of("openapi", "orders", "market-order");
 
@@ -157,12 +148,10 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         }
 
         AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
-
     }
 
     @Test
     void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() {
-
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -182,21 +171,20 @@ class ThrottlingInterceptorUnitTest extends BaseMockedTest {
         }
 
         AssertUtils.assertSlower(() -> interceptor.intercept(chain), minimumThrottledTime);
-
     }
 
-    private QueryThrottleProperties createQueryThrottleProperties(long interval,
-                                                                  int retryInterval,
-                                                                  int attemptsCount,
-                                                                  int defaultLimit) {
-
+    private QueryThrottleProperties createQueryThrottleProperties(
+            long interval,
+            int retryInterval,
+            int attemptsCount,
+            int defaultLimit
+    ) {
         QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties();
         queryThrottleProperties.setInterval(interval);
         queryThrottleProperties.setRetryInterval(retryInterval);
         queryThrottleProperties.setAttemptsCount(attemptsCount);
         queryThrottleProperties.setDefaultLimit(defaultLimit);
         return queryThrottleProperties;
-
     }
 
 }
