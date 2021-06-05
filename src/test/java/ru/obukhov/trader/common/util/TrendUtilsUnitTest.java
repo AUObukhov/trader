@@ -37,11 +37,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
     void getSimpleMovingAverages_withValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
+            final List<Double> values,
+            final int window,
+            final String expectedMessage
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getSimpleMovingAverages(elements, Optional::get, window),
@@ -53,14 +53,14 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
     void getSimpleMovingAverages_withKeyValueExtractors_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
+            final List<Double> values,
+            final int window,
+            final String expectedMessage
     ) {
-        List<Candle> candles = new ArrayList<>(values.size());
-        OffsetDateTime now = OffsetDateTime.now();
+        final List<Candle> candles = new ArrayList<>(values.size());
+        final OffsetDateTime now = OffsetDateTime.now();
         for (int i = 0; i < values.size(); i++) {
-            Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
+            final Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
             candles.add(candle);
         }
 
@@ -74,11 +74,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
     void getSimpleMovingAverages_withoutExtractors_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
+            final List<Double> values,
+            final int window,
+            final String expectedMessage
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getSimpleMovingAverages(bigDecimalValues, window),
@@ -157,15 +157,15 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
     void getSimpleMovingAverages_withValueExtractor(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(elements, Optional::get, window);
+        final List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(elements, Optional::get, window);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -179,22 +179,22 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
     void getSimpleMovingAverages_withKeyValueExtractors(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
-        List<Candle> candles = new ArrayList<>(values.size());
-        OffsetDateTime now = OffsetDateTime.now();
+        final List<Candle> candles = new ArrayList<>(values.size());
+        final OffsetDateTime now = OffsetDateTime.now();
         for (int i = 0; i < values.size(); i++) {
-            Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
+            final Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
             candles.add(candle);
         }
 
-        Map<OffsetDateTime, BigDecimal> movingAverages =
+        final Map<OffsetDateTime, BigDecimal> movingAverages =
                 TrendUtils.getSimpleMovingAverages(candles, Candle::getTime, Candle::getOpenPrice, window);
 
-        List<BigDecimal> actualValues = new ArrayList<>(movingAverages.values());
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> actualValues = new ArrayList<>(movingAverages.values());
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, actualValues);
 
         for (BigDecimal average : actualValues) {
@@ -208,15 +208,15 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages")
     void getSimpleMovingAverages_withoutExtractors(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(bigDecimalValues, window);
+        final List<BigDecimal> movingAverages = TrendUtils.getSimpleMovingAverages(bigDecimalValues, window);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -242,11 +242,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getLinearWeightedMovingAverages_withoutOrder_withoutValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
+            final List<Double> values,
+            final int window,
+            final String expectedMessage
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, window),
@@ -258,11 +258,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getLinearWeightedMovingAverages_withoutOrder_withValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int window,
-            String expectedMessage
+            final List<Double> values,
+            final int window,
+            final String expectedMessage
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getLinearWeightedMovingAverages(elements, Optional::get, window),
@@ -282,9 +282,9 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getLinearWeightedMovingAverages_withOrder_withoutValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int order,
-            String expectedMessage
+            final List<Double> values,
+            final int order,
+            final String expectedMessage
     ) {
         List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
@@ -298,11 +298,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getLinearWeightedMovingAverages_withOrder_withValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            int order,
-            String expectedMessage
+            final List<Double> values,
+            final int order,
+            final String expectedMessage
     ) {
-        List<Optional<BigDecimal>> bigDecimalValues = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> bigDecimalValues = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, Optional::get, 1, order),
@@ -381,15 +381,15 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
     void getLinearWeightedMovingAverages_withoutOrder_withoutValueExtractor(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, window);
+        final List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, window);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -403,15 +403,15 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
     void getLinearWeightedMovingAverages_withoutOrder_withValueExtractor(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
+        final List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(elements, Optional::get, window);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -515,9 +515,9 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
     void getLinearWeightedMovingAverages_withOrderOne_withoutValueExtractor(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
         getLinearWeightedMovingAverages_withOrder_withoutValueExtractor(values, window, 1, expectedValues);
     }
@@ -525,9 +525,9 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withoutOrder")
     void getLinearWeightedMovingAverages_withOrderOne_withValueExtractor(
-            List<Double> values,
-            int window,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final List<Double> expectedValues
     ) {
         getLinearWeightedMovingAverages_withOrder_withValueExtractor(values, window, 1, expectedValues);
     }
@@ -535,16 +535,16 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder")
     void getLinearWeightedMovingAverages_withOrder_withoutValueExtractor(
-            List<Double> values,
-            int window,
-            int order,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final int order,
+            final List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, window, order);
+        final List<BigDecimal> movingAverages = TrendUtils.getLinearWeightedMovingAverages(bigDecimalValues, window, order);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -558,17 +558,17 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLinearWeightedMovingAverages_withOrder")
     void getLinearWeightedMovingAverages_withOrder_withValueExtractor(
-            List<Double> values,
-            int window,
-            int order,
-            List<Double> expectedValues
+            final List<Double> values,
+            final int window,
+            final int order,
+            final List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages =
+        final List<BigDecimal> movingAverages =
                 TrendUtils.getLinearWeightedMovingAverages(elements, Optional::get, window, order);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -595,11 +595,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            double weightDecrease,
-            String expectedMessage
+            final List<Double> values,
+            final double weightDecrease,
+            final String expectedMessage
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease),
@@ -611,11 +611,11 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            double weightDecrease,
-            String expectedMessage
+            final List<Double> values,
+            final double weightDecrease,
+            final String expectedMessage
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
@@ -679,16 +679,16 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithoutValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages =
+        final List<BigDecimal> movingAverages =
                 TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -702,16 +702,16 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages =
+        final List<BigDecimal> movingAverages =
                 TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -740,12 +740,12 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            double weightDecrease,
-            int order,
-            String expectedMessage
+            final List<Double> values,
+            final double weightDecrease,
+            final int order,
+            final String expectedMessage
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease, order),
@@ -757,12 +757,12 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor_throwsIllegalArgumentException(
-            List<Double> values,
-            double weightDecrease,
-            int order,
-            String expectedMessage
+            final List<Double> values,
+            final double weightDecrease,
+            final int order,
+            final String expectedMessage
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
@@ -860,9 +860,9 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withOrderOne_andWithoutValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final List<Double> expectedValues
     ) {
         getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
                 values,
@@ -875,17 +875,17 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder")
     void getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            int order,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final int order,
+            final List<Double> expectedValues
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages =
+        final List<BigDecimal> movingAverages =
                 TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease, order);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -899,9 +899,9 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withOrderOne_andWithValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final List<Double> expectedValues
     ) {
         getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
                 values,
@@ -914,17 +914,17 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder")
     void getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
-            List<Double> values,
-            double weightDecrease,
-            int order,
-            List<Double> expectedValues
+            final List<Double> values,
+            final double weightDecrease,
+            final int order,
+            final List<Double> expectedValues
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<BigDecimal> movingAverages =
+        final List<BigDecimal> movingAverages =
                 TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
 
-        List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
@@ -1023,13 +1023,13 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLocalExtremes")
     void getLocalExtremes_withoutValueExtractor(
-            List<Double> values,
-            List<Integer> expectedExtremes,
-            Comparator<BigDecimal> comparator
+            final List<Double> values,
+            final List<Integer> expectedExtremes,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
+        final List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
@@ -1037,13 +1037,13 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLocalExtremes")
     void getLocalExtremes_withValueExtractor(
-            List<Double> values,
-            List<Integer> expectedExtremes,
-            Comparator<BigDecimal> comparator
+            final List<Double> values,
+            final List<Integer> expectedExtremes,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<Integer> extremes = TrendUtils.getLocalExtremes(elements, Optional::get, comparator);
+        final List<Integer> extremes = TrendUtils.getLocalExtremes(elements, Optional::get, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
@@ -1054,14 +1054,14 @@ class TrendUtilsUnitTest {
 
     @Test
     void getLocalExtremes() {
-        List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10, 20, 15, 30);
-        OffsetDateTime now = OffsetDateTime.now();
-        List<OffsetDateTime> times = List.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
-        List<Integer> localExtremesIndices = List.of(0, 2);
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10, 20, 15, 30);
+        final OffsetDateTime now = OffsetDateTime.now();
+        final List<OffsetDateTime> times = List.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
+        final List<Integer> localExtremesIndices = List.of(0, 2);
 
-        List<Point> localExtremes = TrendUtils.getLocalExtremes(values, times, localExtremesIndices);
+        final List<Point> localExtremes = TrendUtils.getLocalExtremes(values, times, localExtremesIndices);
 
-        List<Point> expectedLocalExtremes = List.of(
+        final List<Point> expectedLocalExtremes = List.of(
                 Point.of(times.get(0), values.get(0)),
                 Point.of(times.get(2), values.get(2))
         );
@@ -1157,13 +1157,13 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSortedLocalExtremes")
     void getSortedLocalExtremes_withoutValueExtractor(
-            List<Double> values,
-            List<Integer> expectedExtremes,
-            Comparator<BigDecimal> comparator
+            final List<Double> values,
+            final List<Integer> expectedExtremes,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
+        final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
@@ -1171,13 +1171,13 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSortedLocalExtremes")
     void getSortedLocalExtremes_withValueExtractor(
-            List<Double> values,
-            List<Integer> expectedExtremes,
-            Comparator<BigDecimal> comparator
+            final List<Double> values,
+            final List<Integer> expectedExtremes,
+            final Comparator<BigDecimal> comparator
     ) {
-        List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
+        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
-        List<Integer> extremes = TrendUtils.getSortedLocalExtremes(elements, Optional::get, comparator);
+        final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(elements, Optional::get, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
@@ -1233,7 +1233,7 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of();
 
-        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+        final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
         Assertions.assertTrue(restraintLines.isEmpty());
     }
@@ -1245,7 +1245,7 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0);
 
-        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+        final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
         Assertions.assertTrue(restraintLines.isEmpty());
     }
@@ -1271,10 +1271,10 @@ class TrendUtilsUnitTest {
         );
         final List<Integer> localExtremes = List.of(0, 3, 8);
 
-        List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
+        final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
 
         Assertions.assertEquals(2, restraintLines.size());
-        List<Point> expectedRestraintLine1 = List.of(
+        final List<Point> expectedRestraintLine1 = List.of(
                 Point.of(times.get(0), 10.00000),
                 Point.of(times.get(1), 10.33333),
                 Point.of(times.get(2), 10.66667),
@@ -1285,7 +1285,7 @@ class TrendUtilsUnitTest {
         );
         AssertUtils.assertListsAreEqual(expectedRestraintLine1, restraintLines.get(0));
 
-        List<Point> expectedRestraintLine2 = List.of(
+        final List<Point> expectedRestraintLine2 = List.of(
                 Point.of(times.get(3), 11.0),
                 Point.of(times.get(4), 11.2),
                 Point.of(times.get(5), 11.4),
@@ -1303,8 +1303,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossovers_throwIllegalArgumentException_whenArgumentsHaveDifferentSizes() {
-        List<BigDecimal> values1 = TestDataHelper.createBigDecimalsList(10.0, 20.0);
-        List<BigDecimal> values2 = TestDataHelper.createBigDecimalsList(10.0);
+        final List<BigDecimal> values1 = TestDataHelper.createBigDecimalsList(10.0, 20.0);
+        final List<BigDecimal> values2 = TestDataHelper.createBigDecimalsList(10.0);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getCrossovers(values1, values2),
@@ -1357,25 +1357,25 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetCrossovers")
     void getCrossovers(
-            List<BigDecimal> values1,
-            List<BigDecimal> values2,
-            List<Integer> expectedCrossovers
+            final List<BigDecimal> values1,
+            final List<BigDecimal> values2,
+            final List<Integer> expectedCrossovers
     ) {
-        List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
+        final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
         AssertUtils.assertListsAreEqual(expectedCrossovers, crossovers);
     }
 
     @Test
     void getCrossovers_commonAssertions_forRandomValues() {
-        List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(1000);
-        List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(1000);
+        final List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(1000);
+        final List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(1000);
 
-        List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
+        final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
         if (!crossovers.isEmpty()) {
             if (crossovers.get(0) <= 0) {
-                String message = String.format(
+                final String message = String.format(
                         "First crossover is %s for [%s] and [%s]",
                         crossovers.get(0),
                         StringUtils.join(values1, ", "),
@@ -1386,10 +1386,10 @@ class TrendUtilsUnitTest {
         }
 
         for (int i = 0; i < crossovers.size() - 1; i++) {
-            int currentCrossover = crossovers.get(i);
-            int nextCrossover = crossovers.get(i + 1);
+            final int currentCrossover = crossovers.get(i);
+            final int nextCrossover = crossovers.get(i + 1);
             if (currentCrossover >= nextCrossover) {
-                String message = String.format(
+                final String message = String.format(
                         "Not ascending crossovers for [%s] and [%s]",
                         StringUtils.join(values1, ", "),
                         StringUtils.join(values2, ", ")
@@ -1500,10 +1500,10 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetCrossoverIfLast")
     void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, Crossover expectedCrossover) {
-        List<BigDecimal> bigDecimalValues1 = TestDataHelper.getBigDecimalValues(values1);
-        List<BigDecimal> bigDecimalValues2 = TestDataHelper.getBigDecimalValues(values2);
+        final List<BigDecimal> bigDecimalValues1 = TestDataHelper.getBigDecimalValues(values1);
+        final List<BigDecimal> bigDecimalValues2 = TestDataHelper.getBigDecimalValues(values2);
 
-        Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
+        final Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
 
         Assertions.assertEquals(expectedCrossover, crossover);
     }
