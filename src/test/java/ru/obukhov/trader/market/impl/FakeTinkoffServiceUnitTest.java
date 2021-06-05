@@ -4,12 +4,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import ru.obukhov.trader.BaseMockedTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.TradingProperties;
@@ -31,8 +30,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
-@RunWith(MockitoJUnitRunner.class)
-class FakeTinkoffServiceUnitTest extends BaseMockedTest {
+@ExtendWith(MockitoExtension.class)
+class FakeTinkoffServiceUnitTest {
 
     private static TradingProperties tradingProperties;
 
