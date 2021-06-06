@@ -36,15 +36,15 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return decision to buy all available lots or decision to wait if no lots available
      */
-    protected Decision getBuyOrWaitDecision(final DecisionData data) {
+    protected Decision getBuyOrWaitDecision(final DecisionData data, StrategyCache strategyCache) {
         Decision decision;
         final int availableLots = getAvailableLots(data);
         if (availableLots > 0) {
-            decision = new Decision(DecisionAction.BUY, availableLots);
+            decision = new Decision(DecisionAction.BUY, availableLots, strategyCache);
             log.debug("No position and current balance {} allows to buy {} lots. Decision is {}",
                     data.getBalance(), availableLots, decision.toPrettyString());
         } else {
-            decision = Decision.WAIT_DECISION;
+            decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
                     data.getBalance(), decision.toPrettyString());
         }
@@ -55,16 +55,16 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
      * @return decision to sell all position if it is profitable with commission
      * or decision to wait otherwise
      */
-    protected Decision getSellOrWaitDecision(final DecisionData data) {
+    protected Decision getSellOrWaitDecision(final DecisionData data, StrategyCache strategyCache) {
         final double profit = getProfit(data);
 
         Decision decision;
         if (profit < MINIMUM_PROFIT) {
-            decision = Decision.WAIT_DECISION;
+            decision = new Decision(DecisionAction.WAIT, 0, strategyCache);
             log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
                     profit, MINIMUM_PROFIT, decision.toPrettyString());
         } else {
-            decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount());
+            decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
             log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
                     profit, MINIMUM_PROFIT, decision.toPrettyString());
         }

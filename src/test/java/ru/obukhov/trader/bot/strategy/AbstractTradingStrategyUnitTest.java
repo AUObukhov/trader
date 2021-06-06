@@ -2,6 +2,7 @@ package ru.obukhov.trader.bot.strategy;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -128,7 +129,7 @@ class AbstractTradingStrategyUnitTest {
         }
 
         @Override
-        public Decision decide(DecisionData data) {
+        public Decision decide(DecisionData data, StrategyCache strategyCache) {
             throw new NotImplementedException();
         }
 
@@ -142,6 +143,12 @@ class AbstractTradingStrategyUnitTest {
 
         public int getAvailableLots(DecisionData data) {
             return super.getAvailableLots(data);
+        }
+
+        @NotNull
+        @Override
+        public StrategyCache initCache() {
+            throw new NotImplementedException();
         }
 
     }

@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
+import ru.obukhov.trader.bot.strategy.StrategyCache;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -114,13 +115,14 @@ class AbstractBotUnitTest {
         final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(new Decision(DecisionAction.WAIT));
 
         final DecisionData decisionData = bot.processTicker(ticker, null);
 
         Assertions.assertNotNull(decisionData);
 
-        Mockito.verify(strategy, Mockito.times(1)).decide(decisionData);
+        Mockito.verify(strategy, Mockito.times(1)).decide(decisionData, null);
         verifyNoOrdersMade();
     }
 
@@ -146,7 +148,8 @@ class AbstractBotUnitTest {
         mockCandles(ticker, currentCandles);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(decision);
 
         final DecisionData decisionData = bot.processTicker(ticker, null);
 
@@ -182,7 +185,8 @@ class AbstractBotUnitTest {
         mockCandles(ticker, currentCandles);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5);
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(decision);
 
         final DecisionData decisionData = bot.processTicker(ticker, null);
 
@@ -217,7 +221,7 @@ class AbstractBotUnitTest {
                 OrdersService ordersService,
                 PortfolioService portfolioService
         ) {
-            super(strategy, marketService, operationsService, ordersService, portfolioService);
+            super(strategy, marketService, operationsService, ordersService, portfolioService, null);
         }
     }
 

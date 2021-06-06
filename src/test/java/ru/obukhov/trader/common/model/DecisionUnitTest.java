@@ -9,7 +9,9 @@ class DecisionUnitTest {
 
     @Test
     void toPrettyString_whenDecisionIsWait() {
-        Assertions.assertEquals("Wait", Decision.WAIT_DECISION.toPrettyString());
+        String prettyString = new Decision(DecisionAction.WAIT).toPrettyString();
+
+        Assertions.assertEquals("Wait", prettyString);
     }
 
     @Test

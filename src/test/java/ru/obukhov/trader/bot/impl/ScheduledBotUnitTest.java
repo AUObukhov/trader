@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
+import ru.obukhov.trader.bot.strategy.StrategyCache;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -124,7 +125,8 @@ class ScheduledBotUnitTest {
 
             bot.tick();
 
-            Mockito.verifyNoMoreInteractions(strategy, operationsService, marketService, portfolioService);
+            Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
+            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
             verifyNoOrdersMade();
         }
     }
@@ -177,7 +179,8 @@ class ScheduledBotUnitTest {
 
             bot.tick();
 
-            Mockito.verifyNoMoreInteractions(strategy, operationsService, marketService, portfolioService);
+            Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
+            Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
             verifyNoOrdersMade();
         }
     }
@@ -322,7 +325,8 @@ class ScheduledBotUnitTest {
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
             TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenThrow(new IllegalArgumentException());
+            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                    .thenThrow(new IllegalArgumentException());
 
             bot.tick();
 
@@ -352,7 +356,8 @@ class ScheduledBotUnitTest {
             TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
+            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                    .thenReturn(decision);
 
             Mockito.when(ordersService.placeMarketOrder(ticker1, decision.getLots(), OperationType.BUY))
                     .thenThrow(new IllegalArgumentException());
@@ -423,7 +428,8 @@ class ScheduledBotUnitTest {
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
             TestDataHelper.createAndMockInstrument(marketService, ticker2);
 
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(Decision.WAIT_DECISION);
+            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                    .thenReturn(new Decision(DecisionAction.WAIT));
 
             bot.tick();
 
@@ -447,7 +453,10 @@ class ScheduledBotUnitTest {
             mockData(ticker2);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
+            Mockito.when(strategy.decide(
+                    Mockito.any(DecisionData.class),
+                    Mockito.nullable(StrategyCache.class))
+            ).thenReturn(decision);
 
             bot.tick();
 
@@ -474,7 +483,10 @@ class ScheduledBotUnitTest {
             mockData(ticker2);
 
             final Decision decision = new Decision(DecisionAction.SELL, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class))).thenReturn(decision);
+            Mockito.when(strategy.decide(
+                    Mockito.any(DecisionData.class),
+                    Mockito.nullable(StrategyCache.class))
+            ).thenReturn(decision);
 
             bot.tick();
 

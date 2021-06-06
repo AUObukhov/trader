@@ -7,6 +7,7 @@ import ru.obukhov.trader.bot.interfaces.Bot;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
+import ru.obukhov.trader.bot.strategy.StrategyCache;
 import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -36,6 +37,7 @@ public abstract class AbstractBot implements Bot {
     protected final OperationsService operationsService;
     protected final OrdersService ordersService;
     protected final PortfolioService portfolioService;
+    protected final StrategyCache strategyCache;
 
     @Override
     @NotNull
@@ -54,7 +56,7 @@ public abstract class AbstractBot implements Bot {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
                 fillDecisionData(decisionData, ticker);
-                final Decision decision = strategy.decide(decisionData);
+                final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(ticker, decision);
             }
         } else {

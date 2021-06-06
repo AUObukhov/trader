@@ -33,6 +33,8 @@ class GoldenCrossStrategyUnitTest {
         TRADING_PROPERTIES.setCommission(0.003);
     }
 
+    // region decide tests
+
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -42,7 +44,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
 
-        final Decision decision = strategy.decide(data);
+        final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -54,7 +56,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.NONE)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
@@ -67,7 +69,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
             Assertions.assertEquals(9, decision.getLots());
@@ -80,7 +82,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000, 1000, 1);
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
@@ -94,7 +96,7 @@ class GoldenCrossStrategyUnitTest {
         data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
             Assertions.assertEquals(10, decision.getLots());
@@ -108,7 +110,7 @@ class GoldenCrossStrategyUnitTest {
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
             Assertions.assertEquals(4, decision.getLots());
@@ -122,11 +124,18 @@ class GoldenCrossStrategyUnitTest {
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
-            final Decision decision = strategy.decide(data);
+            final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
             Assertions.assertNull(decision.getLots());
         }
+    }
+
+    // endregion
+
+    @Test
+    void initCache_returnsNotNull() {
+        Assertions.assertNotNull(strategy.initCache());
     }
 
     private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(Crossover crossover) {
