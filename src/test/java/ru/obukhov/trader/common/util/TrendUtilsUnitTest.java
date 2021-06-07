@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -52,7 +51,7 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSimpleMovingAverages_throwsIllegalArgumentException")
-    void getSimpleMovingAverages_withKeyValueExtractors_throwsIllegalArgumentException(
+    void getSimpleMovingAverages_withValueExtractors_throwsIllegalArgumentException(
             final List<Double> values,
             final int window,
             final String expectedMessage
@@ -65,7 +64,7 @@ class TrendUtilsUnitTest {
         }
 
         AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getSimpleMovingAverages(candles, Candle::getTime, Candle::getOpenPrice, window),
+                () -> TrendUtils.getSimpleMovingAverages(candles, Candle::getOpenPrice, window),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -169,35 +168,6 @@ class TrendUtilsUnitTest {
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetSimpleMovingAverages")
-    void getSimpleMovingAverages_withKeyValueExtractors(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
-        final List<Candle> candles = new ArrayList<>(values.size());
-        final OffsetDateTime now = OffsetDateTime.now();
-        for (int i = 0; i < values.size(); i++) {
-            final Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
-            candles.add(candle);
-        }
-
-        final Map<OffsetDateTime, BigDecimal> movingAverages =
-                TrendUtils.getSimpleMovingAverages(candles, Candle::getTime, Candle::getOpenPrice, window);
-
-        final List<BigDecimal> actualValues = new ArrayList<>(movingAverages.values());
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, actualValues);
-
-        for (BigDecimal average : actualValues) {
             Assertions.assertTrue(
                     DecimalUtils.DEFAULT_SCALE >= average.scale(),
                     "expected default scale for all averages"
