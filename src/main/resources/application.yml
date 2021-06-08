@@ -14,7 +14,7 @@ strategy-config:
     indexCoefficient: 0.5
 
 simulation:
-  thread-count: 10
+  thread-count: 3
 
 query.throttle:
   interval: 60000
