@@ -17,7 +17,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.util.List;
 
-class GoldenCrossStrategyUnitTest {
+class GreedyGoldenCrossStrategyUnitTest {
 
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
@@ -25,8 +25,8 @@ class GoldenCrossStrategyUnitTest {
     private final int bigWindow = 6;
     private final float indexCoefficient = 0.6f;
 
-    private final GoldenCrossStrategy strategy =
-            new GoldenCrossStrategy(TRADING_PROPERTIES, smallWindow, bigWindow, indexCoefficient);
+    private final GreedyGoldenCrossStrategy strategy =
+            new GreedyGoldenCrossStrategy(TRADING_PROPERTIES, smallWindow, bigWindow, indexCoefficient);
 
     @BeforeAll
     static void setUp() {
@@ -117,7 +117,7 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     @SuppressWarnings("unused")
-    void decide_returnsWait_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots() {
+    void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots() {
         final DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
@@ -127,8 +127,8 @@ class GoldenCrossStrategyUnitTest {
         ) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
-            Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
+            Assertions.assertEquals(4, decision.getLots());
         }
     }
 

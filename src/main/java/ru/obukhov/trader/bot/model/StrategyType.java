@@ -10,4 +10,7 @@ public enum StrategyType {
     @JsonProperty("goldenCross")
     GOLDEN_CROSS,
 
+    @JsonProperty("greedGoldenCross")
+    GREEDY_GOLDEN_CROSS,
+
 }

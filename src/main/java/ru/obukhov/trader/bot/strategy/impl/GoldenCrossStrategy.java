@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    private final int smallWindow;
-    private final int bigWindow;
-    private final float indexCoefficient;
+    protected final int smallWindow;
+    protected final int bigWindow;
+    protected final float indexCoefficient;
 
     public GoldenCrossStrategy(
             final TradingProperties tradingProperties,
@@ -35,7 +35,23 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             final int bigWindow,
             final float indexCoefficient
     ) {
-        super(String.format("Golden cross (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient), tradingProperties);
+        this(
+                String.format("GC (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient),
+                tradingProperties,
+                smallWindow,
+                bigWindow,
+                indexCoefficient
+        );
+    }
+
+    protected GoldenCrossStrategy(
+            final String name,
+            final TradingProperties tradingProperties,
+            final int smallWindow,
+            final int bigWindow,
+            final float indexCoefficient
+    ) {
+        super(name, tradingProperties);
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;
@@ -63,7 +79,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
         return decision;
     }
 
-    private Decision getDecisionByCrossover(DecisionData data, Crossover crossover, StrategyCache strategyCache) {
+    protected Decision getDecisionByCrossover(DecisionData data, Crossover crossover, StrategyCache strategyCache) {
         Decision decision;
         switch (crossover) {
             case NONE:
@@ -75,9 +91,6 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
                 break;
             case ABOVE:
                 decision = getSellOrWaitDecision(data, strategyCache);
-                if (decision.getAction() == DecisionAction.WAIT) { // todo - really necessary? looks like not but profit is actually greater sometimes
-                    decision = getBuyOrWaitDecision(data, strategyCache);
-                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown crossover type: " + crossover);
