@@ -60,7 +60,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
         Decision decision;
         if (profit < MINIMUM_PROFIT) {
-            decision = new Decision(DecisionAction.WAIT, 0, strategyCache);
+            decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
                     profit, MINIMUM_PROFIT, decision.toPrettyString());
         } else {
