@@ -57,16 +57,24 @@ public class ExcelServiceImpl implements ExcelService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
     private static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
+
     private static final String PERCENT_FORMAT = "0.00%";
 
     private static final int CHART_WIDTH = 20;
     private static final int CHART_HEIGHT = 40;
     private static final short MARKER_SIZE = (short) 10;
 
-    private static final MarkerProperties SELL_OPERATION_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.GREEN);
-    private static final MarkerProperties BUY_OPERATION_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.RED);
-    private static final MarkerProperties MAXIMUMS_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.GREEN);
-    private static final MarkerProperties MINIMUMS_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.RED);
+    private static final MarkerProperties SELL_OPERATION_MARKER_PROPERTIES =
+            new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.GREEN);
+
+    private static final MarkerProperties BUY_OPERATION_MARKER_PROPERTIES =
+            new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.RED);
+
+    private static final MarkerProperties MAXIMUMS_MARKER_PROPERTIES =
+            new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.GREEN);
+
+    private static final MarkerProperties MINIMUMS_MARKER_PROPERTIES =
+            new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.RED);
 
     private final ExcelFileService excelFileService;
 
@@ -88,7 +96,8 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void saveToFile(final ExtendedWorkbook workBook, final String fileName) {
-        final String extendedFileName = fileName + " " + LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER) + ".xlsx";
+        final String nowString = LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER);
+        final String extendedFileName = fileName + " " + nowString + ".xlsx";
         try {
             log.info("Creating file \"{}\"", extendedFileName);
             excelFileService.saveToFile(workBook, extendedFileName);
@@ -295,7 +304,8 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putChartWithAverages(final ExtendedSheet sheet, final GetCandlesResponse response) {
         final ExtendedChart chart = createChart(sheet);
-        final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+        final ExtendedChartData chartData =
+                chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandles(chartData, response);
         chart.plot(chartData);
     }
@@ -307,7 +317,8 @@ public class ExcelServiceImpl implements ExcelService {
     ) {
         if (CollectionUtils.isNotEmpty(candles)) {
             final ExtendedChart chart = createChart(sheet);
-            final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+            final ExtendedChartData chartData =
+                    chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
             addCandlesAndPricesAndOperations(chartData, candles, operations);
             chart.plot(chartData);
         }
@@ -322,7 +333,9 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addCandles(final ExtendedChartData chartData, final GetCandlesResponse response) {
-        final List<OffsetDateTime> times = response.getCandles().stream().map(Candle::getTime).collect(Collectors.toList());
+        final List<OffsetDateTime> times = response.getCandles().stream()
+                .map(Candle::getTime)
+                .collect(Collectors.toList());
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
         addLine(chartData, timesDataSource, response.getAverages(), MarkerProperties.NO_MARKER, Color.BLUE);
