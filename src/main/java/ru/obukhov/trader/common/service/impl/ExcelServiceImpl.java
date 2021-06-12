@@ -27,6 +27,7 @@ import ru.obukhov.trader.common.model.poi.MarkerProperties;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
@@ -39,7 +40,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,11 +52,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ExcelServiceImpl implements ExcelService {
-
-    private static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-    private static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     private static final String PERCENT_FORMAT = "0.00%";
 
@@ -96,7 +91,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void saveToFile(final ExtendedWorkbook workBook, final String fileName) {
-        final String nowString = LocalDateTime.now().format(FILE_NAME_DATE_TIME_FORMATTER);
+        final String nowString = LocalDateTime.now().format(DateUtils.FILE_NAME_DATE_TIME_FORMATTER);
         final String extendedFileName = fileName + " " + nowString + ".xlsx";
         try {
             log.info("Creating file \"{}\"", extendedFileName);
@@ -121,7 +116,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.NUMERIC);
 
         final CellStyle dateTimeCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.DATE_TIME);
-        dateTimeCellStyle.setDataFormat(workbook.createDataFormat().getFormat(DATE_TIME_FORMAT));
+        dateTimeCellStyle.setDataFormat(workbook.createDataFormat().getFormat(DateUtils.DATE_TIME_FORMAT));
 
         final CellStyle percentCellStyle = workbook.createCellStyle(ExtendedWorkbook.CellStylesNames.PERCENT);
         percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
@@ -378,7 +373,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<OffsetDateTime> times) {
         final String[] timesArray = times.stream()
-                .map(DATE_TIME_FORMATTER::format)
+                .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(timesArray);
     }
@@ -386,7 +381,7 @@ public class ExcelServiceImpl implements ExcelService {
     private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(final List<Candle> innerCandles) {
         final String[] times = innerCandles.stream()
                 .map(Candle::getTime)
-                .map(DATE_TIME_FORMATTER::format)
+                .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(times);
     }

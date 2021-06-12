@@ -12,7 +12,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +23,6 @@ import java.util.List;
 @EqualsAndHashCode(cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Interval {
-
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
 
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
 
@@ -171,8 +167,8 @@ public class Interval {
      * @return pretty string representation of current interval, where null values are represented as "-∞" or "∞"
      */
     public String toPrettyString() {
-        final String fromString = from == null ? "-∞" : DATE_TIME_FORMATTER.format(from);
-        final String toString = to == null ? "∞" : DATE_TIME_FORMATTER.format(to);
+        final String fromString = from == null ? "-∞" : DateUtils.DATE_TIME_FORMATTER.format(from);
+        final String toString = to == null ? "∞" : DateUtils.DATE_TIME_FORMATTER.format(to);
 
         return fromString + " — " + toString;
     }

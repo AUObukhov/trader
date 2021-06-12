@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
@@ -25,6 +26,11 @@ public class DateUtils {
     public static final double DAYS_IN_YEAR = 365.25;
 
     public static final ZoneOffset DEFAULT_OFFSET = ZoneOffset.of("+03:00");
+
+    public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
+    public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     /**
      * @return OffsetDateTime with by params, 0 nanoseconds and UTC zone

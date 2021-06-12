@@ -709,17 +709,17 @@ class IntervalUnitTest {
                 Arguments.of(
                         DateUtils.getDateTime(2020, 10, 5, 10, 20, 30),
                         null,
-                        "2020.10.05 10:20:30 — ∞"
+                        "05.10.2020 10:20:30 — ∞"
                 ),
                 Arguments.of(
                         null,
                         DateUtils.getDateTime(2020, 10, 7, 12, 20, 30),
-                        "-∞ — 2020.10.07 12:20:30"
+                        "-∞ — 07.10.2020 12:20:30"
                 ),
                 Arguments.of(
                         DateUtils.getDateTime(2020, 10, 5, 10, 20, 30),
                         DateUtils.getDateTime(2020, 10, 7, 12, 20, 30),
-                        "2020.10.05 10:20:30 — 2020.10.07 12:20:30"
+                        "05.10.2020 10:20:30 — 07.10.2020 12:20:30"
                 )
         );
     }
