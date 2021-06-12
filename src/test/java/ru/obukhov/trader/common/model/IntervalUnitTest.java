@@ -128,7 +128,7 @@ class IntervalUnitTest {
     // region extendToWholeDay tests
 
     @Test
-    void extendToWholeDay_throwsIllegalArgumentException_whenNotEqualsDates() {
+    void extendToWholeDay_throwsIllegalArgumentException_whenNotEqualDates() {
         final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
@@ -141,7 +141,8 @@ class IntervalUnitTest {
     }
 
     @Test
-    void extendToWholeDay_throwsIllegalArgumentException_whenNotFutureIsTrueAndFromIsInFuture() {
+    @SuppressWarnings("unused")
+    void extendToWholeDay_throwsIllegalArgumentException_whenAllowFutureIsFalseAndFromIsInFuture() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
 
         final OffsetDateTime from = mockedNow.plusHours(1);
@@ -152,7 +153,7 @@ class IntervalUnitTest {
             final String expectedMessage =
                     "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
             AssertUtils.assertThrowsWithMessage(
-                    () -> interval.extendToWholeDay(true),
+                    () -> interval.extendToWholeDay(false),
                     IllegalArgumentException.class,
                     expectedMessage
             );
@@ -160,29 +161,73 @@ class IntervalUnitTest {
     }
 
     @Test
-    void extendToWholeDay_extendsToWholeDay_whenEqualsDates_andNotFuture() {
+    @SuppressWarnings("unused")
+    void extendToWholeDay_extendsToWholeDay_whenEqualsDatesBeforeToday_andAllowFutureIsFalse() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2021, 9, 23, 10, 11, 12);
+
         final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        final Interval extendedInterval = interval.extendToWholeDay(false);
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final Interval extendedInterval = interval.extendToWholeDay(false);
 
-        OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 5);
-        OffsetDateTime expectedTo = DateUtils.atEndOfDay(expectedFrom);
-        Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
-        Assertions.assertEquals(expectedTo, extendedInterval.getTo());
+            final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 5);
+            final OffsetDateTime expectedTo = DateUtils.atEndOfDay(expectedFrom);
+            Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
+            Assertions.assertEquals(expectedTo, extendedInterval.getTo());
+        }
     }
 
     @Test
-    void extendToWholeDay_extendsToWholeDay_whenEqualsDates_andFuture() {
-        final OffsetDateTime from = OffsetDateTime.now();
-        final OffsetDateTime to = from.plusHours(1);
+    @SuppressWarnings("unused")
+    void extendToWholeDay_extendsToWholeDay_whenEqualsDatesBeforeToday_andAllowFutureIsTrue() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2021, 9, 23, 10, 11, 12);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        final Interval extendedInterval = interval.extendToWholeDay(true);
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final Interval extendedInterval = interval.extendToWholeDay(true);
 
-        Assertions.assertEquals(DateUtils.atStartOfDay(from), extendedInterval.getFrom());
-        Assertions.assertTrue(to.isAfter(extendedInterval.getTo()));
+            final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 5);
+            final OffsetDateTime expectedTo = DateUtils.atEndOfDay(expectedFrom);
+            Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
+            Assertions.assertEquals(expectedTo, extendedInterval.getTo());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void extendToWholeDay_extendsToPartOfDayTillNow_whenDatesAreToday_andAllowFutureIsFalse() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
+
+        final OffsetDateTime to = mockedNow.plusHours(1);
+        final Interval interval = Interval.of(mockedNow, to);
+
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final Interval extendedInterval = interval.extendToWholeDay(false);
+
+            Assertions.assertEquals(DateUtils.atStartOfDay(mockedNow), extendedInterval.getFrom());
+            Assertions.assertEquals(mockedNow, extendedInterval.getTo());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void extendToWholeDay_extendsToWholeDay_whenDatesAreToday_andAllowFutureIsTrue() {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 11, 12);
+
+        final OffsetDateTime to = mockedNow.plusHours(1);
+        final Interval interval = Interval.of(mockedNow, to);
+
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final Interval extendedInterval = interval.extendToWholeDay(true);
+
+            Assertions.assertEquals(DateUtils.atStartOfDay(mockedNow), extendedInterval.getFrom());
+            Assertions.assertEquals(DateUtils.atEndOfDay(mockedNow), extendedInterval.getTo());
+        }
     }
 
     // endregion

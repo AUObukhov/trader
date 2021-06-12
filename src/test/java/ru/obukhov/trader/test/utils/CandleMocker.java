@@ -133,7 +133,7 @@ public class CandleMocker {
     }
 
     private List<Candle> createCandles(final OffsetDateTime date, final Integer... openPrices) {
-        final Interval interval = Interval.of(date, date).extendToWholeDay(false);
+        final Interval interval = Interval.of(date, date).extendToWholeDay(true);
 
         final List<Integer> prices = List.of(openPrices);
         final List<OffsetDateTime> times = Collections.nCopies(openPrices.length, interval.getFrom());
