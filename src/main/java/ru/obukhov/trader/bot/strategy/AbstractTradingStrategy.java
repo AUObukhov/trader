@@ -41,37 +41,59 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return decision to buy all available lots or decision to wait if no lots available
      */
-    protected Decision getBuyOrWaitDecision(final DecisionData data, StrategyCache strategyCache) {
+    protected Decision getBuyOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
         Decision decision;
         final int availableLots = getAvailableLots(data);
         if (availableLots > 0) {
             decision = new Decision(DecisionAction.BUY, availableLots, strategyCache);
-            log.debug("No position and current balance {} allows to buy {} lots. Decision is {}",
-                    data.getBalance(), availableLots, decision.toPrettyString());
+            log.debug(
+                    "No position and current balance {} allows to buy {} lots. Decision is {}",
+                    data.getBalance(),
+                    availableLots,
+                    decision.toPrettyString()
+            );
         } else {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-            log.debug("No position and current balance {} is not enough to buy any lots. Decision is {}",
-                    data.getBalance(), decision.toPrettyString());
+            log.debug(
+                    "No position and current balance {} is not enough to buy any lots. Decision is {}",
+                    data.getBalance(),
+                    decision.toPrettyString()
+            );
         }
         return decision;
+    }
+
+    private int getAvailableLots(final DecisionData data) {
+        final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
+        final BigDecimal currentLotPriceWithCommission =
+                DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
+        return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
     /**
      * @return decision to sell all position if it is profitable with commission
      * or decision to wait otherwise
      */
-    protected Decision getSellOrWaitDecision(final DecisionData data, StrategyCache strategyCache) {
+    protected Decision getSellOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
         final double profit = getProfit(data);
 
         Decision decision;
         if (profit < minimumProfit) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-            log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
-                    profit, minimumProfit, decision.toPrettyString());
+            log.debug(
+                    "Potential profit {} is lower than minimum profit {}. Decision is {}",
+                    profit,
+                    minimumProfit,
+                    decision.toPrettyString()
+            );
         } else {
             decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
-            log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
-                    profit, minimumProfit, decision.toPrettyString());
+            log.debug(
+                    "Potential profit {} is greater than minimum profit {}. Decision is {}",
+                    profit,
+                    minimumProfit,
+                    decision.toPrettyString()
+            );
         }
 
         return decision;
@@ -80,7 +102,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     /**
      * @return possible average percent profit of selling all positions in given {@code DecisionData}
      */
-    protected double getProfit(final DecisionData data) {
+    private double getProfit(final DecisionData data) {
         if (data.getPosition() == null) {
             log.debug("no position - no profit");
             return 0.0;
@@ -103,7 +125,11 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
                         "currentPrice = {}, " +
                         "sellPriceMinusCommission = {}, " +
                         "profit = {}, ",
-                averagePositionPrice, buyPricePlusCommission, currentPrice, sellPriceMinusCommission, profit
+                averagePositionPrice,
+                buyPricePlusCommission,
+                currentPrice,
+                sellPriceMinusCommission,
+                profit
         );
 
         return profit;
@@ -112,13 +138,6 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     protected static boolean existsOperationInProgress(final DecisionData data) {
         return data.getLastOperations().stream()
                 .anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
-    }
-
-    protected int getAvailableLots(final DecisionData data) {
-        final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission =
-                DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
-        return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
 }

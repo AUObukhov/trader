@@ -3,12 +3,15 @@ package ru.obukhov.trader.bot.strategy;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.bot.model.Decision;
+import ru.obukhov.trader.bot.model.DecisionAction;
 import ru.obukhov.trader.bot.model.DecisionData;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -18,6 +21,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 class AbstractTradingStrategyUnitTest {
 
@@ -33,36 +37,89 @@ class AbstractTradingStrategyUnitTest {
         final String name = "abcdefghijklmnopqrstuvwxyz123456";
 
         AssertUtils.assertThrowsWithMessage(
-                () -> new TestStrategy(name, TRADING_PROPERTIES),
+                () -> new TestStrategy(name, 0.1f, TRADING_PROPERTIES),
                 IllegalArgumentException.class,
                 "name must be shorter than " + AbstractTradingStrategy.NAME_LENGTH_LIMIT
         );
     }
 
-    // region getProfit tests
+    // region getBuyOrWaitDecision tests
 
-    @Test
-    void getProfit_returnsZero_whenPositionIsNull() {
-        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        final DecisionData decisionData = new DecisionData();
-
-        final double profit = strategy.getProfit(decisionData);
-
-        AssertUtils.assertEquals(0.0, profit);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetBuyOrWaitDecision() {
+        return Stream.of(
+                Arguments.of(1000.0, 1000.0, 1, DecisionAction.WAIT, null),
+                Arguments.of(10030.0, 1000.0, 10, DecisionAction.BUY, 1),
+                Arguments.of(20059.0, 1000.0, 10, DecisionAction.BUY, 1),
+                Arguments.of(20060.0, 1000.0, 10, DecisionAction.BUY, 2)
+        );
     }
 
     @ParameterizedTest
-    @CsvSource({
-            "1000.0, 1100.0, 0.09342",
-            "1000.0, 900.0, -0.10538",
-    })
-    void getProfit(double averagePositionPrice, double currentPrice, double expectedProfit) {
-        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        final DecisionData data = TestDataHelper.createDecisionData(averagePositionPrice, currentPrice);
+    @MethodSource("getData_forGetBuyOrWaitDecision")
+    void getBuyOrWaitDecision(
+            double balance,
+            double currentPrice,
+            int lotSize,
+            DecisionAction expectedAction,
+            @Nullable Integer expectedLots
+    ) {
+        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
+        final StrategyCache strategyCache = new TestStrategyCache();
 
-        double profit = strategy.getProfit(data);
+        final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
 
-        Assertions.assertEquals(expectedProfit, profit);
+        Assertions.assertEquals(expectedAction, decision.getAction());
+        Assertions.assertEquals(expectedLots, decision.getLots());
+        Assertions.assertSame(strategyCache, decision.getStrategyCache());
+    }
+
+    // endregion
+
+    // region getSellOrWaitDecision tests
+
+    @Test
+    void getSellOrWaitDecision_returnsWait_whenPositionIsNull() {
+        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final DecisionData decisionData = new DecisionData();
+        final StrategyCache strategyCache = new TestStrategyCache();
+
+        final Decision decision = strategy.getSellOrWaitDecision(decisionData, strategyCache);
+
+        Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
+        Assertions.assertNull(decision.getLots());
+        Assertions.assertSame(strategyCache, decision.getStrategyCache());
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetSellOrWaitDecision() {
+        return Stream.of(
+                Arguments.of(1000.0, 10, 1100.0, DecisionAction.WAIT, null),
+                Arguments.of(1000.0, 10, 900.0, DecisionAction.WAIT, null),
+                Arguments.of(100.0, 10, 1000.0, DecisionAction.SELL, 10)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetSellOrWaitDecision")
+    void getSellOrWaitDecision(
+            double averagePositionPrice,
+            int positionLotsCount,
+            double currentPrice,
+            DecisionAction expectedAction,
+            @Nullable Integer expectedLots
+    ) {
+        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final DecisionData data =
+                TestDataHelper.createDecisionData(averagePositionPrice, positionLotsCount, currentPrice);
+        final StrategyCache strategyCache = new TestStrategyCache();
+
+        final Decision decision = strategy.getSellOrWaitDecision(data, strategyCache);
+
+        Assertions.assertEquals(expectedAction, decision.getAction());
+        Assertions.assertEquals(expectedLots, decision.getLots());
+        Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     // endregion
@@ -102,47 +159,23 @@ class AbstractTradingStrategyUnitTest {
 
     // endregion
 
-    @ParameterizedTest
-    @CsvSource({
-            "1000.0, 1, 1000.0, 0",
-            "1000.0, 10, 10030.0, 1",
-            "1000.0, 10, 20059.0, 1",
-            "1000.0, 10, 20060.0, 2"
-    })
-    void getAvailableLots(double currentPrice, int lotSize, double balance, int expectedAvailableLots) {
-        final AbstractTradingStrategy strategy = new TestStrategy(TRADING_PROPERTIES);
-        final DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
-
-        final int availableLots = strategy.getAvailableLots(data);
-
-        Assertions.assertEquals(expectedAvailableLots, availableLots);
-    }
-
     private static class TestStrategy extends AbstractTradingStrategy {
 
-        public TestStrategy(TradingProperties tradingProperties) {
-            super(StringUtils.EMPTY, 0.1f, tradingProperties);
+        public TestStrategy(final float minimumProfit, final TradingProperties tradingProperties) {
+            super(StringUtils.EMPTY, minimumProfit, tradingProperties);
         }
 
-        public TestStrategy(String name, TradingProperties tradingProperties) {
-            super(name, 0.1f, tradingProperties);
+        public TestStrategy(final String name, final float minimumProfit, final TradingProperties tradingProperties) {
+            super(name, minimumProfit, tradingProperties);
         }
 
         @Override
-        public Decision decide(DecisionData data, StrategyCache strategyCache) {
+        public Decision decide(final DecisionData data, final StrategyCache strategyCache) {
             throw new NotImplementedException();
         }
 
-        public double getProfit(DecisionData data) {
-            return super.getProfit(data);
-        }
-
-        public static boolean existsOperationInProgress(DecisionData data) {
+        public static boolean existsOperationInProgress(final DecisionData data) {
             return AbstractTradingStrategy.existsOperationInProgress(data);
-        }
-
-        public int getAvailableLots(DecisionData data) {
-            return super.getAvailableLots(data);
         }
 
         @NotNull
@@ -151,6 +184,9 @@ class AbstractTradingStrategyUnitTest {
             throw new NotImplementedException();
         }
 
+    }
+
+    private static class TestStrategyCache implements StrategyCache {
     }
 
 }

@@ -209,6 +209,18 @@ public class TestDataHelper {
         return decisionData;
     }
 
+    public static DecisionData createDecisionData(
+            final double averagePositionPrice,
+            final int positionLotsCount,
+            final double currentPrice
+    ) {
+        final DecisionData decisionData = new DecisionData();
+        decisionData.setPosition(createPortfolioPosition(averagePositionPrice, positionLotsCount));
+        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
+
+        return decisionData;
+    }
+
     public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));

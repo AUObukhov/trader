@@ -49,7 +49,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsZero() {
-        final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
 
         try (
                 final MockedStatic<TrendUtils> trendUtilsStaticMock =
@@ -65,7 +65,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsOne_andThereAreAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(1000, 100, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
 
         try (
                 final MockedStatic<TrendUtils> trendUtilsStaticMock =
@@ -81,7 +81,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsOne_andThereAreNoAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(1000, 1000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
 
         try (
                 final MockedStatic<TrendUtils> trendUtilsStaticMock =
@@ -97,7 +97,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsMinusOne_andSellProfitIsGreaterThanMinimum() {
-        final DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
 
         try (
@@ -114,7 +114,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(1000, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (
@@ -131,7 +131,7 @@ class GreedyGoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(200, 200, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
         try (

@@ -43,7 +43,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(2000, 2000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(2000.0, 2000.0, 1);
 
         final Decision decision = strategy.decide(data, null);
 
@@ -53,7 +53,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(10000, 2000, 1);
+        final DecisionData data = TestDataHelper.createDecisionData(10000.0, 2000.0, 1);
 
         final Decision decision = strategy.decide(data, null);
 
