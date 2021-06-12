@@ -15,8 +15,8 @@ import ru.obukhov.trader.config.TradingProperties;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final TradingProperties tradingProperties) {
-        super("Conservative", tradingProperties);
+    public ConservativeStrategy(final float minimumProfit, final TradingProperties tradingProperties) {
+        super("Conservative", minimumProfit, tradingProperties);
     }
 
     @Override

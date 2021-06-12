@@ -18,13 +18,14 @@ import ru.obukhov.trader.config.TradingProperties;
 public class GreedyGoldenCrossStrategy extends GoldenCrossStrategy {
 
     public GreedyGoldenCrossStrategy(
+            float minimumProfit,
             final TradingProperties tradingProperties,
             final int smallWindow,
             final int bigWindow,
             final float indexCoefficient
     ) {
         super(
-                String.format("Greedy GC (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient),
+                String.format("Greedy GC (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient), minimumProfit,
                 tradingProperties,
                 smallWindow,
                 bigWindow,

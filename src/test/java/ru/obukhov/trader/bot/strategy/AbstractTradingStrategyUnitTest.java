@@ -121,11 +121,11 @@ class AbstractTradingStrategyUnitTest {
     private static class TestStrategy extends AbstractTradingStrategy {
 
         public TestStrategy(TradingProperties tradingProperties) {
-            super(StringUtils.EMPTY, tradingProperties);
+            super(StringUtils.EMPTY, 0.1f, tradingProperties);
         }
 
         public TestStrategy(String name, TradingProperties tradingProperties) {
-            super(name, tradingProperties);
+            super(name, 0.1f, tradingProperties);
         }
 
         @Override

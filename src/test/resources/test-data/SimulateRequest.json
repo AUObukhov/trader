@@ -5,7 +5,8 @@
   "balanceIncrementCron": "0 0 0 1 * ?",
   "strategiesConfigs": [
     {
-      "type": "conservative"
+      "type": "conservative",
+      "minimumProfit": 0.1
     }
   ],
   "candleResolution": "1min",

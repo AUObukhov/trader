@@ -17,7 +17,7 @@ class ConservativeStrategyUnitTest {
 
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
-    private final ConservativeStrategy strategy = new ConservativeStrategy(TRADING_PROPERTIES);
+    private final ConservativeStrategy strategy = new ConservativeStrategy(0.1f, TRADING_PROPERTIES);
 
     @BeforeAll
     static void setUp() {

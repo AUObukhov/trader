@@ -17,7 +17,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsConservativeStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, 0.1f);
 
         final TradingStrategy strategy = factory.createStrategy(strategyConfig);
 
@@ -28,7 +28,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100,
@@ -42,7 +42,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndSmallWindowIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "bigWindow", 100,
                 "indexCoefficient", 0.5
@@ -53,7 +53,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndBigWindowIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "indexCoefficient", 0.5
@@ -64,7 +64,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGoldenCrossAndIndexCoefficientIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100
@@ -79,7 +79,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsGreedyGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100,
@@ -93,7 +93,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGreedyGoldenCrossAndSmallWindowIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "bigWindow", 100,
                 "indexCoefficient", 0.5
@@ -104,7 +104,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGreedyGoldenCrossAndBigWindowIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "indexCoefficient", 0.5
@@ -115,7 +115,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsRuntimeException_whenGreedyGoldenCrossAndIndexCoefficientIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GREEDY_GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
                 "smallWindow", 200,
                 "bigWindow", 100

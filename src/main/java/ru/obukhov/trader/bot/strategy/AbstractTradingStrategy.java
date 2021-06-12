@@ -17,19 +17,24 @@ import java.math.BigDecimal;
 @Slf4j
 public abstract class AbstractTradingStrategy implements TradingStrategy {
 
-    protected static final double MINIMUM_PROFIT = 0.01;
     protected static final int NAME_LENGTH_LIMIT = 32;
 
     @Getter
     protected final String name;
+    protected final double minimumProfit;
     protected final TradingProperties tradingProperties;
 
-    protected AbstractTradingStrategy(final String name, final TradingProperties tradingProperties) {
+    protected AbstractTradingStrategy(
+            final String name,
+            final float minimumProfit,
+            final TradingProperties tradingProperties
+    ) {
         if (name.length() >= NAME_LENGTH_LIMIT) {
             throw new IllegalArgumentException("name must be shorter than " + NAME_LENGTH_LIMIT);
         }
 
         this.name = name;
+        this.minimumProfit = minimumProfit;
         this.tradingProperties = tradingProperties;
     }
 
@@ -59,14 +64,14 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         final double profit = getProfit(data);
 
         Decision decision;
-        if (profit < MINIMUM_PROFIT) {
+        if (profit < minimumProfit) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision.toPrettyString());
+                    profit, minimumProfit, decision.toPrettyString());
         } else {
             decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
             log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}",
-                    profit, MINIMUM_PROFIT, decision.toPrettyString());
+                    profit, minimumProfit, decision.toPrettyString());
         }
 
         return decision;

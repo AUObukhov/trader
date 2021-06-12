@@ -8,6 +8,7 @@ trading:
 
 strategy-config:
   type: "goldenCross"
+  minimumProfit: 0.1
   params:
     smallWindow: 50
     bigWindow: 200

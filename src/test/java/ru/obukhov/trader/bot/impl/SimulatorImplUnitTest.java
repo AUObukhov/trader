@@ -44,8 +44,12 @@ import java.util.TreeMap;
 class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
-    private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG = new StrategyConfig(StrategyType.CONSERVATIVE);
-    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(null);
+
+    private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG =
+            new StrategyConfig(StrategyType.CONSERVATIVE, 0.1f);
+    private static final ConservativeStrategy CONSERVATIVE_STRATEGY =
+            new ConservativeStrategy(0.1f, null);
+
     private static final CronExpression BALANCE_INCREMENT_CRON = TestDataHelper.createCronExpression();
 
     @Mock

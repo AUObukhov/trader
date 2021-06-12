@@ -29,7 +29,7 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_createsFakeBot() {
-        final TradingStrategy strategy = new ConservativeStrategy(tradingProperties);
+        final TradingStrategy strategy = new ConservativeStrategy(0.1f, tradingProperties);
 
         final Bot bot = factory.createBot(strategy);
 

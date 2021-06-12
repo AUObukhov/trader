@@ -21,12 +21,8 @@ class GoldenCrossStrategyUnitTest {
 
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
-    private final int smallWindow = 3;
-    private final int bigWindow = 6;
-    private final float indexCoefficient = 0.6f;
-
     private final GoldenCrossStrategy strategy =
-            new GoldenCrossStrategy(TRADING_PROPERTIES, smallWindow, bigWindow, indexCoefficient);
+            new GoldenCrossStrategy(0.1f, TRADING_PROPERTIES, 3, 6, 0.6f);
 
     @BeforeAll
     static void setUp() {

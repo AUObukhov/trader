@@ -30,6 +30,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     protected final float indexCoefficient;
 
     public GoldenCrossStrategy(
+            final float minimumProfit,
             final TradingProperties tradingProperties,
             final int smallWindow,
             final int bigWindow,
@@ -37,6 +38,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     ) {
         this(
                 String.format("GC (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient),
+                minimumProfit,
                 tradingProperties,
                 smallWindow,
                 bigWindow,
@@ -46,12 +48,13 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
     protected GoldenCrossStrategy(
             final String name,
+            final float minimumProfit,
             final TradingProperties tradingProperties,
             final int smallWindow,
             final int bigWindow,
             final float indexCoefficient
     ) {
-        super(name, tradingProperties);
+        super(name, minimumProfit, tradingProperties);
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;
