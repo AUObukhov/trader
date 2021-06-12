@@ -6,15 +6,6 @@ trading:
   consecutive-empty-days-limit: 5
   start-date: 2000-01-01T00:00:00+03:00
 
-golden-cross-strategy:
-  configs:
-    - small-window: 50
-      big-window: 200
-      index-coefficient: 0.8
-    - small-window: 25
-      big-window: 100
-      index-coefficient: 0.7
-
 query.throttle:
   interval: 60000
   limits:
