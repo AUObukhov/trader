@@ -7,7 +7,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
@@ -27,42 +26,6 @@ class GoldenCrossStrategyUnitTest {
         TRADING_PROPERTIES.setCommission(0.003);
     }
 
-    // region constructor tests
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenIndexCoefficientBelowZero() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new GoldenCrossStrategy(
-                        0.1f,
-                        TRADING_PROPERTIES,
-                        3,
-                        6,
-                        -0.1f,
-                        false
-                ),
-                IllegalArgumentException.class,
-                "indexCoefficient must be in range [0..1]"
-        );
-    }
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenIndexCoefficientAboveOne() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new GoldenCrossStrategy(
-                        0.1f,
-                        TRADING_PROPERTIES,
-                        3,
-                        6,
-                        1.1f,
-                        false
-                ),
-                IllegalArgumentException.class,
-                "indexCoefficient must be in range [0..1]"
-        );
-    }
-
-    // endregion
-
     // region decide tests
 
     @Test
@@ -70,10 +33,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -95,10 +55,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -120,10 +77,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -145,10 +99,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -170,10 +121,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -196,10 +144,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                true
+                new GoldenCrossStrategyParams(3, 6, 0.6f, true)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -222,10 +167,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -248,10 +190,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -275,10 +214,7 @@ class GoldenCrossStrategyUnitTest {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                3,
-                6,
-                0.6f,
-                false
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         Assertions.assertNotNull(strategy.initCache());

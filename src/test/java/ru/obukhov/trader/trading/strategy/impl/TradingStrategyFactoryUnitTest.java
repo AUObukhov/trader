@@ -2,11 +2,16 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 class TradingStrategyFactoryUnitTest {
 
@@ -27,8 +32,8 @@ class TradingStrategyFactoryUnitTest {
     void createStrategy_createsGoldenCrossStrategy() {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of(
-                "smallWindow", 200,
-                "bigWindow", 100,
+                "smallWindow", 100,
+                "bigWindow", 200,
                 "indexCoefficient", 0.5,
                 "greedy", false
         ));
@@ -38,52 +43,120 @@ class TradingStrategyFactoryUnitTest {
         Assertions.assertEquals(GoldenCrossStrategy.class, strategy.getClass());
     }
 
-    @Test
-    void createStrategy_throwsRuntimeException_whenGoldenCrossAndSmallWindowIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
-        strategyConfig.setParams(Map.of(
-                "bigWindow", 100,
-                "indexCoefficient", 0.5,
-                "greedy", false
-        ));
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenStrategyTypeSsGoldenCross_andParamsAreNotValid() {
+        return Stream.of(
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 7,
+                                "bigWindow", 6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "smallWindow must not be greater than bigWindow"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "bigWindow", 6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "smallWindow is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", -1,
+                                "bigWindow", 6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "smallWindow min value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 0,
+                                "bigWindow", 6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "smallWindow min value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 3,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "bigWindow is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 3,
+                                "bigWindow", 6,
+                                "greedy", false
+                        ),
+                        "indexCoefficient is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 3,
+                                "bigWindow", 6,
+                                "indexCoefficient", -0.1f,
+                                "greedy", false
+                        ),
+                        "indexCoefficient min value is 0"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 3,
+                                "bigWindow", 6,
+                                "indexCoefficient", 1.1f,
+                                "greedy", false
+                        ),
+                        "indexCoefficient max value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "smallWindow", 3,
+                                "bigWindow", 6,
+                                "indexCoefficient", 0.6f
+                        ),
+                        "greedy is mandatory"
+                )
+        );
+    }
 
-        Assertions.assertThrows(RuntimeException.class, () -> factory.createStrategy(strategyConfig));
+    @ParameterizedTest
+    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenStrategyTypeSsGoldenCross_andParamsAreNotValid")
+    void createStrategy_throwsIllegalArgumentException_whenStrategyTypeSsGoldenCross_andParamsAreNotValid(
+            Map<String, Object> params,
+            String expectedMessage
+    ) {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(params);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> factory.createStrategy(strategyConfig),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
     }
 
     @Test
-    void createStrategy_throwsRuntimeException_whenGoldenCrossAndBigWindowIsNull() {
+    void createStrategy_throwsIllegalArgumentException_whenStrategyTypeSsGoldenCross_andParamsAreEmpty() {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
-        strategyConfig.setParams(Map.of(
-                "smallWindow", 200,
-                "indexCoefficient", 0.5,
-                "greedy", false
-        ));
+        strategyConfig.setParams(Map.of());
 
-        Assertions.assertThrows(RuntimeException.class, () -> factory.createStrategy(strategyConfig));
-    }
+        final IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> factory.createStrategy(strategyConfig)
+        );
 
-    @Test
-    void createStrategy_throwsRuntimeException_whenGoldenCrossAndIndexCoefficientIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
-        strategyConfig.setParams(Map.of(
-                "smallWindow", 200,
-                "bigWindow", 100,
-                "greedy", false
-        ));
-
-        Assertions.assertThrows(RuntimeException.class, () -> factory.createStrategy(strategyConfig));
-    }
-
-    @Test
-    void createStrategy_throwsRuntimeException_whenGoldenCrossAndGreedyIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.GOLDEN_CROSS, 0.1f);
-        strategyConfig.setParams(Map.of(
-                "smallWindow", 200,
-                "bigWindow", 100,
-                "indexCoefficient", 0.5
-        ));
-
-        Assertions.assertThrows(RuntimeException.class, () -> factory.createStrategy(strategyConfig));
+        final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("smallWindow is mandatory"));
+        Assertions.assertTrue(message.contains("bigWindow is mandatory"));
+        Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
+        Assertions.assertTrue(message.contains("greedy is mandatory"));
     }
 
     // endregion

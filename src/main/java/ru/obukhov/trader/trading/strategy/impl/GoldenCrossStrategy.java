@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
@@ -27,52 +26,33 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    private final int smallWindow;
-    private final int bigWindow;
-    private final float indexCoefficient;
-    private final boolean greedy;
+    private final GoldenCrossStrategyParams params;
 
     /**
      * Initializes new instance of {@link GoldenCrossStrategy}
      *
      * @param minimumProfit     minimum value of profit in percent, which allows to sell papers
      * @param tradingProperties common trading properties
-     * @param smallWindow       window of short-term moving average
-     * @param bigWindow         window of long-term moving average
-     * @param indexCoefficient  relation of index of expected moving averages crossover to prices count.
-     *                          Must be in range [0..1]
-     * @param greedy            flag allowing to buy papers even when short-term moving average crosses a
-     *                          long-term moving average from above and selling is not profitable enough
+     * @param params            params of strategy
      */
     public GoldenCrossStrategy(
             final float minimumProfit,
             final TradingProperties tradingProperties,
-            final int smallWindow,
-            final int bigWindow,
-            final float indexCoefficient,
-            final boolean greedy
+            final GoldenCrossStrategyParams params
     ) {
         super(
                 String.format(
                         "%s GC (%s-%s-%s)",
-                        BooleanUtils.toString(greedy, "Greedy", "Plain"),
-                        smallWindow,
-                        bigWindow,
-                        indexCoefficient
+                        BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain"),
+                        params.getSmallWindow(),
+                        params.getBigWindow(),
+                        params.getIndexCoefficient()
                 ),
                 minimumProfit,
                 tradingProperties
         );
 
-        Assert.isTrue(
-                indexCoefficient >= 0 && indexCoefficient <= 1,
-                "indexCoefficient must be in range [0..1]"
-        );
-
-        this.smallWindow = smallWindow;
-        this.bigWindow = bigWindow;
-        this.indexCoefficient = indexCoefficient;
-        this.greedy = greedy;
+        this.params = params;
     }
 
     @Override
@@ -85,10 +65,10 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
-            final List<BigDecimal> shortAverages = TrendUtils.getSimpleMovingAverages(values, smallWindow);
-            final List<BigDecimal> longAverages = TrendUtils.getSimpleMovingAverages(values, bigWindow);
+            final List<BigDecimal> shortAverages = TrendUtils.getSimpleMovingAverages(values, params.getSmallWindow());
+            final List<BigDecimal> longAverages = TrendUtils.getSimpleMovingAverages(values, params.getBigWindow());
 
-            final int index = (int) (indexCoefficient * (values.size() - 1));
+            final int index = (int) (params.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
             decision = getDecisionByCrossover(data, crossover, strategyCache);
         }
@@ -108,7 +88,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
                 break;
             case ABOVE:
                 decision = getSellOrWaitDecision(data, strategyCache);
-                if (greedy && decision.getAction() == DecisionAction.WAIT) {
+                if (params.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
                     decision = getBuyOrWaitDecision(data, strategyCache);
                 }
                 break;
