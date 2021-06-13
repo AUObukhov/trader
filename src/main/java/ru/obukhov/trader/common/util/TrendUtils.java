@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.Assert;
-import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.common.model.Line;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.trading.model.Crossover;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

@@ -2,8 +2,8 @@ package ru.obukhov.trader.common.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.bot.model.Decision;
-import ru.obukhov.trader.bot.model.DecisionAction;
+import ru.obukhov.trader.trading.model.Decision;
+import ru.obukhov.trader.trading.model.DecisionAction;
 
 class DecisionUnitTest {
 

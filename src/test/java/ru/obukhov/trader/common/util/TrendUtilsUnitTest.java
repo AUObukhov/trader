@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.trading.model.Crossover;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

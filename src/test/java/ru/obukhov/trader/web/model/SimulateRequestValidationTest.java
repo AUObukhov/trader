@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.bot.model.StrategyConfig;
-import ru.obukhov.trader.bot.model.StrategyType;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.trading.model.StrategyConfig;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 
 import javax.validation.ConstraintViolation;

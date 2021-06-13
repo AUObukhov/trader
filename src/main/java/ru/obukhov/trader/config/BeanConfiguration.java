@@ -3,9 +3,6 @@ package ru.obukhov.trader.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.obukhov.trader.bot.impl.TradingStrategyFactory;
-import ru.obukhov.trader.bot.model.StrategyConfig;
-import ru.obukhov.trader.bot.strategy.TradingStrategy;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -20,6 +17,9 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.trading.model.StrategyConfig;
+import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
+import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.invest.openapi.OpenApi;
 
 /**
