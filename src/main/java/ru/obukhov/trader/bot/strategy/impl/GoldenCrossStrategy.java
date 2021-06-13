@@ -2,7 +2,9 @@ package ru.obukhov.trader.bot.strategy.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.util.Assert;
 import ru.obukhov.trader.bot.model.Crossover;
 import ru.obukhov.trader.bot.model.Decision;
 import ru.obukhov.trader.bot.model.DecisionAction;
@@ -18,47 +20,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Trading strategy based on idea to buy when short-term moving average crosses above a long-term moving average.
+ * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving average from below
+ * and to sell when from above.
  *
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">investopedia</a>
  */
 @Slf4j
 public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    protected final int smallWindow;
-    protected final int bigWindow;
-    protected final float indexCoefficient;
+    private final int smallWindow;
+    private final int bigWindow;
+    private final float indexCoefficient;
+    private final boolean greedy;
 
+    /**
+     * Initializes new instance of {@link GoldenCrossStrategy}
+     *
+     * @param minimumProfit     minimum value of profit in percent, which allows to sell papers
+     * @param tradingProperties common trading properties
+     * @param smallWindow       window of short-term moving average
+     * @param bigWindow         window of long-term moving average
+     * @param indexCoefficient  relation of index of expected moving averages crossover to prices count.
+     *                          Must be in range [0..1]
+     * @param greedy            flag allowing to buy papers even when short-term moving average crosses a
+     *                          long-term moving average from above and selling is not profitable enough
+     */
     public GoldenCrossStrategy(
             final float minimumProfit,
             final TradingProperties tradingProperties,
             final int smallWindow,
             final int bigWindow,
-            final float indexCoefficient
+            final float indexCoefficient,
+            final boolean greedy
     ) {
-        this(
-                String.format("GC (%s-%s-%s)", smallWindow, bigWindow, indexCoefficient),
+        super(
+                String.format(
+                        "%s GC (%s-%s-%s)",
+                        BooleanUtils.toString(greedy, "Greedy", "Plain"),
+                        smallWindow,
+                        bigWindow,
+                        indexCoefficient
+                ),
                 minimumProfit,
-                tradingProperties,
-                smallWindow,
-                bigWindow,
-                indexCoefficient
+                tradingProperties
         );
-    }
 
-    protected GoldenCrossStrategy(
-            final String name,
-            final float minimumProfit,
-            final TradingProperties tradingProperties,
-            final int smallWindow,
-            final int bigWindow,
-            final float indexCoefficient
-    ) {
-        super(name, minimumProfit, tradingProperties);
+        Assert.isTrue(
+                indexCoefficient >= 0 && indexCoefficient <= 1,
+                "indexCoefficient must be in range [0..1]"
+        );
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;
         this.indexCoefficient = indexCoefficient;
+        this.greedy = greedy;
     }
 
     @Override
@@ -87,13 +102,16 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
         switch (crossover) {
             case NONE:
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-                log.debug("No crossover in the end. Decision is {}", decision.toPrettyString());
+                log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
                 break;
             case BELOW:
                 decision = getBuyOrWaitDecision(data, strategyCache);
                 break;
             case ABOVE:
                 decision = getSellOrWaitDecision(data, strategyCache);
+                if (greedy && decision.getAction() == DecisionAction.WAIT) {
+                    decision = getBuyOrWaitDecision(data, strategyCache);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Unknown crossover type: " + crossover);
@@ -110,4 +128,5 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     @Data
     private static class GoldenCrossStrategyCache implements StrategyCache {
     }
+
 }
