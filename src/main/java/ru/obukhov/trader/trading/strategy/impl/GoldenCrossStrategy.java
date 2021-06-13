@@ -40,19 +40,21 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             final TradingProperties tradingProperties,
             final GoldenCrossStrategyParams params
     ) {
-        super(
-                String.format(
-                        "%s Golden Cross (%s-%s-%s)",
-                        BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain"),
-                        params.getSmallWindow(),
-                        params.getBigWindow(),
-                        params.getIndexCoefficient()
-                ),
-                minimumProfit,
-                tradingProperties
-        );
+        super(getName(minimumProfit, params), minimumProfit, tradingProperties);
 
         this.params = params;
+    }
+
+    private static String getName(final float minimumProfit, final GoldenCrossStrategyParams params) {
+        final String greedyString = BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain");
+        return String.format(
+                "%s Golden Cross (%s, %s-%s-%s)",
+                greedyString,
+                minimumProfit,
+                params.getSmallWindow(),
+                params.getBigWindow(),
+                params.getIndexCoefficient()
+        );
     }
 
     @Override

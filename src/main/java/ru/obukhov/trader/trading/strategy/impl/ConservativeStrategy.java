@@ -15,7 +15,11 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
     public ConservativeStrategy(final float minimumProfit, final TradingProperties tradingProperties) {
-        super("Conservative", minimumProfit, tradingProperties);
+        super(getName(minimumProfit), minimumProfit, tradingProperties);
+    }
+
+    private static String getName(final float minimumProfit) {
+        return String.format("Conservative (%s)", minimumProfit);
     }
 
     @Override

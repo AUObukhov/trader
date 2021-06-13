@@ -24,6 +24,11 @@ class ConservativeStrategyUnitTest {
         TRADING_PROPERTIES.setCommission(0.003);
     }
 
+    @Test
+    void getName_returnsProperName() {
+        Assertions.assertEquals("Conservative (0.1)", strategy.getName());
+    }
+
     // region decide tests
 
     @Test

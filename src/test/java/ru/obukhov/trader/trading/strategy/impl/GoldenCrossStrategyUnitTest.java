@@ -26,6 +26,17 @@ class GoldenCrossStrategyUnitTest {
         TRADING_PROPERTIES.setCommission(0.003);
     }
 
+    @Test
+    void getName_returnsProperName() {
+        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+                0.1f,
+                TRADING_PROPERTIES,
+                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+        );
+
+        Assertions.assertEquals("Plain Golden Cross (0.1, 3-6-0.6)", strategy.getName());
+    }
+
     // region decide tests
 
     @Test
