@@ -42,7 +42,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     ) {
         super(
                 String.format(
-                        "%s GC (%s-%s-%s)",
+                        "%s Golden Cross (%s-%s-%s)",
                         BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain"),
                         params.getSmallWindow(),
                         params.getBigWindow(),

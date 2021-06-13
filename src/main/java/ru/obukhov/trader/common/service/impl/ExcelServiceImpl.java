@@ -123,7 +123,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void createSheet(final ExtendedWorkbook workbook, final String ticker, final SimulationResult result) {
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
         putCommonStatistics(sheet, ticker, result);
         putPositions(sheet, result.getPositions());

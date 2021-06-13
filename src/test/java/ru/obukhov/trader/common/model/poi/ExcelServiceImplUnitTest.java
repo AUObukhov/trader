@@ -78,7 +78,7 @@ class ExcelServiceImplUnitTest {
             final ExtendedWorkbook workbook = workbooks.get(i);
             Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-            final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+            final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
             final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
             Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -107,7 +107,7 @@ class ExcelServiceImplUnitTest {
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
         final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -136,7 +136,7 @@ class ExcelServiceImplUnitTest {
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
         final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -166,7 +166,7 @@ class ExcelServiceImplUnitTest {
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
         final int expectedRowCount = 18 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -198,7 +198,7 @@ class ExcelServiceImplUnitTest {
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
         final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
@@ -228,7 +228,7 @@ class ExcelServiceImplUnitTest {
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
 
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(result.getBotName());
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
         final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());

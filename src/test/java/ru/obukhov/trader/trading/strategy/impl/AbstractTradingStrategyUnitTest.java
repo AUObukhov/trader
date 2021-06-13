@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -31,17 +30,6 @@ class AbstractTradingStrategyUnitTest {
     @BeforeAll
     static void setUp() {
         TRADING_PROPERTIES.setCommission(0.003);
-    }
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenNameIsTooLong() {
-        final String name = "abcdefghijklmnopqrstuvwxyz123456";
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> new TestStrategy(name, 0.1f, TRADING_PROPERTIES),
-                IllegalArgumentException.class,
-                "name must be shorter than " + AbstractTradingStrategy.NAME_LENGTH_LIMIT
-        );
     }
 
     // region getBuyOrWaitDecision tests
