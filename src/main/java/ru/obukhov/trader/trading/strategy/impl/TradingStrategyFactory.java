@@ -26,21 +26,24 @@ public class TradingStrategyFactory {
         switch (strategyConfig.getType()) {
             case CONSERVATIVE:
                 return new ConservativeStrategy(strategyConfig.getMinimumProfit(), tradingProperties);
-            case SIMPLE_GOLDEN_CROSS: {
-                final Map<String, Object> params = strategyConfig.getParams();
-                final SimpleGoldenCrossStrategyParams strategyParams =
-                        mapper.convertValue(params, SimpleGoldenCrossStrategyParams.class);
-                validate(strategyParams);
-
-                return new SimpleGoldenCrossStrategy(
-                        strategyConfig.getMinimumProfit(),
-                        tradingProperties,
-                        strategyParams
-                );
-            }
+            case SIMPLE_GOLDEN_CROSS:
+                return createSimpleGoldenCrossStrategy(strategyConfig);
             default:
                 throw new IllegalArgumentException("Unknown strategy type " + strategyConfig.getType());
         }
+    }
+
+    private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(StrategyConfig strategyConfig) {
+        final Map<String, Object> params = strategyConfig.getParams();
+        final SimpleGoldenCrossStrategyParams strategyParams =
+                mapper.convertValue(params, SimpleGoldenCrossStrategyParams.class);
+        validate(strategyParams);
+
+        return new SimpleGoldenCrossStrategy(
+                strategyConfig.getMinimumProfit(),
+                tradingProperties,
+                strategyParams
+        );
     }
 
     private void validate(Object object) {
