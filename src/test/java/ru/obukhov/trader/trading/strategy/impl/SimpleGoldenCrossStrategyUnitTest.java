@@ -17,7 +17,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.util.List;
 
-class GoldenCrossStrategyUnitTest {
+class SimpleGoldenCrossStrategyUnitTest {
 
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
@@ -28,10 +28,10 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     void getName_returnsProperName() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         Assertions.assertEquals("Plain Golden Cross (0.1, 3-6-0.6)", strategy.getName());
@@ -41,10 +41,10 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -63,10 +63,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -85,10 +85,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -107,10 +107,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -129,10 +129,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -152,10 +152,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, true)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, true)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -175,10 +175,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -198,10 +198,10 @@ class GoldenCrossStrategyUnitTest {
     @Test
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -222,10 +222,10 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     void initCache_returnsNotNull() {
-        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
+        final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new GoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
         Assertions.assertNotNull(strategy.initCache());

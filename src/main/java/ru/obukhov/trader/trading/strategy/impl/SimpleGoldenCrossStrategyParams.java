@@ -17,9 +17,9 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 @PredicateConstraint(
         message = "smallWindow must not be greater than bigWindow",
-        predicate = GoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
+        predicate = SimpleGoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
 )
-public class GoldenCrossStrategyParams {
+public class SimpleGoldenCrossStrategyParams {
 
     /**
      * window of short-term moving average
@@ -49,9 +49,9 @@ public class GoldenCrossStrategyParams {
     @NotNull(message = "greedy is mandatory")
     private Boolean greedy;
 
-    protected static class GoldenCrossStrategyParamsWindowsPredicate implements Predicate<GoldenCrossStrategyParams> {
+    protected static class GoldenCrossStrategyParamsWindowsPredicate implements Predicate<SimpleGoldenCrossStrategyParams> {
         @Override
-        public boolean test(GoldenCrossStrategyParams params) {
+        public boolean test(SimpleGoldenCrossStrategyParams params) {
             return params.getSmallWindow() == null
                     || params.getBigWindow() == null
                     || params.getSmallWindow() <= params.getBigWindow();

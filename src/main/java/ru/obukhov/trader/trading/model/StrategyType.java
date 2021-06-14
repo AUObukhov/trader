@@ -7,7 +7,7 @@ public enum StrategyType {
     @JsonProperty("conservative")
     CONSERVATIVE,
 
-    @JsonProperty("goldenCross")
-    GOLDEN_CROSS,
+    @JsonProperty("simpleGoldenCross")
+    SIMPLE_GOLDEN_CROSS,
 
 }

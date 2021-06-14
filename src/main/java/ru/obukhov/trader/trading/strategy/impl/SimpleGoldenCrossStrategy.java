@@ -18,37 +18,37 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving average from below
- * and to sell when from above.
+ * Trading strategy based on idea to buy when short-term simple moving average crosses a long-term simple moving averag
+ * e from below and to sell when from above.
  *
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">investopedia</a>
  */
 @Slf4j
-public class GoldenCrossStrategy extends AbstractTradingStrategy {
+public class SimpleGoldenCrossStrategy extends AbstractTradingStrategy {
 
-    private final GoldenCrossStrategyParams params;
+    private final SimpleGoldenCrossStrategyParams params;
 
     /**
-     * Initializes new instance of {@link GoldenCrossStrategy}
+     * Initializes new instance of {@link SimpleGoldenCrossStrategy}
      *
      * @param minimumProfit     minimum value of profit in percent, which allows to sell papers
      * @param tradingProperties common trading properties
      * @param params            params of strategy
      */
-    public GoldenCrossStrategy(
+    public SimpleGoldenCrossStrategy(
             final float minimumProfit,
             final TradingProperties tradingProperties,
-            final GoldenCrossStrategyParams params
+            final SimpleGoldenCrossStrategyParams params
     ) {
         super(getName(minimumProfit, params), minimumProfit, tradingProperties);
 
         this.params = params;
     }
 
-    private static String getName(final float minimumProfit, final GoldenCrossStrategyParams params) {
+    private static String getName(final float minimumProfit, final SimpleGoldenCrossStrategyParams params) {
         final String greedyString = BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain");
         return String.format(
-                "%s Golden Cross (%s, %s-%s-%s)",
+                "%s Simple Golden Cross (%s, %s-%s-%s)",
                 greedyString,
                 minimumProfit,
                 params.getSmallWindow(),
@@ -103,11 +103,11 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     @NotNull
     @Override
     public StrategyCache initCache() {
-        return new GoldenCrossStrategyCache();
+        return new SimpleGoldenCrossStrategyCache();
     }
 
     @Data
-    private static class GoldenCrossStrategyCache implements StrategyCache {
+    private static class SimpleGoldenCrossStrategyCache implements StrategyCache {
     }
 
 }

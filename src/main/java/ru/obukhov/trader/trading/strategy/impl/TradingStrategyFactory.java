@@ -26,16 +26,16 @@ public class TradingStrategyFactory {
         switch (strategyConfig.getType()) {
             case CONSERVATIVE:
                 return new ConservativeStrategy(strategyConfig.getMinimumProfit(), tradingProperties);
-            case GOLDEN_CROSS: {
+            case SIMPLE_GOLDEN_CROSS: {
                 final Map<String, Object> params = strategyConfig.getParams();
-                final GoldenCrossStrategyParams goldenCrossStrategyParams =
-                        mapper.convertValue(params, GoldenCrossStrategyParams.class);
-                validate(goldenCrossStrategyParams);
+                final SimpleGoldenCrossStrategyParams strategyParams =
+                        mapper.convertValue(params, SimpleGoldenCrossStrategyParams.class);
+                validate(strategyParams);
 
-                return new GoldenCrossStrategy(
+                return new SimpleGoldenCrossStrategy(
                         strategyConfig.getMinimumProfit(),
                         tradingProperties,
-                        goldenCrossStrategyParams
+                        strategyParams
                 );
             }
             default:
