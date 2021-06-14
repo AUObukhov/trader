@@ -28,6 +28,8 @@ public class TradingStrategyFactory {
                 return new ConservativeStrategy(strategyConfig.getMinimumProfit(), tradingProperties);
             case SIMPLE_GOLDEN_CROSS:
                 return createSimpleGoldenCrossStrategy(strategyConfig);
+            case LINEAR_GOLDEN_CROSS:
+                return createLinearGoldenCrossStrategy(strategyConfig);
             default:
                 throw new IllegalArgumentException("Unknown strategy type " + strategyConfig.getType());
         }
@@ -40,6 +42,19 @@ public class TradingStrategyFactory {
         validate(strategyParams);
 
         return new SimpleGoldenCrossStrategy(
+                strategyConfig.getMinimumProfit(),
+                tradingProperties,
+                strategyParams
+        );
+    }
+
+    private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(StrategyConfig strategyConfig) {
+        final Map<String, Object> params = strategyConfig.getParams();
+        final LinearGoldenCrossStrategyParams strategyParams =
+                mapper.convertValue(params, LinearGoldenCrossStrategyParams.class);
+        validate(strategyParams);
+
+        return new LinearGoldenCrossStrategy(
                 strategyConfig.getMinimumProfit(),
                 tradingProperties,
                 strategyParams

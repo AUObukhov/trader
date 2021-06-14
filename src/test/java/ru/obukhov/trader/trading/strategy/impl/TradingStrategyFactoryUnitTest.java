@@ -44,7 +44,7 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenStrategyTypeIsSimpleGoldenCross_andParamsAreNotValid() {
+    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid() {
         return Stream.of(
                 Arguments.of(
                         Map.of(
@@ -127,8 +127,8 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenStrategyTypeIsSimpleGoldenCross_andParamsAreNotValid")
-    void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsSimpleGoldenCross_andParamsAreNotValid(
+    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid")
+    void createStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreNotValid(
             Map<String, Object> params,
             String expectedMessage
     ) {
@@ -143,8 +143,60 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @Test
-    void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsSimpleGoldenCross_andParamsAreEmpty() {
+    void createStrategy_throwsIllegalArgumentException_whenSimpleGoldenCross_andParamsAreEmpty() {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(Map.of());
+
+        final IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> factory.createStrategy(strategyConfig)
+        );
+
+        final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("smallWindow is mandatory"));
+        Assertions.assertTrue(message.contains("bigWindow is mandatory"));
+        Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
+        Assertions.assertTrue(message.contains("greedy is mandatory"));
+    }
+
+    // endregion
+
+    // region LinearGoldenCross strategy creation tests
+
+    @Test
+    void createStrategy_createsLinearGoldenCrossStrategy() {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(Map.of(
+                "smallWindow", 100,
+                "bigWindow", 200,
+                "indexCoefficient", 0.5,
+                "greedy", false
+        ));
+
+        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+
+        Assertions.assertEquals(LinearGoldenCrossStrategy.class, strategy.getClass());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid")
+    void createStrategy_throwsIllegalArgumentException_whenLinearGoldenCross_andParamsAreNotValid(
+            Map<String, Object> params,
+            String expectedMessage
+    ) {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(params);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> factory.createStrategy(strategyConfig),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    @Test
+    void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsLinearGoldenCross_andParamsAreEmpty() {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
