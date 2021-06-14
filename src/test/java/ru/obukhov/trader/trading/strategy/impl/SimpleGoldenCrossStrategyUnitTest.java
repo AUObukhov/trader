@@ -34,7 +34,7 @@ class SimpleGoldenCrossStrategyUnitTest {
                 new SimpleGoldenCrossStrategyParams(3, 6, 0.6f, false)
         );
 
-        Assertions.assertEquals("Plain Golden Cross (0.1, 3-6-0.6)", strategy.getName());
+        Assertions.assertEquals("Plain Simple Golden Cross (0.1, 3-6-0.6)", strategy.getName());
     }
 
     // region decide tests
