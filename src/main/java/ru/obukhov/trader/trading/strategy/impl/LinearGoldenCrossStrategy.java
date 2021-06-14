@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving average from below
- * and to sell when from above.
+ * Trading strategy based on idea to buy when short-term linear weighted moving average crosses a long-term linear
+ * weighted moving average from below and to sell when from above.
  *
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">investopedia</a>
  */
