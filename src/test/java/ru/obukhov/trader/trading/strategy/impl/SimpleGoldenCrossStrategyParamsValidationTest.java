@@ -13,7 +13,7 @@ import javax.validation.Validator;
 import java.util.Set;
 import java.util.stream.Stream;
 
-class SimpleSimpleGoldenCrossStrategyParamsValidationTest {
+class SimpleGoldenCrossStrategyParamsValidationTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
