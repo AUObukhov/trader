@@ -17,6 +17,12 @@ public class TradingStrategyParams {
      */
     @NotNull(message = "minimumProfit is mandatory")
     @Min(value = 0, message = "minimumProfit min value is 0")
-    private Float minimumProfit;
+    protected Float minimumProfit;
 
+    @Override
+    public String toString() {
+        return "[" +
+                "minimumProfit=" + minimumProfit +
+                ']';
+    }
 }

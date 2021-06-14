@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.TradingProperties;
@@ -38,19 +37,7 @@ public class SimpleGoldenCrossStrategy extends AbstractTradingStrategy {
             final TradingProperties tradingProperties,
             final SimpleGoldenCrossStrategyParams params
     ) {
-        super(getName(params), params, tradingProperties);
-    }
-
-    private static String getName(final SimpleGoldenCrossStrategyParams params) {
-        final String greedyString = BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain");
-        return String.format(
-                "%s Simple Golden Cross (%s, %s-%s-%s)",
-                greedyString,
-                params.getMinimumProfit(),
-                params.getSmallWindow(),
-                params.getBigWindow(),
-                params.getIndexCoefficient()
-        );
+        super("simpleGoldenCross", params, tradingProperties);
     }
 
     @Override

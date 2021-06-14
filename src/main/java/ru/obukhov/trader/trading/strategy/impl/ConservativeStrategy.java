@@ -16,11 +16,7 @@ import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
     public ConservativeStrategy(final TradingStrategyParams params, final TradingProperties tradingProperties) {
-        super(getName(params), params, tradingProperties);
-    }
-
-    private static String getName(final TradingStrategyParams params) {
-        return String.format("Conservative (%s)", params.getMinimumProfit());
+        super("conservative", params, tradingProperties);
     }
 
     @Override

@@ -31,10 +31,13 @@ class LinearGoldenCrossStrategyUnitTest {
     void getName_returnsProperName() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 100, 200)
         );
 
-        Assertions.assertEquals("Plain Linear Golden Cross (0.1, 3-6-0.6)", strategy.getName());
+        Assertions.assertEquals(
+                "linearGoldenCross [minimumProfit=0.1, indexCoefficient=0.6, greedy=false, smallWindow=100, bigWindow=200]",
+                strategy.getName()
+        );
     }
 
     // region decide tests

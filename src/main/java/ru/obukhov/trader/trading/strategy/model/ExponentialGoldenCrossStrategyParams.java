@@ -47,6 +47,17 @@ public class ExponentialGoldenCrossStrategyParams extends GoldenCrossStrategyPar
         this.slowWeightDecrease = slowWeightDecrease;
     }
 
+    @Override
+    public String toString() {
+        return "[" +
+                "minimumProfit=" + minimumProfit +
+                ", indexCoefficient=" + indexCoefficient +
+                ", greedy=" + greedy +
+                ", fastWeightDecrease=" + fastWeightDecrease +
+                ", slowWeightDecrease=" + slowWeightDecrease +
+                ']';
+    }
+
     protected static class ExponentialGoldenCrossStrategyParamsWeightDecreasesPredicate
             implements Predicate<ExponentialGoldenCrossStrategyParams> {
         @Override

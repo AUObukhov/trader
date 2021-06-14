@@ -30,7 +30,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void getName_returnsProperName() {
-        Assertions.assertEquals("Conservative (0.1)", strategy.getName());
+        Assertions.assertEquals("conservative [minimumProfit=0.1]", strategy.getName());
     }
 
     // region decide tests

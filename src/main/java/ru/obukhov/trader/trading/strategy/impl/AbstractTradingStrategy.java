@@ -1,7 +1,5 @@
 package ru.obukhov.trader.trading.strategy.impl;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -20,13 +18,22 @@ import java.math.BigDecimal;
  * Abstract strategy with some common methods
  */
 @Slf4j
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     @Getter
     protected final String name;
     protected final TradingStrategyParams params;
     protected final TradingProperties tradingProperties;
+
+    protected AbstractTradingStrategy(
+            final String name,
+            final TradingStrategyParams params,
+            final TradingProperties tradingProperties
+    ) {
+        this.name = name + " " + params;
+        this.params = params;
+        this.tradingProperties = tradingProperties;
+    }
 
     /**
      * @return decision to buy all available lots or decision to wait if no lots available

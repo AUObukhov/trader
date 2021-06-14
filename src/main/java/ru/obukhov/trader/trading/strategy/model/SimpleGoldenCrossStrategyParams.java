@@ -44,6 +44,17 @@ public class SimpleGoldenCrossStrategyParams extends GoldenCrossStrategyParams {
         this.bigWindow = bigWindow;
     }
 
+    @Override
+    public String toString() {
+        return "[" +
+                "minimumProfit=" + minimumProfit +
+                ", indexCoefficient=" + indexCoefficient +
+                ", greedy=" + greedy +
+                ", smallWindow=" + smallWindow +
+                ", bigWindow=" + bigWindow +
+                ']';
+    }
+
     protected static class SimpleGoldenCrossStrategyParamsWindowsPredicate implements Predicate<SimpleGoldenCrossStrategyParams> {
         @Override
         public boolean test(SimpleGoldenCrossStrategyParams params) {

@@ -34,7 +34,10 @@ class ExponentialGoldenCrossStrategyUnitTest {
                 new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
         );
 
-        Assertions.assertEquals("Plain Exponential Golden Cross (0.1, 0.6-0.3-0.6)", strategy.getName());
+        Assertions.assertEquals(
+                "exponentialGoldenCross [minimumProfit=0.1, indexCoefficient=0.6, greedy=false, fastWeightDecrease=0.6, slowWeightDecrease=0.3]",
+                strategy.getName()
+        );
     }
 
     // region decide tests

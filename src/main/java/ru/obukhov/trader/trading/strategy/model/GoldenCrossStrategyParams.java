@@ -19,14 +19,14 @@ public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
     @NotNull(message = "indexCoefficient is mandatory")
     @Min(value = 0, message = "indexCoefficient min value is 0")
     @Max(value = 1, message = "indexCoefficient max value is 1")
-    private Float indexCoefficient;
+    protected Float indexCoefficient;
 
     /**
      * flag allowing to buy papers even when short-term moving average crosses a long-term moving average from above
      * and selling is not profitable enough
      */
     @NotNull(message = "greedy is mandatory")
-    private Boolean greedy;
+    protected Boolean greedy;
 
     protected GoldenCrossStrategyParams(final Float minimumProfit, final Float indexCoefficient, final Boolean greedy) {
         super(minimumProfit);
