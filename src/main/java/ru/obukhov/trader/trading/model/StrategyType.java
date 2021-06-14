@@ -13,4 +13,7 @@ public enum StrategyType {
     @JsonProperty("linearGoldenCross")
     LINEAR_GOLDEN_CROSS,
 
+    @JsonProperty("exponentialGoldenCross")
+    EXPONENTIAL_GOLDEN_CROSS,
+
 }

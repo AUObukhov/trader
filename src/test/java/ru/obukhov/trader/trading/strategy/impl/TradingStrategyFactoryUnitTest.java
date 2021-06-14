@@ -213,4 +213,139 @@ class TradingStrategyFactoryUnitTest {
 
     // endregion
 
+    // region ExponentialGoldenCross strategy creation tests
+
+    @Test
+    void createStrategy_createsExponentialGoldenCrossStrategy() {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(Map.of(
+                "fastWeightDecrease", 0.6,
+                "slowWeightDecrease", 0.3,
+                "indexCoefficient", 0.5,
+                "greedy", false
+        ));
+
+        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+
+        Assertions.assertEquals(ExponentialGoldenCrossStrategy.class, strategy.getClass());
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid() {
+        return Stream.of(
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.3,
+                                "slowWeightDecrease", 0.6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "slowWeightDecrease must lower than fastWeightDecrease"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "fastWeightDecrease is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 1.1,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "fastWeightDecrease max value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "slowWeightDecrease is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", -0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false
+                        ),
+                        "slowWeightDecrease min value is 0"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "greedy", false
+                        ),
+                        "indexCoefficient is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", -0.1f,
+                                "greedy", false
+                        ),
+                        "indexCoefficient min value is 0"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 1.1f,
+                                "greedy", false
+                        ),
+                        "indexCoefficient max value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.6f
+                        ),
+                        "greedy is mandatory"
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid")
+    void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid(
+            Map<String, Object> params,
+            String expectedMessage
+    ) {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(params);
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> factory.createStrategy(strategyConfig),
+                IllegalArgumentException.class,
+                expectedMessage
+        );
+    }
+
+    @Test
+    void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreEmpty() {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        strategyConfig.setParams(Map.of());
+
+        final IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> factory.createStrategy(strategyConfig)
+        );
+
+        final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("fastWeightDecrease is mandatory"));
+        Assertions.assertTrue(message.contains("slowWeightDecrease is mandatory"));
+        Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
+        Assertions.assertTrue(message.contains("greedy is mandatory"));
+    }
+
+    // endregion
+
 }
