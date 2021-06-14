@@ -78,7 +78,7 @@ public class SimpleGoldenCrossStrategy extends AbstractTradingStrategy {
         return decision;
     }
 
-    protected Decision getDecisionByCrossover(DecisionData data, Crossover crossover, StrategyCache strategyCache) {
+    private Decision getDecisionByCrossover(DecisionData data, Crossover crossover, StrategyCache strategyCache) {
         Decision decision;
         switch (crossover) {
             case NONE:
