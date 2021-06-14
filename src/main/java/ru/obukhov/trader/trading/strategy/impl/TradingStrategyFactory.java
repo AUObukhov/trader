@@ -53,21 +53,21 @@ public class TradingStrategyFactory {
         final SimpleGoldenCrossStrategyParams strategyParams =
                 getStrategyParams(strategyConfig, SimpleGoldenCrossStrategyParams.class);
 
-        return new SimpleGoldenCrossStrategy(tradingProperties, strategyParams);
+        return new SimpleGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
     private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(StrategyConfig strategyConfig) {
         final LinearGoldenCrossStrategyParams strategyParams =
                 getStrategyParams(strategyConfig, LinearGoldenCrossStrategyParams.class);
 
-        return new LinearGoldenCrossStrategy(tradingProperties, strategyParams);
+        return new LinearGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
     private ExponentialGoldenCrossStrategy createExponentialGoldenCrossStrategy(StrategyConfig strategyConfig) {
         final ExponentialGoldenCrossStrategyParams strategyParams =
                 getStrategyParams(strategyConfig, ExponentialGoldenCrossStrategyParams.class);
 
-        return new ExponentialGoldenCrossStrategy(tradingProperties, strategyParams);
+        return new ExponentialGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
     private <T extends TradingStrategyParams> T getStrategyParams(StrategyConfig strategyConfig, Class<T> type) {

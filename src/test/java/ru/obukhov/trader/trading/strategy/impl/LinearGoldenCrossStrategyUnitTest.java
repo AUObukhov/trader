@@ -30,8 +30,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void getName_returnsProperName() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 100, 200)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 100, 200),
+                TRADING_PROPERTIES
         );
 
         Assertions.assertEquals(
@@ -45,8 +45,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -66,8 +66,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -87,8 +87,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -108,8 +108,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -129,8 +129,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -151,8 +151,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, true, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, true, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -173,8 +173,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -195,8 +195,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -218,8 +218,8 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void initCache_returnsNotNull() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6)
+                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                TRADING_PROPERTIES
         );
 
         Assertions.assertNotNull(strategy.initCache());

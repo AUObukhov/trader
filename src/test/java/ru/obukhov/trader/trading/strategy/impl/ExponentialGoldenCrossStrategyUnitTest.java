@@ -30,8 +30,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @Test
     void getName_returnsProperName() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         Assertions.assertEquals(
@@ -45,8 +45,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -66,8 +66,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -87,8 +87,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -108,8 +108,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -129,8 +129,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -151,8 +151,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, true, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, true, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -173,8 +173,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -195,8 +195,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -218,8 +218,8 @@ class ExponentialGoldenCrossStrategyUnitTest {
     @Test
     void initCache_returnsNotNull() {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
-                TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3)
+                new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3),
+                TRADING_PROPERTIES
         );
 
         Assertions.assertNotNull(strategy.initCache());

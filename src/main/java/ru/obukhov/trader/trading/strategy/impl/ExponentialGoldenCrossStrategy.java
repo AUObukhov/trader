@@ -12,7 +12,6 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
-import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">investopedia</a>
  */
 @Slf4j
-public class ExponentialGoldenCrossStrategy extends AbstractTradingStrategy {
+public class ExponentialGoldenCrossStrategy extends AbstractGoldenCrossStrategy {
 
     /**
      * Initializes new instance of {@link ExponentialGoldenCrossStrategy}
@@ -34,8 +33,8 @@ public class ExponentialGoldenCrossStrategy extends AbstractTradingStrategy {
      * @param params            params of strategy
      */
     public ExponentialGoldenCrossStrategy(
-            final TradingProperties tradingProperties,
-            final ExponentialGoldenCrossStrategyParams params
+            final ExponentialGoldenCrossStrategyParams params,
+            final TradingProperties tradingProperties
     ) {
         super("exponentialGoldenCross", params, tradingProperties);
     }
@@ -66,29 +65,6 @@ public class ExponentialGoldenCrossStrategy extends AbstractTradingStrategy {
             decision = getDecisionByCrossover(data, crossover, strategyCache);
         }
 
-        return decision;
-    }
-
-    private Decision getDecisionByCrossover(DecisionData data, Crossover crossover, StrategyCache strategyCache) {
-        Decision decision;
-        switch (crossover) {
-            case NONE:
-                decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-                log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
-                break;
-            case BELOW:
-                decision = getBuyOrWaitDecision(data, strategyCache);
-                break;
-            case ABOVE:
-                decision = getSellOrWaitDecision(data, strategyCache);
-                GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
-                if (goldenCrossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
-                    decision = getBuyOrWaitDecision(data, strategyCache);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown crossover type: " + crossover);
-        }
         return decision;
     }
 
