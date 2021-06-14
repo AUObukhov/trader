@@ -32,7 +32,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         Assertions.assertEquals("Plain Linear Golden Cross (0.1, 3-6-0.6)", strategy.getName());
@@ -45,7 +45,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -67,7 +67,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -89,7 +89,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -111,7 +111,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -133,7 +133,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -156,7 +156,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, true)
+                new LinearGoldenCrossStrategyParams(0.6f, true, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -179,7 +179,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -202,7 +202,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -226,7 +226,7 @@ class LinearGoldenCrossStrategyUnitTest {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false)
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6)
         );
 
         Assertions.assertNotNull(strategy.initCache());

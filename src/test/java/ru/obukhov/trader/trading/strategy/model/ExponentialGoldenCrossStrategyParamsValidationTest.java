@@ -20,7 +20,7 @@ class ExponentialGoldenCrossStrategyParamsValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final ExponentialGoldenCrossStrategyParams params =
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false);
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3);
 
         Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
@@ -31,39 +31,39 @@ class ExponentialGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.3, 0.6, 0.6f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.3, 0.6),
                         "slowWeightDecrease must lower than fastWeightDecrease"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(null, 0.3, 0.6f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, false, null, 0.3),
                         "fastWeightDecrease is mandatory"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(1.1, 0.3, 0.6f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, false, 1.1, 0.3),
                         "fastWeightDecrease max value is 1"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.6, null, 0.6f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, null),
                         "slowWeightDecrease is mandatory"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.3, -0.1, 0.6f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.3, -0.1),
                         "slowWeightDecrease min value is 0"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, null, false),
+                        new ExponentialGoldenCrossStrategyParams(null, false, 0.6, 0.3),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, -0.1f, false),
+                        new ExponentialGoldenCrossStrategyParams(-0.1f, false, 0.6, 0.3),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 1.1f, false),
+                        new ExponentialGoldenCrossStrategyParams(1.1f, false, 0.6, 0.3),
                         "indexCoefficient max value is 1"
                 ),
                 Arguments.of(
-                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, null),
+                        new ExponentialGoldenCrossStrategyParams(0.6f, null, 0.6, 0.3),
                         "greedy is mandatory"
                 )
         );

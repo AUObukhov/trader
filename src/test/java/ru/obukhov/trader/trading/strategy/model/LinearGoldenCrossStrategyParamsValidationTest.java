@@ -20,7 +20,7 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final LinearGoldenCrossStrategyParams params =
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false);
+                new LinearGoldenCrossStrategyParams(0.6f, false, 3, 6);
 
         Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
@@ -31,39 +31,39 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(7, 6, 0.6f, false),
+                        new LinearGoldenCrossStrategyParams(0.6f, false, 7, 6),
                         "smallWindow must lower than bigWindow"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(null, 6, 0.6f, false),
+                        new LinearGoldenCrossStrategyParams(0.6f, false, null, 6),
                         "smallWindow is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(-1, 6, 0.6f, false),
+                        new LinearGoldenCrossStrategyParams(0.6f, false, -1, 6),
                         "smallWindow min value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0, 6, 0.6f, false),
+                        new LinearGoldenCrossStrategyParams(0.6f, false, 0, 6),
                         "smallWindow min value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, null, 0.6f, false),
+                        new LinearGoldenCrossStrategyParams(0.6f, false, 3, null),
                         "bigWindow is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, null, false),
+                        new LinearGoldenCrossStrategyParams(null, false, 3, 6),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, -0.1f, false),
+                        new LinearGoldenCrossStrategyParams(-0.1f, false, 3, 6),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, 1.1f, false),
+                        new LinearGoldenCrossStrategyParams(1.1f, false, 3, 6),
                         "indexCoefficient max value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, 0.6f, null),
+                        new LinearGoldenCrossStrategyParams(0.6f, null, 3, 6),
                         "greedy is mandatory"
                 )
         );

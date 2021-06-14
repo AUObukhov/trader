@@ -32,7 +32,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         Assertions.assertEquals("Plain Exponential Golden Cross (0.1, 0.6-0.3-0.6)", strategy.getName());
@@ -45,7 +45,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -67,7 +67,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -89,7 +89,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -111,7 +111,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -133,7 +133,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.36, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -156,7 +156,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, true)
+                new ExponentialGoldenCrossStrategyParams(0.6f, true, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -179,7 +179,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -202,7 +202,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
@@ -226,7 +226,7 @@ class ExponentialGoldenCrossStrategyUnitTest {
         final ExponentialGoldenCrossStrategy strategy = new ExponentialGoldenCrossStrategy(
                 0.1f,
                 TRADING_PROPERTIES,
-                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false)
+                new ExponentialGoldenCrossStrategyParams(0.6f, false, 0.6, 0.3)
         );
 
         Assertions.assertNotNull(strategy.initCache());

@@ -1,12 +1,10 @@
 package ru.obukhov.trader.trading.strategy.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.function.Predicate;
@@ -14,12 +12,11 @@ import java.util.function.Predicate;
 @Valid
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @PredicateConstraint(
         message = "smallWindow must lower than bigWindow",
-        predicate = SimpleGoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
+        predicate = SimpleGoldenCrossStrategyParams.SimpleGoldenCrossStrategyParamsWindowsPredicate.class
 )
-public class SimpleGoldenCrossStrategyParams {
+public class SimpleGoldenCrossStrategyParams extends GoldenCrossStrategyParams {
 
     /**
      * window of short-term moving average
@@ -34,22 +31,19 @@ public class SimpleGoldenCrossStrategyParams {
     @NotNull(message = "bigWindow is mandatory")
     private Integer bigWindow;
 
-    /**
-     * relation of index of expected moving averages crossover to prices count. Must be in range [0..1]
-     */
-    @NotNull(message = "indexCoefficient is mandatory")
-    @Min(value = 0, message = "indexCoefficient min value is 0")
-    @Max(value = 1, message = "indexCoefficient max value is 1")
-    private Float indexCoefficient;
+    public SimpleGoldenCrossStrategyParams(
+            Float indexCoefficient,
+            Boolean greedy,
+            Integer smallWindow,
+            Integer bigWindow
+    ) {
+        super(indexCoefficient, greedy);
 
-    /**
-     * flag allowing to buy papers even when short-term moving average crosses a long-term moving average from above
-     * and selling is not profitable enough
-     */
-    @NotNull(message = "greedy is mandatory")
-    private Boolean greedy;
+        this.smallWindow = smallWindow;
+        this.bigWindow = bigWindow;
+    }
 
-    protected static class GoldenCrossStrategyParamsWindowsPredicate implements Predicate<SimpleGoldenCrossStrategyParams> {
+    protected static class SimpleGoldenCrossStrategyParamsWindowsPredicate implements Predicate<SimpleGoldenCrossStrategyParams> {
         @Override
         public boolean test(SimpleGoldenCrossStrategyParams params) {
             return params.getSmallWindow() == null
