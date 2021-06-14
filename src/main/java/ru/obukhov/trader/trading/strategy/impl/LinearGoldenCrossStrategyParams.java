@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 @NoArgsConstructor
 @AllArgsConstructor
 @PredicateConstraint(
-        message = "smallWindow must not be greater than bigWindow",
+        message = "smallWindow must lower than bigWindow",
         predicate = LinearGoldenCrossStrategyParams.LinearGoldenCrossStrategyParamsWindowsPredicate.class
 )
 public class LinearGoldenCrossStrategyParams {
@@ -55,7 +55,7 @@ public class LinearGoldenCrossStrategyParams {
         public boolean test(LinearGoldenCrossStrategyParams params) {
             return params.getSmallWindow() == null
                     || params.getBigWindow() == null
-                    || params.getSmallWindow() <= params.getBigWindow();
+                    || params.getSmallWindow() < params.getBigWindow();
         }
     }
 

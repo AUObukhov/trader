@@ -53,7 +53,7 @@ class TradingStrategyFactoryUnitTest {
                                 "indexCoefficient", 0.6f,
                                 "greedy", false
                         ),
-                        "smallWindow must not be greater than bigWindow"
+                        "smallWindow must lower than bigWindow"
                 ),
                 Arguments.of(
                         Map.of(

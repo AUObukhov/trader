@@ -32,7 +32,7 @@ class SimpleGoldenCrossStrategyParamsValidationTest {
         return Stream.of(
                 Arguments.of(
                         new SimpleGoldenCrossStrategyParams(7, 6, 0.6f, false),
-                        "smallWindow must not be greater than bigWindow"
+                        "smallWindow must lower than bigWindow"
                 ),
                 Arguments.of(
                         new SimpleGoldenCrossStrategyParams(null, 6, 0.6f, false),
