@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.strategy.impl;
+package ru.obukhov.trader.trading.strategy.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

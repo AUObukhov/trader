@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.SimpleGoldenCrossStrategyParams;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

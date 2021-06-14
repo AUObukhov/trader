@@ -12,6 +12,7 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
 import java.util.List;

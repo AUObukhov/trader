@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.strategy.impl;
+package ru.obukhov.trader.trading.strategy.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,14 +13,14 @@ import javax.validation.Validator;
 import java.util.Set;
 import java.util.stream.Stream;
 
-class LinearGoldenCrossStrategyParamsValidationTest {
+class ExponentialGoldenCrossStrategyParamsValidationTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final LinearGoldenCrossStrategyParams params =
-                new LinearGoldenCrossStrategyParams(3, 6, 0.6f, false);
+        final ExponentialGoldenCrossStrategyParams params =
+                new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, false);
 
         Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
@@ -31,39 +31,39 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(7, 6, 0.6f, false),
-                        "smallWindow must lower than bigWindow"
+                        new ExponentialGoldenCrossStrategyParams(0.3, 0.6, 0.6f, false),
+                        "slowWeightDecrease must lower than fastWeightDecrease"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(null, 6, 0.6f, false),
-                        "smallWindow is mandatory"
+                        new ExponentialGoldenCrossStrategyParams(null, 0.3, 0.6f, false),
+                        "fastWeightDecrease is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(-1, 6, 0.6f, false),
-                        "smallWindow min value is 1"
+                        new ExponentialGoldenCrossStrategyParams(1.1, 0.3, 0.6f, false),
+                        "fastWeightDecrease max value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0, 6, 0.6f, false),
-                        "smallWindow min value is 1"
+                        new ExponentialGoldenCrossStrategyParams(0.6, null, 0.6f, false),
+                        "slowWeightDecrease is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, null, 0.6f, false),
-                        "bigWindow is mandatory"
+                        new ExponentialGoldenCrossStrategyParams(0.3, -0.1, 0.6f, false),
+                        "slowWeightDecrease min value is 0"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, null, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, null, false),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, -0.1f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, -0.1f, false),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, 1.1f, false),
+                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 1.1f, false),
                         "indexCoefficient max value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(3, 6, 0.6f, null),
+                        new ExponentialGoldenCrossStrategyParams(0.6, 0.3, 0.6f, null),
                         "greedy is mandatory"
                 )
         );
@@ -71,7 +71,7 @@ class LinearGoldenCrossStrategyParamsValidationTest {
 
     @ParameterizedTest
     @MethodSource("getData_forValidationFails")
-    void validationFails(LinearGoldenCrossStrategyParams params, String expectedMessage) {
+    void validationFails(ExponentialGoldenCrossStrategyParams params, String expectedMessage) {
         final Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
         AssertUtils.assertViolation(violations, expectedMessage);
