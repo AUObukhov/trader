@@ -96,7 +96,7 @@ public class TrendUtils {
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
      * @param window         count of values, used for calculation of each average, must be positive
-     *                       * @param order          order of calculated averages. Must be positive.
+     * @param order          order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getLinearWeightedMovingAverages(
