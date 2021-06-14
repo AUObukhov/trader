@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.trading.model.StrategyConfig;
@@ -9,6 +10,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.model.SimpleGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -28,7 +30,7 @@ public class TradingStrategyFactory {
     public TradingStrategy createStrategy(final StrategyConfig strategyConfig) {
         switch (strategyConfig.getType()) {
             case CONSERVATIVE:
-                return new ConservativeStrategy(strategyConfig.getMinimumProfit(), tradingProperties);
+                return createConservativeStrategy(strategyConfig);
             case SIMPLE_GOLDEN_CROSS:
                 return createSimpleGoldenCrossStrategy(strategyConfig);
             case LINEAR_GOLDEN_CROSS:
@@ -40,43 +42,39 @@ public class TradingStrategyFactory {
         }
     }
 
-    private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(StrategyConfig strategyConfig) {
-        final Map<String, Object> params = strategyConfig.getParams();
-        final SimpleGoldenCrossStrategyParams strategyParams =
-                mapper.convertValue(params, SimpleGoldenCrossStrategyParams.class);
-        validate(strategyParams);
+    @NotNull
+    private ConservativeStrategy createConservativeStrategy(StrategyConfig strategyConfig) {
+        final TradingStrategyParams strategyParams = getStrategyParams(strategyConfig, TradingStrategyParams.class);
 
-        return new SimpleGoldenCrossStrategy(
-                strategyConfig.getMinimumProfit(),
-                tradingProperties,
-                strategyParams
-        );
+        return new ConservativeStrategy(strategyParams, tradingProperties);
+    }
+
+    private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(StrategyConfig strategyConfig) {
+        final SimpleGoldenCrossStrategyParams strategyParams =
+                getStrategyParams(strategyConfig, SimpleGoldenCrossStrategyParams.class);
+
+        return new SimpleGoldenCrossStrategy(tradingProperties, strategyParams);
     }
 
     private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(StrategyConfig strategyConfig) {
-        final Map<String, Object> params = strategyConfig.getParams();
         final LinearGoldenCrossStrategyParams strategyParams =
-                mapper.convertValue(params, LinearGoldenCrossStrategyParams.class);
-        validate(strategyParams);
+                getStrategyParams(strategyConfig, LinearGoldenCrossStrategyParams.class);
 
-        return new LinearGoldenCrossStrategy(
-                strategyConfig.getMinimumProfit(),
-                tradingProperties,
-                strategyParams
-        );
+        return new LinearGoldenCrossStrategy(tradingProperties, strategyParams);
     }
 
     private ExponentialGoldenCrossStrategy createExponentialGoldenCrossStrategy(StrategyConfig strategyConfig) {
-        final Map<String, Object> params = strategyConfig.getParams();
         final ExponentialGoldenCrossStrategyParams strategyParams =
-                mapper.convertValue(params, ExponentialGoldenCrossStrategyParams.class);
-        validate(strategyParams);
+                getStrategyParams(strategyConfig, ExponentialGoldenCrossStrategyParams.class);
 
-        return new ExponentialGoldenCrossStrategy(
-                strategyConfig.getMinimumProfit(),
-                tradingProperties,
-                strategyParams
-        );
+        return new ExponentialGoldenCrossStrategy(tradingProperties, strategyParams);
+    }
+
+    private <T extends TradingStrategyParams> T getStrategyParams(StrategyConfig strategyConfig, Class<T> type) {
+        final Map<String, Object> params = strategyConfig.getParams();
+        final T strategyParams = mapper.convertValue(params, type);
+        validate(strategyParams);
+        return strategyParams;
     }
 
     private void validate(Object object) {

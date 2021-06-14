@@ -12,6 +12,7 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
@@ -27,31 +28,25 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LinearGoldenCrossStrategy extends AbstractTradingStrategy {
 
-    private final LinearGoldenCrossStrategyParams params;
-
     /**
      * Initializes new instance of {@link LinearGoldenCrossStrategy}
      *
-     * @param minimumProfit     minimum value of profit in percent, which allows to sell papers
      * @param tradingProperties common trading properties
      * @param params            params of strategy
      */
     public LinearGoldenCrossStrategy(
-            final float minimumProfit,
             final TradingProperties tradingProperties,
             final LinearGoldenCrossStrategyParams params
     ) {
-        super(getName(minimumProfit, params), minimumProfit, tradingProperties);
-
-        this.params = params;
+        super(getName(params), params, tradingProperties);
     }
 
-    private static String getName(final float minimumProfit, final LinearGoldenCrossStrategyParams params) {
+    private static String getName(final LinearGoldenCrossStrategyParams params) {
         final String greedyString = BooleanUtils.toString(params.getGreedy(), "Greedy", "Plain");
         return String.format(
                 "%s Linear Golden Cross (%s, %s-%s-%s)",
                 greedyString,
-                minimumProfit,
+                params.getMinimumProfit(),
                 params.getSmallWindow(),
                 params.getBigWindow(),
                 params.getIndexCoefficient()
@@ -68,12 +63,18 @@ public class LinearGoldenCrossStrategy extends AbstractTradingStrategy {
             final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
-            final List<BigDecimal> shortAverages =
-                    TrendUtils.getLinearWeightedMovingAverages(values, params.getSmallWindow());
-            final List<BigDecimal> longAverages =
-                    TrendUtils.getLinearWeightedMovingAverages(values, params.getBigWindow());
+            final LinearGoldenCrossStrategyParams linearGoldenCrossStrategyParams =
+                    (LinearGoldenCrossStrategyParams) params;
+            final List<BigDecimal> shortAverages = TrendUtils.getLinearWeightedMovingAverages(
+                    values,
+                    linearGoldenCrossStrategyParams.getSmallWindow()
+            );
+            final List<BigDecimal> longAverages = TrendUtils.getLinearWeightedMovingAverages(
+                    values,
+                    linearGoldenCrossStrategyParams.getBigWindow()
+            );
 
-            final int index = (int) (params.getIndexCoefficient() * (values.size() - 1));
+            final int index = (int) (linearGoldenCrossStrategyParams.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
             decision = getDecisionByCrossover(data, crossover, strategyCache);
         }
@@ -93,7 +94,8 @@ public class LinearGoldenCrossStrategy extends AbstractTradingStrategy {
                 break;
             case ABOVE:
                 decision = getSellOrWaitDecision(data, strategyCache);
-                if (params.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
+                final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
+                if (goldenCrossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
                     decision = getBuyOrWaitDecision(data, strategyCache);
                 }
                 break;

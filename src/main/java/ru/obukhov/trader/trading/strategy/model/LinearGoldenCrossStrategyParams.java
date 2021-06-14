@@ -32,12 +32,13 @@ public class LinearGoldenCrossStrategyParams extends GoldenCrossStrategyParams {
     private Integer bigWindow;
 
     public LinearGoldenCrossStrategyParams(
-            Float indexCoefficient,
-            Boolean greedy,
-            Integer smallWindow,
-            Integer bigWindow
+            final Float minimumProfit,
+            final Float indexCoefficient,
+            final Boolean greedy,
+            final Integer smallWindow,
+            final Integer bigWindow
     ) {
-        super(indexCoefficient, greedy);
+        super(minimumProfit, indexCoefficient, greedy);
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;

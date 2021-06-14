@@ -11,6 +11,7 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     @Getter
     protected final String name;
-    protected final double minimumProfit;
+    protected final TradingStrategyParams params;
     protected final TradingProperties tradingProperties;
 
     /**
@@ -67,12 +68,12 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         final double profit = getProfit(data);
 
         Decision decision;
-        if (profit < minimumProfit) {
+        if (profit < params.getMinimumProfit()) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug(
                     "Potential profit {} is lower than minimum profit {}. Decision is {}",
                     profit,
-                    minimumProfit,
+                    params.getMinimumProfit(),
                     decision.toPrettyString()
             );
         } else {
@@ -80,7 +81,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
             log.debug(
                     "Potential profit {} is greater than minimum profit {}. Decision is {}",
                     profit,
-                    minimumProfit,
+                    params.getMinimumProfit(),
                     decision.toPrettyString()
             );
         }

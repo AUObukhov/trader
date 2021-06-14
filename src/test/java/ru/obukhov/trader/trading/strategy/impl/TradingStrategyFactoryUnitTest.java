@@ -17,25 +17,43 @@ class TradingStrategyFactoryUnitTest {
 
     private final TradingStrategyFactory factory = new TradingStrategyFactory(null);
 
+    // region ConservativeStrategy strategy creation tests
+
     @Test
     void createStrategy_createsConservativeStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        strategyConfig.setParams(Map.of("minimumProfit", 0.1));
 
         final TradingStrategy strategy = factory.createStrategy(strategyConfig);
 
         Assertions.assertEquals(ConservativeStrategy.class, strategy.getClass());
     }
 
-    // region SimpleGoldenCross strategy creation tests
+    @Test
+    void createStrategy_throwIllegalArgumentException_whenMinimumProfitIsNull() {
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        strategyConfig.setParams(Map.of());
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> factory.createStrategy(strategyConfig),
+                IllegalArgumentException.class,
+                "minimumProfit is mandatory"
+        );
+    }
+
+    // endregion
+
+    // region SimpleGoldenCrossStrategy creation tests
 
     @Test
     void createStrategy_createsSimpleGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
-                "smallWindow", 100,
-                "bigWindow", 200,
+                "minimumProfit", 0.1,
                 "indexCoefficient", 0.5,
-                "greedy", false
+                "greedy", false,
+                "smallWindow", 100,
+                "bigWindow", 200
         ));
 
         TradingStrategy strategy = factory.createStrategy(strategyConfig);
@@ -48,80 +66,102 @@ class TradingStrategyFactoryUnitTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
-                                "smallWindow", 7,
-                                "bigWindow", 6,
                                 "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "smallWindow must lower than bigWindow"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "bigWindow", 6,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "smallWindow is mandatory"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "smallWindow", -1,
-                                "bigWindow", 6,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "smallWindow min value is 1"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "smallWindow", 0,
-                                "bigWindow", 6,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "smallWindow min value is 1"
-                ),
-                Arguments.of(
-                        Map.of(
+                                "greedy", false,
                                 "smallWindow", 3,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
+                                "bigWindow", 6
                         ),
-                        "bigWindow is mandatory"
+                        "minimumProfit is mandatory"
                 ),
+
                 Arguments.of(
                         Map.of(
+                                "minimumProfit", 0.1,
+                                "greedy", false,
                                 "smallWindow", 3,
-                                "bigWindow", 6,
-                                "greedy", false
+                                "bigWindow", 6
                         ),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
                         Map.of(
-                                "smallWindow", 3,
-                                "bigWindow", 6,
+                                "minimumProfit", 0.1,
                                 "indexCoefficient", -0.1f,
-                                "greedy", false
+                                "greedy", false,
+                                "smallWindow", 3,
+                                "bigWindow", 6
                         ),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
                         Map.of(
-                                "smallWindow", 3,
-                                "bigWindow", 6,
+                                "minimumProfit", 0.1,
                                 "indexCoefficient", 1.1f,
-                                "greedy", false
+                                "greedy", false,
+                                "smallWindow", 3,
+                                "bigWindow", 6
                         ),
                         "indexCoefficient max value is 1"
                 ),
+
                 Arguments.of(
                         Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
                                 "smallWindow", 3,
-                                "bigWindow", 6,
-                                "indexCoefficient", 0.6f
+                                "bigWindow", 6
                         ),
                         "greedy is mandatory"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "smallWindow", 7,
+                                "bigWindow", 6
+                        ),
+                        "smallWindow must lower than bigWindow"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "bigWindow", 6
+                        ),
+                        "smallWindow is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "smallWindow", -1,
+                                "bigWindow", 6
+                        ),
+                        "smallWindow min value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "smallWindow", 0,
+                                "bigWindow", 6
+                        ),
+                        "smallWindow min value is 1"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "smallWindow", 3
+                        ),
+                        "bigWindow is mandatory"
                 )
         );
     }
@@ -132,7 +172,7 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -144,7 +184,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenSimpleGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
@@ -153,6 +193,7 @@ class TradingStrategyFactoryUnitTest {
         );
 
         final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("minimumProfit is mandatory"));
         Assertions.assertTrue(message.contains("smallWindow is mandatory"));
         Assertions.assertTrue(message.contains("bigWindow is mandatory"));
         Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
@@ -161,12 +202,13 @@ class TradingStrategyFactoryUnitTest {
 
     // endregion
 
-    // region LinearGoldenCross strategy creation tests
+    // region LinearGoldenCrossStrategy creation tests
 
     @Test
     void createStrategy_createsLinearGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
+                "minimumProfit", 0.1,
                 "smallWindow", 100,
                 "bigWindow", 200,
                 "indexCoefficient", 0.5,
@@ -184,7 +226,7 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -196,7 +238,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsLinearGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
@@ -205,6 +247,7 @@ class TradingStrategyFactoryUnitTest {
         );
 
         final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("minimumProfit is mandatory"));
         Assertions.assertTrue(message.contains("smallWindow is mandatory"));
         Assertions.assertTrue(message.contains("bigWindow is mandatory"));
         Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
@@ -213,12 +256,13 @@ class TradingStrategyFactoryUnitTest {
 
     // endregion
 
-    // region ExponentialGoldenCross strategy creation tests
+    // region ExponentialGoldenCrossStrategy creation tests
 
     @Test
     void createStrategy_createsExponentialGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
+                "minimumProfit", 0.1,
                 "fastWeightDecrease", 0.6,
                 "slowWeightDecrease", 0.3,
                 "indexCoefficient", 0.5,
@@ -235,80 +279,102 @@ class TradingStrategyFactoryUnitTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
-                                "fastWeightDecrease", 0.3,
-                                "slowWeightDecrease", 0.6,
                                 "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "slowWeightDecrease must lower than fastWeightDecrease"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "slowWeightDecrease", 0.3,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "fastWeightDecrease is mandatory"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "fastWeightDecrease", 1.1,
-                                "slowWeightDecrease", 0.3,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "fastWeightDecrease max value is 1"
-                ),
-                Arguments.of(
-                        Map.of(
+                                "greedy", false,
                                 "fastWeightDecrease", 0.6,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
+                                "slowWeightDecrease", 0.3
                         ),
-                        "slowWeightDecrease is mandatory"
+                        "minimumProfit is mandatory"
                 ),
+
                 Arguments.of(
                         Map.of(
+                                "minimumProfit", 0.1,
+                                "greedy", false,
                                 "fastWeightDecrease", 0.6,
-                                "slowWeightDecrease", -0.1,
-                                "indexCoefficient", 0.6f,
-                                "greedy", false
-                        ),
-                        "slowWeightDecrease min value is 0"
-                ),
-                Arguments.of(
-                        Map.of(
-                                "fastWeightDecrease", 0.6,
-                                "slowWeightDecrease", 0.3,
-                                "greedy", false
+                                "slowWeightDecrease", 0.3
                         ),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
                         Map.of(
-                                "fastWeightDecrease", 0.6,
-                                "slowWeightDecrease", 0.3,
+                                "minimumProfit", 0.1,
                                 "indexCoefficient", -0.1f,
-                                "greedy", false
+                                "greedy", false,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3
                         ),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
                         Map.of(
-                                "fastWeightDecrease", 0.6,
-                                "slowWeightDecrease", 0.3,
+                                "minimumProfit", 0.1,
                                 "indexCoefficient", 1.1f,
-                                "greedy", false
+                                "greedy", false,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3
                         ),
                         "indexCoefficient max value is 1"
                 ),
+
                 Arguments.of(
                         Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
                                 "fastWeightDecrease", 0.6,
-                                "slowWeightDecrease", 0.3,
-                                "indexCoefficient", 0.6f
+                                "slowWeightDecrease", 0.3
                         ),
                         "greedy is mandatory"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "slowWeightDecrease", 0.3
+                        ),
+                        "fastWeightDecrease is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "fastWeightDecrease", 1.1,
+                                "slowWeightDecrease", 0.3
+                        ),
+                        "fastWeightDecrease max value is 1"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "fastWeightDecrease", 0.3,
+                                "slowWeightDecrease", 0.6
+                        ),
+                        "slowWeightDecrease must lower than fastWeightDecrease"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "fastWeightDecrease", 0.6
+                        ),
+                        "slowWeightDecrease is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "indexCoefficient", 0.6f,
+                                "greedy", false,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", -0.1
+                        ),
+                        "slowWeightDecrease min value is 0"
                 )
         );
     }
@@ -319,7 +385,7 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -331,7 +397,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
@@ -340,6 +406,7 @@ class TradingStrategyFactoryUnitTest {
         );
 
         final String message = exception.getMessage();
+        Assertions.assertTrue(message.contains("minimumProfit is mandatory"));
         Assertions.assertTrue(message.contains("fastWeightDecrease is mandatory"));
         Assertions.assertTrue(message.contains("slowWeightDecrease is mandatory"));
         Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));

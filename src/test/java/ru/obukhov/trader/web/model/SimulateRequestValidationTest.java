@@ -129,15 +129,6 @@ class SimulateRequestValidationTest {
         AssertUtils.assertViolation(violations, "type in StrategyConfig is mandatory");
     }
 
-    @Test
-    void validationFails_whenMinimumProfitIsBelowZero() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.getStrategiesConfigs().get(0).setMinimumProfit(-0.1f);
-
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "должно быть не меньше 0");
-    }
-
     // endregion
 
     private SimulateRequest createValidSimulationRequest() throws ParseException {
@@ -151,7 +142,7 @@ class SimulateRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, 0.1f);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
         request.setStrategiesConfigs(List.of(strategyConfig));
 
         return request;

@@ -8,8 +8,8 @@ trading:
 
 strategy-config:
   type: "simpleGoldenCross"
-  minimumProfit: 0.1
   params:
+    minimumProfit: 0.1
     smallWindow: 50
     bigWindow: 200
     indexCoefficient: 0.5

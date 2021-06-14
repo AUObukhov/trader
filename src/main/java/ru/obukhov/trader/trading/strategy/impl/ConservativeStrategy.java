@@ -7,6 +7,7 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 
 /**
  * Strategy which decides to buy paper always when possible and never to sell
@@ -14,12 +15,12 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final float minimumProfit, final TradingProperties tradingProperties) {
-        super(getName(minimumProfit), minimumProfit, tradingProperties);
+    public ConservativeStrategy(final TradingStrategyParams params, final TradingProperties tradingProperties) {
+        super(getName(params), params, tradingProperties);
     }
 
-    private static String getName(final float minimumProfit) {
-        return String.format("Conservative (%s)", minimumProfit);
+    private static String getName(final TradingStrategyParams params) {
+        return String.format("Conservative (%s)", params.getMinimumProfit());
     }
 
     @Override

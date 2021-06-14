@@ -16,6 +16,7 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
@@ -47,13 +48,14 @@ class AbstractTradingStrategyUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetBuyOrWaitDecision")
     void getBuyOrWaitDecision(
-            double balance,
-            double currentPrice,
-            int lotSize,
-            DecisionAction expectedAction,
-            @Nullable Integer expectedLots
+            final double balance,
+            final double currentPrice,
+            final int lotSize,
+            final DecisionAction expectedAction,
+            final @Nullable Integer expectedLots
     ) {
-        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
         final DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -70,7 +72,8 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void getSellOrWaitDecision_returnsWait_whenPositionIsNull() {
-        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
         final DecisionData decisionData = new DecisionData();
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -93,13 +96,14 @@ class AbstractTradingStrategyUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSellOrWaitDecision")
     void getSellOrWaitDecision(
-            double averagePositionPrice,
-            int positionLotsCount,
-            double currentPrice,
-            DecisionAction expectedAction,
-            @Nullable Integer expectedLots
+            final double averagePositionPrice,
+            final int positionLotsCount,
+            final double currentPrice,
+            final DecisionAction expectedAction,
+            final @Nullable Integer expectedLots
     ) {
-        final AbstractTradingStrategy strategy = new TestStrategy(0.1f, TRADING_PROPERTIES);
+        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
         final DecisionData data =
                 TestDataHelper.createDecisionData(averagePositionPrice, positionLotsCount, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
@@ -150,12 +154,8 @@ class AbstractTradingStrategyUnitTest {
 
     private static class TestStrategy extends AbstractTradingStrategy {
 
-        public TestStrategy(final float minimumProfit, final TradingProperties tradingProperties) {
-            super(StringUtils.EMPTY, minimumProfit, tradingProperties);
-        }
-
-        public TestStrategy(final String name, final float minimumProfit, final TradingProperties tradingProperties) {
-            super(name, minimumProfit, tradingProperties);
+        public TestStrategy(final TradingStrategyParams params, final TradingProperties tradingProperties) {
+            super(StringUtils.EMPTY, params, tradingProperties);
         }
 
         @Override

@@ -13,14 +13,13 @@ import javax.validation.Validator;
 import java.util.Set;
 import java.util.stream.Stream;
 
-class LinearGoldenCrossStrategyParamsValidationTest {
+class GoldenCrossStrategyParamsValidationTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final LinearGoldenCrossStrategyParams params =
-                new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6);
+        final TestParams params = new TestParams(0.1f, 0.6f, false);
 
         final Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
@@ -31,61 +30,49 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(null, 0.6f, false, 3, 6),
+                        new TestParams(null, 0.6f, false),
                         "minimumProfit is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(-0.1f, 0.6f, false, 3, 6),
+                        new TestParams(-0.1f, 0.6f, false),
                         "minimumProfit min value is 0"
                 ),
 
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, null, false, 3, 6),
+                        new TestParams(0.1f, null, false),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, -0.1f, false, 3, 6),
+                        new TestParams(0.1f, -0.1f, false),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 1.1f, false, 3, 6),
+                        new TestParams(0.1f, 1.1f, false),
                         "indexCoefficient max value is 1"
                 ),
 
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, null, 3, 6),
+                        new TestParams(0.3f, 0.6f, null),
                         "greedy is mandatory"
-                ),
-
-                Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 7, 6),
-                        "smallWindow must lower than bigWindow"
-                ),
-                Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, null, 6),
-                        "smallWindow is mandatory"
-                ),
-                Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, -1, 6),
-                        "smallWindow min value is 1"
-                ),
-                Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 0, 6),
-                        "smallWindow min value is 1"
-                ),
-                Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, null),
-                        "bigWindow is mandatory"
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forValidationFails")
-    void validationFails(final LinearGoldenCrossStrategyParams params, final String expectedMessage) {
+    void validationFails(TestParams params, String expectedMessage) {
         final Set<ConstraintViolation<Object>> violations = validator.validate(params);
 
         AssertUtils.assertViolation(violations, expectedMessage);
     }
 
+    private static final class TestParams extends GoldenCrossStrategyParams {
+        public TestParams(
+                final Float minimumProfit,
+                final Float indexCoefficient,
+                final Boolean greedy
+        ) {
+            super(minimumProfit, indexCoefficient, greedy);
+        }
+    }
 }

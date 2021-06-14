@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.strategy.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,8 +11,7 @@ import javax.validation.constraints.NotNull;
 @Valid
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public abstract class GoldenCrossStrategyParams {
+public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
 
     /**
      * relation of index of expected moving averages crossover to prices count. Must be in range [0..1]
@@ -29,5 +27,12 @@ public abstract class GoldenCrossStrategyParams {
      */
     @NotNull(message = "greedy is mandatory")
     private Boolean greedy;
+
+    protected GoldenCrossStrategyParams(final Float minimumProfit, final Float indexCoefficient, final Boolean greedy) {
+        super(minimumProfit);
+
+        this.indexCoefficient = indexCoefficient;
+        this.greedy = greedy;
+    }
 
 }

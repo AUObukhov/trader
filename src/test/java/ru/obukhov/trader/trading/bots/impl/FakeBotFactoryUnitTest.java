@@ -13,6 +13,7 @@ import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 
 @ExtendWith(MockitoExtension.class)
 class FakeBotFactoryUnitTest {
@@ -29,7 +30,8 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_createsFakeBot() {
-        final TradingStrategy strategy = new ConservativeStrategy(0.1f, tradingProperties);
+        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
+        final TradingStrategy strategy = new ConservativeStrategy(params, tradingProperties);
 
         final Bot bot = factory.createBot(strategy);
 
