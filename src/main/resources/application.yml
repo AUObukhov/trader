@@ -8,6 +8,7 @@ trading:
 
 strategy-config:
   type: "simpleGoldenCross"
+  candleResolution: 1min
   params:
     minimumProfit: 0.1
     order: 1

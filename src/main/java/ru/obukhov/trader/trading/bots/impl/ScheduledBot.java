@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.TradingProperties;
@@ -11,34 +10,36 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
-@Component
 public class ScheduledBot extends AbstractBot {
 
     private final BotConfig botConfig;
     private final TradingProperties tradingProperties;
 
     public ScheduledBot(
-            final TradingStrategy strategy,
             final MarketService marketService,
             final OperationsService operationsService,
             final OrdersService ordersService,
             final PortfolioService portfolioService,
+            final TradingStrategy strategy,
+            final CandleResolution candleResolution,
             final BotConfig botConfig,
             final TradingProperties tradingProperties
     ) {
         super(
-                strategy,
                 marketService,
                 operationsService,
                 ordersService,
                 portfolioService,
-                strategy.initCache()
+                strategy,
+                strategy.initCache(),
+                candleResolution
         );
 
         this.botConfig = botConfig;

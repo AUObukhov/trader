@@ -30,7 +30,12 @@ import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
 import ru.obukhov.trader.web.model.pojo.SimulationResult;
-import ru.tinkoff.invest.openapi.model.rest.*;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.Currency;
+import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.tinkoff.invest.openapi.model.rest.Operation;
+import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -45,7 +50,7 @@ class SimulatorImplUnitTest {
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
     private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG =
-            new StrategyConfig(StrategyType.CONSERVATIVE);
+            new StrategyConfig(StrategyType.CONSERVATIVE, CandleResolution._1MIN);
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
             new TradingStrategyParams(0.1f),
             null
@@ -158,7 +163,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -219,7 +225,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -313,7 +320,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -395,7 +403,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -476,7 +485,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -558,7 +568,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -639,7 +650,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -697,7 +709,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -756,7 +769,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -816,7 +830,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 
@@ -878,7 +893,8 @@ class SimulatorImplUnitTest {
         final FakeBot fakeBot = createFakeBotMock(botName);
         final String mockedExceptionMessage = "mocked exception";
         Mockito.when(fakeBot.getFakeTinkoffService()).thenThrow(new IllegalArgumentException(mockedExceptionMessage));
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -925,7 +941,8 @@ class SimulatorImplUnitTest {
         final String botName = "botName";
 
         final FakeBot fakeBot = createFakeBotMock(botName);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
 

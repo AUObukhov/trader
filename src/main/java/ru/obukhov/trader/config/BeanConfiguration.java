@@ -17,9 +17,9 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.trading.bots.impl.ScheduledBot;
 import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.invest.openapi.OpenApi;
 
 /**
@@ -72,11 +72,26 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TradingStrategy tradingStrategy(
+    public ScheduledBot scheduledBot(
+            final MarketService marketService,
+            final OperationsService operationsService,
+            final OrdersService ordersService,
+            final PortfolioService portfolioService,
+            final BotConfig botConfig,
+            final TradingProperties tradingProperties,
             final TradingStrategyFactory strategyFactory,
             final StrategyConfig strategyConfig
     ) {
-        return strategyFactory.createStrategy(strategyConfig);
-    }
+        return new ScheduledBot(
+                marketService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                strategyFactory.createStrategy(strategyConfig),
+                strategyConfig.getCandleResolution(),
+                botConfig,
+                tradingProperties
+        );
 
+    }
 }

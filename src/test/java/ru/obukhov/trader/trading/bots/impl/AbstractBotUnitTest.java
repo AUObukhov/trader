@@ -221,7 +221,15 @@ class AbstractBotUnitTest {
                 OrdersService ordersService,
                 PortfolioService portfolioService
         ) {
-            super(strategy, marketService, operationsService, ordersService, portfolioService, null);
+            super(
+                    marketService,
+                    operationsService,
+                    ordersService,
+                    portfolioService,
+                    strategy,
+                    null,
+                    CandleResolution._1MIN
+            );
         }
     }
 

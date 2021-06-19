@@ -30,14 +30,15 @@ import java.util.List;
 public abstract class AbstractBot implements Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
-    private static final CandleResolution CANDLE_RESOLUTION = CandleResolution._1MIN;
 
-    protected final TradingStrategy strategy;
     protected final MarketService marketService;
     protected final OperationsService operationsService;
     protected final OrdersService ordersService;
     protected final PortfolioService portfolioService;
+
+    protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
+    protected final CandleResolution candleResolution;
 
     @Override
     @NotNull
@@ -47,7 +48,7 @@ public abstract class AbstractBot implements Bot {
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
             final List<Candle> currentCandles =
-                    marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, CANDLE_RESOLUTION);
+                    marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, candleResolution);
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {

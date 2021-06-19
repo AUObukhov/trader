@@ -1,8 +1,8 @@
 package ru.obukhov.trader.trading.bots.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -33,7 +33,6 @@ import ru.tinkoff.invest.openapi.model.rest.Order;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -61,8 +60,21 @@ class ScheduledBotUnitTest {
     @Mock
     private TradingProperties tradingProperties;
 
-    @InjectMocks
     private ScheduledBot bot;
+
+    @BeforeEach
+    void setUp() {
+        bot = new ScheduledBot(
+                marketService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                strategy,
+                CandleResolution._1MIN,
+                botConfig,
+                tradingProperties
+        );
+    }
 
     @Test
     @SuppressWarnings("unused")
@@ -518,25 +530,6 @@ class ScheduledBotUnitTest {
 
         final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
-    }
-
-    private MarketInstrument prepareEmptyMockedData(final String ticker) {
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(Collections.emptyList());
-
-        MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
-
-        Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
-                .thenReturn(BigDecimal.ZERO);
-
-        Mockito.when(portfolioService.getPosition(ticker))
-                .thenReturn(TestDataHelper.createPortfolioPosition(ticker, 0));
-
-        mockCandles(ticker, Collections.emptyList());
-
-        Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
-                .thenReturn(Collections.emptyList());
-
-        return instrument;
     }
 
     private void mockCandles(final String ticker, List<Candle> candles) {

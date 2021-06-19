@@ -9,6 +9,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -21,7 +22,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsConservativeStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of("minimumProfit", 0.1));
 
         final TradingStrategy strategy = factory.createStrategy(strategyConfig);
@@ -31,7 +32,7 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
+        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of());
 
         AssertUtils.assertThrowsWithMessage(
@@ -47,7 +48,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsSimpleGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
@@ -216,7 +218,8 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -228,7 +231,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenSimpleGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
@@ -250,7 +254,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsLinearGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
@@ -271,7 +276,8 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -283,7 +289,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsLinearGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(
@@ -306,7 +313,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsExponentialGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
@@ -475,7 +483,8 @@ class TradingStrategyFactoryUnitTest {
             Map<String, Object> params,
             String expectedMessage
     ) {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(params);
 
         AssertUtils.assertThrowsWithMessage(
@@ -487,7 +496,8 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
+        final StrategyConfig strategyConfig =
+                new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS, CandleResolution._1MIN);
         strategyConfig.setParams(Map.of());
 
         final IllegalArgumentException exception = Assertions.assertThrows(

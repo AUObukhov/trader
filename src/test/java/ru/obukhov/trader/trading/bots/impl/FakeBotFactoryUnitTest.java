@@ -14,6 +14,7 @@ import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 @ExtendWith(MockitoExtension.class)
 class FakeBotFactoryUnitTest {
@@ -33,7 +34,7 @@ class FakeBotFactoryUnitTest {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
         final TradingStrategy strategy = new ConservativeStrategy(params, tradingProperties);
 
-        final Bot bot = factory.createBot(strategy);
+        final Bot bot = factory.createBot(strategy, CandleResolution._1MIN);
 
         Assertions.assertTrue(bot instanceof FakeBot);
     }

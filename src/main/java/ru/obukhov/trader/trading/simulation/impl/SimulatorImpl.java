@@ -126,7 +126,7 @@ public class SimulatorImpl implements Simulator {
 
     private FakeBot createFakeBot(final StrategyConfig strategyConfig) {
         final TradingStrategy strategy = strategyFactory.createStrategy(strategyConfig);
-        return (FakeBot) fakeBotFactory.createBot(strategy);
+        return (FakeBot) fakeBotFactory.createBot(strategy, strategyConfig.getCandleResolution());
     }
 
     private CompletableFuture<SimulationResult> startSimulation(
