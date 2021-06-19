@@ -39,6 +39,48 @@ public class TrendUtils {
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
      * @param window         count of values, used for calculation of each average, must be positive
+     * @param order          order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
+    public static <T> List<BigDecimal> getSimpleMovingAverages(
+            final List<T> elements,
+            final Function<T, BigDecimal> valueExtractor,
+            final int window,
+            final int order
+    ) {
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getSimpleMovingAverages(values, window, order);
+    }
+
+    /**
+     * Calculates simple moving averages of given {@code values}
+     *
+     * @param values values, for which averages are calculated for
+     * @param window count of values, used for calculation of each average, must be positive
+     * @param order  order of calculated averages. Must be positive.
+     * @return list of calculated averages
+     */
+    public static List<BigDecimal> getSimpleMovingAverages(
+            final List<BigDecimal> values,
+            final int window,
+            final int order
+    ) {
+        Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
+
+        List<BigDecimal> averages = new ArrayList<>(values);
+        for (int i = 0; i < order; i++) {
+            averages = getSimpleMovingAverages(averages, window);
+        }
+
+        return averages;
+    }
+
+    /**
+     * Calculates simple moving averages of given {@code elements}
+     *
+     * @param elements       elements containing values, for which averages are calculated for
+     * @param valueExtractor function to get value from current element
+     * @param window         count of values, used for calculation of each average, must be positive
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getSimpleMovingAverages(
