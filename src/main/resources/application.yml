@@ -6,6 +6,11 @@ trading:
   consecutive-empty-days-limit: 7
   start-date: 2000-01-01T00:00:00+03:00
 
+bot:
+  enabled: false
+  delay: 60000
+  tickers: SBER
+
 strategy-config:
   type: "simpleGoldenCross"
   candleResolution: 1min
@@ -57,11 +62,6 @@ query.throttle:
   retry-interval: 5000
   attempts-count: 30
   default-limit: 120
-
-bot:
-  enabled: false
-  delay: 60000
-  tickers: SBER
 
 spring.cache:
   cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
