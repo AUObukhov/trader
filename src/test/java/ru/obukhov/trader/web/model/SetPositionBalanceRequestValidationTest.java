@@ -1,19 +1,12 @@
 package ru.obukhov.trader.web.model;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.web.model.exchange.SetPositionBalanceRequest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.math.BigDecimal;
-import java.util.Set;
 
 class SetPositionBalanceRequestValidationTest {
-
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
@@ -21,8 +14,7 @@ class SetPositionBalanceRequestValidationTest {
         request.setTicker("ticker");
         request.setBalance(BigDecimal.TEN);
 
-        final Set<ConstraintViolation<SetPositionBalanceRequest>> violations = validator.validate(request);
-        Assertions.assertTrue(violations.isEmpty());
+        AssertUtils.assertNoViolations(request);
     }
 
     @Test
@@ -31,8 +23,7 @@ class SetPositionBalanceRequestValidationTest {
         request.setTicker(null);
         request.setBalance(BigDecimal.TEN);
 
-        final Set<ConstraintViolation<SetPositionBalanceRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "ticker is mandatory");
     }
 
     @Test
@@ -41,8 +32,7 @@ class SetPositionBalanceRequestValidationTest {
         request.setTicker(null);
         request.setBalance(BigDecimal.TEN);
 
-        final Set<ConstraintViolation<SetPositionBalanceRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "ticker is mandatory");
     }
 
     @Test
@@ -51,8 +41,7 @@ class SetPositionBalanceRequestValidationTest {
         request.setTicker("ticker");
         request.setBalance(null);
 
-        final Set<ConstraintViolation<SetPositionBalanceRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "balance is mandatory");
+        AssertUtils.assertViolation(request, "balance is mandatory");
     }
 
 }

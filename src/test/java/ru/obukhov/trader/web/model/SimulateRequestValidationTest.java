@@ -1,7 +1,6 @@
 package ru.obukhov.trader.web.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -9,26 +8,19 @@ import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 class SimulateRequestValidationTest {
-
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void validationSucceeds_whenEverythingIsValid() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        Assertions.assertTrue(violations.isEmpty());
+        AssertUtils.assertNoViolations(request);
     }
 
     // region ticker validations tests
@@ -38,8 +30,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setTicker(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "ticker is mandatory");
     }
 
     @Test
@@ -47,8 +38,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setTicker(StringUtils.EMPTY);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "ticker is mandatory");
     }
 
     @Test
@@ -56,8 +46,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setTicker("     ");
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "ticker is mandatory");
     }
 
     // endregion
@@ -67,8 +56,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setInitialBalance(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "initial balance is mandatory");
+        AssertUtils.assertViolation(request, "initial balance is mandatory");
     }
 
     @Test
@@ -76,9 +64,10 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setBalanceIncrement(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations,
-                "balanceIncrement and balanceIncrementCron must be both null or not null");
+        AssertUtils.assertViolation(
+                request,
+                "balanceIncrement and balanceIncrementCron must be both null or not null"
+        );
     }
 
     @Test
@@ -86,9 +75,10 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setBalanceIncrementCron(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations,
-                "balanceIncrement and balanceIncrementCron must be both null or not null");
+        AssertUtils.assertViolation(
+                request,
+                "balanceIncrement and balanceIncrementCron must be both null or not null"
+        );
     }
 
     @Test
@@ -96,8 +86,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setFrom(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "from is mandatory");
+        AssertUtils.assertViolation(request, "from is mandatory");
     }
 
     // region strategiesConfigs validation tests
@@ -107,8 +96,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setStrategiesConfigs(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "strategiesConfigs is mandatory");
+        AssertUtils.assertViolation(request, "strategiesConfigs is mandatory");
     }
 
     @Test
@@ -116,8 +104,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.setStrategiesConfigs(Collections.emptyList());
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "strategiesConfigs is mandatory");
+        AssertUtils.assertViolation(request, "strategiesConfigs is mandatory");
     }
 
     @Test
@@ -125,8 +112,7 @@ class SimulateRequestValidationTest {
         final SimulateRequest request = createValidSimulationRequest();
         request.getStrategiesConfigs().get(0).setType(null);
 
-        final Set<ConstraintViolation<SimulateRequest>> violations = validator.validate(request);
-        AssertUtils.assertViolation(violations, "type in StrategyConfig is mandatory");
+        AssertUtils.assertViolation(request, "type in StrategyConfig is mandatory");
     }
 
     // endregion

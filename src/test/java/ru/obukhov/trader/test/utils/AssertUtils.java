@@ -30,6 +30,8 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -47,6 +49,10 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
+
+    // region assertEquals
+
+    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     // region assertEquals
 
@@ -347,7 +353,15 @@ public class AssertUtils {
 
     // region validation assertions
 
-    public static <T> void assertViolation(final Set<ConstraintViolation<T>> violations, final String expectedMessage) {
+    public static <T> void assertNoViolations(T object) {
+        Set<ConstraintViolation<Object>> violations = VALIDATOR.validate(object);
+
+        Assertions.assertTrue(violations.isEmpty());
+    }
+
+    public static <T> void assertViolation(T object, final String expectedMessage) {
+        Set<ConstraintViolation<Object>> violations = VALIDATOR.validate(object);
+
         Assertions.assertEquals(1, violations.size(), "expected single violation");
         Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
     }

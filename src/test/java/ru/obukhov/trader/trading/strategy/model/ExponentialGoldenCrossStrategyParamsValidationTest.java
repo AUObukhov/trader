@@ -1,30 +1,21 @@
 package ru.obukhov.trader.trading.strategy.model;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import java.util.Set;
 import java.util.stream.Stream;
 
 class ExponentialGoldenCrossStrategyParamsValidationTest {
-
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final ExponentialGoldenCrossStrategyParams params =
                 new ExponentialGoldenCrossStrategyParams(0.1f, 0.6f, false, 0.6, 0.3);
 
-        final Set<ConstraintViolation<Object>> violations = validator.validate(params);
-
-        Assertions.assertTrue(violations.isEmpty());
+        AssertUtils.assertNoViolations(params);
     }
 
     @SuppressWarnings("unused")
@@ -84,9 +75,7 @@ class ExponentialGoldenCrossStrategyParamsValidationTest {
     @ParameterizedTest
     @MethodSource("getData_forValidationFails")
     void validationFails(final ExponentialGoldenCrossStrategyParams params, final String expectedMessage) {
-        final Set<ConstraintViolation<Object>> violations = validator.validate(params);
-
-        AssertUtils.assertViolation(violations, expectedMessage);
+        AssertUtils.assertViolation(params, expectedMessage);
     }
 
 }
