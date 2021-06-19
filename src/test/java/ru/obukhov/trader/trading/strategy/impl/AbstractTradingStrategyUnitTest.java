@@ -159,7 +159,7 @@ class AbstractTradingStrategyUnitTest {
         }
 
         @Override
-        public Decision decide(final DecisionData data, final StrategyCache strategyCache) {
+        public Decision decide(@NotNull final DecisionData data, @NotNull final StrategyCache strategyCache) {
             throw new NotImplementedException();
         }
 

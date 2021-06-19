@@ -8,7 +8,12 @@ public interface TradingStrategy {
 
     String getName();
 
-    Decision decide(final DecisionData data, final StrategyCache strategyCache);
+    /**
+     * @param data          data about current market and portfolio situation
+     * @param strategyCache data, calculated on previous calls of the method. Can be updated by the method.
+     * @return decision about current action
+     */
+    Decision decide(@NotNull final DecisionData data, @NotNull final StrategyCache strategyCache);
 
     @NotNull
     StrategyCache initCache();
