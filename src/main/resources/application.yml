@@ -12,9 +12,9 @@ scheduled-bot:
   tickers: SBER
 
 strategy-config:
-  type: "simpleGoldenCross"
   candleResolution: 1min
-  params:
+  strategy-type: "simpleGoldenCross"
+  strategy-params:
     minimumProfit: 0.1
     order: 1
     smallWindow: 50

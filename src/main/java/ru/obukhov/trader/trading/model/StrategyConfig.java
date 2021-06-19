@@ -13,17 +13,17 @@ import java.util.Map;
 @ConfigurationProperties("strategy-config")
 public class StrategyConfig {
 
-    @NotNull(message = "type in StrategyConfig is mandatory")
-    private StrategyType type;
-
     @NotNull(message = "candleResolution in StrategyConfig is mandatory")
     private CandleResolution candleResolution;
 
-    private Map<String, Object> params;
+    @NotNull(message = "strategyType in StrategyConfig is mandatory")
+    private StrategyType strategyType;
 
-    public StrategyConfig(final StrategyType strategyType, CandleResolution candleResolution) {
-        this.type = strategyType;
+    private Map<String, Object> strategyParams;
+
+    public StrategyConfig(final CandleResolution candleResolution, final StrategyType strategyType) {
         this.candleResolution = candleResolution;
+        this.strategyType = strategyType;
     }
 
 }

@@ -28,7 +28,7 @@ public class TradingStrategyFactory {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     public TradingStrategy createStrategy(final StrategyConfig strategyConfig) {
-        switch (strategyConfig.getType()) {
+        switch (strategyConfig.getStrategyType()) {
             case CONSERVATIVE:
                 return createConservativeStrategy(strategyConfig);
             case SIMPLE_GOLDEN_CROSS:
@@ -38,7 +38,7 @@ public class TradingStrategyFactory {
             case EXPONENTIAL_GOLDEN_CROSS:
                 return createExponentialGoldenCrossStrategy(strategyConfig);
             default:
-                throw new IllegalArgumentException("Unknown strategy type " + strategyConfig.getType());
+                throw new IllegalArgumentException("Unknown strategy type " + strategyConfig.getStrategyType());
         }
     }
 
@@ -71,7 +71,7 @@ public class TradingStrategyFactory {
     }
 
     private <T extends TradingStrategyParams> T getStrategyParams(StrategyConfig strategyConfig, Class<T> type) {
-        final Map<String, Object> params = strategyConfig.getParams();
+        final Map<String, Object> params = strategyConfig.getStrategyParams();
         final T strategyParams = mapper.convertValue(params, type);
         validate(strategyParams);
         return strategyParams;

@@ -50,7 +50,7 @@ class SimulatorImplUnitTest {
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
     private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG =
-            new StrategyConfig(StrategyType.CONSERVATIVE, CandleResolution._1MIN);
+            new StrategyConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
             new TradingStrategyParams(0.1f),
             null

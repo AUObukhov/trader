@@ -111,9 +111,9 @@ class SimulateRequestValidationTest {
     @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.getStrategiesConfigs().get(0).setType(null);
+        request.getStrategiesConfigs().get(0).setStrategyType(null);
 
-        AssertUtils.assertViolation(request, "type in StrategyConfig is mandatory");
+        AssertUtils.assertViolation(request, "strategyType in StrategyConfig is mandatory");
     }
 
     // endregion
@@ -129,7 +129,7 @@ class SimulateRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE, CandleResolution._1MIN);
+        final StrategyConfig strategyConfig = new StrategyConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
         request.setStrategiesConfigs(List.of(strategyConfig));
 
         return request;
