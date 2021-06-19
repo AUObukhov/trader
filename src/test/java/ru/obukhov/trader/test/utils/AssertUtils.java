@@ -344,7 +344,10 @@ public class AssertUtils {
         final Matcher matcher = pattern.matcher(throwable.getMessage());
 
         if (!matcher.matches()) {
-            final String message = String.format("pattern:\n%s\nactual:\n%s", expectedMessagePattern, throwable.getMessage());
+            final String message = "pattern:" + System.lineSeparator()
+                    + expectedMessagePattern + System.lineSeparator()
+                    + "actual:" + System.lineSeparator()
+                    + throwable.getMessage();
             Assertions.fail(message);
         }
     }
