@@ -48,6 +48,8 @@ public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
 
+    // region assertEquals
+
     public static void assertEquals(final double expected, final double actual) {
         Assertions.assertEquals(expected, actual, NumberUtils.DOUBLE_ZERO);
     }
@@ -120,10 +122,14 @@ public class AssertUtils {
         }
     }
 
+    // endregion
+
     public static void assertRangeInclusive(final long expectedMin, final long expectedMax, final long actual) {
         Assertions.assertTrue(actual >= expectedMin);
         Assertions.assertTrue(actual <= expectedMax);
     }
+
+    // region list assertions
 
     public static void assertListsAreEqual(final List<?> expected, final List<?> actual) {
         assertListSize(expected, actual);
@@ -157,6 +163,8 @@ public class AssertUtils {
             Assertions.fail(message);
         }
     }
+
+    // endregion
 
     // region apache poi assertions
 
@@ -309,10 +317,7 @@ public class AssertUtils {
         Assertions.assertEquals(message, errors.get(0).getDefaultMessage());
     }
 
-    public static <T> void assertViolation(final Set<ConstraintViolation<T>> violations, final String expectedMessage) {
-        Assertions.assertEquals(1, violations.size(), "expected single violation");
-        Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
-    }
+    // region exceptions assertions
 
     public static <T extends Throwable> void assertThrowsWithMessage(
             final Executable executable,
@@ -337,5 +342,16 @@ public class AssertUtils {
             Assertions.fail(message);
         }
     }
+
+    // endregion
+
+    // region validation assertions
+
+    public static <T> void assertViolation(final Set<ConstraintViolation<T>> violations, final String expectedMessage) {
+        Assertions.assertEquals(1, violations.size(), "expected single violation");
+        Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
+    }
+
+    // endregion
 
 }
