@@ -33,12 +33,13 @@ public class LinearGoldenCrossStrategyParams extends GoldenCrossStrategyParams {
 
     public LinearGoldenCrossStrategyParams(
             final Float minimumProfit,
+            final Integer order,
             final Float indexCoefficient,
             final Boolean greedy,
             final Integer smallWindow,
             final Integer bigWindow
     ) {
-        super(minimumProfit, indexCoefficient, greedy);
+        super(minimumProfit, order, indexCoefficient, greedy);
 
         this.smallWindow = smallWindow;
         this.bigWindow = bigWindow;

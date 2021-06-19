@@ -14,6 +14,7 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final LinearGoldenCrossStrategyParams params = new LinearGoldenCrossStrategyParams(
                 0.1f,
+                1,
                 0.6f,
                 false,
                 3,
@@ -27,50 +28,63 @@ class LinearGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(null, 0.6f, false, 3, 6),
+                        new LinearGoldenCrossStrategyParams(null, 1, 0.6f, false, 3, 6),
                         "minimumProfit is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(-0.1f, 0.6f, false, 3, 6),
+                        new LinearGoldenCrossStrategyParams(-0.1f, 1, 0.6f, false, 3, 6),
                         "minimumProfit min value is 0"
                 ),
 
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, null, false, 3, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, null, 0.6f, false, 3, 6),
+                        "order is mandatory"
+                ),
+                Arguments.of(
+                        new LinearGoldenCrossStrategyParams(0.1f, -1, 0.6f, false, 3, 6),
+                        "order min value is 1"
+                ),
+                Arguments.of(
+                        new LinearGoldenCrossStrategyParams(0.1f, 0, 0.6f, false, 3, 6),
+                        "order min value is 1"
+                ),
+
+                Arguments.of(
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, null, false, 3, 6),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, -0.1f, false, 3, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, -0.1f, false, 3, 6),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 1.1f, false, 3, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 1.1f, false, 3, 6),
                         "indexCoefficient max value is 1"
                 ),
 
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, null, 3, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, null, 3, 6),
                         "greedy is mandatory"
                 ),
 
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 7, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 7, 6),
                         "smallWindow must lower than bigWindow"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, null, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, null, 6),
                         "smallWindow is mandatory"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, -1, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, -1, 6),
                         "smallWindow min value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 0, 6),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 0, 6),
                         "smallWindow min value is 1"
                 ),
                 Arguments.of(
-                        new LinearGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, null),
+                        new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, null),
                         "bigWindow is mandatory"
                 )
         );

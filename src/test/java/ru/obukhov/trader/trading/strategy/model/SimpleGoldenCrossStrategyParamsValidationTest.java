@@ -14,6 +14,7 @@ class SimpleGoldenCrossStrategyParamsValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final SimpleGoldenCrossStrategyParams params = new SimpleGoldenCrossStrategyParams(
                 0.1f,
+                1,
                 0.6f,
                 false,
                 3,
@@ -27,49 +28,65 @@ class SimpleGoldenCrossStrategyParamsValidationTest {
     static Stream<Arguments> getData_forValidationFails() {
         return Stream.of(
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(null, 0.6f, false, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(null, 1, 0.6f, false, 3, 6),
                         "minimumProfit is mandatory"
                 ),
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(-0.1f, 0.6f, false, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(-0.1f, 1, 0.6f, false, 3, 6),
                         "minimumProfit min value is 0"
                 ),
 
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 7, 6),
-                        "smallWindow must lower than bigWindow"
+                        new SimpleGoldenCrossStrategyParams(0.1f, null, 0.6f, false, 3, 6),
+                        "order is mandatory"
                 ),
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, null, 6),
-                        "smallWindow is mandatory"
+                        new SimpleGoldenCrossStrategyParams(0.1f, -1, 0.6f, false, 3, 6),
+                        "order min value is 1"
                 ),
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, -1, 6),
-                        "smallWindow min value is 1"
+                        new SimpleGoldenCrossStrategyParams(0.1f, 0, 0.6f, false, 3, 6),
+                        "order min value is 1"
                 ),
+
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 0, 6),
-                        "smallWindow min value is 1"
-                ),
-                Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, null),
-                        "bigWindow is mandatory"
-                ),
-                Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, null, false, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, null, false, 3, 6),
                         "indexCoefficient is mandatory"
                 ),
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, -0.1f, false, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, -0.1f, false, 3, 6),
                         "indexCoefficient min value is 0"
                 ),
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 1.1f, false, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 1.1f, false, 3, 6),
                         "indexCoefficient max value is 1"
                 ),
+
                 Arguments.of(
-                        new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, null, 3, 6),
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, null, 3, 6),
                         "greedy is mandatory"
+                ),
+
+                Arguments.of(
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 7, 6),
+                        "smallWindow must lower than bigWindow"
+                ),
+                Arguments.of(
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, null, 6),
+                        "smallWindow is mandatory"
+                ),
+                Arguments.of(
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, -1, 6),
+                        "smallWindow min value is 1"
+                ),
+                Arguments.of(
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 0, 6),
+                        "smallWindow min value is 1"
+                ),
+
+                Arguments.of(
+                        new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, null),
+                        "bigWindow is mandatory"
                 )
         );
     }

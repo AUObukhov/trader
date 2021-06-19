@@ -36,7 +36,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -57,7 +57,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -78,7 +78,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -99,7 +99,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -120,7 +120,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -142,7 +142,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, true),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, true),
                 TRADING_PROPERTIES
         );
 
@@ -164,7 +164,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -186,7 +186,7 @@ class AbstractGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final AbstractGoldenCrossStrategy strategy = new TestGoldenCrossStrategy(
-                new TestGoldenCrossStrategyParams(0.1f, 0.6f, false),
+                new TestGoldenCrossStrategyParams(0.1f, 1, 0.6f, false),
                 TRADING_PROPERTIES
         );
 
@@ -232,10 +232,11 @@ class AbstractGoldenCrossStrategyUnitTest {
     private static final class TestGoldenCrossStrategyParams extends GoldenCrossStrategyParams {
         public TestGoldenCrossStrategyParams(
                 final Float minimumProfit,
+                final Integer order,
                 final Float indexCoefficient,
                 final Boolean greedy
         ) {
-            super(minimumProfit, indexCoefficient, greedy);
+            super(minimumProfit, order, indexCoefficient, greedy);
         }
     }
 

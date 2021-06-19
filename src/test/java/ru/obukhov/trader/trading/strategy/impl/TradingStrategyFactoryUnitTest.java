@@ -30,7 +30,7 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @Test
-    void createStrategy_throwIllegalArgumentException_whenMinimumProfitIsNull() {
+    void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.CONSERVATIVE);
         strategyConfig.setParams(Map.of());
 
@@ -50,6 +50,7 @@ class TradingStrategyFactoryUnitTest {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.SIMPLE_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
+                "order", 1,
                 "indexCoefficient", 0.5,
                 "greedy", false,
                 "smallWindow", 100,
@@ -66,6 +67,7 @@ class TradingStrategyFactoryUnitTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "smallWindow", 3,
@@ -77,6 +79,40 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "indexCoefficient", 0.5,
+                                "greedy", false,
+                                "smallWindow", 100,
+                                "bigWindow", 200
+                        ),
+                        "order is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", -1,
+                                "indexCoefficient", 0.5,
+                                "greedy", false,
+                                "smallWindow", 100,
+                                "bigWindow", 200
+                        ),
+                        "order min value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 0,
+                                "indexCoefficient", 0.5,
+                                "greedy", false,
+                                "smallWindow", 100,
+                                "bigWindow", 200
+                        ),
+                        "order min value is 1"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 1,
                                 "greedy", false,
                                 "smallWindow", 3,
                                 "bigWindow", 6
@@ -86,6 +122,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", -0.1f,
                                 "greedy", false,
                                 "smallWindow", 3,
@@ -96,6 +133,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 1.1f,
                                 "greedy", false,
                                 "smallWindow", 3,
@@ -107,6 +145,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "smallWindow", 3,
                                 "bigWindow", 6
@@ -117,6 +156,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "smallWindow", 7,
@@ -127,6 +167,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "bigWindow", 6
@@ -136,6 +177,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "smallWindow", -1,
@@ -146,6 +188,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "smallWindow", 0,
@@ -157,6 +200,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "smallWindow", 3
@@ -209,6 +253,7 @@ class TradingStrategyFactoryUnitTest {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.LINEAR_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
+                "order", 1,
                 "smallWindow", 100,
                 "bigWindow", 200,
                 "indexCoefficient", 0.5,
@@ -248,6 +293,7 @@ class TradingStrategyFactoryUnitTest {
 
         final String message = exception.getMessage();
         Assertions.assertTrue(message.contains("minimumProfit is mandatory"));
+        Assertions.assertTrue(message.contains("order is mandatory"));
         Assertions.assertTrue(message.contains("smallWindow is mandatory"));
         Assertions.assertTrue(message.contains("bigWindow is mandatory"));
         Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
@@ -263,6 +309,7 @@ class TradingStrategyFactoryUnitTest {
         final StrategyConfig strategyConfig = new StrategyConfig(StrategyType.EXPONENTIAL_GOLDEN_CROSS);
         strategyConfig.setParams(Map.of(
                 "minimumProfit", 0.1,
+                "order", 1,
                 "fastWeightDecrease", 0.6,
                 "slowWeightDecrease", 0.3,
                 "indexCoefficient", 0.5,
@@ -279,6 +326,7 @@ class TradingStrategyFactoryUnitTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6,
@@ -290,6 +338,40 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.5,
+                                "greedy", false
+                        ),
+                        "order is mandatory"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", -1,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.5,
+                                "greedy", false
+                        ),
+                        "order min value is 1"
+                ),
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 0,
+                                "fastWeightDecrease", 0.6,
+                                "slowWeightDecrease", 0.3,
+                                "indexCoefficient", 0.5,
+                                "greedy", false
+                        ),
+                        "order min value is 1"
+                ),
+
+                Arguments.of(
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 1,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6,
                                 "slowWeightDecrease", 0.3
@@ -299,6 +381,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", -0.1f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6,
@@ -309,6 +392,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 1.1f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6,
@@ -320,6 +404,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "fastWeightDecrease", 0.6,
                                 "slowWeightDecrease", 0.3
@@ -330,6 +415,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "slowWeightDecrease", 0.3
@@ -339,6 +425,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "fastWeightDecrease", 1.1,
@@ -350,6 +437,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.3,
@@ -360,6 +448,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6
@@ -369,6 +458,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         Map.of(
                                 "minimumProfit", 0.1,
+                                "order", 1,
                                 "indexCoefficient", 0.6f,
                                 "greedy", false,
                                 "fastWeightDecrease", 0.6,

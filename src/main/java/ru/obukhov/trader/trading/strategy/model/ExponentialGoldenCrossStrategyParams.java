@@ -37,12 +37,14 @@ public class ExponentialGoldenCrossStrategyParams extends GoldenCrossStrategyPar
 
     public ExponentialGoldenCrossStrategyParams(
             final Float minimumProfit,
+            final Integer order,
             final Float indexCoefficient,
             final Boolean greedy,
             final Double fastWeightDecrease,
             final Double slowWeightDecrease
     ) {
-        super(minimumProfit, indexCoefficient, greedy);
+        super(minimumProfit, order, indexCoefficient, greedy);
+
         this.fastWeightDecrease = fastWeightDecrease;
         this.slowWeightDecrease = slowWeightDecrease;
     }

@@ -13,6 +13,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
 
+    @NotNull(message = "order is mandatory")
+    @Min(value = 1, message = "order min value is 1")
+    protected Integer order;
+
     /**
      * relation of index of expected moving averages crossover to prices count. Must be in range [0..1]
      */
@@ -28,9 +32,15 @@ public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
     @NotNull(message = "greedy is mandatory")
     protected Boolean greedy;
 
-    protected GoldenCrossStrategyParams(final Float minimumProfit, final Float indexCoefficient, final Boolean greedy) {
+    protected GoldenCrossStrategyParams(
+            final Float minimumProfit,
+            final Integer order,
+            final Float indexCoefficient,
+            final Boolean greedy
+    ) {
         super(minimumProfit);
 
+        this.order = order;
         this.indexCoefficient = indexCoefficient;
         this.greedy = greedy;
     }

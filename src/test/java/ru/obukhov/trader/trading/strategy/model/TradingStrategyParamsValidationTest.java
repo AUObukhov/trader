@@ -9,6 +9,7 @@ class TradingStrategyParamsValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final SimpleGoldenCrossStrategyParams params = new SimpleGoldenCrossStrategyParams(
                 0.1f,
+                1,
                 0.6f,
                 false,
                 3,

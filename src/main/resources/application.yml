@@ -10,6 +10,7 @@ strategy-config:
   type: "simpleGoldenCross"
   params:
     minimumProfit: 0.1
+    order: 1
     smallWindow: 50
     bigWindow: 200
     indexCoefficient: 0.5

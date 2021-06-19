@@ -30,7 +30,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @Test
     void getName_returnsProperName() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 100, 200),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 100, 200),
                 TRADING_PROPERTIES
         );
 
@@ -45,7 +45,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -66,7 +66,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -87,7 +87,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -108,7 +108,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -129,7 +129,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -151,7 +151,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, true, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, true, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -173,7 +173,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -195,7 +195,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -218,7 +218,7 @@ class SimpleGoldenCrossStrategyUnitTest {
     @Test
     void initCache_returnsNotNull() {
         final SimpleGoldenCrossStrategy strategy = new SimpleGoldenCrossStrategy(
-                new SimpleGoldenCrossStrategyParams(0.1f, 0.6f, false, 3, 6),
+                new SimpleGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
