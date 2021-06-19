@@ -6,7 +6,7 @@ trading:
   consecutive-empty-days-limit: 7
   start-date: 2000-01-01T00:00:00+03:00
 
-bot:
+scheduled-bot:
   enabled: false
   delay: 60000
   tickers: SBER

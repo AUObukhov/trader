@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-@ConfigurationProperties(prefix = "bot")
-public class BotConfig {
+@ConfigurationProperties(prefix = "scheduled-bot")
+public class ScheduledBotConfig {
 
     @Getter
     @Setter

@@ -77,7 +77,7 @@ public class BeanConfiguration {
             final OperationsService operationsService,
             final OrdersService ordersService,
             final PortfolioService portfolioService,
-            final BotConfig botConfig,
+            final ScheduledBotConfig scheduledBotConfig,
             final TradingProperties tradingProperties,
             final TradingStrategyFactory strategyFactory,
             final StrategyConfig strategyConfig
@@ -89,7 +89,7 @@ public class BeanConfiguration {
                 portfolioService,
                 strategyFactory.createStrategy(strategyConfig),
                 strategyConfig.getCandleResolution(),
-                botConfig,
+                scheduledBotConfig,
                 tradingProperties
         );
 

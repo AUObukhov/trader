@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.BotConfig;
+import ru.obukhov.trader.config.ScheduledBotConfig;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -39,7 +39,7 @@ class BotControllerWebTest extends ControllerWebTest {
     @MockBean
     private Simulator simulator;
     @MockBean
-    private BotConfig botConfig;
+    private ScheduledBotConfig scheduledBotConfig;
 
     @Test
     void simulate_returnsSimulationResults() throws Exception {
@@ -157,7 +157,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(botConfig, Mockito.times(1))
+        Mockito.verify(scheduledBotConfig, Mockito.times(1))
                 .setEnabled(true);
     }
 
@@ -167,7 +167,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(botConfig, Mockito.times(1))
+        Mockito.verify(scheduledBotConfig, Mockito.times(1))
                 .setEnabled(false);
     }
 
@@ -180,7 +180,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(botConfig, Mockito.times(1))
+        Mockito.verify(scheduledBotConfig, Mockito.times(1))
                 .setTickers(stringListArgumentCaptor.capture());
 
         final List<String> tickersList = stringListArgumentCaptor.getValue();
