@@ -52,27 +52,23 @@ public class ThrottledCounter {
             this.maxValue = maxValue;
         }
 
-        private void increment() {
-            synchronized (this) {
-                try {
-                    while (value.get() >= maxValue) {
-                        wait();
-                    }
-
-                    value.incrementAndGet();
-                } catch (InterruptedException exception) {
-                    log.error("Counter increment waiting was interrupted", exception);
-                    Thread.currentThread().interrupt();
+        private synchronized void increment() {
+            try {
+                while (value.get() >= maxValue) {
+                    wait();
                 }
+
+                value.incrementAndGet();
+            } catch (InterruptedException exception) {
+                log.error("Counter increment waiting was interrupted", exception);
+                Thread.currentThread().interrupt();
             }
         }
 
-        private void decrement() {
-            synchronized (this) {
-                int previousValue = value.getAndDecrement();
-                if (previousValue == maxValue) {
-                    notifyAll();
-                }
+        private synchronized void decrement() {
+            int previousValue = value.getAndDecrement();
+            if (previousValue == maxValue) {
+                notifyAll();
             }
         }
 
