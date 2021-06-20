@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 @ConfigurationProperties(prefix = "scheduled-bot")
@@ -15,14 +14,15 @@ public class ScheduledBotConfig extends BotConfig {
     @Setter
     private boolean enabled;
 
-    private Set<String> tickers;
+    @SuppressWarnings("java:S3077") // Non-primitive fields should not be "volatile"
+    private volatile Set<String> tickers; // set is immutable, so sonar is wrong
 
-    public synchronized Set<String> getTickers() {
-        return new HashSet<>(tickers);
+    public Set<String> getTickers() {
+        return Set.copyOf(tickers);
     }
 
-    public synchronized void setTickers(final Collection<String> tickers) {
-        this.tickers = new HashSet<>(tickers);
+    public void setTickers(final Collection<String> tickers) {
+        this.tickers = Set.copyOf(tickers);
     }
 
 }
