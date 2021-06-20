@@ -95,4 +95,7 @@ public abstract class AbstractGoldenCrossStrategy extends AbstractTradingStrateg
      */
     protected abstract Averages getAverages(final List<BigDecimal> values);
 
+    protected abstract static class AbstractGoldenCrossStrategyCache implements StrategyCache {
+    }
+
 }

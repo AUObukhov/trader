@@ -1,6 +1,5 @@
 package ru.obukhov.trader.trading.strategy.impl;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.util.TrendUtils;
@@ -53,8 +52,7 @@ public class SimpleGoldenCrossStrategy extends AbstractGoldenCrossStrategy {
         return new SimpleGoldenCrossStrategyCache();
     }
 
-    @Data
-    private static class SimpleGoldenCrossStrategyCache implements StrategyCache {
+    private static class SimpleGoldenCrossStrategyCache extends AbstractGoldenCrossStrategyCache {
     }
 
 }
