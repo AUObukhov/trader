@@ -109,6 +109,14 @@ class SimulateRequestValidationTest {
     }
 
     @Test
+    void validationFails_whenCandleResolutionIsNull() throws ParseException {
+        final SimulateRequest request = createValidSimulationRequest();
+        request.getStrategiesConfigs().get(0).setCandleResolution(null);
+
+        AssertUtils.assertViolation(request, "candleResolution in StrategyConfig is mandatory");
+    }
+
+    @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
         request.getStrategiesConfigs().get(0).setStrategyType(null);
