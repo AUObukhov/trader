@@ -105,9 +105,8 @@ class ThrottledCounterUnitTest {
 
         threads.forEach(Thread::start);
 
-        TimeUnit.MILLISECONDS.sleep(3000);
-
         for (Thread thread : threads) {
+            thread.join(10000);
             Assertions.assertEquals(Thread.State.TERMINATED, thread.getState(), "probably deadlock");
         }
 
