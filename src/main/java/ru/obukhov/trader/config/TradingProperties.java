@@ -3,7 +3,6 @@ package ru.obukhov.trader.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.convert.DurationUnit;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
@@ -14,7 +13,6 @@ import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 
 @Data
-@Component
 @ConfigurationProperties(prefix = "trading")
 @Validated
 public class TradingProperties {
