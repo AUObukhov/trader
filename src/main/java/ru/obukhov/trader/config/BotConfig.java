@@ -1,8 +1,10 @@
 package ru.obukhov.trader.config;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
@@ -11,7 +13,9 @@ import java.util.Map;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
+@Accessors(chain = true)
 public class BotConfig {
 
     @NotNull(message = "candleResolution is mandatory")
