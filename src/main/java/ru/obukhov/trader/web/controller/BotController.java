@@ -40,7 +40,7 @@ public class BotController {
                 request.getInitialBalance(),
                 request.getBalanceIncrement(),
                 request.getBalanceIncrementCron(),
-                request.getStrategiesConfigs(),
+                request.getBotsConfigs(),
                 interval,
                 saveToFiles
         );

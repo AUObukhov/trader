@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -21,7 +22,6 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.bots.interfaces.BotFactory;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -92,7 +92,7 @@ public class SimulatorImpl implements Simulator {
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
             final CronExpression balanceIncrementCron,
-            final List<StrategyConfig> strategiesConfigs,
+            final List<BotConfig> botsConfigs,
             final Interval interval,
             final boolean saveToFiles
     ) {
@@ -104,7 +104,7 @@ public class SimulatorImpl implements Simulator {
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
-        final List<CompletableFuture<SimulationResult>> simulationFutures = strategiesConfigs.stream()
+        final List<CompletableFuture<SimulationResult>> simulationFutures = botsConfigs.stream()
                 .map(this::createFakeBot)
                 .map(bot -> startSimulation(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, finiteInterval))
                 .collect(Collectors.toList());
@@ -124,9 +124,12 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
-    private FakeBot createFakeBot(final StrategyConfig strategyConfig) {
-        final TradingStrategy strategy = strategyFactory.createStrategy(strategyConfig);
-        return (FakeBot) fakeBotFactory.createBot(strategy, strategyConfig.getCandleResolution());
+    private FakeBot createFakeBot(final BotConfig botConfig) {
+        final TradingStrategy strategy = strategyFactory.createStrategy(
+                botConfig.getStrategyType(),
+                botConfig.getStrategyParams()
+        );
+        return (FakeBot) fakeBotFactory.createBot(strategy, botConfig.getCandleResolution());
     }
 
     private CompletableFuture<SimulationResult> startSimulation(

@@ -7,11 +7,9 @@ trading:
   start-date: 2000-01-01T00:00:00+03:00
 
 scheduled-bot:
-  enabled: false
   delay: 60000
+  enabled: false
   tickers: SBER
-
-strategy-config:
   candleResolution: 1min
   strategy-type: "simpleGoldenCross"
   strategy-params:

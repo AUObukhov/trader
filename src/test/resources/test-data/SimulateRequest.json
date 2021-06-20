@@ -3,7 +3,7 @@
   "initialBalance": 1000,
   "balanceIncrement": 100,
   "balanceIncrementCron": "0 0 0 1 * ?",
-  "strategiesConfigs": [
+  "botsConfigs": [
     {
       "candleResolution": "1min",
       "strategyType": "conservative",

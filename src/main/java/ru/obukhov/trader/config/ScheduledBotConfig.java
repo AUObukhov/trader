@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @ConfigurationProperties(prefix = "scheduled-bot")
-public class ScheduledBotConfig {
+public class ScheduledBotConfig extends BotConfig {
 
     @Getter
     @Setter

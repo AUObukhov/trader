@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.TradingProperties;
-import ru.obukhov.trader.trading.model.StrategyConfig;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
@@ -27,51 +27,53 @@ public class TradingStrategyFactory {
     private final ObjectMapper mapper = new ObjectMapper();
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    public TradingStrategy createStrategy(final StrategyConfig strategyConfig) {
-        switch (strategyConfig.getStrategyType()) {
+    public TradingStrategy createStrategy(final StrategyType strategyType, final Map<String, Object> strategyParams) {
+        switch (strategyType) {
             case CONSERVATIVE:
-                return createConservativeStrategy(strategyConfig);
+                return createConservativeStrategy(strategyParams);
             case SIMPLE_GOLDEN_CROSS:
-                return createSimpleGoldenCrossStrategy(strategyConfig);
+                return createSimpleGoldenCrossStrategy(strategyParams);
             case LINEAR_GOLDEN_CROSS:
-                return createLinearGoldenCrossStrategy(strategyConfig);
+                return createLinearGoldenCrossStrategy(strategyParams);
             case EXPONENTIAL_GOLDEN_CROSS:
-                return createExponentialGoldenCrossStrategy(strategyConfig);
+                return createExponentialGoldenCrossStrategy(strategyParams);
             default:
-                throw new IllegalArgumentException("Unknown strategy type " + strategyConfig.getStrategyType());
+                throw new IllegalArgumentException("Unknown strategy type " + strategyType);
         }
     }
 
     @NotNull
-    private ConservativeStrategy createConservativeStrategy(StrategyConfig strategyConfig) {
-        final TradingStrategyParams strategyParams = getStrategyParams(strategyConfig, TradingStrategyParams.class);
+    private ConservativeStrategy createConservativeStrategy(final Map<String, Object> params) {
+        final TradingStrategyParams strategyParams = getStrategyParams(params, TradingStrategyParams.class);
 
         return new ConservativeStrategy(strategyParams, tradingProperties);
     }
 
-    private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(StrategyConfig strategyConfig) {
+    private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(final Map<String, Object> params) {
         final SimpleGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(strategyConfig, SimpleGoldenCrossStrategyParams.class);
+                getStrategyParams(params, SimpleGoldenCrossStrategyParams.class);
 
         return new SimpleGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
-    private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(StrategyConfig strategyConfig) {
+    private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(final Map<String, Object> params) {
         final LinearGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(strategyConfig, LinearGoldenCrossStrategyParams.class);
+                getStrategyParams(params, LinearGoldenCrossStrategyParams.class);
 
         return new LinearGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
-    private ExponentialGoldenCrossStrategy createExponentialGoldenCrossStrategy(StrategyConfig strategyConfig) {
+    private ExponentialGoldenCrossStrategy createExponentialGoldenCrossStrategy(final Map<String, Object> params) {
         final ExponentialGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(strategyConfig, ExponentialGoldenCrossStrategyParams.class);
+                getStrategyParams(params, ExponentialGoldenCrossStrategyParams.class);
 
         return new ExponentialGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
-    private <T extends TradingStrategyParams> T getStrategyParams(StrategyConfig strategyConfig, Class<T> type) {
-        final Map<String, Object> params = strategyConfig.getStrategyParams();
+    private <T extends TradingStrategyParams> T getStrategyParams(
+            final Map<String, Object> params,
+            final Class<T> type
+    ) {
         final T strategyParams = mapper.convertValue(params, type);
         validate(strategyParams);
         return strategyParams;

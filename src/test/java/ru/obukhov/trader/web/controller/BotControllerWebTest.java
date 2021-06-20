@@ -2,11 +2,10 @@ package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,15 +29,14 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class BotControllerWebTest extends ControllerWebTest {
 
-    @Captor
-    private ArgumentCaptor<List<String>> stringListArgumentCaptor;
-
     @MockBean
     private Simulator simulator;
-    @MockBean
+
+    @Autowired
     private ScheduledBotConfig scheduledBotConfig;
 
     @Test
@@ -153,26 +151,30 @@ class BotControllerWebTest extends ControllerWebTest {
 
     @Test
     void enableScheduling_enablesScheduling() throws Exception {
+        scheduledBotConfig.setEnabled(false);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(scheduledBotConfig, Mockito.times(1))
-                .setEnabled(true);
+        Assertions.assertTrue(scheduledBotConfig.isEnabled());
     }
 
     @Test
     void disableScheduling_disablesScheduling() throws Exception {
+        scheduledBotConfig.setEnabled(true);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(scheduledBotConfig, Mockito.times(1))
-                .setEnabled(false);
+        Assertions.assertFalse(scheduledBotConfig.isEnabled());
     }
 
     @Test
     void setTickers_setsTickers() throws Exception {
+        scheduledBotConfig.setTickers(Set.of());
+
         final String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers")
@@ -180,14 +182,11 @@ class BotControllerWebTest extends ControllerWebTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(scheduledBotConfig, Mockito.times(1))
-                .setTickers(stringListArgumentCaptor.capture());
-
-        final List<String> tickersList = stringListArgumentCaptor.getValue();
+        final Set<String> tickersList = scheduledBotConfig.getTickers();
         Assertions.assertEquals(3, tickersList.size());
-        Assertions.assertEquals("ticker1", tickersList.get(0));
-        Assertions.assertEquals("ticker2", tickersList.get(1));
-        Assertions.assertEquals("ticker3", tickersList.get(2));
+        Assertions.assertTrue(tickersList.contains("ticker1"));
+        Assertions.assertTrue(tickersList.contains("ticker2"));
+        Assertions.assertTrue(tickersList.contains("ticker3"));
     }
 
 }

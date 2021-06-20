@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Data;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.trading.model.StrategyConfig;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import javax.validation.Valid;
@@ -37,8 +37,8 @@ public class SimulateRequest {
     private OffsetDateTime to;
 
     @Valid
-    @NotEmpty(message = "strategiesConfigs is mandatory")
-    private List<StrategyConfig> strategiesConfigs;
+    @NotEmpty(message = "botsConfigs is mandatory")
+    private List<BotConfig> botsConfigs;
 
     private Boolean saveToFiles;
 

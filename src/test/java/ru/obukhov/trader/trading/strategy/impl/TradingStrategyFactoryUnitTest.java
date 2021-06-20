@@ -6,10 +6,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -22,21 +20,21 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsConservativeStrategy() {
-        final StrategyConfig strategyConfig = new StrategyConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        strategyConfig.setStrategyParams(Map.of("minimumProfit", 0.1));
+        final StrategyType strategyType = StrategyType.CONSERVATIVE;
+        final Map<String, Object> params = Map.of("minimumProfit", 0.1);
 
-        final TradingStrategy strategy = factory.createStrategy(strategyConfig);
+        final TradingStrategy strategy = factory.createStrategy(strategyType, params);
 
         Assertions.assertEquals(ConservativeStrategy.class, strategy.getClass());
     }
 
     @Test
     void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
-        final StrategyConfig strategyConfig = new StrategyConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        strategyConfig.setStrategyParams(Map.of());
+        final StrategyType strategyType = StrategyType.CONSERVATIVE;
+        final Map<String, Object> params = Map.of();
 
         AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyConfig),
+                () -> factory.createStrategy(strategyType, params),
                 IllegalArgumentException.class,
                 "minimumProfit is mandatory"
         );
@@ -48,18 +46,17 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsSimpleGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.SIMPLE_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of(
+        final StrategyType strategyType = StrategyType.SIMPLE_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
                 "indexCoefficient", 0.5,
                 "greedy", false,
                 "smallWindow", 100,
                 "bigWindow", 200
-        ));
+        );
 
-        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+        TradingStrategy strategy = factory.createStrategy(strategyType, params);
 
         Assertions.assertEquals(SimpleGoldenCrossStrategy.class, strategy.getClass());
     }
@@ -215,15 +212,13 @@ class TradingStrategyFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid")
     void createStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreNotValid(
-            Map<String, Object> params,
-            String expectedMessage
+            final Map<String, Object> params,
+            final String expectedMessage
     ) {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.SIMPLE_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(params);
+        final StrategyType strategyType = StrategyType.SIMPLE_GOLDEN_CROSS;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyConfig),
+                () -> factory.createStrategy(strategyType, params),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -231,13 +226,12 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenSimpleGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.SIMPLE_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of());
+        final StrategyType strategyType = StrategyType.SIMPLE_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of();
 
         final IllegalArgumentException exception = Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> factory.createStrategy(strategyConfig)
+                () -> factory.createStrategy(strategyType, params)
         );
 
         final String message = exception.getMessage();
@@ -254,18 +248,17 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsLinearGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.LINEAR_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of(
+        final StrategyType strategyType = StrategyType.LINEAR_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
                 "smallWindow", 100,
                 "bigWindow", 200,
                 "indexCoefficient", 0.5,
                 "greedy", false
-        ));
+        );
 
-        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+        TradingStrategy strategy = factory.createStrategy(strategyType, params);
 
         Assertions.assertEquals(LinearGoldenCrossStrategy.class, strategy.getClass());
     }
@@ -273,15 +266,13 @@ class TradingStrategyFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid")
     void createStrategy_throwsIllegalArgumentException_whenLinearGoldenCross_andParamsAreNotValid(
-            Map<String, Object> params,
-            String expectedMessage
+            final Map<String, Object> params,
+            final String expectedMessage
     ) {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.LINEAR_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(params);
+        final StrategyType strategyType = StrategyType.LINEAR_GOLDEN_CROSS;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyConfig),
+                () -> factory.createStrategy(strategyType, params),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -289,13 +280,12 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenStrategyTypeIsLinearGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.LINEAR_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of());
+        final StrategyType strategyType = StrategyType.LINEAR_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of();
 
         final IllegalArgumentException exception = Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> factory.createStrategy(strategyConfig)
+                () -> factory.createStrategy(strategyType, params)
         );
 
         final String message = exception.getMessage();
@@ -313,18 +303,17 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_createsExponentialGoldenCrossStrategy() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.EXPONENTIAL_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of(
+        final StrategyType strategyType = StrategyType.EXPONENTIAL_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of(
                 "minimumProfit", 0.1,
                 "order", 1,
                 "fastWeightDecrease", 0.6,
                 "slowWeightDecrease", 0.3,
                 "indexCoefficient", 0.5,
                 "greedy", false
-        ));
+        );
 
-        TradingStrategy strategy = factory.createStrategy(strategyConfig);
+        TradingStrategy strategy = factory.createStrategy(strategyType, params);
 
         Assertions.assertEquals(ExponentialGoldenCrossStrategy.class, strategy.getClass());
     }
@@ -480,15 +469,13 @@ class TradingStrategyFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid")
     void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid(
-            Map<String, Object> params,
-            String expectedMessage
+            final Map<String, Object> params,
+            final String expectedMessage
     ) {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.EXPONENTIAL_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(params);
+        final StrategyType strategyType = StrategyType.EXPONENTIAL_GOLDEN_CROSS;
 
         AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyConfig),
+                () -> factory.createStrategy(strategyType, params),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -496,13 +483,12 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreEmpty() {
-        final StrategyConfig strategyConfig =
-                new StrategyConfig(CandleResolution._1MIN, StrategyType.EXPONENTIAL_GOLDEN_CROSS);
-        strategyConfig.setStrategyParams(Map.of());
+        final StrategyType strategyType = StrategyType.EXPONENTIAL_GOLDEN_CROSS;
+        final Map<String, Object> params = Map.of();
 
         final IllegalArgumentException exception = Assertions.assertThrows(
                 IllegalArgumentException.class,
-                () -> factory.createStrategy(strategyConfig)
+                () -> factory.createStrategy(strategyType, params)
         );
 
         final String message = exception.getMessage();

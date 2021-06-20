@@ -12,6 +12,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -21,7 +22,6 @@ import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.StrategyConfig;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -49,8 +49,10 @@ class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final StrategyConfig CONSERVATIVE_STRATEGY_CONFIG =
-            new StrategyConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+    private static final BotConfig CONSERVATIVE_BOT_CONFIG = new BotConfig(
+            CandleResolution._1MIN,
+            StrategyType.CONSERVATIVE
+    );
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
             new TradingStrategyParams(0.1f),
             null
@@ -109,7 +111,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = Collections.emptyList();
+        final List<BotConfig> botsConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
@@ -120,7 +122,7 @@ class SimulatorImplUnitTest {
                 DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false),
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, botsConfigs, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
@@ -135,7 +137,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = Collections.emptyList();
+        final List<BotConfig> botsConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
@@ -147,7 +149,7 @@ class SimulatorImplUnitTest {
         );
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, strategiesConfigs, interval, false),
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, botsConfigs, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
@@ -157,7 +159,7 @@ class SimulatorImplUnitTest {
     void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -171,7 +173,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -184,7 +186,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -219,7 +221,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -235,7 +237,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -277,7 +279,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -314,7 +316,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -330,7 +332,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -372,7 +374,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -397,7 +399,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -413,7 +415,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -453,7 +455,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -479,7 +481,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -495,7 +497,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -533,7 +535,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -562,7 +564,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -578,7 +580,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -614,7 +616,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -644,7 +646,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -660,7 +662,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -680,7 +682,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -703,7 +705,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -719,7 +721,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -740,7 +742,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -763,7 +765,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -779,7 +781,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -804,7 +806,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 true
         );
@@ -824,7 +826,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -840,7 +842,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -865,7 +867,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -885,7 +887,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -901,7 +903,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -914,7 +916,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 false
         );
@@ -935,7 +937,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        Mockito.when(strategyFactory.createStrategy(CONSERVATIVE_STRATEGY_CONFIG)).thenReturn(CONSERVATIVE_STRATEGY);
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -951,7 +953,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<StrategyConfig> strategiesConfigs = List.of(CONSERVATIVE_STRATEGY_CONFIG);
+        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -979,7 +981,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                strategiesConfigs,
+                botsConfigs,
                 interval,
                 true
         );
@@ -991,6 +993,13 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         Assertions.assertNull(simulationResult.getError());
+    }
+
+    private void mockStrategy(BotConfig botConfig, TradingStrategy strategy) {
+        Mockito.when(strategyFactory.createStrategy(
+                botConfig.getStrategyType(),
+                botConfig.getStrategyParams()
+        )).thenReturn(strategy);
     }
 
     private FakeBot createFakeBotMock(String botName) {
