@@ -32,4 +32,12 @@ public class BotConfig {
         this.strategyParams = Map.of();
     }
 
+    @Override
+    public String toString() {
+        return "[" +
+                "candleResolution=" + candleResolution +
+                ", strategyType=" + strategyType +
+                ", strategyParams=" + strategyParams +
+                ']';
+    }
 }

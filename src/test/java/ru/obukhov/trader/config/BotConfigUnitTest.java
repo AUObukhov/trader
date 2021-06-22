@@ -97,4 +97,28 @@ class BotConfigUnitTest {
         Assertions.assertEquals(config1.hashCode(), config2.hashCode());
     }
 
+    @Test
+    void testToString() {
+        final BotConfig config = new BotConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyParams(Map.of(
+                        "minimumProfit", 0.01,
+                        "smallWindow", 100,
+                        "bigWindow", 200,
+                        "indexCoefficient", 0.3,
+                        "greedy", false
+                ));
+
+        final String string = config.toString();
+
+        final String expectedStart = "[candleResolution=1min, strategyType=LINEAR_GOLDEN_CROSS, strategyParams={";
+        Assertions.assertTrue(string.startsWith(expectedStart));
+        Assertions.assertTrue(string.contains("minimumProfit=0.01"));
+        Assertions.assertTrue(string.contains("smallWindow=100"));
+        Assertions.assertTrue(string.contains("bigWindow=200"));
+        Assertions.assertTrue(string.contains("greedy=false"));
+        Assertions.assertTrue(string.contains("indexCoefficient=0.3"));
+    }
+
 }
