@@ -7,7 +7,31 @@
     {
       "candleResolution": "1min",
       "strategyType": "conservative",
-      "minimumProfit": 0.1
+      "strategyParams": {
+        "minimumProfit": 0.01
+      }
+    },
+    {
+      "candleResolution": "1min",
+      "strategyType": "simpleGoldenCross",
+      "strategyParams": {
+        "minimumProfit": 0.01,
+        "smallWindow": 100,
+        "bigWindow": 200,
+        "indexCoefficient": 0.3,
+        "greedy": false
+      }
+    },
+    {
+      "candleResolution": "1min",
+      "strategyType": "linearGoldenCross",
+      "strategyParams": {
+        "minimumProfit": 0.01,
+        "smallWindow": 100,
+        "bigWindow": 200,
+        "indexCoefficient": 0.3,
+        "greedy": false
+      }
     }
   ],
   "from": "2021-01-01T10:00:00+03:00",

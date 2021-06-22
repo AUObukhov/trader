@@ -78,7 +78,7 @@ public class ExcelServiceImpl implements ExcelService {
         for (SimulationResult result : results) {
             final ExtendedWorkbook workBook = createWorkBook();
             createSheet(workBook, ticker, result);
-            saveToFile(workBook, "SimulationResult for '" + ticker + "' by '" + result.getBotName() + "'");
+            saveToFile(workBook, "SimulationResult for '" + ticker + "'");
         }
     }
 

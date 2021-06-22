@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.market.model.Candle;
 
 import java.math.BigDecimal;
@@ -14,9 +15,9 @@ import java.util.List;
 public class SimulationResult {
 
     /**
-     * name of bot for which simulation was ran
+     * config of bot for which simulation was ran
      */
-    private String botName;
+    private BotConfig botConfig;
 
     /**
      * simulation interval

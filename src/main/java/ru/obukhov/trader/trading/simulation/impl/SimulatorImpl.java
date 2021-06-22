@@ -105,8 +105,14 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull();
 
         final List<CompletableFuture<SimulationResult>> simulationFutures = botsConfigs.stream()
-                .map(this::createFakeBot)
-                .map(bot -> startSimulation(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, finiteInterval))
+                .map(botConfig -> startSimulation(
+                        botConfig,
+                        ticker,
+                        initialBalance,
+                        balanceIncrement,
+                        balanceIncrementCron,
+                        finiteInterval
+                ))
                 .collect(Collectors.toList());
         final List<SimulationResult> simulationResults = simulationFutures.stream()
                 .map(CompletableFuture::join)
@@ -133,7 +139,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private CompletableFuture<SimulationResult> startSimulation(
-            final FakeBot bot,
+            final BotConfig botConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
@@ -141,13 +147,13 @@ public class SimulatorImpl implements Simulator {
             final Interval interval
     ) {
         return CompletableFuture.supplyAsync(
-                () -> simulateSafe(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
+                () -> simulateSafe(botConfig, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
                 executor
         );
     }
 
     private SimulationResult simulateSafe(
-            final FakeBot bot,
+            final BotConfig botConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
@@ -155,19 +161,26 @@ public class SimulatorImpl implements Simulator {
             final Interval interval
     ) {
         try {
-            log.info("Simulation for '{}' with ticker = '{}' started", bot.getStrategyName(), ticker);
-            final SimulationResult result =
-                    simulate(bot, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval);
-            log.info("Simulation for '{}' with ticker = '{}' ended", bot.getStrategyName(), ticker);
+            log.info("Simulation for '{}' with ticker = '{}' started", botConfig, ticker);
+
+            final SimulationResult result = simulate(
+                    botConfig,
+                    ticker,
+                    initialBalance,
+                    balanceIncrement,
+                    balanceIncrementCron,
+                    interval
+            );
+            log.info("Simulation for '{}' with ticker = '{}' ended", botConfig, ticker);
             return result;
         } catch (Exception ex) {
             final String message = String.format(
                     "Simulation for '%s' with ticker '%s' failed with error: %s",
-                    bot.getStrategyName(), ticker, ex.getMessage()
+                    botConfig, ticker, ex.getMessage()
             );
             log.error(message, ex);
             return SimulationResult.builder()
-                    .botName(bot.getStrategyName())
+                    .botConfig(botConfig)
                     .interval(interval)
                     .initialBalance(initialBalance)
                     .totalInvestment(initialBalance)
@@ -186,13 +199,15 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult simulate(
-            final FakeBot bot,
+            final BotConfig botConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
             final CronExpression balanceIncrementCron,
             final Interval interval
     ) {
+        final FakeBot bot = createFakeBot(botConfig);
+
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
         final MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
@@ -217,7 +232,7 @@ public class SimulatorImpl implements Simulator {
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(bot, interval, ticker, historicalCandles);
+        return createResult(botConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -251,13 +266,12 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult createResult(
-            final FakeBot bot,
+            final BotConfig botConfig,
             final Interval interval,
             final String ticker,
-            final List<Candle> candles
+            final List<Candle> candles,
+            final FakeTinkoffService fakeTinkoffService
     ) {
-        final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
-
         final List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), candles);
         final Currency currency = getCurrency(fakeTinkoffService, ticker);
 
@@ -276,7 +290,7 @@ public class SimulatorImpl implements Simulator {
         final List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()
-                .botName(bot.getStrategyName())
+                .botConfig(botConfig)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .finalTotalBalance(totalBalance)

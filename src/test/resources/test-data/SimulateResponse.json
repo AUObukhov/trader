@@ -1,7 +1,13 @@
 {
   "results": [
     {
-      "botName": "bot1",
+      "botConfig": {
+        "candleResolution": "1min",
+        "strategyType": "conservative",
+        "strategyParams": {
+          "minimumProfit": 0.01
+        }
+      },
       "interval": {
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"
@@ -17,7 +23,17 @@
       "error": null
     },
     {
-      "botName": "bot2",
+      "botConfig": {
+        "candleResolution": "1min",
+        "strategyType": "simpleGoldenCross",
+        "strategyParams": {
+          "minimumProfit": 0.01,
+          "smallWindow": 100,
+          "bigWindow": 200,
+          "indexCoefficient": 0.3,
+          "greedy": false
+        }
+      },
       "interval": {
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"
@@ -33,7 +49,17 @@
       "error": null
     },
     {
-      "botName": "bot3",
+      "botConfig": {
+        "candleResolution": "1min",
+        "strategyType": "linearGoldenCross",
+        "strategyParams": {
+          "minimumProfit": 0.01,
+          "smallWindow": 100,
+          "bigWindow": 200,
+          "indexCoefficient": 0.3,
+          "greedy": false
+        }
+      },
       "interval": {
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"

@@ -12,12 +12,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.BotConfig;
 import ru.obukhov.trader.config.ScheduledBotConfig;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.CronExpressionMatcher;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
 import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
@@ -29,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 class BotControllerWebTest extends ControllerWebTest {
@@ -65,8 +68,12 @@ class BotControllerWebTest extends ControllerWebTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(1000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(100);
         final CronExpression balanceIncrementCron = new CronExpression("0 0 0 1 * ?");
+        final BotConfig botConfig1 = new BotConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.CONSERVATIVE)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult simulationResult1 = SimulationResult.builder()
-                .botName("bot1")
+                .botConfig(botConfig1)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .totalInvestment(BigDecimal.valueOf(1000))
@@ -80,9 +87,19 @@ class BotControllerWebTest extends ControllerWebTest {
                 .candles(List.of(candle))
                 .build();
 
+        final BotConfig botConfig2 = new BotConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of(
+                        "minimumProfit", 0.01,
+                        "smallWindow", 100,
+                        "bigWindow", 200,
+                        "indexCoefficient", 0.3,
+                        "greedy", false
+                ));
         final SimulatedPosition simulatedPosition1 = new SimulatedPosition(ticker, BigDecimal.valueOf(100000), 10);
         final SimulationResult simulationResult2 = SimulationResult.builder()
-                .botName("bot2")
+                .botConfig(botConfig2)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .totalInvestment(BigDecimal.valueOf(10000))
@@ -95,10 +112,20 @@ class BotControllerWebTest extends ControllerWebTest {
                 .positions(List.of(simulatedPosition1))
                 .build();
 
+        final BotConfig botConfig3 = new BotConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyParams(Map.of(
+                        "minimumProfit", 0.01,
+                        "smallWindow", 100,
+                        "bigWindow", 200,
+                        "indexCoefficient", 0.3,
+                        "greedy", false
+                ));
         final SimulatedPosition simulatedPosition2 = new SimulatedPosition(ticker, BigDecimal.valueOf(100), 10);
         final SimulatedPosition simulatedPosition3 = new SimulatedPosition(ticker, BigDecimal.valueOf(1000), 1);
         final SimulationResult simulationResult3 = SimulationResult.builder()
-                .botName("bot3")
+                .botConfig(botConfig3)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .totalInvestment(BigDecimal.valueOf(2000))

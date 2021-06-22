@@ -197,7 +197,7 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        Assertions.assertEquals(botName, simulationResult.getBotName());
+        Assertions.assertEquals(botsConfigs.get(0), simulationResult.getBotConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
@@ -209,8 +209,8 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedError = String.format(
-                "Simulation for '%1$s' with ticker '%2$s' failed with error: Not found instrument for ticker '%2$s'",
-                botName,
+                "Simulation for '[candleResolution=1min, strategyType=CONSERVATIVE, strategyParams={}]' " +
+                        "with ticker '%1$s' failed with error: Not found instrument for ticker '%1$s'",
                 ticker
         );
         Assertions.assertEquals(expectedError, simulationResult.getError());
@@ -290,7 +290,7 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        Assertions.assertEquals(botName, simulationResult.getBotName());
+        Assertions.assertEquals(botsConfigs.get(0), simulationResult.getBotConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
@@ -927,8 +927,11 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        String expectedErrorMessage = String.format("Simulation for '%s' with ticker '%s' failed with error: %s",
-                botName, ticker, mockedExceptionMessage);
+        String expectedErrorMessage = String.format(
+                "Simulation for '[candleResolution=1min, strategyType=CONSERVATIVE, strategyParams={}]' " +
+                        "with ticker '%s' failed with error: %s",
+                ticker, mockedExceptionMessage
+        );
         Assertions.assertEquals(expectedErrorMessage, simulationResult.getError());
     }
 
@@ -1004,7 +1007,6 @@ class SimulatorImplUnitTest {
 
     private FakeBot createFakeBotMock(String botName) {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBot.getStrategyName()).thenReturn(botName);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
     }
