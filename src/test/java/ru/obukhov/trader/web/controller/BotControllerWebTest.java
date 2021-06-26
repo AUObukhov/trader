@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;

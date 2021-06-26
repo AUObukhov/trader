@@ -11,7 +11,7 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.config.ReportProperties;
+import ru.obukhov.trader.config.properties.ReportProperties;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.io.File;

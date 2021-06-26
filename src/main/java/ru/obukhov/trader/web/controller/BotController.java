@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;

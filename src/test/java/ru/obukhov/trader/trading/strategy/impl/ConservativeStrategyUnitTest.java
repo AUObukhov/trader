@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;

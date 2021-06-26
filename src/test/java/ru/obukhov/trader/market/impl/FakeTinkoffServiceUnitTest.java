@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;

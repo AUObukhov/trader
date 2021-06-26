@@ -3,6 +3,8 @@ package ru.obukhov.trader.config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;

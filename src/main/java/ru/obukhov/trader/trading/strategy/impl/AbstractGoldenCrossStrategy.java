@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;

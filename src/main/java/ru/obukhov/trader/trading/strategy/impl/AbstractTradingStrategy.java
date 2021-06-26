@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;

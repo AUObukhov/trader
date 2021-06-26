@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
-import ru.obukhov.trader.config.ReportProperties;
+import ru.obukhov.trader.config.properties.ReportProperties;
 
 import java.io.File;
 import java.io.FileOutputStream;

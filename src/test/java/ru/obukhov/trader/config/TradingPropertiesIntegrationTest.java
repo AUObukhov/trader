@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.assertj.AssertableApplicationContex
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.common.model.transform.OffsetTimeConverter;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.time.Duration;

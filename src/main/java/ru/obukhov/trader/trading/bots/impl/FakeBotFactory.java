@@ -1,7 +1,7 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import org.springframework.stereotype.Service;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;

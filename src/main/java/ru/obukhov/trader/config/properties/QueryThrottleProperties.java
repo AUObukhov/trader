@@ -1,4 +1,4 @@
-package ru.obukhov.trader.config;
+package ru.obukhov.trader.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

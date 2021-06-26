@@ -4,7 +4,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.config.TradingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;

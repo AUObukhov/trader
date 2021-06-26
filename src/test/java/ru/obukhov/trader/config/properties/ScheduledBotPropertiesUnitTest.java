@@ -1,4 +1,4 @@
-package ru.obukhov.trader.config;
+package ru.obukhov.trader.config.properties;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
