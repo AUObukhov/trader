@@ -122,6 +122,10 @@ public class ExtendedRow implements Row {
      * style from workbook named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME}.
      * * If such a style does not exist yet, then it is pre-created.<br/>
      * <p>
+     * {@link Boolean}: Created cell gets {@link CellType#BOOLEAN} type and
+     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#BOOLEAN}.
+     * If such a style does not exist yet, then it is pre-created.<br/>
+     * <p>
      * If {@code value} is null than created cell gets {@link CellType#BLANK} type and no style.
      *
      * @return created cell
@@ -142,6 +146,8 @@ public class ExtendedRow implements Row {
             return createCell(column, (LocalDateTime) value);
         } else if (value instanceof OffsetDateTime) {
             return createCell(column, (OffsetDateTime) value);
+        } else if (value instanceof Boolean) {
+            return createCell(column, (Boolean) value);
         } else {
             throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
         }
@@ -229,6 +235,23 @@ public class ExtendedRow implements Row {
     public ExtendedCell createCell(final int column, final OffsetDateTime value) {
         final LocalDateTime localDateTime = value == null ? null : value.toLocalDateTime();
         return createCell(column, localDateTime);
+    }
+
+    /**
+     * Create boolean cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#BOOLEAN} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(final int column, final Boolean value) {
+        final ExtendedCell cell = (ExtendedCell) createCell(column, CellType.BOOLEAN);
+        cell.setCellStyle(getWorkbook().getOrCreateCellStyle(ExtendedWorkbook.CellStylesNames.BOOLEAN));
+        if (value != null) {
+            cell.setCellValue(value);
+
+        }
+        return cell;
     }
 
     public ExtendedWorkbook getWorkbook() {

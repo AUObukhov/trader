@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -229,6 +230,10 @@ public class AssertUtils {
                 }
                 break;
 
+            case BOOLEAN:
+                assertCellValue(cell, (Boolean) value);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unexpected cell type " + cell.getCellType());
         }
@@ -252,6 +257,11 @@ public class AssertUtils {
     public static void assertCellValue(final Cell cell, final Integer value) {
         final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
+    }
+
+    public static void assertCellValue(final Cell cell, final Boolean value) {
+        final boolean expectedValue = BooleanUtils.isTrue(value);
+        Assertions.assertEquals(expectedValue, cell.getBooleanCellValue());
     }
 
     private static void assetCellValue(final Cell cell, final LocalDateTime value) {

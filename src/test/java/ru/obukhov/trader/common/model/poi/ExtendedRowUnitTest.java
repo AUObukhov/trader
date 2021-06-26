@@ -593,6 +593,46 @@ class ExtendedRowUnitTest {
 
     // endregion
 
+    // region createCell with Boolean value tests
+
+    @Test
+    void createCell_withBooleanValue_whenValueIsNull() {
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Boolean value = null;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        AssertUtils.assertCellAttributes(
+                cell,
+                extendedRow,
+                column,
+                CellType.BOOLEAN,
+                ExtendedWorkbook.CellStylesNames.BOOLEAN,
+                value
+        );
+    }
+
+    @Test
+    void createCell_withBooleanValue_whenValueIsNotNull() {
+        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final int column = 5;
+        final Boolean value = true;
+
+        final ExtendedCell cell = extendedRow.createCell(column, value);
+
+        AssertUtils.assertCellAttributes(
+                cell,
+                extendedRow,
+                column,
+                CellType.BOOLEAN,
+                ExtendedWorkbook.CellStylesNames.BOOLEAN,
+                value
+        );
+    }
+
+    // endregion
+
     // region getWorkbook tests
 
     @Test
