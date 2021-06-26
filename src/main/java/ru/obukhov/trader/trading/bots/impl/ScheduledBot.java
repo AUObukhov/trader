@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.ScheduledBotConfig;
+import ru.obukhov.trader.config.ScheduledBotProperties;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -19,7 +19,7 @@ import java.util.Set;
 @Slf4j
 public class ScheduledBot extends AbstractBot {
 
-    private final ScheduledBotConfig scheduledBotConfig;
+    private final ScheduledBotProperties scheduledBotProperties;
     private final TradingProperties tradingProperties;
 
     public ScheduledBot(
@@ -29,7 +29,7 @@ public class ScheduledBot extends AbstractBot {
             final PortfolioService portfolioService,
             final TradingStrategy strategy,
             final CandleResolution candleResolution,
-            final ScheduledBotConfig scheduledBotConfig,
+            final ScheduledBotProperties scheduledBotProperties,
             final TradingProperties tradingProperties
     ) {
         super(
@@ -42,14 +42,14 @@ public class ScheduledBot extends AbstractBot {
                 candleResolution
         );
 
-        this.scheduledBotConfig = scheduledBotConfig;
+        this.scheduledBotProperties = scheduledBotProperties;
         this.tradingProperties = tradingProperties;
     }
 
     @Scheduled(fixedDelayString = "${scheduled-bot.delay}")
     @SuppressWarnings("unused")
     public void tick() {
-        if (!scheduledBotConfig.isEnabled()) {
+        if (!scheduledBotProperties.isEnabled()) {
             log.trace("Bot is disabled. Do nothing");
             return;
         }
@@ -59,7 +59,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        final Set<String> tickers = new HashSet<>(scheduledBotConfig.getTickers());
+        final Set<String> tickers = new HashSet<>(scheduledBotProperties.getTickers());
         if (tickers.isEmpty()) {
             log.warn("No tickers configured for bot. Do nothing");
             return;

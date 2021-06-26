@@ -77,13 +77,13 @@ public class BeanConfiguration {
             final OperationsService operationsService,
             final OrdersService ordersService,
             final PortfolioService portfolioService,
-            final ScheduledBotConfig scheduledBotConfig,
+            final ScheduledBotProperties scheduledBotProperties,
             final TradingProperties tradingProperties,
             final TradingStrategyFactory strategyFactory
     ) {
         final TradingStrategy strategy = strategyFactory.createStrategy(
-                scheduledBotConfig.getStrategyType(),
-                scheduledBotConfig.getStrategyParams()
+                scheduledBotProperties.getStrategyType(),
+                scheduledBotProperties.getStrategyParams()
         );
         return new ScheduledBot(
                 marketService,
@@ -91,8 +91,8 @@ public class BeanConfiguration {
                 ordersService,
                 portfolioService,
                 strategy,
-                scheduledBotConfig.getCandleResolution(),
-                scheduledBotConfig,
+                scheduledBotProperties.getCandleResolution(),
+                scheduledBotProperties,
                 tradingProperties
         );
 

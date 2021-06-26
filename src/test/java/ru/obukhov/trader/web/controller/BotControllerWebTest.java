@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.ScheduledBotConfig;
+import ru.obukhov.trader.config.ScheduledBotProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -40,7 +40,7 @@ class BotControllerWebTest extends ControllerWebTest {
     private Simulator simulator;
 
     @Autowired
-    private ScheduledBotConfig scheduledBotConfig;
+    private ScheduledBotProperties scheduledBotProperties;
 
     @Test
     void simulate_returnsSimulationResults() throws Exception {
@@ -178,29 +178,29 @@ class BotControllerWebTest extends ControllerWebTest {
 
     @Test
     void enableScheduling_enablesScheduling() throws Exception {
-        scheduledBotConfig.setEnabled(false);
+        scheduledBotProperties.setEnabled(false);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Assertions.assertTrue(scheduledBotConfig.isEnabled());
+        Assertions.assertTrue(scheduledBotProperties.isEnabled());
     }
 
     @Test
     void disableScheduling_disablesScheduling() throws Exception {
-        scheduledBotConfig.setEnabled(true);
+        scheduledBotProperties.setEnabled(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Assertions.assertFalse(scheduledBotConfig.isEnabled());
+        Assertions.assertFalse(scheduledBotProperties.isEnabled());
     }
 
     @Test
     void setTickers_setsTickers() throws Exception {
-        scheduledBotConfig.setTickers(Set.of());
+        scheduledBotProperties.setTickers(Set.of());
 
         final String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
 
@@ -209,7 +209,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        final Set<String> tickersList = scheduledBotConfig.getTickers();
+        final Set<String> tickersList = scheduledBotProperties.getTickers();
         Assertions.assertEquals(3, tickersList.size());
         Assertions.assertTrue(tickersList.contains("ticker1"));
         Assertions.assertTrue(tickersList.contains("ticker2"));

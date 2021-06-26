@@ -11,7 +11,7 @@ import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "scheduled-bot")
-public class ScheduledBotConfig extends TradingConfig {
+public class ScheduledBotProperties extends TradingConfig {
 
     @Getter
     @Setter

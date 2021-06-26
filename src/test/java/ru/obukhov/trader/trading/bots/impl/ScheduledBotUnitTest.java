@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.ScheduledBotConfig;
+import ru.obukhov.trader.config.ScheduledBotProperties;
 import ru.obukhov.trader.config.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -55,7 +55,7 @@ class ScheduledBotUnitTest {
     private PortfolioService portfolioService;
 
     @Mock
-    private ScheduledBotConfig scheduledBotConfig;
+    private ScheduledBotProperties scheduledBotProperties;
 
     @Mock
     private TradingProperties tradingProperties;
@@ -71,7 +71,7 @@ class ScheduledBotUnitTest {
                 portfolioService,
                 strategy,
                 CandleResolution._1MIN,
-                scheduledBotConfig,
+                scheduledBotProperties,
                 tradingProperties
         );
     }
@@ -79,7 +79,7 @@ class ScheduledBotUnitTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNothing_whenDisabled() {
-        Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(false);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(false);
 
         bot.tick();
 
@@ -91,7 +91,7 @@ class ScheduledBotUnitTest {
     void tick_doesNothing_whenNotWorkTime() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().plusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -106,7 +106,7 @@ class ScheduledBotUnitTest {
     void tick_doesNothing_whenNoNoTickers() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
             mockTickers();
@@ -122,7 +122,7 @@ class ScheduledBotUnitTest {
     void tick_doesNothing_whenThereAreOrders() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -148,7 +148,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenGetLastCandlesThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -178,7 +178,7 @@ class ScheduledBotUnitTest {
     void tick_doesNothing_whenGetOrdersThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -202,7 +202,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenGetInstrumentThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -229,7 +229,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenGetAvailableBalanceThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -259,7 +259,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenGetPositionThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -289,7 +289,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenGetOperationsThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -321,7 +321,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenDecideThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -351,7 +351,7 @@ class ScheduledBotUnitTest {
     void tick_catchesException_whenPlaceMarketOrderThrowsException() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -383,7 +383,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenThereAreOrders() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -405,7 +405,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -424,7 +424,7 @@ class ScheduledBotUnitTest {
     void tick_doesNoOrder_whenDecisionIsWait() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -454,7 +454,7 @@ class ScheduledBotUnitTest {
     void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -484,7 +484,7 @@ class ScheduledBotUnitTest {
     void tick_andPlacesSellOrder_whenDecisionIsSell() {
         final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 6, 0, 0);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotConfig.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -510,7 +510,7 @@ class ScheduledBotUnitTest {
     }
 
     private void mockTickers(String... tickers) {
-        Mockito.when(scheduledBotConfig.getTickers()).thenReturn(Set.of(tickers));
+        Mockito.when(scheduledBotProperties.getTickers()).thenReturn(Set.of(tickers));
     }
 
     private void mockData(final String ticker) {

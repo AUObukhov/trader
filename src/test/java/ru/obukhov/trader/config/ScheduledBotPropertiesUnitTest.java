@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class ScheduledBotConfigUnitTest {
+class ScheduledBotPropertiesUnitTest {
 
     @Test
     void setTickersAndGetTickers_copiesCollection() {
-        final ScheduledBotConfig config = new ScheduledBotConfig();
+        final ScheduledBotProperties config = new ScheduledBotProperties();
         final Collection<String> initialTickers = Set.of("ticker1", "ticker2");
         final Collection<String> tickers = new HashSet<>(initialTickers);
 
@@ -31,7 +31,7 @@ class ScheduledBotConfigUnitTest {
 
     @Test
     void setTickersAndGetTickersAreThreadSafe() throws InterruptedException {
-        final ScheduledBotConfig config = new ScheduledBotConfig();
+        final ScheduledBotProperties config = new ScheduledBotProperties();
         AtomicReference<Exception> error = new AtomicReference<>();
 
         final Runnable target = () -> {

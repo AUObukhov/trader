@@ -5,11 +5,11 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
-class ScheduledBotConfigValidationTest {
+class ScheduledBotPropertiesValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final ScheduledBotConfig botConfig = new ScheduledBotConfig();
+        final ScheduledBotProperties botConfig = new ScheduledBotProperties();
         botConfig.setCandleResolution(CandleResolution._1MIN);
         botConfig.setStrategyType(StrategyType.CONSERVATIVE);
 
@@ -18,7 +18,7 @@ class ScheduledBotConfigValidationTest {
 
     @Test
     void validationFails_whenCandleResolutionIsNull() {
-        final ScheduledBotConfig botConfig = new ScheduledBotConfig();
+        final ScheduledBotProperties botConfig = new ScheduledBotProperties();
         botConfig.setStrategyType(StrategyType.CONSERVATIVE);
 
         AssertUtils.assertViolation(botConfig, "candleResolution is mandatory");
@@ -26,7 +26,7 @@ class ScheduledBotConfigValidationTest {
 
     @Test
     void validationFails_whenStrategyTypeIsNull() {
-        final ScheduledBotConfig botConfig = new ScheduledBotConfig();
+        final ScheduledBotProperties botConfig = new ScheduledBotProperties();
         botConfig.setCandleResolution(CandleResolution._1MIN);
 
         AssertUtils.assertViolation(botConfig, "strategyType is mandatory");
