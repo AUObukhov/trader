@@ -22,14 +22,14 @@ import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.SimulatedPosition;
+import ru.obukhov.trader.web.model.SimulationResult;
+import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
-import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
-import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.io.IOException;

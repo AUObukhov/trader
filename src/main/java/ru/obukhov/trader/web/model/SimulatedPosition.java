@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.model.pojo;
+package ru.obukhov.trader.web.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

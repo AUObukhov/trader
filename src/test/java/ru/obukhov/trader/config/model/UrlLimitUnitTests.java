@@ -1,4 +1,4 @@
-package ru.obukhov.trader.config;
+package ru.obukhov.trader.config.model;
 
 import okhttp3.HttpUrl;
 import org.junit.jupiter.api.Assertions;

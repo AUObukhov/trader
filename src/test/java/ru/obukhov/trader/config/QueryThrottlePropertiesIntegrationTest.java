@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import ru.obukhov.trader.config.model.UrlLimit;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;

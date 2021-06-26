@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.QueryThrottleProperties;
-import ru.obukhov.trader.config.UrlLimit;
+import ru.obukhov.trader.config.model.UrlLimit;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.io.IOException;

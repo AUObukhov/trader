@@ -1,10 +1,9 @@
-package ru.obukhov.trader.web.model.pojo;
+package ru.obukhov.trader.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.market.model.Candle;
 
 import java.math.BigDecimal;

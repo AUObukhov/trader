@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.Data;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.config.TradingConfig;
+import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import javax.validation.Valid;

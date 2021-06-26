@@ -1,4 +1,4 @@
-package ru.obukhov.trader.config;
+package ru.obukhov.trader.web.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

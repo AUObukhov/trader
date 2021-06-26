@@ -29,10 +29,10 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.SimulatedPosition;
+import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
-import ru.obukhov.trader.web.model.pojo.SimulatedPosition;
-import ru.obukhov.trader.web.model.pojo.SimulationResult;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.awt.Color;

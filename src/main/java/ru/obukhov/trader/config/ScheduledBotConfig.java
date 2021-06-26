@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import ru.obukhov.trader.web.model.TradingConfig;
 
 import java.util.Collection;
 import java.util.Set;

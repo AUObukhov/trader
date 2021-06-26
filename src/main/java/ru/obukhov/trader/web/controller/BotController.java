@@ -11,9 +11,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.ScheduledBotConfig;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
+import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateResponse;
-import ru.obukhov.trader.web.model.pojo.SimulationResult;
 
 import javax.validation.Valid;
 import java.util.Collection;

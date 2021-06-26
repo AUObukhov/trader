@@ -16,7 +16,7 @@ import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
-import ru.obukhov.trader.web.model.pojo.SimulatedOperation;
+import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;

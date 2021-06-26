@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.common.util.ThrottledCounter;
 import ru.obukhov.trader.config.QueryThrottleProperties;
-import ru.obukhov.trader.config.UrlLimit;
+import ru.obukhov.trader.config.model.UrlLimit;
 
 import java.util.HashMap;
 import java.util.Map;

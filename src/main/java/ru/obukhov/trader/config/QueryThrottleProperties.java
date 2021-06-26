@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 import ru.obukhov.trader.common.util.ThrottledCounter;
+import ru.obukhov.trader.config.model.UrlLimit;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
