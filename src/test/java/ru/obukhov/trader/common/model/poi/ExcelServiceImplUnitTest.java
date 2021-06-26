@@ -22,7 +22,7 @@ import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.config.BotConfig;
+import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -59,9 +59,9 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_savesMultipleResults() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result1 = createSimulationResult(ticker, new BotConfig());
-        final SimulationResult result2 = createSimulationResult(ticker, new BotConfig());
-        final SimulationResult result3 = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result1 = createSimulationResult(ticker, new TradingConfig());
+        final SimulationResult result2 = createSimulationResult(ticker, new TradingConfig());
+        final SimulationResult result3 = createSimulationResult(ticker, new TradingConfig());
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
         excelService.saveSimulationResults(ticker, results);
@@ -97,7 +97,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
 
         excelService.saveSimulationResults(ticker, List.of(result));
 
@@ -125,7 +125,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
         result.setError(StringUtils.EMPTY);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -155,7 +155,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
         final String error = "error";
 
-        final SimulationResult result = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
         result.setError(error);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -187,7 +187,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsChart_whenCandlesAreNull() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
         result.setCandles(null);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -217,7 +217,7 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsChart_whenCandlesAreEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
         result.setCandles(Collections.emptyList());
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -249,9 +249,9 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result1 = createSimulationResult(ticker, new BotConfig());
-        final SimulationResult result2 = createSimulationResult(ticker, new BotConfig());
-        final SimulationResult result3 = createSimulationResult(ticker, new BotConfig());
+        final SimulationResult result1 = createSimulationResult(ticker, new TradingConfig());
+        final SimulationResult result2 = createSimulationResult(ticker, new TradingConfig());
+        final SimulationResult result3 = createSimulationResult(ticker, new TradingConfig());
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
@@ -380,9 +380,9 @@ class ExcelServiceImplUnitTest {
         excelService.saveCandles(ticker, interval, response);
     }
 
-    private SimulationResult createSimulationResult(String ticker, BotConfig botConfig) {
+    private SimulationResult createSimulationResult(String ticker, TradingConfig tradingConfig) {
         return SimulationResult.builder()
-                .botConfig(botConfig)
+                .tradingConfig(tradingConfig)
                 .interval(createInterval())
                 .initialBalance(BigDecimal.valueOf(700))
                 .finalTotalBalance(BigDecimal.valueOf(1000))

@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @ConfigurationProperties(prefix = "scheduled-bot")
-public class ScheduledBotConfig extends BotConfig {
+public class ScheduledBotConfig extends TradingConfig {
 
     @Getter
     @Setter

@@ -12,7 +12,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.BotConfig;
+import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -49,7 +49,7 @@ class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final BotConfig CONSERVATIVE_BOT_CONFIG = new BotConfig(
+    private static final TradingConfig CONSERVATIVE_BOT_CONFIG = new TradingConfig(
             CandleResolution._1MIN,
             StrategyType.CONSERVATIVE
     );
@@ -111,7 +111,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = Collections.emptyList();
+        final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
@@ -122,7 +122,7 @@ class SimulatorImplUnitTest {
                 DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, botsConfigs, interval, false),
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, tradingConfigs, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
@@ -137,7 +137,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = Collections.emptyList();
+        final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
@@ -149,7 +149,7 @@ class SimulatorImplUnitTest {
         );
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, botsConfigs, interval, false),
+                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, tradingConfigs, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
@@ -173,7 +173,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -186,7 +186,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -197,7 +197,7 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        Assertions.assertEquals(botsConfigs.get(0), simulationResult.getBotConfig());
+        Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
@@ -237,7 +237,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -279,7 +279,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -290,7 +290,7 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        Assertions.assertEquals(botsConfigs.get(0), simulationResult.getBotConfig());
+        Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
         AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
         AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
@@ -332,7 +332,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -374,7 +374,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -415,7 +415,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -455,7 +455,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -497,7 +497,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -535,7 +535,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -580,7 +580,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -616,7 +616,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -662,7 +662,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -682,7 +682,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -721,7 +721,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = null;
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -742,7 +742,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -781,7 +781,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -806,7 +806,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 true
         );
@@ -842,7 +842,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -867,7 +867,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -903,7 +903,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -916,7 +916,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 false
         );
@@ -956,7 +956,7 @@ class SimulatorImplUnitTest {
         final BigDecimal initialBalance = BigDecimal.valueOf(10000);
         final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
 
-        final List<BotConfig> botsConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
@@ -984,7 +984,7 @@ class SimulatorImplUnitTest {
                 initialBalance,
                 balanceIncrement,
                 BALANCE_INCREMENT_CRON,
-                botsConfigs,
+                tradingConfigs,
                 interval,
                 true
         );
@@ -998,10 +998,10 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
     }
 
-    private void mockStrategy(BotConfig botConfig, TradingStrategy strategy) {
+    private void mockStrategy(TradingConfig tradingConfig, TradingStrategy strategy) {
         Mockito.when(strategyFactory.createStrategy(
-                botConfig.getStrategyType(),
-                botConfig.getStrategyParams()
+                tradingConfig.getStrategyType(),
+                tradingConfig.getStrategyParams()
         )).thenReturn(strategy);
     }
 

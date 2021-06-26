@@ -3,7 +3,7 @@ package ru.obukhov.trader.web.model;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.config.BotConfig;
+import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
@@ -90,28 +90,28 @@ class SimulateRequestValidationTest {
         AssertUtils.assertViolation(request, "from is mandatory");
     }
 
-    // region botsConfigs validation tests
+    // region tradingConfigs validation tests
 
     @Test
     void validationFails_whenBotsConfigsIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.setBotsConfigs(null);
+        request.setTradingConfigs(null);
 
-        AssertUtils.assertViolation(request, "botsConfigs is mandatory");
+        AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
     }
 
     @Test
     void validationFails_whenBotsConfigsIsEmpty() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.setBotsConfigs(Collections.emptyList());
+        request.setTradingConfigs(Collections.emptyList());
 
-        AssertUtils.assertViolation(request, "botsConfigs is mandatory");
+        AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
     }
 
     @Test
     void validationFails_whenCandleResolutionIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.getBotsConfigs().get(0).setCandleResolution(null);
+        request.getTradingConfigs().get(0).setCandleResolution(null);
 
         AssertUtils.assertViolation(request, "candleResolution is mandatory");
     }
@@ -119,7 +119,7 @@ class SimulateRequestValidationTest {
     @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.getBotsConfigs().get(0).setStrategyType(null);
+        request.getTradingConfigs().get(0).setStrategyType(null);
 
         AssertUtils.assertViolation(request, "strategyType is mandatory");
     }
@@ -137,8 +137,8 @@ class SimulateRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final BotConfig botConfig = new BotConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        request.setBotsConfigs(List.of(botConfig));
+        final TradingConfig tradingConfig = new TradingConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        request.setTradingConfigs(List.of(tradingConfig));
 
         return request;
     }

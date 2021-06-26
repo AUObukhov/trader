@@ -14,7 +14,7 @@ import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.MathUtils;
-import ru.obukhov.trader.config.BotConfig;
+import ru.obukhov.trader.config.TradingConfig;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -92,7 +92,7 @@ public class SimulatorImpl implements Simulator {
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
             final CronExpression balanceIncrementCron,
-            final List<BotConfig> botsConfigs,
+            final List<TradingConfig> tradingConfigs,
             final Interval interval,
             final boolean saveToFiles
     ) {
@@ -104,9 +104,9 @@ public class SimulatorImpl implements Simulator {
 
         final Interval finiteInterval = interval.limitByNowIfNull();
 
-        final List<CompletableFuture<SimulationResult>> simulationFutures = botsConfigs.stream()
-                .map(botConfig -> startSimulation(
-                        botConfig,
+        final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
+                .map(tradingConfig -> startSimulation(
+                        tradingConfig,
                         ticker,
                         initialBalance,
                         balanceIncrement,
@@ -130,16 +130,16 @@ public class SimulatorImpl implements Simulator {
         return simulationResults;
     }
 
-    private FakeBot createFakeBot(final BotConfig botConfig) {
+    private FakeBot createFakeBot(final TradingConfig tradingConfig) {
         final TradingStrategy strategy = strategyFactory.createStrategy(
-                botConfig.getStrategyType(),
-                botConfig.getStrategyParams()
+                tradingConfig.getStrategyType(),
+                tradingConfig.getStrategyParams()
         );
-        return (FakeBot) fakeBotFactory.createBot(strategy, botConfig.getCandleResolution());
+        return (FakeBot) fakeBotFactory.createBot(strategy, tradingConfig.getCandleResolution());
     }
 
     private CompletableFuture<SimulationResult> startSimulation(
-            final BotConfig botConfig,
+            final TradingConfig tradingConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
@@ -147,13 +147,13 @@ public class SimulatorImpl implements Simulator {
             final Interval interval
     ) {
         return CompletableFuture.supplyAsync(
-                () -> simulateSafe(botConfig, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
+                () -> simulateSafe(tradingConfig, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
                 executor
         );
     }
 
     private SimulationResult simulateSafe(
-            final BotConfig botConfig,
+            final TradingConfig tradingConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
@@ -161,26 +161,26 @@ public class SimulatorImpl implements Simulator {
             final Interval interval
     ) {
         try {
-            log.info("Simulation for '{}' with ticker = '{}' started", botConfig, ticker);
+            log.info("Simulation for '{}' with ticker = '{}' started", tradingConfig, ticker);
 
             final SimulationResult result = simulate(
-                    botConfig,
+                    tradingConfig,
                     ticker,
                     initialBalance,
                     balanceIncrement,
                     balanceIncrementCron,
                     interval
             );
-            log.info("Simulation for '{}' with ticker = '{}' ended", botConfig, ticker);
+            log.info("Simulation for '{}' with ticker = '{}' ended", tradingConfig, ticker);
             return result;
         } catch (Exception ex) {
             final String message = String.format(
                     "Simulation for '%s' with ticker '%s' failed with error: %s",
-                    botConfig, ticker, ex.getMessage()
+                    tradingConfig, ticker, ex.getMessage()
             );
             log.error(message, ex);
             return SimulationResult.builder()
-                    .botConfig(botConfig)
+                    .tradingConfig(tradingConfig)
                     .interval(interval)
                     .initialBalance(initialBalance)
                     .totalInvestment(initialBalance)
@@ -199,14 +199,14 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult simulate(
-            final BotConfig botConfig,
+            final TradingConfig tradingConfig,
             final String ticker,
             final BigDecimal initialBalance,
             final BigDecimal balanceIncrement,
             final CronExpression balanceIncrementCron,
             final Interval interval
     ) {
-        final FakeBot bot = createFakeBot(botConfig);
+        final FakeBot bot = createFakeBot(tradingConfig);
 
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
@@ -232,7 +232,7 @@ public class SimulatorImpl implements Simulator {
             moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(botConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
+        return createResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -266,7 +266,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulationResult createResult(
-            final BotConfig botConfig,
+            final TradingConfig tradingConfig,
             final Interval interval,
             final String ticker,
             final List<Candle> candles,
@@ -290,7 +290,7 @@ public class SimulatorImpl implements Simulator {
         final List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
         return SimulationResult.builder()
-                .botConfig(botConfig)
+                .tradingConfig(tradingConfig)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .finalTotalBalance(totalBalance)

@@ -16,7 +16,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Accessors(chain = true)
-public class BotConfig {
+public class TradingConfig {
 
     @NotNull(message = "candleResolution is mandatory")
     private CandleResolution candleResolution;
@@ -26,7 +26,7 @@ public class BotConfig {
 
     private Map<String, Object> strategyParams;
 
-    public BotConfig(final CandleResolution candleResolution, final StrategyType strategyType) {
+    public TradingConfig(final CandleResolution candleResolution, final StrategyType strategyType) {
         this.candleResolution = candleResolution;
         this.strategyType = strategyType;
         this.strategyParams = Map.of();
