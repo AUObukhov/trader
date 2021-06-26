@@ -24,6 +24,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
 import ru.obukhov.trader.web.model.SimulationResult;
@@ -78,20 +79,16 @@ public class SimulatorImpl implements Simulator {
     }
 
     /**
-     * @param ticker               ticker for all simulations
-     * @param initialBalance       initial balance sum of each simulation
-     * @param balanceIncrement     regular balance increment sum
-     * @param balanceIncrementCron cron expression, representing schedule of balance increment
-     * @param interval             all simulations interval
-     * @param saveToFiles          flag to save simulations results to file
+     * @param ticker        ticker for all simulations
+     * @param balanceConfig balance configuration of each simulation
+     * @param interval      all simulations interval
+     * @param saveToFiles   flag to save simulations results to file
      * @return map of simulations results by tickers
      */
     @Override
     public List<SimulationResult> simulate(
             final String ticker,
-            final BigDecimal initialBalance,
-            final BigDecimal balanceIncrement,
-            final CronExpression balanceIncrementCron,
+            final BalanceConfig balanceConfig,
             final List<TradingConfig> tradingConfigs,
             final Interval interval,
             final boolean saveToFiles
@@ -108,9 +105,7 @@ public class SimulatorImpl implements Simulator {
                 .map(tradingConfig -> startSimulation(
                         tradingConfig,
                         ticker,
-                        initialBalance,
-                        balanceIncrement,
-                        balanceIncrementCron,
+                        balanceConfig,
                         finiteInterval
                 ))
                 .collect(Collectors.toList());
@@ -141,13 +136,11 @@ public class SimulatorImpl implements Simulator {
     private CompletableFuture<SimulationResult> startSimulation(
             final TradingConfig tradingConfig,
             final String ticker,
-            final BigDecimal initialBalance,
-            final BigDecimal balanceIncrement,
-            final CronExpression balanceIncrementCron,
+            final BalanceConfig balanceConfig,
             final Interval interval
     ) {
         return CompletableFuture.supplyAsync(
-                () -> simulateSafe(tradingConfig, ticker, initialBalance, balanceIncrement, balanceIncrementCron, interval),
+                () -> simulateSafe(tradingConfig, ticker, balanceConfig, interval),
                 executor
         );
     }
@@ -155,9 +148,7 @@ public class SimulatorImpl implements Simulator {
     private SimulationResult simulateSafe(
             final TradingConfig tradingConfig,
             final String ticker,
-            final BigDecimal initialBalance,
-            final BigDecimal balanceIncrement,
-            final CronExpression balanceIncrementCron,
+            final BalanceConfig balanceConfig,
             final Interval interval
     ) {
         try {
@@ -166,9 +157,7 @@ public class SimulatorImpl implements Simulator {
             final SimulationResult result = simulate(
                     tradingConfig,
                     ticker,
-                    initialBalance,
-                    balanceIncrement,
-                    balanceIncrementCron,
+                    balanceConfig,
                     interval
             );
             log.info("Simulation for '{}' with ticker = '{}' ended", tradingConfig, ticker);
@@ -182,9 +171,9 @@ public class SimulatorImpl implements Simulator {
             return SimulationResult.builder()
                     .tradingConfig(tradingConfig)
                     .interval(interval)
-                    .initialBalance(initialBalance)
-                    .totalInvestment(initialBalance)
-                    .weightedAverageInvestment(initialBalance)
+                    .initialBalance(balanceConfig.getInitialBalance())
+                    .totalInvestment(balanceConfig.getInitialBalance())
+                    .weightedAverageInvestment(balanceConfig.getInitialBalance())
                     .finalBalance(BigDecimal.ZERO)
                     .finalTotalBalance(BigDecimal.ZERO)
                     .absoluteProfit(BigDecimal.ZERO)
@@ -201,9 +190,7 @@ public class SimulatorImpl implements Simulator {
     private SimulationResult simulate(
             final TradingConfig tradingConfig,
             final String ticker,
-            final BigDecimal initialBalance,
-            final BigDecimal balanceIncrement,
-            final CronExpression balanceIncrementCron,
+            final BalanceConfig balanceConfig,
             final Interval interval
     ) {
         final FakeBot bot = createFakeBot(tradingConfig);
@@ -215,7 +202,7 @@ public class SimulatorImpl implements Simulator {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), initialBalance);
+        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), balanceConfig.getInitialBalance());
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 
@@ -229,7 +216,12 @@ public class SimulatorImpl implements Simulator {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinute(ticker, balanceIncrement, balanceIncrementCron, fakeTinkoffService);
+            moveToNextMinute(
+                    ticker,
+                    balanceConfig.getBalanceIncrement(),
+                    balanceConfig.getBalanceIncrementCron(),
+                    fakeTinkoffService
+            );
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());

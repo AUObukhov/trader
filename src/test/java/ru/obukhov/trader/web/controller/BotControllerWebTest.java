@@ -2,7 +2,6 @@ package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,9 @@ import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
-import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
-import ru.obukhov.trader.test.utils.matchers.CronExpressionMatcher;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
 import ru.obukhov.trader.web.model.SimulationResult;
@@ -65,9 +63,11 @@ class BotControllerWebTest extends ControllerWebTest {
                 10000, 20000, 30000, 5000, from, CandleResolution.DAY
         );
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(1000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(100);
-        final CronExpression balanceIncrementCron = new CronExpression("0 0 0 1 * ?");
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(100),
+                new CronExpression("0 0 0 1 * ?")
+        );
         final TradingConfig tradingConfig1 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
@@ -75,7 +75,7 @@ class BotControllerWebTest extends ControllerWebTest {
         final SimulationResult simulationResult1 = SimulationResult.builder()
                 .tradingConfig(tradingConfig1)
                 .interval(interval)
-                .initialBalance(initialBalance)
+                .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(1000))
                 .weightedAverageInvestment(BigDecimal.valueOf(1000))
                 .finalTotalBalance(BigDecimal.valueOf(2000))
@@ -101,7 +101,7 @@ class BotControllerWebTest extends ControllerWebTest {
         final SimulationResult simulationResult2 = SimulationResult.builder()
                 .tradingConfig(tradingConfig2)
                 .interval(interval)
-                .initialBalance(initialBalance)
+                .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(10000))
                 .weightedAverageInvestment(BigDecimal.valueOf(10000))
                 .finalTotalBalance(BigDecimal.valueOf(20000))
@@ -127,7 +127,7 @@ class BotControllerWebTest extends ControllerWebTest {
         final SimulationResult simulationResult3 = SimulationResult.builder()
                 .tradingConfig(tradingConfig3)
                 .interval(interval)
-                .initialBalance(initialBalance)
+                .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(2000))
                 .weightedAverageInvestment(BigDecimal.valueOf(2000))
                 .finalTotalBalance(BigDecimal.valueOf(4000))
@@ -146,9 +146,7 @@ class BotControllerWebTest extends ControllerWebTest {
         Mockito.when(
                 simulator.simulate(
                         Mockito.eq(ticker),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(initialBalance)),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement)),
-                        ArgumentMatchers.argThat(CronExpressionMatcher.of(balanceIncrementCron)),
+                        Mockito.eq(balanceConfig),
                         Mockito.anyList(),
                         Mockito.any(Interval.class),
                         Mockito.eq(true)
@@ -167,9 +165,7 @@ class BotControllerWebTest extends ControllerWebTest {
         Mockito.verify(simulator, Mockito.times(1))
                 .simulate(
                         Mockito.eq(ticker),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(initialBalance)),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement)),
-                        ArgumentMatchers.argThat(CronExpressionMatcher.of(balanceIncrementCron)),
+                        Mockito.eq(balanceConfig),
                         Mockito.anyList(),
                         Mockito.any(Interval.class),
                         Mockito.eq(true)

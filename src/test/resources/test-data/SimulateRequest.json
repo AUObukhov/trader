@@ -1,8 +1,10 @@
 {
   "ticker": "ticker",
-  "initialBalance": 1000,
-  "balanceIncrement": 100,
-  "balanceIncrementCron": "0 0 0 1 * ?",
+  "balanceConfig": {
+    "initialBalance": 1000,
+    "balanceIncrement": 100,
+    "balanceIncrementCron": "0 0 0 1 * ?"
+  },
   "tradingConfigs": [
     {
       "candleResolution": "1min",

@@ -37,9 +37,7 @@ public class BotController {
 
         final List<SimulationResult> results = simulator.simulate(
                 request.getTicker(),
-                request.getInitialBalance(),
-                request.getBalanceIncrement(),
-                request.getBalanceIncrementCron(),
+                request.getBalanceConfig(),
                 request.getTradingConfigs(),
                 interval,
                 saveToFiles

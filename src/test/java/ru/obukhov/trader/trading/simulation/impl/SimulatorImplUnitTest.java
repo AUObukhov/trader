@@ -26,6 +26,7 @@ import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
 import ru.obukhov.trader.web.model.SimulationResult;
@@ -108,8 +109,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
@@ -122,7 +126,7 @@ class SimulatorImplUnitTest {
                 DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, tradingConfigs, interval, false),
+                () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
@@ -134,8 +138,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
@@ -149,7 +156,7 @@ class SimulatorImplUnitTest {
         );
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, initialBalance, balanceIncrement, BALANCE_INCREMENT_CRON, tradingConfigs, interval, false),
+                () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
@@ -170,8 +177,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -183,9 +193,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -199,11 +207,11 @@ class SimulatorImplUnitTest {
 
         Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getInitialBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getTotalInvestment());
         AssertUtils.assertEquals(0, simulationResult.getFinalTotalBalance());
         AssertUtils.assertEquals(0, simulationResult.getFinalBalance());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getWeightedAverageInvestment());
         AssertUtils.assertEquals(0, simulationResult.getAbsoluteProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
@@ -234,8 +242,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -263,7 +274,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
@@ -276,9 +287,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -292,17 +301,17 @@ class SimulatorImplUnitTest {
 
         Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
         Assertions.assertEquals(interval, simulationResult.getInterval());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getInitialBalance());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getTotalInvestment());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getInitialBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getTotalInvestment());
 
         final BigDecimal positionsPrice = DecimalUtils.multiply(candle4.getClosePrice(), positionLotsCount);
         final BigDecimal expectedFinalTotalBalance = currentBalance.add(positionsPrice);
         AssertUtils.assertEquals(expectedFinalTotalBalance, simulationResult.getFinalTotalBalance());
 
         AssertUtils.assertEquals(currentBalance, simulationResult.getFinalBalance());
-        AssertUtils.assertEquals(initialBalance, simulationResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getWeightedAverageInvestment());
 
-        final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(initialBalance).add(positionsPrice);
+        final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(balanceConfig.getInitialBalance()).add(positionsPrice);
         AssertUtils.assertEquals(expectedAbsoluteProfit, simulationResult.getAbsoluteProfit());
 
         AssertUtils.assertEquals(1.1, simulationResult.getRelativeProfit());
@@ -329,8 +338,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -358,7 +370,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
@@ -371,9 +383,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -390,7 +400,7 @@ class SimulatorImplUnitTest {
         Mockito.verify(fakeTinkoffService, Mockito.times(5))
                 .incrementBalance(
                         Mockito.eq(MarketInstrument.getCurrency()),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
+                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceConfig.getBalanceIncrement()))
                 );
     }
 
@@ -412,8 +422,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -441,7 +454,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final int positionLotsCount = 2;
@@ -452,9 +465,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -494,8 +505,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -509,7 +523,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final OffsetDateTime operationDateTime = from.plusMinutes(2);
@@ -532,9 +546,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -577,8 +589,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = null;
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                null,
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -606,16 +621,14 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -659,8 +672,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = null;
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                null,
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -672,16 +688,14 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -718,8 +732,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = null;
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                null,
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -731,7 +748,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency()))
                 .thenReturn(BigDecimal.valueOf(20000));
 
@@ -739,9 +756,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -778,8 +793,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -793,7 +811,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -803,9 +821,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 true
@@ -839,8 +855,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -854,7 +873,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -864,9 +883,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -900,8 +917,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -913,9 +933,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 false
@@ -953,8 +971,11 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BigDecimal initialBalance = BigDecimal.valueOf(10000);
-        final BigDecimal balanceIncrement = BigDecimal.valueOf(1000);
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(1000),
+                BALANCE_INCREMENT_CRON
+        );
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -968,7 +989,7 @@ class SimulatorImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialBalance(MarketInstrument.getCurrency(), from, initialBalance);
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
@@ -981,9 +1002,7 @@ class SimulatorImplUnitTest {
 
         final List<SimulationResult> simulationResults = simulator.simulate(
                 ticker,
-                initialBalance,
-                balanceIncrement,
-                BALANCE_INCREMENT_CRON,
+                balanceConfig,
                 tradingConfigs,
                 interval,
                 true

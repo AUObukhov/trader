@@ -52,33 +52,11 @@ class SimulateRequestValidationTest {
     // endregion
 
     @Test
-    void validationFails_whenInitialBalanceIsNull() throws ParseException {
+    void validationFails_whenBalanceConfigIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
-        request.setInitialBalance(null);
+        request.setBalanceConfig(null);
 
-        AssertUtils.assertViolation(request, "initial balance is mandatory");
-    }
-
-    @Test
-    void validationFails_whenBalanceIncrementIsNullAndBalanceIncrementCronIsNotNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setBalanceIncrement(null);
-
-        AssertUtils.assertViolation(
-                request,
-                "balanceIncrement and balanceIncrementCron must be both null or not null"
-        );
-    }
-
-    @Test
-    void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setBalanceIncrementCron(null);
-
-        AssertUtils.assertViolation(
-                request,
-                "balanceIncrement and balanceIncrementCron must be both null or not null"
-        );
+        AssertUtils.assertViolation(request, "balanceConfig is mandatory");
     }
 
     @Test
@@ -130,9 +108,12 @@ class SimulateRequestValidationTest {
 
         request.setTicker("ticker");
 
-        request.setInitialBalance(BigDecimal.TEN);
-        request.setBalanceIncrement(BigDecimal.ONE);
-        request.setBalanceIncrementCron(new CronExpression("0 0 0 1 * ?"));
+        BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.TEN,
+                BigDecimal.ONE,
+                new CronExpression("0 0 0 1 * ?")
+        );
+        request.setBalanceConfig(balanceConfig);
 
         request.setFrom(OffsetDateTime.now());
 
