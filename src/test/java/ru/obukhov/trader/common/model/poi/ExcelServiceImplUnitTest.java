@@ -25,11 +25,13 @@ import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
 import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.io.IOException;
@@ -39,11 +41,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class ExcelServiceImplUnitTest {
+
+    private static final int MINIMUM_ROWS_COUNT = 21;
 
     @Captor
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
@@ -59,9 +64,23 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_savesMultipleResults() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result1 = createSimulationResult(ticker, new TradingConfig());
-        final SimulationResult result2 = createSimulationResult(ticker, new TradingConfig());
-        final SimulationResult result3 = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig1 = new TradingConfig()
+                .setCandleResolution(CandleResolution.HOUR)
+                .setStrategyType(StrategyType.CONSERVATIVE)
+                .setStrategyParams(Map.of());
+        final SimulationResult result1 = createSimulationResult(ticker, tradingConfig1);
+
+        final TradingConfig tradingConfig2 = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result2 = createSimulationResult(ticker, tradingConfig2);
+
+        final TradingConfig tradingConfig3 = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
+        final SimulationResult result3 = createSimulationResult(ticker, tradingConfig3);
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
         excelService.saveSimulationResults(ticker, results);
@@ -81,10 +100,11 @@ class ExcelServiceImplUnitTest {
 
             final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-            final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+            final int expectedRowCount = getExpectedRowCount(result);
             Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
             final Iterator<Row> rowIterator = sheet.iterator();
+            assertTradingConfig(result.getTradingConfig(), rowIterator);
             assertCommonStatistics(ticker, result, rowIterator);
             assertPositions(result, rowIterator);
             assertOperations(result, rowIterator);
@@ -97,7 +117,11 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
 
         excelService.saveSimulationResults(ticker, List.of(result));
 
@@ -110,10 +134,11 @@ class ExcelServiceImplUnitTest {
 
         final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = getExpectedRowCount(result);
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
+        assertTradingConfig(result.getTradingConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -125,7 +150,11 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setError(StringUtils.EMPTY);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -139,10 +168,11 @@ class ExcelServiceImplUnitTest {
 
         final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = getExpectedRowCount(result);
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
+        assertTradingConfig(result.getTradingConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -155,7 +185,11 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
         final String error = "error";
 
-        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setError(error);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -169,10 +203,11 @@ class ExcelServiceImplUnitTest {
 
         final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-        final int expectedRowCount = 18 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = getExpectedRowCount(result);
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
+        assertTradingConfig(result.getTradingConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.getError());
 
@@ -187,7 +222,11 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsChart_whenCandlesAreNull() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setCandles(null);
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -201,10 +240,11 @@ class ExcelServiceImplUnitTest {
 
         final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = getExpectedRowCount(result);
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
+        assertTradingConfig(result.getTradingConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -217,7 +257,11 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_skipsChart_whenCandlesAreEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setCandles(Collections.emptyList());
 
         excelService.saveSimulationResults(ticker, List.of(result));
@@ -231,10 +275,11 @@ class ExcelServiceImplUnitTest {
 
         final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheetAt(0);
 
-        final int expectedRowCount = 17 + result.getPositions().size() + result.getOperations().size();
+        final int expectedRowCount = getExpectedRowCount(result);
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
+        assertTradingConfig(result.getTradingConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -249,9 +294,13 @@ class ExcelServiceImplUnitTest {
     void saveSimulationResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
-        final SimulationResult result1 = createSimulationResult(ticker, new TradingConfig());
-        final SimulationResult result2 = createSimulationResult(ticker, new TradingConfig());
-        final SimulationResult result3 = createSimulationResult(ticker, new TradingConfig());
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setCandleResolution(CandleResolution._1MIN)
+                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyParams(Map.of());
+        final SimulationResult result1 = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result2 = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result3 = createSimulationResult(ticker, tradingConfig);
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
         final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
@@ -262,7 +311,17 @@ class ExcelServiceImplUnitTest {
         excelService.saveSimulationResults(ticker, results);
     }
 
+    private void assertTradingConfig(TradingConfig tradingConfig, Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next(), "Конфигурация");
+        AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", tradingConfig.getCandleResolution().toString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", tradingConfig.getStrategyType().toString());
+        for (Map.Entry<String, Object> entry : tradingConfig.getStrategyParams().entrySet()) {
+            AssertUtils.assertRowValues(rowIterator.next(), entry.getKey(), entry.getValue());
+        }
+    }
+
     private void assertCommonStatistics(String ticker, SimulationResult result, Iterator<Row> rowIterator) {
+        AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
@@ -306,7 +365,7 @@ class ExcelServiceImplUnitTest {
 
     private void assertMergedRegions(ExtendedSheet sheet) {
         final List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
-        Assertions.assertEquals(3, mergedRegions.size());
+        Assertions.assertEquals(4, mergedRegions.size());
     }
 
     // endregion
@@ -503,6 +562,14 @@ class ExcelServiceImplUnitTest {
                 supportLines,
                 resistanceLines
         );
+    }
+
+    private int getExpectedRowCount(SimulationResult result) {
+        return MINIMUM_ROWS_COUNT +
+                result.getTradingConfig().getStrategyParams().size() +
+                result.getPositions().size() +
+                result.getOperations().size() +
+                (StringUtils.isEmpty(result.getError()) ? 0 : 1);
     }
 
     private void assertChartCreated(ExtendedSheet sheet) {

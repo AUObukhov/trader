@@ -29,10 +29,13 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
 import ru.obukhov.trader.web.model.SimulationResult;
+import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.awt.Color;
@@ -45,6 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -125,8 +129,15 @@ public class ExcelServiceImpl implements ExcelService {
     private void createSheet(final ExtendedWorkbook workbook, final String ticker, final SimulationResult result) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
+        putTradingConfig(sheet, result.getTradingConfig());
+        sheet.addRow();
+
         putCommonStatistics(sheet, ticker, result);
+        sheet.addRow();
+
         putPositions(sheet, result.getPositions());
+        sheet.addRow();
+
         putOperations(sheet, result.getOperations());
 
         sheet.autoSizeColumns();
@@ -149,6 +160,32 @@ public class ExcelServiceImpl implements ExcelService {
         sheet.autoSizeColumns();
 
         putChartWithAverages(sheet, response);
+    }
+
+    private void putTradingConfig(ExtendedSheet sheet, TradingConfig tradingConfig) {
+        final ExtendedRow labelRow = sheet.addRow();
+        labelRow.createUnitedCell("Конфигурация", 2);
+
+        putCandleResolution(sheet, tradingConfig.getCandleResolution());
+        putStrategyType(sheet, tradingConfig.getStrategyType());
+        putStrategyParams(sheet, tradingConfig.getStrategyParams());
+    }
+
+    private void putCandleResolution(ExtendedSheet sheet, CandleResolution candleResolution) {
+        final ExtendedRow row = sheet.addRow();
+        row.createCells("Размер свечи", candleResolution.getValue());
+    }
+
+    private void putStrategyType(ExtendedSheet sheet, StrategyType strategyType) {
+        final ExtendedRow row = sheet.addRow();
+        row.createCells("Стратегия", strategyType.toString());
+    }
+
+    private void putStrategyParams(ExtendedSheet sheet, Map<String, Object> strategyParams) {
+        for (Map.Entry<String, Object> entry : strategyParams.entrySet()) {
+            final ExtendedRow row = sheet.addRow();
+            row.createCells(entry.getKey(), entry.getValue());
+        }
     }
 
     private void putCommonStatistics(final ExtendedSheet sheet, final String ticker, final SimulationResult result) {
@@ -233,7 +270,6 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putPositions(final ExtendedSheet sheet, final List<SimulatedPosition> positions) {
-        sheet.addRow();
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(positions)) {
@@ -250,7 +286,6 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putOperations(final ExtendedSheet sheet, final List<SimulatedOperation> operations) {
-        sheet.addRow();
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(operations)) {
