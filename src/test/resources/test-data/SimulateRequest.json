@@ -1,10 +1,13 @@
 {
   "ticker": "ticker",
+  "from": "2021-01-01T10:00:00+03:00",
+  "to": "2021-02-01T00:00:00+03:00",
   "balanceConfig": {
     "initialBalance": 1000,
     "balanceIncrement": 100,
     "balanceIncrementCron": "0 0 0 1 * ?"
   },
+  "saveToFiles": true,
   "tradingConfigs": [
     {
       "candleResolution": "1min",
@@ -35,8 +38,5 @@
         "greedy": false
       }
     }
-  ],
-  "from": "2021-01-01T10:00:00+03:00",
-  "to": "2021-02-01T00:00:00+03:00",
-  "saveToFiles": true
+  ]
 }

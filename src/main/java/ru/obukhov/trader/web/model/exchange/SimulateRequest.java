@@ -19,18 +19,18 @@ public class SimulateRequest {
     @NotBlank(message = "ticker is mandatory")
     private String ticker;
 
-    @NotNull(message = "balanceConfig is mandatory")
-    private BalanceConfig balanceConfig;
-
     @NotNull(message = "from is mandatory")
     private OffsetDateTime from;
 
     private OffsetDateTime to;
 
+    @NotNull(message = "balanceConfig is mandatory")
+    private BalanceConfig balanceConfig;
+
+    private Boolean saveToFiles;
+
     @Valid
     @NotEmpty(message = "tradingConfigs is mandatory")
     private List<TradingConfig> tradingConfigs;
-
-    private Boolean saveToFiles;
 
 }

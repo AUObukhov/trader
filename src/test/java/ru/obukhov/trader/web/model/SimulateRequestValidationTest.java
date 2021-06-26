@@ -52,19 +52,19 @@ class SimulateRequestValidationTest {
     // endregion
 
     @Test
-    void validationFails_whenBalanceConfigIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setBalanceConfig(null);
-
-        AssertUtils.assertViolation(request, "balanceConfig is mandatory");
-    }
-
-    @Test
     void validationFails_whenFromIsNull() throws ParseException {
         final SimulateRequest request = createValidSimulationRequest();
         request.setFrom(null);
 
         AssertUtils.assertViolation(request, "from is mandatory");
+    }
+
+    @Test
+    void validationFails_whenBalanceConfigIsNull() throws ParseException {
+        final SimulateRequest request = createValidSimulationRequest();
+        request.setBalanceConfig(null);
+
+        AssertUtils.assertViolation(request, "balanceConfig is mandatory");
     }
 
     // region tradingConfigs validation tests
