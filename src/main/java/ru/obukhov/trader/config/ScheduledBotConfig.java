@@ -1,5 +1,6 @@
 package ru.obukhov.trader.config;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Collection;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "scheduled-bot")
 public class ScheduledBotConfig extends TradingConfig {
 
