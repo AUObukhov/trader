@@ -250,28 +250,4 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
-    @ParameterizedTest
-    @CsvSource({
-            "150, 151, false",
-            "150, 150, false",
-            "150, 149, true"
-    })
-    void isGreater(BigDecimal value1, long value2, boolean expectedResult) {
-        final boolean result = DecimalUtils.isGreater(value1, value2);
-
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "150, 149, false",
-            "150, 150, false",
-            "150, 151, true"
-    })
-    void isLower(BigDecimal value1, long value2, boolean expectedResult) {
-        final boolean result = DecimalUtils.isLower(value1, value2);
-
-        Assertions.assertEquals(expectedResult, result);
-    }
-
 }
