@@ -232,12 +232,12 @@ public class DateUtils {
     }
 
     /**
-     * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
+     * @return {@link ChronoUnit#DAYS} when {@code candleResolution) is less than day, or else {@link ChronoUnit#YEARS}
      */
-    public static ChronoUnit getPeriodByCandleInterval(final CandleResolution candleInterval) {
-        return candleInterval == CandleResolution.DAY
-                || candleInterval == CandleResolution.WEEK
-                || candleInterval == CandleResolution.MONTH
+    public static ChronoUnit getPeriodByCandleResolution(final CandleResolution candleResolution) {
+        return candleResolution == CandleResolution.DAY
+                || candleResolution == CandleResolution.WEEK
+                || candleResolution == CandleResolution.MONTH
                 ? ChronoUnit.YEARS
                 : ChronoUnit.DAYS;
     }

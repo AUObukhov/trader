@@ -488,15 +488,15 @@ class DateUtilsUnitTest {
     // region getPeriodUnitByCandleInterval tests
 
     @Test
-    void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.HOUR);
+    void getPeriodUnitByCandleResolution_returnsDays_whenResolutionIsHour() {
+        final TemporalUnit unit = DateUtils.getPeriodByCandleResolution(CandleResolution.HOUR);
 
         Assertions.assertEquals(ChronoUnit.DAYS, unit);
     }
 
     @Test
-    void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleResolution.DAY);
+    void getPeriodUnitByCandleResolution_returnsYears_whenResolutionIsDay() {
+        final TemporalUnit unit = DateUtils.getPeriodByCandleResolution(CandleResolution.DAY);
 
         Assertions.assertEquals(ChronoUnit.YEARS, unit);
     }

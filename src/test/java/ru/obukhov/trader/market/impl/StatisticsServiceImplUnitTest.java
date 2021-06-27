@@ -39,13 +39,13 @@ class StatisticsServiceImplUnitTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final CandleResolution candleInterval = CandleResolution._1MIN;
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
 
-        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleInterval);
+        final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleResolution);
 
         Assertions.assertSame(candles, candlesResponse);
     }
@@ -58,18 +58,18 @@ class StatisticsServiceImplUnitTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final CandleResolution candleInterval = CandleResolution._1MIN;
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
         final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, candleInterval));
-        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleInterval));
-        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), candleInterval));
+        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, candleResolution));
+        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleResolution));
+        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), candleResolution));
 
-        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval);
+        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
@@ -100,25 +100,25 @@ class StatisticsServiceImplUnitTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final CandleResolution candleInterval = CandleResolution._1MIN;
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final List<Candle> candles = new ArrayList<>();
         final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
 
-        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleInterval));
-        candles.add(TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleInterval));
-        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleInterval));
-        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleInterval));
-        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleInterval));
-        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleInterval));
-        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleInterval));
-        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleInterval));
-        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleInterval));
-        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleInterval));
+        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleResolution));
+        candles.add(TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleResolution));
+        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleResolution));
+        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleResolution));
+        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleResolution));
+        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleResolution));
+        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleResolution));
+        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleResolution));
+        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleResolution));
+        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleResolution));
 
-        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval);
+        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 

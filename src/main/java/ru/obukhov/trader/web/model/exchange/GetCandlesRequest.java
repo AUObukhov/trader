@@ -12,11 +12,11 @@ public class GetCandlesRequest {
     private String ticker;
     private OffsetDateTime from;
     private OffsetDateTime to;
-    private CandleResolution candleInterval;
+    private CandleResolution candleResolution;
     private boolean saveToFile;
 
     // due to some lombok internal error
-    public CandleResolution getCandleInterval() {
-        return this.candleInterval;
+    public CandleResolution getCandleResolution() {
+        return this.candleResolution;
     }
 }

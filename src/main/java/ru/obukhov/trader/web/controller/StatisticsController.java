@@ -35,7 +35,7 @@ public class StatisticsController {
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,
                 interval,
-                request.getCandleInterval()
+                request.getCandleResolution()
         );
 
         if (request.isSaveToFile()) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface MarketService {
 
-    List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleInterval);
+    List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution);
 
     Candle getLastCandle(final String ticker);
 
