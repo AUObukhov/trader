@@ -17,11 +17,6 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
     @Getter
     private final FakeTinkoffService fakeTinkoffService;
 
-    @Override
-    public String getStrategyName() {
-        return strategy.getName();
-    }
-
     public FakeBotImpl(
             final MarketService marketService,
             final OperationsService operationsService,
