@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xddf.usermodel.XDDFColorRgbBinary;
 import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
@@ -289,6 +290,13 @@ public class AssertUtils {
         final CTMarker marker = (CTMarker) getMarkerMethod.invoke(series);
         final byte[] colorBytes = marker.getSpPr().getSolidFill().getSrgbClr().getVal();
         AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), colorBytes);
+    }
+
+    public static void assertEqualSheetNames(Workbook expected, Workbook actual) {
+        Assertions.assertEquals(expected.getNumberOfSheets(), actual.getNumberOfSheets());
+        for (int i = 0; i < expected.getNumberOfSheets(); i++) {
+            Assertions.assertEquals(actual.getSheetName(i), actual.getSheetName(i));
+        }
     }
 
     // endregion

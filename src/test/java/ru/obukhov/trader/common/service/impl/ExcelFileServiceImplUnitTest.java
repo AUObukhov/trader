@@ -1,10 +1,14 @@
 package ru.obukhov.trader.common.service.impl;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedConstruction;
@@ -12,19 +16,22 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.properties.ReportProperties;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
 class ExcelFileServiceImplUnitTest {
 
+    @Rule
+    public TemporaryFolder temporaryFolder = TemporaryFolder.builder().assureDeletion().build();
+
     @Mock
     private ReportProperties reportProperties;
-    @Mock
-    private Workbook workbook;
     @Mock
     private Runtime runtime;
 
@@ -32,17 +39,23 @@ class ExcelFileServiceImplUnitTest {
     private ExcelFileServiceImpl service;
 
     @BeforeEach
-    void setUp() {
-        final String saveDirectory = "save directory";
+    void setUp() throws IOException {
+        temporaryFolder.create();
 
-        Mockito.when(reportProperties.getSaveDirectory()).thenReturn(saveDirectory);
+        Mockito.when(reportProperties.getSaveDirectory()).thenReturn(temporaryFolder.getRoot().getAbsolutePath());
+    }
+
+    @AfterEach
+    void after() {
+        temporaryFolder.delete();
     }
 
     @Test
     @SuppressWarnings("unused")
     void saveToFile_throwsIllegalArgumentException_whenFailsToCreateFile() throws IOException {
-        final String fileName = "file";
-        final String absolutePath = "absolute path";
+        final String fileName = "file.xlsx";
+        final String absolutePath = reportProperties.getSaveDirectory() + "\\" + fileName;
+        final Workbook workbook = Mockito.mock(Workbook.class);
 
         MockedConstruction.MockInitializer<File> fileMockInitializer =
                 (mock, context) -> {
@@ -65,28 +78,29 @@ class ExcelFileServiceImplUnitTest {
     @Test
     @SuppressWarnings("unused")
     void saveToFile_writesWorkbookToFile() throws IOException {
-        final String fileName = "file";
+        final String fileName = "file.xlsx";
+        final String sheetName = "sheet";
 
-        MockedConstruction.MockInitializer<File> fileMockInitializer =
-                (mock, context) -> {
-                    Mockito.when(mock.createNewFile()).thenReturn(true);
-                    Mockito.when(mock.getAbsolutePath()).thenReturn(fileName);
-                };
+        final Workbook inputWorkbook = new XSSFWorkbook();
+        inputWorkbook.createSheet(sheetName);
 
-        try (
-                final MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime);
-                final MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer);
-                final MockedConstruction<FileOutputStream> fileOutputStreamConstruction =
-                        Mockito.mockConstruction(FileOutputStream.class)
-        ) {
-            service.saveToFile(workbook, fileName);
+        try (final MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
 
-            final FileOutputStream fileOutputStream = fileOutputStreamConstruction.constructed().get(0);
+            service.saveToFile(inputWorkbook, fileName);
 
-            Mockito.verify(workbook, Mockito.times(1)).write(fileOutputStream);
-            Mockito.verify(workbook, Mockito.times(1)).close();
-            Mockito.verify(runtime, Mockito.times(1)).exec(new String[]{"explorer", fileName});
+            final File file = new File(reportProperties.getSaveDirectory(), fileName);
+            try (final Workbook outputWorkbook = readWorkbook(file)) {
+                AssertUtils.assertEqualSheetNames(inputWorkbook, outputWorkbook);
+            }
+
+            Mockito.verify(runtime, Mockito.times(1))
+                    .exec(new String[]{"explorer", file.getAbsolutePath()});
         }
+    }
+
+    private Workbook readWorkbook(final File file) throws IOException {
+        final FileInputStream inputStream = new FileInputStream(file);
+        return new XSSFWorkbook(inputStream);
     }
 
 }
