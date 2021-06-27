@@ -105,6 +105,37 @@ class MarketServiceImplUnitTest {
     }
 
     @Test
+    void getCandles_filterCandlesByYears() {
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+
+        final CandleResolution candleResolution = CandleResolution.DAY;
+        final String ticker = "ticker";
+
+        new CandleMocker(tinkoffService, ticker, candleResolution)
+                .add(10, DateUtils.getDate(2016, 1, 1))
+                .add(0, DateUtils.getDate(2016, 2, 2))
+                .add(1, DateUtils.getDate(2016, 2, 2))
+                .add(2, DateUtils.getDate(2016, 2, 2))
+                .add(3, DateUtils.getDate(2016, 2, 3))
+                .add(4, DateUtils.getDate(2016, 2, 3))
+                .add(5, DateUtils.getDate(2016, 3, 1))
+                .mock();
+
+        final Interval interval = Interval.of(
+                DateUtils.getDate(2016, 2, 1),
+                DateUtils.getDate(2016, 2, 29)
+        );
+        final List<Candle> candles = service.getCandles(ticker, interval, candleResolution);
+
+        Assertions.assertEquals(5, candles.size());
+        AssertUtils.assertEquals(0, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(1, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(2).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(3).getOpenPrice());
+        AssertUtils.assertEquals(4, candles.get(4).getOpenPrice());
+    }
+
+    @Test
     void getCandles_skipsCandlesByYears_whenFromIsReached() {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 

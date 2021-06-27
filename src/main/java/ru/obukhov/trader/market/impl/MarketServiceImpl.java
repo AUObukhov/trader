@@ -105,7 +105,7 @@ public class MarketServiceImpl implements MarketService {
 
             currentCandles = loadCandles(ticker, currentFrom, currentTo, candleResolution)
                     .stream()
-                    .filter(candle -> !candle.getTime().isBefore(interval.getFrom()))
+                    .filter(candle -> interval.contains(candle.getTime()))
                     .collect(Collectors.toList());
             allCandles.addAll(currentCandles);
         } while (DateUtils.isAfter(currentFrom, interval.getFrom()) && !currentCandles.isEmpty());
