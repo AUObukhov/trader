@@ -98,9 +98,41 @@ class ExcelFileServiceImplUnitTest {
         }
     }
 
+    @Test
+    @SuppressWarnings("unused")
+    void saveToFile_createsFileWithUniqueName_whenFileAlreadyExists() throws IOException {
+        final String fileName = "file.xlsx";
+        final String fileName1 = "file (1).xlsx";
+        final String fileName2 = "file (2).xlsx";
+        final String sheetName = "sheet";
+
+        final Workbook inputWorkbook = new XSSFWorkbook();
+        inputWorkbook.createSheet(sheetName);
+
+        try (final MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
+            createFile(fileName);
+            createFile(fileName1);
+
+            service.saveToFile(inputWorkbook, fileName);
+
+            final File file = new File(reportProperties.getSaveDirectory(), fileName2);
+            try (final Workbook outputWorkbook = readWorkbook(file)) {
+                AssertUtils.assertEqualSheetNames(inputWorkbook, outputWorkbook);
+            }
+
+            Mockito.verify(runtime, Mockito.times(1))
+                    .exec(new String[]{"explorer", file.getAbsolutePath()});
+        }
+    }
+
     private Workbook readWorkbook(final File file) throws IOException {
         final FileInputStream inputStream = new FileInputStream(file);
         return new XSSFWorkbook(inputStream);
+    }
+
+    private void createFile(String fileName) throws IOException {
+        final File file = new File(reportProperties.getSaveDirectory(), fileName);
+        Assertions.assertTrue(file.createNewFile());
     }
 
 }
