@@ -48,7 +48,7 @@ class PortfolioControllerWebTest extends ControllerWebTest {
 
         Mockito.when(portfolioService.getPositions()).thenReturn(List.of(position1, position2));
 
-        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetPortfolioPositionsResponse.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("GetPortfolioPositionsResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/positions")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -72,8 +72,7 @@ class PortfolioControllerWebTest extends ControllerWebTest {
 
         Mockito.when(portfolioService.getCurrencies()).thenReturn(List.of(currencyPosition1, currencyPosition2));
 
-        final String expectedResponse =
-                ResourceUtils.getResourceAsString("test-data/getPortfolioCurrenciesResponse.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("getPortfolioCurrenciesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/currencies")
                 .contentType(MediaType.APPLICATION_JSON))

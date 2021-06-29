@@ -29,7 +29,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void setCurrencyBalance_setsBalance() throws Exception {
-        final String request = ResourceUtils.getResourceAsString("test-data/SetCurrencyBalanceRequest.json");
+        final String request = ResourceUtils.getTestDataAsString("SetCurrencyBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/currency-balance")
                 .content(request)
@@ -42,7 +42,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void setPositionBalance_setsBalance() throws Exception {
-        final String request = ResourceUtils.getResourceAsString("test-data/SetPositionBalanceRequest.json");
+        final String request = ResourceUtils.getTestDataAsString("SetPositionBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
                 .content(request)
@@ -55,7 +55,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
 
     @Test
     void clearAll_clears() throws Exception {
-        final String request = ResourceUtils.getResourceAsString("test-data/ClearAllRequest.json");
+        final String request = ResourceUtils.getTestDataAsString("ClearAllRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/clear")
                 .content(request)

@@ -50,8 +50,7 @@ class TraderExceptionHandlerWebTest {
         final OffsetDateTime mockedNow =
                 DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final String expectedResponse =
-                    ResourceUtils.getResourceAsString("test-data/TestValidationResponse.json");
+            final String expectedResponse = ResourceUtils.getTestDataAsString("TestValidationResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -67,8 +66,7 @@ class TraderExceptionHandlerWebTest {
         final OffsetDateTime mockedNow =
                 DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final String expectedResponse =
-                    ResourceUtils.getResourceAsString("test-data/RuntimeExceptionResponse.json");
+            final String expectedResponse = ResourceUtils.getTestDataAsString("RuntimeExceptionResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/runtime")
                     .contentType(MediaType.APPLICATION_JSON))

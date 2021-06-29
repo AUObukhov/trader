@@ -107,8 +107,8 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
-        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetCandlesResponse.json");
+        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("GetCandlesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -139,7 +139,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -167,7 +167,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest1.json");
+        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
         Mockito.doThrow(new RuntimeException())
                 .when(excelService)
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
@@ -198,7 +198,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetCandlesRequest2.json");
+        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest2.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .content(getCandlesRequest)
@@ -214,8 +214,8 @@ class StatisticsControllerWebTest extends ControllerWebTest {
 
     @Test
     void getInstruments() throws Exception {
-        final String getCandlesRequest = ResourceUtils.getResourceAsString("test-data/GetInstrumentsRequest.json");
-        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetInstrumentsResponse.json");
+        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetInstrumentsRequest.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("GetInstrumentsResponse.json");
 
         MarketInstrument instrument1 = new MarketInstrument()
                 .figi("figi1")

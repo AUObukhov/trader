@@ -45,7 +45,7 @@ class OrdersControllerWebTest extends ControllerWebTest {
 
         Mockito.when(ordersService.getOrders()).thenReturn(List.of(order1, order2));
 
-        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/GetOrdersResponse.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("GetOrdersResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/orders/get")
                 .contentType(MediaType.APPLICATION_JSON))

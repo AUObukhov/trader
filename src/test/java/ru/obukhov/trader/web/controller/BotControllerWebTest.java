@@ -44,7 +44,7 @@ class BotControllerWebTest extends ControllerWebTest {
     void simulate_returnsSimulationResults() throws Exception {
         final String ticker = "ticker";
 
-        final String request = ResourceUtils.getResourceAsString("test-data/SimulateRequest.json");
+        final String request = ResourceUtils.getTestDataAsString("SimulateRequest.json");
 
         final List<SimulationResult> simulationResults = new ArrayList<>();
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
@@ -153,7 +153,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 )
         ).thenReturn(simulationResults);
 
-        final String expectedResponse = ResourceUtils.getResourceAsString("test-data/SimulateResponse.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("SimulateResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate")
                 .content(request)
@@ -198,7 +198,7 @@ class BotControllerWebTest extends ControllerWebTest {
     void setTickers_setsTickers() throws Exception {
         scheduledBotProperties.setTickers(Set.of());
 
-        final String tickers = ResourceUtils.getResourceAsString("test-data/SetTickersRequest.json");
+        final String tickers = ResourceUtils.getTestDataAsString("SetTickersRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers")
                 .content(tickers)
