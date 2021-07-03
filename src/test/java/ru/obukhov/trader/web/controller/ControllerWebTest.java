@@ -6,6 +6,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
 
 @RunWith(SpringRunner.class)
@@ -15,7 +18,14 @@ import ru.obukhov.trader.Application;
         args = "--trading.token=i identify myself as token")
 abstract class ControllerWebTest {
 
+    private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER =
+            MockMvcResultMatchers.jsonPath("$.message");
+
     @Autowired
     protected MockMvc mockMvc;
+
+    protected ResultMatcher getJsonPathMessageMatcher(String expectedMessage) {
+        return RESULT_MESSAGE_MATCHER.value(expectedMessage);
+    }
 
 }

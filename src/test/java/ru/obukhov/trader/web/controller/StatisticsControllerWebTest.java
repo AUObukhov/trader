@@ -36,6 +36,79 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     // region getCandles tests
 
     @Test
+    void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required String parameter 'ticker' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required OffsetDateTime parameter 'from' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required OffsetDateTime parameter 'to' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsBadRequest_whenCandleResolutionIsMissing() throws Exception {
+        final String ticker = "ticker";
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required CandleResolution parameter 'candleResolution' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
     void getCandles_returnsCandles() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
