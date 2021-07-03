@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
@@ -37,6 +38,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     @Test
     void getCandles_returnsCandles() throws Exception {
         final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final Candle candle1 = TestDataHelper.createCandle(
                 12000,
@@ -44,7 +46,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 15000,
                 6000,
                 DateUtils.getDateTime(2021, 3, 25, 10, 0, 0),
-                CandleResolution._1MIN
+                candleResolution
         );
 
         final Candle candle2 = TestDataHelper.createCandle(
@@ -53,7 +55,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 1500,
                 600,
                 DateUtils.getDateTime(2021, 3, 25, 10, 1, 0),
-                CandleResolution._1MIN
+                candleResolution
         );
 
         final Candle candle3 = TestDataHelper.createCandle(
@@ -62,7 +64,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 150,
                 60,
                 DateUtils.getDateTime(2021, 3, 25, 10, 2, 0),
-                CandleResolution._1MIN
+                candleResolution
         );
 
         final List<BigDecimal> averages = List.of(
@@ -104,28 +106,31 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         );
 
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
         final String expectedResponse = ResourceUtils.getTestDataAsString("GetCandlesResponse.json");
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .content(getCandlesRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
         Mockito.verify(statisticsService, Mockito.times(1))
-                .getExtendedCandles(
-                        Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
-                );
+                .getExtendedCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution));
     }
 
     @Test
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
@@ -135,15 +140,20 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Collections.emptyList(),
                 Collections.emptyList()
         );
+
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .content(getCandlesRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
@@ -154,6 +164,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     @Test
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
@@ -163,18 +174,24 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Collections.emptyList(),
                 Collections.emptyList()
         );
+
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest1.json");
         Mockito.doThrow(new RuntimeException())
                 .when(excelService)
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .content(getCandlesRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
@@ -185,6 +202,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     @Test
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
         final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
@@ -195,14 +213,52 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 Collections.emptyList()
         );
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(CandleResolution._1MIN)
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
         )).thenReturn(response);
 
-        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetCandlesRequest2.json");
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("saveToFile", Boolean.FALSE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .content(getCandlesRequest)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        Mockito.verify(excelService, Mockito.never())
+                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(response));
+    }
+
+    @Test
+    void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
+        Mockito.when(statisticsService.getExtendedCandles(
+                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+        )).thenReturn(response);
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 
