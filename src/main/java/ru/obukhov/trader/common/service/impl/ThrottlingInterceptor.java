@@ -79,7 +79,7 @@ public class ThrottlingInterceptor implements Interceptor {
                 TimeUnit.MILLISECONDS.sleep(queryThrottleProperties.getRetryInterval());
                 return proceed(chain, attemptNumber + 1);
             } catch (InterruptedException interruptedException) {
-                log.warn("Wait before retry call {} interrupted. Retry right not", path, interruptedException);
+                log.warn("Wait before retry call {} interrupted. Retry right now", path, interruptedException);
                 Thread.currentThread().interrupt();
                 return proceed(chain, attemptNumber + 1);
             }
