@@ -13,10 +13,10 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.TickerType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
@@ -527,7 +527,7 @@ class MarketServiceImplUnitTest {
         final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
         Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
-        final List<MarketInstrument> instruments = service.getInstruments(TickerType.ETF);
+        final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.ETF);
 
         Assertions.assertEquals(2, instruments.size());
         Assertions.assertSame(etf1, instruments.get(0));
@@ -540,7 +540,7 @@ class MarketServiceImplUnitTest {
         final MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
         Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
-        final List<MarketInstrument> instruments = service.getInstruments(TickerType.STOCK);
+        final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.STOCK);
 
         Assertions.assertEquals(2, instruments.size());
         Assertions.assertSame(stock1, instruments.get(0));
@@ -553,7 +553,7 @@ class MarketServiceImplUnitTest {
         final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
         Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
-        final List<MarketInstrument> instruments = service.getInstruments(TickerType.BOND);
+        final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.BOND);
 
         Assertions.assertEquals(2, instruments.size());
         Assertions.assertSame(bond1, instruments.get(0));
@@ -566,7 +566,7 @@ class MarketServiceImplUnitTest {
         final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
         Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
-        final List<MarketInstrument> instruments = service.getInstruments(TickerType.CURRENCY);
+        final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.CURRENCY);
 
         Assertions.assertEquals(2, instruments.size());
         Assertions.assertSame(currency1, instruments.get(0));

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +12,11 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.obukhov.trader.web.model.exchange.GetInstrumentsRequest;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
-import javax.validation.Valid;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -63,8 +61,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/instruments")
-    public GetInstrumentsResponse getInstruments(@Valid @RequestBody final GetInstrumentsRequest request) {
-        List<MarketInstrument> instruments = statisticsService.getInstruments(request.getTickerType());
+    public GetInstrumentsResponse getInstruments(InstrumentType instrumentType) {
+        final List<MarketInstrument> instruments = statisticsService.getInstruments(instrumentType);
 
         return new GetInstrumentsResponse(instruments);
     }

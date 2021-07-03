@@ -13,10 +13,11 @@ class WebConfigWebTest {
     private GenericConversionService conversionService;
 
     @Test
-    void initializesCandleResolutionConverter() {
-        final String stringConversionService = conversionService.toString();
+    void initializesCustomConverters() {
+        final String conversionServiceString = conversionService.toString();
 
-        Assertions.assertTrue(stringConversionService.contains("CandleResolutionConverter"));
+        Assertions.assertTrue(conversionServiceString.contains("CandleResolutionConverter"));
+        Assertions.assertTrue(conversionServiceString.contains("InstrumentTypeConverter"));
     }
 
 }

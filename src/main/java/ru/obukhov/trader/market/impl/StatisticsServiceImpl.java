@@ -9,9 +9,9 @@ import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.TickerType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
@@ -93,11 +93,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     /**
-     * @param type nullable ticker type
+     * @param type nullable instrument type
      * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
      */
     @Override
-    public List<MarketInstrument> getInstruments(@Nullable final TickerType type) {
+    public List<MarketInstrument> getInstruments(@Nullable final InstrumentType type) {
         return marketService.getInstruments(type);
     }
 

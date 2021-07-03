@@ -3,8 +3,8 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.TickerType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
@@ -23,7 +23,7 @@ public interface MarketService {
 
     MarketInstrument getInstrument(final String ticker);
 
-    List<MarketInstrument> getInstruments(final TickerType type);
+    List<MarketInstrument> getInstruments(final InstrumentType type);
 
     String getFigi(final String ticker);
 

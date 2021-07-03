@@ -12,8 +12,8 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.TickerType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
@@ -216,7 +216,7 @@ public class MarketServiceImpl implements MarketService {
      *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
      */
     @Override
-    public List<MarketInstrument> getInstruments(final TickerType type) {
+    public List<MarketInstrument> getInstruments(final InstrumentType type) {
         if (type == null) {
             return getAllInstruments();
         }

@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,10 +14,10 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.TickerType;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
@@ -343,10 +344,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
 
     @Test
     void getInstruments() throws Exception {
-        final String getCandlesRequest = ResourceUtils.getTestDataAsString("GetInstrumentsRequest.json");
-        final String expectedResponse = ResourceUtils.getTestDataAsString("GetInstrumentsResponse.json");
+        final InstrumentType instrumentType = InstrumentType.STOCK;
 
-        MarketInstrument instrument1 = new MarketInstrument()
+        final MarketInstrument instrument1 = new MarketInstrument()
                 .figi("figi1")
                 .ticker("ticker1")
                 .isin("isin1")
@@ -355,8 +355,8 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 .minQuantity(1)
                 .currency(Currency.RUB)
                 .name("name1")
-                .type(InstrumentType.STOCK);
-        MarketInstrument instrument2 = new MarketInstrument()
+                .type(instrumentType);
+        final MarketInstrument instrument2 = new MarketInstrument()
                 .figi("figi2")
                 .ticker("ticker2")
                 .isin("isin2")
@@ -365,20 +365,24 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 .minQuantity(2)
                 .currency(Currency.USD)
                 .name("name2")
-                .type(InstrumentType.BOND);
+                .type(instrumentType);
+        final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
-        Mockito.when(statisticsService.getInstruments(TickerType.STOCK))
-                .thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(statisticsService.getInstruments(instrumentType))
+                .thenReturn(instruments);
+
+        final String expectedResponse = new ObjectMapper()
+                .writeValueAsString(new GetInstrumentsResponse(instruments));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/statistics/instruments")
-                .content(getCandlesRequest)
+                .param("instrumentType", instrumentType.getValue())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
         Mockito.verify(statisticsService, Mockito.times(1))
-                .getInstruments(TickerType.STOCK);
+                .getInstruments(instrumentType);
     }
 
 }
