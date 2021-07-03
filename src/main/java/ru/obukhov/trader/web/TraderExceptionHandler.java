@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class TraderExceptionHandler {
 
+    @SuppressWarnings("unused")
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(
             final MethodArgumentNotValidException exception
@@ -29,6 +31,17 @@ public class TraderExceptionHandler {
                 .body(createResponseMap(exception));
     }
 
+    @SuppressWarnings("unused")
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingRequestParameterException(
+            final MissingServletRequestParameterException exception
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(createResponseMap(exception));
+    }
+
+    @SuppressWarnings("unused")
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(final Exception exception) {
         log.error("Unknown exception", exception);

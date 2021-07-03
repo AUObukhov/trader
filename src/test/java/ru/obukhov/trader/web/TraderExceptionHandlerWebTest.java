@@ -21,6 +21,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.Application;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -47,12 +48,40 @@ class TraderExceptionHandlerWebTest {
     @Test
     @SuppressWarnings("unused")
     void handlesMethodArgumentNotValidException() throws Exception {
-        final OffsetDateTime mockedNow =
-                DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(
+                2020,
+                9,
+                23,
+                10,
+                0,
+                0
+        );
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("TestValidationResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                    .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    void handlesMissingServletRequestParameterException() throws Exception {
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(
+                2020,
+                9,
+                23,
+                10,
+                0,
+                0
+        );
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+            final String expectedResponse = ResourceUtils.getTestDataAsString("TestMissingParamResponse.json");
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/missingParam")
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -95,6 +124,10 @@ class TraderExceptionHandlerWebTest {
             bindingResult.addError(new ObjectError("objectName2", "validation error2"));
 
             throw new MethodArgumentNotValidException(parameter, bindingResult);
+        }
+
+        @PostMapping("/missingParam")
+        public void throwMissingServletRequestParameterException(@RequestParam final String param) {
         }
 
         @PostMapping("/runtime")
