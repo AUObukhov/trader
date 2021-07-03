@@ -87,6 +87,22 @@ class PortfolioServiceImplUnitTest {
     }
 
     @Test
+    void getAvailableBalance_returnsBalance_whenNoBlocked() {
+        final long rubBalance = 1000;
+
+        final List<CurrencyPosition> currencies = List.of(
+                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
+                TestDataHelper.createCurrencyPosition(Currency.RUB, rubBalance),
+                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
+        );
+        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+
+        final BigDecimal balance = service.getAvailableBalance(Currency.RUB);
+
+        AssertUtils.assertEquals(rubBalance, balance);
+    }
+
+    @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
         final List<CurrencyPosition> currencies = List.of(
                 TestDataHelper.createCurrencyPosition(Currency.USD, 100),
