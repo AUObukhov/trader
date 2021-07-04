@@ -5,6 +5,6 @@ import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 public interface BotFactory {
 
-    Bot createBot(final TradingStrategy strategy, CandleResolution candleResolution);
+    Bot createBot(final TradingStrategy strategy, final CandleResolution candleResolution);
 
 }

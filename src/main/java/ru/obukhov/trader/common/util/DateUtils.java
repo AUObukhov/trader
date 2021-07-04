@@ -183,7 +183,7 @@ public class DateUtils {
      * @return average dateTime between given {@code dateTime1} and {@code dateTime2}
      */
     public static OffsetDateTime getAverage(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
-        Duration halfOfDuration = Duration.between(dateTime1, dateTime2).dividedBy(2);
+        final Duration halfOfDuration = Duration.between(dateTime1, dateTime2).dividedBy(2);
         return dateTime1.plus(halfOfDuration);
     }
 

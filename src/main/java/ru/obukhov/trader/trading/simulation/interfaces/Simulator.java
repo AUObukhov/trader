@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface Simulator {
     List<SimulationResult> simulate(
-            String ticker,
-            BalanceConfig balanceConfig,
-            List<TradingConfig> tradingConfigs,
-            Interval interval,
-            boolean saveToFiles
+            final String ticker,
+            final BalanceConfig balanceConfig,
+            final List<TradingConfig> tradingConfigs,
+            final Interval interval,
+            final boolean saveToFiles
     );
 }
