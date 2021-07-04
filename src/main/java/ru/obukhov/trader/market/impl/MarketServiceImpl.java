@@ -174,11 +174,26 @@ public class MarketServiceImpl implements MarketService {
     /**
      * @return last {@code limit} candles by {@code ticker}.
      * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
-     * within {@code trading.consecutive-empty-days-limit} days.
+     * within {@code trading.consecutive-empty-days-limit} days or one year (when candleResolution >= 1 day).
      */
     @Override
     @NotNull
     public List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution) {
+        return DateUtils.getPeriodByCandleResolution(candleResolution) == ChronoUnit.DAYS
+                ? getLastCandlesDaily(ticker, limit, candleResolution)
+                : getLastCandlesYearly(ticker, limit, candleResolution);
+    }
+
+    /**
+     * @return last {@code limit} candles by {@code ticker}.
+     * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
+     * within {@code trading.consecutive-empty-days-limit} days.
+     */
+    private List<Candle> getLastCandlesDaily(
+            final String ticker,
+            final int limit,
+            final CandleResolution candleResolution
+    ) {
         OffsetDateTime to = tinkoffService.getCurrentDateTime();
         OffsetDateTime from = DateUtils.atStartOfDay(to);
         int consecutiveEmptyDaysCount = 0;
@@ -197,6 +212,27 @@ public class MarketServiceImpl implements MarketService {
             to = DateUtils.atEndOfDay(from);
         } while (candles.size() < limit
                 && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
+
+        candles.sort(Comparator.comparing(Candle::getTime));
+        return CollectionsUtils.getTail(candles, limit);
+    }
+
+    private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleResolution candleResolution) {
+        OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        OffsetDateTime from = DateUtils.atStartOfYear(to);
+        final List<Candle> candles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+
+        from = from.minusYears(1);
+        to = DateUtils.atEndOfYear(from);
+
+        List<Candle> currentCandles;
+        do {
+            currentCandles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+            candles.addAll(currentCandles);
+
+            from = from.minusYears(1);
+            to = to.minusYears(1);
+        } while (candles.size() < limit && !currentCandles.isEmpty());
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);
