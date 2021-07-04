@@ -1107,6 +1107,36 @@ class DateUtilsUnitTest {
 
     // endregion
 
+    // region atStartOfYear tests
+
+    @Test
+    void atStartOfYear() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+
+        final OffsetDateTime startOfDay = DateUtils.atStartOfYear(dateTime);
+
+        final OffsetDateTime expected = DateUtils.getDate(2020, 1, 1);
+
+        Assertions.assertEquals(expected, startOfDay);
+    }
+
+    // endregion
+
+    // region atEndOfYear tests
+
+    @Test
+    void atEndOfYear() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40);
+
+        final OffsetDateTime startOfDay = DateUtils.atEndOfYear(dateTime);
+
+        final OffsetDateTime expected = DateUtils.getDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+
+        Assertions.assertEquals(expected, startOfDay);
+    }
+
+    // endregion
+
     // region withDefaultOffset tests
 
     @Test

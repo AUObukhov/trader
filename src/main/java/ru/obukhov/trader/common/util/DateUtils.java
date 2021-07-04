@@ -403,6 +403,28 @@ public class DateUtils {
     }
 
     /**
+     * @return value of given {@code dateTime} with minimum month, day, hours, minutes, seconds and nanos of this date
+     */
+    public static OffsetDateTime atStartOfYear(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), OffsetDateTime.MIN.getMonthValue(), OffsetDateTime.MIN.getDayOfMonth(),
+                OffsetTime.MIN.getHour(), OffsetTime.MIN.getMinute(), OffsetTime.MIN.getSecond(),
+                OffsetTime.MIN.getNano(), dateTime.getOffset()
+        );
+    }
+
+    /**
+     * @return value of given {@code dateTime} with maximum month, day, hours, minutes, seconds and nanos of this date
+     */
+    public static OffsetDateTime atEndOfYear(final OffsetDateTime dateTime) {
+        return OffsetDateTime.of(
+                dateTime.getYear(), OffsetDateTime.MAX.getMonthValue(), OffsetDateTime.MAX.getDayOfMonth(),
+                OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
+                OffsetTime.MAX.getNano(), dateTime.getOffset()
+        );
+    }
+
+    /**
      * @return dateTime equals to given {@code dateTime}, but with system default offset
      */
     public static OffsetDateTime withDefaultOffset(final OffsetDateTime dateTime) {
