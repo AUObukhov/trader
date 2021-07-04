@@ -380,26 +380,32 @@ public class DateUtils {
 
     private static void validateWorkTimeDuration(final Duration workTimeDuration) {
         Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0,
-                "workTimeDuration must be less than 1 day");
+        Assert.isTrue(
+                Duration.ofDays(1).compareTo(workTimeDuration) > 0,
+                "workTimeDuration must be less than 1 day"
+        );
     }
 
     /**
      * @return value of given {@code dateTime} with minimum hours, minutes, seconds and nanos of this date
      */
     public static OffsetDateTime atStartOfDay(final OffsetDateTime dateTime) {
-        return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+        return OffsetDateTime.of(
+                dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MIN.getHour(), OffsetTime.MIN.getMinute(), OffsetTime.MIN.getSecond(),
-                OffsetTime.MIN.getNano(), dateTime.getOffset());
+                OffsetTime.MIN.getNano(), dateTime.getOffset()
+        );
     }
 
     /**
      * @return value of given {@code dateTime} with maximum hours, minutes, seconds and nanos of this date
      */
     public static OffsetDateTime atEndOfDay(final OffsetDateTime dateTime) {
-        return OffsetDateTime.of(dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
+        return OffsetDateTime.of(
+                dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(),
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
-                OffsetTime.MAX.getNano(), dateTime.getOffset());
+                OffsetTime.MAX.getNano(), dateTime.getOffset()
+        );
     }
 
     /**
