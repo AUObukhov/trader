@@ -3,6 +3,7 @@ package ru.obukhov.trader.common.service.impl;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,8 @@ class ThrottlingInterceptorUnitTest {
     private HttpUrl url;
     @Mock
     private Request request;
+    @Mock
+    private Response response;
     @Mock
     private Interceptor.Chain chain;
 
@@ -55,7 +58,9 @@ class ThrottlingInterceptorUnitTest {
     }
 
     @Test
-    void intercept_doesNotThrottle_whenNoOpenApiPrefix() {
+    void intercept_doesNotThrottle_whenNoOpenApiPrefix() throws IOException {
+        Mockito.when(chain.proceed(request)).thenReturn(response);
+
         Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -75,7 +80,9 @@ class ThrottlingInterceptorUnitTest {
     }
 
     @Test
-    void intercept_throttles_onlyWhenLimitIsReached() {
+    void intercept_throttles_onlyWhenLimitIsReached() throws IOException {
+        Mockito.when(chain.proceed(request)).thenReturn(response);
+
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -98,7 +105,9 @@ class ThrottlingInterceptorUnitTest {
     }
 
     @Test
-    void intercept_throttlesByLowestLimit() {
+    void intercept_throttlesByLowestLimit() throws IOException {
+        Mockito.when(chain.proceed(request)).thenReturn(response);
+
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "orders", "market-order"));
 
         final QueryThrottleProperties queryThrottleProperties =
@@ -122,7 +131,9 @@ class ThrottlingInterceptorUnitTest {
     }
 
     @Test
-    void intercept_throttlesByCommonLimit() {
+    void intercept_throttlesByCommonLimit() throws IOException {
+        Mockito.when(chain.proceed(request)).thenReturn(response);
+
         final List<String> limitOrderSegments = List.of("openapi", "orders", "limit-order");
         final List<String> marketOrderSegments = List.of("openapi", "orders", "market-order");
 
@@ -151,7 +162,9 @@ class ThrottlingInterceptorUnitTest {
     }
 
     @Test
-    void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() {
+    void intercept_throttlesByDefaultLimit_whenNoMatchingCounter() throws IOException {
+        Mockito.when(chain.proceed(request)).thenReturn(response);
+
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
         final QueryThrottleProperties queryThrottleProperties =

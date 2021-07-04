@@ -44,7 +44,7 @@ class ConservativeStrategyUnitTest {
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
 
-        final Decision decision = strategy.decide(data, null);
+        final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -54,7 +54,7 @@ class ConservativeStrategyUnitTest {
     void decide_returnsWait_whenNoAvailableLots() {
         final DecisionData data = TestDataHelper.createDecisionData(2000.0, 2000.0, 1);
 
-        final Decision decision = strategy.decide(data, null);
+        final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -64,7 +64,7 @@ class ConservativeStrategyUnitTest {
     void decide_returnsBuy_whenThereAreAvailableLots() {
         final DecisionData data = TestDataHelper.createDecisionData(10000.0, 2000.0, 1);
 
-        final Decision decision = strategy.decide(data, null);
+        final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
         Assertions.assertEquals(4, decision.getLots());
