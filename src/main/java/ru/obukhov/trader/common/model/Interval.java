@@ -128,17 +128,6 @@ public class Interval {
     }
 
     /**
-     * @return new Interval with
-     * same value of current {@code from} or given {@code defaultFrom} if current {@code from} is null
-     * and
-     * same value of current {@code to} or given {@code defaultTo} if current {@code to} is null
-     */
-    public Interval getDefault(final OffsetDateTime defaultFrom, final OffsetDateTime defaultTo) {
-        return new Interval(from == null ? defaultFrom : from,
-                to == null ? defaultTo : to);
-    }
-
-    /**
      * @return list of consecutive intervals starting with {@code from} and ending with {@code to}.
      * Every interval is in one day.
      * <br/>

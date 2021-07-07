@@ -718,38 +718,6 @@ class IntervalUnitTest {
 
     // endregion
 
-    // region getDefault tests
-
-    @Test
-    void getDefault_returnsSameValues_whenValuesAreNotNull() {
-        final OffsetDateTime from = DateUtils.getDate(2020, 10, 10);
-        final OffsetDateTime to = DateUtils.getDate(2020, 10, 11);
-
-        final OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
-        final OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
-
-        final Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
-
-        Assertions.assertEquals(from, interval.getFrom());
-        Assertions.assertEquals(to, interval.getTo());
-    }
-
-    @Test
-    void getDefault_returnsDefaultValues_whenValuesAreNull() {
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-
-        final OffsetDateTime defaultFrom = DateUtils.getDate(2020, 11, 10);
-        final OffsetDateTime defaultTo = DateUtils.getDate(2020, 11, 11);
-
-        final Interval interval = Interval.of(from, to).getDefault(defaultFrom, defaultTo);
-
-        Assertions.assertEquals(defaultFrom, interval.getFrom());
-        Assertions.assertEquals(defaultTo, interval.getTo());
-    }
-
-    // endregion
-
     // region splitIntoDailyIntervals tests
 
     @Test
