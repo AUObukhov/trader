@@ -12,6 +12,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +33,13 @@ public class Interval {
 
     /**
      * @return new Interval with given {@code from} and {@code to}
-     * @throws IllegalArgumentException if {@code from} is after {@code to}
+     * @throws IllegalArgumentException if {@code from} is after {@code to} or if they have different offsets
      */
     public static Interval of(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {
-        Assert.isTrue(from == null || to == null || !from.isAfter(to), "from can't be after to");
+        if (from != null && to != null) {
+            Assert.isTrue(!from.isAfter(to), "from can't be after to");
+            Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
+        }
 
         return new Interval(from, to);
     }

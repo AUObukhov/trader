@@ -12,6 +12,7 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,6 +29,18 @@ class IntervalUnitTest {
                 () -> Interval.of(from, to),
                 IllegalArgumentException.class,
                 "from can't be after to"
+        );
+    }
+
+    @Test
+    void of_throwsIllegalArgumentException_whenOffsetsAreDifferent() {
+        final OffsetDateTime from = OffsetDateTime.of(2020, 10, 5, 0, 0, 0, 0, ZoneOffset.ofHours(1));
+        final OffsetDateTime to = OffsetDateTime.of(2020, 10, 10, 0, 0, 0, 0, ZoneOffset.ofHours(2));
+
+        AssertUtils.assertThrowsWithMessage(
+                () -> Interval.of(from, to),
+                IllegalArgumentException.class,
+                "offsets of from and to must be equal"
         );
     }
 
