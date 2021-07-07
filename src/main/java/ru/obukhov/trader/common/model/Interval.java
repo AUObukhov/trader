@@ -93,6 +93,22 @@ public class Interval {
     }
 
     /**
+     * @return a copy of this Interval with the specified number of days subtracted from each side.
+     * @throws NullPointerException if from or to is null
+     */
+    public Interval minusDays(final long days) {
+        return new Interval(from.minusDays(days), to.minusDays(days));
+    }
+
+    /**
+     * @return a copy of this Interval with the specified number of years subtracted from each side.
+     * @throws NullPointerException if from or to is null
+     */
+    public Interval minusYears(final long years) {
+        return new Interval(from.minusYears(years), to.minusYears(years));
+    }
+
+    /**
      * @return true, if days of year of {@code from} and {@code to} are equal, or else false
      */
     public boolean equalDates() {

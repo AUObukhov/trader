@@ -410,6 +410,194 @@ class IntervalUnitTest {
 
     // endregion
 
+    // region minusDays tests
+
+    @Test
+    void minusDays_throwNullPointerException_whenFromIsNull() {
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 5);
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
+    }
+
+    @Test
+    void minusDays_throwNullPointerException_whenToIsNull() {
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = null;
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
+    }
+
+    @Test
+    void minusDays_throwNullPointerException_whenFromAndToAreNull() {
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forMinusDays() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        -2,
+                        DateUtils.getDateTime(2020, 10, 7, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 7, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        -1,
+                        DateUtils.getDateTime(2020, 10, 6, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 6, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        0,
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        1,
+                        DateUtils.getDateTime(2020, 10, 4, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 4, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        2,
+                        DateUtils.getDateTime(2020, 10, 3, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 3, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        10,
+                        DateUtils.getDateTime(2020, 9, 25, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 9, 25, 11, 30, 40, 50)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forMinusDays")
+    void minusDays(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final long days,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
+        final Interval interval = Interval.of(from, to).minusDays(days);
+
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
+    }
+
+    // endregion
+
+    // region minusYears tests
+
+    @Test
+    void minusYears_throwNullPointerException_whenFromIsNull() {
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = DateUtils.getDate(2020, 10, 5);
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
+    }
+
+    @Test
+    void minusYears_throwNullPointerException_whenToIsNull() {
+        final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
+        final OffsetDateTime to = null;
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
+    }
+
+    @Test
+    void minusYears_throwNullPointerException_whenFromAndToAreNull() {
+        final OffsetDateTime from = null;
+        final OffsetDateTime to = null;
+        final Interval interval = Interval.of(from, to);
+
+        Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forMinusYears() {
+        return Stream.of(
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        -2,
+                        DateUtils.getDateTime(2022, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2022, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        -1,
+                        DateUtils.getDateTime(2021, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2021, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        0,
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        1,
+                        DateUtils.getDateTime(2019, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2019, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        2,
+                        DateUtils.getDateTime(2018, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2018, 10, 5, 11, 30, 40, 50)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        10,
+                        DateUtils.getDateTime(2010, 10, 5, 10, 20, 30, 40),
+                        DateUtils.getDateTime(2010, 10, 5, 11, 30, 40, 50)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forMinusYears")
+    void minusYears(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final long years,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
+        final Interval interval = Interval.of(from, to).minusYears(years);
+
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
+    }
+
+    // endregion
+
     // region equalDates tests
 
     @SuppressWarnings("unused")
