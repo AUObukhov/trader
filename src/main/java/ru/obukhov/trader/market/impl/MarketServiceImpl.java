@@ -119,7 +119,7 @@ public class MarketServiceImpl implements MarketService {
             final OffsetDateTime to,
             final CandleResolution candleResolution
     ) {
-        final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, OffsetDateTime.now());
+        final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, tinkoffService.getCurrentDateTime());
         return tinkoffService.getMarketCandles(ticker, Interval.of(from, innerTo), candleResolution);
     }
 
