@@ -94,6 +94,25 @@ public class Interval {
     }
 
     /**
+     * @return new Interval where {@code from} is at start of current {@code from} and
+     * {@code to} is earliest dateTime between end of day of current {@code to} and current dateTime
+     * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day
+     * @throws IllegalArgumentException when {@code from} is in future
+     */
+    public Interval extendToYear() {
+        Assert.isTrue(equalYears(), "'from' and 'to' must be at same year");
+
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(from, now, "from");
+        DateUtils.assertDateTimeNotFuture(to, now, "to");
+
+        final OffsetDateTime extendedFrom = DateUtils.atStartOfYear(from);
+        OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.atEndOfYear(to), now);
+
+        return new Interval(extendedFrom, extendedTo);
+    }
+
+    /**
      * @return a copy of this Interval with the specified number of days subtracted from each side.
      * @throws NullPointerException if from or to is null
      */
@@ -118,6 +137,17 @@ public class Interval {
         }
 
         return to != null && DateUtils.atStartOfDay(from).equals(DateUtils.atStartOfDay(to));
+    }
+
+    /**
+     * @return true, if years of {@code from} and {@code to} are equal, or else false
+     */
+    public boolean equalYears() {
+        if (from == null) {
+            return to == null;
+        }
+
+        return to != null && DateUtils.atStartOfYear(from).equals(DateUtils.atStartOfYear(to));
     }
 
     /**
