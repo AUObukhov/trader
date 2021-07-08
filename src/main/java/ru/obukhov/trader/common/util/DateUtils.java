@@ -126,13 +126,6 @@ public class DateUtils {
     }
 
     /**
-     * @return last work day not after today
-     */
-    public static OffsetDateTime getLastWorkDay() {
-        return getLastWorkDay(OffsetDateTime.now());
-    }
-
-    /**
      * @return last work day not after given {@code dateTime}
      */
     public static OffsetDateTime getLastWorkDay(final OffsetDateTime dateTime) {

@@ -247,10 +247,11 @@ class MarketServiceImplUnitTest {
 
     @Test
     void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        final OffsetDateTime now = OffsetDateTime.now();
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(now);
 
         final String ticker = "ticker";
-        final OffsetDateTime from = DateUtils.getLastWorkDay()
+        final OffsetDateTime from = DateUtils.getLastWorkDay(now)
                 .minusDays(tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime to = from.plusDays(1);
 

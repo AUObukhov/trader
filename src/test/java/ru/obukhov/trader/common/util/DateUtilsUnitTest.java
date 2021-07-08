@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.MockedStatic;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -161,33 +160,6 @@ class DateUtilsUnitTest {
         final OffsetDateTime nextWorkDay = DateUtils.getNextWorkDay(dateTime);
 
         Assertions.assertEquals(expectedNextWorkDay, nextWorkDay);
-    }
-
-    // endregion
-
-    // region getLastWorkDay without arguments tests
-
-    @Test
-    @SuppressWarnings("unused")
-    void getLastWorkDay_returnsNow_whenTodayIsWorkDay() {
-        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 23); // wednesday
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
-
-            Assertions.assertEquals(mockedNow, lastWorkDay);
-        }
-    }
-
-    @Test
-    @SuppressWarnings("unused")
-    void getLastWorkDay_returnsNow_whenTodayIsWeekend() {
-        final OffsetDateTime mockedNow = DateUtils.getDate(2020, 9, 27); // sunday
-        final OffsetDateTime expected = DateUtils.getDate(2020, 9, 25); // friday
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final OffsetDateTime lastWorkDay = DateUtils.getLastWorkDay();
-
-            Assertions.assertEquals(expected, lastWorkDay);
-        }
     }
 
     // endregion
