@@ -63,7 +63,7 @@ class AbstractBotUnitTest {
         Assertions.assertNull(decisionData.getLastOperations());
         Assertions.assertNull(decisionData.getInstrument());
 
-        Mockito.verifyNoMoreInteractions(strategy, operationsService, marketService, portfolioService);
+        Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         verifyNoOrdersMade();
     }
 
@@ -115,14 +115,15 @@ class AbstractBotUnitTest {
         final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
-        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
         final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
-        Mockito.verify(strategy, Mockito.times(1)).decide(decisionData, null);
+        Mockito.verify(strategy, Mockito.times(1))
+                .decide(Mockito.eq(decisionData), Mockito.any(StrategyCache.class));
         verifyNoOrdersMade();
     }
 
@@ -213,6 +214,9 @@ class AbstractBotUnitTest {
                 .placeMarketOrder(Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
+    private static final class TestStrategyCache implements StrategyCache {
+    }
+
     private static class TestBot extends AbstractBot {
         public TestBot(
                 TradingStrategy strategy,
@@ -227,7 +231,7 @@ class AbstractBotUnitTest {
                     ordersService,
                     portfolioService,
                     strategy,
-                    null,
+                    new TestStrategyCache(),
                     CandleResolution._1MIN
             );
         }
