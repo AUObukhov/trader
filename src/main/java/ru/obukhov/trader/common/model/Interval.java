@@ -65,13 +65,14 @@ public class Interval {
     }
 
     /**
+     * @param now DateTime which is handled as now
      * @return new Interval where {@code from} is equals to current {@code from} and
      * {@code to} is equal to:<br/>
      * {@code now} if current {@code to} is null;<br/>
      * equals to current {@code to} otherwise;
      */
-    public Interval limitByNowIfNull() {
-        return Interval.of(from, to == null ? OffsetDateTime.now() : to);
+    public Interval limitByNowIfNull(OffsetDateTime now) {
+        return Interval.of(from, to == null ? now : to);
     }
 
     /**

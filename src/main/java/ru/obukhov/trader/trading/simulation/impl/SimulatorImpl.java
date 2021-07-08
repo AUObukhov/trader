@@ -99,7 +99,7 @@ public class SimulatorImpl implements Simulator {
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), startTime, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), startTime, "to");
 
-        final Interval finiteInterval = interval.limitByNowIfNull();
+        final Interval finiteInterval = interval.limitByNowIfNull(startTime);
 
         final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
                 .map(tradingConfig -> startSimulation(

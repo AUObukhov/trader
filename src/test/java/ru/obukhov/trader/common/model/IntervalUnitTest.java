@@ -114,11 +114,13 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_setToToNow_whenToIsNull() {
+        final OffsetDateTime now = OffsetDateTime.now();
+
         final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
         final OffsetDateTime to = null;
 
         final Interval interval = Interval.of(from, to);
-        final Interval newInterval = interval.limitByNowIfNull();
+        final Interval newInterval = interval.limitByNowIfNull(now);
 
         Assertions.assertEquals(interval.getFrom(), newInterval.getFrom());
         Assertions.assertNotNull(newInterval.getTo());
@@ -126,11 +128,13 @@ class IntervalUnitTest {
 
     @Test
     void limitByNowIfNull_notChangesTo_whenToIsNotNull() {
+        final OffsetDateTime now = OffsetDateTime.now();
+
         final OffsetDateTime from = DateUtils.getDate(2020, 10, 5);
         final OffsetDateTime to = DateUtils.getDate(2020, 10, 10);
 
         final Interval interval = Interval.of(from, to);
-        final Interval newInterval = interval.limitByNowIfNull();
+        final Interval newInterval = interval.limitByNowIfNull(now);
 
         Assertions.assertEquals(interval.getFrom(), newInterval.getFrom());
         Assertions.assertEquals(interval.getTo(), newInterval.getTo());
