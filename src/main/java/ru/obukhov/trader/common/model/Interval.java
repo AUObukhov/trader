@@ -12,7 +12,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,22 +75,20 @@ public class Interval {
     }
 
     /**
-     * @param allowFuture if false then to of returned value is set to now
      * @return new Interval where {@code from} is at start of current {@code from} and
-     * {@code to} is earliest dateTime between end of day of current {@code to} and current dateTime
+     * {@code to} is earliest dateTime between end of day of current {@code to} and now
      * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day
-     * @throws IllegalArgumentException when {@code from} is in future and {@code allowFuture} is false
+     * @throws IllegalArgumentException when {@code from} is in future
      */
-    public Interval extendToWholeDay(final boolean allowFuture) {
+    public Interval extendToDay() {
         Assert.isTrue(equalDates(), "'from' and 'to' must be at same day");
 
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(from, now, "from");
+        DateUtils.assertDateTimeNotFuture(to, now, "to");
+
         final OffsetDateTime extendedFrom = DateUtils.atStartOfDay(from);
-        OffsetDateTime extendedTo = DateUtils.atEndOfDay(to);
-        if (!allowFuture) {
-            final OffsetDateTime now = OffsetDateTime.now();
-            DateUtils.assertDateTimeNotFuture(from, now, "from");
-            extendedTo = DateUtils.getEarliestDateTime(extendedTo, now);
-        }
+        final OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.atEndOfDay(to), now);
 
         return new Interval(extendedFrom, extendedTo);
     }

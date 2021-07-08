@@ -128,7 +128,7 @@ public class MarketServiceImpl implements MarketService {
             final Interval interval,
             final CandleResolution candleResolution
     ) {
-        return tinkoffService.getMarketCandles(ticker, interval.extendToWholeDay(false), candleResolution)
+        return tinkoffService.getMarketCandles(ticker, interval.extendToDay(), candleResolution)
                 .stream()
                 .filter(candle -> interval.contains(candle.getTime()))
                 .collect(Collectors.toList());
