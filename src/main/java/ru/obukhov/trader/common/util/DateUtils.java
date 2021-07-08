@@ -2,7 +2,6 @@ package ru.obukhov.trader.common.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
@@ -104,13 +103,6 @@ public class DateUtils {
         final OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
 
         return Interval.of(innerFrom, innerTo);
-    }
-
-    /**
-     * @return passed value if it is not null or current dateTime otherways
-     */
-    public static OffsetDateTime getDefaultToIfNull(final OffsetDateTime to) {
-        return ObjectUtils.defaultIfNull(to, OffsetDateTime.now());
     }
 
     /**

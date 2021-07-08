@@ -113,30 +113,6 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region getDefaultToIfNull tests
-
-    @Test
-    void getDefaultToIfNull_returnsValue_whenNotNull() {
-        final OffsetDateTime to = OffsetDateTime.now().minusYears(1);
-
-        final OffsetDateTime result = DateUtils.getDefaultToIfNull(to);
-
-        Assertions.assertEquals(to, result);
-    }
-
-    @Test
-    void getDefaultToIfNull_returnsNow_whenNull() {
-        final OffsetDateTime start = OffsetDateTime.now();
-
-        final OffsetDateTime result = DateUtils.getDefaultToIfNull(null);
-
-        final OffsetDateTime end = OffsetDateTime.now();
-
-        Assertions.assertTrue(!start.isAfter(result) && !end.isBefore(result));
-    }
-
-    // endregion
-
     // region isWorkDay tests
 
     @SuppressWarnings("unused")
