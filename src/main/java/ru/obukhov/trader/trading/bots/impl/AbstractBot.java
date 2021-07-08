@@ -42,7 +42,11 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     @NotNull
-    public DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime) {
+    public DecisionData processTicker(
+            final String ticker,
+            final OffsetDateTime previousStartTime,
+            final OffsetDateTime now
+    ) {
         final DecisionData decisionData = new DecisionData();
 
         final List<Order> orders = ordersService.getOrders(ticker);
@@ -56,7 +60,7 @@ public abstract class AbstractBot implements Bot {
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                fillDecisionData(decisionData, ticker);
+                fillDecisionData(decisionData, ticker, now);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(ticker, decision);
             }
@@ -67,19 +71,18 @@ public abstract class AbstractBot implements Bot {
         return decisionData;
     }
 
-    private void fillDecisionData(final DecisionData decisionData, final String ticker) {
+    private void fillDecisionData(final DecisionData decisionData, final String ticker, final OffsetDateTime now) {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(ticker));
-        decisionData.setLastOperations(getLastWeekOperations(ticker));
+        decisionData.setLastOperations(getLastWeekOperations(ticker, now));
         decisionData.setInstrument(instrument);
     }
 
-    private List<Operation> getLastWeekOperations(final String ticker) {
-        final OffsetDateTime to = OffsetDateTime.now();
-        final OffsetDateTime from = to.minusWeeks(1);
-        return operationsService.getOperations(Interval.of(from, to), ticker);
+    private List<Operation> getLastWeekOperations(final String ticker, final OffsetDateTime now) {
+        final OffsetDateTime from = now.minusWeeks(1);
+        return operationsService.getOperations(Interval.of(from, now), ticker);
     }
 
     private void performOperation(final String ticker, final Decision decision) {

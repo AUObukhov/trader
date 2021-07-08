@@ -8,6 +8,6 @@ import java.time.OffsetDateTime;
 public interface Bot {
 
     @NotNull
-    DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime);
+    DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime, final OffsetDateTime now);
 
 }

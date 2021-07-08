@@ -207,7 +207,11 @@ public class SimulatorImpl implements Simulator {
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
+            final DecisionData decisionData = bot.processTicker(
+                    ticker,
+                    previousStartTime,
+                    fakeTinkoffService.getCurrentDateTime()
+            );
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
                 previousStartTime = null;

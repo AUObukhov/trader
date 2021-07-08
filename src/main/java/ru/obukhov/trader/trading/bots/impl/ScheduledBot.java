@@ -70,7 +70,7 @@ public class ScheduledBot extends AbstractBot {
 
     public void processTickerSafe(String ticker, OffsetDateTime previousStartTime) {
         try {
-            processTicker(ticker, previousStartTime);
+            processTicker(ticker, previousStartTime, OffsetDateTime.now());
         } catch (Exception exception) {
             log.error("Failed to process ticker '{}'", ticker, exception);
         }

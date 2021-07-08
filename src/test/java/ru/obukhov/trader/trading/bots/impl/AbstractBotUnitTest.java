@@ -55,7 +55,7 @@ class AbstractBotUnitTest {
         final List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         Assertions.assertNull(decisionData.getBalance());
         Assertions.assertNull(decisionData.getPosition());
@@ -73,7 +73,7 @@ class AbstractBotUnitTest {
 
         TestDataHelper.mockEmptyOrder(ordersService, ticker);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -84,7 +84,7 @@ class AbstractBotUnitTest {
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final String ticker = "ticker";
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -99,7 +99,7 @@ class AbstractBotUnitTest {
         final Candle candle = TestDataHelper.createCandleWithTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
-        final DecisionData decisionData = bot.processTicker(ticker, previousStartTime);
+        final DecisionData decisionData = bot.processTicker(ticker, previousStartTime, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -118,7 +118,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -151,7 +151,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
@@ -188,7 +188,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null);
+        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
