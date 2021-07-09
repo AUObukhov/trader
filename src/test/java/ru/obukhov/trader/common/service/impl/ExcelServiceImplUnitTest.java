@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.model.poi;
+package ru.obukhov.trader.common.service.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
@@ -18,7 +18,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
-import ru.obukhov.trader.common.service.impl.ExcelServiceImpl;
+import ru.obukhov.trader.common.model.poi.ExtendedSheet;
+import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
