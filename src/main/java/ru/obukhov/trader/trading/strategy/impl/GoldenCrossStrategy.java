@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import ru.obukhov.trader.common.service.interfaces.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
@@ -10,7 +11,6 @@ import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
-import ru.obukhov.trader.trading.strategy.model.Averages;
 import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
@@ -26,14 +26,19 @@ import java.util.stream.Collectors;
  * @see <a href="https://en.wikipedia.org/wiki/Moving_average">Moving average</a>
  */
 @Slf4j
-public abstract class AbstractGoldenCrossStrategy extends AbstractTradingStrategy {
+public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    protected AbstractGoldenCrossStrategy(
+    private final MovingAverager averager;
+
+    protected GoldenCrossStrategy(
             final String name,
             final GoldenCrossStrategyParams params,
-            final TradingProperties tradingProperties
+            final TradingProperties tradingProperties,
+            final MovingAverager averager
     ) {
         super(name, params, tradingProperties);
+
+        this.averager = averager;
     }
 
     @Override
@@ -46,16 +51,18 @@ public abstract class AbstractGoldenCrossStrategy extends AbstractTradingStrateg
             final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
-            final GoldenCrossStrategyParams goldenCrossStrategyParams =
-                    (GoldenCrossStrategyParams) params;
-            final Averages averages = getAverages(values);
+            final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
+            final List<BigDecimal> shortAverages = averager.getAverages(
+                    values,
+                    goldenCrossStrategyParams.getSmallWindow()
+            );
+            final List<BigDecimal> longAverages = averager.getAverages(
+                    values,
+                    goldenCrossStrategyParams.getBigWindow()
+            );
 
             final int index = (int) (goldenCrossStrategyParams.getIndexCoefficient() * (values.size() - 1));
-            final Crossover crossover = TrendUtils.getCrossoverIfLast(
-                    averages.getShortAverages(),
-                    averages.getLongAverages(),
-                    index
-            );
+            final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
             decision = decide(data, strategyCache, crossover);
         }
 
@@ -89,13 +96,13 @@ public abstract class AbstractGoldenCrossStrategy extends AbstractTradingStrateg
         return decision;
     }
 
-    /**
-     * @return pair of lists of moving averages of given {@code values}.
-     * Left is short-term moving averages, right is long-term
-     */
-    protected abstract Averages getAverages(final List<BigDecimal> values);
+    @NotNull
+    @Override
+    public StrategyCache initCache() {
+        return new GoldenCrossStrategy.GoldenCrossStrategyCache();
+    }
 
-    protected abstract static class AbstractGoldenCrossStrategyCache implements StrategyCache {
+    private static class GoldenCrossStrategyCache implements StrategyCache {
     }
 
 }

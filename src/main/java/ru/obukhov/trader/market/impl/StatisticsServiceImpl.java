@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.common.service.interfaces.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
@@ -24,7 +25,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
+    private static final int WINDOW = 2;
+    private static final int ORDER = 1;
+
     private final MarketService marketService;
+    private final MovingAverager averager;
 
     /**
      * Searches candles by conditions
@@ -62,7 +67,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private GetCandlesResponse extendCandles(final List<Candle> candles) {
-        final List<BigDecimal> averages = getAverages(candles);
+        final List<BigDecimal> averages = averager.getAverages(candles, Candle::getOpenPrice, WINDOW, ORDER);
 
         final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
         final List<Integer> localMinimumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.reverseOrder());
@@ -81,10 +86,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                 supportLines,
                 resistanceLines
         );
-    }
-
-    private List<BigDecimal> getAverages(final List<Candle> candles) {
-        return TrendUtils.getSimpleMovingAverages(candles, Candle::getOpenPrice, 2, 1);
     }
 
     /**

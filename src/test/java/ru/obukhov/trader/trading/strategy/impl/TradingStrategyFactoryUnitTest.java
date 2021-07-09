@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.common.service.impl.ExponentialMovingAverager;
+import ru.obukhov.trader.common.service.impl.LinearMovingAverager;
+import ru.obukhov.trader.common.service.impl.SimpleMovingAverager;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -14,19 +17,73 @@ import java.util.stream.Stream;
 
 class TradingStrategyFactoryUnitTest {
 
-    private final TradingStrategyFactory factory = new TradingStrategyFactory(null);
+    private final TradingStrategyFactory factory = new TradingStrategyFactory(
+            null,
+            new SimpleMovingAverager(),
+            new LinearMovingAverager(),
+            new ExponentialMovingAverager()
+    );
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCreateStrategy_givesStrategyProperName() {
+        return Stream.of(
+                Arguments.of(
+                        StrategyType.CONSERVATIVE,
+                        Map.of("minimumProfit", 0.1),
+                        "conservative [minimumProfit=0.1]"
+                ),
+                Arguments.of(
+                        StrategyType.SIMPLE_GOLDEN_CROSS,
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 1,
+                                "indexCoefficient", 0.4,
+                                "greedy", false,
+                                "smallWindow", 100,
+                                "bigWindow", 200
+                        ),
+                        "simpleGoldenCross [minimumProfit=0.1, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
+                ),
+                Arguments.of(
+                        StrategyType.LINEAR_GOLDEN_CROSS,
+                        Map.of(
+                                "minimumProfit", 0.1,
+                                "order", 2,
+                                "indexCoefficient", 0.5,
+                                "greedy", true,
+                                "smallWindow", 100,
+                                "bigWindow", 200
+                        ),
+                        "linearGoldenCross [minimumProfit=0.1, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
+                ),
+                Arguments.of(
+                        StrategyType.EXPONENTIAL_GOLDEN_CROSS,
+                        Map.of(
+                                "minimumProfit", 0.2,
+                                "order", 1,
+                                "indexCoefficient", 0.5,
+                                "greedy", false,
+                                "smallWindow", 10,
+                                "bigWindow", 20
+                        ),
+                        "exponentialGoldenCross [minimumProfit=0.2, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateStrategy_givesStrategyProperName")
+    void createStrategy_givesStrategyProperName(
+            final StrategyType strategyType,
+            final Map<String, Object> params,
+            final String expectedName
+    ) {
+        TradingStrategy strategy = factory.createStrategy(strategyType, params);
+
+        Assertions.assertEquals(expectedName, strategy.getName());
+    }
 
     // region ConservativeStrategy strategy creation tests
-
-    @Test
-    void createStrategy_createsConservativeStrategy() {
-        final StrategyType strategyType = StrategyType.CONSERVATIVE;
-        final Map<String, Object> params = Map.of("minimumProfit", 0.1);
-
-        final TradingStrategy strategy = factory.createStrategy(strategyType, params);
-
-        Assertions.assertEquals(ConservativeStrategy.class, strategy.getClass());
-    }
 
     @Test
     void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
@@ -43,23 +100,6 @@ class TradingStrategyFactoryUnitTest {
     // endregion
 
     // region SimpleGoldenCrossStrategy creation tests
-
-    @Test
-    void createStrategy_createsSimpleGoldenCrossStrategy() {
-        final StrategyType strategyType = StrategyType.SIMPLE_GOLDEN_CROSS;
-        final Map<String, Object> params = Map.of(
-                "minimumProfit", 0.1,
-                "order", 1,
-                "indexCoefficient", 0.5,
-                "greedy", false,
-                "smallWindow", 100,
-                "bigWindow", 200
-        );
-
-        TradingStrategy strategy = factory.createStrategy(strategyType, params);
-
-        Assertions.assertEquals(SimpleGoldenCrossStrategy.class, strategy.getClass());
-    }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid() {
@@ -246,23 +286,6 @@ class TradingStrategyFactoryUnitTest {
 
     // region LinearGoldenCrossStrategy creation tests
 
-    @Test
-    void createStrategy_createsLinearGoldenCrossStrategy() {
-        final StrategyType strategyType = StrategyType.LINEAR_GOLDEN_CROSS;
-        final Map<String, Object> params = Map.of(
-                "minimumProfit", 0.1,
-                "order", 1,
-                "smallWindow", 100,
-                "bigWindow", 200,
-                "indexCoefficient", 0.5,
-                "greedy", false
-        );
-
-        TradingStrategy strategy = factory.createStrategy(strategyType, params);
-
-        Assertions.assertEquals(LinearGoldenCrossStrategy.class, strategy.getClass());
-    }
-
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenSimpleOrLinearGoldenCross_andParamsAreNotValid")
     void createStrategy_throwsIllegalArgumentException_whenLinearGoldenCross_andParamsAreNotValid(
@@ -300,23 +323,6 @@ class TradingStrategyFactoryUnitTest {
     // endregion
 
     // region ExponentialGoldenCrossStrategy creation tests
-
-    @Test
-    void createStrategy_createsExponentialGoldenCrossStrategy() {
-        final StrategyType strategyType = StrategyType.EXPONENTIAL_GOLDEN_CROSS;
-        final Map<String, Object> params = Map.of(
-                "minimumProfit", 0.1,
-                "order", 1,
-                "indexCoefficient", 0.5,
-                "greedy", false,
-                "smallWindow", 2,
-                "bigWindow", 5
-        );
-
-        TradingStrategy strategy = factory.createStrategy(strategyType, params);
-
-        Assertions.assertEquals(ExponentialGoldenCrossStrategy.class, strategy.getClass());
-    }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenExponentialGoldenCross_andParamsAreNotValid() {

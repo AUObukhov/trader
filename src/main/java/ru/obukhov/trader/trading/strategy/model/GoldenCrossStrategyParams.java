@@ -72,6 +72,7 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
     public String toString() {
         return "[" +
                 "minimumProfit=" + minimumProfit +
+                ", order=" + order +
                 ", indexCoefficient=" + indexCoefficient +
                 ", greedy=" + greedy +
                 ", smallWindow=" + smallWindow +

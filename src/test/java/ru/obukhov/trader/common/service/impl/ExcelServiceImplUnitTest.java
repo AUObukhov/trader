@@ -21,6 +21,7 @@ import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
+import ru.obukhov.trader.common.service.interfaces.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.model.Candle;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 class ExcelServiceImplUnitTest {
 
     private static final int MINIMUM_ROWS_COUNT = 21;
+
+    private final MovingAverager averager = new SimpleMovingAverager();
 
     @Captor
     private ArgumentCaptor<ExtendedWorkbook> workbookArgumentCaptor;
@@ -538,7 +541,7 @@ class ExcelServiceImplUnitTest {
         final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
         final Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
-        final List<BigDecimal> averages = TrendUtils.getSimpleMovingAverages(openPrices, selfExtractor, 5);
+        final List<BigDecimal> averages = averager.getAverages(openPrices, selfExtractor, 5);
 
         final List<Integer> localMinimumsIndices =
                 TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.common.service.interfaces.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
@@ -21,10 +22,13 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceImplUnitTest {
 
+    @Mock
+    private MovingAverager averager;
     @Mock
     private MarketService marketService;
 
@@ -69,13 +73,21 @@ class StatisticsServiceImplUnitTest {
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
+        final List<BigDecimal> averages = TestDataHelper.createBigDecimalsList(10.0, 12.5, 17.5);
+        Mockito.when(
+                averager.getAverages(
+                        Mockito.eq(candles),
+                        Mockito.any(Function.class),
+                        Mockito.eq(2),
+                        Mockito.eq(1)
+                )
+        ).thenReturn(averages);
+
         final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
-        // calculated for TrendUtils#getSimpleMovingAverages by openPrice with window = 2 and order = 1
-        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.0, 12.5, 17.5);
-        AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
+        AssertUtils.assertListsAreEqual(averages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 10.00000)
@@ -117,15 +129,23 @@ class StatisticsServiceImplUnitTest {
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
+        final List<BigDecimal> averages = TestDataHelper.createBigDecimalsList(
+                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
+        );
+        Mockito.when(
+                averager.getAverages(
+                        Mockito.eq(candles),
+                        Mockito.any(Function.class),
+                        Mockito.eq(2),
+                        Mockito.eq(1)
+                )
+        ).thenReturn(averages);
+
         final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
-        // calculated for TrendUtils#getSimpleMovingAverages by openPrice with window = 2 and order = 1
-        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(
-                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
-        );
-        AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
+        AssertUtils.assertListsAreEqual(averages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
                 Point.of(candles.get(0).getTime(), 80),
