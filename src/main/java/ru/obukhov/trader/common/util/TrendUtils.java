@@ -235,74 +235,78 @@ public class TrendUtils {
     // region getExponentialWeightedMovingAverages
 
     /**
-     * Calculates exponential weighted moving averages of given {@code elements} with given {@code weightDecrease}
+     * Calculates exponential weighted moving averages of given {@code elements} with given {@code window}
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @param window         value, used to calculate degree of weighting decrease, a constant smoothing factor
+     *                       by formula 2 / (window + 1). Must be positive
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getExponentialWeightedMovingAverages(
             final List<T> elements,
             final Function<T, BigDecimal> valueExtractor,
-            final double weightDecrease
+            final int window
     ) {
         final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
+        return getExponentialWeightedMovingAverages(values, window, 1);
     }
 
     /**
-     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code window}
      *
-     * @param values         values, for which averages are calculated for
-     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @param values values, for which averages are calculated for
+     * @param window value, used to calculate degree of weighting decrease, a constant smoothing factor
+     *               by formula 2 / (window + 1). Must be positive
      * @return list of calculated averages
      */
     public static List<BigDecimal> getExponentialWeightedMovingAverages(
             final List<BigDecimal> values,
-            final double weightDecrease
+            final int window
     ) {
-        return getExponentialWeightedMovingAverages(values, weightDecrease, 1);
+        return getExponentialWeightedMovingAverages(values, window, 1);
     }
 
     /**
-     * Calculates exponential weighted moving averages of given {@code elements} with given {@code weightDecrease}
+     * Calculates exponential weighted moving averages of given {@code elements} with given {@code window}
      * and {@code order}
      *
      * @param elements       elements containing values, for which averages are calculated for
      * @param valueExtractor function to get value from current element
-     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
+     * @param window         value, used to calculate degree of weighting decrease, a constant smoothing factor
+     *                       by formula 2 / (window + 1). Must be positive
      * @param order          order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
     public static <T> List<BigDecimal> getExponentialWeightedMovingAverages(
             final List<T> elements,
             final Function<T, BigDecimal> valueExtractor,
-            final double weightDecrease,
+            final int window,
             final int order
     ) {
         final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getExponentialWeightedMovingAverages(values, weightDecrease, order);
+        return getExponentialWeightedMovingAverages(values, window, order);
     }
 
     /**
-     * Calculates exponential weighted moving averages of given {@code values} with given {@code weightDecrease}
+     * Calculates exponential weighted moving averages of given {@code values} with given {@code window}
      * and {@code order}
      *
-     * @param values         values containing values, for which averages are calculated for
-     * @param weightDecrease degree of weighting decrease, a constant smoothing factor. Must be in range (0; 1]
-     * @param order          order of calculated averages. Must be positive.
+     * @param values values containing values, for which averages are calculated for
+     * @param window value, used to calculate degree of weighting decrease, a constant smoothing factor
+     *               by formula 2 / (window + 1). Must be positive
+     * @param order  order of calculated averages. Must be positive.
      * @return list of calculated averages
      */
     public static List<BigDecimal> getExponentialWeightedMovingAverages(
             final List<BigDecimal> values,
-            final double weightDecrease,
+            final int window,
             final int order
     ) {
         Assert.isTrue(order > 0, ORDER_MUST_BE_POSITIVE_MESSAGE);
-        Assert.isTrue(weightDecrease > 0 && weightDecrease <= 1,
-                "weightDecrease must be in range (0; 1]");
+        Assert.isTrue(window > 0, WINDOW_MUST_BE_POSITIVE_MESSAGE);
 
+        final double weightDecrease = 2.0 / (window + 1);
         final double revertedWeightDecrease = 1 - weightDecrease;
         final List<BigDecimal> averages = new ArrayList<>(values);
         if (averages.isEmpty()) {

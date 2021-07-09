@@ -12,7 +12,7 @@ import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
@@ -30,7 +30,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void getName_returnsProperName() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 100, 200),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 100, 200),
                 TRADING_PROPERTIES
         );
 
@@ -45,7 +45,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void decide_returnsWait_whenExistsOperationInProgress() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -66,7 +66,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsNone() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -87,7 +87,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -108,7 +108,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -129,7 +129,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -151,7 +151,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, true, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, true, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -173,7 +173,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -195,7 +195,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @SuppressWarnings("unused")
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 
@@ -218,7 +218,7 @@ class LinearGoldenCrossStrategyUnitTest {
     @Test
     void initCache_returnsNotNull() {
         final LinearGoldenCrossStrategy strategy = new LinearGoldenCrossStrategy(
-                new LinearGoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
+                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 6),
                 TRADING_PROPERTIES
         );
 

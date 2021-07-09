@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
-import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
-import ru.obukhov.trader.trading.strategy.model.SimpleGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 
 import javax.validation.ConstraintViolation;
@@ -50,22 +48,19 @@ public class TradingStrategyFactory {
     }
 
     private SimpleGoldenCrossStrategy createSimpleGoldenCrossStrategy(final Map<String, Object> params) {
-        final SimpleGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(params, SimpleGoldenCrossStrategyParams.class);
+        final GoldenCrossStrategyParams strategyParams = getStrategyParams(params, GoldenCrossStrategyParams.class);
 
         return new SimpleGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
     private LinearGoldenCrossStrategy createLinearGoldenCrossStrategy(final Map<String, Object> params) {
-        final LinearGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(params, LinearGoldenCrossStrategyParams.class);
+        final GoldenCrossStrategyParams strategyParams = getStrategyParams(params, GoldenCrossStrategyParams.class);
 
         return new LinearGoldenCrossStrategy(strategyParams, tradingProperties);
     }
 
     private ExponentialGoldenCrossStrategy createExponentialGoldenCrossStrategy(final Map<String, Object> params) {
-        final ExponentialGoldenCrossStrategyParams strategyParams =
-                getStrategyParams(params, ExponentialGoldenCrossStrategyParams.class);
+        final GoldenCrossStrategyParams strategyParams = getStrategyParams(params, GoldenCrossStrategyParams.class);
 
         return new ExponentialGoldenCrossStrategy(strategyParams, tradingProperties);
     }

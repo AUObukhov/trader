@@ -2,16 +2,22 @@ package ru.obukhov.trader.trading.strategy.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.function.Predicate;
 
 @Valid
 @Getter
 @NoArgsConstructor
-public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
+@PredicateConstraint(
+        message = "smallWindow must lower than bigWindow",
+        predicate = GoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
+)
+public class GoldenCrossStrategyParams extends TradingStrategyParams {
 
     @NotNull(message = "order is mandatory")
     @Min(value = 1, message = "order min value is 1")
@@ -32,17 +38,54 @@ public abstract class GoldenCrossStrategyParams extends TradingStrategyParams {
     @NotNull(message = "greedy is mandatory")
     protected Boolean greedy;
 
-    protected GoldenCrossStrategyParams(
+    /**
+     * window of short-term moving average
+     */
+    @NotNull(message = "smallWindow is mandatory")
+    @Min(value = 1, message = "smallWindow must be positive")
+    private Integer smallWindow;
+
+    /**
+     * window of long-term moving average
+     */
+    @NotNull(message = "bigWindow is mandatory")
+    private Integer bigWindow;
+
+    public GoldenCrossStrategyParams(
             final Float minimumProfit,
             final Integer order,
             final Float indexCoefficient,
-            final Boolean greedy
+            final Boolean greedy,
+            final Integer smallWindow,
+            final Integer bigWindow
     ) {
         super(minimumProfit);
 
         this.order = order;
         this.indexCoefficient = indexCoefficient;
         this.greedy = greedy;
+        this.smallWindow = smallWindow;
+        this.bigWindow = bigWindow;
+    }
+
+    @Override
+    public String toString() {
+        return "[" +
+                "minimumProfit=" + minimumProfit +
+                ", indexCoefficient=" + indexCoefficient +
+                ", greedy=" + greedy +
+                ", smallWindow=" + smallWindow +
+                ", bigWindow=" + bigWindow +
+                ']';
+    }
+
+    protected static class GoldenCrossStrategyParamsWindowsPredicate implements Predicate<GoldenCrossStrategyParams> {
+        @Override
+        public boolean test(GoldenCrossStrategyParams params) {
+            return params.getSmallWindow() == null
+                    || params.getBigWindow() == null
+                    || params.getSmallWindow() < params.getBigWindow();
+        }
     }
 
 }

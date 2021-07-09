@@ -871,9 +871,8 @@ class TrendUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException() {
         return Stream.of(
-                Arguments.of(Collections.emptyList(), -0.1, "weightDecrease must be in range (0; 1]"),
-                Arguments.of(Collections.emptyList(), 0.0, "weightDecrease must be in range (0; 1]"),
-                Arguments.of(Collections.emptyList(), 1.1, "weightDecrease must be in range (0; 1]")
+                Arguments.of(Collections.emptyList(), -1, "window must be positive"),
+                Arguments.of(Collections.emptyList(), 0, "window must be positive")
         );
     }
 
@@ -881,13 +880,13 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final String expectedMessage
     ) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease),
+                () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, window),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -897,13 +896,13 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithValueExtractor_throwsIllegalArgumentException(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final String expectedMessage
     ) {
         final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease),
+                () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, window),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -914,22 +913,22 @@ class TrendUtilsUnitTest {
         return Stream.of(
                 Arguments.of(
                         List.of(),
-                        0.8,
+                        2,
                         List.of()
                 ),
                 Arguments.of(
                         List.of(1000.0),
-                        0.8,
+                        2,
                         List.of(1000.0)
                 ),
                 Arguments.of(
                         List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0),
-                        1.0,
+                        1,
                         List.of(1000.0, 2000.0, 3000.0, 4000.0, 5000.0)
                 ),
                 Arguments.of(
                         List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
-                        0.8,
+                        4,
                         List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
                 ),
                 Arguments.of(
@@ -937,10 +936,10 @@ class TrendUtilsUnitTest {
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
-                        0.8,
+                        4,
                         List.of(
-                                1000.00000, 1800.00000, 2760.00000, 3752.00000, 4750.40000,
-                                5750.08000, 6750.01600, 7750.00320, 8750.00064, 9750.00013
+                                1000.00000, 1400.00000, 2040.00000, 2824.00000, 3694.40000,
+                                4616.64000, 5569.98400, 6541.99040, 7525.19424, 8515.11654
                         )
                 ),
                 Arguments.of(
@@ -950,12 +949,12 @@ class TrendUtilsUnitTest {
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
-                        0.5,
+                        4,
                         List.of(
-                                9912.00000, 9905.00000, 9890.50000, 9893.75000, 9895.37500,
-                                9896.68750, 9890.84375, 9893.42188, 9890.71094, 9889.35547,
-                                9885.17773, 9881.58887, 9884.29443, 9881.14722, 9879.57361,
-                                9881.28680, 9879.64340, 9870.32170, 9866.16085, 9864.08043
+                                9912.00000, 9906.40000, 9894.24000, 9895.34400, 9896.00640,
+                                9896.80384, 9892.08230, 9893.64938, 9891.38963, 9890.03378,
+                                9886.42027, 9883.05216, 9884.63130, 9881.97878, 9880.38727,
+                                9881.43236, 9880.05942, 9872.43565, 9868.26139, 9865.75683
                         )
                 )
         );
@@ -965,13 +964,13 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithoutValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final List<Double> expectedValues
     ) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
-                TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease);
+                TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
@@ -988,13 +987,13 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withoutOrder_andWithValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final List<Double> expectedValues
     ) {
         final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
-                TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease);
+                TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
@@ -1014,11 +1013,10 @@ class TrendUtilsUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException() {
         return Stream.of(
-                Arguments.of(Collections.emptyList(), -0.1, 3, "weightDecrease must be in range (0; 1]"),
-                Arguments.of(Collections.emptyList(), 0.0, 3, "weightDecrease must be in range (0; 1]"),
-                Arguments.of(Collections.emptyList(), 1.1, 3, "weightDecrease must be in range (0; 1]"),
-                Arguments.of(Collections.emptyList(), 0.5, -1, "order must be positive"),
-                Arguments.of(Collections.emptyList(), 0.5, 0, "order must be positive")
+                Arguments.of(Collections.emptyList(), -1, 3, "window must be positive"),
+                Arguments.of(Collections.emptyList(), 0, 3, "window must be positive"),
+                Arguments.of(Collections.emptyList(), 4, -1, "order must be positive"),
+                Arguments.of(Collections.emptyList(), 4, 0, "order must be positive")
         );
     }
 
@@ -1026,14 +1024,14 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final int order,
             final String expectedMessage
     ) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease, order),
+                () -> TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, window, order),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -1043,14 +1041,14 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder_throwsIllegalArgumentException")
     void getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor_throwsIllegalArgumentException(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final int order,
             final String expectedMessage
     ) {
         final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order),
+                () -> TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, window, order),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -1061,13 +1059,13 @@ class TrendUtilsUnitTest {
         return Stream.of(
                 Arguments.of(
                         List.of(),
-                        0.8,
+                        2,
                         3,
                         List.of()
                 ),
                 Arguments.of(
                         List.of(1000.0),
-                        0.8,
+                        2,
                         3,
                         List.of(1000.0)
                 ),
@@ -1079,7 +1077,7 @@ class TrendUtilsUnitTest {
                 ),
                 Arguments.of(
                         List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0),
-                        0.8,
+                        2,
                         2,
                         List.of(1000.0, 1000.0, 1000.0, 1000.0, 1000.0)
                 ),
@@ -1088,11 +1086,11 @@ class TrendUtilsUnitTest {
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
-                        0.8,
+                        4,
                         2,
                         List.of(
-                                1000.00000, 1640.00000, 2536.00000, 3508.80000, 4502.08000,
-                                5500.48000, 6500.10880, 7500.02432, 8500.00538, 9500.00118
+                                1000.00000, 1160.00000, 1512.00000, 2036.80000, 2699.84000,
+                                3466.56000, 4307.92960, 5201.55392, 6131.01005, 7084.65265
                         )
                 ),
                 Arguments.of(
@@ -1100,11 +1098,11 @@ class TrendUtilsUnitTest {
                                 1000.0, 2000.0, 3000.0, 4000.0, 5000.0,
                                 6000.0, 7000.0, 8000.0, 9000.0, 10000.0
                         ),
-                        0.8,
+                        4,
                         3,
                         List.of(
-                                1000.00000, 1512.00000, 2331.20000, 3273.28000, 4256.32000,
-                                5251.64800, 6250.41664, 7250.10278, 8250.02486, 9250.00591
+                                1000.00000, 1064.00000, 1243.20000, 1560.64000, 2016.32000,
+                                2596.41600, 3281.02144, 4049.23443, 4881.94468, 5763.02787
                         )
                 ),
                 Arguments.of(
@@ -1114,13 +1112,13 @@ class TrendUtilsUnitTest {
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
-                        0.5,
+                        4,
                         2,
                         List.of(
-                                9912.00000, 9908.50000, 9899.50000, 9896.62500, 9896.00000,
-                                9896.34375, 9893.59375, 9893.50781, 9892.10938, 9890.73242,
-                                9887.95508, 9884.77197, 9884.53320, 9882.84021, 9881.20691,
-                                9881.24686, 9880.44513, 9875.38342, 9870.77213, 9867.42628
+                                9912.00000, 9909.76000, 9903.55200, 9900.26880, 9898.56384,
+                                9897.85984, 9895.54883, 9894.78905, 9893.42928, 9892.07108,
+                                9889.81075, 9887.10732, 9886.11691, 9884.46166, 9882.83190,
+                                9882.27208, 9881.38702, 9877.80647, 9873.98844, 9870.69580
                         )
                 ),
                 Arguments.of(
@@ -1130,13 +1128,13 @@ class TrendUtilsUnitTest {
                                 9881.0, 9878.0, 9887.0, 9878.0, 9878.0,
                                 9883.0, 9878.0, 9861.0, 9862.0, 9862.0
                         ),
-                        0.5,
+                        4,
                         3,
                         List.of(
-                                9912.00000, 9910.25000, 9904.87500, 9900.75000, 9898.37500,
-                                9897.35938, 9895.47656, 9894.49219, 9893.30078, 9892.01660,
-                                9889.98584, 9887.37891, 9885.95605, 9884.39813, 9882.80252,
-                                9882.02469, 9881.23491, 9878.30916, 9874.54065, 9870.98346
+                                9912.00000, 9911.10400, 9908.08320, 9904.95744, 9902.40000,
+                                9900.58394, 9898.56989, 9897.05755, 9895.60624, 9894.19218,
+                                9892.43961, 9890.30669, 9888.63078, 9886.96313, 9885.31064,
+                                9884.09522, 9883.01194, 9880.92975, 9878.15323, 9875.17025
                         )
                 )
         );
@@ -1146,12 +1144,12 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withOrderOne_andWithoutValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final List<Double> expectedValues
     ) {
         getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
                 values,
-                weightDecrease,
+                window,
                 1,
                 expectedValues
         );
@@ -1161,14 +1159,14 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder")
     void getExponentialWeightedMovingAverages_withOrder_andWithoutValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final int order,
             final List<Double> expectedValues
     ) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
-                TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, weightDecrease, order);
+                TrendUtils.getExponentialWeightedMovingAverages(bigDecimalValues, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
@@ -1185,12 +1183,12 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withoutOrder")
     void getExponentialWeightedMovingAverages_withOrderOne_andWithValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final List<Double> expectedValues
     ) {
         getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
                 values,
-                weightDecrease,
+                window,
                 1,
                 expectedValues
         );
@@ -1200,14 +1198,14 @@ class TrendUtilsUnitTest {
     @MethodSource("getData_forGetExponentialWeightedMovingAverages_withOrder")
     void getExponentialWeightedMovingAverages_withOrder_andWithValueExtractor(
             final List<Double> values,
-            final double weightDecrease,
+            final int window,
             final int order,
             final List<Double> expectedValues
     ) {
         final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
-                TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, weightDecrease, order);
+                TrendUtils.getExponentialWeightedMovingAverages(elements, Optional::get, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);

@@ -84,12 +84,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private List<BigDecimal> getAverages(final List<Candle> candles) {
-        return TrendUtils.getExponentialWeightedMovingAverages(
-                candles,
-                Candle::getOpenPrice,
-                0.3,
-                3
-        );
+        return TrendUtils.getSimpleMovingAverages(candles, Candle::getOpenPrice, 2, 1);
     }
 
     /**

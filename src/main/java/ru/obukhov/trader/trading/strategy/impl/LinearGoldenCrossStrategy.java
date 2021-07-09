@@ -6,7 +6,7 @@ import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.model.Averages;
-import ru.obukhov.trader.trading.strategy.model.LinearGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,11 +20,11 @@ public class LinearGoldenCrossStrategy extends AbstractGoldenCrossStrategy {
     /**
      * Initializes new instance of {@link LinearGoldenCrossStrategy}
      *
-     * @param tradingProperties common trading properties
      * @param params            params of strategy
+     * @param tradingProperties common trading properties
      */
     public LinearGoldenCrossStrategy(
-            final LinearGoldenCrossStrategyParams params,
+            final GoldenCrossStrategyParams params,
             final TradingProperties tradingProperties
     ) {
         super("linearGoldenCross", params, tradingProperties);
@@ -32,15 +32,14 @@ public class LinearGoldenCrossStrategy extends AbstractGoldenCrossStrategy {
 
     @Override
     protected Averages getAverages(final List<BigDecimal> values) {
-        final LinearGoldenCrossStrategyParams linearGoldenCrossStrategyParams =
-                (LinearGoldenCrossStrategyParams) params;
+        final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
         final List<BigDecimal> shortAverages = TrendUtils.getLinearWeightedMovingAverages(
                 values,
-                linearGoldenCrossStrategyParams.getSmallWindow()
+                goldenCrossStrategyParams.getSmallWindow()
         );
         final List<BigDecimal> longAverages = TrendUtils.getLinearWeightedMovingAverages(
                 values,
-                linearGoldenCrossStrategyParams.getBigWindow()
+                goldenCrossStrategyParams.getBigWindow()
         );
 
         return new Averages(shortAverages, longAverages);

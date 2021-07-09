@@ -6,7 +6,7 @@ import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.model.Averages;
-import ru.obukhov.trader.trading.strategy.model.ExponentialGoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,11 +20,11 @@ public class ExponentialGoldenCrossStrategy extends AbstractGoldenCrossStrategy 
     /**
      * Initializes new instance of {@link ExponentialGoldenCrossStrategy}
      *
-     * @param tradingProperties common trading properties
      * @param params            params of strategy
+     * @param tradingProperties common trading properties
      */
     public ExponentialGoldenCrossStrategy(
-            final ExponentialGoldenCrossStrategyParams params,
+            final GoldenCrossStrategyParams params,
             final TradingProperties tradingProperties
     ) {
         super("exponentialGoldenCross", params, tradingProperties);
@@ -32,15 +32,14 @@ public class ExponentialGoldenCrossStrategy extends AbstractGoldenCrossStrategy 
 
     @Override
     protected Averages getAverages(final List<BigDecimal> values) {
-        final ExponentialGoldenCrossStrategyParams exponentialGoldenCrossStrategyParams =
-                (ExponentialGoldenCrossStrategyParams) params;
+        final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
         final List<BigDecimal> shortAverages = TrendUtils.getExponentialWeightedMovingAverages(
                 values,
-                exponentialGoldenCrossStrategyParams.getFastWeightDecrease()
+                goldenCrossStrategyParams.getSmallWindow()
         );
         final List<BigDecimal> longAverages = TrendUtils.getExponentialWeightedMovingAverages(
                 values,
-                exponentialGoldenCrossStrategyParams.getSlowWeightDecrease()
+                goldenCrossStrategyParams.getBigWindow()
         );
 
         return new Averages(shortAverages, longAverages);
@@ -49,10 +48,10 @@ public class ExponentialGoldenCrossStrategy extends AbstractGoldenCrossStrategy 
     @NotNull
     @Override
     public StrategyCache initCache() {
-        return new LinearGoldenCrossStrategyCache();
+        return new ExponentialGoldenCrossStrategyCache();
     }
 
-    private static class LinearGoldenCrossStrategyCache extends AbstractGoldenCrossStrategyCache {
+    private static class ExponentialGoldenCrossStrategyCache extends AbstractGoldenCrossStrategyCache {
     }
 
 }

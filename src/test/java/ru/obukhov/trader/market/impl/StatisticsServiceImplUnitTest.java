@@ -73,9 +73,8 @@ class StatisticsServiceImplUnitTest {
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
-        // expected average prices are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
-        // with weightDecrease = 0.3 and order = 3
-        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.00000, 10.13500, 10.55350);
+        // calculated for TrendUtils#getSimpleMovingAverages by openPrice with window = 2 and order = 1
+        final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(10.0, 12.5, 17.5);
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
@@ -84,7 +83,7 @@ class StatisticsServiceImplUnitTest {
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
         final List<Point> expectedMaximums = List.of(
-                Point.of(candles.get(2).getTime(), 10.55350)
+                Point.of(candles.get(2).getTime(), 17.5)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
 
@@ -122,50 +121,61 @@ class StatisticsServiceImplUnitTest {
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
 
-        // expectedAverages are calculated for MathUtils.getExponentialWeightedMovingAveragesOfArbitraryOrder
-        // with weightDecrease = 0.3 and order = 3
+        // calculated for TrendUtils#getSimpleMovingAverages by openPrice with window = 2 and order = 1
         final List<BigDecimal> expectedAverages = TestDataHelper.createBigDecimalsList(
-                80.00000, 104.84000, 131.89400, 151.38260, 161.32940,
-                161.76896, 156.91483, 174.05676, 191.96114, 201.88675
+                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
         );
         AssertUtils.assertListsAreEqual(expectedAverages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
-                Point.of(candles.get(0).getTime(), 80.00000),
-                Point.of(candles.get(6).getTime(), 156.91483)
+                Point.of(candles.get(0).getTime(), 80),
+                Point.of(candles.get(5).getTime(), 30),
+                Point.of(candles.get(9).getTime(), 45)
         );
         AssertUtils.assertListsAreEqual(expectedMinimums, response.getLocalMinimums());
 
         final List<Point> expectedMaximums = List.of(
-                Point.of(candles.get(5).getTime(), 161.76896),
-                Point.of(candles.get(9).getTime(), 201.88675)
+                Point.of(candles.get(1).getTime(), 540),
+                Point.of(candles.get(7).getTime(), 545)
         );
         AssertUtils.assertListsAreEqual(expectedMaximums, response.getLocalMaximums());
 
         final List<List<Point>> supportLines = response.getSupportLines();
-        Assertions.assertEquals(1, supportLines.size());
-        final List<Point> expectedSupportLine = List.of(
-                Point.of(candles.get(0).getTime(), 80.00000),
-                Point.of(candles.get(1).getTime(), 92.81914),
-                Point.of(candles.get(2).getTime(), 105.63828),
-                Point.of(candles.get(3).getTime(), 118.45742),
-                Point.of(candles.get(4).getTime(), 131.27655),
-                Point.of(candles.get(5).getTime(), 144.09569),
-                Point.of(candles.get(6).getTime(), 156.91483),
-                Point.of(candles.get(7).getTime(), 169.73397),
-                Point.of(candles.get(8).getTime(), 182.55311),
-                Point.of(candles.get(9).getTime(), 195.37225)
+        Assertions.assertEquals(2, supportLines.size());
+        final List<Point> expectedSupportLine1 = List.of(
+                Point.of(candles.get(0).getTime(), 80),
+                Point.of(candles.get(1).getTime(), 70),
+                Point.of(candles.get(2).getTime(), 60),
+                Point.of(candles.get(3).getTime(), 50),
+                Point.of(candles.get(4).getTime(), 40),
+                Point.of(candles.get(5).getTime(), 30),
+                Point.of(candles.get(6).getTime(), 20),
+                Point.of(candles.get(7).getTime(), 10),
+                Point.of(candles.get(8).getTime(), 0),
+                Point.of(candles.get(9).getTime(), -10)
         );
-        AssertUtils.assertListsAreEqual(expectedSupportLine, supportLines.get(0));
+        AssertUtils.assertListsAreEqual(expectedSupportLine1, supportLines.get(0));
+        final List<Point> expectedSupportLine2 = List.of(
+                Point.of(candles.get(5).getTime(), 30.00),
+                Point.of(candles.get(6).getTime(), 33.75),
+                Point.of(candles.get(7).getTime(), 37.50),
+                Point.of(candles.get(8).getTime(), 41.25),
+                Point.of(candles.get(9).getTime(), 45.00)
+        );
+        AssertUtils.assertListsAreEqual(expectedSupportLine2, supportLines.get(1));
 
         final List<List<Point>> resistanceLines = response.getResistanceLines();
         Assertions.assertEquals(1, resistanceLines.size());
         final List<Point> expectedResistanceLine = List.of(
-                Point.of(candles.get(5).getTime(), 161.76896),
-                Point.of(candles.get(6).getTime(), 171.79841),
-                Point.of(candles.get(7).getTime(), 181.82786),
-                Point.of(candles.get(8).getTime(), 191.85730),
-                Point.of(candles.get(9).getTime(), 201.88675)
+                Point.of(candles.get(1).getTime(), 540.00000),
+                Point.of(candles.get(2).getTime(), 540.83333),
+                Point.of(candles.get(3).getTime(), 541.66667),
+                Point.of(candles.get(4).getTime(), 542.50000),
+                Point.of(candles.get(5).getTime(), 543.33333),
+                Point.of(candles.get(6).getTime(), 544.16667),
+                Point.of(candles.get(7).getTime(), 545.00000),
+                Point.of(candles.get(8).getTime(), 545.83333),
+                Point.of(candles.get(9).getTime(), 546.66667)
         );
         AssertUtils.assertListsAreEqual(expectedResistanceLine, resistanceLines.get(0));
     }
