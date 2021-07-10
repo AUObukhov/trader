@@ -1,5 +1,6 @@
 package ru.obukhov.trader.trading.simulation.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,6 +56,7 @@ class SimulatorImplUnitTest {
             StrategyType.CONSERVATIVE
     );
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
+            StringUtils.EMPTY,
             new TradingStrategyParams(0.1f),
             null
     );

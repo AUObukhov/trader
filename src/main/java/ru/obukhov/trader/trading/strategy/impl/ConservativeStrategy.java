@@ -15,8 +15,8 @@ import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final TradingStrategyParams params, final TradingProperties tradingProperties) {
-        super("conservative", params, tradingProperties);
+    public ConservativeStrategy(final String name, final TradingStrategyParams params, final TradingProperties tradingProperties) {
+        super(name, params, tradingProperties);
     }
 
     @Override

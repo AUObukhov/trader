@@ -8,6 +8,7 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
@@ -19,6 +20,7 @@ class ConservativeStrategyUnitTest {
     private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
 
     private final ConservativeStrategy strategy = new ConservativeStrategy(
+            StrategyType.CONSERVATIVE.getValue(),
             new TradingStrategyParams(0.1f),
             TRADING_PROPERTIES
     );

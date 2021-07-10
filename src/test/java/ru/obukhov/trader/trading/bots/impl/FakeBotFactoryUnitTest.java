@@ -1,5 +1,6 @@
 package ru.obukhov.trader.trading.bots.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +33,7 @@ class FakeBotFactoryUnitTest {
     @Test
     void createBot_createsFakeBot() {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final TradingStrategy strategy = new ConservativeStrategy(params, tradingProperties);
+        final TradingStrategy strategy = new ConservativeStrategy(StringUtils.EMPTY, params, tradingProperties);
 
         final Bot bot = factory.createBot(strategy, CandleResolution._1MIN);
 
