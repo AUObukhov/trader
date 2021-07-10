@@ -454,13 +454,13 @@ class FakeTinkoffServiceUnitTest {
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies();
 
         Assertions.assertEquals(Currency.values().length, currencies.size());
-        for (Currency currency : Currency.values()) {
+        for (final Currency currency : Currency.values()) {
             if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)) {
                 Assertions.fail("Currency " + currency + " found in getPortfolioCurrencies result");
             }
         }
 
-        for (CurrencyPosition portfolioCurrency : currencies) {
+        for (final CurrencyPosition portfolioCurrency : currencies) {
             AssertUtils.assertEquals(0, portfolioCurrency.getBalance());
             Assertions.assertNull(portfolioCurrency.getBlocked());
         }

@@ -60,7 +60,7 @@ class ScheduledBotPropertiesUnitTest {
 
         threads.forEach(Thread::start);
 
-        for (Thread thread : threads) {
+        for (final Thread thread : threads) {
             thread.join(10000);
             Assertions.assertEquals(Thread.State.TERMINATED, thread.getState(), "probably deadlock");
         }

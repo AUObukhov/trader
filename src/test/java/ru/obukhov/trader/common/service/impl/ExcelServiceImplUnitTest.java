@@ -319,7 +319,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Конфигурация");
         AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", tradingConfig.getCandleResolution().toString());
         AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", tradingConfig.getStrategyType().toString());
-        for (Map.Entry<String, Object> entry : tradingConfig.getStrategyParams().entrySet()) {
+        for (final Map.Entry<String, Object> entry : tradingConfig.getStrategyParams().entrySet()) {
             AssertUtils.assertRowValues(rowIterator.next(), entry.getKey(), entry.getValue());
         }
     }
@@ -345,7 +345,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
-        for (SimulatedPosition position : result.getPositions()) {
+        for (final SimulatedPosition position : result.getPositions()) {
             AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
         }
     }
@@ -355,7 +355,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
         AssertUtils.assertRowValues(rowIterator.next(),
                 "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
-        for (SimulatedOperation operation : result.getOperations()) {
+        for (final SimulatedOperation operation : result.getOperations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     operation.getDateTime(),
@@ -409,7 +409,7 @@ class ExcelServiceImplUnitTest {
                 "Набольшая цена",
                 "Наименьшая цена"
         );
-        for (Candle candle : response.getCandles()) {
+        for (final Candle candle : response.getCandles()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     candle.getTime(),

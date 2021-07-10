@@ -8,8 +8,8 @@ class CandleResolutionConverterTest {
 
     @Test
     void convert() {
-        CandleResolutionConverter converter = new CandleResolutionConverter();
-        for (CandleResolution candleResolution : CandleResolution.values()) {
+        final CandleResolutionConverter converter = new CandleResolutionConverter();
+        for (final CandleResolution candleResolution : CandleResolution.values()) {
             Assertions.assertEquals(candleResolution, converter.convert(candleResolution.getValue()));
         }
     }

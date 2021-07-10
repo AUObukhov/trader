@@ -8,8 +8,8 @@ class InstrumentTypeConverterTest {
 
     @Test
     void convert() {
-        InstrumentTypeConverter converter = new InstrumentTypeConverter();
-        for (InstrumentType instrumentType : InstrumentType.values()) {
+        final InstrumentTypeConverter converter = new InstrumentTypeConverter();
+        for (final InstrumentType instrumentType : InstrumentType.values()) {
             Assertions.assertEquals(instrumentType, converter.convert(instrumentType.getValue()));
         }
     }

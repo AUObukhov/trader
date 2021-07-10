@@ -76,7 +76,7 @@ public class ExtendedRow implements Row {
     public List<ExtendedCell> createCells(final int column, final Object... values) {
         final List<ExtendedCell> extendedCells = new ArrayList<>(values.length);
         int currentColumn = column;
-        for (Object value : values) {
+        for (final Object value : values) {
             extendedCells.add(createCell(currentColumn, value));
             currentColumn++;
         }

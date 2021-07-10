@@ -123,7 +123,7 @@ class TradingPropertiesIntegrationTest {
         Assertions.assertNotNull(startupFailure);
 
         final String message = getBindValidationExceptionMessage(startupFailure);
-        for (String substring : messageSubstrings) {
+        for (final String substring : messageSubstrings) {
             Assertions.assertTrue(message.contains(substring));
         }
     }

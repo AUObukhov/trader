@@ -79,7 +79,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Override
     public void saveSimulationResults(final String ticker, final Collection<SimulationResult> results) {
-        for (SimulationResult result : results) {
+        for (final SimulationResult result : results) {
             final ExtendedWorkbook workBook = createWorkBook();
             createSheet(workBook, ticker, result);
             saveToFile(workBook, "SimulationResult for '" + ticker + "'");
@@ -182,7 +182,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void putStrategyParams(ExtendedSheet sheet, Map<String, Object> strategyParams) {
-        for (Map.Entry<String, Object> entry : strategyParams.entrySet()) {
+        for (final Map.Entry<String, Object> entry : strategyParams.entrySet()) {
             final ExtendedRow row = sheet.addRow();
             row.createCells(entry.getKey(), entry.getValue());
         }
@@ -278,7 +278,7 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Позиции", 3);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Цена", "Количество");
-            for (SimulatedPosition position : positions) {
+            for (final SimulatedPosition position : positions) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(position.getPrice(), position.getQuantity());
             }
@@ -294,7 +294,7 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Операции", 6);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
-            for (SimulatedOperation operation : operations) {
+            for (final SimulatedOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(operation.getDateTime(),
                         operation.getOperationType().name(),
@@ -316,7 +316,7 @@ public class ExcelServiceImpl implements ExcelService {
                 "Наименьшая цена"
         );
 
-        for (Candle candle : candles) {
+        for (final Candle candle : candles) {
             putCandle(sheet, candle);
         }
     }
@@ -386,7 +386,7 @@ public class ExcelServiceImpl implements ExcelService {
 
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
-        for (SimulatedOperation operation : operations) {
+        for (final SimulatedOperation operation : operations) {
             final OffsetDateTime operationDateTime = operation.getDateTime();
             final Candle keyCandle = new Candle();
             keyCandle.setTime(operationDateTime);
@@ -462,7 +462,7 @@ public class ExcelServiceImpl implements ExcelService {
             final List<List<Point>> restraintLines,
             final Color seriesColor
     ) {
-        for (List<Point> line : restraintLines) {
+        for (final List<Point> line : restraintLines) {
             final List<BigDecimal> values = getValues(times, line);
             addLine(chartData, timesDataSource, values, MarkerProperties.NO_MARKER, seriesColor);
         }

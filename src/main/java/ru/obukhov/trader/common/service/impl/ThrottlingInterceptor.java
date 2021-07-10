@@ -38,7 +38,7 @@ public class ThrottlingInterceptor implements Interceptor {
         final long interval = queryThrottleProperties.getInterval();
 
         final Map<UrlLimit, ThrottledCounter> result = new HashMap<>();
-        for (UrlLimit limit : queryThrottleProperties.getLimits()) {
+        for (final UrlLimit limit : queryThrottleProperties.getLimits()) {
             final ThrottledCounter counter = new ThrottledCounter(limit.getLimit(), interval);
             result.put(limit, counter);
         }
@@ -94,7 +94,7 @@ public class ThrottlingInterceptor implements Interceptor {
         if (matchingCounters.isEmpty()) {
             defaultCounter.increment();
         } else {
-            for (Map.Entry<UrlLimit, ThrottledCounter> entry : matchingCounters.entrySet()) {
+            for (final Map.Entry<UrlLimit, ThrottledCounter> entry : matchingCounters.entrySet()) {
                 if (entry.getKey().matchesUrl(url)) {
                     entry.getValue().increment();
                 }

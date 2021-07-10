@@ -22,7 +22,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = new FakeContext(currentDateTime);
 
         Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
-        for (Currency currency : Currency.values()) {
+        for (final Currency currency : Currency.values()) {
             Assertions.assertEquals(0, fakeContext.getInvestments(currency).size());
         }
         Assertions.assertTrue(fakeContext.getOperations().isEmpty());

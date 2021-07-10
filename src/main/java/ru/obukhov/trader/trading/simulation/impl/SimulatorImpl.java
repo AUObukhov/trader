@@ -344,7 +344,7 @@ public class SimulatorImpl implements Simulator {
     ) {
         final SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
         BigDecimal currentBalance = BigDecimal.ZERO;
-        for (Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
+        for (final Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
             currentBalance = currentBalance.add(entry.getValue());
             balances.put(entry.getKey(), currentBalance);
         }

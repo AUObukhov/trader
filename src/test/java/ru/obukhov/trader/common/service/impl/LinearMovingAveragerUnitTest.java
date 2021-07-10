@@ -179,7 +179,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
-        for (BigDecimal average : movingAverages) {
+        for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(
                     DecimalUtils.DEFAULT_SCALE >= average.scale(),
                     "expected default scale for all averages"
@@ -201,7 +201,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
-        for (BigDecimal average : movingAverages) {
+        for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(
                     DecimalUtils.DEFAULT_SCALE >= average.scale(),
                     "expected default scale for all averages"
@@ -334,7 +334,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
-        for (BigDecimal average : movingAverages) {
+        for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(
                     DecimalUtils.DEFAULT_SCALE >= average.scale(),
                     "expected default scale for all averages"
@@ -358,7 +358,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
-        for (BigDecimal average : movingAverages) {
+        for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(
                     DecimalUtils.DEFAULT_SCALE >= average.scale(),
                     "expected default scale for all averages"

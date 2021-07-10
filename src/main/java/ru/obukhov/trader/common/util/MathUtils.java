@@ -94,7 +94,7 @@ public class MathUtils {
         final double weightsSum = weightedAmounts.values().stream().reduce(0.0, Double::sum);
 
         BigDecimal weightedAverage = BigDecimal.ZERO;
-        for (Map.Entry<BigDecimal, Double> entry : weightedAmounts.entrySet()) {
+        for (final Map.Entry<BigDecimal, Double> entry : weightedAmounts.entrySet()) {
             final double weight = entry.getValue() / weightsSum;
             final BigDecimal weightedAmount = DecimalUtils.multiply(entry.getKey(), weight);
             weightedAverage = weightedAverage.add(weightedAmount);
