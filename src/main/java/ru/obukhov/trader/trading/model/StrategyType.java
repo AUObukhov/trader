@@ -1,19 +1,30 @@
 package ru.obukhov.trader.trading.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Getter
+@AllArgsConstructor
 public enum StrategyType {
 
-    @JsonProperty("conservative")
-    CONSERVATIVE,
+    CONSERVATIVE("conservative"),
+    SIMPLE_GOLDEN_CROSS("simpleGoldenCross"),
+    LINEAR_GOLDEN_CROSS("linearGoldenCross"),
+    EXPONENTIAL_GOLDEN_CROSS("exponentialGoldenCross");
 
-    @JsonProperty("simpleGoldenCross")
-    SIMPLE_GOLDEN_CROSS,
+    private static final Map<String, StrategyType> LOOKUP = Stream.of(StrategyType.values())
+            .collect(Collectors.toMap(StrategyType::getValue, strategyType -> strategyType));
 
-    @JsonProperty("linearGoldenCross")
-    LINEAR_GOLDEN_CROSS,
+    @JsonValue
+    private final String value;
 
-    @JsonProperty("exponentialGoldenCross")
-    EXPONENTIAL_GOLDEN_CROSS,
+    public static StrategyType from(String value) {
+        return LOOKUP.get(value);
+    }
 
 }
