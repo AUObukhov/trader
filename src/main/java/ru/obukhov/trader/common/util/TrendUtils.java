@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Class with util methods to transform or analyse with trends
+ * Class with util methods to transform or analyse trends
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrendUtils {
