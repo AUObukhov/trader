@@ -353,8 +353,15 @@ class ExcelServiceImplUnitTest {
     private void assertOperations(SimulationResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+        AssertUtils.assertRowValues(
+                rowIterator.next(),
+                "Дата и время",
+                "Тип операции",
+                "Цена",
+                "Количество",
+                "Комиссия"
+        );
+
         for (final SimulatedOperation operation : result.getOperations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
