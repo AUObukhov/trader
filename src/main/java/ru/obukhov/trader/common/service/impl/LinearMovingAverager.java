@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class with methods for calculation of linear weighted moving averages
+ */
 @Service
 public class LinearMovingAverager extends SimpleMovingAverager {
 

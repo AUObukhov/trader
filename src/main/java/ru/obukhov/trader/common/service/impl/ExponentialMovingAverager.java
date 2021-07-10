@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Class with methods for calculation of exponentially weighted moving averages
+ */
 @Service
 public class ExponentialMovingAverager extends SimpleMovingAverager {
 

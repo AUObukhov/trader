@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Class with methods for calculation of simple moving averages
+ */
 @Service
 public class SimpleMovingAverager implements MovingAverager {
 
