@@ -76,14 +76,15 @@ public class Interval {
     }
 
     /**
-     * @param now DateTime which is handled as now
      * @return new Interval where {@code from} is at start of current {@code from} and
      * {@code to} is earliest dateTime between end of day of current {@code to} and now
      * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day
      * @throws IllegalArgumentException when {@code from} is in future
      */
-    public Interval extendToDay(final OffsetDateTime now) {
+    public Interval extendToDay() {
         Assert.isTrue(equalDates(), "'from' and 'to' must be at same day");
+
+        final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(from, now, "from");
         DateUtils.assertDateTimeNotFuture(to, now, "to");
 
@@ -94,14 +95,15 @@ public class Interval {
     }
 
     /**
-     * @param now DateTime which is handled as now
      * @return new Interval where {@code from} is at start of current {@code from} and
      * {@code to} is earliest dateTime between end of day of current {@code to} and current dateTime
      * @throws IllegalArgumentException when {@code from} and {@code to} are not at same day
      * @throws IllegalArgumentException when {@code from} is in future
      */
-    public Interval extendToYear(final OffsetDateTime now) {
+    public Interval extendToYear() {
         Assert.isTrue(equalYears(), "'from' and 'to' must be at same year");
+
+        final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(from, now, "from");
         DateUtils.assertDateTimeNotFuture(to, now, "to");
 

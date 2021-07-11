@@ -146,13 +146,12 @@ class IntervalUnitTest {
 
     @Test
     void extendToDay_throwsIllegalArgumentException_whenNotEqualDates() {
-        final OffsetDateTime now = DateUtils.getDateTime(2020, 10, 7, 10, 20, 30);
         final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateUtils.getDateTime(2020, 10, 6, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> interval.extendToDay(now),
+                interval::extendToDay,
                 IllegalArgumentException.class,
                 "'from' and 'to' must be at same day"
         );
@@ -169,7 +168,7 @@ class IntervalUnitTest {
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
-                    () -> interval.extendToDay(mockedNow),
+                    interval::extendToDay,
                     IllegalArgumentException.class,
                     "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00"
             );
@@ -187,7 +186,7 @@ class IntervalUnitTest {
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
-                    () -> interval.extendToDay(mockedNow),
+                    interval::extendToDay,
                     IllegalArgumentException.class,
                     "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00"
             );
@@ -204,7 +203,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToDay(mockedNow);
+            final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 10, 5);
             final OffsetDateTime expectedTo = DateUtils.getDateTime(2020, 10, 5, 23, 59, 59, 999999999);
@@ -223,7 +222,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToDay(mockedNow);
+            final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 9, 23);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
@@ -237,13 +236,12 @@ class IntervalUnitTest {
 
     @Test
     void extendToYear_throwsIllegalArgumentException_whenNotEqualYears() {
-        final OffsetDateTime now = DateUtils.getDateTime(2021, 10, 5, 10, 20, 30);
         final OffsetDateTime from = DateUtils.getDateTime(2020, 10, 5, 10, 20, 30);
         final OffsetDateTime to = DateUtils.getDateTime(2021, 10, 6, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertThrowsWithMessage(
-                () -> interval.extendToYear(now),
+                interval::extendToYear,
                 IllegalArgumentException.class,
                 "'from' and 'to' must be at same year"
         );
@@ -260,7 +258,7 @@ class IntervalUnitTest {
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
-                    () -> interval.extendToYear(mockedNow),
+                    interval::extendToYear,
                     IllegalArgumentException.class,
                     "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00"
             );
@@ -278,7 +276,7 @@ class IntervalUnitTest {
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
-                    () -> interval.extendToYear(mockedNow),
+                    interval::extendToYear,
                     IllegalArgumentException.class,
                     "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00"
             );
@@ -295,7 +293,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToYear(mockedNow);
+            final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 1, 1);
             final OffsetDateTime expectedTo = DateUtils.getDateTime(2020, 12, 31, 23, 59, 59, 999999999);
@@ -314,7 +312,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
-            final Interval extendedInterval = interval.extendToYear(mockedNow);
+            final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateUtils.getDate(2020, 1, 1);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
