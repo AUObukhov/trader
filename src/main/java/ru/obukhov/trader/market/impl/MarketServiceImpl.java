@@ -194,13 +194,17 @@ public class MarketServiceImpl implements MarketService {
             final int limit,
             final CandleResolution candleResolution
     ) {
-        OffsetDateTime to = tinkoffService.getCurrentDateTime();
-        OffsetDateTime from = DateUtils.atStartOfDay(to);
-        int consecutiveEmptyDaysCount = 0;
-        final List<Candle> candles = new ArrayList<>();
+        final OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime from = DateUtils.atStartOfDay(to);
+        Interval interval = Interval.of(from, to);
+
+        final List<Candle> candles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        int consecutiveEmptyDaysCount = candles.isEmpty() ? 1 : 0;
+
+        interval = interval.minusDays(1).extendToDay();
 
         do {
-            List<Candle> currentCandles = loadDayCandles(ticker, Interval.of(from, to), candleResolution);
+            final List<Candle> currentCandles = loadDayCandles(ticker, interval, candleResolution);
             if (currentCandles.isEmpty()) {
                 consecutiveEmptyDaysCount++;
             } else {
@@ -208,8 +212,7 @@ public class MarketServiceImpl implements MarketService {
                 candles.addAll(currentCandles);
             }
 
-            from = from.minusDays(1);
-            to = DateUtils.atEndOfDay(from);
+            interval = interval.minusDays(1);
         } while (candles.size() < limit
                 && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
 
@@ -218,20 +221,19 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleResolution candleResolution) {
-        OffsetDateTime to = tinkoffService.getCurrentDateTime();
-        OffsetDateTime from = DateUtils.atStartOfYear(to);
-        List<Candle> currentCandles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+        final OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime from = DateUtils.atStartOfYear(to);
+        Interval interval = Interval.of(from, to);
+
+        List<Candle> currentCandles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
-        from = from.minusYears(1);
-        to = DateUtils.atEndOfYear(from);
+        interval = interval.minusYears(1).extendToYear();
 
         do {
-            currentCandles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+            currentCandles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
             candles.addAll(currentCandles);
-
-            from = from.minusYears(1);
-            to = to.minusYears(1);
+            interval = interval.minusYears(1);
         } while (candles.size() < limit && !currentCandles.isEmpty());
 
         candles.sort(Comparator.comparing(Candle::getTime));
