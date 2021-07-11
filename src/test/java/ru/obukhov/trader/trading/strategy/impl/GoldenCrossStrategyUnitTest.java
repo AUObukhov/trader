@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,15 +25,10 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class GoldenCrossStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
 
     @Mock
     private MovingAverager averager;
-
-    @BeforeAll
-    static void setUp() {
-        TRADING_PROPERTIES.setCommission(0.003);
-    }
 
     // region decide no crossover tests
 

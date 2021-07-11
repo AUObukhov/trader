@@ -9,7 +9,9 @@ import org.mockito.Mockito;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -29,6 +31,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -380,6 +383,18 @@ public class TestDataHelper {
     @SneakyThrows
     public static CronExpression createCronExpression() {
         return new CronExpression("0 * * * * ?");
+    }
+
+    public static TradingProperties createTradingProperties() {
+        return new TradingProperties(
+                false,
+                "token",
+                0.003,
+                DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                Duration.ofHours(9),
+                7,
+                OffsetDateTime.now()
+        );
     }
 
 }

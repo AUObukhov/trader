@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +23,6 @@ import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +31,7 @@ import java.util.SortedMap;
 @ExtendWith(MockitoExtension.class)
 class FakeTinkoffServiceUnitTest {
 
-    private static TradingProperties tradingProperties;
+    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
 
     @Mock
     private MarketService marketService;
@@ -42,18 +40,9 @@ class FakeTinkoffServiceUnitTest {
 
     private FakeTinkoffService service;
 
-    @BeforeAll
-    static void setUpAll() {
-        tradingProperties = new TradingProperties();
-        tradingProperties.setConsecutiveEmptyDaysLimit(7);
-        tradingProperties.setWorkStartTime(DateUtils.getTime(10, 0, 0).toOffsetTime());
-        tradingProperties.setWorkDuration(Duration.ofHours(9));
-        tradingProperties.setCommission(0.001);
-    }
-
     @BeforeEach
     void setUpEach() {
-        this.service = new FakeTinkoffService(tradingProperties, marketService, realTinkoffService);
+        this.service = new FakeTinkoffService(TRADING_PROPERTIES, marketService, realTinkoffService);
     }
 
     // region init tests
@@ -73,7 +62,7 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
 
@@ -83,7 +72,7 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
 
@@ -93,7 +82,7 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
 
@@ -103,7 +92,7 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
 
@@ -113,7 +102,7 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime, tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime, TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
 
@@ -176,7 +165,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
@@ -189,7 +178,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), tradingProperties.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), TRADING_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
@@ -332,7 +321,7 @@ class FakeTinkoffServiceUnitTest {
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());
         Assertions.assertEquals(ticker, positions.iterator().next().getTicker());
-        AssertUtils.assertEquals(998999, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(998997, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -356,7 +345,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(3, portfolioPosition.getLotsCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(993994, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(993982, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -392,7 +381,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(3, portfolioPosition.getLotsCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(993994, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(993982, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -413,7 +402,7 @@ class FakeTinkoffServiceUnitTest {
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertTrue(positions.isEmpty());
-        AssertUtils.assertEquals(1002985, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(1002955, service.getCurrentBalance(currency));
     }
 
     @Test
@@ -438,7 +427,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(2, portfolioPosition.getLotsCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(996991, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(996973, service.getCurrentBalance(currency));
     }
 
     // endregion

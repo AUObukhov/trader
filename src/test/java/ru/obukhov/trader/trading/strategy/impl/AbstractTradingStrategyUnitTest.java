@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,12 +25,7 @@ import java.util.stream.Stream;
 
 class AbstractTradingStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
-
-    @BeforeAll
-    static void setUp() {
-        TRADING_PROPERTIES.setCommission(0.003);
-    }
+    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
 
     // region getBuyOrWaitDecision tests
 
@@ -40,7 +34,7 @@ class AbstractTradingStrategyUnitTest {
         return Stream.of(
                 Arguments.of(1000.0, 1000.0, 1, DecisionAction.WAIT, null),
                 Arguments.of(10030.0, 1000.0, 10, DecisionAction.BUY, 1),
-                Arguments.of(20059.0, 1000.0, 10, DecisionAction.BUY, 1),
+                Arguments.of(20019.0, 1000.0, 10, DecisionAction.BUY, 1),
                 Arguments.of(20060.0, 1000.0, 10, DecisionAction.BUY, 2)
         );
     }

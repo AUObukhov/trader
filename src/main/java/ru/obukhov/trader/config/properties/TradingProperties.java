@@ -2,6 +2,7 @@ package ru.obukhov.trader.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.convert.DurationUnit;
 import org.springframework.validation.annotation.Validated;
 
@@ -13,28 +14,46 @@ import java.time.OffsetTime;
 import java.time.temporal.ChronoUnit;
 
 @Data
+@ConstructorBinding
 @ConfigurationProperties(prefix = "trading")
 @Validated
 public class TradingProperties {
 
-    private boolean sandbox;
+    private final boolean sandbox;
 
     @NotBlank
-    private String token;
+    private final String token;
 
-    private double commission;
-
-    @NotNull
-    private OffsetTime workStartTime;
+    private final double commission;
 
     @NotNull
-    @DurationUnit(ChronoUnit.MINUTES)
-    private Duration workDuration;
+    private final OffsetTime workStartTime;
 
     @NotNull
-    private Integer consecutiveEmptyDaysLimit;
+    private final Duration workDuration;
 
     @NotNull
-    private OffsetDateTime startDate;
+    private final Integer consecutiveEmptyDaysLimit;
+
+    @NotNull
+    private final OffsetDateTime startDate;
+
+    public TradingProperties(
+            boolean sandbox,
+            String token,
+            double commission,
+            OffsetTime workStartTime,
+            @DurationUnit(ChronoUnit.MINUTES) Duration workDuration,
+            Integer consecutiveEmptyDaysLimit,
+            OffsetDateTime startDate
+    ) {
+        this.sandbox = sandbox;
+        this.token = token;
+        this.commission = commission;
+        this.workStartTime = workStartTime;
+        this.workDuration = workDuration;
+        this.consecutiveEmptyDaysLimit = consecutiveEmptyDaysLimit;
+        this.startDate = startDate;
+    }
 
 }

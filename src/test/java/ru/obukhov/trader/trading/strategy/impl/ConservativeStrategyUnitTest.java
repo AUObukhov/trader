@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -17,18 +16,13 @@ import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = new TradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
 
     private final ConservativeStrategy strategy = new ConservativeStrategy(
             StrategyType.CONSERVATIVE.getValue(),
             new TradingStrategyParams(0.1f),
             TRADING_PROPERTIES
     );
-
-    @BeforeAll
-    static void setUp() {
-        TRADING_PROPERTIES.setCommission(0.003);
-    }
 
     @Test
     void getName_returnsProperName() {
