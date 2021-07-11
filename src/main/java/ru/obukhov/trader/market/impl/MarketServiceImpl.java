@@ -220,12 +220,12 @@ public class MarketServiceImpl implements MarketService {
     private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleResolution candleResolution) {
         OffsetDateTime to = tinkoffService.getCurrentDateTime();
         OffsetDateTime from = DateUtils.atStartOfYear(to);
-        final List<Candle> candles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+        List<Candle> currentCandles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
+        final List<Candle> candles = new ArrayList<>(currentCandles);
 
         from = from.minusYears(1);
         to = DateUtils.atEndOfYear(from);
 
-        List<Candle> currentCandles;
         do {
             currentCandles = tinkoffService.getMarketCandles(ticker, Interval.of(from, to), candleResolution);
             candles.addAll(currentCandles);
