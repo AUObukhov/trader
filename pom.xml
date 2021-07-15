@@ -24,6 +24,7 @@
         <mockito.version>3.8.0</mockito.version>
         <spring-boot-maven-plugin.version>2.4.4</spring-boot-maven-plugin.version>
         <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
+        <io.springfox.version>3.0.0</io.springfox.version>
     </properties>
 
     <dependencies>
@@ -133,6 +134,32 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
             <version>2.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-data-rest</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-bean-validators</artifactId>
+            <version>${io.springfox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${io.springfox.version}</version>
         </dependency>
 
         <!-- testing -->
