@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,11 +25,28 @@ import java.util.Objects;
 public class BalanceConfig {
 
     @NotNull(message = "initial balance is mandatory")
+    @ApiModelProperty(
+            value = "Initial balance before the simulation in ticker currency",
+            example = "100000",
+            required = true,
+            position = 1
+    )
     private BigDecimal initialBalance;
 
     @Min(value = 1, message = "balanceIncrement must be positive")
+    @ApiModelProperty(
+            value = "Sum to add to balance",
+            example = "1000",
+            allowableValues = "range[0, infinity]",
+            position = 2
+    )
     private BigDecimal balanceIncrement;
 
+    @ApiModelProperty(
+            value = "Cron expression describing schedule of balance increments",
+            example = "0 0 0 1 * ?",
+            position = 3
+    )
     private CronExpression balanceIncrementCron;
 
     @Override
