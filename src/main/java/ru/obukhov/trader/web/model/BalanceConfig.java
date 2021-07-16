@@ -8,6 +8,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -25,6 +26,7 @@ public class BalanceConfig {
     @NotNull(message = "initial balance is mandatory")
     private BigDecimal initialBalance;
 
+    @Min(value = 1, message = "balanceIncrement must be positive")
     private BigDecimal balanceIncrement;
 
     private CronExpression balanceIncrementCron;

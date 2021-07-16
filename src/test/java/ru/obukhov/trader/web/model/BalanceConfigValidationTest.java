@@ -32,6 +32,28 @@ class BalanceConfigValidationTest {
     }
 
     @Test
+    void validationFails_whenBalanceIncrementIsNegative() throws ParseException {
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.TEN,
+                BigDecimal.valueOf(-1),
+                new CronExpression("0 0 0 1 * ?")
+        );
+
+        AssertUtils.assertViolation(balanceConfig, "balanceIncrement must be positive");
+    }
+
+    @Test
+    void validationFails_whenBalanceIncrementIsZero() throws ParseException {
+        final BalanceConfig balanceConfig = new BalanceConfig(
+                BigDecimal.TEN,
+                BigDecimal.ZERO,
+                new CronExpression("0 0 0 1 * ?")
+        );
+
+        AssertUtils.assertViolation(balanceConfig, "balanceIncrement must be positive");
+    }
+
+    @Test
     void validationFails_whenBalanceIncrementIsNullAndBalanceIncrementCronIsNotNull() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 BigDecimal.TEN,
