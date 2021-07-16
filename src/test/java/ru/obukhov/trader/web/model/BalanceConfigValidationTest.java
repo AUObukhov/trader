@@ -68,7 +68,7 @@ class BalanceConfigValidationTest {
     }
 
     @Test
-    void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() throws ParseException {
+    void validationFails_whenBalanceIncrementIsNotNullAndBalanceIncrementCronIsNull() {
         final BalanceConfig balanceConfig = new BalanceConfig(
                 BigDecimal.TEN,
                 BigDecimal.ONE,
