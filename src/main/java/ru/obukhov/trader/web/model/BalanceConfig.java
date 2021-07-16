@@ -40,7 +40,7 @@ public class BalanceConfig {
             return false;
         }
 
-        BalanceConfig that = (BalanceConfig) o;
+        final BalanceConfig that = (BalanceConfig) o;
         return DecimalUtils.numbersEqual(initialBalance, that.initialBalance)
                 && DecimalUtils.numbersEqual(balanceIncrement, that.balanceIncrement)
                 && (String.valueOf(balanceIncrementCron).equals(String.valueOf(that.balanceIncrementCron))
