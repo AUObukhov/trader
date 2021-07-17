@@ -1,5 +1,9 @@
 package ru.obukhov.trader.web.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,12 +34,41 @@ public class StatisticsController {
     private final ExcelService excelService;
 
     @GetMapping("/candles")
+    @ApiOperation("Get candles by given criteria")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public GetCandlesResponse getCandles(
-            @RequestParam final String ticker,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final OffsetDateTime from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final OffsetDateTime to,
-            @RequestParam final CandleResolution candleResolution,
-            @RequestParam(required = false, defaultValue = "false") final boolean saveToFile
+            @RequestParam
+            @ApiParam(example = "FXIT", required = true) final String ticker,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @ApiParam(
+                    value = "Start date time of candle search interval",
+                    example = "2019-01-01T00:00:00+03:00",
+                    required = true
+            ) final OffsetDateTime from,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @ApiParam(
+                    value = "End date time of candle search interval",
+                    example = "2020-01-01T00:00:00+03:00",
+                    required = true
+            ) final OffsetDateTime to,
+
+            @RequestParam
+            @ApiParam(value = "Candle interval", example = "1min", required = true)
+            final CandleResolution candleResolution,
+
+            @RequestParam(required = false, defaultValue = "false")
+            @ApiParam(
+                    value = "Flag indicating to save the simulation result to a file. Default value is false",
+                    example = "true"
+            ) final boolean saveToFile
     ) {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
@@ -61,7 +94,15 @@ public class StatisticsController {
     }
 
     @GetMapping("/instruments")
-    public GetInstrumentsResponse getInstruments(InstrumentType instrumentType) {
+    @ApiOperation("Get instruments by given criteria")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public GetInstrumentsResponse getInstruments(
+            @ApiParam(value = "Instrument type. If null all instruments are returned", example = "Stock")
+                    InstrumentType instrumentType
+    ) {
         final List<MarketInstrument> instruments = statisticsService.getInstruments(instrumentType);
 
         return new GetInstrumentsResponse(instruments);
