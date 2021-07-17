@@ -20,12 +20,18 @@ abstract class ControllerWebTest {
 
     private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER =
             MockMvcResultMatchers.jsonPath("$.message");
+    private static final JsonPathResultMatchers ERRORS_MATCHER =
+            MockMvcResultMatchers.jsonPath("$.errors");
 
     @Autowired
     protected MockMvc mockMvc;
 
     protected ResultMatcher getJsonPathMessageMatcher(String expectedMessage) {
         return RESULT_MESSAGE_MATCHER.value(expectedMessage);
+    }
+
+    protected ResultMatcher getJsonErrorsMatcher(String expectedError) {
+        return ERRORS_MATCHER.value(expectedError);
     }
 
 }

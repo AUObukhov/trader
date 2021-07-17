@@ -1,5 +1,7 @@
-[
-  "ticker1",
-  "ticker2",
-  "ticker3"
-]
+{
+  "tickers": [
+    "ticker1",
+    "ticker2",
+    "ticker3"
+  ]
+}

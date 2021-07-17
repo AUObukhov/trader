@@ -197,6 +197,8 @@ class BotControllerWebTest extends ControllerWebTest {
         Assertions.assertFalse(scheduledBotProperties.isEnabled());
     }
 
+    // region setTickers tests
+
     @Test
     void setTickers_setsTickers() throws Exception {
         scheduledBotProperties.setTickers(Set.of());
@@ -215,5 +217,23 @@ class BotControllerWebTest extends ControllerWebTest {
         Assertions.assertTrue(tickersList.contains("ticker2"));
         Assertions.assertTrue(tickersList.contains("ticker3"));
     }
+
+    @Test
+    void setTickers_returnsBadRequest_whenTickersAreEmpty() throws Exception {
+        scheduledBotProperties.setTickers(Set.of());
+
+        final String tickers = "{\"tickers\": []}";
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/trader/bot/tickers")
+                        .content(tickers)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Invalid request"))
+                .andExpect(getJsonErrorsMatcher("tickers are mandatory"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    // endregion
 
 }

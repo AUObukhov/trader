@@ -12,11 +12,11 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.web.model.SimulationResult;
+import ru.obukhov.trader.web.model.exchange.SetTickersRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateResponse;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -58,8 +58,8 @@ public class BotController {
     }
 
     @PostMapping("/tickers")
-    public void setTickers(@RequestBody final Collection<String> tickers) {
-        scheduledBotProperties.setTickers(tickers);
+    public void setTickers(@Valid @RequestBody final SetTickersRequest request) {
+        scheduledBotProperties.setTickers(request.getTickers());
     }
 
 }
