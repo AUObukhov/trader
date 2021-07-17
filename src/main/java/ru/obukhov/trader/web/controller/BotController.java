@@ -1,5 +1,8 @@
 package ru.obukhov.trader.web.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -30,6 +33,12 @@ public class BotController {
     private final ScheduledBotProperties scheduledBotProperties;
 
     @PostMapping("/simulate")
+    @ApiOperation("Simulates bot trading on historical data and returns result of it")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public SimulateResponse simulate(@Valid @RequestBody final SimulateRequest request) {
 
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
@@ -48,16 +57,32 @@ public class BotController {
     }
 
     @PostMapping("/enable")
+    @ApiOperation("Enables real trade bot, working by schedule")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public void enableScheduling() {
         scheduledBotProperties.setEnabled(true);
     }
 
     @PostMapping("/disable")
+    @ApiOperation("Disables real trade bot, working by schedule")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public void disableScheduling() {
         scheduledBotProperties.setEnabled(false);
     }
 
     @PostMapping("/tickers")
+    @ApiOperation("Sets collection of tickers for real trading")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public void setTickers(@Valid @RequestBody final SetTickersRequest request) {
         scheduledBotProperties.setTickers(request.getTickers());
     }
