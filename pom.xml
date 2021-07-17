@@ -21,8 +21,8 @@
         <java.version>11</java.version>
         <apache.poi.version>5.0.0</apache.poi.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <mockito.version>3.8.0</mockito.version>
-        <spring-boot-maven-plugin.version>2.4.4</spring-boot-maven-plugin.version>
+        <mockito.version>3.11.2</mockito.version>
+        <spring-boot-maven-plugin.version>2.5.2</spring-boot-maven-plugin.version>
         <junit-jupiter.version>5.8.0-M1</junit-jupiter.version>
         <io.springfox.version>3.0.0</io.springfox.version>
     </properties>
