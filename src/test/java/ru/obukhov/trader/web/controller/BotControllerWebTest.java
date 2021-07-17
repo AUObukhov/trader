@@ -155,10 +155,11 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("SimulateResponse.json");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/trader/bot/simulate")
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
@@ -176,9 +177,10 @@ class BotControllerWebTest extends ControllerWebTest {
     void enableScheduling_enablesScheduling() throws Exception {
         scheduledBotProperties.setEnabled(false);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/trader/bot/enable")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
 
         Assertions.assertTrue(scheduledBotProperties.isEnabled());
     }
@@ -187,9 +189,10 @@ class BotControllerWebTest extends ControllerWebTest {
     void disableScheduling_disablesScheduling() throws Exception {
         scheduledBotProperties.setEnabled(true);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/trader/bot/disable")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
 
         Assertions.assertFalse(scheduledBotProperties.isEnabled());
     }
@@ -200,10 +203,11 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final String tickers = ResourceUtils.getTestDataAsString("SetTickersRequest.json");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers")
-                .content(tickers)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/trader/bot/tickers")
+                        .content(tickers)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk());
 
         final Set<String> tickersList = scheduledBotProperties.getTickers();
         Assertions.assertEquals(3, tickersList.size());
