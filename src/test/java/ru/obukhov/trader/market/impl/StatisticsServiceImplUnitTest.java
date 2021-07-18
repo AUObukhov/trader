@@ -62,14 +62,14 @@ class StatisticsServiceImplUnitTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
+        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
-        final List<Candle> candles = new ArrayList<>();
-        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-
-        candles.add(TestDataHelper.createCandle(10, 15, 20, 5, time, candleResolution));
-        candles.add(TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleResolution));
-        candles.add(TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), candleResolution));
+        final List<Candle> candles = List.of(
+                TestDataHelper.createCandle(10, 15, 20, 5, time, candleResolution),
+                TestDataHelper.createCandle(15, 20, 25, 10, time.plusMinutes(1), candleResolution),
+                TestDataHelper.createCandle(20, 17, 24, 15, time.plusMinutes(2), candleResolution)
+        );
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
@@ -86,7 +86,6 @@ class StatisticsServiceImplUnitTest {
         final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
-
         AssertUtils.assertListsAreEqual(averages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
@@ -111,22 +110,21 @@ class StatisticsServiceImplUnitTest {
         final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
+        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
-        final List<Candle> candles = new ArrayList<>();
-        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
-
-        candles.add(TestDataHelper.createCandle(80, 15, 20, 5, time, candleResolution));
-        candles.add(TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleResolution));
-        candles.add(TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleResolution));
-        candles.add(TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleResolution));
-        candles.add(TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleResolution));
-        candles.add(TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleResolution));
-        candles.add(TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleResolution));
-        candles.add(TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleResolution));
-        candles.add(TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleResolution));
-        candles.add(TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleResolution));
-
+        final List<Candle> candles = List.of(
+                TestDataHelper.createCandle(80, 15, 20, 5, time, candleResolution),
+                TestDataHelper.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleResolution),
+                TestDataHelper.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleResolution),
+                TestDataHelper.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleResolution),
+                TestDataHelper.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleResolution),
+                TestDataHelper.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleResolution),
+                TestDataHelper.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleResolution),
+                TestDataHelper.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleResolution),
+                TestDataHelper.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleResolution),
+                TestDataHelper.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleResolution)
+        );
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
         final List<BigDecimal> averages = TestDataHelper.createBigDecimalsList(
@@ -144,7 +142,6 @@ class StatisticsServiceImplUnitTest {
         final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
-
         AssertUtils.assertListsAreEqual(averages, response.getAverages());
 
         final List<Point> expectedMinimums = List.of(
