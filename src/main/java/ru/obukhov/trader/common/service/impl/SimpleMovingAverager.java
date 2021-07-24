@@ -8,8 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Class with methods for calculation of simple moving averages
@@ -18,32 +16,19 @@ import java.util.stream.Collectors;
 public class SimpleMovingAverager implements MovingAverager {
 
     @Override
-    public <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window,
-            final int order
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getAverages(values, window, order);
-    }
-
-    @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order) {
+        Assert.isTrue(window > 0, "window must be positive");
         Assert.isTrue(order > 0, "order must be positive");
 
         List<BigDecimal> averages = new ArrayList<>(values);
         for (int i = 0; i < order; i++) {
-            averages = getAverages(averages, window);
+            averages = getAveragesInner(averages, window);
         }
 
         return averages;
     }
 
-    @Override
-    public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
-        Assert.isTrue(window > 0, "window must be positive");
-
+    private List<BigDecimal> getAveragesInner(List<BigDecimal> values, int window) {
         final int size = values.size();
 
         // filling of first {window} averages

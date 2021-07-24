@@ -8,7 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -16,17 +15,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ExponentialMovingAverager implements MovingAverager {
-
-    @Override
-    public <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window,
-            final int order
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getAverages(values, window, order);
-    }
 
     @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order) {
@@ -41,18 +29,13 @@ public class ExponentialMovingAverager implements MovingAverager {
         final double revertedWeightDecrease = 1.0 - weightDecrease;
 
         for (int i = 0; i < order; i++) {
-            updateExponentialMovingAverages(averages, weightDecrease, revertedWeightDecrease);
+            updateAverages(averages, weightDecrease, revertedWeightDecrease);
         }
 
         return averages.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    @Override
-    public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
-        return getAverages(values, window, 1);
-    }
-
-    private static void updateExponentialMovingAverages(
+    private void updateAverages(
             final List<BigDecimal> averages,
             final double weightDecrease,
             final double revertedWeightDecrease
@@ -60,11 +43,11 @@ public class ExponentialMovingAverager implements MovingAverager {
         BigDecimal average = averages.get(0);
         final int size = averages.size();
         for (int i = 1; i < size; i++) {
-            average = updateExponentialMovingAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
+            average = updateAverage(averages, average, i, weightDecrease, revertedWeightDecrease);
         }
     }
 
-    private static BigDecimal updateExponentialMovingAverage(
+    private BigDecimal updateAverage(
             final List<BigDecimal> averages,
             final BigDecimal previousAverage,
             final int index,

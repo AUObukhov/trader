@@ -3,6 +3,7 @@ package ru.obukhov.trader.common.service.interfaces;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Interface with methods for calculation of moving averages
@@ -27,12 +28,28 @@ public interface MovingAverager {
      * @param <T>            base type of {@code elements}
      * @return calculated averages
      */
-    <T> List<BigDecimal> getAverages(
+    default <T> List<BigDecimal> getAverages(
             final List<T> elements,
             final Function<T, BigDecimal> valueExtractor,
             final int window,
             final int order
-    );
+    ) {
+        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
+        return getAverages(values, window, order);
+    }
+
+    /**
+     * Calculates moving averages
+     *
+     * @param values list of values to calculate averages
+     * @param window period of average, usually a number of values, used to calculate each average.
+     *               Higher values gives more smooth and more lagging averages trend.
+     *               Must be positive
+     * @return calculated averages
+     */
+    default List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
+        return getAverages(values, window, 1);
+    }
 
     /**
      * Calculates moving averages
@@ -49,16 +66,5 @@ public interface MovingAverager {
      * @return calculated averages
      */
     List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order);
-
-    /**
-     * Calculates moving averages
-     *
-     * @param values list of values to calculate averages
-     * @param window period of average, usually a number of values, used to calculate each average.
-     *               Higher values gives more smooth and more lagging averages trend.
-     *               Must be positive
-     * @return calculated averages
-     */
-    List<BigDecimal> getAverages(final List<BigDecimal> values, final int window);
 
 }
