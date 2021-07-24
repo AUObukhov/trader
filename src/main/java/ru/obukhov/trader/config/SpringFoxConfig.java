@@ -10,6 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
+@SuppressWarnings("unused")
 public class SpringFoxConfig {
 
     @Bean
@@ -17,7 +18,7 @@ public class SpringFoxConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("ru.obukhov.trader"))
                 .paths(PathSelectors.any())
                 .build();
     }
