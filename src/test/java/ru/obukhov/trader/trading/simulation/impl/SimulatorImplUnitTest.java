@@ -219,7 +219,7 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedError = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=CONSERVATIVE, strategyParams={}]' " +
+                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' " +
                         "with ticker '%1$s' failed with error: Not found instrument for ticker '%1$s'",
                 ticker
         );
@@ -957,7 +957,7 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         String expectedErrorMessage = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=CONSERVATIVE, strategyParams={}]' " +
+                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' " +
                         "with ticker '%s' failed with error: %s",
                 ticker, mockedExceptionMessage
         );

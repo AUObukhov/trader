@@ -114,7 +114,7 @@ class TradingConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[candleResolution=1min, strategyType=GOLDEN_CROSS, strategyParams={";
+        final String expectedStart = "[candleResolution=1min, strategyType=goldenCross, strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));
         Assertions.assertTrue(string.contains("movingAverageType=linearWeighted"));

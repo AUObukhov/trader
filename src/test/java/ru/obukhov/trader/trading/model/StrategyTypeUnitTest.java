@@ -27,4 +27,13 @@ class StrategyTypeUnitTest {
         }
     }
 
+    @Test
+    void testToString() {
+        for (final StrategyType type : StrategyType.values()) {
+            final String stringValue = type.toString();
+
+            Assertions.assertEquals(type.getValue(), stringValue);
+        }
+    }
+
 }
