@@ -10,9 +10,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
 
 @AutoConfigureMockMvc
-@SpringBootTest(classes = Application.class,
+@SpringBootTest(
+        classes = Application.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        args = "--trading.token=i identify myself as token")
+        args = "--trading.token=i identify myself as token"
+)
 abstract class ControllerWebTest {
 
     private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER =
@@ -23,11 +25,11 @@ abstract class ControllerWebTest {
     @Autowired
     protected MockMvc mockMvc;
 
-    protected ResultMatcher getJsonPathMessageMatcher(String expectedMessage) {
+    protected ResultMatcher getJsonPathMessageMatcher(final String expectedMessage) {
         return RESULT_MESSAGE_MATCHER.value(expectedMessage);
     }
 
-    protected ResultMatcher getJsonErrorsMatcher(String expectedError) {
+    protected ResultMatcher getJsonErrorsMatcher(final String expectedError) {
         return ERRORS_MATCHER.value(expectedError);
     }
 
