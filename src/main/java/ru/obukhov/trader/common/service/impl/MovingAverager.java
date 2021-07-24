@@ -1,16 +1,44 @@
-package ru.obukhov.trader.common.service.interfaces;
+package ru.obukhov.trader.common.service.impl;
 
+import org.springframework.util.Assert;
+import ru.obukhov.trader.market.model.MovingAverageType;
+
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Interface with methods for calculation of moving averages
+ * Abstract class with methods for calculation of moving averages
  *
- * @see <a href=https://www.investopedia.com/terms/m/movingaverage.asp#:~:text=Key%20Takeaways-,A%20moving%20average%20(MA)%20is%20a%20stock%20indicator%20that%20is,commonly%20used%20in%20technical%20analysis.&text=A%20simple%20moving%20average%20(SMA,%2C%20100%2C%20or%20200%20days.">investopedia</a>
+ * @see <a href=https://www.investopedia.com/terms/m/movingaverage.asp">investopedia</a>
  */
-public interface MovingAverager {
+public abstract class MovingAverager {
+
+    private static final EnumMap<MovingAverageType, MovingAverager> INSTANCES = new EnumMap<>(MovingAverageType.class);
+
+    @PostConstruct
+    private void postConstruct() {
+        INSTANCES.put(getType(), this);
+    }
+
+    /**
+     * @return Instance of MovingAverager with given {@code type} of moving average
+     */
+    public static MovingAverager getByType(final MovingAverageType type) {
+        Assert.isTrue(
+                INSTANCES.containsKey(type),
+                "Not found MovingAverager instance for " + type.getValue()
+        );
+        return INSTANCES.get(type);
+    }
+
+    /**
+     * @return type of current MovingAverager
+     */
+    public abstract MovingAverageType getType();
 
     /**
      * Calculates moving averages
@@ -28,7 +56,7 @@ public interface MovingAverager {
      * @param <T>            base type of {@code elements}
      * @return calculated averages
      */
-    default <T> List<BigDecimal> getAverages(
+    public <T> List<BigDecimal> getAverages(
             final List<T> elements,
             final Function<T, BigDecimal> valueExtractor,
             final int window,
@@ -47,7 +75,7 @@ public interface MovingAverager {
      *               Must be positive
      * @return calculated averages
      */
-    default List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
+    public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
         return getAverages(values, window, 1);
     }
 
@@ -65,6 +93,6 @@ public interface MovingAverager {
      *               Must be positive
      * @return calculated averages
      */
-    List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order);
+    public abstract List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order);
 
 }
