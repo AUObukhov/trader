@@ -1,5 +1,8 @@
 package ru.obukhov.trader.web.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +26,11 @@ public class OrdersController {
     }
 
     @GetMapping("/get")
+    @ApiOperation("Get active orders at default broker account")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
     public GetOrdersResponse getOrders() {
         final List<Order> orders = ordersService.getOrders();
 
