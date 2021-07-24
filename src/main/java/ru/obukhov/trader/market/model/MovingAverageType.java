@@ -30,4 +30,10 @@ public enum MovingAverageType {
     public static MovingAverageType from(String value) {
         return LOOKUP.get(value);
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
 }

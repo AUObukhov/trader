@@ -27,4 +27,13 @@ class MovingAverageTypeUnitTest {
         }
     }
 
+    @Test
+    void testToString() {
+        for (final MovingAverageType type : MovingAverageType.values()) {
+            final String stringValue = type.toString();
+
+            Assertions.assertEquals(type.getValue(), stringValue);
+        }
+    }
+
 }
