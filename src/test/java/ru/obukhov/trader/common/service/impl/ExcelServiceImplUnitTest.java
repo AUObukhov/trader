@@ -17,13 +17,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
@@ -40,11 +38,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
@@ -545,34 +541,10 @@ class ExcelServiceImplUnitTest {
 
     private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
-        final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
-        final Function<BigDecimal, BigDecimal> selfExtractor = (BigDecimal number) -> number;
-        final List<BigDecimal> averages = averager.getAverages(openPrices, selfExtractor, 5);
+        final List<BigDecimal> averages = averager.getAverages(openPrices, 5);
 
-        final List<Integer> localMinimumsIndices =
-                TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.reverseOrder());
-        final List<Point> localMinimums = localMinimumsIndices.stream()
-                .map(minimum -> TestDataHelper.createPoint(candles.get(minimum)))
-                .collect(Collectors.toList());
-
-        final List<Integer> localMaximumsIndices =
-                TrendUtils.getLocalExtremes(averages, selfExtractor, Comparator.naturalOrder());
-        final List<Point> localMaximums = localMaximumsIndices.stream()
-                .map(maximum -> TestDataHelper.createPoint(candles.get(maximum)))
-                .collect(Collectors.toList());
-
-        final List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
-        final List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
-
-        return new GetCandlesResponse(
-                candles,
-                averages,
-                localMinimums,
-                localMaximums,
-                supportLines,
-                resistanceLines
-        );
+        return new GetCandlesResponse(candles, averages);
     }
 
     private int getExpectedRowCount(SimulationResult result) {

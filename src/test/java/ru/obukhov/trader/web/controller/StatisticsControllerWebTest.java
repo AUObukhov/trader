@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
@@ -147,36 +146,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 BigDecimal.valueOf(100)
         );
 
-        final List<Point> localMinimums = List.of(TestDataHelper.createPoint(candle1));
-        final List<Point> localMaximums = List.of(TestDataHelper.createPoint(candle3));
-
-        final List<Point> supportLine1 = List.of(
-                Point.of(candle1.getTime(), 9000),
-                Point.of(candle1.getTime(), 900)
-        );
-        final List<Point> supportLine2 = List.of(
-                Point.of(candle1.getTime(), 900),
-                Point.of(candle1.getTime(), 90)
-        );
-        final List<List<Point>> supportLines = List.of(supportLine1, supportLine2);
-
-        final List<Point> resistanceLine1 = List.of(
-                Point.of(candle1.getTime(), 11000),
-                Point.of(candle1.getTime(), 1100)
-        );
-        final List<Point> resistanceLine2 = List.of(
-                Point.of(candle1.getTime(), 1100),
-                Point.of(candle1.getTime(), 110)
-        );
-        final List<List<Point>> resistanceLines = List.of(resistanceLine1, resistanceLine2);
-
         final GetCandlesResponse response = new GetCandlesResponse(
                 List.of(candle1, candle2, candle3),
-                averages,
-                localMinimums,
-                localMaximums,
-                supportLines,
-                resistanceLines
+                averages
         );
 
         Mockito.when(statisticsService.getExtendedCandles(
@@ -196,9 +168,6 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
-
-        Mockito.verify(statisticsService, Mockito.times(1))
-                .getExtendedCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution));
     }
 
     @Test
@@ -207,10 +176,6 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
@@ -241,10 +206,6 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
@@ -280,10 +241,6 @@ class StatisticsControllerWebTest extends ControllerWebTest {
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
                 Collections.emptyList()
         );
         Mockito.when(statisticsService.getExtendedCandles(
@@ -313,10 +270,6 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final GetCandlesResponse response = new GetCandlesResponse(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );

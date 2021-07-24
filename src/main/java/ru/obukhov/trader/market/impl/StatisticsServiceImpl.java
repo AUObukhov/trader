@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.interfaces.MovingAverager;
-import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
@@ -16,10 +14,7 @@ import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -63,29 +58,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             final CandleResolution candleResolution
     ) {
         final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
-        return extendCandles(candles);
-    }
-
-    private GetCandlesResponse extendCandles(final List<Candle> candles) {
         final List<BigDecimal> averages = averager.getAverages(candles, Candle::getOpenPrice, WINDOW, ORDER);
-
-        final List<OffsetDateTime> times = candles.stream().map(Candle::getTime).collect(Collectors.toList());
-        final List<Integer> localMinimumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.reverseOrder());
-        final List<Integer> localMaximumsIndices = TrendUtils.getLocalExtremes(averages, Comparator.naturalOrder());
-
-        final List<Point> localMinimumsPoints = TrendUtils.getLocalExtremes(averages, times, localMinimumsIndices);
-        final List<Point> localMaximumsPoints = TrendUtils.getLocalExtremes(averages, times, localMaximumsIndices);
-        final List<List<Point>> supportLines = TrendUtils.getRestraintLines(times, averages, localMinimumsIndices);
-        final List<List<Point>> resistanceLines = TrendUtils.getRestraintLines(times, averages, localMaximumsIndices);
-
-        return new GetCandlesResponse(
-                candles,
-                averages,
-                localMinimumsPoints,
-                localMaximumsPoints,
-                supportLines,
-                resistanceLines
-        );
+        return new GetCandlesResponse(candles, averages);
     }
 
     /**

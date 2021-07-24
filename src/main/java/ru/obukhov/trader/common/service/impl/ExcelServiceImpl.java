@@ -369,10 +369,6 @@ public class ExcelServiceImpl implements ExcelService {
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
         addLine(chartData, timesDataSource, response.getAverages(), MarkerProperties.NO_MARKER, Color.BLUE);
-        addExtremesLine(chartData, times, timesDataSource, response.getLocalMinimums(), MINIMUMS_MARKER_PROPERTIES);
-        addExtremesLine(chartData, times, timesDataSource, response.getLocalMaximums(), MAXIMUMS_MARKER_PROPERTIES);
-        addRestraintLines(chartData, times, timesDataSource, response.getSupportLines(), Color.GREEN);
-        addRestraintLines(chartData, times, timesDataSource, response.getResistanceLines(), Color.RED);
 
         chartData.stretchChart();
     }
@@ -442,36 +438,6 @@ public class ExcelServiceImpl implements ExcelService {
         if (values.stream().anyMatch(Objects::nonNull)) {
             addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerProperties, seriesColor);
         }
-    }
-
-    private void addExtremesLine(
-            final ExtendedChartData chartData,
-            final List<OffsetDateTime> times,
-            final XDDFCategoryDataSource timesDataSource,
-            final List<Point> extremes,
-            final MarkerProperties markerProperties
-    ) {
-        final List<BigDecimal> values = getValues(times, extremes);
-        addLine(chartData, timesDataSource, values, markerProperties, null);
-    }
-
-    private void addRestraintLines(
-            final ExtendedChartData chartData,
-            final List<OffsetDateTime> times,
-            final XDDFCategoryDataSource timesDataSource,
-            final List<List<Point>> restraintLines,
-            final Color seriesColor
-    ) {
-        for (final List<Point> line : restraintLines) {
-            final List<BigDecimal> values = getValues(times, line);
-            addLine(chartData, timesDataSource, values, MarkerProperties.NO_MARKER, seriesColor);
-        }
-    }
-
-    private List<BigDecimal> getValues(final List<OffsetDateTime> times, final List<Point> points) {
-        return times.stream()
-                .map(time -> getValueAtTime(points, time))
-                .collect(Collectors.toList());
     }
 
     @Nullable
