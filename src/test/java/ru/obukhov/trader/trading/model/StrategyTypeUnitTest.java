@@ -25,8 +25,6 @@ class StrategyTypeUnitTest {
 
             Assertions.assertEquals(strategyType, parsedStrategyType);
         }
-
-
     }
 
 }
