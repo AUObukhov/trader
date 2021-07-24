@@ -48,15 +48,6 @@ public class ExponentialMovingAverager implements MovingAverager {
     }
 
     @Override
-    public <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window
-    ) {
-        return getAverages(elements, valueExtractor, window, 1);
-    }
-
-    @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
         return getAverages(values, window, 1);
     }

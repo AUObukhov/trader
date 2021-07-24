@@ -41,16 +41,6 @@ public class SimpleMovingAverager implements MovingAverager {
     }
 
     @Override
-    public <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getAverages(values, window);
-    }
-
-    @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window) {
         Assert.isTrue(window > 0, "window must be positive");
 

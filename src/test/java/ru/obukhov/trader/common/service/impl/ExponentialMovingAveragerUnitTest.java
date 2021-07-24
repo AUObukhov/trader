@@ -44,22 +44,6 @@ class ExponentialMovingAveragerUnitTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
-    void getAverages_withoutOrder_andWithValueExtractor_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final String expectedMessage
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(elements, Optional::get, window),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
-    }
-
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetAverages_withoutOrder() {
         return Stream.of(
@@ -123,29 +107,6 @@ class ExponentialMovingAveragerUnitTest {
 
         final List<BigDecimal> movingAverages =
                 averager.getAverages(bigDecimalValues, window);
-
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
-
-        for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withoutOrder_andWithValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(elements, Optional::get, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);

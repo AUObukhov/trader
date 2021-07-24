@@ -53,23 +53,6 @@ public interface MovingAverager {
     /**
      * Calculates moving averages
      *
-     * @param elements       list of elements, which containing values to calculate averages
-     * @param valueExtractor function to get value from item of {@code elements}
-     * @param window         period of average, usually a number of values, used to calculate each average.
-     *                       Higher values gives more smooth and more lagging averages trend.
-     *                       Must be positive
-     * @param <T>            base type of {@code elements}
-     * @return calculated averages
-     */
-    <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window
-    );
-
-    /**
-     * Calculates moving averages
-     *
      * @param values list of values to calculate averages
      * @param window period of average, usually a number of values, used to calculate each average.
      *               Higher values gives more smooth and more lagging averages trend.
