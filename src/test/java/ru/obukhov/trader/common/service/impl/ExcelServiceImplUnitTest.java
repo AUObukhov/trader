@@ -71,13 +71,13 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig2 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result2 = createSimulationResult(ticker, tradingConfig2);
 
         final TradingConfig tradingConfig3 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
         final SimulationResult result3 = createSimulationResult(ticker, tradingConfig3);
         final List<SimulationResult> results = List.of(result1, result2, result3);
@@ -118,7 +118,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result = createSimulationResult(ticker, tradingConfig);
 
@@ -151,7 +151,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setError(StringUtils.EMPTY);
@@ -186,7 +186,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setError(error);
@@ -223,7 +223,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setCandles(null);
@@ -258,7 +258,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final SimulationResult result = createSimulationResult(ticker, tradingConfig);
         result.setCandles(Collections.emptyList());
@@ -295,7 +295,7 @@ class ExcelServiceImplUnitTest {
 
         final TradingConfig tradingConfig = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of());
         final SimulationResult result1 = createSimulationResult(ticker, tradingConfig);
         final SimulationResult result2 = createSimulationResult(ticker, tradingConfig);

@@ -25,8 +25,6 @@ class MovingAverageTypeUnitTest {
 
             Assertions.assertEquals(type, parsedType);
         }
-
-
     }
 
 }

@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -89,9 +90,10 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final TradingConfig tradingConfig2 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
+                        "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
                         "smallWindow", 100,
                         "bigWindow", 200,
                         "indexCoefficient", 0.3,
@@ -114,9 +116,10 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final TradingConfig tradingConfig3 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
+                        "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
                         "smallWindow", 100,
                         "bigWindow", 200,
                         "indexCoefficient", 0.3,

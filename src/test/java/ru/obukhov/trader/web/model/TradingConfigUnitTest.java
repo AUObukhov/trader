@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
@@ -41,7 +42,7 @@ class TradingConfigUnitTest {
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         new TradingConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.SIMPLE_GOLDEN_CROSS)
+                                .setStrategyType(StrategyType.GOLDEN_CROSS)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         false
                 ),
@@ -101,9 +102,10 @@ class TradingConfigUnitTest {
     void testToString() {
         final TradingConfig config = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.LINEAR_GOLDEN_CROSS)
+                .setStrategyType(StrategyType.GOLDEN_CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
+                        "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
                         "smallWindow", 100,
                         "bigWindow", 200,
                         "indexCoefficient", 0.3,
@@ -112,9 +114,10 @@ class TradingConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[candleResolution=1min, strategyType=LINEAR_GOLDEN_CROSS, strategyParams={";
+        final String expectedStart = "[candleResolution=1min, strategyType=GOLDEN_CROSS, strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));
+        Assertions.assertTrue(string.contains("movingAverageType=LINEAR_WEIGHTED"));
         Assertions.assertTrue(string.contains("smallWindow=100"));
         Assertions.assertTrue(string.contains("bigWindow=200"));
         Assertions.assertTrue(string.contains("greedy=false"));

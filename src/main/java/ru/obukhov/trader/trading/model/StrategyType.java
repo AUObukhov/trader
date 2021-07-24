@@ -13,9 +13,7 @@ import java.util.stream.Stream;
 public enum StrategyType {
 
     CONSERVATIVE("conservative"),
-    SIMPLE_GOLDEN_CROSS("simpleGoldenCross"),
-    LINEAR_GOLDEN_CROSS("linearGoldenCross"),
-    EXPONENTIAL_GOLDEN_CROSS("exponentialGoldenCross");
+    GOLDEN_CROSS("goldenCross");
 
     private static final Map<String, StrategyType> LOOKUP = Stream.of(StrategyType.values())
             .collect(Collectors.toMap(StrategyType::getValue, strategyType -> strategyType));

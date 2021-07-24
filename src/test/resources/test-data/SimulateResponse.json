@@ -25,9 +25,10 @@
     {
       "tradingConfig": {
         "candleResolution": "1min",
-        "strategyType": "simpleGoldenCross",
+        "strategyType": "goldenCross",
         "strategyParams": {
           "minimumProfit": 0.01,
+          "movingAverageType": "linearWeighted",
           "smallWindow": 100,
           "bigWindow": 200,
           "indexCoefficient": 0.3,
@@ -51,9 +52,10 @@
     {
       "tradingConfig": {
         "candleResolution": "1min",
-        "strategyType": "linearGoldenCross",
+        "strategyType": "goldenCross",
         "strategyParams": {
           "minimumProfit": 0.01,
+          "movingAverageType": "linearWeighted",
           "smallWindow": 100,
           "bigWindow": 200,
           "indexCoefficient": 0.3,

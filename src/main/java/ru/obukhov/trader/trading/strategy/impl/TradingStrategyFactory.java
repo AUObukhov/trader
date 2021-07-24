@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import ru.obukhov.trader.common.service.impl.ExponentialMovingAverager;
-import ru.obukhov.trader.common.service.impl.LinearMovingAverager;
-import ru.obukhov.trader.common.service.impl.SimpleMovingAverager;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -24,9 +21,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TradingStrategyFactory {
     private final TradingProperties tradingProperties;
-    private final SimpleMovingAverager simpleMovingAverager;
-    private final LinearMovingAverager linearMovingAverager;
-    private final ExponentialMovingAverager exponentialMovingAverager;
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -36,12 +30,8 @@ public class TradingStrategyFactory {
         switch (strategyType) {
             case CONSERVATIVE:
                 return createConservativeStrategy(strategyName, strategyParams);
-            case SIMPLE_GOLDEN_CROSS:
-                return createSimpleGoldenCrossStrategy(strategyName, strategyParams);
-            case LINEAR_GOLDEN_CROSS:
-                return createLinearGoldenCrossStrategy(strategyName, strategyParams);
-            case EXPONENTIAL_GOLDEN_CROSS:
-                return createExponentialGoldenCrossStrategy(strategyName, strategyParams);
+            case GOLDEN_CROSS:
+                return createGoldenCrossStrategy(strategyName, strategyParams);
             default:
                 throw new IllegalArgumentException("Unknown strategy type " + strategyType);
         }
@@ -59,7 +49,7 @@ public class TradingStrategyFactory {
         return new ConservativeStrategy(name, tradingStrategyParams, tradingProperties);
     }
 
-    private GoldenCrossStrategy createSimpleGoldenCrossStrategy(
+    private GoldenCrossStrategy createGoldenCrossStrategy(
             final String name,
             final Map<String, Object> strategyParams
     ) {
@@ -67,29 +57,7 @@ public class TradingStrategyFactory {
                 strategyParams,
                 GoldenCrossStrategyParams.class
         );
-        return new GoldenCrossStrategy(name, goldenCrossStrategyParams, tradingProperties, simpleMovingAverager);
-    }
-
-    private GoldenCrossStrategy createLinearGoldenCrossStrategy(
-            final String name,
-            final Map<String, Object> strategyParams
-    ) {
-        final GoldenCrossStrategyParams goldenCrossStrategyParams = getStrategyParams(
-                strategyParams,
-                GoldenCrossStrategyParams.class
-        );
-        return new GoldenCrossStrategy(name, goldenCrossStrategyParams, tradingProperties, linearMovingAverager);
-    }
-
-    private GoldenCrossStrategy createExponentialGoldenCrossStrategy(
-            final String name,
-            final Map<String, Object> strategyParams
-    ) {
-        final GoldenCrossStrategyParams goldenCrossStrategyParams = getStrategyParams(
-                strategyParams,
-                GoldenCrossStrategyParams.class
-        );
-        return new GoldenCrossStrategy(name, goldenCrossStrategyParams, tradingProperties, exponentialMovingAverager);
+        return new GoldenCrossStrategy(name, goldenCrossStrategyParams, tradingProperties);
     }
 
     private <T extends TradingStrategyParams> T getStrategyParams(

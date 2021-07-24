@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
@@ -36,9 +37,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenExistsOperationInProgress() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
@@ -59,9 +59,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsNone() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -82,9 +81,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsBuy_whenCrossoverIsBelow_andThereAreAvailableLots() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
@@ -105,9 +103,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsBelow_andThereAreNoAvailableLots() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
@@ -128,9 +125,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsSell_whenCrossoverIsAbove_andSellProfitIsGreaterThanMinimum() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -152,9 +148,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, true, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, true, 3, 5),
+                TRADING_PROPERTIES
 
         );
 
@@ -177,9 +172,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andNotGreedy() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
@@ -201,9 +195,8 @@ class GoldenCrossStrategyUnitTest {
     void decide_returnsWait_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreNoAvailableLots() {
         final GoldenCrossStrategy strategy = new GoldenCrossStrategy(
                 StringUtils.EMPTY,
-                new GoldenCrossStrategyParams(0.1f, 1, 0.6f, false, 3, 5),
-                TRADING_PROPERTIES,
-                averager
+                new GoldenCrossStrategyParams(0.1f, MovingAverageType.SIMPLE, 1, 0.6f, false, 3, 5),
+                TRADING_PROPERTIES
         );
 
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);

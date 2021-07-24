@@ -3,6 +3,7 @@ package ru.obukhov.trader.trading.strategy.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
+import ru.obukhov.trader.market.model.MovingAverageType;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -18,6 +19,9 @@ import java.util.function.Predicate;
         predicate = GoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
 )
 public class GoldenCrossStrategyParams extends TradingStrategyParams {
+
+    @NotNull(message = "movingAverageType is mandatory")
+    protected MovingAverageType movingAverageType;
 
     @NotNull(message = "order is mandatory")
     @Min(value = 1, message = "order min value is 1")
@@ -53,6 +57,7 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
 
     public GoldenCrossStrategyParams(
             final Float minimumProfit,
+            final MovingAverageType movingAverageType,
             final Integer order,
             final Float indexCoefficient,
             final Boolean greedy,
@@ -61,6 +66,7 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
     ) {
         super(minimumProfit);
 
+        this.movingAverageType = movingAverageType;
         this.order = order;
         this.indexCoefficient = indexCoefficient;
         this.greedy = greedy;
@@ -72,6 +78,7 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
     public String toString() {
         return "[" +
                 "minimumProfit=" + minimumProfit +
+                ", movingAverageType=" + movingAverageType.getValue() +
                 ", order=" + order +
                 ", indexCoefficient=" + indexCoefficient +
                 ", greedy=" + greedy +

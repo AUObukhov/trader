@@ -31,7 +31,7 @@ public class TradingConfig {
     @NotNull(message = "strategyType is mandatory")
     @ApiModelProperty(
             value = "Trading strategy type",
-            example = "simpleGoldenCross",
+            example = "goldenCross",
             required = true,
             position = 2
     )
@@ -39,7 +39,7 @@ public class TradingConfig {
 
     @ApiModelProperty(
             value = "Map of trading strategy params. Required keys name and values types depend on strategyType",
-            example = "{\"minimumProfit\": 0.01, \"order\": 1, \"indexCoefficient\": 0.3, \"greedy\": false, \"smallWindow\": 100, \"bigWindow\": 200}",
+            example = "{\"minimumProfit\": 0.01, \"movingAverageType\": \"linearWeighted\", \"order\": 1, \"indexCoefficient\": 0.3, \"greedy\": false, \"smallWindow\": 100, \"bigWindow\": 200}",
             dataType = "java.util.Map",
             position = 3
     )
