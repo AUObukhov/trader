@@ -16,6 +16,7 @@ class BalanceConfigUnitTest {
 
     // region equals test
 
+    @SuppressWarnings("unused")
     static Stream<Arguments> getData_forEquals() throws ParseException {
         return Stream.of(
                 Arguments.of(
