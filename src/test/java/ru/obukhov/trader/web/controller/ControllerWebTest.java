@@ -3,8 +3,10 @@ package ru.obukhov.trader.web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
@@ -31,6 +33,18 @@ abstract class ControllerWebTest {
 
     protected ResultMatcher getJsonErrorsMatcher(final String expectedError) {
         return ERRORS_MATCHER.value(expectedError);
+    }
+
+    protected void assertBadRequestError(String urlTemplate, String requestString, String expectedError)
+            throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post(urlTemplate)
+                        .content(requestString)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Invalid request"))
+                .andExpect(getJsonErrorsMatcher(expectedError))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
 }

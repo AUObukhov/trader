@@ -41,11 +41,92 @@ class BotControllerWebTest extends ControllerWebTest {
     @Autowired
     private ScheduledBotProperties scheduledBotProperties;
 
+    // region simulate tests
+
     @Test
-    void simulate_returnsSimulationResults() throws Exception {
+    void simulate_returnsBadRequest_whenTickerIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_tickerIsNull.json",
+                "ticker is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenTickerIsEmpty() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_tickerIsEmpty.json",
+                "ticker is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenTickerIsBlank() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_tickerIsBlank.json",
+                "ticker is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenFromIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_fromIsNull.json",
+                "from is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_balanceConfigsIsNull.json",
+                "balanceConfig is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenTradingConfigsIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_tradingConfigsIsNull.json",
+                "tradingConfigs is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_tradingConfigsIsEmpty.json",
+                "tradingConfigs is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_candleResolutionIsNull.json",
+                "candleResolution is mandatory"
+        );
+    }
+
+    @Test
+    void simulate_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
+        simulate_returnsBadRequest_withError(
+                "SimulateRequest/SimulateRequest_strategyTypeIsNull.json",
+                "strategyType is mandatory"
+        );
+    }
+
+    private void simulate_returnsBadRequest_withError(String simulateRequestResource, String expectedError)
+            throws Exception {
+        final String requestString = ResourceUtils.getTestDataAsString(simulateRequestResource);
+
+        assertBadRequestError("/trader/bot/simulate", requestString, expectedError);
+    }
+
+    @Test
+    void simulate_returnsSimulationResults_whenRequestIsValid() throws Exception {
         final String ticker = "ticker";
 
-        final String request = ResourceUtils.getTestDataAsString("SimulateRequest.json");
+        final String request = ResourceUtils.getTestDataAsString("SimulateRequest/SimulateRequest_valid.json");
 
         final List<SimulationResult> simulationResults = new ArrayList<>();
         final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
@@ -165,16 +246,9 @@ class BotControllerWebTest extends ControllerWebTest {
         ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
-
-        Mockito.verify(simulator, Mockito.times(1))
-                .simulate(
-                        Mockito.eq(ticker),
-                        Mockito.eq(balanceConfig),
-                        Mockito.anyList(),
-                        Mockito.any(Interval.class),
-                        Mockito.eq(true)
-                );
     }
+
+    // endregion
 
     @Test
     void enableScheduling_enablesScheduling() throws Exception {
@@ -227,14 +301,7 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final String tickers = "{\"tickers\": []}";
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/trader/bot/tickers")
-                        .content(tickers)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Invalid request"))
-                .andExpect(getJsonErrorsMatcher("tickers are mandatory"))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        assertBadRequestError("/trader/bot/tickers", tickers, "tickers are mandatory");
     }
 
     // endregion
