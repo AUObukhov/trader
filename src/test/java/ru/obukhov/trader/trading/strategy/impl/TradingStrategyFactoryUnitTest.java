@@ -36,7 +36,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "goldenCross [minimumProfit=0.1, movingAverageType=simple, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
+                        "goldenCross [minimumProfit=0.1, movingAverageType=SMA, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
                         StrategyType.GOLDEN_CROSS,
@@ -49,7 +49,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "goldenCross [minimumProfit=0.1, movingAverageType=linearWeighted, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
+                        "goldenCross [minimumProfit=0.1, movingAverageType=LWMA, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
                         StrategyType.GOLDEN_CROSS,
@@ -62,7 +62,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 10,
                                 "bigWindow", 20
                         ),
-                        "goldenCross [minimumProfit=0.2, movingAverageType=exponentialWeighted, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
+                        "goldenCross [minimumProfit=0.2, movingAverageType=EWMA, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
                 )
         );
     }

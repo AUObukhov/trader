@@ -14,7 +14,7 @@ scheduled-bot:
   strategy-type: "goldenCross"
   strategy-params:
     minimumProfit: 0.1
-    movingAverageType: simple
+    movingAverageType: SMA
     order: 1
     smallWindow: 50
     bigWindow: 200

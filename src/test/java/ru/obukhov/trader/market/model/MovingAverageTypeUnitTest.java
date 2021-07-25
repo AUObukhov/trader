@@ -17,6 +17,24 @@ class MovingAverageTypeUnitTest {
     }
 
     @Test
+    void from_returnsProperValueForLowerCase() {
+        for (final MovingAverageType type : MovingAverageType.values()) {
+            final MovingAverageType lookupValue = MovingAverageType.from(type.getValue().toLowerCase());
+
+            Assertions.assertEquals(type, lookupValue);
+        }
+    }
+
+    @Test
+    void from_returnsProperValueForUpperCase() {
+        for (final MovingAverageType type : MovingAverageType.values()) {
+            final MovingAverageType lookupValue = MovingAverageType.from(type.getValue().toUpperCase());
+
+            Assertions.assertEquals(type, lookupValue);
+        }
+    }
+
+    @Test
     void testParsingFromJson() throws JsonProcessingException {
         final ObjectMapper mapper = new ObjectMapper();
         for (final MovingAverageType type : MovingAverageType.values()) {

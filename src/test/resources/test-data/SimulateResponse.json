@@ -28,7 +28,7 @@
         "strategyType": "goldenCross",
         "strategyParams": {
           "minimumProfit": 0.01,
-          "movingAverageType": "linearWeighted",
+          "movingAverageType": "LWMA",
           "smallWindow": 100,
           "bigWindow": 200,
           "indexCoefficient": 0.3,
@@ -55,7 +55,7 @@
         "strategyType": "goldenCross",
         "strategyParams": {
           "minimumProfit": 0.01,
-          "movingAverageType": "linearWeighted",
+          "movingAverageType": "LWMA",
           "smallWindow": 100,
           "bigWindow": 200,
           "indexCoefficient": 0.3,

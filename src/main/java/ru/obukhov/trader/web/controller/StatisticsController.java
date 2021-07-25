@@ -66,7 +66,7 @@ public class StatisticsController {
             final CandleResolution candleResolution,
 
             @RequestParam
-            @ApiParam(value = "Moving average algorithm type", example = "linearWeighted", required = true)
+            @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true)
             final MovingAverageType movingAverageType,
 
             @RequestParam

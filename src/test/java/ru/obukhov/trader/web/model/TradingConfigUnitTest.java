@@ -117,7 +117,7 @@ class TradingConfigUnitTest {
         final String expectedStart = "[candleResolution=1min, strategyType=goldenCross, strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));
-        Assertions.assertTrue(string.contains("movingAverageType=linearWeighted"));
+        Assertions.assertTrue(string.contains("movingAverageType=LWMA"));
         Assertions.assertTrue(string.contains("smallWindow=100"));
         Assertions.assertTrue(string.contains("bigWindow=200"));
         Assertions.assertTrue(string.contains("greedy=false"));

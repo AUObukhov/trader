@@ -17,18 +17,18 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum MovingAverageType {
 
-    SIMPLE("simple"),
-    LINEAR_WEIGHTED("linearWeighted"),
-    EXPONENTIAL_WEIGHTED("exponentialWeighted");
+    SIMPLE("SMA"),
+    LINEAR_WEIGHTED("LWMA"),
+    EXPONENTIAL_WEIGHTED("EWMA");
 
     private static final Map<String, MovingAverageType> LOOKUP = Stream.of(MovingAverageType.values())
-            .collect(Collectors.toMap(MovingAverageType::getValue, movingAverage -> movingAverage));
+            .collect(Collectors.toUnmodifiableMap(MovingAverageType::getValue, movingAverage -> movingAverage));
 
     @JsonValue
     private final String value;
 
     public static MovingAverageType from(String value) {
-        return LOOKUP.get(value);
+        return LOOKUP.get(value.toUpperCase());
     }
 
     @Override
