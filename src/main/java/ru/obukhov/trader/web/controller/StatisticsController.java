@@ -15,6 +15,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -64,6 +65,18 @@ public class StatisticsController {
             @ApiParam(value = "Candle interval", example = "1min", required = true)
             final CandleResolution candleResolution,
 
+            @RequestParam
+            @ApiParam(value = "Moving average algorithm type", example = "linearWeighted", required = true)
+            final MovingAverageType movingAverageType,
+
+            @RequestParam
+            @ApiParam(value = "Window of short-term moving average", example = "50", required = true)
+            final Integer smallWindow,
+
+            @RequestParam
+            @ApiParam(value = "Window of long-term moving average", example = "200", required = true)
+            final Integer bigWindow,
+
             @RequestParam(required = false, defaultValue = "false")
             @ApiParam(
                     value = "Flag indicating to save the simulation result to a file. Default value is false",
@@ -74,7 +87,10 @@ public class StatisticsController {
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,
                 interval,
-                candleResolution
+                candleResolution,
+                movingAverageType,
+                smallWindow,
+                bigWindow
         );
 
         if (saveToFile) {

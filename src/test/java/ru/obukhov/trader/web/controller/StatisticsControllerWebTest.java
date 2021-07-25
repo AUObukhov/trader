@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -38,12 +39,18 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     @Test
     void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int smallWindow = 50;
+        final int bigWindow = 50;
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestBuilder)
@@ -56,12 +63,18 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int smallWindow = 50;
+        final int bigWindow = 50;
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
@@ -75,12 +88,18 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int smallWindow = 50;
+        final int bigWindow = 50;
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
@@ -93,12 +112,18 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     @Test
     void getCandles_returnsBadRequest_whenCandleResolutionIsMissing() throws Exception {
         final String ticker = "ticker";
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int smallWindow = 50;
+        final int bigWindow = 50;
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
@@ -109,9 +134,84 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     }
 
     @Test
-    void getCandles_returnsCandles() throws Exception {
+    void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final int smallWindow = 50;
+        final int bigWindow = 50;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("bigWindow", Integer.toString(bigWindow))
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required MovingAverageType parameter 'movingAverageType' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int bigWindow = 50;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("bigWindow", Integer.toString(bigWindow))
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required Integer parameter 'smallWindow' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
+        final int smallWindow = 50;
+
+        final MockHttpServletRequestBuilder requestBuilder =
+                MockMvcRequestBuilders.get("/trader/statistics/candles")
+                        .param("ticker", ticker)
+                        .param("from", "2021-03-25T10:00:00+03:00")
+                        .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", Integer.toString(smallWindow))
+                        .param("saveToFile", Boolean.TRUE.toString())
+                        .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(getJsonPathMessageMatcher("Required Integer parameter 'bigWindow' is not present"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
+        final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+        final Integer smallWindow = 1;
+        final Integer bigWindow = 2;
 
         final Candle candle1 = TestDataHelper.createCandle(
                 12000,
@@ -140,7 +240,12 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 candleResolution
         );
 
-        final List<BigDecimal> averages = List.of(
+        final List<BigDecimal> shortAverages = List.of(
+                BigDecimal.valueOf(12000),
+                BigDecimal.valueOf(1200),
+                BigDecimal.valueOf(120)
+        );
+        final List<BigDecimal> longAverages = List.of(
                 BigDecimal.valueOf(10000),
                 BigDecimal.valueOf(1000),
                 BigDecimal.valueOf(100)
@@ -148,11 +253,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 List.of(candle1, candle2, candle3),
-                averages
+                shortAverages,
+                longAverages
         );
 
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+                Mockito.eq(ticker),
+                Mockito.any(Interval.class),
+                Mockito.eq(candleResolution),
+                Mockito.eq(movingAverageType),
+                Mockito.eq(smallWindow),
+                Mockito.eq(bigWindow)
         )).thenReturn(response);
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("GetCandlesResponse.json");
@@ -163,6 +274,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", smallWindow.toString())
+                        .param("bigWindow", bigWindow.toString())
                         .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -174,14 +288,23 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+        final Integer smallWindow = 1;
+        final Integer bigWindow = 2;
 
         final GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
 
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+                Mockito.eq(ticker),
+                Mockito.any(Interval.class),
+                Mockito.eq(candleResolution),
+                Mockito.eq(movingAverageType),
+                Mockito.eq(smallWindow),
+                Mockito.eq(bigWindow)
         )).thenReturn(response);
 
         final MockHttpServletRequestBuilder requestBuilder =
@@ -190,6 +313,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", smallWindow.toString())
+                        .param("bigWindow", bigWindow.toString())
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestBuilder)
@@ -204,14 +330,23 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+        final Integer smallWindow = 1;
+        final Integer bigWindow = 2;
 
         final GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
 
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+                Mockito.eq(ticker),
+                Mockito.any(Interval.class),
+                Mockito.eq(candleResolution),
+                Mockito.eq(movingAverageType),
+                Mockito.eq(smallWindow),
+                Mockito.eq(bigWindow)
         )).thenReturn(response);
 
         Mockito.doThrow(new RuntimeException())
@@ -224,6 +359,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", smallWindow.toString())
+                        .param("bigWindow", bigWindow.toString())
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestBuilder)
@@ -238,13 +376,22 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+        final Integer smallWindow = 1;
+        final Integer bigWindow = 2;
 
         final GetCandlesResponse response = new GetCandlesResponse(
+                Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList()
         );
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+                Mockito.eq(ticker),
+                Mockito.any(Interval.class),
+                Mockito.eq(candleResolution),
+                Mockito.eq(movingAverageType),
+                Mockito.eq(smallWindow),
+                Mockito.eq(bigWindow)
         )).thenReturn(response);
 
         final MockHttpServletRequestBuilder requestBuilder =
@@ -253,6 +400,9 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
                         .param("candleResolution", candleResolution.getValue())
+                        .param("movingAverageType", movingAverageType.getValue())
+                        .param("smallWindow", smallWindow.toString())
+                        .param("bigWindow", bigWindow.toString())
                         .param("saveToFile", Boolean.FALSE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
@@ -268,13 +418,23 @@ class StatisticsControllerWebTest extends ControllerWebTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleResolution candleResolution = CandleResolution._1MIN;
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+        final Integer smallWindow = 1;
+        final Integer bigWindow = 2;
 
         final GetCandlesResponse response = new GetCandlesResponse(
                 Collections.emptyList(),
+                Collections.emptyList(),
                 Collections.emptyList()
         );
+
         Mockito.when(statisticsService.getExtendedCandles(
-                Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution)
+                Mockito.eq(ticker),
+                Mockito.any(Interval.class),
+                Mockito.eq(candleResolution),
+                Mockito.eq(movingAverageType),
+                Mockito.eq(smallWindow),
+                Mockito.eq(bigWindow)
         )).thenReturn(response);
 
         final MockHttpServletRequestBuilder requestBuilder =
@@ -282,7 +442,10 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("ticker", ticker)
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
+                        .param("movingAverageType", movingAverageType.getValue())
                         .param("candleResolution", candleResolution.getValue())
+                        .param("smallWindow", smallWindow.toString())
+                        .param("bigWindow", bigWindow.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
@@ -12,6 +13,7 @@ import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -21,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 @ExtendWith(MockitoExtension.class)
 class StatisticsServiceImplUnitTest {
@@ -36,6 +37,9 @@ class StatisticsServiceImplUnitTest {
 
     @Test
     void getCandles_returnsCandlesFromMarketService() {
+
+        // arrange
+
         final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
@@ -48,13 +52,20 @@ class StatisticsServiceImplUnitTest {
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
+        // act
+
         final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleResolution);
+
+        // assert
 
         Assertions.assertSame(candles, candlesResponse);
     }
 
     @Test
     void getExtendedCandles_extendsCandles_withoutExtremes() {
+
+        // arrange
+
         final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
@@ -63,6 +74,11 @@ class StatisticsServiceImplUnitTest {
 
         final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
         final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+
+        final int smallWindow = 1;
+        final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
                 TestDataHelper.createCandle(10, 15, 20, 5, time, candleResolution),
@@ -72,24 +88,33 @@ class StatisticsServiceImplUnitTest {
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final List<BigDecimal> averages = TestDataHelper.createBigDecimalsList(10.0, 12.5, 17.5);
-        Mockito.when(
-                averager.getAverages(
-                        Mockito.eq(candles),
-                        Mockito.any(Function.class),
-                        Mockito.eq(2),
-                        Mockito.eq(1)
-                )
-        ).thenReturn(averages);
+        final List<BigDecimal> shortAverages = TestDataHelper.createBigDecimalsList(10.0, 15.0, 20.0);
+        final List<BigDecimal> longAverages = TestDataHelper.createBigDecimalsList(10.0, 12.5, 17.5);
 
-        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
+        mockAverages(smallWindow, shortAverages);
+        mockAverages(bigWindow, longAverages);
+
+        // act
+
+        GetCandlesResponse response;
+        try (MockedStatic<MovingAverager> mock = TestDataHelper.mockAveragerByType(movingAverageType, averager)) {
+            response = service.getExtendedCandles(
+                    ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow
+            );
+        }
+
+        // assert
 
         AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(averages, response.getAverages());
+        AssertUtils.assertListsAreEqual(shortAverages, response.getShortAverages());
+        AssertUtils.assertListsAreEqual(longAverages, response.getLongAverages());
     }
 
     @Test
     void getExtendedCandles_extendsCandles_withExtremes() {
+
+        // arrange
+
         final String ticker = "ticker";
 
         final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
@@ -98,6 +123,11 @@ class StatisticsServiceImplUnitTest {
 
         final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
         final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
+
+        final int smallWindow = 1;
+        final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
                 TestDataHelper.createCandle(80, 15, 20, 5, time, candleResolution),
@@ -113,22 +143,40 @@ class StatisticsServiceImplUnitTest {
         );
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final List<BigDecimal> averages = TestDataHelper.createBigDecimalsList(
+        final List<BigDecimal> shortAverages = TestDataHelper.createBigDecimalsList(
                 80, 540, 535, 55, 45, 30, 50, 545, 530, 45
         );
+        final List<BigDecimal> longAverages = TestDataHelper.createBigDecimalsList(
+                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
+        );
+
+        mockAverages(smallWindow, shortAverages);
+        mockAverages(bigWindow, longAverages);
+
+        // act
+
+        GetCandlesResponse response;
+        try (MockedStatic<MovingAverager> mock = TestDataHelper.mockAveragerByType(movingAverageType, averager)) {
+            response = service.getExtendedCandles(
+                    ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow
+            );
+        }
+
+        // assert
+
+        AssertUtils.assertListsAreEqual(candles, response.getCandles());
+        AssertUtils.assertListsAreEqual(shortAverages, response.getShortAverages());
+        AssertUtils.assertListsAreEqual(longAverages, response.getLongAverages());
+    }
+
+    private void mockAverages(Integer window, List<BigDecimal> averages) {
         Mockito.when(
                 averager.getAverages(
-                        Mockito.eq(candles),
-                        Mockito.any(Function.class),
-                        Mockito.eq(2),
+                        Mockito.anyList(),
+                        Mockito.eq(window),
                         Mockito.eq(1)
                 )
         ).thenReturn(averages);
-
-        final GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution);
-
-        AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(averages, response.getAverages());
     }
 
 }

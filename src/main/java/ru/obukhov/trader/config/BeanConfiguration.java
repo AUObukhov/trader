@@ -74,7 +74,7 @@ public class BeanConfiguration {
             final MarketService realMarketService,
             final MovingAverager simpleMovingAverager
     ) {
-        return new StatisticsServiceImpl(realMarketService, simpleMovingAverager);
+        return new StatisticsServiceImpl(realMarketService);
     }
 
     @Bean

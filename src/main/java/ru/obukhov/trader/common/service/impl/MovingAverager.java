@@ -30,7 +30,7 @@ public abstract class MovingAverager {
     public static MovingAverager getByType(final MovingAverageType type) {
         Assert.isTrue(
                 INSTANCES.containsKey(type),
-                "Not found MovingAverager instance for " + type.getValue()
+                "Not found MovingAverager instance for " + type
         );
         return INSTANCES.get(type);
     }

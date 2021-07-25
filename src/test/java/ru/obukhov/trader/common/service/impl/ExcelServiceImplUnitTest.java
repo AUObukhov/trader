@@ -541,9 +541,10 @@ class ExcelServiceImplUnitTest {
     private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
-        final List<BigDecimal> averages = averager.getAverages(openPrices, 5);
+        final List<BigDecimal> shortAverages = averager.getAverages(openPrices, 2);
+        final List<BigDecimal> longAverages = averager.getAverages(openPrices, 5);
 
-        return new GetCandlesResponse(candles, averages);
+        return new GetCandlesResponse(candles, shortAverages, longAverages);
     }
 
     private int getExpectedRowCount(SimulationResult result) {

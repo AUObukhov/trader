@@ -13,6 +13,8 @@ public class GetCandlesResponse {
 
     private List<Candle> candles;
 
-    private List<BigDecimal> averages;
+    private List<BigDecimal> shortAverages;
+
+    private List<BigDecimal> longAverages;
 
 }

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
+import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -16,6 +17,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -395,6 +397,16 @@ public class TestDataHelper {
                 7,
                 OffsetDateTime.now()
         );
+    }
+
+    public static MockedStatic<MovingAverager> mockAveragerByType(
+            final MovingAverageType movingAverageType,
+            final MovingAverager averager
+    ) {
+        final MockedStatic<MovingAverager> movingAveragerStaticMock =
+                Mockito.mockStatic(MovingAverager.class, Mockito.CALLS_REAL_METHODS);
+        movingAveragerStaticMock.when(() -> MovingAverager.getByType(movingAverageType)).thenReturn(averager);
+        return movingAveragerStaticMock;
     }
 
 }
