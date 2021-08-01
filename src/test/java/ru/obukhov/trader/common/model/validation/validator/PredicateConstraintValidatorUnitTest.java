@@ -7,6 +7,7 @@ import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.hibernate.validator.internal.metadata.location.ConstraintLocation;
 import org.hibernate.validator.internal.util.annotation.ConstraintAnnotationDescriptor;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
@@ -49,7 +50,14 @@ class PredicateConstraintValidatorUnitTest {
                 constraintAnnotationDescriptor,
                 ConstraintLocation.ConstraintLocationKind.TYPE);
 
-        return new ConstraintValidatorContextImpl(null, null, constraintDescriptor, null);
+        return new ConstraintValidatorContextImpl(
+                null,
+                null,
+                constraintDescriptor,
+                null,
+                ExpressionLanguageFeatureLevel.DEFAULT,
+                ExpressionLanguageFeatureLevel.DEFAULT
+        );
     }
 
     @Data

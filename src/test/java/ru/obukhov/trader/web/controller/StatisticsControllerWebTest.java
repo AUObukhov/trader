@@ -53,9 +53,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
+        final String expectedMessage =
+                "Required request parameter 'ticker' for method parameter type String is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required String parameter 'ticker' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -78,9 +80,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'from' for method parameter type OffsetDateTime is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required OffsetDateTime parameter 'from' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -103,9 +107,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'to' for method parameter type OffsetDateTime is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required OffsetDateTime parameter 'to' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -127,9 +133,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'candleResolution' for method parameter type CandleResolution is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required CandleResolution parameter 'candleResolution' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -151,9 +159,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'movingAverageType' for method parameter type MovingAverageType is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required MovingAverageType parameter 'movingAverageType' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -175,9 +185,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'smallWindow' for method parameter type Integer is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required Integer parameter 'smallWindow' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
@@ -199,9 +211,11 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
+        final String expectedMessage =
+                "Required request parameter 'bigWindow' for method parameter type Integer is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Required Integer parameter 'bigWindow' is not present"))
+                .andExpect(getJsonPathMessageMatcher(expectedMessage))
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 

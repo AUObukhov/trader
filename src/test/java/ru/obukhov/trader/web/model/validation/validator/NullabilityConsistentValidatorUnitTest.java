@@ -7,6 +7,7 @@ import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.hibernate.validator.internal.metadata.location.ConstraintLocation;
 import org.hibernate.validator.internal.util.annotation.ConstraintAnnotationDescriptor;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
@@ -72,7 +73,9 @@ class NullabilityConsistentValidatorUnitTest {
                 null,
                 null,
                 constraintDescriptor,
-                null
+                null,
+                ExpressionLanguageFeatureLevel.DEFAULT,
+                ExpressionLanguageFeatureLevel.DEFAULT
         );
     }
 
