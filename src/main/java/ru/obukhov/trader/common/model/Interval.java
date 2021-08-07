@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,8 +27,10 @@ public class Interval {
 
     private static final double NANOSECONDS_IN_DAY = 24.0 * 60 * 60 * 1000_000_000;
 
+    @ApiModelProperty(value = "start of the interval", position = 1, example = "2021-08-01T00:00:00.000Z")
     private final OffsetDateTime from;
 
+    @ApiModelProperty(value = "end of the interval", position = 2, example = "2021-08-01T12:00:00.000Z")
     private final OffsetDateTime to;
 
     /**

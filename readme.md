@@ -35,3 +35,7 @@ at
 ## Documentation
 
 Swagger UI available at host:port/swagger-ui/index.html#/
+
+## Integration
+
+File "Candles dashboard.json" contains Grafana dashboard with candles and moving averages chart

@@ -368,8 +368,8 @@ public class ExcelServiceImpl implements ExcelService {
                 .collect(Collectors.toList());
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
-        addLine(chartData, timesDataSource, response.getShortAverages(), MarkerProperties.NO_MARKER, Color.BLUE);
-        addLine(chartData, timesDataSource, response.getLongAverages(), MarkerProperties.NO_MARKER, Color.YELLOW);
+        addLine(chartData, timesDataSource, response.getAverages1(), MarkerProperties.NO_MARKER, Color.BLUE);
+        addLine(chartData, timesDataSource, response.getAverages2(), MarkerProperties.NO_MARKER, Color.YELLOW);
 
         chartData.stretchChart();
     }

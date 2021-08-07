@@ -25,12 +25,12 @@
       "interval": "1min"
     }
   ],
-  "shortAverages": [
+  "averages1": [
     12000,
     1200,
     120
   ],
-  "longAverages": [
+  "averages2": [
     10000,
     1000,
     100
