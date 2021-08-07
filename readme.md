@@ -31,3 +31,7 @@ at
 ```
 --trading.sandbox=true
 ```
+
+## Documentation
+
+Swagger UI available at host:port/swagger-ui/index.html#/
