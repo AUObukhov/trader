@@ -133,6 +133,15 @@ public class Interval {
     }
 
     /**
+     * @return a copy of this Interval, but with borders with same instant and offset equals to {@link DateUtils#DEFAULT_OFFSET}
+     */
+    public Interval withDefaultOffsetSameInstant() {
+        final OffsetDateTime newFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
+        final OffsetDateTime newTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
+        return Interval.of(newFrom, newTo);
+    }
+
+    /**
      * @return true, if days of year of {@code from} and {@code to} are equal, or else false
      */
     public boolean equalDates() {

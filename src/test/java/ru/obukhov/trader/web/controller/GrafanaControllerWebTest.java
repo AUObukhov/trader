@@ -2,7 +2,9 @@ package ru.obukhov.trader.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,6 +23,7 @@ import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -115,6 +118,35 @@ class GrafanaControllerWebTest extends ControllerWebTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+    }
+
+    @Test
+    void getData_updatesRangeOffset_whenOffsetIsNotDefault() throws Exception {
+        final OffsetDateTime from = OffsetDateTime.of(2021, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC);
+        final OffsetDateTime to = OffsetDateTime.of(2021, 1, 1, 15, 0, 0, 0, ZoneOffset.UTC);
+        final GetDataRequest getDataRequest = createGetDataRequest();
+        getDataRequest.setRange(Interval.of(from, to));
+
+        final String request = MAPPER.writeValueAsString(getDataRequest);
+
+        Mockito.when(grafanaService.getData(Mockito.any(GetDataRequest.class))).thenReturn(List.of());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/grafana/query")
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        final ArgumentCaptor<GetDataRequest> argumentCaptor = ArgumentCaptor.forClass(GetDataRequest.class);
+        Mockito.verify(grafanaService).getData(argumentCaptor.capture());
+        final GetDataRequest capturedGetDataRequest = argumentCaptor.getValue();
+        final Interval interval = capturedGetDataRequest.getRange();
+
+        final OffsetDateTime expectedFrom = DateUtils.getDateTime(2021, 1, 1, 13, 0, 0);
+        final OffsetDateTime expectedTo = DateUtils.getDateTime(2021, 1, 1, 18, 0, 0);
+
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
     }
 
     @NotNull

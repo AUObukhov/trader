@@ -688,6 +688,50 @@ class IntervalUnitTest {
 
     // endregion
 
+    // region withDefaultOffsetSameInstant tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forWithDefaultOffsetSameInstant() {
+        return Stream.of(
+                Arguments.of(null, null, null, null),
+                Arguments.of(
+                        null,
+                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        null,
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                ),
+                Arguments.of(
+                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        null,
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        null
+                ),
+                Arguments.of(
+                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                ),
+                Arguments.of(
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forWithDefaultOffsetSameInstant")
+    void withDefaultOffsetSameInstant(OffsetDateTime from, OffsetDateTime to, OffsetDateTime expectedFrom, OffsetDateTime expectedTo) {
+        final Interval result = Interval.of(from, to).withDefaultOffsetSameInstant();
+
+        Assertions.assertEquals(expectedFrom, result.getFrom());
+        Assertions.assertEquals(expectedTo, result.getTo());
+    }
+
+    // endregion
+
     // region equalDates tests
 
     @SuppressWarnings("unused")
