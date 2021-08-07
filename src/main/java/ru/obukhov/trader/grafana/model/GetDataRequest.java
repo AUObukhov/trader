@@ -1,5 +1,6 @@
 package ru.obukhov.trader.grafana.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -14,9 +15,10 @@ import java.util.List;
 @Accessors(chain = true)
 public class GetDataRequest {
 
-    @NotNull(message = "range is mandatory")
+    @NotNull(message = "interval is mandatory")
     @ApiModelProperty(required = true, position = 1)
-    private Interval range;
+    @JsonProperty("range")
+    private Interval interval;
 
     @Valid
     @NotEmpty(message = "targets is mandatory")

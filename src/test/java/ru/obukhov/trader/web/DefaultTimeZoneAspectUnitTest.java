@@ -59,15 +59,15 @@ class DefaultTimeZoneAspectUnitTest {
         final DefaultTimeZoneAspect aspect = new DefaultTimeZoneAspect();
 
         final Interval interval = Interval.of(from, to);
-        final GetDataRequest request = new GetDataRequest().setRange(interval);
+        final GetDataRequest request = new GetDataRequest().setInterval(interval);
         final Object[] arguments = new Object[]{request};
         final ProxyMethodInvocation methodInvocation = new TestMethodInvocation(arguments);
         final JoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
 
         aspect.beforeGrafanaControllerGetData(joinPoint);
 
-        Assertions.assertEquals(expectedFrom, request.getRange().getFrom());
-        Assertions.assertEquals(expectedTo, request.getRange().getTo());
+        Assertions.assertEquals(expectedFrom, request.getInterval().getFrom());
+        Assertions.assertEquals(expectedTo, request.getInterval().getTo());
     }
 
     @Getter

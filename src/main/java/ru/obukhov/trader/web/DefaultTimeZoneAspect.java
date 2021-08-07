@@ -18,7 +18,7 @@ public class DefaultTimeZoneAspect {
     @Before("execution(public * ru.obukhov.trader.web.controller.GrafanaController.getData(..))")
     public void beforeGrafanaControllerGetData(JoinPoint joinPoint) {
         final GetDataRequest request = (GetDataRequest) joinPoint.getArgs()[0];
-        request.setRange(request.getRange().withDefaultOffsetSameInstant());
+        request.setInterval(request.getInterval().withDefaultOffsetSameInstant());
     }
 
 }

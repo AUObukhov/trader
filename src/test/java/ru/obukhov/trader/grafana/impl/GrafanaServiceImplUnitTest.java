@@ -213,7 +213,7 @@ class GrafanaServiceImplUnitTest {
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = OffsetDateTime.now();
         final Interval interval = Interval.of(from, to);
-        request.setRange(interval);
+        request.setInterval(interval);
 
         final List<Candle> candles = List.of(
                 TestDataHelper.createCandleWithOpenPriceAndTime(1000, from.plusHours(1)),
@@ -269,7 +269,7 @@ class GrafanaServiceImplUnitTest {
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = OffsetDateTime.now();
         final Interval interval = Interval.of(from, to);
-        request.setRange(interval);
+        request.setInterval(interval);
 
         final List<Candle> candles = List.of(
                 TestDataHelper.createCandle(80, 15, 20, 5, from, candleResolution),

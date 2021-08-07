@@ -45,11 +45,11 @@ class GrafanaControllerWebTest extends ControllerWebTest {
     @Test
     void getData_returnsBadRequest_whenRangeIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
-        getDataRequest.setRange(null);
+        getDataRequest.setInterval(null);
 
         final String request = MAPPER.writeValueAsString(getDataRequest);
 
-        assertBadRequestError("/trader/grafana/query", request, "range is mandatory");
+        assertBadRequestError("/trader/grafana/query", request, "interval is mandatory");
     }
 
     @Test
@@ -125,7 +125,7 @@ class GrafanaControllerWebTest extends ControllerWebTest {
         final OffsetDateTime from = OffsetDateTime.of(2021, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC);
         final OffsetDateTime to = OffsetDateTime.of(2021, 1, 1, 15, 0, 0, 0, ZoneOffset.UTC);
         final GetDataRequest getDataRequest = createGetDataRequest();
-        getDataRequest.setRange(Interval.of(from, to));
+        getDataRequest.setInterval(Interval.of(from, to));
 
         final String request = MAPPER.writeValueAsString(getDataRequest);
 
@@ -140,7 +140,7 @@ class GrafanaControllerWebTest extends ControllerWebTest {
         final ArgumentCaptor<GetDataRequest> argumentCaptor = ArgumentCaptor.forClass(GetDataRequest.class);
         Mockito.verify(grafanaService).getData(argumentCaptor.capture());
         final GetDataRequest capturedGetDataRequest = argumentCaptor.getValue();
-        final Interval interval = capturedGetDataRequest.getRange();
+        final Interval interval = capturedGetDataRequest.getInterval();
 
         final OffsetDateTime expectedFrom = DateUtils.getDateTime(2021, 1, 1, 13, 0, 0);
         final OffsetDateTime expectedTo = DateUtils.getDateTime(2021, 1, 1, 18, 0, 0);
@@ -152,7 +152,7 @@ class GrafanaControllerWebTest extends ControllerWebTest {
     @NotNull
     private GetDataRequest createGetDataRequest() {
         final GetDataRequest getDataRequest = new GetDataRequest();
-        getDataRequest.setRange(Interval.ofDay(OffsetDateTime.now()));
+        getDataRequest.setInterval(Interval.ofDay(OffsetDateTime.now()));
 
         final Target target = new Target();
         target.setMetric(Metric.CANDLES);

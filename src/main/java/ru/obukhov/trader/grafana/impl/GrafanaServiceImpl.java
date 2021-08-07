@@ -68,7 +68,7 @@ public class GrafanaServiceImpl implements GrafanaService {
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
         final CandleResolution candleResolution = getRequiredCandleResolution(data);
 
-        final QueryResult queryResult = getCandles(ticker, request.getRange(), candleResolution);
+        final QueryResult queryResult = getCandles(ticker, request.getInterval(), candleResolution);
 
         return List.of(queryResult);
     }
@@ -81,7 +81,7 @@ public class GrafanaServiceImpl implements GrafanaService {
     private List<QueryResult> getExtendedCandles(GetDataRequest request) {
         final Map<String, Object> data = getRequiredTargetData(request);
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
-        final Interval interval = request.getRange();
+        final Interval interval = request.getInterval();
         final CandleResolution candleResolution = getRequiredCandleResolution(data);
         final MovingAverageType movingAverageType = getRequiredMovingAverageType(data);
         final Integer window1 = MapUtils.getRequiredInteger(data, "window1");
