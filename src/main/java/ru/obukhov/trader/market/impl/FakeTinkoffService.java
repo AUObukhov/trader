@@ -68,7 +68,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     /**
-     * sets current dateTime, but moves it to nearest work time
+     * Sets current dateTime, but moves it to the nearest work time
      */
     public void init(final OffsetDateTime currentDateTime) {
         init(currentDateTime, null, null);
