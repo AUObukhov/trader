@@ -98,7 +98,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     /**
-     * changes currentDateTime to nearest work time after it
+     * Changes currentDateTime to the nearest work time after it
      *
      * @return new value of currentDateTime
      */
