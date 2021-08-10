@@ -198,13 +198,14 @@ public class MarketServiceImpl implements MarketService {
         final OffsetDateTime from = DateUtils.atStartOfDay(to);
         Interval interval = Interval.of(from, to);
 
-        final List<Candle> candles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        List<Candle> currentCandles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        final List<Candle> candles = new ArrayList<>(currentCandles);
         int consecutiveEmptyDaysCount = candles.isEmpty() ? 1 : 0;
 
         interval = interval.minusDays(1).extendToDay();
 
         do {
-            final List<Candle> currentCandles = loadDayCandles(ticker, interval, candleResolution);
+            currentCandles = loadDayCandles(ticker, interval, candleResolution);
             if (currentCandles.isEmpty()) {
                 consecutiveEmptyDaysCount++;
             } else {
