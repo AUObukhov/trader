@@ -107,6 +107,20 @@ class FakeTinkoffServiceUnitTest {
     }
 
     @Test
+    void init_throwsIllegalArgumentException_whenCurrencyIsNullAndBalanceIsNotNull() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, null, BigDecimal.TEN));
+    }
+
+    @Test
+    void init_throwsIllegalArgumentException_whenCurrencyIsNotNullAndBalanceIsNull() {
+        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, Currency.RUB, null));
+    }
+
+    @Test
     void init_clearsPortfolio() {
         final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
         final Currency currency = Currency.RUB;

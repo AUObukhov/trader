@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.ValidationUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -82,14 +83,14 @@ public class FakeTinkoffService implements TinkoffService {
      * @param balance         initial balance of {@code currency}. When null {@code currency} is not initialized.
      *                        {@code currency} and {@code balance} must be both null or both not null.
      */
-    public void init(
-            final OffsetDateTime currentDateTime,
-            @Nullable final Currency currency,
-            @Nullable final BigDecimal balance
-    ) {
-        final OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(currentDateTime,
+    public void init(final OffsetDateTime currentDateTime, @Nullable final Currency currency, @Nullable final BigDecimal balance) {
+        ValidationUtils.assertNullConsistent(currency, balance, "currency and balance must be both null or both not null");
+
+        final OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(
+                currentDateTime,
                 tradingProperties.getWorkStartTime(),
-                tradingProperties.getWorkDuration());
+                tradingProperties.getWorkDuration()
+        );
 
         this.fakeContext = new FakeContext(shiftedCurrentDateTime);
         if (balance != null) {
