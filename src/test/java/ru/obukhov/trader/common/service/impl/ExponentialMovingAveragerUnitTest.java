@@ -13,7 +13,6 @@ import ru.obukhov.trader.test.utils.TestDataHelper;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 class ExponentialMovingAveragerUnitTest {
@@ -37,11 +36,7 @@ class ExponentialMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
-    void getAverages_withoutOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final String expectedMessage
-    ) {
+    void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
@@ -105,11 +100,7 @@ class ExponentialMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withoutOrder_andWithoutValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
+    void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
@@ -142,7 +133,7 @@ class ExponentialMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
-    void getAverages_withOrder_andWithoutValueExtractor_throwsIllegalArgumentException(
+    void getAverages_withOrder_throwsIllegalArgumentException(
             final List<Double> values,
             final int window,
             final int order,
@@ -152,23 +143,6 @@ class ExponentialMovingAveragerUnitTest {
 
         AssertUtils.assertThrowsWithMessage(
                 () -> averager.getAverages(bigDecimalValues, window, order),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
-    void getAverages_withOrder_andWithValueExtractor_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final String expectedMessage
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(elements, Optional::get, window, order),
                 IllegalArgumentException.class,
                 expectedMessage
         );
@@ -262,70 +236,17 @@ class ExponentialMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withOrderOne_andWithoutValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
-        getAverages_withOrder_andWithoutValueExtractor(
-                values,
-                window,
-                1,
-                expectedValues
-        );
+    void getAverages_withOrderOne(final List<Double> values, final int window, final List<Double> expectedValues) {
+        getAverages_withOrder(values, window, 1, expectedValues);
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder")
-    void getAverages_withOrder_andWithoutValueExtractor(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final List<Double> expectedValues
-    ) {
+    void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages =
                 averager.getAverages(bigDecimalValues, window, order);
-
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
-
-        for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withOrderOne_andWithValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
-        getAverages_withOrder_andWithValueExtractor(
-                values,
-                window,
-                1,
-                expectedValues
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withOrder")
-    void getAverages_withOrder_andWithValueExtractor(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final List<Double> expectedValues
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(elements, Optional::get, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);

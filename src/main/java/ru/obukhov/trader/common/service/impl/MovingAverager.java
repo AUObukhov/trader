@@ -7,8 +7,6 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Abstract class with methods for calculation of moving averages
@@ -39,32 +37,6 @@ public abstract class MovingAverager {
      * @return type of current MovingAverager
      */
     public abstract MovingAverageType getType();
-
-    /**
-     * Calculates moving averages
-     *
-     * @param elements       list of elements, which containing values to calculate averages
-     * @param valueExtractor function to get value from item of {@code elements}
-     * @param window         period of average, usually a number of values, used to calculate each average.
-     *                       Higher values gives more smooth and more lagging averages trend.
-     *                       Must be positive
-     * @param order          number of consecutive calculations of averages.
-     *                       For example, when equals 2, than after calculation of averages by initial values,
-     *                       calculation repeated again by previously calculated averages.
-     *                       Higher values gives more smooth averages trend.
-     *                       Must be positive
-     * @param <T>            base type of {@code elements}
-     * @return calculated averages
-     */
-    public <T> List<BigDecimal> getAverages(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final int window,
-            final int order
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getAverages(values, window, order);
-    }
 
     /**
      * Calculates moving averages

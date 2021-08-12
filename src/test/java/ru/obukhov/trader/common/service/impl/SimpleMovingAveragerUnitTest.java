@@ -6,17 +6,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 class SimpleMovingAveragerUnitTest {
@@ -38,11 +34,7 @@ class SimpleMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
-    void getAverages_withoutOrder_withoutExtractors_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final String expectedMessage
-    ) {
+    void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
@@ -121,11 +113,7 @@ class SimpleMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withoutOrder_withoutExtractors(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
+    void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
@@ -157,46 +145,7 @@ class SimpleMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
-    void getAverages_withOrder_withValueExtractor_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final String expectedMessage
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(elements, Optional::get, window, order),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
-    void getAverages_withOrder_withValueExtractors_throwsIllegalArgumentException(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final String expectedMessage
-    ) {
-        final List<Candle> candles = new ArrayList<>(values.size());
-        final OffsetDateTime now = OffsetDateTime.now();
-        for (int i = 0; i < values.size(); i++) {
-            final Candle candle = TestDataHelper.createCandleWithOpenPriceAndTime(values.get(i), now.plusMinutes(i));
-            candles.add(candle);
-        }
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(candles, Candle::getOpenPrice, window, order),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withOrder_throwsIllegalArgumentException")
-    void getAverages_withOrder_withoutExtractors_throwsIllegalArgumentException(
+    void getAverages_withOrder_throwsIllegalArgumentException(
             final List<Double> values,
             final int window,
             final int order,
@@ -366,58 +315,7 @@ class SimpleMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withOrderOne_withValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(elements, Optional::get, window, 1);
-
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
-
-        for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withOrder")
-    void getAverages_withOrder_withValueExtractor(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final List<Double> expectedValues
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(elements, Optional::get, window, order);
-
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
-
-        for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
-        }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetAverages_withoutOrder")
-    void getAverages_withOrderOne_withoutValueExtractor(
-            final List<Double> values,
-            final int window,
-            final List<Double> expectedValues
-    ) {
+    void getAverages_withOrderOne(final List<Double> values, final int window, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, 1);
@@ -435,12 +333,7 @@ class SimpleMovingAveragerUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder")
-    void getAverages_withOrder_withoutValueExtractor(
-            final List<Double> values,
-            final int window,
-            final int order,
-            final List<Double> expectedValues
-    ) {
+    void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
