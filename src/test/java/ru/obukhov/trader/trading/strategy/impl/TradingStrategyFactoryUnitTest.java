@@ -69,11 +69,7 @@ class TradingStrategyFactoryUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_givesStrategyProperName")
-    void createStrategy_givesStrategyProperName(
-            final StrategyType strategyType,
-            final Map<String, Object> params,
-            final String expectedName
-    ) {
+    void createStrategy_givesStrategyProperName(final StrategyType strategyType, final Map<String, Object> params, final String expectedName) {
         TradingStrategy strategy = factory.createStrategy(strategyType, params);
 
         Assertions.assertEquals(expectedName, strategy.getName());

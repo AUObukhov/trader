@@ -47,27 +47,19 @@ public class StatisticsController {
 
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(
-                    value = "Start date time of candle search interval",
-                    example = "2019-01-01T00:00:00+03:00",
-                    required = true
-            ) final OffsetDateTime from,
+            @ApiParam(value = "Start date time of candle search interval", example = "2019-01-01T00:00:00+03:00", required = true)
+            final OffsetDateTime from,
 
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(
-                    value = "End date time of candle search interval",
-                    example = "2020-01-01T00:00:00+03:00",
-                    required = true
-            ) final OffsetDateTime to,
+            @ApiParam(value = "End date time of candle search interval", example = "2020-01-01T00:00:00+03:00", required = true)
+            final OffsetDateTime to,
 
             @RequestParam
-            @ApiParam(value = "Candle interval", example = "1min", required = true)
-            final CandleResolution candleResolution,
+            @ApiParam(value = "Candle interval", example = "1min", required = true) final CandleResolution candleResolution,
 
             @RequestParam
-            @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true)
-            final MovingAverageType movingAverageType,
+            @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true) final MovingAverageType movingAverageType,
 
             @RequestParam
             @ApiParam(value = "Window of short-term moving average", example = "50", required = true)
@@ -78,10 +70,8 @@ public class StatisticsController {
             final Integer bigWindow,
 
             @RequestParam(required = false, defaultValue = "false")
-            @ApiParam(
-                    value = "Flag indicating to save the simulation result to a file. Default value is false",
-                    example = "true"
-            ) final boolean saveToFile
+            @ApiParam(value = "Flag indicating to save the simulation result to a file. Default value is false", example = "true")
+            final boolean saveToFile
     ) {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
@@ -116,8 +106,7 @@ public class StatisticsController {
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public GetInstrumentsResponse getInstruments(
-            @ApiParam(value = "Instrument type. If null all instruments are returned", example = "Stock")
-                    InstrumentType instrumentType
+            @ApiParam(value = "Instrument type. If null all instruments are returned", example = "Stock") InstrumentType instrumentType
     ) {
         final List<MarketInstrument> instruments = statisticsService.getInstruments(instrumentType);
 

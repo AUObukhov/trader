@@ -103,8 +103,7 @@ class ExponentialMovingAveragerUnitTest {
     void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(bigDecimalValues, window);
+        final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
@@ -245,8 +244,7 @@ class ExponentialMovingAveragerUnitTest {
     void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
-        final List<BigDecimal> movingAverages =
-                averager.getAverages(bigDecimalValues, window, order);
+        final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);

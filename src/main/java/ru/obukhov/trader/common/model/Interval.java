@@ -167,8 +167,7 @@ public class Interval {
      * @return true if {@code dateTime} is in current interval including extreme values
      */
     public boolean contains(final OffsetDateTime dateTime) {
-        return from != null && to != null
-                && !dateTime.isBefore(from) && !dateTime.isAfter(to);
+        return from != null && to != null && !dateTime.isBefore(from) && !dateTime.isAfter(to);
     }
 
     /**

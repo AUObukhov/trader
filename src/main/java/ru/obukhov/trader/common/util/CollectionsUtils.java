@@ -52,11 +52,7 @@ public class CollectionsUtils {
      * @throws IllegalArgumentException {@code index} is negative or greater then size of list
      * @throws IllegalArgumentException {@code list} is empty
      */
-    public static <T> void insertInterpolated(
-            final List<T> list,
-            final int index,
-            final BinaryOperator<T> interpolator
-    ) {
+    public static <T> void insertInterpolated(final List<T> list, final int index, final BinaryOperator<T> interpolator) {
         Assert.isTrue(index >= 0, "index can't be negative");
         Assert.isTrue(index <= list.size(), "index can't be greater than size of list");
         Assert.isTrue(!list.isEmpty(), "list can't be empty");
@@ -96,11 +92,7 @@ public class CollectionsUtils {
         return false;
     }
 
-    private static <T> boolean containsList(
-            final List<T> list,
-            final List<T> searchedList,
-            final int searchStartPosition
-    ) {
+    private static <T> boolean containsList(final List<T> list, final List<T> searchedList, final int searchStartPosition) {
         for (int j = 0; j < searchedList.size(); j++) {
             if (!Objects.equals(list.get(searchStartPosition + j), searchedList.get(j))) {
                 return false;

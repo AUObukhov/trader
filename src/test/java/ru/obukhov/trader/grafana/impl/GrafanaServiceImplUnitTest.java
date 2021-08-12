@@ -283,12 +283,8 @@ class GrafanaServiceImplUnitTest {
                 TestDataHelper.createCandle(60, 18, 22, 14, from.plusMinutes(8), candleResolution),
                 TestDataHelper.createCandle(30, 18, 22, 14, from.plusMinutes(9), candleResolution)
         );
-        final List<BigDecimal> averages1 = TestDataHelper.createBigDecimalsList(
-                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
-        );
-        final List<BigDecimal> averages2 = TestDataHelper.createBigDecimalsList(
-                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
-        );
+        final List<BigDecimal> averages1 = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> averages2 = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         GetCandlesResponse response = new GetCandlesResponse(candles, averages1, averages2);
         Mockito.when(statisticsService.getExtendedCandles(
                 ticker, interval, candleResolution, movingAverageType, window1, window2

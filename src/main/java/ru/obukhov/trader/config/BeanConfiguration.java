@@ -38,10 +38,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketService realMarketService(
-            final TradingProperties tradingProperties,
-            final TinkoffService realTinkoffService
-    ) {
+    public MarketService realMarketService(final TradingProperties tradingProperties, final TinkoffService realTinkoffService) {
         return new MarketServiceImpl(tradingProperties, realTinkoffService);
     }
 
@@ -57,10 +54,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public OrdersService realOrdersService(
-            final TinkoffService realTinkoffService,
-            final MarketService realMarketService
-    ) {
+    public OrdersService realOrdersService(final TinkoffService realTinkoffService, final MarketService realMarketService) {
         return new OrdersServiceImpl(realTinkoffService, realMarketService);
     }
 
@@ -70,10 +64,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public StatisticsService statisticsService(
-            final MarketService realMarketService,
-            final MovingAverager simpleMovingAverager
-    ) {
+    public StatisticsService statisticsService(final MarketService realMarketService, final MovingAverager simpleMovingAverager) {
         return new StatisticsServiceImpl(realMarketService);
     }
 

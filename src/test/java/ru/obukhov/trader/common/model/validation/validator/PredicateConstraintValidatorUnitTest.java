@@ -41,14 +41,14 @@ class PredicateConstraintValidatorUnitTest {
     private ConstraintValidatorContext createValidationContext() {
         final PredicateConstraint annotation = TestClass.class.getAnnotation(PredicateConstraint.class);
 
-        final ConstraintAnnotationDescriptor<PredicateConstraint> constraintAnnotationDescriptor =
-                new ConstraintAnnotationDescriptor<>(annotation);
+        final ConstraintAnnotationDescriptor<PredicateConstraint> constraintAnnotationDescriptor = new ConstraintAnnotationDescriptor<>(annotation);
 
         final ConstraintDescriptor<PredicateConstraint> constraintDescriptor = new ConstraintDescriptorImpl<>(
                 ConstraintHelper.forAllBuiltinConstraints(),
                 null,
                 constraintAnnotationDescriptor,
-                ConstraintLocation.ConstraintLocationKind.TYPE);
+                ConstraintLocation.ConstraintLocationKind.TYPE
+        );
 
         return new ConstraintValidatorContextImpl(
                 null,

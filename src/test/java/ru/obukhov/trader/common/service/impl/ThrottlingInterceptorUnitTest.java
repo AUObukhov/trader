@@ -40,9 +40,7 @@ class ThrottlingInterceptorUnitTest {
     void intercept_throwsIllegalStateException_whenAttemptsCountExceeds() throws IOException {
         Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
-        final List<UrlLimit> limits = List.of(
-                new UrlLimit(List.of("orders", "market-order"), 50)
-        );
+        final List<UrlLimit> limits = List.of(new UrlLimit(List.of("orders", "market-order"), 50));
         final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties(
                 1000,
                 limits,
@@ -68,9 +66,7 @@ class ThrottlingInterceptorUnitTest {
 
         Mockito.when(url.pathSegments()).thenReturn(List.of("orders", "market-order"));
 
-        final List<UrlLimit> limits = List.of(
-                new UrlLimit(List.of("orders", "market-order"), 50)
-        );
+        final List<UrlLimit> limits = List.of(new UrlLimit(List.of("orders", "market-order"), 50));
         final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties(
                 1000,
                 limits,
@@ -95,9 +91,7 @@ class ThrottlingInterceptorUnitTest {
 
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
-        final List<UrlLimit> limits = List.of(
-                new UrlLimit(List.of("market"), 120)
-        );
+        final List<UrlLimit> limits = List.of(new UrlLimit(List.of("market"), 120));
         final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties(
                 1000,
                 limits,
@@ -192,9 +186,7 @@ class ThrottlingInterceptorUnitTest {
 
         Mockito.when(url.pathSegments()).thenReturn(List.of("openapi", "market", "candles"));
 
-        final List<UrlLimit> limits = List.of(
-                new UrlLimit(List.of("portfolio"), 120)
-        );
+        final List<UrlLimit> limits = List.of(new UrlLimit(List.of("portfolio"), 120));
         final QueryThrottleProperties queryThrottleProperties = new QueryThrottleProperties(
                 1000,
                 limits,

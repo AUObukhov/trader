@@ -214,11 +214,7 @@ public class TestDataHelper {
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(
-            final double averagePositionPrice,
-            final int positionLotsCount,
-            final double currentPrice
-    ) {
+    public static DecisionData createDecisionData(final double averagePositionPrice, final int positionLotsCount, final double currentPrice) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(averagePositionPrice, positionLotsCount));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
@@ -318,11 +314,7 @@ public class TestDataHelper {
                 .balance(DecimalUtils.setDefaultScale(balance));
     }
 
-    public static CurrencyPosition createCurrencyPosition(
-            final Currency currency,
-            final long balance,
-            final long blocked
-    ) {
+    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance, final long blocked) {
         return new CurrencyPosition()
                 .currency(currency)
                 .balance(DecimalUtils.setDefaultScale(balance))
@@ -335,9 +327,7 @@ public class TestDataHelper {
                 .value(BigDecimal.valueOf(value));
     }
 
-    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(
-            final MarketInstrument... instruments
-    ) {
+    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(final MarketInstrument... instruments) {
         final List<MarketInstrument> instrumentList = List.of(instruments);
         final MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
@@ -399,10 +389,7 @@ public class TestDataHelper {
         );
     }
 
-    public static MockedStatic<MovingAverager> mockAveragerByType(
-            final MovingAverageType movingAverageType,
-            final MovingAverager averager
-    ) {
+    public static MockedStatic<MovingAverager> mockAveragerByType(final MovingAverageType movingAverageType, final MovingAverager averager) {
         final MockedStatic<MovingAverager> movingAveragerStaticMock =
                 Mockito.mockStatic(MovingAverager.class, Mockito.CALLS_REAL_METHODS);
         movingAveragerStaticMock.when(() -> MovingAverager.getByType(movingAverageType)).thenReturn(averager);

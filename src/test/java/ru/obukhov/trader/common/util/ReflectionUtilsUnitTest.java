@@ -31,7 +31,8 @@ class ReflectionUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> ReflectionUtils.getFieldValueByReadMethod(container, "notExistingField"),
                 IntrospectionException.class,
-                "Method not found: isNotExistingField");
+                "Method not found: isNotExistingField"
+        );
     }
 
     @Test
@@ -43,7 +44,8 @@ class ReflectionUtilsUnitTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> ReflectionUtils.getFieldValueByReadMethod(container, "fieldWithoutReadMethod"),
                 IntrospectionException.class,
-                "Method not found: isFieldWithoutReadMethod");
+                "Method not found: isFieldWithoutReadMethod"
+        );
     }
 
     @AllArgsConstructor

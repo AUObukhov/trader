@@ -38,32 +38,17 @@ public class TradingStrategyFactory {
     }
 
     @NotNull
-    private ConservativeStrategy createConservativeStrategy(
-            final String name,
-            final Map<String, Object> strategyParams
-    ) {
-        final TradingStrategyParams tradingStrategyParams = getStrategyParams(
-                strategyParams,
-                TradingStrategyParams.class
-        );
+    private ConservativeStrategy createConservativeStrategy(final String name, final Map<String, Object> strategyParams) {
+        final TradingStrategyParams tradingStrategyParams = getStrategyParams(strategyParams, TradingStrategyParams.class);
         return new ConservativeStrategy(name, tradingStrategyParams, tradingProperties);
     }
 
-    private GoldenCrossStrategy createGoldenCrossStrategy(
-            final String name,
-            final Map<String, Object> strategyParams
-    ) {
-        final GoldenCrossStrategyParams goldenCrossStrategyParams = getStrategyParams(
-                strategyParams,
-                GoldenCrossStrategyParams.class
-        );
+    private GoldenCrossStrategy createGoldenCrossStrategy(final String name, final Map<String, Object> strategyParams) {
+        final GoldenCrossStrategyParams goldenCrossStrategyParams = getStrategyParams(strategyParams, GoldenCrossStrategyParams.class);
         return new GoldenCrossStrategy(name, goldenCrossStrategyParams, tradingProperties);
     }
 
-    private <T extends TradingStrategyParams> T getStrategyParams(
-            final Map<String, Object> params,
-            final Class<T> type
-    ) {
+    private <T extends TradingStrategyParams> T getStrategyParams(final Map<String, Object> params, final Class<T> type) {
         final T strategyParams = mapper.convertValue(params, type);
         validate(strategyParams);
         return strategyParams;

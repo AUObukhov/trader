@@ -208,7 +208,6 @@ class MarketServiceImplUnitTest {
                 .add(3, DateUtils.getDateTime(2018, 1, 1, 1, 0, 0))
                 .add(4, DateUtils.getDateTime(2018, 1, 1, 1, 0, 0))
                 .add(5, DateUtils.getDateTime(2019, 1, 1, 1, 0, 0))
-
                 .mock();
 
         final Interval interval = Interval.of(
@@ -246,8 +245,7 @@ class MarketServiceImplUnitTest {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(now);
 
         final String ticker = "ticker";
-        final OffsetDateTime from = DateUtils.getLastWorkDay(now)
-                .minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
+        final OffsetDateTime from = DateUtils.getLastWorkDay(now).minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime to = from.plusDays(1);
 
         new CandleMocker(tinkoffService, ticker, CandleResolution._1MIN)
@@ -266,8 +264,7 @@ class MarketServiceImplUnitTest {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final String ticker = "ticker";
-        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now()
-                .minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit());
+        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now().minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit());
         final int openPrice = 10;
 
         new CandleMocker(tinkoffService, ticker, CandleResolution._1MIN)
@@ -421,9 +418,8 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDateTime(2020, 9, 10, 1, 0, 0))
                 .mock();
 
-        final OffsetDateTime currentDateTime =
-                DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 10))
-                        .plusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
+        final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 10))
+                .plusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
@@ -446,9 +442,8 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDateTime(2020, 9, 11, 1, 0, 0))
                 .mock();
 
-        final OffsetDateTime currentDateTime =
-                DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 11))
-                        .plusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit());
+        final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 11))
+                .plusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit());
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
@@ -468,8 +463,7 @@ class MarketServiceImplUnitTest {
         final String ticker = "ticker";
         final int limit = 5;
 
-        final OffsetDateTime currentDateTime =
-                DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 10));
+        final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateUtils.getDate(2020, 9, 10));
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, CandleResolution.DAY);
@@ -492,8 +486,7 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDate(2020, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateUtils.getDate(2020, 9, 15));
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
@@ -520,8 +513,7 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDate(2020, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateUtils.getDate(2020, 9, 15));
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
@@ -549,8 +541,7 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDate(2019, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateUtils.getDate(2020, 9, 10));
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 10));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
@@ -578,8 +569,7 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDate(2018, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateUtils.getDate(2020, 9, 10));
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 10));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
@@ -601,8 +591,7 @@ class MarketServiceImplUnitTest {
                 .add(6, DateUtils.getDate(2020, 9, 12))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateUtils.getDate(2020, 9, 15));
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 

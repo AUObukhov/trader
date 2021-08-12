@@ -26,10 +26,7 @@ public abstract class MovingAverager {
      * @return Instance of MovingAverager with given {@code type} of moving average
      */
     public static MovingAverager getByType(final MovingAverageType type) {
-        Assert.isTrue(
-                INSTANCES.containsKey(type),
-                "Not found MovingAverager instance for " + type
-        );
+        Assert.isTrue(INSTANCES.containsKey(type), "Not found MovingAverager instance for " + type);
         return INSTANCES.get(type);
     }
 

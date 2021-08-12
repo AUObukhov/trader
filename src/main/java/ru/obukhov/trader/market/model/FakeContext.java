@@ -53,8 +53,7 @@ public class FakeContext {
     }
 
     public Map<Currency, BigDecimal> getBalances() {
-        return Stream.of(Currency.values())
-                .collect(Collectors.toMap(currency -> currency, this::getBalance));
+        return Stream.of(Currency.values()).collect(Collectors.toMap(currency -> currency, this::getBalance));
     }
 
     public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final Currency currency) {

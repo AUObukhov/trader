@@ -87,10 +87,7 @@ class GoldenCrossStrategyUnitTest {
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
@@ -109,10 +106,7 @@ class GoldenCrossStrategyUnitTest {
 
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -132,10 +126,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
@@ -156,10 +147,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
@@ -179,10 +167,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -202,10 +187,7 @@ class GoldenCrossStrategyUnitTest {
         final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
         data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
 
-        try (
-                final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                        mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)
-        ) {
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
@@ -219,9 +201,8 @@ class GoldenCrossStrategyUnitTest {
         final MockedStatic<TrendUtils> trendUtilsStaticMock =
                 Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
 
-        trendUtilsStaticMock.when(
-                () -> TrendUtils.getCrossoverIfLast(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt())
-        ).thenReturn(crossover);
+        trendUtilsStaticMock.when(() -> TrendUtils.getCrossoverIfLast(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt()))
+                .thenReturn(crossover);
 
         return trendUtilsStaticMock;
     }

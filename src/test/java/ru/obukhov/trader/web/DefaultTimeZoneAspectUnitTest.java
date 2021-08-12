@@ -100,12 +100,10 @@ class DefaultTimeZoneAspectUnitTest {
 
         @Override
         public void setArguments(@NotNull Object... arguments) {
-
         }
 
         @Override
         public void setUserAttribute(@NotNull String key, Object value) {
-
         }
 
         @Override

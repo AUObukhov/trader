@@ -107,7 +107,8 @@ public class FakeTinkoffService implements TinkoffService {
         final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(
                 fakeContext.getCurrentDateTime(),
                 tradingProperties.getWorkStartTime(),
-                tradingProperties.getWorkDuration());
+                tradingProperties.getWorkDuration()
+        );
         fakeContext.setCurrentDateTime(nextWorkMinute);
 
         return nextWorkMinute;
@@ -141,11 +142,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleResolution candleResolution
-    ) {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         return realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
     }
 
@@ -262,11 +259,7 @@ public class FakeTinkoffService implements TinkoffService {
                 StringUtils.EMPTY);
     }
 
-    private PortfolioPosition addValuesToPosition(
-            final PortfolioPosition existingPosition,
-            final int lotsCount,
-            final BigDecimal totalPrice
-    ) {
+    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int lotsCount, final BigDecimal totalPrice) {
         final BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
         final int newLotsCount = existingPosition.getLotsCount() + lotsCount;
         final BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);

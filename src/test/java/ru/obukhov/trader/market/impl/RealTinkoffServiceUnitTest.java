@@ -83,8 +83,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketStocks_returnsStocks() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketStocks())
-                .thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketStocks()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketStocks();
 
@@ -97,8 +96,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketBonds_returnsBonds() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketBonds())
-                .thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketBonds()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketBonds();
 
@@ -111,8 +109,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketEtfs_returnsEtfs() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketEtfs())
-                .thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketEtfs()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketEtfs();
 
@@ -125,8 +122,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketCurrencies_returnsCurrencies() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketCurrencies())
-                .thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketCurrencies()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketCurrencies();
 
@@ -147,8 +143,7 @@ class RealTinkoffServiceUnitTest {
 
         final Orderbook orderbook = new Orderbook();
         final Optional<Orderbook> optionalOrderbook = Optional.of(orderbook);
-        Mockito.when(marketContext.getMarketOrderbook(figi, depth))
-                .thenReturn(CompletableFuture.completedFuture(optionalOrderbook));
+        Mockito.when(marketContext.getMarketOrderbook(figi, depth)).thenReturn(CompletableFuture.completedFuture(optionalOrderbook));
 
         final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
         Assertions.assertSame(orderbook, result);
@@ -162,8 +157,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
-        Mockito.when(marketContext.getMarketOrderbook(figi, depth))
-                .thenReturn(CompletableFuture.completedFuture(Optional.empty()));
+        Mockito.when(marketContext.getMarketOrderbook(figi, depth)).thenReturn(CompletableFuture.completedFuture(Optional.empty()));
 
         final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
         Assertions.assertNull(result);
@@ -201,8 +195,7 @@ class RealTinkoffServiceUnitTest {
         );
         final Candles tinkoffCandles = new Candles().candles(List.of(tinkoffCandle1, tinkoffCandle2));
         final Optional<Candles> optionalCandles = Optional.of(tinkoffCandles);
-        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution))
-                .thenReturn(CompletableFuture.completedFuture(optionalCandles));
+        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution)).thenReturn(CompletableFuture.completedFuture(optionalCandles));
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
 
@@ -223,8 +216,7 @@ class RealTinkoffServiceUnitTest {
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
         final Optional<Candles> optionalCandles = Optional.of(new Candles());
-        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution))
-                .thenReturn(CompletableFuture.completedFuture(optionalCandles));
+        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution)).thenReturn(CompletableFuture.completedFuture(optionalCandles));
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
 
@@ -281,8 +273,7 @@ class RealTinkoffServiceUnitTest {
         final Operation operation1 = new Operation();
         final Operation operation2 = new Operation();
         final Operations operations = new Operations().operations(List.of(operation1, operation2));
-        Mockito.when(operationsContext.getOperations(from, to, figi, null))
-                .thenReturn(CompletableFuture.completedFuture(operations));
+        Mockito.when(operationsContext.getOperations(from, to, figi, null)).thenReturn(CompletableFuture.completedFuture(operations));
 
         final List<Operation> result = realTinkoffService.getOperations(Interval.of(from, to), ticker);
 
@@ -313,8 +304,7 @@ class RealTinkoffServiceUnitTest {
         final LimitOrderRequest orderRequest = new LimitOrderRequest();
 
         final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
-        Mockito.when(ordersContext.placeLimitOrder(figi, orderRequest, null))
-                .thenReturn(CompletableFuture.completedFuture(placedOrder));
+        Mockito.when(ordersContext.placeLimitOrder(figi, orderRequest, null)).thenReturn(CompletableFuture.completedFuture(placedOrder));
         final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
@@ -378,8 +368,7 @@ class RealTinkoffServiceUnitTest {
                         .averagePositionPriceNoNkd(TestDataHelper.createMoneyAmount(Currency.RUB, 440))
                         .name("name2");
         final Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
-        Mockito.when(portfolioContext.getPortfolio(null))
-                .thenReturn(CompletableFuture.completedFuture(portfolio));
+        Mockito.when(portfolioContext.getPortfolio(null)).thenReturn(CompletableFuture.completedFuture(portfolio));
 
         final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions();
 
@@ -400,8 +389,7 @@ class RealTinkoffServiceUnitTest {
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(null);
         final Currencies currencies = new Currencies().currencies(List.of(currency1, currency2));
-        Mockito.when(portfolioContext.getPortfolioCurrencies(null))
-                .thenReturn(CompletableFuture.completedFuture(currencies));
+        Mockito.when(portfolioContext.getPortfolioCurrencies(null)).thenReturn(CompletableFuture.completedFuture(currencies));
 
         final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies();
 

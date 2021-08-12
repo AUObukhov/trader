@@ -19,7 +19,11 @@ class CandleMapperUnitTest {
     @Test
     void mapsSingleCandleFields() {
         final ru.tinkoff.invest.openapi.model.rest.Candle source = TestDataHelper.createTinkoffCandle(
-                100, 200, 1000, 50);
+                100,
+                200,
+                1000,
+                50
+        );
 
         final Candle result = candleMapper.map(source);
 
@@ -33,7 +37,11 @@ class CandleMapperUnitTest {
     @Test
     void updatesOffset() {
         final ru.tinkoff.invest.openapi.model.rest.Candle source = TestDataHelper.createTinkoffCandle(
-                CandleResolution.DAY, 0, 0, 0, 0
+                CandleResolution.DAY,
+                0,
+                0,
+                0,
+                0
         );
 
         final Candle result = candleMapper.map(source);
@@ -44,11 +52,17 @@ class CandleMapperUnitTest {
     @Test
     void mapsMultipleCandles() {
         final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestDataHelper.createTinkoffCandle(
-                100, 200, 1000, 50
+                100,
+                200,
+                1000,
+                50
         );
 
         final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestDataHelper.createTinkoffCandle(
-                200, 400, 2000, 100
+                200,
+                400,
+                2000,
+                100
         );
 
         final List<ru.tinkoff.invest.openapi.model.rest.Candle> candles = List.of(tinkoffCandle1, tinkoffCandle2);

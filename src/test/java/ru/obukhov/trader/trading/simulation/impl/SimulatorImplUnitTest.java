@@ -51,10 +51,7 @@ class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final TradingConfig CONSERVATIVE_BOT_CONFIG = new TradingConfig(
-            CandleResolution._1MIN,
-            StrategyType.CONSERVATIVE
-    );
+    private static final TradingConfig CONSERVATIVE_BOT_CONFIG = new TradingConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
             StringUtils.EMPTY,
             new TradingStrategyParams(0.1f),
@@ -111,11 +108,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
@@ -123,9 +116,7 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = from.plusDays(1);
         final Interval interval = Interval.of(from, to);
 
-        final String expectedMessagePattern = String.format(
-                "^'from' \\(%1$s\\) can't be in future. Now is %1$s$",
-                DATE_TIME_REGEX_PATTERN);
+        final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
                 () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
@@ -140,11 +131,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = Collections.emptyList();
 
@@ -152,10 +139,7 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = from.plusDays(2);
         final Interval interval = Interval.of(from, to);
 
-        final String expectedMessagePattern = String.format(
-                "^'to' \\(%1$s\\) can't be in future. Now is %1$s$",
-                DATE_TIME_REGEX_PATTERN
-        );
+        final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
                 () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
@@ -179,11 +163,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -193,13 +173,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -219,8 +193,8 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedError = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' " +
-                        "with ticker '%1$s' failed with error: Not found instrument for ticker '%1$s'",
+                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' with ticker '%1$s' failed with error: " +
+                        "Not found instrument for ticker '%1$s'",
                 ticker
         );
         Assertions.assertEquals(expectedError, simulationResult.getError());
@@ -244,11 +218,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -287,13 +257,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -340,11 +304,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -383,13 +343,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -424,11 +378,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -465,13 +415,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -507,11 +451,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -547,13 +487,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -592,11 +526,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                null,
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -630,13 +560,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -677,11 +601,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                null,
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -699,13 +619,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -739,11 +653,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                null,
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -762,13 +672,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -802,11 +706,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -829,13 +729,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                true
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, true);
 
         // assert
 
@@ -865,11 +759,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -892,13 +782,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -928,11 +812,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -942,13 +822,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                false
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
 
         // assert
 
@@ -957,8 +831,7 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         String expectedErrorMessage = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' " +
-                        "with ticker '%s' failed with error: %s",
+                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' with ticker '%s' failed with error: %s",
                 ticker, mockedExceptionMessage
         );
         Assertions.assertEquals(expectedErrorMessage, simulationResult.getError());
@@ -982,11 +855,7 @@ class SimulatorImplUnitTest {
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.valueOf(10000),
-                BigDecimal.valueOf(1000),
-                BALANCE_INCREMENT_CRON
-        );
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
@@ -1012,13 +881,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(
-                ticker,
-                balanceConfig,
-                tradingConfigs,
-                interval,
-                true
-        );
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, true);
 
         // assert
 
@@ -1030,10 +893,7 @@ class SimulatorImplUnitTest {
     }
 
     private void mockStrategy(TradingConfig tradingConfig, TradingStrategy strategy) {
-        Mockito.when(strategyFactory.createStrategy(
-                tradingConfig.getStrategyType(),
-                tradingConfig.getStrategyParams()
-        )).thenReturn(strategy);
+        Mockito.when(strategyFactory.createStrategy(tradingConfig.getStrategyType(), tradingConfig.getStrategyParams())).thenReturn(strategy);
     }
 
     private FakeBot createFakeBotMock(String botName) {
@@ -1060,8 +920,7 @@ class SimulatorImplUnitTest {
     }
 
     private void mockPortfolioPositions(PortfolioPosition... portfolioPositions) {
-        Mockito.when(fakeTinkoffService.getPortfolioPositions())
-                .thenReturn(List.of(portfolioPositions));
+        Mockito.when(fakeTinkoffService.getPortfolioPositions()).thenReturn(List.of(portfolioPositions));
     }
 
     // endregion

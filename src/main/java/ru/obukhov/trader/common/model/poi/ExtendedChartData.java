@@ -49,8 +49,7 @@ public class ExtendedChartData {
             final MarkerProperties markerProperties,
             final Color seriesColor
     ) {
-        final XDDFLineChartData.Series series =
-                (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
+        final XDDFLineChartData.Series series = (XDDFLineChartData.Series) delegate.addSeries(categoryDataSource, numericalDataSource);
         setMarkerProperties(series, markerProperties);
         setSeriesColor(series, seriesColor);
     }

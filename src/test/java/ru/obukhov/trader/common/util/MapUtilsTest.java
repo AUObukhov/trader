@@ -18,7 +18,8 @@ class MapUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MapUtils.getRequiredString(map, "key"),
                 IllegalArgumentException.class,
-                "\"key\" is mandatory");
+                "\"key\" is mandatory"
+        );
     }
 
     @Test
@@ -41,7 +42,8 @@ class MapUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MapUtils.getNotBlankString(map, "key"),
                 IllegalArgumentException.class,
-                "\"key\" must be not blank");
+                "\"key\" must be not blank"
+        );
     }
 
     @Test
@@ -51,7 +53,8 @@ class MapUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MapUtils.getNotBlankString(map, "key1"),
                 IllegalArgumentException.class,
-                "\"key1\" must be not blank");
+                "\"key1\" must be not blank"
+        );
     }
 
     @Test
@@ -61,7 +64,8 @@ class MapUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MapUtils.getNotBlankString(map, "key1"),
                 IllegalArgumentException.class,
-                "\"key1\" must be not blank");
+                "\"key1\" must be not blank"
+        );
     }
 
     @Test
@@ -84,7 +88,8 @@ class MapUtilsTest {
         AssertUtils.assertThrowsWithMessage(
                 () -> MapUtils.getRequiredInteger(map, "key"),
                 IllegalArgumentException.class,
-                "\"key\" is mandatory");
+                "\"key\" is mandatory"
+        );
     }
 
     @Test

@@ -87,11 +87,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleResolution candleResolution
-    ) {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         final List<Candle> candles = getMarketContext()
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleResolution)

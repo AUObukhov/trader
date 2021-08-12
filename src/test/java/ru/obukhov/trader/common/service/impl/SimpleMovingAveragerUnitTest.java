@@ -122,10 +122,7 @@ class SimpleMovingAveragerUnitTest {
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
+            Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
         }
     }
 
@@ -324,10 +321,7 @@ class SimpleMovingAveragerUnitTest {
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
+            Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
         }
     }
 
@@ -342,10 +336,7 @@ class SimpleMovingAveragerUnitTest {
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
-            Assertions.assertTrue(
-                    DecimalUtils.DEFAULT_SCALE >= average.scale(),
-                    "expected default scale for all averages"
-            );
+            Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
         }
     }
 

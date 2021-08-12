@@ -42,17 +42,12 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     @NotNull
-    public DecisionData processTicker(
-            final String ticker,
-            final OffsetDateTime previousStartTime,
-            final OffsetDateTime now
-    ) {
+    public DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
         final DecisionData decisionData = new DecisionData();
 
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles =
-                    marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, candleResolution);
+            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, candleResolution);
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {

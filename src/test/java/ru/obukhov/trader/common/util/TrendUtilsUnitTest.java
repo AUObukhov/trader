@@ -311,10 +311,7 @@ class TrendUtilsUnitTest {
                 startTime.plusMinutes(8),
                 startTime.plusMinutes(9)
         );
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(
-                10.0, 15.0, 14.0, 11.0, 12.0,
-                13.0, 14.0, 14.0, 12.0, 16.0
-        );
+        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 15.0, 14.0, 11.0, 12.0, 13.0, 14.0, 14.0, 12.0, 16.0);
         final List<Integer> localExtremes = List.of(0, 3, 8);
 
         final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
@@ -402,11 +399,7 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetCrossovers")
-    void getCrossovers(
-            final List<BigDecimal> values1,
-            final List<BigDecimal> values2,
-            final List<Integer> expectedCrossovers
-    ) {
+    void getCrossovers(final List<BigDecimal> values1, final List<BigDecimal> values2, final List<Integer> expectedCrossovers) {
         final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
         AssertUtils.assertListsAreEqual(expectedCrossovers, crossovers);

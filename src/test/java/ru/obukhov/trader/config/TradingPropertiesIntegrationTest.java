@@ -54,10 +54,7 @@ class TradingPropertiesIntegrationTest {
                         "trading.consecutive-empty-days-limit: 5",
                         "trading.start-date: 2000-01-01T00:00:00+03:00"
                 )
-                .run(context -> assertContextStartupFailed(
-                        context,
-                        "trading.token", "не должно быть пустым"
-                ));
+                .run(context -> assertContextStartupFailed(context, "trading.token", "не должно быть пустым"));
     }
 
     @Test
@@ -71,10 +68,7 @@ class TradingPropertiesIntegrationTest {
                         "trading.consecutive-empty-days-limit: 5",
                         "trading.start-date: 2000-01-01T00:00:00+03:00"
                 )
-                .run(context -> assertContextStartupFailed(
-                        context,
-                        "trading.workStartTime", "не должно равняться null"
-                ));
+                .run(context -> assertContextStartupFailed(context, "trading.workStartTime", "не должно равняться null"));
     }
 
     @Test
@@ -88,10 +82,7 @@ class TradingPropertiesIntegrationTest {
                         "trading.consecutive-empty-days-limit: 5",
                         "trading.start-date: 2000-01-01T00:00:00+03:00"
                 )
-                .run(context -> assertContextStartupFailed(
-                        context,
-                        "trading.workDuration", "не должно равняться null"
-                ));
+                .run(context -> assertContextStartupFailed(context, "trading.workDuration", "не должно равняться null"));
     }
 
     @Test
@@ -105,10 +96,7 @@ class TradingPropertiesIntegrationTest {
                         "trading.work-duration: 480",
                         "trading.start-date: 2000-01-01T00:00:00+03:00"
                 )
-                .run(context -> assertContextStartupFailed(
-                        context,
-                        "trading.consecutiveEmptyDaysLimit", "не должно равняться null"
-                ));
+                .run(context -> assertContextStartupFailed(context, "trading.consecutiveEmptyDaysLimit", "не должно равняться null"));
     }
 
     @Test
@@ -122,16 +110,10 @@ class TradingPropertiesIntegrationTest {
                         "trading.work-duration: 480",
                         "trading.consecutive-empty-days-limit: 5"
                 )
-                .run(context -> assertContextStartupFailed(
-                        context,
-                        "trading.startDate", "не должно равняться null"
-                ));
+                .run(context -> assertContextStartupFailed(context, "trading.startDate", "не должно равняться null"));
     }
 
-    private void assertContextStartupFailed(
-            final AssertableApplicationContext context,
-            final String... messageSubstrings
-    ) {
+    private void assertContextStartupFailed(final AssertableApplicationContext context, final String... messageSubstrings) {
         final Throwable startupFailure = context.getStartupFailure();
 
         Assertions.assertNotNull(startupFailure);
@@ -143,8 +125,7 @@ class TradingPropertiesIntegrationTest {
     }
 
     private String getBindValidationExceptionMessage(final Throwable startupFailure) {
-        final BindValidationException bindValidationException =
-                (BindValidationException) startupFailure.getCause().getCause();
+        final BindValidationException bindValidationException = (BindValidationException) startupFailure.getCause().getCause();
         return bindValidationException.getMessage();
     }
 

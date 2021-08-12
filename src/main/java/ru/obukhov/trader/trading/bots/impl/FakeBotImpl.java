@@ -26,15 +26,7 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
             final CandleResolution candleResolution,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        super(
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                strategy,
-                strategy.initCache(),
-                candleResolution
-        );
+        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache(), candleResolution);
 
         this.fakeTinkoffService = fakeTinkoffService;
     }

@@ -108,11 +108,7 @@ public class GrafanaServiceImpl implements GrafanaService {
         return MovingAverageType.from(movingAverageType);
     }
 
-    private QueryResult getCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleResolution candleResolution
-    ) {
+    private QueryResult getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         final QueryTableResult queryResult = new QueryTableResult();
         queryResult.setColumns(CANDLES_COLUMNS);
 
@@ -158,11 +154,7 @@ public class GrafanaServiceImpl implements GrafanaService {
         return List.of(valuesAndAveragesResult);
     }
 
-    private List<Column> getExtendedCandlesColumns(
-            final MovingAverageType movingAverageType,
-            final Integer window1,
-            final Integer window2
-    ) {
+    private List<Column> getExtendedCandlesColumns(final MovingAverageType movingAverageType, final Integer window1, final Integer window2) {
         return List.of(
                 new Column("time", ColumnType.TIME),
                 new Column("open price", ColumnType.NUMBER),

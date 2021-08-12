@@ -35,11 +35,7 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @return list of found candles
      */
     @Override
-    public List<Candle> getCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleResolution candleResolution
-    ) {
+    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         return marketService.getCandles(ticker, interval, candleResolution);
     }
 

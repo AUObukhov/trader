@@ -20,8 +20,7 @@ public class PredicateConstraintValidator implements ConstraintValidator<Predica
     public boolean isValid(final Object value, final ConstraintValidatorContext context) {
         final ConstraintValidatorContextImpl contextImpl = (ConstraintValidatorContextImpl) context;
         final Map<String, Object> attributes = contextImpl.getConstraintDescriptor().getAttributes();
-        final Class<? extends Predicate<Object>> predicateClass =
-                (Class<? extends Predicate<Object>>) attributes.get("predicate");
+        final Class<? extends Predicate<Object>> predicateClass = (Class<? extends Predicate<Object>>) attributes.get("predicate");
         final Constructor<? extends Predicate<Object>> constructor = predicateClass.getDeclaredConstructor();
         constructor.trySetAccessible();
 

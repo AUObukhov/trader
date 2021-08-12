@@ -32,15 +32,7 @@ public class ScheduledBot extends AbstractBot {
             final ScheduledBotProperties scheduledBotProperties,
             final TradingProperties tradingProperties
     ) {
-        super(
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                strategy,
-                strategy.initCache(),
-                candleResolution
-        );
+        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache(), candleResolution);
 
         this.scheduledBotProperties = scheduledBotProperties;
         this.tradingProperties = tradingProperties;

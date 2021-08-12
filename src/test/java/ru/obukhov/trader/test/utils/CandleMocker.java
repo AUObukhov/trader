@@ -62,11 +62,7 @@ public class CandleMocker {
     }
 
     public void mock() {
-        Mockito.when(tinkoffService.getMarketCandles(
-                Mockito.eq(ticker),
-                Mockito.any(Interval.class),
-                Mockito.eq(candleResolution)
-        )).then(answer);
+        Mockito.when(tinkoffService.getMarketCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution))).then(answer);
     }
 
 }

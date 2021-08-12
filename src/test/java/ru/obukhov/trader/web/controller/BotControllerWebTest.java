@@ -69,10 +69,7 @@ class BotControllerWebTest extends ControllerWebTest {
 
     @Test
     void simulate_returnsBadRequest_whenFromIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_fromIsNull.json",
-                "from is mandatory"
-        );
+        simulate_returnsBadRequest_withError("SimulateRequest/SimulateRequest_fromIsNull.json", "from is mandatory");
     }
 
     @Test
@@ -115,8 +112,7 @@ class BotControllerWebTest extends ControllerWebTest {
         );
     }
 
-    private void simulate_returnsBadRequest_withError(String simulateRequestResource, String expectedError)
-            throws Exception {
+    private void simulate_returnsBadRequest_withError(String simulateRequestResource, String expectedError) throws Exception {
         final String requestString = ResourceUtils.getTestDataAsString(simulateRequestResource);
 
         assertBadRequestError("/trader/bot/simulate", requestString, expectedError);
@@ -141,9 +137,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 1,
                 BigDecimal.valueOf(300)
         );
-        final Candle candle = TestDataHelper.createCandle(
-                10000, 20000, 30000, 5000, from, CandleResolution.DAY
-        );
+        final Candle candle = TestDataHelper.createCandle(10000, 20000, 30000, 5000, from, CandleResolution.DAY);
 
         final BalanceConfig balanceConfig = new BalanceConfig(
                 BigDecimal.valueOf(1000),
@@ -239,11 +233,8 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("SimulateResponse.json");
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/trader/bot/simulate")
-                        .content(request)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate").content(request).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
     }
@@ -254,10 +245,8 @@ class BotControllerWebTest extends ControllerWebTest {
     void enableScheduling_enablesScheduling() throws Exception {
         scheduledBotProperties.setEnabled(false);
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/trader/bot/enable")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         Assertions.assertTrue(scheduledBotProperties.isEnabled());
     }
@@ -266,10 +255,8 @@ class BotControllerWebTest extends ControllerWebTest {
     void disableScheduling_disablesScheduling() throws Exception {
         scheduledBotProperties.setEnabled(true);
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/trader/bot/disable")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         Assertions.assertFalse(scheduledBotProperties.isEnabled());
     }
@@ -282,11 +269,8 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final String tickers = ResourceUtils.getTestDataAsString("SetTickersRequest.json");
 
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/trader/bot/tickers")
-                        .content(tickers)
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers").content(tickers).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         final Set<String> tickersList = scheduledBotProperties.getTickers();
         Assertions.assertEquals(3, tickersList.size());

@@ -20,21 +20,11 @@ import java.util.Map;
 public class TradingConfig {
 
     @NotNull(message = "candleResolution is mandatory")
-    @ApiModelProperty(
-            value = "Candle interval",
-            example = "1min",
-            required = true,
-            position = 1
-    )
+    @ApiModelProperty(value = "Candle interval", example = "1min", required = true, position = 1)
     private CandleResolution candleResolution;
 
     @NotNull(message = "strategyType is mandatory")
-    @ApiModelProperty(
-            value = "Trading strategy type",
-            example = "goldenCross",
-            required = true,
-            position = 2
-    )
+    @ApiModelProperty(value = "Trading strategy type", example = "goldenCross", required = true, position = 2)
     private StrategyType strategyType;
 
     @ApiModelProperty(

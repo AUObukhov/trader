@@ -16,8 +16,7 @@ class MoneyAmountMapperUnitTest {
 
     @Test
     void mapsTinkoffToCustom() {
-        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source =
-                TestDataHelper.createMoneyAmount(Currency.RUB, 100);
+        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source = TestDataHelper.createMoneyAmount(Currency.RUB, 100);
 
         final MoneyAmount target = mapper.map(source);
 

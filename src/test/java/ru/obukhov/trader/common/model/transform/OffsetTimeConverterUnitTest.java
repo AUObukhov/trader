@@ -14,8 +14,7 @@ class OffsetTimeConverterUnitTest {
     void convert() {
         final OffsetTime offsetTime = converter.convert("10:15:30.000005+01:00");
 
-        final OffsetTime expectedTime =
-                OffsetTime.of(10, 15, 30, 5000, ZoneOffset.ofHours(1));
+        final OffsetTime expectedTime = OffsetTime.of(10, 15, 30, 5000, ZoneOffset.ofHours(1));
 
         Assertions.assertEquals(expectedTime, offsetTime);
     }

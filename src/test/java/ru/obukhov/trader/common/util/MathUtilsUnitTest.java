@@ -61,11 +61,7 @@ class MathUtilsUnitTest {
 
     @Test
     void getAverage_withVarArgs_returnsAverage_whenMultipleNumbersInCollection() {
-        final BigDecimal average = MathUtils.getAverage(
-                BigDecimal.valueOf(100),
-                BigDecimal.valueOf(200),
-                BigDecimal.valueOf(1000)
-        );
+        final BigDecimal average = MathUtils.getAverage(BigDecimal.valueOf(100), BigDecimal.valueOf(200), BigDecimal.valueOf(1000));
 
         AssertUtils.assertEquals(433.33333, average);
     }
@@ -87,18 +83,9 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
         final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
-        dateTimesToAmounts.put(
-                DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
-                BigDecimal.valueOf(100000)
-        );
-        dateTimesToAmounts.put(
-                DateUtils.getDateTime(2021, 2, 1, 10, 0, 0),
-                BigDecimal.valueOf(110000)
-        );
-        dateTimesToAmounts.put(
-                DateUtils.getDateTime(2021, 3, 1, 10, 0, 0),
-                BigDecimal.valueOf(120000)
-        );
+        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 1, 1, 10, 0, 0), BigDecimal.valueOf(100000));
+        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 2, 1, 10, 0, 0), BigDecimal.valueOf(110000));
+        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 3, 1, 10, 0, 0), BigDecimal.valueOf(120000));
         final OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 10, 0, 0);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);

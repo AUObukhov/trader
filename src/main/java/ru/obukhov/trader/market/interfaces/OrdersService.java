@@ -15,11 +15,7 @@ public interface OrdersService {
 
     List<Order> getOrders();
 
-    PlacedMarketOrder placeMarketOrder(
-            @NotNull final String ticker,
-            final int lots,
-            @NotNull final OperationType operationType
-    );
+    PlacedMarketOrder placeMarketOrder(@NotNull final String ticker, final int lots, @NotNull final OperationType operationType);
 
     PlacedLimitOrder placeLimitOrder(
             @NotNull final String ticker,

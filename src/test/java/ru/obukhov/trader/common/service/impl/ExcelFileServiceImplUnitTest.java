@@ -57,11 +57,10 @@ class ExcelFileServiceImplUnitTest {
         final String absolutePath = reportProperties.getSaveDirectory() + "\\" + fileName;
         final Workbook workbook = Mockito.mock(Workbook.class);
 
-        MockedConstruction.MockInitializer<File> fileMockInitializer =
-                (mock, context) -> {
-                    Mockito.when(mock.createNewFile()).thenReturn(false);
-                    Mockito.when(mock.getAbsolutePath()).thenReturn(absolutePath);
-                };
+        MockedConstruction.MockInitializer<File> fileMockInitializer = (mock, context) -> {
+            Mockito.when(mock.createNewFile()).thenReturn(false);
+            Mockito.when(mock.getAbsolutePath()).thenReturn(absolutePath);
+        };
 
         try (MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer)) {
             final Throwable throwable = Assertions.assertThrows(

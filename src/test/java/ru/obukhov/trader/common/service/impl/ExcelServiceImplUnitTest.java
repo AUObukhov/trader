@@ -328,12 +328,10 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Средневзвешенные вложения", result.getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getWeightedAverageInvestment());
         AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
-        AssertUtils.assertRowValues(rowIterator.next(),
-                "Относительный годовой доход", result.getRelativeYearProfit());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
     }
 
     private void assertPositions(SimulationResult result, Iterator<Row> rowIterator) {
@@ -348,14 +346,7 @@ class ExcelServiceImplUnitTest {
     private void assertOperations(SimulationResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
-        AssertUtils.assertRowValues(
-                rowIterator.next(),
-                "Дата и время",
-                "Тип операции",
-                "Цена",
-                "Количество",
-                "Комиссия"
-        );
+        AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
 
         for (final SimulatedOperation operation : result.getOperations()) {
             AssertUtils.assertRowValues(
@@ -403,14 +394,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Свечи");
-        AssertUtils.assertRowValues(
-                rowIterator.next(),
-                "Дата-время",
-                "Цена открытия",
-                "Цена закрытия",
-                "Набольшая цена",
-                "Наименьшая цена"
-        );
+        AssertUtils.assertRowValues(rowIterator.next(), "Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
         for (final Candle candle : response.getCandles()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),

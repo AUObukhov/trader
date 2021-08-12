@@ -96,10 +96,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(
-            final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle,
-            final Candle candle
-    ) {
+    public static void assertEquals(final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle, final Candle candle) {
         Assertions.assertEquals(tinkoffCandle.getInterval(), candle.getInterval());
         AssertUtils.assertEquals(tinkoffCandle.getO(), candle.getOpenPrice());
         AssertUtils.assertEquals(tinkoffCandle.getC(), candle.getClosePrice());
@@ -108,10 +105,7 @@ public class AssertUtils {
         Assertions.assertEquals(tinkoffCandle.getTime(), candle.getTime());
     }
 
-    public static void assertEquals(
-            final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition expected,
-            final PortfolioPosition actual
-    ) {
+    public static void assertEquals(final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition expected, final PortfolioPosition actual) {
         Assertions.assertEquals(expected.getTicker(), actual.getTicker());
         AssertUtils.assertEquals(expected.getBalance(), actual.getBalance());
         AssertUtils.assertEquals(expected.getBlocked(), actual.getBlocked());
@@ -322,16 +316,11 @@ public class AssertUtils {
 
     // endregion
 
-    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(
-            final String message
-    ) {
+    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(final String message) {
         return context -> AssertUtils.assertContextStartupFailedWithMessage(context, message);
     }
 
-    public static void assertContextStartupFailedWithMessage(
-            final AssertableApplicationContext context,
-            final String message
-    ) {
+    public static void assertContextStartupFailedWithMessage(final AssertableApplicationContext context, final String message) {
         final Throwable startupFailure = context.getStartupFailure();
 
         Assertions.assertNotNull(startupFailure, "context startup not failed as expected");

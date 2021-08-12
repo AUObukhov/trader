@@ -102,12 +102,7 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull(startTime);
 
         final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
-                .map(tradingConfig -> startSimulation(
-                        tradingConfig,
-                        ticker,
-                        balanceConfig,
-                        finiteInterval
-                ))
+                .map(tradingConfig -> startSimulation(tradingConfig, ticker, balanceConfig, finiteInterval))
                 .collect(Collectors.toList());
         final List<SimulationResult> simulationResults = simulationFutures.stream()
                 .map(CompletableFuture::join)
@@ -126,10 +121,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private FakeBot createFakeBot(final TradingConfig tradingConfig) {
-        final TradingStrategy strategy = strategyFactory.createStrategy(
-                tradingConfig.getStrategyType(),
-                tradingConfig.getStrategyParams()
-        );
+        final TradingStrategy strategy = strategyFactory.createStrategy(tradingConfig.getStrategyType(), tradingConfig.getStrategyParams());
         return (FakeBot) fakeBotFactory.createBot(strategy, tradingConfig.getCandleResolution());
     }
 
@@ -139,10 +131,7 @@ public class SimulatorImpl implements Simulator {
             final BalanceConfig balanceConfig,
             final Interval interval
     ) {
-        return CompletableFuture.supplyAsync(
-                () -> simulateSafe(tradingConfig, ticker, balanceConfig, interval),
-                executor
-        );
+        return CompletableFuture.supplyAsync(() -> simulateSafe(tradingConfig, ticker, balanceConfig, interval), executor);
     }
 
     private SimulationResult simulateSafe(
@@ -154,12 +143,7 @@ public class SimulatorImpl implements Simulator {
         try {
             log.info("Simulation for '{}' with ticker = '{}' started", tradingConfig, ticker);
 
-            final SimulationResult result = simulate(
-                    tradingConfig,
-                    ticker,
-                    balanceConfig,
-                    interval
-            );
+            final SimulationResult result = simulate(tradingConfig, ticker, balanceConfig, interval);
             log.info("Simulation for '{}' with ticker = '{}' ended", tradingConfig, ticker);
             return result;
         } catch (Exception ex) {
@@ -207,11 +191,7 @@ public class SimulatorImpl implements Simulator {
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = bot.processTicker(
-                    ticker,
-                    previousStartTime,
-                    fakeTinkoffService.getCurrentDateTime()
-            );
+            final DecisionData decisionData = bot.processTicker(ticker, previousStartTime, fakeTinkoffService.getCurrentDateTime());
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
                 previousStartTime = null;
@@ -220,12 +200,7 @@ public class SimulatorImpl implements Simulator {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinute(
-                    ticker,
-                    balanceConfig.getBalanceIncrement(),
-                    balanceConfig.getBalanceIncrementCron(),
-                    fakeTinkoffService
-            );
+            moveToNextMinute(ticker, balanceConfig.getBalanceIncrement(), balanceConfig.getBalanceIncrementCron(), fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
@@ -306,10 +281,7 @@ public class SimulatorImpl implements Simulator {
         return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<SimulatedPosition> getPositions(
-            final Collection<PortfolioPosition> portfolioPositions,
-            final List<Candle> candles
-    ) {
+    private List<SimulatedPosition> getPositions(final Collection<PortfolioPosition> portfolioPositions, final List<Candle> candles) {
         final Candle lastCandle = CollectionsUtils.getLast(candles);
         final BigDecimal currentPrice = lastCandle == null ? null : lastCandle.getClosePrice();
 
@@ -318,10 +290,7 @@ public class SimulatorImpl implements Simulator {
                 .collect(Collectors.toList());
     }
 
-    private SimulatedPosition createSimulatedPosition(
-            final PortfolioPosition portfolioPosition,
-            final BigDecimal currentPrice
-    ) {
+    private SimulatedPosition createSimulatedPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
         return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getLotsCount());
     }
 
@@ -331,10 +300,7 @@ public class SimulatorImpl implements Simulator {
                 .reduce(balance, BigDecimal::add);
     }
 
-    private BigDecimal getWeightedAverage(
-            final SortedMap<OffsetDateTime, BigDecimal> investments,
-            final OffsetDateTime endDateTime
-    ) {
+    private BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> investments, final OffsetDateTime endDateTime) {
         final SortedMap<OffsetDateTime, BigDecimal> totalInvestments = getTotalInvestments(investments);
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }

@@ -49,10 +49,7 @@ public class MathUtils {
      * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}
      * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
      */
-    public static BigDecimal getWeightedAverage(
-            final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts,
-            final OffsetDateTime endDateTime
-    ) {
+    public static BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
         if (dateTimesToAmounts.isEmpty()) {
             return BigDecimal.ZERO;
         }

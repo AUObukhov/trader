@@ -31,10 +31,8 @@ public class Candle {
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
      */
     public static Candle createAverage(final Candle leftCandle, final Candle rightCandle) {
-        Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()),
-                "leftCandle can't be after rightCandle");
-        Assert.isTrue(leftCandle.getInterval() == rightCandle.getInterval(),
-                "Candle intervals must be equal");
+        Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()), "leftCandle can't be after rightCandle");
+        Assert.isTrue(leftCandle.getInterval() == rightCandle.getInterval(), "Candle intervals must be equal");
 
         final BigDecimal openPrice = leftCandle.getClosePrice();
         final BigDecimal closePrice = rightCandle.getOpenPrice();
@@ -42,14 +40,7 @@ public class Candle {
         final BigDecimal lowestPrice = openPrice.min(closePrice);
         final OffsetDateTime time = DateUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
 
-        return new Candle(
-                openPrice,
-                closePrice,
-                highestPrice,
-                lowestPrice,
-                time,
-                leftCandle.getInterval()
-        );
+        return new Candle(openPrice, closePrice, highestPrice, lowestPrice, time, leftCandle.getInterval());
     }
 
 }

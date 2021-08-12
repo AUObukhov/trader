@@ -156,16 +156,10 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            Mockito.when(marketService.getLastCandles(
-                    Mockito.eq(ticker1),
-                    Mockito.anyInt(),
-                    Mockito.any(CandleResolution.class)
-            )).thenThrow(new IllegalArgumentException());
-            Mockito.when(marketService.getLastCandles(
-                    Mockito.eq(ticker2),
-                    Mockito.anyInt(),
-                    Mockito.any(CandleResolution.class)
-            )).thenThrow(new IllegalArgumentException());
+            Mockito.when(marketService.getLastCandles(Mockito.eq(ticker1), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
+                    .thenThrow(new IllegalArgumentException());
+            Mockito.when(marketService.getLastCandles(Mockito.eq(ticker2), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
+                    .thenThrow(new IllegalArgumentException());
 
             bot.tick();
 
@@ -465,10 +459,8 @@ class ScheduledBotUnitTest {
             mockData(ticker2);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
-            Mockito.when(strategy.decide(
-                    Mockito.any(DecisionData.class),
-                    Mockito.nullable(StrategyCache.class))
-            ).thenReturn(decision);
+            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                    .thenReturn(decision);
 
             bot.tick();
 
@@ -495,10 +487,8 @@ class ScheduledBotUnitTest {
             mockData(ticker2);
 
             final Decision decision = new Decision(DecisionAction.SELL, 5);
-            Mockito.when(strategy.decide(
-                    Mockito.any(DecisionData.class),
-                    Mockito.nullable(StrategyCache.class))
-            ).thenReturn(decision);
+            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                    .thenReturn(decision);
 
             bot.tick();
 
@@ -533,11 +523,8 @@ class ScheduledBotUnitTest {
     }
 
     private void mockCandles(final String ticker, List<Candle> candles) {
-        Mockito.when(marketService.getLastCandles(
-                Mockito.eq(ticker),
-                Mockito.anyInt(),
-                Mockito.any(CandleResolution.class)
-        )).thenReturn(candles);
+        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
+                .thenReturn(candles);
     }
 
     private void verifyNoOrdersMade() {

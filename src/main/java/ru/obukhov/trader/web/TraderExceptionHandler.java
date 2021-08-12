@@ -23,9 +23,7 @@ public class TraderExceptionHandler {
 
     @SuppressWarnings("unused")
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(
-            final MethodArgumentNotValidException exception
-    ) {
+    public ResponseEntity<Map<String, Object>> handleValidationException(final MethodArgumentNotValidException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(createResponseMap(exception));
@@ -33,9 +31,7 @@ public class TraderExceptionHandler {
 
     @SuppressWarnings("unused")
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingRequestParameterException(
-            final MissingServletRequestParameterException exception
-    ) {
+    public ResponseEntity<Map<String, Object>> handleMissingRequestParameterException(final MissingServletRequestParameterException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(createResponseMap(exception));

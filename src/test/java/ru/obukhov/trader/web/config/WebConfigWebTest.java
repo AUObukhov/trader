@@ -18,10 +18,7 @@ class WebConfigWebTest {
     @Test
     void testCandleResolutionConversion() {
         for (CandleResolution candleResolution : CandleResolution.values()) {
-            CandleResolution convertedValue = conversionService.convert(
-                    candleResolution.getValue(),
-                    CandleResolution.class
-            );
+            CandleResolution convertedValue = conversionService.convert(candleResolution.getValue(), CandleResolution.class);
             Assertions.assertEquals(candleResolution, convertedValue);
         }
     }
@@ -29,10 +26,7 @@ class WebConfigWebTest {
     @Test
     void testInstrumentTypeConversion() {
         for (InstrumentType instrumentType : InstrumentType.values()) {
-            InstrumentType convertedValue = conversionService.convert(
-                    instrumentType.getValue(),
-                    InstrumentType.class
-            );
+            InstrumentType convertedValue = conversionService.convert(instrumentType.getValue(), InstrumentType.class);
             Assertions.assertEquals(instrumentType, convertedValue);
         }
     }
@@ -40,10 +34,7 @@ class WebConfigWebTest {
     @Test
     void testMovingAverageTypeConversion() {
         for (MovingAverageType movingAverageType : MovingAverageType.values()) {
-            MovingAverageType convertedValue = conversionService.convert(
-                    movingAverageType.getValue(),
-                    MovingAverageType.class
-            );
+            MovingAverageType convertedValue = conversionService.convert(movingAverageType.getValue(), MovingAverageType.class);
             Assertions.assertEquals(movingAverageType, convertedValue);
         }
     }

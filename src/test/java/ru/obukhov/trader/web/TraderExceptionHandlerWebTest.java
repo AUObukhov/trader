@@ -89,8 +89,7 @@ class TraderExceptionHandlerWebTest {
     @Test
     @SuppressWarnings("unused")
     void handlesRuntimeException() throws Exception {
-        final OffsetDateTime mockedNow =
-                DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
+        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("RuntimeExceptionResponse.json");
 
@@ -110,8 +109,7 @@ class TraderExceptionHandlerWebTest {
     public static class TestController {
 
         @PostMapping("/validation")
-        public void throwMethodArgumentNotValidException()
-                throws MethodArgumentNotValidException, NoSuchMethodException {
+        public void throwMethodArgumentNotValidException() throws MethodArgumentNotValidException, NoSuchMethodException {
 
             final Method method = this.getClass().getMethod("throwMethodArgumentNotValidException");
             final MethodParameter parameter = new MethodParameter(method, -1);

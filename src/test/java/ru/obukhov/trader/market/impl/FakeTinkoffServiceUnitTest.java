@@ -300,13 +300,7 @@ class FakeTinkoffServiceUnitTest {
 
         TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
 
-        final Executable executable = () ->
-                placeOrder(
-                        ticker,
-                        2,
-                        OperationType.BUY,
-                        BigDecimal.valueOf(500)
-                );
+        final Executable executable = () -> placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
 
         AssertUtils.assertThrowsWithMessage(
                 executable,
@@ -376,12 +370,7 @@ class FakeTinkoffServiceUnitTest {
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
-        final Executable sellExecutable = () -> placeOrder(
-                ticker,
-                4,
-                OperationType.SELL,
-                BigDecimal.valueOf(3000)
-        );
+        final Executable sellExecutable = () -> placeOrder(ticker, 4, OperationType.SELL, BigDecimal.valueOf(3000));
 
         AssertUtils.assertThrowsWithMessage(
                 sellExecutable,
@@ -508,10 +497,7 @@ class FakeTinkoffServiceUnitTest {
 
     // endregion
 
-    private void placeOrder(String ticker,
-                            int lots,
-                            OperationType operationType,
-                            BigDecimal price) {
+    private void placeOrder(String ticker, int lots, OperationType operationType, BigDecimal price) {
         final Candle candle = TestDataHelper.createCandleWithOpenPrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 

@@ -43,18 +43,16 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final int smallWindow = 50;
         final int bigWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleResolution", candleResolution.getValue())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
-        final String expectedMessage =
-                "Required request parameter 'ticker' for method parameter type String is not present";
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("from", "2021-03-25T10:00:00+03:00")
+                .param("to", "2021-03-25T19:00:00+03:00")
+                .param("candleResolution", candleResolution.getValue())
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("smallWindow", Integer.toString(smallWindow))
+                .param("bigWindow", Integer.toString(bigWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
+        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -69,19 +67,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final int smallWindow = 50;
         final int bigWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleResolution", candleResolution.getValue())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("ticker", ticker)
+                .param("to", "2021-03-25T19:00:00+03:00")
+                .param("candleResolution", candleResolution.getValue())
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("smallWindow", Integer.toString(smallWindow))
+                .param("bigWindow", Integer.toString(bigWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'from' for method parameter type OffsetDateTime is not present";
+        final String expectedMessage = "Required request parameter 'from' for method parameter type OffsetDateTime is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -96,19 +92,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final int smallWindow = 50;
         final int bigWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("candleResolution", candleResolution.getValue())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("ticker", ticker)
+                .param("from", "2021-03-25T10:00:00+03:00")
+                .param("candleResolution", candleResolution.getValue())
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("smallWindow", Integer.toString(smallWindow))
+                .param("bigWindow", Integer.toString(bigWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'to' for method parameter type OffsetDateTime is not present";
+        final String expectedMessage = "Required request parameter 'to' for method parameter type OffsetDateTime is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -122,19 +116,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final int smallWindow = 50;
         final int bigWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("ticker", ticker)
+                .param("from", "2021-03-25T10:00:00+03:00")
+                .param("to", "2021-03-25T19:00:00+03:00")
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("smallWindow", Integer.toString(smallWindow))
+                .param("bigWindow", Integer.toString(bigWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'candleResolution' for method parameter type CandleResolution is not present";
+        final String expectedMessage = "Required request parameter 'candleResolution' for method parameter type CandleResolution is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -159,8 +151,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'movingAverageType' for method parameter type MovingAverageType is not present";
+        final String expectedMessage = "Required request parameter 'movingAverageType' for method parameter type MovingAverageType is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -174,19 +165,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int bigWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleResolution", candleResolution.getValue())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("ticker", ticker)
+                .param("from", "2021-03-25T10:00:00+03:00")
+                .param("to", "2021-03-25T19:00:00+03:00")
+                .param("candleResolution", candleResolution.getValue())
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("bigWindow", Integer.toString(bigWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'smallWindow' for method parameter type Integer is not present";
+        final String expectedMessage = "Required request parameter 'smallWindow' for method parameter type Integer is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))
@@ -200,19 +189,17 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleResolution", candleResolution.getValue())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
+                .param("ticker", ticker)
+                .param("from", "2021-03-25T10:00:00+03:00")
+                .param("to", "2021-03-25T19:00:00+03:00")
+                .param("candleResolution", candleResolution.getValue())
+                .param("movingAverageType", movingAverageType.getValue())
+                .param("smallWindow", Integer.toString(smallWindow))
+                .param("saveToFile", Boolean.TRUE.toString())
+                .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage =
-                "Required request parameter 'bigWindow' for method parameter type Integer is not present";
+        final String expectedMessage = "Required request parameter 'bigWindow' for method parameter type Integer is not present";
         mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(getJsonPathMessageMatcher(expectedMessage))

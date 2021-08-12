@@ -127,16 +127,8 @@ class BalanceConfigUnitTest {
 
     @Test
     void hashCode_returnsEqualsCodes_whenObjectsAreEqual() throws ParseException {
-        final BalanceConfig balanceConfig1 = new BalanceConfig(
-                BigDecimal.TEN,
-                BigDecimal.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
-        final BalanceConfig balanceConfig2 = new BalanceConfig(
-                BigDecimal.TEN,
-                BigDecimal.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
+        final BalanceConfig balanceConfig1 = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
+        final BalanceConfig balanceConfig2 = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
 
         Assertions.assertEquals(balanceConfig1.hashCode(), balanceConfig2.hashCode());
     }

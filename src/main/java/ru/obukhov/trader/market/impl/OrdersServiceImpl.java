@@ -39,11 +39,7 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(
-            @NotNull final String ticker,
-            final int lots,
-            @NotNull final OperationType operationType
-    ) {
+    public PlacedMarketOrder placeMarketOrder(@NotNull final String ticker, final int lots, @NotNull final OperationType operationType) {
         final MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);

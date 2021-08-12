@@ -21,8 +21,6 @@ public class TradingStrategyParams {
 
     @Override
     public String toString() {
-        return "[" +
-                "minimumProfit=" + minimumProfit +
-                ']';
+        return "[minimumProfit=" + minimumProfit + ']';
     }
 }

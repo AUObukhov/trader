@@ -202,11 +202,8 @@ class AbstractBotUnitTest {
     }
 
     private void mockCandles(String ticker, List<Candle> candles) {
-        Mockito.when(marketService.getLastCandles(
-                Mockito.eq(ticker),
-                Mockito.anyInt(),
-                Mockito.any(CandleResolution.class)
-        )).thenReturn(candles);
+        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
+                .thenReturn(candles);
     }
 
     private void verifyNoOrdersMade() {
@@ -225,15 +222,7 @@ class AbstractBotUnitTest {
                 OrdersService ordersService,
                 PortfolioService portfolioService
         ) {
-            super(
-                    marketService,
-                    operationsService,
-                    ordersService,
-                    portfolioService,
-                    strategy,
-                    new TestStrategyCache(),
-                    CandleResolution._1MIN
-            );
+            super(marketService, operationsService, ordersService, portfolioService, strategy, new TestStrategyCache(), CandleResolution._1MIN);
         }
     }
 

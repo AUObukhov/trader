@@ -33,11 +33,7 @@ public interface TinkoffService {
 
     Orderbook getMarketOrderbook(final String ticker, final int depth);
 
-    List<Candle> getMarketCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleResolution candleResolution
-    );
+    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution);
 
     MarketInstrument searchMarketInstrument(final String ticker);
 

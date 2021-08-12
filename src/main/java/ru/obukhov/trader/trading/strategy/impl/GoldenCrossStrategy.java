@@ -28,11 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    protected GoldenCrossStrategy(
-            final String name,
-            final GoldenCrossStrategyParams params,
-            final TradingProperties tradingProperties
-    ) {
+    protected GoldenCrossStrategy(final String name, final GoldenCrossStrategyParams params, final TradingProperties tradingProperties) {
         super(name, params, tradingProperties);
     }
 
@@ -48,14 +44,8 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
                     .collect(Collectors.toList());
             final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
             final MovingAverager averager = MovingAverager.getByType(goldenCrossStrategyParams.getMovingAverageType());
-            final List<BigDecimal> shortAverages = averager.getAverages(
-                    values,
-                    goldenCrossStrategyParams.getSmallWindow()
-            );
-            final List<BigDecimal> longAverages = averager.getAverages(
-                    values,
-                    goldenCrossStrategyParams.getBigWindow()
-            );
+            final List<BigDecimal> shortAverages = averager.getAverages(values, goldenCrossStrategyParams.getSmallWindow());
+            final List<BigDecimal> longAverages = averager.getAverages(values, goldenCrossStrategyParams.getBigWindow());
 
             final int index = (int) (goldenCrossStrategyParams.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
@@ -65,11 +55,7 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
         return decision;
     }
 
-    private Decision decide(
-            final DecisionData data,
-            final StrategyCache strategyCache,
-            final Crossover crossover
-    ) {
+    private Decision decide(final DecisionData data, final StrategyCache strategyCache, final Crossover crossover) {
         Decision decision;
         switch (crossover) {
             case NONE:

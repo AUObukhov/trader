@@ -108,11 +108,7 @@ class SimulateRequestValidationTest {
 
         request.setTicker("ticker");
 
-        BalanceConfig balanceConfig = new BalanceConfig(
-                BigDecimal.TEN,
-                BigDecimal.ONE,
-                new CronExpression("0 0 0 1 * ?")
-        );
+        BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
         request.setBalanceConfig(balanceConfig);
 
         request.setFrom(OffsetDateTime.now());

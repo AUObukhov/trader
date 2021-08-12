@@ -11,8 +11,7 @@ import java.math.BigDecimal;
 public class BigDecimalSerializer extends JsonSerializer<BigDecimal> {
 
     @Override
-    public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider serializerProvider)
-            throws IOException {
+    public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
         gen.writeNumber(DecimalUtils.setDefaultScale(value));
     }
 

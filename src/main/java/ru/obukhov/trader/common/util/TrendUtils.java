@@ -82,10 +82,7 @@ public class TrendUtils {
      * @param comparator comparator of elements, defining character of extremes
      * @return calculated extremes in order, opposite to {@code comparator} order
      */
-    public static List<Integer> getSortedLocalExtremes(
-            final List<BigDecimal> values,
-            final Comparator<BigDecimal> comparator
-    ) {
+    public static List<Integer> getSortedLocalExtremes(final List<BigDecimal> values, final Comparator<BigDecimal> comparator) {
         if (values.isEmpty()) {
             return new ArrayList<>();
         }
@@ -242,11 +239,7 @@ public class TrendUtils {
      * there are no crossovers or touches after {@code index}<br/>
      * @throws IllegalArgumentException if {@code values1} and {@code values2} have different sizes
      */
-    public static Crossover getCrossoverIfLast(
-            final List<BigDecimal> values1,
-            final List<BigDecimal> values2,
-            final int index
-    ) {
+    public static Crossover getCrossoverIfLast(final List<BigDecimal> values1, final List<BigDecimal> values2, final int index) {
         final int size = values1.size();
 
         Assert.isTrue(size == values2.size(), "Collections must has same size");
@@ -280,12 +273,7 @@ public class TrendUtils {
         return Crossover.NONE;
     }
 
-    private static boolean relationIsKept(
-            final List<BigDecimal> values1,
-            final List<BigDecimal> values2,
-            final int index,
-            final int relation
-    ) {
+    private static boolean relationIsKept(final List<BigDecimal> values1, final List<BigDecimal> values2, final int index, final int relation) {
         for (int i = index; i < values1.size(); i++) {
             if (values1.get(i).compareTo(values2.get(i)) != relation) {
                 return false;

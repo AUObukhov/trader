@@ -25,11 +25,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     protected final TradingStrategyParams params;
     protected final TradingProperties tradingProperties;
 
-    protected AbstractTradingStrategy(
-            final String name,
-            final TradingStrategyParams params,
-            final TradingProperties tradingProperties
-    ) {
+    protected AbstractTradingStrategy(final String name, final TradingStrategyParams params, final TradingProperties tradingProperties) {
         this.name = name + " " + params;
         this.params = params;
         this.tradingProperties = tradingProperties;
@@ -62,8 +58,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     private int getAvailableLots(final DecisionData data) {
         final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission =
-                DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
+        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
         return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
@@ -106,22 +101,16 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         }
 
         final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
-        final BigDecimal buyPricePlusCommission =
-                DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());
+        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());
 
         final BigDecimal currentPrice = data.getCurrentPrice();
-        final BigDecimal sellPriceMinusCommission =
-                DecimalUtils.subtractFraction(currentPrice, tradingProperties.getCommission());
+        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, tradingProperties.getCommission());
 
         final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
                 .doubleValue();
 
         log.debug(
-                "averagePositionPrice = {}, " +
-                        "buyPricePlusCommission = {}, " +
-                        "currentPrice = {}, " +
-                        "sellPriceMinusCommission = {}, " +
-                        "profit = {}, ",
+                "averagePositionPrice = {}, buyPricePlusCommission = {}, currentPrice = {}, sellPriceMinusCommission = {}, profit = {}, ",
                 averagePositionPrice,
                 buyPricePlusCommission,
                 currentPrice,
@@ -133,8 +122,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     }
 
     protected static boolean existsOperationInProgress(final DecisionData data) {
-        return data.getLastOperations().stream()
-                .anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
+        return data.getLastOperations().stream().anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
     }
 
 }

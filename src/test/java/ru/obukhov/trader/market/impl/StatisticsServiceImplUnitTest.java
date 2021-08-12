@@ -143,12 +143,8 @@ class StatisticsServiceImplUnitTest {
         );
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
-        final List<BigDecimal> shortAverages = TestDataHelper.createBigDecimalsList(
-                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
-        );
-        final List<BigDecimal> longAverages = TestDataHelper.createBigDecimalsList(
-                80, 540, 535, 55, 45, 30, 50, 545, 530, 45
-        );
+        final List<BigDecimal> shortAverages = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> longAverages = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
 
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
@@ -170,13 +166,7 @@ class StatisticsServiceImplUnitTest {
     }
 
     private void mockAverages(Integer window, List<BigDecimal> averages) {
-        Mockito.when(
-                averager.getAverages(
-                        Mockito.anyList(),
-                        Mockito.eq(window),
-                        Mockito.eq(1)
-                )
-        ).thenReturn(averages);
+        Mockito.when(averager.getAverages(Mockito.anyList(), Mockito.eq(window), Mockito.eq(1))).thenReturn(averages);
     }
 
 }

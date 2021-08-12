@@ -42,16 +42,7 @@ public class DateUtils {
             final int minute,
             final int second
     ) {
-        return OffsetDateTime.of(
-                year,
-                month,
-                dayOfMonth,
-                hour,
-                minute,
-                second,
-                0,
-                DEFAULT_OFFSET
-        );
+        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DEFAULT_OFFSET);
     }
 
     /**
@@ -66,16 +57,7 @@ public class DateUtils {
             final int second,
             final int nanoOfSecond
     ) {
-        return OffsetDateTime.of(
-                year,
-                month,
-                dayOfMonth,
-                hour,
-                minute,
-                second,
-                nanoOfSecond,
-                DEFAULT_OFFSET
-        );
+        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond, DEFAULT_OFFSET);
     }
 
     /**
@@ -95,10 +77,7 @@ public class DateUtils {
     /**
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
      */
-    public static Interval getIntervalWithDefaultOffsets(
-            @Nullable final OffsetDateTime from,
-            @Nullable final OffsetDateTime to
-    ) {
+    public static Interval getIntervalWithDefaultOffsets(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {
         final OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
         final OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
 
@@ -290,11 +269,7 @@ public class DateUtils {
      * @return true if given {@code dateTime} is work time, or else false
      * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
-    public static boolean isWorkTime(
-            final OffsetDateTime dateTime,
-            final OffsetTime workStartTime,
-            final Duration workTimeDuration
-    ) {
+    public static boolean isWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
         validateWorkTimeDuration(workTimeDuration);
 
         final OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
@@ -302,9 +277,7 @@ public class DateUtils {
         final OffsetTime time = dateTime.toOffsetTime();
 
         if (!isWorkDay(dateTime)) {
-            return livingAfterMidnight
-                    && DayOfWeek.SATURDAY == dateTime.getDayOfWeek()
-                    && time.isBefore(workEndTime);
+            return livingAfterMidnight && DayOfWeek.SATURDAY == dateTime.getDayOfWeek() && time.isBefore(workEndTime);
         }
 
         if (livingAfterMidnight) {
@@ -319,11 +292,7 @@ public class DateUtils {
      * @param workTimeDuration duration of work period
      * @return first minute of work time not before {@code dateTime}
      */
-    public static OffsetDateTime getNearestWorkTime(
-            final OffsetDateTime dateTime,
-            final OffsetTime workStartTime,
-            final Duration workTimeDuration
-    ) {
+    public static OffsetDateTime getNearestWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
         validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
@@ -338,11 +307,7 @@ public class DateUtils {
      * @param workTimeDuration duration of work period
      * @return next minute of work time after {@code dateTime}
      */
-    public static OffsetDateTime getNextWorkMinute(
-            final OffsetDateTime dateTime,
-            final OffsetTime workStartTime,
-            final Duration workTimeDuration
-    ) {
+    public static OffsetDateTime getNextWorkMinute(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
         validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
@@ -365,10 +330,7 @@ public class DateUtils {
 
     private static void validateWorkTimeDuration(final Duration workTimeDuration) {
         Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(
-                Duration.ofDays(1).compareTo(workTimeDuration) > 0,
-                "workTimeDuration must be less than 1 day"
-        );
+        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0, "workTimeDuration must be less than 1 day");
     }
 
     /**
@@ -425,11 +387,7 @@ public class DateUtils {
     /**
      * @throws IllegalArgumentException when given {@code dateTime} is not null and after given {@code now}
      */
-    public static void assertDateTimeNotFuture(
-            @Nullable final OffsetDateTime dateTime,
-            final OffsetDateTime now,
-            final String name
-    ) {
+    public static void assertDateTimeNotFuture(@Nullable final OffsetDateTime dateTime, final OffsetDateTime now, final String name) {
         if (dateTime != null && dateTime.isAfter(now)) {
             final String message = String.format("'%s' (%s) can't be in future. Now is %s", name, dateTime, now);
             throw new IllegalArgumentException(message);
@@ -450,11 +408,7 @@ public class DateUtils {
      * @return number of dates which match given {@code expression} and between given {@code from} exclusively and {@code to}
      * inclusively
      */
-    public static int getCronHitsBetweenDates(
-            final CronExpression expression,
-            final OffsetDateTime from,
-            final OffsetDateTime to
-    ) {
+    public static int getCronHitsBetweenDates(final CronExpression expression, final OffsetDateTime from, final OffsetDateTime to) {
         Assert.isTrue(from.isBefore(to), "from must be before to");
 
         final Date dateFrom = DateUtils.toDate(from);

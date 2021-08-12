@@ -40,11 +40,7 @@ public class ExponentialMovingAverager extends MovingAverager {
         return averages.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    private void updateAverages(
-            final List<BigDecimal> averages,
-            final double weightDecrease,
-            final double revertedWeightDecrease
-    ) {
+    private void updateAverages(final List<BigDecimal> averages, final double weightDecrease, final double revertedWeightDecrease) {
         BigDecimal average = averages.get(0);
         final int size = averages.size();
         for (int i = 1; i < size; i++) {

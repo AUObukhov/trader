@@ -36,11 +36,7 @@ public class SandboxServiceImpl implements SandboxService {
     }
 
     @Override
-    public void setPositionBalance(
-            @NotNull final String ticker,
-            @NotNull final BigDecimal balance,
-            @Nullable final String brokerAccountId
-    ) {
+    public void setPositionBalance(@NotNull final String ticker, @NotNull final BigDecimal balance, @Nullable final String brokerAccountId) {
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
                 .figi(marketService.getFigi(ticker))
                 .balance(balance);
