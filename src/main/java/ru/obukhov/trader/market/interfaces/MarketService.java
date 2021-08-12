@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.interfaces;
 
-import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -18,7 +17,6 @@ public interface MarketService {
 
     Candle getLastCandle(final String ticker, final OffsetDateTime to);
 
-    @NotNull
     List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution);
 
     MarketInstrument getInstrument(final String ticker);
