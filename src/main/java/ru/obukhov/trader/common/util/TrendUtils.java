@@ -13,7 +13,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -28,25 +27,7 @@ public class TrendUtils {
      */
     private static final double RESTRAINT_DURATION_FACTOR = 2.0;
 
-    // region getLocalExtremes
-
-    /**
-     * Calculates indices of local extremes.
-     * If several consecutive elements are equal, then the last one is considered the extremum
-     *
-     * @param elements       extended elements among which values extremes are sought for
-     * @param valueExtractor function to get elements to compare from element
-     * @param comparator     comparator of elements, defining character of extremes
-     * @return calculated extremes
-     */
-    public static <T> List<Integer> getLocalExtremes(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final Comparator<BigDecimal> comparator
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getLocalExtremes(values, comparator);
-    }
+    // region local extremes
 
     /**
      * Calculates indices of local extremes.
@@ -56,10 +37,7 @@ public class TrendUtils {
      * @param comparator comparator of elements, defining character of extremes
      * @return calculated extremes
      */
-    public static List<Integer> getLocalExtremes(
-            final List<BigDecimal> values,
-            final Comparator<BigDecimal> comparator
-    ) {
+    public static List<Integer> getLocalExtremes(final List<BigDecimal> values, final Comparator<BigDecimal> comparator) {
         final int size = values.size();
         final List<Integer> extremes = new ArrayList<>(size);
         if (values.isEmpty()) {
@@ -86,8 +64,6 @@ public class TrendUtils {
         return extremes;
     }
 
-    // endregion
-
     public static List<Point> getLocalExtremes(
             final List<BigDecimal> values,
             final List<OffsetDateTime> times,
@@ -96,26 +72,6 @@ public class TrendUtils {
         return localExtremesIndices.stream()
                 .map(extremum -> Point.of(times.get(extremum), values.get(extremum)))
                 .collect(Collectors.toList());
-    }
-
-    // region getSortedLocalExtremes
-
-    /**
-     * Calculates indices of local extremes.
-     * If several consecutive elements are equal, then the last one is considered the extremum
-     *
-     * @param elements       extended elements among which values extremes are sought for
-     * @param valueExtractor function to get elements to compare from element
-     * @param comparator     comparator of elements, defining character of extremes
-     * @return calculated extremes in order, opposite to {@code comparator} order
-     */
-    public static <T> List<Integer> getSortedLocalExtremes(
-            final List<T> elements,
-            final Function<T, BigDecimal> valueExtractor,
-            final Comparator<BigDecimal> comparator
-    ) {
-        final List<BigDecimal> values = elements.stream().map(valueExtractor).collect(Collectors.toList());
-        return getSortedLocalExtremes(values, comparator);
     }
 
     /**

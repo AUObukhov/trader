@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 class TrendUtilsUnitTest {
@@ -105,28 +104,10 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetLocalExtremes")
-    void getLocalExtremes_withoutValueExtractor(
-            final List<Double> values,
-            final List<Integer> expectedExtremes,
-            final Comparator<BigDecimal> comparator
-    ) {
+    void getLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
-
-        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetLocalExtremes")
-    void getLocalExtremes_withValueExtractor(
-            final List<Double> values,
-            final List<Integer> expectedExtremes,
-            final Comparator<BigDecimal> comparator
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<Integer> extremes = TrendUtils.getLocalExtremes(elements, Optional::get, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
@@ -239,28 +220,10 @@ class TrendUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetSortedLocalExtremes")
-    void getSortedLocalExtremes_withoutValueExtractor(
-            final List<Double> values,
-            final List<Integer> expectedExtremes,
-            final Comparator<BigDecimal> comparator
-    ) {
+    void getSortedLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
         final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
 
         final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
-
-        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forGetSortedLocalExtremes")
-    void getSortedLocalExtremes_withValueExtractor(
-            final List<Double> values,
-            final List<Integer> expectedExtremes,
-            final Comparator<BigDecimal> comparator
-    ) {
-        final List<Optional<BigDecimal>> elements = TestDataHelper.getOptionalBigDecimalValues(values);
-
-        final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(elements, Optional::get, comparator);
 
         AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
     }
