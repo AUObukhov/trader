@@ -331,7 +331,7 @@ class MarketServiceImplUnitTest {
 
     // endregion
 
-    // region getLastCandlesDaily tests
+    // region getLastCandles daily tests
 
     @Test
     void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
@@ -454,9 +454,34 @@ class MarketServiceImplUnitTest {
         AssertUtils.assertEquals(6, candles.get(2).getOpenPrice());
     }
 
+    @Test
+    void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
+        final String ticker = "ticker";
+        final int limit = 5;
+        final CandleResolution candleResolution = CandleResolution._1MIN;
+
+        new CandleMocker(tinkoffService, ticker, candleResolution)
+                .add(1, DateUtils.getDateTime(2020, 9, 9, 1, 0, 0))
+                .add(2, DateUtils.getDateTime(2020, 9, 9, 2, 0, 0))
+                .add(3, DateUtils.getDateTime(2020, 9, 9, 3, 0, 0))
+                .add(4, DateUtils.getDateTime(2020, 9, 9, 4, 0, 0))
+                .add(5, DateUtils.getDateTime(2020, 9, 9, 5, 0, 0))
+                .mock();
+
+        Mockito.when(tinkoffService.getCurrentDateTime())
+                .thenReturn(DateUtils.getDateTime(2020, 9, 9, 3, 0, 0));
+
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
+
+        Assertions.assertEquals(3, candles.size());
+        AssertUtils.assertEquals(1, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(2).getOpenPrice());
+    }
+
     // endregion
 
-    // region getLastCandlesYearly tests
+    // region getLastCandles yearly tests
 
     @Test
     void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
@@ -599,6 +624,30 @@ class MarketServiceImplUnitTest {
         AssertUtils.assertEquals(4, candles.get(0).getOpenPrice());
         AssertUtils.assertEquals(5, candles.get(1).getOpenPrice());
         AssertUtils.assertEquals(6, candles.get(2).getOpenPrice());
+    }
+
+    @Test
+    void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
+        final String ticker = "ticker";
+        final int limit = 5;
+        final CandleResolution candleResolution = CandleResolution.DAY;
+
+        new CandleMocker(tinkoffService, ticker, candleResolution)
+                .add(1, DateUtils.getDate(2020, 9, 12))
+                .add(2, DateUtils.getDate(2020, 9, 13))
+                .add(3, DateUtils.getDate(2020, 9, 15))
+                .add(4, DateUtils.getDate(2020, 9, 16))
+                .add(5, DateUtils.getDate(2020, 9, 17))
+                .mock();
+
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateUtils.getDate(2020, 9, 15));
+
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
+
+        Assertions.assertEquals(3, candles.size());
+        AssertUtils.assertEquals(1, candles.get(0).getOpenPrice());
+        AssertUtils.assertEquals(2, candles.get(1).getOpenPrice());
+        AssertUtils.assertEquals(3, candles.get(2).getOpenPrice());
     }
 
     // endregion
