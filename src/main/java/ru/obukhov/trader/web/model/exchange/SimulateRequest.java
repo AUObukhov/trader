@@ -13,7 +13,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
-@Valid
 public class SimulateRequest {
 
     @NotBlank(message = "ticker is mandatory")

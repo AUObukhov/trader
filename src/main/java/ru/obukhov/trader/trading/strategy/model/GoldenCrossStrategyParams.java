@@ -5,13 +5,11 @@ import lombok.NoArgsConstructor;
 import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
 import ru.obukhov.trader.market.model.MovingAverageType;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.function.Predicate;
 
-@Valid
 @Getter
 @NoArgsConstructor
 @PredicateConstraint(

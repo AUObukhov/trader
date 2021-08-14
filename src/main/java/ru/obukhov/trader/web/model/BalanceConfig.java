@@ -8,7 +8,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -17,7 +16,6 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Valid
 @NullabilityConsistent(
         fields = {"balanceIncrement", "balanceIncrementCron"},
         message = "balanceIncrement and balanceIncrementCron must be both null or not null"
