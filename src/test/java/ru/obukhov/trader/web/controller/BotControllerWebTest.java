@@ -280,6 +280,15 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     @Test
+    void setTickers_returnsBadRequest_whenNoTickers() throws Exception {
+        scheduledBotProperties.setTickers(Set.of());
+
+        final String tickers = "{}";
+
+        assertBadRequestError("/trader/bot/tickers", tickers, "tickers are mandatory");
+    }
+
+    @Test
     void setTickers_returnsBadRequest_whenTickersAreEmpty() throws Exception {
         scheduledBotProperties.setTickers(Set.of());
 
