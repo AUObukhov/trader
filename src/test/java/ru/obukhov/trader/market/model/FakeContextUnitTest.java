@@ -32,46 +32,6 @@ class FakeContextUnitTest {
     // region addInvestment tests
 
     @Test
-    void addInvestment_throwsIllegalArgumentException_whenAmountIsNegative() {
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.valueOf(-20);
-        final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
-
-        final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(currency, balance);
-
-        fakeContext.setCurrentDateTime(investmentDateTime);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> fakeContext.addInvestment(currency, investment),
-                IllegalArgumentException.class,
-                "expected positive investment amount"
-        );
-    }
-
-    @Test
-    void addInvestment_throwsIllegalArgumentException_whenAmountIsZero() {
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.ZERO;
-        final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
-
-        final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(currency, balance);
-
-        fakeContext.setCurrentDateTime(investmentDateTime);
-
-        AssertUtils.assertThrowsWithMessage(
-                () -> fakeContext.addInvestment(currency, investment),
-                IllegalArgumentException.class,
-                "expected positive investment amount"
-        );
-    }
-
-    @Test
     void addInvestment_throwsIllegalArgumentException_whenInvestmentWithCurrentDateTimeAlreadyExists() {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
@@ -112,6 +72,48 @@ class FakeContextUnitTest {
         Assertions.assertEquals(investment2, fakeContext.getInvestments(currency).get(investment2DateTime));
 
         AssertUtils.assertEquals(170, fakeContext.getBalance(currency));
+    }
+
+    @Test
+    void addInvestment_throwsIllegalArgumentException_whenAmountIsNegative() {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final Currency currency = Currency.RUB;
+        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal investment = BigDecimal.valueOf(-20);
+        final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
+
+        final FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
+
+        fakeContext.setCurrentDateTime(investmentDateTime);
+
+        fakeContext.addInvestment(currency, investment);
+
+        Assertions.assertEquals(1, fakeContext.getInvestments(currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(currency).get(investmentDateTime));
+
+        AssertUtils.assertEquals(80, fakeContext.getBalance(currency));
+    }
+
+    @Test
+    void addInvestment_throwsIllegalArgumentException_whenAmountIsZero() {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final Currency currency = Currency.RUB;
+        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal investment = BigDecimal.ZERO;
+        final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
+
+        final FakeContext fakeContext = new FakeContext(currentDateTime);
+        fakeContext.setCurrentBalance(currency, balance);
+
+        fakeContext.setCurrentDateTime(investmentDateTime);
+
+        fakeContext.addInvestment(currency, investment);
+
+        Assertions.assertEquals(1, fakeContext.getInvestments(currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(currency).get(investmentDateTime));
+
+        AssertUtils.assertEquals(balance, fakeContext.getBalance(currency));
     }
 
     // endregion

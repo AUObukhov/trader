@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -29,7 +28,6 @@ public class FakeBalance {
      * Adds given {@code amount} to balance and record to history of investments with given {@code dateTime}
      */
     public void addInvestment(final OffsetDateTime dateTime, final BigDecimal amount) {
-        Assert.isTrue(amount.signum() > 0, "expected positive investment amount");
         if (investments.containsKey(dateTime)) {
             throw new IllegalArgumentException("investment at " + dateTime + " alreadyExists");
         }
