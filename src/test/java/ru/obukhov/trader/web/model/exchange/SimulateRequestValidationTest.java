@@ -1,11 +1,12 @@
-package ru.obukhov.trader.web.model;
+package ru.obukhov.trader.web.model.exchange;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.web.model.exchange.SimulateRequest;
+import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.obukhov.trader.web.model.TradingConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
