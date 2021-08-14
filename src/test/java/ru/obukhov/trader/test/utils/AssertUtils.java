@@ -316,17 +316,16 @@ public class AssertUtils {
 
     // endregion
 
-    public static ContextConsumer<AssertableApplicationContext> createContextFailureAssertConsumer(final String message) {
-        return context -> AssertUtils.assertContextStartupFailedWithMessage(context, message);
+    public static ContextConsumer<AssertableApplicationContext> createBindValidationExceptionAssertConsumer(final String message) {
+        return context -> assertContextStartupFailedWithBindValidationException(context, message);
     }
 
-    public static void assertContextStartupFailedWithMessage(final AssertableApplicationContext context, final String message) {
+    public static void assertContextStartupFailedWithBindValidationException(final AssertableApplicationContext context, final String message) {
         final Throwable startupFailure = context.getStartupFailure();
 
         Assertions.assertNotNull(startupFailure, "context startup not failed as expected");
 
-        final BindValidationException bindValidationException =
-                (BindValidationException) startupFailure.getCause().getCause();
+        final BindValidationException bindValidationException = (BindValidationException) startupFailure.getCause().getCause();
         final List<ObjectError> errors = bindValidationException.getValidationErrors().getAllErrors();
 
         Assertions.assertEquals(1, errors.size());

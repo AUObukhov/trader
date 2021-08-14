@@ -57,7 +57,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenIntervalIsNegative() {
         contextRunner.withPropertyValues("query.throttle.interval: -1")
-                .run(AssertUtils.createContextFailureAssertConsumer("interval must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("interval must be positive"));
     }
 
     @Test
@@ -65,7 +65,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenIntervalIsZero() {
         contextRunner.withPropertyValues("query.throttle.interval: 0")
-                .run(AssertUtils.createContextFailureAssertConsumer("interval must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("interval must be positive"));
     }
 
     @Test
@@ -78,7 +78,7 @@ class QueryThrottlePropertiesIntegrationTest {
                 .withPropertyValues("query.throttle.retry-interval: 5000")
                 .withPropertyValues("query.throttle.attempts-count: 30")
                 .withPropertyValues("query.throttle.default-limit: 120")
-                .run(AssertUtils.createContextFailureAssertConsumer("limits must not be null"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("limits must not be null"));
     }
 
     @Test
@@ -86,7 +86,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenLimitsAreEmpty() {
         contextRunner.withPropertyValues("query.throttle.limits:")
-                .run(AssertUtils.createContextFailureAssertConsumer("limits must not be empty"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("limits must not be empty"));
     }
 
     @Test
@@ -94,7 +94,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenRetryIntervalIsNegative() {
         contextRunner.withPropertyValues("query.throttle.retry-interval: -1")
-                .run(AssertUtils.createContextFailureAssertConsumer("retryInterval must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("retryInterval must be positive"));
     }
 
     @Test
@@ -102,7 +102,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenRetryIntervalIsZero() {
         contextRunner.withPropertyValues("query.throttle.retry-interval: 0")
-                .run(AssertUtils.createContextFailureAssertConsumer("retryInterval must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("retryInterval must be positive"));
     }
 
     @Test
@@ -110,7 +110,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenAttemptsCountIsNegative() {
         contextRunner.withPropertyValues("query.throttle.attempts-count: -1")
-                .run(AssertUtils.createContextFailureAssertConsumer("attemptsCount must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("attemptsCount must be positive"));
     }
 
     @Test
@@ -118,7 +118,7 @@ class QueryThrottlePropertiesIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenAttemptsCountIsZero() {
         contextRunner.withPropertyValues("query.throttle.attempts-count: 0")
-                .run(AssertUtils.createContextFailureAssertConsumer("attemptsCount must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("attemptsCount must be positive"));
     }
 
     @Test
@@ -127,7 +127,7 @@ class QueryThrottlePropertiesIntegrationTest {
     void beanCreationFails_whenSegmentsAreEmpty() {
         contextRunner.withPropertyValues("query.throttle.limits[0].segments=")
                 .withPropertyValues("query.throttle.limits[0].limit: 1")
-                .run(AssertUtils.createContextFailureAssertConsumer("segments must not be empty"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("segments must not be empty"));
     }
 
     @Test
@@ -136,7 +136,7 @@ class QueryThrottlePropertiesIntegrationTest {
     void beanCreationFails_whenUrlLimitIsNegative() {
         contextRunner.withPropertyValues("query.throttle.limits[0].segments[0]: market")
                 .withPropertyValues("query.throttle.limits[0].limits=-1")
-                .run(AssertUtils.createContextFailureAssertConsumer("limit must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("limit must be positive"));
     }
 
     @Test
@@ -149,7 +149,7 @@ class QueryThrottlePropertiesIntegrationTest {
                 .withPropertyValues("query.throttle.retry-interval: 1")
                 .withPropertyValues("query.throttle.attempts-count: 1")
                 .withPropertyValues("query.throttle.default-limit: 1")
-                .run(AssertUtils.createContextFailureAssertConsumer("limit must be positive"));
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("limit must be positive"));
     }
 
     @EnableConfigurationProperties(QueryThrottleProperties.class)
