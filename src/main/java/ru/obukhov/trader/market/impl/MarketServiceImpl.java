@@ -194,8 +194,7 @@ public class MarketServiceImpl implements MarketService {
             }
 
             interval = interval.minusDays(1);
-        } while (candles.size() < limit
-                && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
+        } while (candles.size() < limit && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);
