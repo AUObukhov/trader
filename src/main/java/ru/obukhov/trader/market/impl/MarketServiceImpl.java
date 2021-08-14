@@ -118,6 +118,13 @@ public class MarketServiceImpl implements MarketService {
                 .collect(Collectors.toList());
     }
 
+    private List<Candle> loadYearCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+        return tinkoffService.getMarketCandles(ticker, interval.extendToYear(), candleResolution)
+                .stream()
+                .filter(candle -> interval.contains(candle.getTime()))
+                .collect(Collectors.toList());
+    }
+
     /**
      * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
      *
@@ -205,7 +212,7 @@ public class MarketServiceImpl implements MarketService {
         final OffsetDateTime from = DateUtils.atStartOfYear(to);
         Interval interval = Interval.of(from, to);
 
-        List<Candle> currentCandles = tinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        List<Candle> currentCandles = loadYearCandles(ticker, interval, candleResolution);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
         interval = interval.minusYears(1).extendToYear();
