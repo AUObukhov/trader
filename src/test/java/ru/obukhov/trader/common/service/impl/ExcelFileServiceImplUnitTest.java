@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -63,10 +64,8 @@ class ExcelFileServiceImplUnitTest {
         };
 
         try (MockedConstruction<File> fileConstruction = Mockito.mockConstruction(File.class, fileMockInitializer)) {
-            final Throwable throwable = Assertions.assertThrows(
-                    IllegalStateException.class,
-                    () -> service.saveToFile(workbook, fileName)
-            );
+            final Executable executable = () -> service.saveToFile(workbook, fileName);
+            final Throwable throwable = Assertions.assertThrows(IllegalStateException.class, executable);
             Assertions.assertEquals("Failed to create file " + absolutePath, throwable.getMessage());
 
             Mockito.verify(workbook, Mockito.never()).write(Mockito.any(FileOutputStream.class));

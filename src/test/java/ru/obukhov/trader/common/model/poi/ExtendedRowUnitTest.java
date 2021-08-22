@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -22,22 +23,16 @@ class ExtendedRowUnitTest {
         final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
         final Row row = sheet.createRow(0);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedRow(null, row),
-                IllegalArgumentException.class,
-                "sheet can't be null"
-        );
+        final Executable executable = () -> new ExtendedRow(null, row);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "sheet can't be null");
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedRow(extendedSheet, null),
-                IllegalArgumentException.class,
-                "delegate can't be null"
-        );
+        final Executable executable = () -> new ExtendedRow(extendedSheet, null);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
     }
 
     @Test
@@ -45,11 +40,8 @@ class ExtendedRowUnitTest {
         final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedRow(extendedSheet, extendedRow),
-                IllegalArgumentException.class,
-                "delegate can't be ExtendedRow"
-        );
+        final Executable executable = () -> new ExtendedRow(extendedSheet, extendedRow);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedRow");
     }
 
     @Test

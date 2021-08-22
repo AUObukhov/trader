@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 class ExtendedCellUnitTest {
@@ -17,11 +18,8 @@ class ExtendedCellUnitTest {
         final Row row = sheet.createRow(0);
         final Cell cell = row.createCell(0);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedCell(null, cell),
-                IllegalArgumentException.class,
-                "row can't be null"
-        );
+        final Executable executable = () -> new ExtendedCell(null, cell);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "row can't be null");
     }
 
     @Test
@@ -29,11 +27,8 @@ class ExtendedCellUnitTest {
         final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedCell(extendedRow, null),
-                IllegalArgumentException.class,
-                "delegate can't be null"
-        );
+        final Executable executable = () -> new ExtendedCell(extendedRow, null);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
     }
 
     @Test
@@ -42,11 +37,8 @@ class ExtendedCellUnitTest {
         final ExtendedRow extendedRow = extendedSheet.addRow();
         final Cell extendedCell = extendedRow.createCell(0);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedCell(extendedRow, extendedCell),
-                IllegalArgumentException.class,
-                "delegate can't be ExtendedCell"
-        );
+        final Executable executable = () -> new ExtendedCell(extendedRow, extendedCell);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedCell");
     }
 
     // endregion

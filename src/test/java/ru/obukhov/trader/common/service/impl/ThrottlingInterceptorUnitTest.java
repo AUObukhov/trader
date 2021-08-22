@@ -7,6 +7,7 @@ import okhttp3.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -53,11 +54,8 @@ class ThrottlingInterceptorUnitTest {
                 .thenThrow(new RuntimeException("exception for test"));
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> interceptor.intercept(chain),
-                IllegalStateException.class,
-                "Failed to retry for 30 times"
-        );
+        final Executable executable = () -> interceptor.intercept(chain);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalStateException.class, "Failed to retry for 30 times");
     }
 
     @Test

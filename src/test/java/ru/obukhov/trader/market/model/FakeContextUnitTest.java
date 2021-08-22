@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.web.model.SimulatedOperation;
@@ -41,11 +42,9 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = new FakeContext(currentDateTime);
         fakeContext.addInvestment(currency, balance);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> fakeContext.addInvestment(currency, investment),
-                IllegalArgumentException.class,
-                "investment at " + currentDateTime + " alreadyExists"
-        );
+        final Executable executable = () -> fakeContext.addInvestment(currency, investment);
+        final String expectedMessage = "investment at " + currentDateTime + " alreadyExists";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test

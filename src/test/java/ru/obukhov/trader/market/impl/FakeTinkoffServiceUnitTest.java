@@ -112,14 +112,16 @@ class FakeTinkoffServiceUnitTest {
     void init_throwsIllegalArgumentException_whenCurrencyIsNullAndBalanceIsNotNull() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, null, BigDecimal.TEN));
+        final Executable executable = () -> service.init(dateTime, null, BigDecimal.TEN);
+        Assertions.assertThrows(IllegalArgumentException.class, executable);
     }
 
     @Test
     void init_throwsIllegalArgumentException_whenCurrencyIsNotNullAndBalanceIsNull() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, Currency.RUB, null));
+        final Executable executable = () -> service.init(dateTime, Currency.RUB, null);
+        Assertions.assertThrows(IllegalArgumentException.class, executable);
     }
 
     @Test
@@ -303,12 +305,7 @@ class FakeTinkoffServiceUnitTest {
         Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         final Executable executable = () -> placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
-
-        AssertUtils.assertThrowsWithMessage(
-                executable,
-                IllegalArgumentException.class,
-                "balance can't be negative"
-        );
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions().isEmpty());
         AssertUtils.assertEquals(1000, service.getCurrentBalance(currency));
@@ -373,12 +370,8 @@ class FakeTinkoffServiceUnitTest {
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
         final Executable sellExecutable = () -> placeOrder(ticker, 4, OperationType.SELL, BigDecimal.valueOf(3000));
-
-        AssertUtils.assertThrowsWithMessage(
-                sellExecutable,
-                IllegalArgumentException.class,
-                "lotsCount 4 can't be greater than existing position lots count 3"
-        );
+        final String expectedMessage = "lotsCount 4 can't be greater than existing position lots count 3";
+        AssertUtils.assertThrowsWithMessage(sellExecutable, IllegalArgumentException.class, expectedMessage);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());

@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
@@ -16,22 +17,16 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedWorkbook(null),
-                IllegalArgumentException.class,
-                "delegate can't be null"
-        );
+        final Executable executable = () -> new ExtendedWorkbook(null);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
         final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedWorkbook(extendedWorkbook),
-                IllegalArgumentException.class,
-                "delegate can't be ExtendedWorkbook"
-        );
+        final Executable executable = () -> new ExtendedWorkbook(extendedWorkbook);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedWorkbook");
     }
 
     @Test
@@ -74,11 +69,8 @@ class ExtendedWorkbookUnitTest {
         final String cellStyleName = "cellStyle";
         extendedWorkbook.createCellStyle(cellStyleName);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> extendedWorkbook.createCellStyle(cellStyleName),
-                IllegalArgumentException.class,
-                "Cell style 'cellStyle' already exists"
-        );
+        final Executable executable = () -> extendedWorkbook.createCellStyle(cellStyleName);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Cell style 'cellStyle' already exists");
     }
 
     @Test

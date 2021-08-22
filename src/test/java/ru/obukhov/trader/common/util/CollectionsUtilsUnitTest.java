@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -92,11 +93,8 @@ class CollectionsUtilsUnitTest {
         final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
         final int index = -1;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
-                IllegalArgumentException.class,
-                "index can't be negative"
-        );
+        final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "index can't be negative");
     }
 
     @Test
@@ -104,11 +102,8 @@ class CollectionsUtilsUnitTest {
         final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
         final int index = 3;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
-                IllegalArgumentException.class,
-                "index can't be greater than size of list"
-        );
+        final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "index can't be greater than size of list");
     }
 
     @Test
@@ -116,11 +111,8 @@ class CollectionsUtilsUnitTest {
         final List<BigDecimal> list = new ArrayList<>();
         final int index = 0;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage),
-                IllegalArgumentException.class,
-                "list can't be empty"
-        );
+        final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "list can't be empty");
     }
 
     @Test
@@ -172,11 +164,8 @@ class CollectionsUtilsUnitTest {
         final List<String> list = null;
         final List<String> searchedList = List.of("0", "1");
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> CollectionsUtils.containsList(list, searchedList),
-                IllegalArgumentException.class,
-                "list must not be null"
-        );
+        final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "list must not be null");
     }
 
     @Test
@@ -184,11 +173,8 @@ class CollectionsUtilsUnitTest {
         final List<String> list = List.of("0", "1");
         final List<String> searchedList = null;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> CollectionsUtils.containsList(list, searchedList),
-                IllegalArgumentException.class,
-                "searchedList must not be null"
-        );
+        final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "searchedList must not be null");
     }
 
     @SuppressWarnings("unused")

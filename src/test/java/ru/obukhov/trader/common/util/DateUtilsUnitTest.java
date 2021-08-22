@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -508,11 +509,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be positive"
-        );
+        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be positive");
     }
 
     @Test
@@ -521,11 +519,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(0);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be positive"
-        );
+        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be positive");
     }
 
     @Test
@@ -534,11 +529,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofDays(1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day"
-        );
+        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be less than 1 day");
     }
 
     @Test
@@ -547,11 +539,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(25);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.isWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be less than 1 day"
-        );
+        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be less than 1 day");
     }
 
     @SuppressWarnings("unused")
@@ -718,11 +707,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be positive"
-        );
+        final Executable executable = () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be positive");
     }
 
     @SuppressWarnings("unused")
@@ -757,11 +743,8 @@ class DateUtilsUnitTest {
             final Duration duration,
             final String expectedErrorMessage
     ) {
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                expectedErrorMessage
-        );
+        final Executable executable = () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedErrorMessage);
     }
 
     @Test
@@ -845,11 +828,8 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(-1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                "workTimeDuration must be positive"
-        );
+        final Executable executable = () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workTimeDuration must be positive");
     }
 
     @ParameterizedTest
@@ -860,10 +840,8 @@ class DateUtilsUnitTest {
             final Duration duration,
             final String expectedErrorMessage
     ) {
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration),
-                IllegalArgumentException.class,
-                expectedErrorMessage);
+        final Executable executable = () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedErrorMessage);
     }
 
     @SuppressWarnings("unused")
@@ -999,11 +977,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime now = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1, 10, 0, 1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name"),
-                IllegalArgumentException.class,
-                "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00"
-        );
+        final Executable name = () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
+        final String expectedMessage = "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00";
+        AssertUtils.assertThrowsWithMessage(name, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -1069,11 +1045,8 @@ class DateUtilsUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getCronHitsBetweenDates(expression, from, to),
-                IllegalArgumentException.class,
-                "from must be before to"
-        );
+        final Executable executable = () -> DateUtils.getCronHitsBetweenDates(expression, from, to);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "from must be before to");
     }
 
     @Test
@@ -1082,11 +1055,8 @@ class DateUtilsUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 15);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> DateUtils.getCronHitsBetweenDates(expression, from, to),
-                IllegalArgumentException.class,
-                "from must be before to"
-        );
+        final Executable executable = () -> DateUtils.getCronHitsBetweenDates(expression, from, to);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "from must be before to");
     }
 
     @Test

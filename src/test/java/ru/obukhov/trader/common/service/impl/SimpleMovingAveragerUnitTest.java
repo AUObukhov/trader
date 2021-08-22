@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.service.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -37,11 +38,8 @@ class SimpleMovingAveragerUnitTest {
     void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
         final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(bigDecimalValues, window),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
+        final Executable executable = () -> averager.getAverages(bigDecimalValues, window);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @SuppressWarnings("unused")
@@ -150,11 +148,8 @@ class SimpleMovingAveragerUnitTest {
     ) {
         final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> averager.getAverages(bigDecimalValues, window, order),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
+        final Executable executable = () -> averager.getAverages(bigDecimalValues, window, order);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @SuppressWarnings("unused")

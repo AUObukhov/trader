@@ -3,6 +3,7 @@ package ru.obukhov.trader.common.util;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -239,11 +240,8 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values = TestData.createBigDecimalsList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
-                IllegalArgumentException.class,
-                "times and values must have same size"
-        );
+        final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "times and values must have same size");
     }
 
     @Test
@@ -252,11 +250,8 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values = TestData.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
-                IllegalArgumentException.class,
-                "times and values must have same size"
-        );
+        final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "times and values must have same size");
     }
 
     @Test
@@ -265,11 +260,9 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values = TestData.createBigDecimalsList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getRestraintLines(times, values, localExtremes),
-                IllegalArgumentException.class,
-                "localExtremes can't be longer than times and values"
-        );
+        final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
+        final String expectedMessage = "localExtremes can't be longer than times and values";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -349,11 +342,8 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values1 = TestData.createBigDecimalsList(10.0, 20.0);
         final List<BigDecimal> values2 = TestData.createBigDecimalsList(10.0);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getCrossovers(values1, values2),
-                IllegalArgumentException.class,
-                "values1 and values2 must have same size"
-        );
+        final Executable executable = () -> TrendUtils.getCrossovers(values1, values2);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "values1 and values2 must have same size");
     }
 
     @SuppressWarnings("unused")
@@ -448,11 +438,8 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values2 = TestData.createRandomBigDecimalsList(9);
         final int index = 2;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> TrendUtils.getCrossoverIfLast(values1, values2, index),
-                IllegalArgumentException.class,
-                "Collections must has same size"
-        );
+        final Executable executable = () -> TrendUtils.getCrossoverIfLast(values1, values2, index);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Collections must has same size");
     }
 
     @SuppressWarnings("unused")

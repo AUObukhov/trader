@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -30,7 +31,8 @@ class ExecutionUtilsTest {
             throw runnableException;
         };
 
-        AssertUtils.assertThrowsWithMessage(() -> ExecutionUtils.run(runnable), runnableException.getClass(), runnableException.getMessage());
+        final Executable executable = () -> ExecutionUtils.run(runnable);
+        AssertUtils.assertThrowsWithMessage(executable, runnableException.getClass(), runnableException.getMessage());
     }
 
     // endregion
@@ -55,7 +57,8 @@ class ExecutionUtilsTest {
             throw supplierException;
         };
 
-        AssertUtils.assertThrowsWithMessage(() -> ExecutionUtils.get(supplier), supplierException.getClass(), supplierException.getMessage());
+        final Executable executable = () -> ExecutionUtils.get(supplier);
+        AssertUtils.assertThrowsWithMessage(executable, supplierException.getClass(), supplierException.getMessage());
     }
 
     // endregion

@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -28,11 +29,9 @@ class FakeBalanceUnitTest {
         final FakeBalance fakeBalance = new FakeBalance();
         fakeBalance.addInvestment(currentDateTime, amount1);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> fakeBalance.addInvestment(currentDateTime, amount2),
-                IllegalArgumentException.class,
-                "investment at " + currentDateTime + " alreadyExists"
-        );
+        final Executable executable = () -> fakeBalance.addInvestment(currentDateTime, amount2);
+        final String expectedMessage = "investment at " + currentDateTime + " alreadyExists";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test

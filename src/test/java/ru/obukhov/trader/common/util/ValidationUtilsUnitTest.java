@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 class ValidationUtilsUnitTest {
@@ -12,11 +13,8 @@ class ValidationUtilsUnitTest {
     void assertNullConsistent_throwsIllegalArgumentException_whenObject1IsNullAndObjectIsNotNull() {
         final String message = "test message";
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> ValidationUtils.assertNullConsistent(null, "object2", message),
-                IllegalArgumentException.class,
-                message
-        );
+        final Executable executable = () -> ValidationUtils.assertNullConsistent(null, "object2", message);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, message);
     }
 
     @Test
@@ -24,11 +22,8 @@ class ValidationUtilsUnitTest {
     void assertNullConsistent_throwsIllegalArgumentException_whenObject1IsNotNullAndObjectIsNull() {
         final String message = "test message";
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> ValidationUtils.assertNullConsistent("object1", null, message),
-                IllegalArgumentException.class,
-                message
-        );
+        final Executable executable = () -> ValidationUtils.assertNullConsistent("object1", null, message);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, message);
     }
 
     @Test

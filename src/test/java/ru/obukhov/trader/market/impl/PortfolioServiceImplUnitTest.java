@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -110,11 +111,8 @@ class PortfolioServiceImplUnitTest {
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getAvailableBalance(Currency.RUB),
-                NoSuchElementException.class,
-                "No value present"
-        );
+        final Executable executable = () -> service.getAvailableBalance(Currency.RUB);
+        AssertUtils.assertThrowsWithMessage(executable, NoSuchElementException.class, "No value present");
     }
 
     // endregion

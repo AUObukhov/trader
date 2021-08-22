@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,11 +52,8 @@ class GrafanaServiceImplUnitTest {
 
         request.setTargets(List.of());
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getData(request),
-                IllegalArgumentException.class,
-                "Expected single target"
-        );
+        final Executable executable = () -> service.getData(request);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Expected single target");
     }
 
     @Test
@@ -64,11 +62,8 @@ class GrafanaServiceImplUnitTest {
 
         request.setTargets(List.of(new Target(), new Target()));
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getData(request),
-                IllegalArgumentException.class,
-                "Expected single target"
-        );
+        final Executable executable = () -> service.getData(request);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Expected single target");
     }
 
     @SuppressWarnings("unused")
@@ -193,11 +188,8 @@ class GrafanaServiceImplUnitTest {
         final Target target = new Target().setMetric(metric).setData(data);
         request.setTargets(List.of(target));
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getData(request),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
+        final Executable executable = () -> service.getData(request);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test

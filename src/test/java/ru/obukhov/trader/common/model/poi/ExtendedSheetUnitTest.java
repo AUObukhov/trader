@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFGraphicFrame;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
@@ -25,22 +26,16 @@ class ExtendedSheetUnitTest {
         final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         final Sheet sheet = extendedWorkbook.createSheet();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedSheet(null, sheet),
-                IllegalArgumentException.class,
-                "workbook can't be null"
-        );
+        final Executable executable = () -> new ExtendedSheet(null, sheet);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workbook can't be null");
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedSheet(extendedWorkbook, null),
-                IllegalArgumentException.class,
-                "delegate can't be null"
-        );
+        final Executable executable = () -> new ExtendedSheet(extendedWorkbook, null);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
     }
 
     @Test
@@ -48,11 +43,8 @@ class ExtendedSheetUnitTest {
         final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
         final Sheet sheet = extendedWorkbook.createSheet();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> new ExtendedSheet(extendedWorkbook, sheet),
-                IllegalArgumentException.class,
-                "delegate can't be ExtendedSheet"
-        );
+        final Executable executable = () -> new ExtendedSheet(extendedWorkbook, sheet);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedSheet");
     }
 
     @Test

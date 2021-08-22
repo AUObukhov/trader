@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -18,11 +19,8 @@ class CandleUnitTest {
 
         final Candle rightCandle = new Candle().setTime(DateTimeTestData.createDateTime(2020, 10, 10, 2));
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> Candle.createAverage(leftCandle, rightCandle),
-                IllegalArgumentException.class,
-                "leftCandle can't be after rightCandle"
-        );
+        final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "leftCandle can't be after rightCandle");
     }
 
     @Test
@@ -35,11 +33,8 @@ class CandleUnitTest {
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2))
                 .setInterval(CandleResolution.HOUR);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> Candle.createAverage(leftCandle, rightCandle),
-                IllegalArgumentException.class,
-                "Candle intervals must be equal"
-        );
+        final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Candle intervals must be equal");
     }
 
     @Test

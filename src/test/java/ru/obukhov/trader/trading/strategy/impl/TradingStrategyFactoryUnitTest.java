@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -82,11 +83,8 @@ class TradingStrategyFactoryUnitTest {
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final Map<String, Object> params = Map.of();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyType, params),
-                IllegalArgumentException.class,
-                "minimumProfit is mandatory"
-        );
+        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "minimumProfit is mandatory");
     }
 
     // endregion
@@ -274,11 +272,8 @@ class TradingStrategyFactoryUnitTest {
     ) {
         final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> factory.createStrategy(strategyType, params),
-                IllegalArgumentException.class,
-                expectedMessage
-        );
+        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -286,10 +281,8 @@ class TradingStrategyFactoryUnitTest {
         final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
         final Map<String, Object> params = Map.of();
 
-        final IllegalArgumentException exception = Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> factory.createStrategy(strategyType, params)
-        );
+        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, executable);
 
         final String message = exception.getMessage();
         Assertions.assertTrue(message.contains("minimumProfit is mandatory"));

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -234,11 +235,9 @@ class MarketServiceImplUnitTest {
 
         final String ticker = "ticker";
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getLastCandle(ticker),
-                IllegalArgumentException.class,
-                "Not found last candle for ticker '" + ticker + "'"
-        );
+        final Executable executable = () -> service.getLastCandle(ticker);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -253,11 +252,9 @@ class MarketServiceImplUnitTest {
                 .add(10, from)
                 .mock();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getLastCandle(ticker),
-                IllegalArgumentException.class,
-                "Not found last candle for ticker '" + ticker + "'"
-        );
+        final Executable executable = () -> service.getLastCandle(ticker);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -287,11 +284,9 @@ class MarketServiceImplUnitTest {
         final String ticker = "ticker";
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getLastCandle(ticker, to),
-                IllegalArgumentException.class,
-                "Not found last candle for ticker '" + ticker + "'"
-        );
+        final Executable executable = () -> service.getLastCandle(ticker, to);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test
@@ -305,11 +300,9 @@ class MarketServiceImplUnitTest {
                 .add(10, candlesFrom)
                 .mock();
 
-        AssertUtils.assertThrowsWithMessage(
-                () -> service.getLastCandle(ticker, to),
-                IllegalArgumentException.class,
-                "Not found last candle for ticker '" + ticker + "'"
-        );
+        final Executable executable = () -> service.getLastCandle(ticker, to);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
     }
 
     @Test

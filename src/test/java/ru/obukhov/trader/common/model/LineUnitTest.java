@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
@@ -9,11 +10,8 @@ class LineUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenX1EqualsX2() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new Line(10, BigDecimal.ZERO, 10, BigDecimal.ONE),
-                IllegalArgumentException.class,
-                "x1 and x2 can't be equal"
-        );
+        final Executable executable = () -> new Line(10, BigDecimal.ZERO, 10, BigDecimal.ONE);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "x1 and x2 can't be equal");
     }
 
     @Test
