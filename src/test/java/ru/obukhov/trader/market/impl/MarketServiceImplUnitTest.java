@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
+import ru.obukhov.trader.test.utils.DateTestUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -246,8 +247,7 @@ class MarketServiceImplUnitTest {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(now);
 
         final String ticker = "ticker";
-        final OffsetDateTime from = DateTimeTestData.getLastWorkDay(now).minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
-        final OffsetDateTime to = from.plusDays(1);
+        final OffsetDateTime from = DateTestUtils.getLastWorkDay(now).minusDays(TRADING_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
 
         new CandleMocker(tinkoffService, ticker, CandleResolution._1MIN)
                 .add(10, from)

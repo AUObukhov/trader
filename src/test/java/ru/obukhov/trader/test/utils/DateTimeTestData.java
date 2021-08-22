@@ -7,7 +7,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -92,17 +91,6 @@ public class DateTimeTestData {
         final OffsetDateTime from = DateUtils.atStartOfDay(dateTime);
         final OffsetDateTime to = DateUtils.atEndOfDay(from);
         return Interval.of(from, to);
-    }
-
-    /**
-     * @return last work day not after given {@code dateTime}
-     */
-    public static OffsetDateTime getLastWorkDay(final OffsetDateTime dateTime) {
-        OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
-        while (!DateUtils.isWorkDay(date)) {
-            date = date.minusDays(1);
-        }
-        return date;
     }
 
     public static ZoneOffset getNotDefaultOffset() {

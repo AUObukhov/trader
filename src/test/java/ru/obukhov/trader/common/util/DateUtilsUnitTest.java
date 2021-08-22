@@ -110,29 +110,6 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region getLastWorkDay with dateTime argument tests
-
-    @Test
-    void getLastWorkDayDateTime_returnsNow_whenWorkDay() {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23); // wednesday
-
-        final OffsetDateTime lastWorkDay = DateTimeTestData.getLastWorkDay(mockedNow);
-
-        Assertions.assertEquals(mockedNow, lastWorkDay);
-    }
-
-    @Test
-    void getLastWorkDayDateTime_returnsNow_whenWeekend() {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 27); // sunday
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2020, 9, 25); // friday
-
-        final OffsetDateTime lastWorkDay = DateTimeTestData.getLastWorkDay(mockedNow);
-
-        Assertions.assertEquals(expected, lastWorkDay);
-    }
-
-    // endregion
-
     // region getLatestDateTime tests
 
     @Test
