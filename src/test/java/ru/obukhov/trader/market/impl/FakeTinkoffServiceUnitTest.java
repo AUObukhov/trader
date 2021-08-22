@@ -131,8 +131,9 @@ class FakeTinkoffServiceUnitTest {
 
         service.init(dateTime, currency, BigDecimal.valueOf(1000000));
         final String ticker = "ticker";
+        final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -213,8 +214,9 @@ class FakeTinkoffServiceUnitTest {
         service.init(dateTime, Currency.RUB, balance);
 
         final String ticker = "ticker";
+        final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -242,9 +244,10 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
+        final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker1);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker2);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
 
         placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -272,9 +275,10 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
+        final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker1);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker2);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
 
         placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -297,12 +301,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         final Executable executable = () -> placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
         AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "balance can't be negative");
@@ -316,12 +321,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(1000));
 
@@ -336,12 +342,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -360,12 +367,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -387,12 +395,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -408,12 +417,13 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
+        final int lotSize = 10;
 
         service.init(dateTime, currency, balance);
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));

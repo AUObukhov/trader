@@ -22,11 +22,11 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
-    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker) {
+    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker, final int lotSize) {
         final MarketInstrument instrument = new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
-                .lot(0)
+                .lot(lotSize)
                 .currency(Currency.RUB)
                 .name(StringUtils.EMPTY)
                 .type(InstrumentType.STOCK);
@@ -36,11 +36,11 @@ public class Mocker {
         return instrument;
     }
 
-    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker) {
+    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker, final int lotSize) {
         final MarketInstrument instrument = new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
-                .lot(0)
+                .lot(lotSize)
                 .currency(Currency.RUB)
                 .name(StringUtils.EMPTY)
                 .type(InstrumentType.STOCK);

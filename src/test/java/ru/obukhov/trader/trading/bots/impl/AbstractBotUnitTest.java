@@ -110,8 +110,9 @@ class AbstractBotUnitTest {
     @Test
     void processTicker_doesNoOrder_whenDecisionIsWait() {
         final String ticker = "ticker";
+        final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker);
+        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -131,8 +132,9 @@ class AbstractBotUnitTest {
     @Test
     void processTicker_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String ticker = "ticker";
+        final int lotSize = 10;
 
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker);
+        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
@@ -168,8 +170,9 @@ class AbstractBotUnitTest {
     @Test
     void processTicker_returnsFilledData_andPlacesSellOrder_whenDecisionIsSell() {
         final String ticker = "ticker";
+        final int lotSize = 10;
 
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker);
+        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))

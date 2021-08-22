@@ -237,8 +237,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             Mockito.when(portfolioService.getAvailableBalance(Mockito.any(Currency.class)))
                     .thenThrow(new IllegalArgumentException());
@@ -267,8 +269,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             Mockito.when(portfolioService.getPosition(ticker1)).thenThrow(new IllegalArgumentException());
             Mockito.when(portfolioService.getPosition(ticker2)).thenThrow(new IllegalArgumentException());
@@ -297,8 +301,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker1)))
                     .thenThrow(new IllegalArgumentException());
@@ -329,8 +335,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                     .thenThrow(new IllegalArgumentException());
@@ -359,8 +367,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -432,8 +442,10 @@ class ScheduledBotUnitTest {
             final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
-            Mocker.createAndMockInstrument(marketService, ticker1);
-            Mocker.createAndMockInstrument(marketService, ticker2);
+            final int lotSize = 10;
+
+            Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
+            Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                     .thenReturn(new Decision(DecisionAction.WAIT));
@@ -455,9 +467,10 @@ class ScheduledBotUnitTest {
 
             final String ticker1 = "ticker1";
             final String ticker2 = "ticker2";
+            final int lotSize = 10;
             mockTickers(ticker1, ticker2);
-            mockData(ticker1);
-            mockData(ticker2);
+            mockData(ticker1, lotSize);
+            mockData(ticker2, lotSize);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -483,9 +496,10 @@ class ScheduledBotUnitTest {
 
             final String ticker1 = "ticker1";
             final String ticker2 = "ticker2";
+            final int lotSize = 10;
             mockTickers(ticker1, ticker2);
-            mockData(ticker1);
-            mockData(ticker2);
+            mockData(ticker1, lotSize);
+            mockData(ticker2, lotSize);
 
             final Decision decision = new Decision(DecisionAction.SELL, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -504,8 +518,8 @@ class ScheduledBotUnitTest {
         Mockito.when(scheduledBotProperties.getTickers()).thenReturn(Set.of(tickers));
     }
 
-    private void mockData(final String ticker) {
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker);
+    private void mockData(final String ticker, final int lotSize) {
+        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
