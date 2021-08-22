@@ -6,6 +6,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 
@@ -68,8 +69,8 @@ public class DateTimeTestData {
     /**
      * @return OffsetDateTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and UTC zone
      */
-    public static OffsetDateTime createTime(final int hour, final int minute, final int second) {
-        return OffsetDateTime.of(0, 1, 1, hour, minute, second, 0, DateUtils.DEFAULT_OFFSET);
+    public static OffsetTime createTime(final int hour, final int minute, final int second) {
+        return OffsetTime.of(hour, minute, second, 0, DateUtils.DEFAULT_OFFSET);
     }
 
     /**

@@ -34,7 +34,7 @@ class TradingPropertiesIntegrationTest {
 
                     AssertUtils.assertEquals(0.1d, tradingProperties.getCommission());
 
-                    final OffsetTime expectedWorkStartTime = DateTimeTestData.createTime(12, 0, 0).toOffsetTime();
+                    final OffsetTime expectedWorkStartTime = DateTimeTestData.createTime(12, 0, 0);
                     Assertions.assertEquals(expectedWorkStartTime, tradingProperties.getWorkStartTime());
 
                     Assertions.assertEquals(Duration.ofMinutes(480), tradingProperties.getWorkDuration());

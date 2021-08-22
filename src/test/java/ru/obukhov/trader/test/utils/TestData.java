@@ -245,7 +245,7 @@ public class TestData {
                 false,
                 "token",
                 0.003,
-                DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                DateTimeTestData.createTime(10, 0, 0),
                 Duration.ofHours(9),
                 7,
                 OffsetDateTime.now()
