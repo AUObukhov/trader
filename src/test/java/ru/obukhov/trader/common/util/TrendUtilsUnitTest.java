@@ -106,7 +106,7 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLocalExtremes")
     void getLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
-        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
 
         final List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
 
@@ -222,7 +222,7 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSortedLocalExtremes")
     void getSortedLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
-        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
 
         final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
 
@@ -526,8 +526,8 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetCrossoverIfLast")
     void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, Crossover expectedCrossover) {
-        final List<BigDecimal> bigDecimalValues1 = TestData.getBigDecimalValues(values1);
-        final List<BigDecimal> bigDecimalValues2 = TestData.getBigDecimalValues(values2);
+        final List<BigDecimal> bigDecimalValues1 = TestData.createBigDecimalsList(values1);
+        final List<BigDecimal> bigDecimalValues2 = TestData.createBigDecimalsList(values2);
 
         final Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
 

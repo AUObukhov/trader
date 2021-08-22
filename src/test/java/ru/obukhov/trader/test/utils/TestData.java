@@ -214,7 +214,7 @@ public class TestData {
         return CompletableFuture.completedFuture(marketInstrumentList);
     }
 
-    public static List<BigDecimal> getBigDecimalValues(final List<Double> values) {
+    public static List<BigDecimal> createBigDecimalsList(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
