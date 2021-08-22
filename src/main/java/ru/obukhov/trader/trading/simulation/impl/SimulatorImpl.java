@@ -37,7 +37,6 @@ import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,29 +96,37 @@ public class SimulatorImpl implements Simulator {
     ) {
         log.info("Simulation for ticker = '{}' started", ticker);
 
-        final OffsetDateTime startTime = OffsetDateTime.now();
-        DateUtils.assertDateTimeNotFuture(interval.getFrom(), startTime, "from");
-        DateUtils.assertDateTimeNotFuture(interval.getTo(), startTime, "to");
+        ExecutionResult<List<SimulationResult>> executionResult = ExecutionUtils.get(() -> simulate(ticker, balanceConfig, tradingConfigs, interval));
 
-        final Interval finiteInterval = interval.limitByNowIfNull(startTime);
+        final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
+
+        if (saveToFiles) {
+            saveSimulationResultsSafe(ticker, executionResult.getResult());
+        }
+
+        return executionResult.getResult();
+    }
+
+    private List<SimulationResult> simulate(
+            final String ticker,
+            final BalanceConfig balanceConfig,
+            final List<TradingConfig> tradingConfigs,
+            final Interval interval
+    ) {
+        final OffsetDateTime now = OffsetDateTime.now();
+        DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
+        DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
+
+        final Interval finiteInterval = interval.limitByNowIfNull(now);
 
         final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
                 .map(tradingConfig -> startSimulation(tradingConfig, ticker, balanceConfig, finiteInterval))
                 .collect(Collectors.toList());
-        final List<SimulationResult> simulationResults = simulationFutures.stream()
+        return simulationFutures.stream()
                 .map(CompletableFuture::join)
                 .sorted(Comparator.comparing(SimulationResult::getFinalTotalBalance).reversed())
                 .collect(Collectors.toList());
-
-        final Duration simulationDuration = Duration.between(startTime, OffsetDateTime.now());
-        final String simulationDurationString = DurationFormatUtils.formatDurationHMS(simulationDuration.toMillis());
-        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
-
-        if (saveToFiles) {
-            saveSimulationResultsSafe(ticker, simulationResults);
-        }
-
-        return simulationResults;
     }
 
     private FakeBot createFakeBot(final TradingConfig tradingConfig) {
@@ -144,7 +151,7 @@ public class SimulatorImpl implements Simulator {
     ) {
         log.info("Starting simulation for '{}' with ticker = '{}'", tradingConfig, ticker);
 
-        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.get(() -> simulate(tradingConfig, ticker, balanceConfig, interval));
+        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.getSafe(() -> simulate(tradingConfig, ticker, balanceConfig, interval));
 
         final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
 
