@@ -71,7 +71,7 @@ public class SimulatorImpl implements Simulator {
             final TradingStrategyFactory strategyFactory,
             @Value("${simulation.thread-count:10}") final Integer simulationThreadCount
     ) {
-        Assert.isTrue(simulationThreadCount > 1, "simulationThreadCount must be greater than 1");
+        Assert.isTrue(simulationThreadCount > 0, "simulationThreadCount must be positive");
 
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -73,29 +74,14 @@ class SimulatorImplUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsNegative() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, -1),
-                IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1"
-        );
+        final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, -1);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "simulationThreadCount must be positive");
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsZero() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 0),
-                IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1"
-        );
-    }
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsOne() {
-        AssertUtils.assertThrowsWithMessage(
-                () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 1),
-                IllegalArgumentException.class,
-                "simulationThreadCount must be greater than 1"
-        );
+        final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 0);
+        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "simulationThreadCount must be positive");
     }
 
     // endregion
