@@ -204,9 +204,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             Mockito.when(marketService.getInstrument(ticker1)).thenThrow(new IllegalArgumentException());
@@ -231,9 +231,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -261,9 +261,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -291,9 +291,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -323,9 +323,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -353,9 +353,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -426,9 +426,9 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             mockTickers(ticker1, ticker2);
 
-            final Candle candle1 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker1, List.of(candle1));
-            final Candle candle2 = TestDataHelper.createCandleWithTime(mockedNow);
+            final Candle candle2 = new Candle().setTime(mockedNow);
             mockCandles(ticker2, List.of(candle2));
 
             TestDataHelper.createAndMockInstrument(marketService, ticker1);
@@ -518,7 +518,7 @@ class ScheduledBotUnitTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
+        final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
     }
 

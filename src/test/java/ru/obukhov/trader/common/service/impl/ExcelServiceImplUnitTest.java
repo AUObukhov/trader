@@ -498,26 +498,16 @@ class ExcelServiceImplUnitTest {
     }
 
     private List<Candle> createCandles() {
-        final Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                150,
-                DateTimeTestData.createDateTime(2020, 10, 1, 10)
-        );
-        final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                160,
-                DateTimeTestData.createDateTime(2020, 10, 1, 11)
-        );
-        final Candle candle3 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                180,
-                DateTimeTestData.createDateTime(2020, 10, 5, 10, 11)
-        );
-        final Candle candle4 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                160,
-                DateTimeTestData.createDateTime(2020, 10, 10, 10, 50)
-        );
-        final Candle candle5 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                120,
-                DateTimeTestData.createDateTime(2020, 11, 1, 10)
-        );
+        final Candle candle1 = TestDataHelper.createCandleWithOpenPrice(150)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10));
+        final Candle candle2 = TestDataHelper.createCandleWithOpenPrice(160)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11));
+        final Candle candle3 = TestDataHelper.createCandleWithOpenPrice(180)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11));
+        final Candle candle4 = TestDataHelper.createCandleWithOpenPrice(160)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50));
+        final Candle candle5 = TestDataHelper.createCandleWithOpenPrice(120)
+                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10));
 
         return List.of(candle1, candle2, candle3, candle4, candle5);
     }

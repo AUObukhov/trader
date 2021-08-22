@@ -216,11 +216,11 @@ class GrafanaServiceImplUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestDataHelper.createCandleWithOpenPriceAndTime(1000, from.plusHours(1)),
-                TestDataHelper.createCandleWithOpenPriceAndTime(2000, from.plusHours(2)),
-                TestDataHelper.createCandleWithOpenPriceAndTime(3000, from.plusHours(3)),
-                TestDataHelper.createCandleWithOpenPriceAndTime(4000, from.plusHours(4)),
-                TestDataHelper.createCandleWithOpenPriceAndTime(5000, from.plusHours(5))
+                TestDataHelper.createCandleWithOpenPrice(1000).setTime(from.plusHours(1)),
+                TestDataHelper.createCandleWithOpenPrice(2000).setTime(from.plusHours(2)),
+                TestDataHelper.createCandleWithOpenPrice(3000).setTime(from.plusHours(3)),
+                TestDataHelper.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
+                TestDataHelper.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
         );
         Mockito.when(statisticsService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 

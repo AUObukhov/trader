@@ -96,7 +96,7 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
-        final Candle candle = TestDataHelper.createCandleWithTime(previousStartTime);
+        final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
         final DecisionData decisionData = bot.processTicker(ticker, previousStartTime, OffsetDateTime.now());
@@ -112,7 +112,7 @@ class AbstractBotUnitTest {
 
         TestDataHelper.createAndMockInstrument(marketService, ticker);
 
-        final Candle candle = TestDataHelper.createCandleWithTime(OffsetDateTime.now());
+        final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -145,7 +145,7 @@ class AbstractBotUnitTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(TestDataHelper.createCandleWithTime(OffsetDateTime.now()));
+        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5);
@@ -182,7 +182,7 @@ class AbstractBotUnitTest {
         Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
-        final List<Candle> currentCandles = List.of(TestDataHelper.createCandleWithTime(OffsetDateTime.now()));
+        final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5);

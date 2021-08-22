@@ -499,7 +499,7 @@ class FakeTinkoffServiceUnitTest {
     // endregion
 
     private void placeOrder(String ticker, int lots, OperationType operationType, BigDecimal price) {
-        final Candle candle = TestDataHelper.createCandleWithOpenPrice(price);
+        final Candle candle = new Candle().setOpenPrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
         MarketOrderRequest orderRequest = new MarketOrderRequest()

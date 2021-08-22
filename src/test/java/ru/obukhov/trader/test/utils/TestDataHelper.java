@@ -46,6 +46,8 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestDataHelper {
 
+    // region Tinkoff Candle creation methods
+
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
             final double openPrice,
             final double closePrice,
@@ -62,14 +64,7 @@ public class TestDataHelper {
             final double highestPrice,
             final double lowestPrice
     ) {
-        return createTinkoffCandle(
-                interval,
-                openPrice,
-                closePrice,
-                highestPrice,
-                lowestPrice,
-                OffsetDateTime.now()
-        );
+        return createTinkoffCandle(interval, openPrice, closePrice, highestPrice, lowestPrice, OffsetDateTime.now());
     }
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
@@ -91,6 +86,10 @@ public class TestDataHelper {
                 .time(time);
     }
 
+    // endregion
+
+    // region Candle creation methods
+
     public static Candle createCandle(
             final double openPrice,
             final double closePrice,
@@ -110,13 +109,7 @@ public class TestDataHelper {
     }
 
     public static Candle createCandleWithOpenPrice(final double openPrice) {
-        return createCandleWithOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
-    }
-
-    public static Candle createCandleWithOpenPrice(final BigDecimal openPrice) {
-        final Candle candle = new Candle();
-        candle.setOpenPrice(openPrice);
-        return candle;
+        return new Candle().setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }
 
     public static Candle createCandleWithClosePrice(final double closePrice) {
@@ -125,33 +118,14 @@ public class TestDataHelper {
         return candle;
     }
 
-    public static Candle createCandleWithTime(final OffsetDateTime time) {
-        final Candle candle = new Candle();
-        candle.setTime(time);
-        return candle;
-    }
-
-    public static Candle createCandleWithOpenPriceAndTime(final double openPrice, final OffsetDateTime time) {
-        final Candle candle = new Candle();
-        candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
-        candle.setTime(time);
-        return candle;
-    }
-
-    public static Candle createCandleWithOpenClosePricesAndTime(final double openPrice, final double closePrice, final OffsetDateTime time) {
+    public static Candle createCandleWithOpenPriceAndClosePrice(final double openPrice, final double closePrice) {
         final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
-        candle.setTime(time);
         return candle;
     }
 
-    public static Candle createCandleWithTimeAndInterval(final OffsetDateTime time, final CandleResolution interval) {
-        final Candle candle = new Candle();
-        candle.setTime(time);
-        candle.setInterval(interval);
-        return candle;
-    }
+    // endregion
 
     public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker) {
         final MarketInstrument instrument = new MarketInstrument()

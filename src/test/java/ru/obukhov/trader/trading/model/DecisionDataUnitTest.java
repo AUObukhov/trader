@@ -35,7 +35,7 @@ class DecisionDataUnitTest {
         candles.add(TestDataHelper.createCandleWithOpenPrice(100));
         candles.add(TestDataHelper.createCandleWithOpenPrice(200));
         final BigDecimal lastCandleOpenPrice = BigDecimal.valueOf(300);
-        candles.add(TestDataHelper.createCandleWithOpenPrice(lastCandleOpenPrice));
+        candles.add(new Candle().setOpenPrice(lastCandleOpenPrice));
 
         final DecisionData decisionData = new DecisionData();
         decisionData.setCurrentCandles(candles);

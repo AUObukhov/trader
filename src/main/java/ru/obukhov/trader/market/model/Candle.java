@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -13,6 +14,7 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class Candle {
 
     protected BigDecimal openPrice;

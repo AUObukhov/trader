@@ -44,7 +44,7 @@ public class CandleMocker {
     }
 
     public CandleMocker add(@NotNull final Integer openPrice, @NotNull final OffsetDateTime time) {
-        return add(createCandleWithOpenPriceAndTime(openPrice, time));
+        return add(createCandleWithOpenPrice(openPrice, time));
     }
 
     public CandleMocker add(@NotNull final Candle... candles) {
@@ -53,7 +53,7 @@ public class CandleMocker {
         return this;
     }
 
-    private Candle createCandleWithOpenPriceAndTime(final Integer openPrice, final OffsetDateTime time) {
+    private Candle createCandleWithOpenPrice(final Integer openPrice, final OffsetDateTime time) {
         final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setTime(time);
