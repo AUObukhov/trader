@@ -50,21 +50,23 @@ class CandleUnitTest {
 
     @Test
     void createAverage() {
-        final Candle candle1 = TestDataHelper.createCandleWithClosePriceAndTime(
+        final Candle candle1 = TestDataHelper.createCandleWithOpenClosePricesAndTime(
                 100,
+                200,
                 DateUtils.getDateTime(2020, 10, 10, 1, 0, 0)
         );
 
-        final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
-                200,
+        final Candle candle2 = TestDataHelper.createCandleWithOpenClosePricesAndTime(
+                300,
+                400,
                 DateUtils.getDateTime(2020, 10, 11, 2, 0, 0)
         );
 
         final Candle averageCandle = Candle.createAverage(candle1, candle2);
 
         AssertUtils.assertEquals(100, averageCandle.getOpenPrice());
-        AssertUtils.assertEquals(200, averageCandle.getClosePrice());
-        AssertUtils.assertEquals(200, averageCandle.getHighestPrice());
+        AssertUtils.assertEquals(400, averageCandle.getClosePrice());
+        AssertUtils.assertEquals(400, averageCandle.getHighestPrice());
         AssertUtils.assertEquals(100, averageCandle.getLowestPrice());
 
         final OffsetDateTime expectedTime = DateUtils.getDateTime(2020, 10, 10, 13, 30, 0);

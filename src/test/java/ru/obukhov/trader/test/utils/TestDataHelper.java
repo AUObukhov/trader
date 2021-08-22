@@ -146,6 +146,14 @@ public class TestDataHelper {
         return candle;
     }
 
+    public static Candle createCandleWithOpenClosePricesAndTime(final double openPrice, final double closePrice, final OffsetDateTime time) {
+        final Candle candle = new Candle();
+        candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
+        candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
+        candle.setTime(time);
+        return candle;
+    }
+
     public static Candle createCandleWithTimeAndInterval(final OffsetDateTime time, final CandleResolution interval) {
         final Candle candle = new Candle();
         candle.setTime(time);
