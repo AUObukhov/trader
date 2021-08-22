@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestData {
 
-    // region Tinkoff Candle creation methods
+    // region Tinkoff Candle creation
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
             final double openPrice,
@@ -74,7 +74,7 @@ public class TestData {
 
     // endregion
 
-    // region Candle creation methods
+    // region Candle creation
 
     public static Candle createCandle(
             final double openPrice,
@@ -113,6 +113,8 @@ public class TestData {
 
     // endregion
 
+    // region DecisionData creation
+
     public static DecisionData createDecisionData(final Candle... candles) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setCurrentCandles(List.of(candles));
@@ -136,6 +138,10 @@ public class TestData {
 
         return decisionData;
     }
+
+    // endregion
+
+    // region PortfolioPosition creation
 
     public static PortfolioPosition createPortfolioPosition(final String ticker) {
         return createPortfolioPosition(ticker, 1);
@@ -169,6 +175,25 @@ public class TestData {
         );
     }
 
+    // endregion
+
+    // region CurrencyPosition creation
+
+    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
+        return new CurrencyPosition()
+                .currency(currency)
+                .balance(DecimalUtils.setDefaultScale(balance));
+    }
+
+    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance, final long blocked) {
+        return new CurrencyPosition()
+                .currency(currency)
+                .balance(DecimalUtils.setDefaultScale(balance))
+                .blocked(DecimalUtils.setDefaultScale(blocked));
+    }
+
+    // endregion
+
     public static Operation createTinkoffOperation(
             final OffsetDateTime operationDateTime,
             final OperationTypeWithCommission operationType,
@@ -189,19 +214,6 @@ public class TestData {
                 .operationType(operationType);
     }
 
-    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
-        return new CurrencyPosition()
-                .currency(currency)
-                .balance(DecimalUtils.setDefaultScale(balance));
-    }
-
-    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance, final long blocked) {
-        return new CurrencyPosition()
-                .currency(currency)
-                .balance(DecimalUtils.setDefaultScale(balance))
-                .blocked(DecimalUtils.setDefaultScale(blocked));
-    }
-
     public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
         return new MoneyAmount()
                 .currency(currency)
@@ -213,6 +225,8 @@ public class TestData {
         final MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
     }
+
+    // region BigDecimals list creation
 
     public static List<BigDecimal> createBigDecimalsList(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
@@ -234,6 +248,8 @@ public class TestData {
         }
         return values;
     }
+
+    // endregion
 
     @SneakyThrows
     public static CronExpression createCronExpression() {
