@@ -22,12 +22,10 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -114,12 +112,6 @@ public class TestData {
     }
 
     // endregion
-
-    public static ZoneOffset getNotDefaultOffset() {
-        final ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
-        final int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
-        return ZoneOffset.ofTotalSeconds(totalSeconds);
-    }
 
     public static DecisionData createDecisionData(final Candle... candles) {
         final DecisionData decisionData = new DecisionData();

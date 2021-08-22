@@ -6,7 +6,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class for handy creating of {@link OffsetDateTime} instances for tests
@@ -101,6 +103,12 @@ public class DateTimeTestData {
             date = date.minusDays(1);
         }
         return date;
+    }
+
+    public static ZoneOffset getNotDefaultOffset() {
+        final ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
+        final int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
+        return ZoneOffset.ofTotalSeconds(totalSeconds);
     }
 
 }

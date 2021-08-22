@@ -9,7 +9,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.text.ParseException;
@@ -1028,7 +1027,7 @@ class DateUtilsUnitTest {
 
     @Test
     void withDefaultOffset() {
-        final ZoneOffset testOffset = TestData.getNotDefaultOffset();
+        final ZoneOffset testOffset = DateTimeTestData.getNotDefaultOffset();
 
         final OffsetDateTime dateTimeWithTestOffset = OffsetDateTime.now().withOffsetSameInstant(testOffset);
         final OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
