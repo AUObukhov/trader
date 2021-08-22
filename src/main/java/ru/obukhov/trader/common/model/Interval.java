@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -43,27 +42,6 @@ public class Interval {
             Assert.isTrue(from.getOffset().equals(to.getOffset()), "offsets of from and to must be equal");
         }
 
-        return new Interval(from, to);
-    }
-
-    /**
-     * @param year       year of given date
-     * @param month      month of given date
-     * @param dayOfMonth day of month of given date
-     * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
-     */
-    public static Interval ofDay(final int year, final int month, final int dayOfMonth) {
-        final OffsetDateTime from = DateUtils.getDate(year, month, dayOfMonth);
-        final OffsetDateTime to = DateUtils.atEndOfDay(from);
-        return new Interval(from, to);
-    }
-
-    /**
-     * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
-     */
-    public static Interval ofDay(@NotNull final OffsetDateTime dateTime) {
-        final OffsetDateTime from = DateUtils.atStartOfDay(dateTime);
-        final OffsetDateTime to = DateUtils.atEndOfDay(from);
         return new Interval(from, to);
     }
 

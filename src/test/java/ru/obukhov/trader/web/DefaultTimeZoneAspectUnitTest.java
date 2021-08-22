@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.aop.ProxyMethodInvocation;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -30,25 +30,25 @@ class DefaultTimeZoneAspectUnitTest {
                         null,
                         OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
                         null,
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),
                 Arguments.of(
                         OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
                         null,
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
                         null
                 ),
                 Arguments.of(
                         OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
                         OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),
                 Arguments.of(
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0),
-                        DateUtils.getDateTime(2020, 10, 5, 13, 0, 0, 0)
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 )
         );
     }

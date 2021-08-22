@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.Application;
-import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
@@ -45,14 +45,7 @@ class TraderExceptionHandlerWebTest {
     @Test
     @SuppressWarnings("unused")
     void handlesMethodArgumentNotValidException() throws Exception {
-        final OffsetDateTime mockedNow = DateUtils.getDateTime(
-                2020,
-                9,
-                23,
-                10,
-                0,
-                0
-        );
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("TestValidationResponse.json");
 
@@ -67,14 +60,7 @@ class TraderExceptionHandlerWebTest {
     @Test
     @SuppressWarnings("unused")
     void handlesMissingServletRequestParameterException() throws Exception {
-        final OffsetDateTime mockedNow = DateUtils.getDateTime(
-                2020,
-                9,
-                23,
-                10,
-                0,
-                0
-        );
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("TestMissingParamResponse.json");
 
@@ -89,7 +75,7 @@ class TraderExceptionHandlerWebTest {
     @Test
     @SuppressWarnings("unused")
     void handlesRuntimeException() throws Exception {
-        final OffsetDateTime mockedNow = DateUtils.getDateTime(2020, 9, 23, 10, 0, 0);
+        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("RuntimeExceptionResponse.json");
 

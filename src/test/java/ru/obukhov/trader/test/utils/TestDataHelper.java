@@ -9,7 +9,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -389,7 +388,7 @@ public class TestDataHelper {
                 false,
                 "token",
                 0.003,
-                DateUtils.getTime(10, 0, 0).toOffsetTime(),
+                DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
                 Duration.ofHours(9),
                 7,
                 OffsetDateTime.now()

@@ -10,10 +10,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -219,7 +219,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 8000,
                 15000,
                 6000,
-                DateUtils.getDateTime(2021, 3, 25, 10, 0, 0),
+                DateTimeTestData.createDateTime(2021, 3, 25, 10),
                 candleResolution
         );
 
@@ -228,7 +228,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 800,
                 1500,
                 600,
-                DateUtils.getDateTime(2021, 3, 25, 10, 1, 0),
+                DateTimeTestData.createDateTime(2021, 3, 25, 10, 1),
                 candleResolution
         );
 
@@ -237,7 +237,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 80,
                 150,
                 60,
-                DateUtils.getDateTime(2021, 3, 25, 10, 2, 0),
+                DateTimeTestData.createDateTime(2021, 3, 25, 10, 2),
                 candleResolution
         );
 

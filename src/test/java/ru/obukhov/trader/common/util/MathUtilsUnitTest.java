@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.math.BigDecimal;
@@ -73,7 +74,7 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
         final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
-        final OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 11, 12, 13);
+        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
@@ -83,10 +84,10 @@ class MathUtilsUnitTest {
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
         final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
-        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 1, 1, 10, 0, 0), BigDecimal.valueOf(100000));
-        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 2, 1, 10, 0, 0), BigDecimal.valueOf(110000));
-        dateTimesToAmounts.put(DateUtils.getDateTime(2021, 3, 1, 10, 0, 0), BigDecimal.valueOf(120000));
-        final OffsetDateTime endTime = DateUtils.getDateTime(2021, 3, 10, 10, 0, 0);
+        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 1, 1, 10), BigDecimal.valueOf(100000));
+        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 2, 1, 10), BigDecimal.valueOf(110000));
+        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 3, 1, 10), BigDecimal.valueOf(120000));
+        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 10);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 

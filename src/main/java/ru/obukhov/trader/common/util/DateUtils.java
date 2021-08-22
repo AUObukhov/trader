@@ -27,51 +27,7 @@ public class DateUtils {
 
     public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-    public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
-
-    /**
-     * @return OffsetDateTime with by params, 0 nanoseconds and UTC zone
-     */
-    public static OffsetDateTime getDateTime(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final int minute,
-            final int second
-    ) {
-        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, second, 0, DEFAULT_OFFSET);
-    }
-
-    /**
-     * @return OffsetDateTime with by params and UTC zone
-     */
-    public static OffsetDateTime getDateTime(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final int minute,
-            final int second,
-            final int nanoOfSecond
-    ) {
-        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, second, nanoOfSecond, DEFAULT_OFFSET);
-    }
-
-    /**
-     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds and UTC zone
-     */
-    public static OffsetDateTime getDate(final int year, final int month, final int dayOfMonth) {
-        return getDateTime(year, month, dayOfMonth, 0, 0, 0);
-    }
-
-    /**
-     * @return OffsetDateTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and UTC zone
-     */
-    public static OffsetDateTime getTime(final int hour, final int minute, final int second) {
-        return getDateTime(0, 1, 1, hour, minute, second);
-    }
+    public static final DateTimeFormatter FILE_NAME_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss");
 
     /**
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
@@ -103,16 +59,6 @@ public class DateUtils {
         return dateTime.plusDays(adjustment);
     }
 
-    /**
-     * @return last work day not after given {@code dateTime}
-     */
-    public static OffsetDateTime getLastWorkDay(final OffsetDateTime dateTime) {
-        OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
-        while (!isWorkDay(date)) {
-            date = date.minusDays(1);
-        }
-        return date;
-    }
 
     /**
      * @return earliest dateTime of parameters. If parameters are equal, returns {@code dateTime1}.

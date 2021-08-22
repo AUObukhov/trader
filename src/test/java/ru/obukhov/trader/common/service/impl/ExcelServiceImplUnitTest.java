@@ -20,9 +20,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.SimulatedOperation;
@@ -371,8 +371,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_createsAndSaveWorkbook() throws IOException {
         final String ticker = "ticker";
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 0, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -415,8 +415,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 0, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -448,8 +448,8 @@ class ExcelServiceImplUnitTest {
     }
 
     private Interval createInterval() {
-        final OffsetDateTime from = DateUtils.getDate(2020, 10, 1);
-        final OffsetDateTime to = DateUtils.getDate(2020, 10, 15);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 15);
         return Interval.of(from, to);
     }
 
@@ -463,7 +463,7 @@ class ExcelServiceImplUnitTest {
     private List<SimulatedOperation> createSimulatedOperations(String ticker) {
         SimulatedOperation operation1 = SimulatedOperation.builder()
                 .ticker(ticker)
-                .dateTime(DateUtils.getDateTime(2020, 10, 1, 10, 0, 0))
+                .dateTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
                 .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(150))
                 .quantity(1)
@@ -471,7 +471,7 @@ class ExcelServiceImplUnitTest {
                 .build();
         SimulatedOperation operation2 = SimulatedOperation.builder()
                 .ticker(ticker)
-                .dateTime(DateUtils.getDateTime(2020, 10, 5, 10, 11, 0))
+                .dateTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
                 .operationType(OperationType.SELL)
                 .price(BigDecimal.valueOf(180))
                 .quantity(1)
@@ -479,7 +479,7 @@ class ExcelServiceImplUnitTest {
                 .build();
         SimulatedOperation operation3 = SimulatedOperation.builder()
                 .ticker(ticker)
-                .dateTime(DateUtils.getDateTime(2020, 10, 10, 10, 50, 0))
+                .dateTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
                 .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(160))
                 .quantity(3)
@@ -487,7 +487,7 @@ class ExcelServiceImplUnitTest {
                 .build();
         SimulatedOperation operation4 = SimulatedOperation.builder()
                 .ticker(ticker)
-                .dateTime(DateUtils.getDateTime(2020, 11, 1, 10, 0, 0))
+                .dateTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
                 .operationType(OperationType.BUY)
                 .price(BigDecimal.valueOf(120))
                 .quantity(2)
@@ -500,23 +500,23 @@ class ExcelServiceImplUnitTest {
     private List<Candle> createCandles() {
         final Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 150,
-                DateUtils.getDateTime(2020, 10, 1, 10, 0, 0)
+                DateTimeTestData.createDateTime(2020, 10, 1, 10)
         );
         final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 160,
-                DateUtils.getDateTime(2020, 10, 1, 11, 0, 0)
+                DateTimeTestData.createDateTime(2020, 10, 1, 11)
         );
         final Candle candle3 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 180,
-                DateUtils.getDateTime(2020, 10, 5, 10, 11, 0)
+                DateTimeTestData.createDateTime(2020, 10, 5, 10, 11)
         );
         final Candle candle4 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 160,
-                DateUtils.getDateTime(2020, 10, 10, 10, 50, 0)
+                DateTimeTestData.createDateTime(2020, 10, 10, 10, 50)
         );
         final Candle candle5 = TestDataHelper.createCandleWithOpenPriceAndTime(
                 120,
-                DateUtils.getDateTime(2020, 11, 1, 10, 0, 0)
+                DateTimeTestData.createDateTime(2020, 11, 1, 10)
         );
 
         return List.of(candle1, candle2, candle3, candle4, candle5);

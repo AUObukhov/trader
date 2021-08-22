@@ -12,12 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
@@ -153,8 +153,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         // act
@@ -208,8 +208,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
@@ -294,8 +294,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
@@ -368,8 +368,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
@@ -441,8 +441,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
@@ -516,8 +516,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
@@ -591,8 +591,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
@@ -643,8 +643,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
@@ -696,8 +696,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
@@ -749,8 +749,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
@@ -802,8 +802,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
@@ -859,8 +859,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         // act
@@ -903,8 +903,8 @@ class SimulatorImplUnitTest {
 
         final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
 
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestDataHelper.createCandleWithClosePrice(100);

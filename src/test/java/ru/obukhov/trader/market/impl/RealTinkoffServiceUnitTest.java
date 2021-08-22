@@ -10,10 +10,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OpenApi;
@@ -171,8 +171,8 @@ class RealTinkoffServiceUnitTest {
     void getMarketCandles_returnsMappedCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 2, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
@@ -208,8 +208,8 @@ class RealTinkoffServiceUnitTest {
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 2, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
@@ -265,8 +265,8 @@ class RealTinkoffServiceUnitTest {
     void getOperations_returnsOperations() {
         final String ticker = "ticker";
         final String figi = "figi";
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 2, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 

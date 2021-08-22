@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.grafana.interfaces.GrafanaService;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
@@ -20,6 +19,7 @@ import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 
 import java.time.OffsetDateTime;
@@ -104,9 +104,9 @@ class GrafanaControllerWebTest extends ControllerWebTest {
                 new Column("open price", ColumnType.NUMBER)
         ));
         queryResult.setRows(List.of(
-                List.of(DateUtils.getDateTime(2021, 2, 1, 10, 0, 0), 100),
-                List.of(DateUtils.getDateTime(2021, 2, 1, 10, 1, 0), 101),
-                List.of(DateUtils.getDateTime(2021, 2, 1, 10, 2, 0), 102)
+                List.of(DateTimeTestData.createDateTime(2021, 2, 1, 10), 100),
+                List.of(DateTimeTestData.createDateTime(2021, 2, 1, 10, 1), 101),
+                List.of(DateTimeTestData.createDateTime(2021, 2, 1, 10, 2), 102)
         ));
 
         Mockito.when(grafanaService.getData(Mockito.any(GetDataRequest.class))).thenReturn(List.of(queryResult));
@@ -142,8 +142,8 @@ class GrafanaControllerWebTest extends ControllerWebTest {
         final GetDataRequest capturedGetDataRequest = argumentCaptor.getValue();
         final Interval interval = capturedGetDataRequest.getInterval();
 
-        final OffsetDateTime expectedFrom = DateUtils.getDateTime(2021, 1, 1, 13, 0, 0);
-        final OffsetDateTime expectedTo = DateUtils.getDateTime(2021, 1, 1, 18, 0, 0);
+        final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2021, 1, 1, 13);
+        final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2021, 1, 1, 18);
 
         Assertions.assertEquals(expectedFrom, interval.getFrom());
         Assertions.assertEquals(expectedTo, interval.getTo());
@@ -152,7 +152,7 @@ class GrafanaControllerWebTest extends ControllerWebTest {
     @NotNull
     private GetDataRequest createGetDataRequest() {
         final GetDataRequest getDataRequest = new GetDataRequest();
-        getDataRequest.setInterval(Interval.ofDay(OffsetDateTime.now()));
+        getDataRequest.setInterval(DateTimeTestData.createIntervalOfDay(OffsetDateTime.now()));
 
         final Target target = new Target();
         target.setMetric(Metric.CANDLES);

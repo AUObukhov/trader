@@ -10,11 +10,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -42,8 +42,8 @@ class StatisticsServiceImplUnitTest {
 
         final String ticker = "ticker";
 
-        final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
-        final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -68,11 +68,11 @@ class StatisticsServiceImplUnitTest {
 
         final String ticker = "ticker";
 
-        final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
-        final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
@@ -117,11 +117,11 @@ class StatisticsServiceImplUnitTest {
 
         final String ticker = "ticker";
 
-        final OffsetDateTime from = DateUtils.getDate(2020, 1, 1);
-        final OffsetDateTime to = DateUtils.getDate(2020, 2, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final OffsetDateTime time = DateUtils.getDateTime(2020, 1, 1, 10, 0, 0);
+        final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;

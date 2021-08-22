@@ -10,10 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -125,8 +125,8 @@ class BotControllerWebTest extends ControllerWebTest {
         final String request = ResourceUtils.getTestDataAsString("SimulateRequest/SimulateRequest_valid.json");
 
         final List<SimulationResult> simulationResults = new ArrayList<>();
-        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 10, 0, 0);
-        final OffsetDateTime to = DateUtils.getDateTime(2021, 2, 1, 0, 0, 0);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final SimulatedOperation operation = new SimulatedOperation(

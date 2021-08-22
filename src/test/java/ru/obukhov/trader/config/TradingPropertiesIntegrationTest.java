@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.common.model.transform.OffsetTimeConverter;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 
 import java.time.Duration;
 import java.time.OffsetTime;
@@ -34,7 +34,7 @@ class TradingPropertiesIntegrationTest {
 
                     AssertUtils.assertEquals(0.1d, tradingProperties.getCommission());
 
-                    final OffsetTime expectedWorkStartTime = DateUtils.getTime(12, 0, 0).toOffsetTime();
+                    final OffsetTime expectedWorkStartTime = DateTimeTestData.createTime(12, 0, 0).toOffsetTime();
                     Assertions.assertEquals(expectedWorkStartTime, tradingProperties.getWorkStartTime());
 
                     Assertions.assertEquals(Duration.ofMinutes(480), tradingProperties.getWorkDuration());

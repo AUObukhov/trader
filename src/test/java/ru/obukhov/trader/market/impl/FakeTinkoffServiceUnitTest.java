@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestDataHelper;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -49,7 +50,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsCurrentMinuteToCurrentDateTime_whenMiddleOfWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         service.init(dateTime);
 
@@ -58,7 +59,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsStartOfNextDayToCurrentDateTime_whenAtEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19);
 
         service.init(dateTime);
 
@@ -68,7 +69,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsStartOfNextDayToCurrentDateTime_whenAfterEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 19, 20, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19, 20);
 
         service.init(dateTime);
 
@@ -78,7 +79,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsStartOfNextWeekToCurrentDateTime_whenEndOfWorkWeek() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 19, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 19);
 
         service.init(dateTime);
 
@@ -88,7 +89,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsStartOfNextWeekToCurrentDateTime_whenAtWeekend() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 10, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 12);
 
         service.init(dateTime);
 
@@ -98,7 +99,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_setsStartOfTodayWorkDayToCurrentDateTime_whenBeforeStartOfTodayWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 9, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 9);
 
         service.init(dateTime);
 
@@ -108,21 +109,21 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void init_throwsIllegalArgumentException_whenCurrencyIsNullAndBalanceIsNotNull() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, null, BigDecimal.TEN));
     }
 
     @Test
     void init_throwsIllegalArgumentException_whenCurrencyIsNotNullAndBalanceIsNull() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> service.init(dateTime, Currency.RUB, null));
     }
 
     @Test
     void init_clearsPortfolio() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
 
         service.init(dateTime, currency, BigDecimal.valueOf(1000000));
@@ -136,7 +137,7 @@ class FakeTinkoffServiceUnitTest {
         service.nextMinute();
         placeOrder(ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
-        final OffsetDateTime newDateTime = DateUtils.getDateTime(2021, 10, 5, 12, 0, 0);
+        final OffsetDateTime newDateTime = DateTimeTestData.createDateTime(2021, 10, 5, 12);
         final BigDecimal newBalance = BigDecimal.valueOf(1000);
 
         service.init(newDateTime, currency, newBalance);
@@ -160,7 +161,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void nextMinute_movesToNextMinute_whenMiddleOfWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         service.init(dateTime);
 
@@ -173,7 +174,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 18, 59, 59);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
         service.init(dateTime);
 
@@ -186,7 +187,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 9, 18, 59, 59);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
         service.init(dateTime);
 
@@ -203,7 +204,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getOperations_filtersOperationsByInterval() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
 
         service.init(dateTime, Currency.RUB, balance);
@@ -231,7 +232,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getOperations_filtersOperationsByTicker_whenTickerIsNotNull() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
 
         service.init(dateTime, Currency.RUB, balance);
@@ -261,7 +262,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
 
         service.init(dateTime, Currency.RUB, balance);
@@ -290,7 +291,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000);
         final Currency currency = Currency.RUB;
 
@@ -314,7 +315,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_buy_createsNewPosition_whenNoPositions() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
 
@@ -334,7 +335,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_buy_addValueToExistingPosition_whenPositionAlreadyExists() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
 
@@ -358,7 +359,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
 
@@ -389,7 +390,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_sell_removesPosition_whenAllLotsSold() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
 
@@ -410,7 +411,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void placeMarketOrder_sell_reducesLotsCount() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BigDecimal balance = BigDecimal.valueOf(1000000);
         final Currency currency = Currency.RUB;
 
@@ -439,7 +440,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getPortfolioCurrencies_returnsAllCurrencies_whenCurrenciesAreNotInitialized() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         service.init(dateTime);
 
@@ -460,7 +461,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getPortfolioCurrencies_returnsCurrencyWithBalance_whenBalanceInitialized() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
@@ -478,7 +479,7 @@ class FakeTinkoffServiceUnitTest {
 
     @Test
     void getPortfolioCurrencies_returnsCurrencyWithBalance_afterIncrementBalance() {
-        final OffsetDateTime dateTime = DateUtils.getDateTime(2020, 10, 5, 12, 0, 0);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 

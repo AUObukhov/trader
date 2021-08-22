@@ -4,8 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
@@ -128,7 +128,7 @@ class FakeContextUnitTest {
         fakeContext.setCurrentBalance(currency, balance);
 
         final SimulatedOperation operation = new SimulatedOperation(null,
-                DateUtils.getDateTime(2021, 1, 1, 10, 0, 0),
+                DateTimeTestData.createDateTime(2021, 1, 1, 10),
                 null,
                 null,
                 null,
