@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.strategy.model;
+package ru.obukhov.trader.trading.model;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

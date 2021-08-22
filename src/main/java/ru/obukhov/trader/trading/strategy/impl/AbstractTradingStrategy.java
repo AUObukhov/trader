@@ -7,9 +7,9 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.math.BigDecimal;

@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.trading.model.GoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.trading.strategy.model.GoldenCrossStrategyParams;
-import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

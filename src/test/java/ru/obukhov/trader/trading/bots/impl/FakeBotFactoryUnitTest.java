@@ -12,9 +12,9 @@ import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
+import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.trading.strategy.model.TradingStrategyParams;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 @ExtendWith(MockitoExtension.class)
