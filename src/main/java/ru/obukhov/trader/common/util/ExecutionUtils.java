@@ -4,11 +4,19 @@ import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.model.ExecutionResult;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.function.Supplier;
 
 @UtilityClass
 public class ExecutionUtils {
+
+    public static Duration run(final Runnable runnable) {
+        final long start = System.currentTimeMillis();
+
+        runnable.run();
+
+        final long end = System.currentTimeMillis();
+        return Duration.ofMillis(end - start);
+    }
 
     /**
      * Executes given {@code supplier}. Does not catches execution exceptions.
@@ -16,12 +24,12 @@ public class ExecutionUtils {
      * @return result of execution of given {@code supplier} and execution time.
      */
     public static <T> ExecutionResult<T> get(Supplier<T> supplier) {
-        final OffsetDateTime start = OffsetDateTime.now();
+        final long start = System.currentTimeMillis();
 
         final T result = supplier.get();
 
-        final OffsetDateTime end = OffsetDateTime.now();
-        final Duration duration = Duration.between(start, end);
+        final long end = System.currentTimeMillis();
+        final Duration duration = Duration.ofMillis(end - start);
 
         return new ExecutionResult<>(result, duration, null);
     }
@@ -36,14 +44,14 @@ public class ExecutionUtils {
         Duration duration;
         Exception exception = null;
 
-        final OffsetDateTime start = OffsetDateTime.now();
+        final long start = System.currentTimeMillis();
         try {
             result = supplier.get();
         } catch (Exception caughtException) {
             exception = caughtException;
         } finally {
-            final OffsetDateTime end = OffsetDateTime.now();
-            duration = Duration.between(start, end);
+            final long end = System.currentTimeMillis();
+            duration = Duration.ofMillis(end - start);
         }
 
         return new ExecutionResult<>(result, duration, exception);

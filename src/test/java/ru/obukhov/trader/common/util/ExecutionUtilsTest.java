@@ -5,9 +5,37 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 class ExecutionUtilsTest {
+
+    // region run tests
+
+    @Test
+    void run_executesRunnable_andReturnsNonNegativeDuration() {
+        final AtomicInteger integer = new AtomicInteger(0);
+
+        final Duration duration = ExecutionUtils.run(integer::incrementAndGet);
+
+        Assertions.assertEquals(1, integer.get());
+        Assertions.assertFalse(duration.isNegative());
+    }
+
+    @Test
+    void run_throwsRunnableException() {
+        final IllegalArgumentException runnableException = new IllegalArgumentException("exception message");
+        final Runnable runnable = () -> {
+            throw runnableException;
+        };
+
+        AssertUtils.assertThrowsWithMessage(() -> ExecutionUtils.run(runnable), runnableException.getClass(), runnableException.getMessage());
+    }
+
+    // endregion
+
+    // region get tests
 
     @Test
     void get_returnsSupplierResult_andNonNegativeDuration_andNullException_whenSupplierSucceeds() {
@@ -29,6 +57,10 @@ class ExecutionUtilsTest {
 
         AssertUtils.assertThrowsWithMessage(() -> ExecutionUtils.get(supplier), supplierException.getClass(), supplierException.getMessage());
     }
+
+    // endregion
+
+    // region getSafe tests
 
     @Test
     void getSafe_returnsSupplierResult_andNonNegativeDuration_andNullException_whenSupplierSucceeds() {
@@ -55,5 +87,7 @@ class ExecutionUtilsTest {
         Assertions.assertEquals(supplierException.getClass(), executionResult.getException().getClass());
         Assertions.assertEquals(supplierException.getMessage(), executionResult.getException().getMessage());
     }
+
+    // endregion
 
 }
