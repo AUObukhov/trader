@@ -20,7 +20,7 @@ public class DecisionData {
     private MarketInstrument instrument;
 
     public Integer getPositionLotsCount() {
-        return position.getCount();
+        return position.getCount() / instrument.getLot();
     }
 
     public BigDecimal getAveragePositionPrice() {

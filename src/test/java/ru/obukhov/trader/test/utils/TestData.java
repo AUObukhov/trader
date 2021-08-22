@@ -121,10 +121,16 @@ public class TestData {
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(final double averagePositionPrice, final int positionLotsCount, final double currentPrice) {
+    public static DecisionData createDecisionData(
+            final double averagePositionPrice,
+            final int positionLotsCount,
+            final int lotSize,
+            final double currentPrice
+    ) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(averagePositionPrice, positionLotsCount));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setInstrument(createMarketInstrument(lotSize));
 
         return decisionData;
     }
@@ -220,11 +226,22 @@ public class TestData {
                 .value(BigDecimal.valueOf(value));
     }
 
+    // region MarketInstrument creation
+
+    private static MarketInstrument createMarketInstrument(int lotSize) {
+        final MarketInstrument instrument = new MarketInstrument();
+        instrument.setLot(lotSize);
+        return instrument;
+    }
+
+
     public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(final MarketInstrument... instruments) {
         final List<MarketInstrument> instrumentList = List.of(instruments);
         final MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
         return CompletableFuture.completedFuture(marketInstrumentList);
     }
+
+    // endregion
 
     // region BigDecimals list creation
 
