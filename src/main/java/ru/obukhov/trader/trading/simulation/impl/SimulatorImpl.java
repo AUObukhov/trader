@@ -8,11 +8,13 @@ import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -140,34 +142,22 @@ public class SimulatorImpl implements Simulator {
             final BalanceConfig balanceConfig,
             final Interval interval
     ) {
-        try {
-            log.info("Simulation for '{}' with ticker = '{}' started", tradingConfig, ticker);
+        log.info("Starting simulation for '{}' with ticker = '{}'", tradingConfig, ticker);
 
-            final SimulationResult result = simulate(tradingConfig, ticker, balanceConfig, interval);
-            log.info("Simulation for '{}' with ticker = '{}' ended", tradingConfig, ticker);
-            return result;
-        } catch (Exception ex) {
+        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.get(() -> simulate(tradingConfig, ticker, balanceConfig, interval));
+
+        final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+
+        if (executionResult.getException() == null) {
+            log.info("Simulation for '{}' with ticker = '{}' succeed within {}", tradingConfig, ticker, simulationDurationString);
+            return executionResult.getResult();
+        } else {
             final String message = String.format(
-                    "Simulation for '%s' with ticker '%s' failed with error: %s",
-                    tradingConfig, ticker, ex.getMessage()
+                    "Simulation for '%s' with ticker '%s' failed within %s with error: %s",
+                    tradingConfig, ticker, simulationDurationString, executionResult.getException().getMessage()
             );
-            log.error(message, ex);
-            return SimulationResult.builder()
-                    .tradingConfig(tradingConfig)
-                    .interval(interval)
-                    .initialBalance(balanceConfig.getInitialBalance())
-                    .totalInvestment(balanceConfig.getInitialBalance())
-                    .weightedAverageInvestment(balanceConfig.getInitialBalance())
-                    .finalBalance(BigDecimal.ZERO)
-                    .finalTotalBalance(BigDecimal.ZERO)
-                    .absoluteProfit(BigDecimal.ZERO)
-                    .relativeProfit(0.0)
-                    .relativeYearProfit(0.0)
-                    .positions(Collections.emptyList())
-                    .operations(Collections.emptyList())
-                    .candles(Collections.emptyList())
-                    .error(message)
-                    .build();
+            log.error(message, executionResult.getException());
+            return createFailedSimulationResult(tradingConfig, interval, balanceConfig, message);
         }
     }
 
@@ -203,7 +193,7 @@ public class SimulatorImpl implements Simulator {
             moveToNextMinute(ticker, balanceConfig.getBalanceIncrement(), balanceConfig.getBalanceIncrementCron(), fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
+        return createSucceedSimulationResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -236,7 +226,7 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private SimulationResult createResult(
+    private SimulationResult createSucceedSimulationResult(
             final TradingConfig tradingConfig,
             final Interval interval,
             final String ticker,
@@ -274,6 +264,30 @@ public class SimulatorImpl implements Simulator {
                 .positions(positions)
                 .operations(getOperations(operations, ticker))
                 .candles(candles)
+                .build();
+    }
+
+    private SimulationResult createFailedSimulationResult(
+            final TradingConfig tradingConfig,
+            final Interval interval,
+            final BalanceConfig balanceConfig,
+            final String message
+    ) {
+        return SimulationResult.builder()
+                .tradingConfig(tradingConfig)
+                .interval(interval)
+                .initialBalance(balanceConfig.getInitialBalance())
+                .totalInvestment(balanceConfig.getInitialBalance())
+                .weightedAverageInvestment(balanceConfig.getInitialBalance())
+                .finalBalance(BigDecimal.ZERO)
+                .finalTotalBalance(BigDecimal.ZERO)
+                .absoluteProfit(BigDecimal.ZERO)
+                .relativeProfit(0.0)
+                .relativeYearProfit(0.0)
+                .positions(Collections.emptyList())
+                .operations(Collections.emptyList())
+                .candles(Collections.emptyList())
+                .error(message)
                 .build();
     }
 

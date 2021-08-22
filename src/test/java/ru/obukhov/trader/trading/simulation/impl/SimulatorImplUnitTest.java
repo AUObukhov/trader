@@ -192,12 +192,12 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
-        final String expectedError = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' with ticker '%1$s' failed with error: " +
-                        "Not found instrument for ticker '%1$s'",
+        final String expectedErrorPattern = String.format(
+                "^Simulation for '\\[candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' with ticker '%1$s' failed within " +
+                        "00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
                 ticker
         );
-        Assertions.assertEquals(expectedError, simulationResult.getError());
+        AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
     }
 
     @Test
@@ -830,11 +830,12 @@ class SimulatorImplUnitTest {
 
         final SimulationResult simulationResult = simulationResults.get(0);
 
-        String expectedErrorMessage = String.format(
-                "Simulation for '[candleResolution=1min, strategyType=conservative, strategyParams={}]' with ticker '%s' failed with error: %s",
+        final String expectedErrorPattern = String.format(
+                "^Simulation for '\\[candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' with ticker '%s' failed within " +
+                        "00:00:00.\\d\\d\\d with error: %s$",
                 ticker, mockedExceptionMessage
         );
-        Assertions.assertEquals(expectedErrorMessage, simulationResult.getError());
+        AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
     }
 
     @Test
