@@ -5,6 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +32,7 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class FakeTinkoffServiceUnitTest {
@@ -49,63 +53,42 @@ class FakeTinkoffServiceUnitTest {
 
     // region init tests
 
-    @Test
-    void init_setsCurrentMinuteToCurrentDateTime_whenMiddleOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-
-        service.init(dateTime);
-
-        Assertions.assertEquals(dateTime, service.getCurrentDateTime());
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forInit() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19),
+                        DateTimeTestData.createDateTime(2020, 10, 6, 10)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19, 20),
+                        DateTimeTestData.createDateTime(2020, 10, 6, 10)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 9, 19), // friday
+                        DateTimeTestData.createDateTime(2020, 10, 12, 10) // monday
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 10, 12), // saturday
+                        DateTimeTestData.createDateTime(2020, 10, 12, 10) // monday
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 9, 9),
+                        DateTimeTestData.createDateTime(2020, 10, 9, 10)
+                )
+        );
     }
 
-    @Test
-    void init_setsStartOfNextDayToCurrentDateTime_whenAtEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19);
-
+    @ParameterizedTest
+    @MethodSource("getData_forInit")
+    void init(final OffsetDateTime dateTime, final OffsetDateTime expectedCurrentDateTime) {
         service.init(dateTime);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
-        Assertions.assertEquals(expected, service.getCurrentDateTime());
-    }
-
-    @Test
-    void init_setsStartOfNextDayToCurrentDateTime_whenAfterEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19, 20);
-
-        service.init(dateTime);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
-        Assertions.assertEquals(expected, service.getCurrentDateTime());
-    }
-
-    @Test
-    void init_setsStartOfNextWeekToCurrentDateTime_whenEndOfWorkWeek() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 19);
-
-        service.init(dateTime);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), TRADING_PROPERTIES.getWorkStartTime());
-        Assertions.assertEquals(expected, service.getCurrentDateTime());
-    }
-
-    @Test
-    void init_setsStartOfNextWeekToCurrentDateTime_whenAtWeekend() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 12);
-
-        service.init(dateTime);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), TRADING_PROPERTIES.getWorkStartTime());
-        Assertions.assertEquals(expected, service.getCurrentDateTime());
-    }
-
-    @Test
-    void init_setsStartOfTodayWorkDayToCurrentDateTime_whenBeforeStartOfTodayWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 9);
-
-        service.init(dateTime);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime, TRADING_PROPERTIES.getWorkStartTime());
-        Assertions.assertEquals(expected, service.getCurrentDateTime());
+        Assertions.assertEquals(expectedCurrentDateTime, service.getCurrentDateTime());
     }
 
     @Test
@@ -113,7 +96,8 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         final Executable executable = () -> service.init(dateTime, null, BigDecimal.TEN);
-        Assertions.assertThrows(IllegalArgumentException.class, executable);
+        final String expectedMessage = "currency and balance must be both null or both not null";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -121,7 +105,8 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         final Executable executable = () -> service.init(dateTime, Currency.RUB, null);
-        Assertions.assertThrows(IllegalArgumentException.class, executable);
+        final String expectedMessage = "currency and balance must be both null or both not null";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
