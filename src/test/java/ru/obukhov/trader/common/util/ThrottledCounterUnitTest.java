@@ -3,8 +3,8 @@ package ru.obukhov.trader.common.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestUtils;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -45,18 +45,18 @@ class ThrottledCounterUnitTest {
         final ThrottledCounter counter = new ThrottledCounter(3, 1000);
         final long start = System.currentTimeMillis();
 
-        final long elapsed1 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final Duration elapsed1 = ExecutionUtils.run(counter::increment);
         final int value1 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        final long elapsed2 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final Duration elapsed2 = ExecutionUtils.run(counter::increment);
         final int value2 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(250); // not changing
-        final long elapsed3 = TestUtils.runAndGetElapsedMillis(counter::increment);
+        final Duration elapsed3 = ExecutionUtils.run(counter::increment);
         final int value3 = counter.getValue();
 
-        final long elapsed4 = TestUtils.runAndGetElapsedMillis(counter::increment); // should wait for ~500 milliseconds until -1, then +1
+        final long elapsed4 = ExecutionUtils.run(counter::increment).toMillis(); // should wait for ~500 milliseconds until -1, then +1
         final int value4 = counter.getValue();
 
         TimeUnit.MILLISECONDS.sleep(50); // overhead buffer
@@ -71,9 +71,9 @@ class ThrottledCounterUnitTest {
 
         final long elapsedOverall = System.currentTimeMillis() - start;
 
-        Assertions.assertTrue(elapsed1 <= 1);
-        Assertions.assertTrue(elapsed2 <= 1);
-        Assertions.assertTrue(elapsed3 <= 1);
+        Assertions.assertTrue(elapsed1.toMillis() <= 1);
+        Assertions.assertTrue(elapsed2.toMillis() <= 1);
+        Assertions.assertTrue(elapsed3.toMillis() <= 1);
         AssertUtils.assertRangeInclusive(450, 550, elapsed4);
         AssertUtils.assertRangeInclusive(2000, 2200, elapsedOverall);
 
