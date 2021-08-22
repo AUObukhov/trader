@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 class ExtendedCellUnitTest {
 
@@ -14,7 +15,7 @@ class ExtendedCellUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenRowIsNull() {
-        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
         final Cell cell = row.createCell(0);
 
@@ -24,7 +25,7 @@ class ExtendedCellUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
         final Executable executable = () -> new ExtendedCell(extendedRow, null);
@@ -33,7 +34,7 @@ class ExtendedCellUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
         final Cell extendedCell = extendedRow.createCell(0);
 
@@ -47,7 +48,7 @@ class ExtendedCellUnitTest {
 
     @Test
     void getWorkbook_returnsParentWorkbook() {
-        final ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook parentExtendedWorkbook = PoiTestData.createExtendedWorkbook();
         final ExtendedSheet extendedSheet = (ExtendedSheet) parentExtendedWorkbook.createSheet();
         final ExtendedCell extendedCell = (ExtendedCell) extendedSheet.addRow().createCell(0);
 

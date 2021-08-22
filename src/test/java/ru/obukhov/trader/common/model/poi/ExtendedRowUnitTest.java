@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenSheetIsNull() {
-        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
 
         final Executable executable = () -> new ExtendedRow(null, row);
@@ -29,7 +30,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, null);
         AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
@@ -37,7 +38,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedRow() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, extendedRow);
@@ -46,15 +47,15 @@ class ExtendedRowUnitTest {
 
     @Test
     void constructor_CopiesCells() {
-        final Sheet sheet = ExcelTestDataHelper.createXSSFSheet();
+        final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
 
         final String value0 = "cell0";
         final String value1 = "cell1";
-        ExcelTestDataHelper.createCell(row, 0, value0);
-        ExcelTestDataHelper.createCell(row, 1, value1);
+        PoiTestData.createCell(row, 0, value0);
+        PoiTestData.createCell(row, 1, value1);
 
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = new ExtendedRow(extendedSheet, row);
 
         AssertUtils.assertRowValues(extendedRow, value0, value1);
@@ -66,7 +67,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCells_withNoColumn() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final Object[] values = {
                 null,
                 "value",
@@ -137,7 +138,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCells_withColumn() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object[] values = {
                 null,
@@ -213,7 +214,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createUnitedCell_createsMergedRegion() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = "value";
         final int width = 4;
@@ -235,7 +236,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = null;
 
@@ -253,7 +254,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsString() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = "value";
 
@@ -271,7 +272,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsBigDecimal() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = BigDecimal.TEN;
 
@@ -289,7 +290,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsInteger() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = 10;
 
@@ -307,7 +308,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsLocalDateTime() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = OffsetDateTime.now();
         final Object value = offsetDateTime.toLocalDateTime();
@@ -326,7 +327,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withObjectValue_whenValueIsOffsetDateTime() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = OffsetDateTime.now();
 
@@ -348,7 +349,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withStringValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = null;
 
@@ -366,7 +367,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withStringValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = "value";
 
@@ -388,7 +389,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBigDecimalValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = null;
 
@@ -406,7 +407,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBigDecimalValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = BigDecimal.TEN;
 
@@ -428,7 +429,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withDoubleValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = null;
 
@@ -446,7 +447,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withDoubleValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = 10d;
 
@@ -468,7 +469,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withIntegerValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = null;
 
@@ -486,7 +487,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withIntegerValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = 10;
 
@@ -508,7 +509,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withLocalDateTimeValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final LocalDateTime value = null;
 
@@ -526,7 +527,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withLocalDateTimeValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = OffsetDateTime.now();
         final LocalDateTime value = offsetDateTime.toLocalDateTime();
@@ -549,7 +550,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withOffsetDateTimeValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = null;
 
@@ -567,7 +568,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withOffsetDateTimeValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = OffsetDateTime.now();
 
@@ -589,7 +590,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBooleanValue_whenValueIsNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = null;
 
@@ -607,7 +608,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void createCell_withBooleanValue_whenValueIsNotNull() {
-        final ExtendedRow extendedRow = ExcelTestDataHelper.createExtendedRow();
+        final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = true;
 
@@ -629,7 +630,7 @@ class ExtendedRowUnitTest {
 
     @Test
     void getWorkbook_returnsParentWorkbook() {
-        final ExtendedWorkbook parentExtendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook parentExtendedWorkbook = PoiTestData.createExtendedWorkbook();
         final ExtendedRow extendedRow = (ExtendedRow) parentExtendedWorkbook.createSheet().createRow(0);
 
         final ExtendedWorkbook returnedExtendedWorkbook = extendedRow.getWorkbook();

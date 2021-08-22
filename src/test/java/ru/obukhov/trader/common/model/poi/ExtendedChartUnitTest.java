@@ -5,12 +5,13 @@ import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 class ExtendedChartUnitTest {
 
     @Test
     void createChartData() {
-        final ExtendedChart chart = ExcelTestDataHelper.createExtendedChart();
+        final ExtendedChart chart = PoiTestData.createExtendedChart();
         final AxisPosition categoryAxisPosition = AxisPosition.BOTTOM;
         final AxisPosition valueAxisPosition = AxisPosition.LEFT;
 

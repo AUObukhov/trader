@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenWorkbookIsNull() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
         final Sheet sheet = extendedWorkbook.createSheet();
 
         final Executable executable = () -> new ExtendedSheet(null, sheet);
@@ -32,7 +33,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final Executable executable = () -> new ExtendedSheet(extendedWorkbook, null);
         AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
@@ -40,7 +41,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedSheet() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
         final Sheet sheet = extendedWorkbook.createSheet();
 
         final Executable executable = () -> new ExtendedSheet(extendedWorkbook, sheet);
@@ -71,16 +72,16 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getRowsCount_returnProperRowsCount_whenThereIsNoGapBetweenRows() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 3);
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
+        PoiTestData.addRows(extendedSheet, 0, 1, 2, 3);
 
         Assertions.assertEquals(4, extendedSheet.getRowsCount());
     }
 
     @Test
     void getRowsCount_returnProperRowsCount_whenThereIsGapBetweenRows() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExcelTestDataHelper.addRows(extendedSheet, 0, 1, 2, 10);
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
+        PoiTestData.addRows(extendedSheet, 0, 1, 2, 10);
 
         Assertions.assertEquals(4, extendedSheet.getRowsCount());
     }
@@ -91,14 +92,14 @@ class ExtendedSheetUnitTest {
     void autoSizeColumns_callsAutoSizeColumnOfDelegate() {
         final Workbook workbook = new XSSFWorkbook();
         final Sheet sheet = workbook.createSheet();
-        ExcelTestDataHelper.addRow(sheet, 2);
-        ExcelTestDataHelper.addRow(sheet, 3);
-        ExcelTestDataHelper.addRow(sheet, 1);
+        PoiTestData.addRow(sheet, 2);
+        PoiTestData.addRow(sheet, 3);
+        PoiTestData.addRow(sheet, 1);
 
         final Sheet sheetMock = Mockito.mock(Sheet.class);
         Mockito.when(sheetMock.spliterator()).thenReturn(sheet.spliterator());
 
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, sheetMock);
 
         extendedSheet.autoSizeColumns();
@@ -112,7 +113,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getColumnsCount_returnsZero_whenNoRows() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
 
         final int columnsCount = extendedSheet.getColumnsCount();
 
@@ -121,10 +122,10 @@ class ExtendedSheetUnitTest {
 
     @Test
     void getColumnsCount_returnsMaxColumnsCountBetweenRows() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
-        ExcelTestDataHelper.addRow(extendedSheet, 2);
-        ExcelTestDataHelper.addRow(extendedSheet, 3);
-        ExcelTestDataHelper.addRow(extendedSheet, 1);
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
+        PoiTestData.addRow(extendedSheet, 2);
+        PoiTestData.addRow(extendedSheet, 3);
+        PoiTestData.addRow(extendedSheet, 1);
 
         final int columnsCount = extendedSheet.getColumnsCount();
 
@@ -135,7 +136,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void addRow_addsRowAfterLastRow() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         extendedSheet.createRow(0);
         extendedSheet.createRow(1);
         extendedSheet.createRow(4);
@@ -149,7 +150,7 @@ class ExtendedSheetUnitTest {
 
     @Test
     void createChart() {
-        final ExtendedSheet extendedSheet = ExcelTestDataHelper.createExtendedSheet();
+        final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final int column1 = 1;
         final int row1 = 2;
         final int column2 = 3;

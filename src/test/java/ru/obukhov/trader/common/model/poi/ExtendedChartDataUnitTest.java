@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 import java.awt.Color;
 import java.util.List;
@@ -21,7 +22,7 @@ class ExtendedChartDataUnitTest {
 
     @BeforeEach
     void setUp() {
-        chartData = ExcelTestDataHelper.createExtendedChartData();
+        chartData = PoiTestData.createExtendedChartData();
     }
 
     @Test

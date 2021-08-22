@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.model.poi;
+package ru.obukhov.trader.test.utils;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,12 +8,17 @@ import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import ru.obukhov.trader.common.model.poi.ExtendedChart;
+import ru.obukhov.trader.common.model.poi.ExtendedChartData;
+import ru.obukhov.trader.common.model.poi.ExtendedRow;
+import ru.obukhov.trader.common.model.poi.ExtendedSheet;
+import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExcelTestDataHelper {
+public class PoiTestData {
 
     public static ExtendedWorkbook createExtendedWorkbook() {
         final Workbook workbook = new XSSFWorkbook();

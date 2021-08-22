@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.PoiTestData;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final Executable executable = () -> new ExtendedWorkbook(extendedWorkbook);
         AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedWorkbook");
@@ -34,7 +35,7 @@ class ExtendedWorkbookUnitTest {
         final Workbook workbook = new XSSFWorkbook();
         final String sheetName0 = "sheet0";
         final String sheetName1 = "sheet1";
-        final List<Sheet> sheets = ExcelTestDataHelper.createSheets(workbook, sheetName0, sheetName1);
+        final List<Sheet> sheets = PoiTestData.createSheets(workbook, sheetName0, sheetName1);
         final ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook(workbook);
 
         Assertions.assertEquals(2, extendedWorkbook.getNumberOfSheets());
@@ -65,7 +66,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
         final String cellStyleName = "cellStyle";
         extendedWorkbook.createCellStyle(cellStyleName);
 
@@ -105,7 +106,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void getCellStyle_returnsCreatedCellStyle() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final String cellStyleName = "cellStyle";
         final CellStyle createdCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
@@ -121,7 +122,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void getOrCreateCellStyle_returnsExistingCellStyle_whenCellStyleWithGivenNameExists() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final String cellStyleName = "cellStyle";
         final CellStyle existingCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
@@ -133,7 +134,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void getOrCreateCellStyle_notAddsCellStyle_whenCellStyleWithGivenNameExists() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final String cellStyleName = "cellStyle";
         extendedWorkbook.createCellStyle(cellStyleName);
@@ -146,7 +147,7 @@ class ExtendedWorkbookUnitTest {
 
     @Test
     void getOrCreateCellStyle_addsCellStyle_whenCellStyleWithGivenNameNotExists() {
-        final ExtendedWorkbook extendedWorkbook = ExcelTestDataHelper.createExtendedWorkbook();
+        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
         final int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
 
         extendedWorkbook.getOrCreateCellStyle("cellStyle");
@@ -166,7 +167,7 @@ class ExtendedWorkbookUnitTest {
         final String sheetName1 = "sheet1";
         final String sheetName2 = "sheet2";
         final String sheetName3 = "sheet3";
-        ExcelTestDataHelper.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
+        PoiTestData.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
 
         extendedWorkbook.setSheetOrder(sheetName1, 1);
 
@@ -186,7 +187,7 @@ class ExtendedWorkbookUnitTest {
         final String sheetName1 = "sheet1";
         final String sheetName2 = "sheet2";
         final String sheetName3 = "sheet3";
-        ExcelTestDataHelper.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
+        PoiTestData.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
 
         extendedWorkbook.setSheetOrder(sheetName3, 1);
 
@@ -206,7 +207,7 @@ class ExtendedWorkbookUnitTest {
         final String sheetName1 = "sheet1";
         final String sheetName2 = "sheet2";
         final String sheetName3 = "sheet3";
-        ExcelTestDataHelper.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
+        PoiTestData.createSheets(extendedWorkbook, sheetName1, sheetName2, sheetName3);
 
         extendedWorkbook.setSheetOrder(sheetName2, 1);
 
