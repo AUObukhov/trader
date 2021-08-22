@@ -795,6 +795,63 @@ class SimulatorImplUnitTest {
     }
 
     @Test
+    void simulate_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
+
+        // arrange
+
+        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+
+        final String ticker = "ticker";
+        final String botName = "botName";
+
+        final FakeBot fakeBot = createFakeBotMock(botName);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+                .thenReturn(fakeBot);
+
+        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, null, BALANCE_INCREMENT_CRON);
+
+        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+
+        final OffsetDateTime from = DateUtils.getDateTime(2021, 1, 1, 7, 0, 0);
+        final OffsetDateTime to = DateUtils.getDateTime(2021, 1, 1, 7, 5, 0);
+        final Interval interval = Interval.of(from, to);
+
+        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+
+        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class))).thenReturn(decisionData);
+
+        mockNextMinute(from);
+
+        mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency()))
+                .thenReturn(BigDecimal.valueOf(20000));
+
+        // act
+
+        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+
+        // assert
+
+        Assertions.assertEquals(1, simulationResults.size());
+
+        final SimulationResult simulationResult = simulationResults.get(0);
+
+        Assertions.assertNull(simulationResult.getError());
+
+        AssertUtils.assertEquals(0, simulationResult.getTotalInvestment());
+        AssertUtils.assertEquals(0, simulationResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(0, simulationResult.getRelativeProfit());
+        AssertUtils.assertEquals(0, simulationResult.getRelativeYearProfit());
+
+        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
+    }
+
+    @Test
     void simulate_catchesSimulationException() {
 
         // arrange

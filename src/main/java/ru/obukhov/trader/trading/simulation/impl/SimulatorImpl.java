@@ -253,7 +253,7 @@ public class SimulatorImpl implements Simulator {
         final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
         final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
-        final double relativeProfit = DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
+        final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
         final List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
 
@@ -324,6 +324,12 @@ public class SimulatorImpl implements Simulator {
     private BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> investments, final OffsetDateTime endDateTime) {
         final SortedMap<OffsetDateTime, BigDecimal> totalInvestments = getTotalInvestments(investments);
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
+    }
+
+    private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
+        return weightedAverageInvestment.signum() == 0
+                ? 0.0
+                : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
     }
 
     private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(
