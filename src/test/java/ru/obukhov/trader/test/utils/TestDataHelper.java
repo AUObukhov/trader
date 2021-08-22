@@ -7,7 +7,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -36,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -179,14 +177,6 @@ public class TestDataHelper {
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(final double averagePositionPrice, final double currentPrice) {
-        final DecisionData decisionData = new DecisionData();
-        decisionData.setPosition(createPortfolioPosition(averagePositionPrice));
-        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
-
-        return decisionData;
-    }
-
     public static DecisionData createDecisionData(final double averagePositionPrice, final int positionLotsCount, final double currentPrice) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(averagePositionPrice, positionLotsCount));
@@ -207,20 +197,6 @@ public class TestDataHelper {
 
     public static PortfolioPosition createPortfolioPosition(final String ticker) {
         return createPortfolioPosition(ticker, 1);
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice) {
-        return new PortfolioPosition(
-                StringUtils.EMPTY,
-                BigDecimal.ZERO,
-                null,
-                Currency.RUB,
-                null,
-                0,
-                DecimalUtils.setDefaultScale(averagePositionPrice),
-                null,
-                StringUtils.EMPTY
-        );
     }
 
     public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice, final int lotsCount) {
@@ -310,22 +286,11 @@ public class TestDataHelper {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
     }
 
-    public static List<Optional<BigDecimal>> getOptionalBigDecimalValues(final List<Double> values) {
-        return values.stream()
-                .map(DecimalUtils::setDefaultScale)
-                .map(Optional::of)
-                .collect(Collectors.toList());
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static MockedStatic<Runtime> mockRuntime(final Runtime runtime) {
         final MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
         runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
         return runtimeStaticMock;
-    }
-
-    public static Point createPoint(final Candle candle) {
-        return Point.of(candle.getTime(), candle.getOpenPrice());
     }
 
     public static List<BigDecimal> createBigDecimalsList(final Double... values) {
