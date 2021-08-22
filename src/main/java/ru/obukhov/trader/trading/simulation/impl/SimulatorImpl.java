@@ -69,7 +69,7 @@ public class SimulatorImpl implements Simulator {
             final ExcelService excelService,
             final BotFactory fakeBotFactory,
             final TradingStrategyFactory strategyFactory,
-            @Value("${simulation.thread-count:10}") final Integer simulationThreadCount
+            @Value("${simulation.thread-count:4}") final Integer simulationThreadCount
     ) {
         Assert.isTrue(simulationThreadCount > 0, "simulationThreadCount must be positive");
 

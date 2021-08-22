@@ -22,7 +22,7 @@ scheduled-bot:
     greedy: true
 
 simulation:
-  thread-count: 3
+  thread-count: 4
 
 query.throttle:
   interval: 60000
