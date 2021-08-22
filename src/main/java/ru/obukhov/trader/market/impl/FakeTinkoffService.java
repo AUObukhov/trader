@@ -199,18 +199,20 @@ public class FakeTinkoffService implements TinkoffService {
      */
     @Override
     public PlacedMarketOrder placeMarketOrder(final String ticker, final MarketOrderRequest orderRequest) {
+        final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, orderRequest.getLots());
+        final int count = instrument.getLot() * orderRequest.getLots();
+        final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
         final BigDecimal commissionAmount = DecimalUtils.getFraction(totalPrice, tradingProperties.getCommission());
         final MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
 
         if (orderRequest.getOperation() == OperationType.BUY) {
-            buyPosition(ticker, currentPrice, orderRequest.getLots(), totalPrice, commissionAmount);
+            buyPosition(ticker, currentPrice, count, totalPrice, commissionAmount);
         } else {
-            sellPosition(ticker, orderRequest.getLots(), totalPrice, commissionAmount);
+            sellPosition(ticker, count, totalPrice, commissionAmount);
         }
 
-        addOperation(ticker, currentPrice, commission, orderRequest);
+        addOperation(ticker, currentPrice, count, commission, orderRequest.getOperation());
         return createOrder(orderRequest, commission);
     }
 
@@ -221,7 +223,7 @@ public class FakeTinkoffService implements TinkoffService {
     private void buyPosition(
             final String ticker,
             final BigDecimal currentPrice,
-            final int lotsCount,
+            final int count,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
@@ -232,9 +234,9 @@ public class FakeTinkoffService implements TinkoffService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            position = createNewPosition(ticker, totalPrice, instrument.getCurrency(), currentPrice, lotsCount);
+            position = createNewPosition(ticker, totalPrice, instrument.getCurrency(), currentPrice, count);
         } else {
-            position = addValuesToPosition(existingPosition, lotsCount, totalPrice);
+            position = addValuesToPosition(existingPosition, count, totalPrice);
         }
 
         fakeContext.addPosition(ticker, position);
@@ -245,7 +247,7 @@ public class FakeTinkoffService implements TinkoffService {
             final BigDecimal balance,
             final Currency currency,
             final BigDecimal averagePositionPrice,
-            final int lotsCount
+            final int count
     ) {
         return new PortfolioPosition(
                 ticker,
@@ -253,15 +255,16 @@ public class FakeTinkoffService implements TinkoffService {
                 null,
                 currency,
                 null,
-                lotsCount,
+                count,
                 averagePositionPrice,
                 null,
-                StringUtils.EMPTY);
+                StringUtils.EMPTY
+        );
     }
 
-    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int lotsCount, final BigDecimal totalPrice) {
+    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int count, final BigDecimal totalPrice) {
         final BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
-        final int newLotsCount = existingPosition.getLotsCount() + lotsCount;
+        final int newLotsCount = existingPosition.getCount() + count;
         final BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
         return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
     }
@@ -292,17 +295,11 @@ public class FakeTinkoffService implements TinkoffService {
         fakeContext.setCurrentBalance(currency, newBalance);
     }
 
-    private void sellPosition(
-            final String ticker,
-            final int lotsCount,
-            final BigDecimal totalPrice,
-            final BigDecimal commissionAmount
-    ) {
+    private void sellPosition(final String ticker, final int count, final BigDecimal totalPrice, final BigDecimal commissionAmount) {
         final PortfolioPosition existingPosition = fakeContext.getPosition(ticker);
-        final int newLotsCount = existingPosition.getLotsCount() - lotsCount;
+        final int newLotsCount = existingPosition.getCount() - count;
         if (newLotsCount < 0) {
-            final String message = "lotsCount " + lotsCount + " can't be greater than existing position lots count "
-                    + existingPosition.getLotsCount();
+            final String message = "count " + count + " can't be greater than existing position lots count " + existingPosition.getCount();
             throw new IllegalArgumentException(message);
         }
 
@@ -317,14 +314,14 @@ public class FakeTinkoffService implements TinkoffService {
         }
     }
 
-    private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int lotsCount) {
+    private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
         return new PortfolioPosition(
                 position.getTicker(),
                 position.getBalance(),
                 position.getBlocked(),
                 position.getCurrency(),
                 position.getExpectedYield(),
-                lotsCount,
+                count,
                 position.getAveragePositionPrice(),
                 position.getAveragePositionPriceNoNkd(),
                 position.getName()
@@ -334,16 +331,17 @@ public class FakeTinkoffService implements TinkoffService {
     private void addOperation(
             final String ticker,
             final BigDecimal price,
+            final int count,
             final MoneyAmount commission,
-            final MarketOrderRequest orderRequest
+            final OperationType operationType
     ) {
         final SimulatedOperation operation = SimulatedOperation.builder()
                 .ticker(ticker)
                 .price(price)
-                .quantity(orderRequest.getLots())
+                .quantity(count)
                 .commission(commission.getValue())
                 .dateTime(fakeContext.getCurrentDateTime())
-                .operationType(orderRequest.getOperation())
+                .operationType(operationType)
                 .build();
         fakeContext.addOperation(operation);
     }

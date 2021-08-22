@@ -14,7 +14,7 @@ public interface PortfolioPositionMapper {
 
     @Mapping(source = "expectedYield.currency", target = "currency")
     @Mapping(source = "expectedYield.value", target = "expectedYield")
-    @Mapping(source = "lots", target = "lotsCount")
+    @Mapping(source = "lots", target = "count")
     @Mapping(source = "averagePositionPrice.value", target = "averagePositionPrice")
     @Mapping(source = "averagePositionPriceNoNkd.value", target = "averagePositionPriceNoNkd")
     PortfolioPosition map(final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source);

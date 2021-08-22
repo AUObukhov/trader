@@ -29,7 +29,10 @@ public class PortfolioPosition {
     @Nullable
     private final BigDecimal expectedYield;
 
-    private final int lotsCount;
+    /**
+     * Count of papers, not lots
+     */
+    private final int count;
 
     @Nullable
     private final BigDecimal averagePositionPrice;

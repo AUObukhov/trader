@@ -312,7 +312,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private SimulatedPosition createSimulatedPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
-        return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getLotsCount());
+        return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getCount());
     }
 
     private BigDecimal getTotalBalance(final BigDecimal balance, final List<SimulatedPosition> positions) {

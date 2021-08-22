@@ -51,7 +51,7 @@ class PortfolioPositionMapperUnitTest {
         Assertions.assertEquals(source.getBalance(), target.getBalance());
         Assertions.assertEquals(source.getBlocked(), target.getBlocked());
         AssertUtils.assertEquals(expectedYield.getValue(), target.getExpectedYield());
-        Assertions.assertEquals(source.getLots(), target.getLotsCount());
+        Assertions.assertEquals(source.getLots(), target.getCount());
         AssertUtils.assertEquals(averagePositionPrice.getValue(), target.getAveragePositionPrice());
         AssertUtils.assertEquals(averagePositionPriceNoNkd.getValue(), target.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(source.getName(), target.getName());
@@ -107,7 +107,7 @@ class PortfolioPositionMapperUnitTest {
         Assertions.assertEquals(source1.getBalance(), target1.getBalance());
         Assertions.assertEquals(source1.getBlocked(), target1.getBlocked());
         Assertions.assertEquals(expectedYield1.getValue(), target1.getExpectedYield());
-        Assertions.assertEquals(source1.getLots(), target1.getLotsCount());
+        Assertions.assertEquals(source1.getLots(), target1.getCount());
         Assertions.assertEquals(averagePositionPrice1.getValue(), target1.getAveragePositionPrice());
         Assertions.assertEquals(averagePositionPriceNoNkd1.getValue(), target1.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(source1.getName(), target1.getName());
@@ -117,7 +117,7 @@ class PortfolioPositionMapperUnitTest {
         Assertions.assertEquals(source2.getBalance(), target2.getBalance());
         Assertions.assertEquals(source2.getBlocked(), target2.getBlocked());
         Assertions.assertEquals(expectedYield2.getValue(), target2.getExpectedYield());
-        Assertions.assertEquals(source2.getLots(), target2.getLotsCount());
+        Assertions.assertEquals(source2.getLots(), target2.getCount());
         Assertions.assertEquals(averagePositionPrice2.getValue(), target2.getAveragePositionPrice());
         Assertions.assertEquals(averagePositionPriceNoNkd2.getValue(), target2.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(source2.getName(), target2.getName());

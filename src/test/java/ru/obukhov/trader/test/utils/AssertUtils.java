@@ -108,7 +108,7 @@ public class AssertUtils {
         AssertUtils.assertEquals(expected.getBlocked(), actual.getBlocked());
         Assertions.assertEquals(expected.getExpectedYield().getCurrency(), actual.getCurrency());
         AssertUtils.assertEquals(expected.getExpectedYield().getValue(), actual.getExpectedYield());
-        AssertUtils.assertEquals(expected.getLots(), actual.getLotsCount());
+        AssertUtils.assertEquals(expected.getLots(), actual.getCount());
         AssertUtils.assertEquals(expected.getAveragePositionPrice().getValue(), actual.getAveragePositionPrice());
         AssertUtils.assertEquals(expected.getAveragePositionPriceNoNkd().getValue(), actual.getAveragePositionPriceNoNkd());
         Assertions.assertEquals(expected.getName(), actual.getName());
