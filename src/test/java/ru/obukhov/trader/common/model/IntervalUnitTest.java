@@ -28,7 +28,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
 
         final Executable executable = () -> Interval.of(from, to);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "from can't be after to");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "from can't be after to");
     }
 
     @Test
@@ -37,7 +37,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = OffsetDateTime.of(2020, 10, 10, 0, 0, 0, 0, ZoneOffset.ofHours(2));
 
         final Executable executable = () -> Interval.of(from, to);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "offsets of from and to must be equal");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
     }
 
     @Test
@@ -147,7 +147,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = interval::extendToDay;
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "'from' and 'to' must be at same day");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "'from' and 'to' must be at same day");
     }
 
     @Test
@@ -162,7 +162,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -178,7 +178,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -230,7 +230,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = interval::extendToYear;
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "'from' and 'to' must be at same year");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "'from' and 'to' must be at same year");
     }
 
     @Test
@@ -245,7 +245,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -261,7 +261,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 

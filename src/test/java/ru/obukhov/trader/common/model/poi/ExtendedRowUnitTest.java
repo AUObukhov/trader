@@ -25,7 +25,7 @@ class ExtendedRowUnitTest {
         final Row row = sheet.createRow(0);
 
         final Executable executable = () -> new ExtendedRow(null, row);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "sheet can't be null");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "sheet can't be null");
     }
 
     @Test
@@ -33,7 +33,7 @@ class ExtendedRowUnitTest {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, null);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be null");
     }
 
     @Test
@@ -42,7 +42,7 @@ class ExtendedRowUnitTest {
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, extendedRow);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedRow");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be ExtendedRow");
     }
 
     @Test

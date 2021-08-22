@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.PoiTestData;
 
 import java.util.List;
@@ -28,7 +27,7 @@ class ExtendedSheetUnitTest {
         final Sheet sheet = extendedWorkbook.createSheet();
 
         final Executable executable = () -> new ExtendedSheet(null, sheet);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "workbook can't be null");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "workbook can't be null");
     }
 
     @Test
@@ -36,7 +35,7 @@ class ExtendedSheetUnitTest {
         final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final Executable executable = () -> new ExtendedSheet(extendedWorkbook, null);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be null");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be null");
     }
 
     @Test
@@ -45,7 +44,7 @@ class ExtendedSheetUnitTest {
         final Sheet sheet = extendedWorkbook.createSheet();
 
         final Executable executable = () -> new ExtendedSheet(extendedWorkbook, sheet);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "delegate can't be ExtendedSheet");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be ExtendedSheet");
     }
 
     @Test

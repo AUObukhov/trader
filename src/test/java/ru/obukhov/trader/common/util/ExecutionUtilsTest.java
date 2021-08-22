@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.common.model.ExecutionResult;
-import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,7 +31,7 @@ class ExecutionUtilsTest {
         };
 
         final Executable executable = () -> ExecutionUtils.run(runnable);
-        AssertUtils.assertThrowsWithMessage(executable, runnableException.getClass(), runnableException.getMessage());
+        Assertions.assertThrows(runnableException.getClass(), executable, runnableException.getMessage());
     }
 
     // endregion
@@ -58,7 +57,7 @@ class ExecutionUtilsTest {
         };
 
         final Executable executable = () -> ExecutionUtils.get(supplier);
-        AssertUtils.assertThrowsWithMessage(executable, supplierException.getClass(), supplierException.getMessage());
+        Assertions.assertThrows(supplierException.getClass(), executable, supplierException.getMessage());
     }
 
     // endregion

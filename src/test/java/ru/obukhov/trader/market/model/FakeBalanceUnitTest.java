@@ -31,7 +31,7 @@ class FakeBalanceUnitTest {
 
         final Executable executable = () -> fakeBalance.addInvestment(currentDateTime, amount2);
         final String expectedMessage = "investment at " + currentDateTime + " alreadyExists";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

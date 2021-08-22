@@ -76,13 +76,13 @@ class SimulatorImplUnitTest {
     @Test
     void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsNegative() {
         final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, -1);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "simulationThreadCount must be positive");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "simulationThreadCount must be positive");
     }
 
     @Test
     void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsZero() {
         final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 0);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "simulationThreadCount must be positive");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "simulationThreadCount must be positive");
     }
 
     // endregion

@@ -53,7 +53,7 @@ class GrafanaServiceImplUnitTest {
         request.setTargets(List.of());
 
         final Executable executable = () -> service.getData(request);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Expected single target");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "Expected single target");
     }
 
     @Test
@@ -63,7 +63,7 @@ class GrafanaServiceImplUnitTest {
         request.setTargets(List.of(new Target(), new Target()));
 
         final Executable executable = () -> service.getData(request);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Expected single target");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "Expected single target");
     }
 
     @SuppressWarnings("unused")
@@ -189,7 +189,7 @@ class GrafanaServiceImplUnitTest {
         request.setTargets(List.of(target));
 
         final Executable executable = () -> service.getData(request);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

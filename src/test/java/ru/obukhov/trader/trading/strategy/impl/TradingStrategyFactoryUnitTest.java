@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
@@ -84,7 +83,7 @@ class TradingStrategyFactoryUnitTest {
         final Map<String, Object> params = Map.of();
 
         final Executable executable = () -> factory.createStrategy(strategyType, params);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "minimumProfit is mandatory");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "minimumProfit is mandatory");
     }
 
     // endregion
@@ -273,7 +272,7 @@ class TradingStrategyFactoryUnitTest {
         final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
 
         final Executable executable = () -> factory.createStrategy(strategyType, params);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

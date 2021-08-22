@@ -20,7 +20,7 @@ class CandleUnitTest {
         final Candle rightCandle = new Candle().setTime(DateTimeTestData.createDateTime(2020, 10, 10, 2));
 
         final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "leftCandle can't be after rightCandle");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "leftCandle can't be after rightCandle");
     }
 
     @Test
@@ -34,7 +34,7 @@ class CandleUnitTest {
                 .setInterval(CandleResolution.HOUR);
 
         final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "Candle intervals must be equal");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "Candle intervals must be equal");
     }
 
     @Test

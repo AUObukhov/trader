@@ -112,7 +112,7 @@ class PortfolioServiceImplUnitTest {
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
         final Executable executable = () -> service.getAvailableBalance(Currency.RUB);
-        AssertUtils.assertThrowsWithMessage(executable, NoSuchElementException.class, "No value present");
+        Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
     }
 
     // endregion

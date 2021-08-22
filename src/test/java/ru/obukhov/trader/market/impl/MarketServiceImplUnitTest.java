@@ -237,7 +237,7 @@ class MarketServiceImplUnitTest {
 
         final Executable executable = () -> service.getLastCandle(ticker);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -254,7 +254,7 @@ class MarketServiceImplUnitTest {
 
         final Executable executable = () -> service.getLastCandle(ticker);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -286,7 +286,7 @@ class MarketServiceImplUnitTest {
 
         final Executable executable = () -> service.getLastCandle(ticker, to);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -302,7 +302,7 @@ class MarketServiceImplUnitTest {
 
         final Executable executable = () -> service.getLastCandle(ticker, to);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

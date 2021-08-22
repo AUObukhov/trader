@@ -295,7 +295,7 @@ class FakeTinkoffServiceUnitTest {
         Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
         final Executable executable = () -> placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, "balance can't be negative");
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions().isEmpty());
         AssertUtils.assertEquals(1000, service.getCurrentBalance(currency));
@@ -364,7 +364,7 @@ class FakeTinkoffServiceUnitTest {
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
         final Executable sellExecutable = () -> placeOrder(ticker, 4, OperationType.SELL, BigDecimal.valueOf(3000));
         final String expectedMessage = "lotsCount 4 can't be greater than existing position lots count 3";
-        AssertUtils.assertThrowsWithMessage(sellExecutable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions();
         Assertions.assertEquals(1, positions.size());

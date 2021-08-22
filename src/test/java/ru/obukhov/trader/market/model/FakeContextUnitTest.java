@@ -44,7 +44,7 @@ class FakeContextUnitTest {
 
         final Executable executable = () -> fakeContext.addInvestment(currency, investment);
         final String expectedMessage = "investment at " + currentDateTime + " alreadyExists";
-        AssertUtils.assertThrowsWithMessage(executable, IllegalArgumentException.class, expectedMessage);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

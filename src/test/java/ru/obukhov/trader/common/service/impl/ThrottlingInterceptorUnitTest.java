@@ -4,6 +4,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +56,7 @@ class ThrottlingInterceptorUnitTest {
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
 
         final Executable executable = () -> interceptor.intercept(chain);
-        AssertUtils.assertThrowsWithMessage(executable, IllegalStateException.class, "Failed to retry for 30 times");
+        Assertions.assertThrows(IllegalStateException.class, executable, "Failed to retry for 30 times");
     }
 
     @Test
