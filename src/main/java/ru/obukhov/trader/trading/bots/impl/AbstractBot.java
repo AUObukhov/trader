@@ -88,7 +88,7 @@ public abstract class AbstractBot implements Bot {
 
         final OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
         final PlacedMarketOrder order = ordersService.placeMarketOrder(ticker, decision.getLots(), operation);
-        log.info("Placed order {}", order);
+        log.info("Placed order:\n{}", order);
     }
 
 }
