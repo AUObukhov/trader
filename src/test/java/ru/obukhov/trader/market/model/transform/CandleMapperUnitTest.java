@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Candles;
 
@@ -18,7 +18,7 @@ class CandleMapperUnitTest {
 
     @Test
     void mapsSingleCandleFields() {
-        final ru.tinkoff.invest.openapi.model.rest.Candle source = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle source = TestData.createTinkoffCandle(
                 100,
                 200,
                 1000,
@@ -36,7 +36,7 @@ class CandleMapperUnitTest {
 
     @Test
     void updatesOffset() {
-        final ru.tinkoff.invest.openapi.model.rest.Candle source = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle source = TestData.createTinkoffCandle(
                 CandleResolution.DAY,
                 0,
                 0,
@@ -51,14 +51,14 @@ class CandleMapperUnitTest {
 
     @Test
     void mapsMultipleCandles() {
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestData.createTinkoffCandle(
                 100,
                 200,
                 1000,
                 50
         );
 
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestData.createTinkoffCandle(
                 200,
                 400,
                 2000,

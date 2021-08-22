@@ -23,7 +23,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
@@ -498,15 +498,15 @@ class ExcelServiceImplUnitTest {
     }
 
     private List<Candle> createCandles() {
-        final Candle candle1 = TestDataHelper.createCandleWithOpenPrice(150)
+        final Candle candle1 = TestData.createCandleWithOpenPrice(150)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10));
-        final Candle candle2 = TestDataHelper.createCandleWithOpenPrice(160)
+        final Candle candle2 = TestData.createCandleWithOpenPrice(160)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11));
-        final Candle candle3 = TestDataHelper.createCandleWithOpenPrice(180)
+        final Candle candle3 = TestData.createCandleWithOpenPrice(180)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11));
-        final Candle candle4 = TestDataHelper.createCandleWithOpenPrice(160)
+        final Candle candle4 = TestData.createCandleWithOpenPrice(160)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50));
-        final Candle candle5 = TestDataHelper.createCandleWithOpenPrice(120)
+        final Candle candle5 = TestData.createCandleWithOpenPrice(120)
                 .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10));
 
         return List.of(candle1, candle2, candle3, candle4, candle5);

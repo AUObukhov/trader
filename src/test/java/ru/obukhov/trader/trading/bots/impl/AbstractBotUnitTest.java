@@ -15,7 +15,8 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -71,7 +72,7 @@ class AbstractBotUnitTest {
     void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
         final String ticker = "ticker";
 
-        TestDataHelper.mockEmptyOrder(ordersService, ticker);
+        Mocker.mockEmptyOrder(ordersService, ticker);
 
         final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
 
@@ -110,7 +111,7 @@ class AbstractBotUnitTest {
     void processTicker_doesNoOrder_whenDecisionIsWait() {
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(marketService, ticker);
+        Mocker.createAndMockInstrument(marketService, ticker);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -131,13 +132,13 @@ class AbstractBotUnitTest {
     void processTicker_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
+        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
                 .thenReturn(balance);
 
-        final PortfolioPosition position = TestDataHelper.createPortfolioPosition(ticker, 0);
+        final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
         Mockito.when(portfolioService.getPosition(ticker))
                 .thenReturn(position);
 
@@ -168,13 +169,13 @@ class AbstractBotUnitTest {
     void processTicker_returnsFilledData_andPlacesSellOrder_whenDecisionIsSell() {
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestDataHelper.createAndMockInstrument(marketService, ticker);
+        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
                 .thenReturn(balance);
 
-        final PortfolioPosition position = TestDataHelper.createPortfolioPosition(ticker, 0);
+        final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
         Mockito.when(portfolioService.getPosition(ticker))
                 .thenReturn(position);
 

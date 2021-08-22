@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ class MoneyAmountMapperUnitTest {
 
     @Test
     void mapsTinkoffToCustom() {
-        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source = TestDataHelper.createMoneyAmount(Currency.RUB, 100);
+        final ru.tinkoff.invest.openapi.model.rest.MoneyAmount source = TestData.createMoneyAmount(Currency.RUB, 100);
 
         final MoneyAmount target = mapper.map(source);
 

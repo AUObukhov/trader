@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -33,7 +33,7 @@ class MathUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverage_withCollection")
     void getAverage_withCollection(final List<Double> values, final Double expectedAverage) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final BigDecimal average = MathUtils.getAverage(bigDecimalValues);
 

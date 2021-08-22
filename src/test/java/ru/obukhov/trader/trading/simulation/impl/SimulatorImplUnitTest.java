@@ -18,7 +18,8 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
@@ -59,7 +60,7 @@ class SimulatorImplUnitTest {
             null
     );
 
-    private static final CronExpression BALANCE_INCREMENT_CRON = TestDataHelper.createCronExpression();
+    private static final CronExpression BALANCE_INCREMENT_CRON = TestData.createCronExpression();
 
     @Mock
     private ExcelService excelService;
@@ -200,7 +201,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -212,20 +213,20 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
+        final Candle candle0 = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
 
-        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
+        final Candle candle1 = TestData.createCandleWithClosePrice(200);
+        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
 
-        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
+        final Candle candle2 = TestData.createCandleWithClosePrice(300);
+        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
 
-        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
+        final Candle candle3 = TestData.createCandleWithClosePrice(400);
+        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
 
-        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
+        final Candle candle4 = TestData.createCandleWithClosePrice(500);
+        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
@@ -238,7 +239,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 2;
-        final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
+        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
         mockPortfolioPositions(portfolioPosition);
 
         // act
@@ -286,7 +287,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -298,20 +299,20 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
+        final Candle candle0 = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
 
-        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
+        final Candle candle1 = TestData.createCandleWithClosePrice(200);
+        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
 
-        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
+        final Candle candle2 = TestData.createCandleWithClosePrice(300);
+        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
 
-        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
+        final Candle candle3 = TestData.createCandleWithClosePrice(400);
+        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
 
-        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
+        final Candle candle4 = TestData.createCandleWithClosePrice(500);
+        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
@@ -324,7 +325,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 2;
-        final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
+        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
         mockPortfolioPositions(portfolioPosition);
 
         // act
@@ -360,7 +361,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -372,20 +373,20 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
+        final Candle candle0 = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
 
-        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
+        final Candle candle1 = TestData.createCandleWithClosePrice(200);
+        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
 
-        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
+        final Candle candle2 = TestData.createCandleWithClosePrice(300);
+        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
 
-        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
+        final Candle candle3 = TestData.createCandleWithClosePrice(400);
+        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
 
-        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
+        final Candle candle4 = TestData.createCandleWithClosePrice(500);
+        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
@@ -396,7 +397,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final int positionLotsCount = 2;
-        final PortfolioPosition portfolioPosition = TestDataHelper.createPortfolioPosition(ticker, positionLotsCount);
+        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
         mockPortfolioPositions(portfolioPosition);
 
         // act
@@ -433,7 +434,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -445,8 +446,8 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+        final Candle candle = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestData.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
@@ -460,14 +461,14 @@ class SimulatorImplUnitTest {
         final BigDecimal operationPrice = BigDecimal.valueOf(100);
         final int operationQuantity = 2;
         final BigDecimal operationCommission = BigDecimal.valueOf(0.03);
-        final Operation operation = TestDataHelper.createTinkoffOperation(
+        final Operation operation = TestData.createTinkoffOperation(
                 operationDateTime,
                 operationType,
                 operationPrice,
                 operationQuantity,
                 operationCommission
         );
-        TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval, operation);
+        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval, operation);
 
         mockPortfolioPositions();
 
@@ -508,7 +509,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -520,20 +521,20 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestDataHelper.createDecisionData(candle0);
+        final Candle candle0 = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
 
-        final Candle candle1 = TestDataHelper.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestDataHelper.createDecisionData(candle1);
+        final Candle candle1 = TestData.createCandleWithClosePrice(200);
+        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
 
-        final Candle candle2 = TestDataHelper.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestDataHelper.createDecisionData(candle2);
+        final Candle candle2 = TestData.createCandleWithClosePrice(300);
+        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
 
-        final Candle candle3 = TestDataHelper.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestDataHelper.createDecisionData(candle3);
+        final Candle candle3 = TestData.createCandleWithClosePrice(400);
+        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
 
-        final Candle candle4 = TestDataHelper.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestDataHelper.createDecisionData(candle4);
+        final Candle candle4 = TestData.createCandleWithClosePrice(500);
+        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
@@ -583,7 +584,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -635,7 +636,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -648,7 +649,7 @@ class SimulatorImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(TestDataHelper.createDecisionData());
+                .thenReturn(TestData.createDecisionData());
 
         mockNextMinute(from);
 
@@ -688,7 +689,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -700,8 +701,8 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+        final Candle candle = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestData.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
@@ -710,7 +711,7 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
+        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();
 
         // act
@@ -741,7 +742,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -753,8 +754,8 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+        final Candle candle = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestData.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
@@ -763,7 +764,7 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
+        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();
 
         // act
@@ -794,7 +795,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -806,8 +807,8 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+        final Candle candle = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestData.createDecisionData(candle);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class))).thenReturn(decisionData);
 
@@ -895,7 +896,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final MarketInstrument MarketInstrument = TestDataHelper.createAndMockInstrument(fakeTinkoffService, ticker);
+        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
 
@@ -907,8 +908,8 @@ class SimulatorImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestDataHelper.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestDataHelper.createDecisionData(candle);
+        final Candle candle = TestData.createCandleWithClosePrice(100);
+        final DecisionData decisionData = TestData.createDecisionData(candle);
         Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
@@ -917,7 +918,7 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        TestDataHelper.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
+        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
         mockPortfolioPositions();
 
         Mockito.doThrow(new IllegalArgumentException())

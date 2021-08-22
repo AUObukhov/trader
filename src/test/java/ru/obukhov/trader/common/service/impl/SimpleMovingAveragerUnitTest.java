@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -35,7 +35,7 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder_throwsIllegalArgumentException")
     void getAverages_withoutOrder_throwsIllegalArgumentException(final List<Double> values, final int window, final String expectedMessage) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> averager.getAverages(bigDecimalValues, window),
@@ -114,11 +114,11 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
     void getAverages_withoutOrder(final List<Double> values, final int window, final List<Double> expectedValues) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestData.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
@@ -148,7 +148,7 @@ class SimpleMovingAveragerUnitTest {
             final int order,
             final String expectedMessage
     ) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> averager.getAverages(bigDecimalValues, window, order),
@@ -313,11 +313,11 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withoutOrder")
     void getAverages_withOrderOne(final List<Double> values, final int window, final List<Double> expectedValues) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, 1);
 
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestData.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
@@ -328,11 +328,11 @@ class SimpleMovingAveragerUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetAverages_withOrder")
     void getAverages_withOrder(final List<Double> values, final int window, final int order, final List<Double> expectedValues) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
-        final List<BigDecimal> bigDecimalExpectedValues = TestDataHelper.getBigDecimalValues(expectedValues);
+        final List<BigDecimal> bigDecimalExpectedValues = TestData.getBigDecimalValues(expectedValues);
         AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {

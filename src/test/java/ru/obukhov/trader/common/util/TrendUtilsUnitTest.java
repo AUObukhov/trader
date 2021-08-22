@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Crossover;
 
 import java.math.BigDecimal;
@@ -105,7 +105,7 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetLocalExtremes")
     void getLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
 
@@ -118,7 +118,7 @@ class TrendUtilsUnitTest {
 
     @Test
     void getLocalExtremes() {
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10, 20, 15, 30);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10, 20, 15, 30);
         final OffsetDateTime now = OffsetDateTime.now();
         final List<OffsetDateTime> times = List.of(now, now.plusMinutes(1), now.plusMinutes(2), now.plusMinutes(2));
         final List<Integer> localExtremesIndices = List.of(0, 2);
@@ -221,7 +221,7 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetSortedLocalExtremes")
     void getSortedLocalExtremes(final List<Double> values, final List<Integer> expectedExtremes, final Comparator<BigDecimal> comparator) {
-        final List<BigDecimal> bigDecimalValues = TestDataHelper.getBigDecimalValues(values);
+        final List<BigDecimal> bigDecimalValues = TestData.getBigDecimalValues(values);
 
         final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
 
@@ -236,7 +236,7 @@ class TrendUtilsUnitTest {
     void getRestraintLines_throwsIllegalArgumentException_whenTimesIsLongerThanValues() {
         final OffsetDateTime startTime = OffsetDateTime.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
@@ -249,7 +249,7 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenValuesIsLongerThanTimes() {
         final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
@@ -262,7 +262,7 @@ class TrendUtilsUnitTest {
     @Test
     void getRestraintLines_throwsIllegalArgumentException_whenLocalExtremesIsLongerThanTimes() {
         final List<OffsetDateTime> times = List.of(OffsetDateTime.now());
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0);
         final List<Integer> localExtremes = List.of(0, 1);
 
         AssertUtils.assertThrowsWithMessage(
@@ -276,7 +276,7 @@ class TrendUtilsUnitTest {
     void getRestraintLines_returnsEmptyList_whenLocalExtremesIsEmpty() {
         final OffsetDateTime startTime = OffsetDateTime.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of();
 
         final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
@@ -288,7 +288,7 @@ class TrendUtilsUnitTest {
     void getRestraintLines_returnsEmptyList_whenThereIsSingleLocalExtremum() {
         final OffsetDateTime startTime = OffsetDateTime.now();
         final List<OffsetDateTime> times = List.of(startTime, startTime.plusMinutes(1));
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 11.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0, 11.0);
         final List<Integer> localExtremes = List.of(0);
 
         final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
@@ -311,7 +311,7 @@ class TrendUtilsUnitTest {
                 startTime.plusMinutes(8),
                 startTime.plusMinutes(9)
         );
-        final List<BigDecimal> values = TestDataHelper.createBigDecimalsList(10.0, 15.0, 14.0, 11.0, 12.0, 13.0, 14.0, 14.0, 12.0, 16.0);
+        final List<BigDecimal> values = TestData.createBigDecimalsList(10.0, 15.0, 14.0, 11.0, 12.0, 13.0, 14.0, 14.0, 12.0, 16.0);
         final List<Integer> localExtremes = List.of(0, 3, 8);
 
         final List<List<Point>> restraintLines = TrendUtils.getRestraintLines(times, values, localExtremes);
@@ -346,8 +346,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossovers_throwIllegalArgumentException_whenArgumentsHaveDifferentSizes() {
-        final List<BigDecimal> values1 = TestDataHelper.createBigDecimalsList(10.0, 20.0);
-        final List<BigDecimal> values2 = TestDataHelper.createBigDecimalsList(10.0);
+        final List<BigDecimal> values1 = TestData.createBigDecimalsList(10.0, 20.0);
+        final List<BigDecimal> values2 = TestData.createBigDecimalsList(10.0);
 
         AssertUtils.assertThrowsWithMessage(
                 () -> TrendUtils.getCrossovers(values1, values2),
@@ -365,33 +365,33 @@ class TrendUtilsUnitTest {
                         List.of()
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 20, 30),
-                        TestDataHelper.createBigDecimalsList(10, 20, 30),
+                        TestData.createBigDecimalsList(10, 20, 30),
+                        TestData.createBigDecimalsList(10, 20, 30),
                         List.of()
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 20, 30),
-                        TestDataHelper.createBigDecimalsList(10, 20, 31),
+                        TestData.createBigDecimalsList(10, 20, 30),
+                        TestData.createBigDecimalsList(10, 20, 31),
                         List.of()
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 12, 13),
-                        TestDataHelper.createBigDecimalsList(11, 10, 11),
+                        TestData.createBigDecimalsList(10, 12, 13),
+                        TestData.createBigDecimalsList(11, 10, 11),
                         List.of(1)
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
-                        TestDataHelper.createBigDecimalsList(10, 12, 13, 12, 11),
+                        TestData.createBigDecimalsList(10, 11, 12, 14, 15),
+                        TestData.createBigDecimalsList(10, 12, 13, 12, 11),
                         List.of(3)
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15),
-                        TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11),
+                        TestData.createBigDecimalsList(10, 11, 12, 14, 15),
+                        TestData.createBigDecimalsList(11, 12, 13, 12, 11),
                         List.of(3)
                 ),
                 Arguments.of(
-                        TestDataHelper.createBigDecimalsList(10, 11, 12, 14, 15, 15, 16, 16),
-                        TestDataHelper.createBigDecimalsList(11, 12, 13, 12, 11, 11, 11, 20),
+                        TestData.createBigDecimalsList(10, 11, 12, 14, 15, 15, 16, 16),
+                        TestData.createBigDecimalsList(11, 12, 13, 12, 11, 11, 11, 20),
                         List.of(3, 7)
                 )
         );
@@ -407,8 +407,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossovers_commonAssertions_forRandomValues() {
-        final List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(1000);
-        final List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(1000);
+        final List<BigDecimal> values1 = TestData.createRandomBigDecimalsList(1000);
+        final List<BigDecimal> values2 = TestData.createRandomBigDecimalsList(1000);
 
         final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
@@ -444,8 +444,8 @@ class TrendUtilsUnitTest {
 
     @Test
     void getCrossoverIfLast_throwIllegalArgumentException_whenDifferentSizes() {
-        final List<BigDecimal> values1 = TestDataHelper.createRandomBigDecimalsList(10);
-        final List<BigDecimal> values2 = TestDataHelper.createRandomBigDecimalsList(9);
+        final List<BigDecimal> values1 = TestData.createRandomBigDecimalsList(10);
+        final List<BigDecimal> values2 = TestData.createRandomBigDecimalsList(9);
         final int index = 2;
 
         AssertUtils.assertThrowsWithMessage(
@@ -539,8 +539,8 @@ class TrendUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetCrossoverIfLast")
     void getCrossoverIfLast(List<Double> values1, List<Double> values2, int index, Crossover expectedCrossover) {
-        final List<BigDecimal> bigDecimalValues1 = TestDataHelper.getBigDecimalValues(values1);
-        final List<BigDecimal> bigDecimalValues2 = TestDataHelper.getBigDecimalValues(values2);
+        final List<BigDecimal> bigDecimalValues1 = TestData.getBigDecimalValues(values1);
+        final List<BigDecimal> bigDecimalValues2 = TestData.getBigDecimalValues(values2);
 
         final Crossover crossover = TrendUtils.getCrossoverIfLast(bigDecimalValues1, bigDecimalValues2, index);
 

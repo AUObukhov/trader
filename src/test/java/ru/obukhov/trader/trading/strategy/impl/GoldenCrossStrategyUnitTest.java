@@ -12,7 +12,7 @@ import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -26,7 +26,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class GoldenCrossStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     @Mock
     private MovingAverager averager;
@@ -63,7 +63,7 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
 
         try (
                 final MockedStatic<TrendUtils> trendUtilsStaticMock =
@@ -85,7 +85,7 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 100.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -104,7 +104,7 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 1000.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 1000.0, 1);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -123,8 +123,8 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
-        data.setPosition(TestDataHelper.createPortfolioPosition(100, 10));
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        data.setPosition(TestData.createPortfolioPosition(100, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -144,8 +144,8 @@ class GoldenCrossStrategyUnitTest {
 
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
-        data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -164,8 +164,8 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(1000.0, 200.0, 1);
-        data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -184,8 +184,8 @@ class GoldenCrossStrategyUnitTest {
                 TRADING_PROPERTIES
         );
 
-        final DecisionData data = TestDataHelper.createDecisionData(200.0, 200.0, 1);
-        data.setPosition(TestDataHelper.createPortfolioPosition(199, 10));
+        final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1);
+        data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());

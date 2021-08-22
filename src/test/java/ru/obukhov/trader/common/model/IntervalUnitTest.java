@@ -9,7 +9,7 @@ import org.mockito.MockedStatic;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.Mocker;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -167,7 +167,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = from.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
                     interval::extendToDay,
                     IllegalArgumentException.class,
@@ -185,7 +185,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = mockedNow.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
                     interval::extendToDay,
                     IllegalArgumentException.class,
@@ -203,7 +203,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 10, 5);
@@ -222,7 +222,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 9, 23, 6, 11, 12);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 9, 23);
@@ -257,7 +257,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = from.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
                     interval::extendToYear,
                     IllegalArgumentException.class,
@@ -275,7 +275,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = mockedNow.plusMinutes(10);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             AssertUtils.assertThrowsWithMessage(
                     interval::extendToYear,
                     IllegalArgumentException.class,
@@ -293,7 +293,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 1, 1);
@@ -312,7 +312,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 4, 23, 10, 11, 12);
         final Interval interval = Interval.of(from, to);
 
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 1, 1);

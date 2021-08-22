@@ -14,7 +14,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.MarketContext;
 import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;
@@ -83,7 +83,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketStocks_returnsStocks() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketStocks()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketStocks()).thenReturn(TestData.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketStocks();
 
@@ -96,7 +96,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketBonds_returnsBonds() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketBonds()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketBonds()).thenReturn(TestData.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketBonds();
 
@@ -109,7 +109,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketEtfs_returnsEtfs() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketEtfs()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketEtfs()).thenReturn(TestData.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketEtfs();
 
@@ -122,7 +122,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketCurrencies_returnsCurrencies() {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketCurrencies()).thenReturn(TestDataHelper.createInstrumentsFuture(instrument1, instrument2));
+        Mockito.when(marketContext.getMarketCurrencies()).thenReturn(TestData.createInstrumentsFuture(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketCurrencies();
 
@@ -177,7 +177,7 @@ class RealTinkoffServiceUnitTest {
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestData.createTinkoffCandle(
                 candleResolution,
                 1000,
                 1500,
@@ -185,7 +185,7 @@ class RealTinkoffServiceUnitTest {
                 500,
                 from.plusMinutes(1)
         );
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestDataHelper.createTinkoffCandle(
+        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestData.createTinkoffCandle(
                 candleResolution,
                 1500,
                 2000,
@@ -351,10 +351,10 @@ class RealTinkoffServiceUnitTest {
                         .ticker("ticker1")
                         .balance(BigDecimal.valueOf(1000))
                         .blocked(null)
-                        .expectedYield(TestDataHelper.createMoneyAmount(Currency.RUB, 100))
+                        .expectedYield(TestData.createMoneyAmount(Currency.RUB, 100))
                         .lots(10)
-                        .averagePositionPrice(TestDataHelper.createMoneyAmount(Currency.RUB, 110))
-                        .averagePositionPriceNoNkd(TestDataHelper.createMoneyAmount(Currency.RUB, 110))
+                        .averagePositionPrice(TestData.createMoneyAmount(Currency.RUB, 110))
+                        .averagePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 110))
                         .name("name1");
 
         final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition tinkoffPosition2 =
@@ -362,10 +362,10 @@ class RealTinkoffServiceUnitTest {
                         .ticker("ticker2")
                         .balance(BigDecimal.valueOf(2000))
                         .blocked(BigDecimal.valueOf(100))
-                        .expectedYield(TestDataHelper.createMoneyAmount(Currency.RUB, 200))
+                        .expectedYield(TestData.createMoneyAmount(Currency.RUB, 200))
                         .lots(5)
-                        .averagePositionPrice(TestDataHelper.createMoneyAmount(Currency.RUB, 440))
-                        .averagePositionPriceNoNkd(TestDataHelper.createMoneyAmount(Currency.RUB, 440))
+                        .averagePositionPrice(TestData.createMoneyAmount(Currency.RUB, 440))
+                        .averagePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 440))
                         .name("name2");
         final Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
         Mockito.when(portfolioContext.getPortfolio(null)).thenReturn(CompletableFuture.completedFuture(portfolio));
@@ -414,7 +414,7 @@ class RealTinkoffServiceUnitTest {
 
     private void mockInstrument(MarketInstrument instrument) {
         Mockito.when(marketContext.searchMarketInstrumentsByTicker(instrument.getTicker()))
-                .thenReturn(TestDataHelper.createInstrumentsFuture(instrument));
+                .thenReturn(TestData.createInstrumentsFuture(instrument));
     }
 
 }

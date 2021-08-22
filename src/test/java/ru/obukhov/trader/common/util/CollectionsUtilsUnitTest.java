@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToBeginning_whenIndexIsZero() {
-        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
+        final List<BigDecimal> list = TestData.createBigDecimalsList(5, 10);
         final int index = 0;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -138,7 +138,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToEnd_whenIndexIsEqualsToListSize() {
-        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10);
+        final List<BigDecimal> list = TestData.createBigDecimalsList(5, 10);
         final int index = 2;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -151,7 +151,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_addsElementToMiddle_whenIndexIsInMiddle() {
-        final List<BigDecimal> list = TestDataHelper.createBigDecimalsList(5, 10, 0);
+        final List<BigDecimal> list = TestData.createBigDecimalsList(5, 10, 0);
         final int index = 1;
 
         CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);

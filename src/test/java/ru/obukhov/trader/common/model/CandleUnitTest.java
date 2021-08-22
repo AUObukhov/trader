@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
@@ -44,10 +44,10 @@ class CandleUnitTest {
 
     @Test
     void createAverage() {
-        final Candle candle1 = TestDataHelper.createCandleWithOpenPriceAndClosePrice(100, 200)
+        final Candle candle1 = TestData.createCandleWithOpenPriceAndClosePrice(100, 200)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 1));
 
-        final Candle candle2 = TestDataHelper.createCandleWithOpenPriceAndClosePrice(300, 400)
+        final Candle candle2 = TestData.createCandleWithOpenPriceAndClosePrice(300, 400)
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2));
 
         final Candle averageCandle = Candle.createAverage(candle1, candle2);

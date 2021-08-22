@@ -15,7 +15,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
@@ -26,7 +26,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class MarketServiceImplUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     @Mock
     private TinkoffService tinkoffService;

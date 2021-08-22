@@ -3,31 +3,21 @@ package ru.obukhov.trader.test.utils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.interfaces.MarketService;
-import ru.obukhov.trader.market.interfaces.OrdersService;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrumentList;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
-import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -42,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @UtilityClass
-public class TestDataHelper {
+public class TestData {
 
     // region Tinkoff Candle creation methods
 
@@ -125,50 +115,10 @@ public class TestDataHelper {
 
     // endregion
 
-    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker) {
-        final MarketInstrument instrument = new MarketInstrument()
-                .figi(StringUtils.EMPTY)
-                .ticker(ticker)
-                .lot(0)
-                .currency(Currency.RUB)
-                .name(StringUtils.EMPTY)
-                .type(InstrumentType.STOCK);
-
-        Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
-
-        return instrument;
-    }
-
-    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker) {
-        final MarketInstrument instrument = new MarketInstrument()
-                .figi(StringUtils.EMPTY)
-                .ticker(ticker)
-                .lot(0)
-                .currency(Currency.RUB)
-                .name(StringUtils.EMPTY)
-                .type(InstrumentType.STOCK);
-
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
-
-        return instrument;
-    }
-
-    public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) {
-        final Order order = new Order();
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
-    }
-
     public static ZoneOffset getNotDefaultOffset() {
         final ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
         final int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
         return ZoneOffset.ofTotalSeconds(totalSeconds);
-    }
-
-    public static MockedStatic<OffsetDateTime> mockNow(final OffsetDateTime mockedNow) {
-        final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock =
-                Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
-        offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
-        return offsetDateTimeStaticMock;
     }
 
     public static DecisionData createDecisionData(final Candle... candles) {
@@ -247,16 +197,6 @@ public class TestDataHelper {
                 .operationType(operationType);
     }
 
-    public static void mockTinkoffOperations(
-            final TinkoffService tinkoffService,
-            final String ticker,
-            final Interval interval,
-            final Operation... operations
-    ) {
-        Mockito.when(tinkoffService.getOperations(interval, ticker))
-                .thenReturn(List.of(operations));
-    }
-
     public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
         return new CurrencyPosition()
                 .currency(currency)
@@ -284,13 +224,6 @@ public class TestDataHelper {
 
     public static List<BigDecimal> getBigDecimalValues(final List<Double> values) {
         return values.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static MockedStatic<Runtime> mockRuntime(final Runtime runtime) {
-        final MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
-        runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
-        return runtimeStaticMock;
     }
 
     public static List<BigDecimal> createBigDecimalsList(final Double... values) {
@@ -325,13 +258,6 @@ public class TestDataHelper {
                 7,
                 OffsetDateTime.now()
         );
-    }
-
-    public static MockedStatic<MovingAverager> mockAveragerByType(final MovingAverageType movingAverageType, final MovingAverager averager) {
-        final MockedStatic<MovingAverager> movingAveragerStaticMock =
-                Mockito.mockStatic(MovingAverager.class, Mockito.CALLS_REAL_METHODS);
-        movingAveragerStaticMock.when(() -> MovingAverager.getByType(movingAverageType)).thenReturn(averager);
-        return movingAveragerStaticMock;
     }
 
 }

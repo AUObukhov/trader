@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.Application;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
 
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
@@ -46,11 +46,11 @@ class TraderExceptionHandlerWebTest {
     @SuppressWarnings("unused")
     void handlesMethodArgumentNotValidException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("TestValidationResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/validation")
-                    .contentType(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
@@ -61,11 +61,11 @@ class TraderExceptionHandlerWebTest {
     @SuppressWarnings("unused")
     void handlesMissingServletRequestParameterException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("TestMissingParamResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/missingParam")
-                    .contentType(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
@@ -76,11 +76,11 @@ class TraderExceptionHandlerWebTest {
     @SuppressWarnings("unused")
     void handlesRuntimeException() throws Exception {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 10);
-        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = TestDataHelper.mockNow(mockedNow)) {
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final String expectedResponse = ResourceUtils.getTestDataAsString("RuntimeExceptionResponse.json");
 
             mockMvc.perform(MockMvcRequestBuilders.post("/trader/test/runtime")
-                    .contentType(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.status().isInternalServerError())
                     .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(MockMvcResultMatchers.content().json(expectedResponse));

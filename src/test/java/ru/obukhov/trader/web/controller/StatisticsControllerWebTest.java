@@ -15,7 +15,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -214,7 +214,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
         final Integer smallWindow = 1;
         final Integer bigWindow = 2;
 
-        final Candle candle1 = TestDataHelper.createCandle(
+        final Candle candle1 = TestData.createCandle(
                 12000,
                 8000,
                 15000,
@@ -223,7 +223,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 candleResolution
         );
 
-        final Candle candle2 = TestDataHelper.createCandle(
+        final Candle candle2 = TestData.createCandle(
                 1200,
                 800,
                 1500,
@@ -232,7 +232,7 @@ class StatisticsControllerWebTest extends ControllerWebTest {
                 candleResolution
         );
 
-        final Candle candle3 = TestDataHelper.createCandle(
+        final Candle candle3 = TestData.createCandle(
                 120,
                 80,
                 150,

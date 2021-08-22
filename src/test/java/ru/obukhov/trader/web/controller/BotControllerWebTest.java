@@ -15,7 +15,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -137,7 +137,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 1,
                 BigDecimal.valueOf(300)
         );
-        final Candle candle = TestDataHelper.createCandle(10000, 20000, 30000, 5000, from, CandleResolution.DAY);
+        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleResolution.DAY);
 
         final BalanceConfig balanceConfig = new BalanceConfig(
                 BigDecimal.valueOf(1000),

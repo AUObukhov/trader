@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
@@ -32,15 +32,15 @@ class PortfolioPositionMapperUnitTest {
                         .balance(BigDecimal.valueOf(1000))
                         .blocked(BigDecimal.valueOf(500));
 
-        final MoneyAmount expectedYield = TestDataHelper.createMoneyAmount(currency, 200);
+        final MoneyAmount expectedYield = TestData.createMoneyAmount(currency, 200);
         source.setExpectedYield(expectedYield);
 
         source.setLots(10);
 
-        final MoneyAmount averagePositionPrice = TestDataHelper.createMoneyAmount(currency, 100);
+        final MoneyAmount averagePositionPrice = TestData.createMoneyAmount(currency, 100);
         source.setAveragePositionPrice(averagePositionPrice);
 
-        final MoneyAmount averagePositionPriceNoNkd = TestDataHelper.createMoneyAmount(currency, 50);
+        final MoneyAmount averagePositionPriceNoNkd = TestData.createMoneyAmount(currency, 50);
         source.setAveragePositionPriceNoNkd(averagePositionPriceNoNkd);
 
         source.setName("name");
@@ -60,9 +60,9 @@ class PortfolioPositionMapperUnitTest {
     @Test
     void mapCollection() {
         final Currency currency1 = Currency.RUB;
-        final MoneyAmount expectedYield1 = TestDataHelper.createMoneyAmount(currency1, 200);
-        final MoneyAmount averagePositionPrice1 = TestDataHelper.createMoneyAmount(currency1, 100);
-        final MoneyAmount averagePositionPriceNoNkd1 = TestDataHelper.createMoneyAmount(currency1, 50);
+        final MoneyAmount expectedYield1 = TestData.createMoneyAmount(currency1, 200);
+        final MoneyAmount averagePositionPrice1 = TestData.createMoneyAmount(currency1, 100);
+        final MoneyAmount averagePositionPriceNoNkd1 = TestData.createMoneyAmount(currency1, 50);
 
         final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source1 =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
@@ -79,9 +79,9 @@ class PortfolioPositionMapperUnitTest {
                         .name("name1");
 
         final Currency currency2 = Currency.USD;
-        final MoneyAmount expectedYield2 = TestDataHelper.createMoneyAmount(currency2, 400);
-        final MoneyAmount averagePositionPrice2 = TestDataHelper.createMoneyAmount(currency2, 200);
-        final MoneyAmount averagePositionPriceNoNkd2 = TestDataHelper.createMoneyAmount(currency2, 100);
+        final MoneyAmount expectedYield2 = TestData.createMoneyAmount(currency2, 400);
+        final MoneyAmount averagePositionPrice2 = TestData.createMoneyAmount(currency2, 200);
+        final MoneyAmount averagePositionPriceNoNkd2 = TestData.createMoneyAmount(currency2, 100);
 
         final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source2 =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()

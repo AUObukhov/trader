@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 class AbstractTradingStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     // region getBuyOrWaitDecision tests
 
@@ -50,7 +50,7 @@ class AbstractTradingStrategyUnitTest {
     ) {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
         final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
-        final DecisionData data = TestDataHelper.createDecisionData(balance, currentPrice, lotSize);
+        final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
@@ -99,7 +99,7 @@ class AbstractTradingStrategyUnitTest {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
         final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
         final DecisionData data =
-                TestDataHelper.createDecisionData(averagePositionPrice, positionLotsCount, currentPrice);
+                TestData.createDecisionData(averagePositionPrice, positionLotsCount, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getSellOrWaitDecision(data, strategyCache);

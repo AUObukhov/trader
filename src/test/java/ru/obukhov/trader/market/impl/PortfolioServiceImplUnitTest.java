@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
@@ -36,9 +36,9 @@ class PortfolioServiceImplUnitTest {
         final String ticker3 = "ticker3";
 
         final List<PortfolioPosition> positions = List.of(
-                TestDataHelper.createPortfolioPosition(ticker1),
-                TestDataHelper.createPortfolioPosition(ticker2),
-                TestDataHelper.createPortfolioPosition(ticker3)
+                TestData.createPortfolioPosition(ticker1),
+                TestData.createPortfolioPosition(ticker2),
+                TestData.createPortfolioPosition(ticker3)
         );
         Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
@@ -54,9 +54,9 @@ class PortfolioServiceImplUnitTest {
         final String ticker3 = "ticker3";
 
         final List<PortfolioPosition> positions = List.of(
-                TestDataHelper.createPortfolioPosition(ticker1),
-                TestDataHelper.createPortfolioPosition(ticker2),
-                TestDataHelper.createPortfolioPosition(ticker3)
+                TestData.createPortfolioPosition(ticker1),
+                TestData.createPortfolioPosition(ticker2),
+                TestData.createPortfolioPosition(ticker3)
         );
         Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
 
@@ -75,9 +75,9 @@ class PortfolioServiceImplUnitTest {
         final long rubBlocked = 100;
 
         final List<CurrencyPosition> currencies = List.of(
-                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
-                TestDataHelper.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
-                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD, 100),
+                TestData.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
+                TestData.createCurrencyPosition(Currency.EUR, 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
@@ -91,9 +91,9 @@ class PortfolioServiceImplUnitTest {
         final long rubBalance = 1000;
 
         final List<CurrencyPosition> currencies = List.of(
-                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
-                TestDataHelper.createCurrencyPosition(Currency.RUB, rubBalance),
-                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD, 100),
+                TestData.createCurrencyPosition(Currency.RUB, rubBalance),
+                TestData.createCurrencyPosition(Currency.EUR, 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 
@@ -105,8 +105,8 @@ class PortfolioServiceImplUnitTest {
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
         final List<CurrencyPosition> currencies = List.of(
-                TestDataHelper.createCurrencyPosition(Currency.USD, 100),
-                TestDataHelper.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD, 100),
+                TestData.createCurrencyPosition(Currency.EUR, 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
 

@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.properties.ReportProperties;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.Mocker;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -83,7 +83,7 @@ class ExcelFileServiceImplUnitTest {
         final Workbook inputWorkbook = new XSSFWorkbook();
         inputWorkbook.createSheet(sheetName);
 
-        try (final MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
+        try (final MockedStatic<Runtime> runtimeStaticMock = Mocker.mockRuntime(runtime)) {
 
             service.saveToFile(inputWorkbook, fileName);
 
@@ -108,7 +108,7 @@ class ExcelFileServiceImplUnitTest {
         final Workbook inputWorkbook = new XSSFWorkbook();
         inputWorkbook.createSheet(sheetName);
 
-        try (final MockedStatic<Runtime> runtimeStaticMock = TestDataHelper.mockRuntime(runtime)) {
+        try (final MockedStatic<Runtime> runtimeStaticMock = Mocker.mockRuntime(runtime)) {
             createFile(fileName);
             createFile(fileName1);
 

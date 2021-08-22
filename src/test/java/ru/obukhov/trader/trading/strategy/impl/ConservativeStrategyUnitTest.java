@@ -3,7 +3,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -16,7 +16,7 @@ import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     private final ConservativeStrategy strategy = new ConservativeStrategy(
             StrategyType.CONSERVATIVE.getValue(),
@@ -48,7 +48,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(2000.0, 2000.0, 1);
+        final DecisionData data = TestData.createDecisionData(2000.0, 2000.0, 1);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 
@@ -58,7 +58,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        final DecisionData data = TestDataHelper.createDecisionData(10000.0, 2000.0, 1);
+        final DecisionData data = TestData.createDecisionData(10000.0, 2000.0, 1);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 

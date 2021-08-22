@@ -16,7 +16,8 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
@@ -32,7 +33,7 @@ import java.util.SortedMap;
 @ExtendWith(MockitoExtension.class)
 class FakeTinkoffServiceUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestDataHelper.createTradingProperties();
+    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     @Mock
     private MarketService marketService;
@@ -129,7 +130,7 @@ class FakeTinkoffServiceUnitTest {
         service.init(dateTime, currency, BigDecimal.valueOf(1000000));
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -211,7 +212,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -240,8 +241,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker1);
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker2);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker1);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker2);
 
         placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -270,8 +271,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker1);
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker2);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker1);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker2);
 
         placeOrder(ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
         service.nextMinute();
@@ -299,7 +300,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         final Executable executable = () -> placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
 
@@ -323,7 +324,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(1000));
 
@@ -343,7 +344,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -367,7 +368,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -398,7 +399,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -419,7 +420,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        TestDataHelper.createAndMockInstrument(realTinkoffService, ticker);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker);
 
         placeOrder(ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeOrder(ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));

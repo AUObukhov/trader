@@ -23,7 +23,7 @@ import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestDataHelper;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
@@ -216,11 +216,11 @@ class GrafanaServiceImplUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestDataHelper.createCandleWithOpenPrice(1000).setTime(from.plusHours(1)),
-                TestDataHelper.createCandleWithOpenPrice(2000).setTime(from.plusHours(2)),
-                TestDataHelper.createCandleWithOpenPrice(3000).setTime(from.plusHours(3)),
-                TestDataHelper.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
-                TestDataHelper.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
+                TestData.createCandleWithOpenPrice(1000).setTime(from.plusHours(1)),
+                TestData.createCandleWithOpenPrice(2000).setTime(from.plusHours(2)),
+                TestData.createCandleWithOpenPrice(3000).setTime(from.plusHours(3)),
+                TestData.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
+                TestData.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
         );
         Mockito.when(statisticsService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
@@ -272,19 +272,19 @@ class GrafanaServiceImplUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestDataHelper.createCandle(80, 15, 20, 5, from, candleResolution),
-                TestDataHelper.createCandle(1000, 20, 25, 10, from.plusMinutes(1), candleResolution),
-                TestDataHelper.createCandle(70, 17, 24, 15, from.plusMinutes(2), candleResolution),
-                TestDataHelper.createCandle(40, 18, 22, 14, from.plusMinutes(3), candleResolution),
-                TestDataHelper.createCandle(50, 18, 22, 14, from.plusMinutes(4), candleResolution),
-                TestDataHelper.createCandle(10, 18, 22, 14, from.plusMinutes(5), candleResolution),
-                TestDataHelper.createCandle(90, 18, 22, 14, from.plusMinutes(6), candleResolution),
-                TestDataHelper.createCandle(1000, 18, 22, 14, from.plusMinutes(7), candleResolution),
-                TestDataHelper.createCandle(60, 18, 22, 14, from.plusMinutes(8), candleResolution),
-                TestDataHelper.createCandle(30, 18, 22, 14, from.plusMinutes(9), candleResolution)
+                TestData.createCandle(80, 15, 20, 5, from, candleResolution),
+                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1), candleResolution),
+                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2), candleResolution),
+                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3), candleResolution),
+                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4), candleResolution),
+                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5), candleResolution),
+                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6), candleResolution),
+                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7), candleResolution),
+                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8), candleResolution),
+                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9), candleResolution)
         );
-        final List<BigDecimal> averages1 = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
-        final List<BigDecimal> averages2 = TestDataHelper.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> averages1 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
+        final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         GetCandlesResponse response = new GetCandlesResponse(candles, averages1, averages2);
         Mockito.when(statisticsService.getExtendedCandles(
                 ticker, interval, candleResolution, movingAverageType, window1, window2
