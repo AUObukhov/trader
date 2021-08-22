@@ -51,9 +51,6 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
-
-    // region assertEquals
-
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     // region assertEquals
@@ -129,6 +126,13 @@ public class AssertUtils {
     public static void assertRangeInclusive(final long expectedMin, final long expectedMax, final long actual) {
         Assertions.assertTrue(actual >= expectedMin);
         Assertions.assertTrue(actual <= expectedMax);
+    }
+
+    public static void assertMatchesRegex(final String value, final String regex) {
+        final Matcher matcher = Pattern.compile(regex).matcher(value);
+        if (!matcher.matches()) {
+            Assertions.fail(value + System.lineSeparator() + "does not matches regex:" + System.lineSeparator() + regex);
+        }
     }
 
     // region list assertions
