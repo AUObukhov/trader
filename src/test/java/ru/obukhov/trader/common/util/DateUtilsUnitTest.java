@@ -866,76 +866,54 @@ class DateUtilsUnitTest {
                 expectedErrorMessage);
     }
 
-    @Test
-    void getNextWorkMinute_returnsNextMinute_whenMiddleOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
-
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = dateTime.plusMinutes(1);
-        Assertions.assertEquals(expected, nextWorkMinute);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetNextWorkMinute() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19),
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 6, 10)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 19, 20),
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 6, 10)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 9, 19), // friday
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 12, 10) // monday
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 10, 12), // saturday
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 12, 10) // monday
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 9, 9),
+                        DateTimeTestData.createTime(10, 0, 0).toOffsetTime(),
+                        Duration.ofHours(9),
+                        DateTimeTestData.createDateTime(2020, 10, 9, 10)
+                )
+        );
     }
 
-    @Test
-    void getNextWorkMinute_returnsStartOfNextDay_whenAtEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
+    @ParameterizedTest
+    @MethodSource("getData_forGetNextWorkMinute")
+    void getNextWorkMinute(final OffsetDateTime dateTime, final OffsetTime startTime, final Duration duration, final OffsetDateTime expectedResult) {
+        final OffsetDateTime result = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
-        Assertions.assertEquals(expected, nextWorkMinute);
-    }
-
-    @Test
-    void getNextWorkMinute_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19, 20);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
-
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
-        Assertions.assertEquals(expected, nextWorkMinute);
-    }
-
-    @Test
-    void getNextWorkMinute_returnsStartOfNextWeek_whenEndOfWorkWeek() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 19);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
-
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
-        Assertions.assertEquals(expected, nextWorkMinute);
-    }
-
-    @Test
-    void getNextWorkMinute_returnsStartOfNextWeek_whenAtWeekend() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
-
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
-        Assertions.assertEquals(expected, nextWorkMinute);
-    }
-
-    @Test
-    void getNextWorkMinute_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 9);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0).toOffsetTime();
-        final Duration duration = Duration.ofHours(9);
-
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
-        Assertions.assertEquals(expected, nextWorkMinute);
+        Assertions.assertEquals(expectedResult, result);
     }
 
     // endregion
