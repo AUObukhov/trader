@@ -10,12 +10,12 @@ import java.util.function.Supplier;
 public class ExecutionUtils {
 
     public static Duration run(final Runnable runnable) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
 
         runnable.run();
 
-        final long end = System.currentTimeMillis();
-        return Duration.ofMillis(end - start);
+        final long end = System.nanoTime();
+        return Duration.ofNanos(end - start);
     }
 
     /**
@@ -24,12 +24,12 @@ public class ExecutionUtils {
      * @return result of execution of given {@code supplier} and execution time.
      */
     public static <T> ExecutionResult<T> get(Supplier<T> supplier) {
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
 
         final T result = supplier.get();
 
-        final long end = System.currentTimeMillis();
-        final Duration duration = Duration.ofMillis(end - start);
+        final long end = System.nanoTime();
+        final Duration duration = Duration.ofNanos(end - start);
 
         return new ExecutionResult<>(result, duration, null);
     }
@@ -44,14 +44,14 @@ public class ExecutionUtils {
         Duration duration;
         Exception exception = null;
 
-        final long start = System.currentTimeMillis();
+        final long start = System.nanoTime();
         try {
             result = supplier.get();
         } catch (Exception caughtException) {
             exception = caughtException;
         } finally {
-            final long end = System.currentTimeMillis();
-            duration = Duration.ofMillis(end - start);
+            final long end = System.nanoTime();
+            duration = Duration.ofNanos(end - start);
         }
 
         return new ExecutionResult<>(result, duration, exception);
