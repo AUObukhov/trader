@@ -1,9 +1,8 @@
 package ru.obukhov.trader.test.utils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class TestUtils {
 
     public static long runAndGetElapsedMillis(final Runnable runnable) {

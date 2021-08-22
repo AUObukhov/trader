@@ -1,7 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 
@@ -9,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ResourceUtils {
 
     private static final String TEST_DATA_FOLDER = "test-data/";

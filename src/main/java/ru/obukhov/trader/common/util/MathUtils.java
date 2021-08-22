@@ -1,7 +1,6 @@
 package ru.obukhov.trader.common.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class MathUtils {
 
     /**

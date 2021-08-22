@@ -1,7 +1,6 @@
 package ru.obukhov.trader.common.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Line;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Class with util methods to transform or analyse trends
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class TrendUtils {
 
     /**

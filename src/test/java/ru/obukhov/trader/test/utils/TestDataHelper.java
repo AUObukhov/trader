@@ -1,8 +1,7 @@
 package ru.obukhov.trader.test.utils;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -45,7 +44,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class TestDataHelper {
 
     public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(

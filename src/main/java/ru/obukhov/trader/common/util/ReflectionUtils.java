@@ -1,12 +1,11 @@
 package ru.obukhov.trader.common.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 import java.beans.PropertyDescriptor;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class ReflectionUtils {
 
     /**
