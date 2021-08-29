@@ -5,11 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
@@ -76,12 +74,6 @@ public class Mocker {
         final MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
         runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
         return runtimeStaticMock;
-    }
-
-    public static MockedStatic<MovingAverager> mockAveragerByType(final MovingAverageType movingAverageType, final MovingAverager averager) {
-        final MockedStatic<MovingAverager> movingAveragerStaticMock = Mockito.mockStatic(MovingAverager.class, Mockito.CALLS_REAL_METHODS);
-        movingAveragerStaticMock.when(() -> MovingAverager.getByType(movingAverageType)).thenReturn(averager);
-        return movingAveragerStaticMock;
     }
 
 }

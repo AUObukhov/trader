@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
@@ -25,6 +26,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private static final int ORDER = 1;
 
     private final MarketService marketService;
+    private final ApplicationContext applicationContext;
 
     /**
      * Searches candles by conditions
@@ -58,7 +60,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     ) {
         final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
 
-        final MovingAverager averager = MovingAverager.getByType(movingAverageType);
+        final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
         final List<BigDecimal> shortAverages = averager.getAverages(openPrices, smallWindow, ORDER);
         final List<BigDecimal> longAverages = averager.getAverages(openPrices, bigWindow, ORDER);

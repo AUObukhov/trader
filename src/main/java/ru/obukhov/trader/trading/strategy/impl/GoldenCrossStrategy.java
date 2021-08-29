@@ -28,8 +28,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GoldenCrossStrategy extends AbstractTradingStrategy {
 
-    protected GoldenCrossStrategy(final String name, final GoldenCrossStrategyParams params, final TradingProperties tradingProperties) {
+    private final MovingAverager averager;
+
+    protected GoldenCrossStrategy(
+            final String name,
+            final GoldenCrossStrategyParams params,
+            final TradingProperties tradingProperties,
+            final MovingAverager averager
+    ) {
         super(name, params, tradingProperties);
+
+        this.averager = averager;
     }
 
     @Override
@@ -43,7 +52,6 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
             final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
-            final MovingAverager averager = MovingAverager.getByType(goldenCrossStrategyParams.getMovingAverageType());
             final List<BigDecimal> shortAverages = averager.getAverages(values, goldenCrossStrategyParams.getSmallWindow());
             final List<BigDecimal> longAverages = averager.getAverages(values, goldenCrossStrategyParams.getBigWindow());
 

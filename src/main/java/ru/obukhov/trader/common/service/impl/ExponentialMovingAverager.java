@@ -3,7 +3,6 @@ package ru.obukhov.trader.common.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.MovingAverageType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,11 +14,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ExponentialMovingAverager extends MovingAverager {
-
-    @Override
-    public MovingAverageType getType() {
-        return MovingAverageType.EXPONENTIAL_WEIGHTED;
-    }
 
     @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order) {

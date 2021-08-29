@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -15,7 +15,6 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -32,6 +31,8 @@ class StatisticsServiceImplUnitTest {
     private MovingAverager averager;
     @Mock
     private MarketService marketService;
+    @Mock
+    private ApplicationContext applicationContext;
 
     @InjectMocks
     private StatisticsServiceImpl service;
@@ -89,6 +90,8 @@ class StatisticsServiceImplUnitTest {
 
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
+        Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
+
         final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(10.0, 15.0, 20.0);
         final List<BigDecimal> longAverages = TestData.createBigDecimalsList(10.0, 12.5, 17.5);
 
@@ -97,12 +100,7 @@ class StatisticsServiceImplUnitTest {
 
         // act
 
-        GetCandlesResponse response;
-        try (MockedStatic<MovingAverager> mock = Mocker.mockAveragerByType(movingAverageType, averager)) {
-            response = service.getExtendedCandles(
-                    ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow
-            );
-        }
+        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow);
 
         // assert
 
@@ -144,6 +142,8 @@ class StatisticsServiceImplUnitTest {
         );
         Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
+        Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
+
         final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         final List<BigDecimal> longAverages = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
 
@@ -152,12 +152,7 @@ class StatisticsServiceImplUnitTest {
 
         // act
 
-        GetCandlesResponse response;
-        try (MockedStatic<MovingAverager> mock = Mocker.mockAveragerByType(movingAverageType, averager)) {
-            response = service.getExtendedCandles(
-                    ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow
-            );
-        }
+        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleResolution, movingAverageType, smallWindow, bigWindow);
 
         // assert
 

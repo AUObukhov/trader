@@ -1,13 +1,11 @@
 package ru.obukhov.trader.common.service.impl;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 
@@ -19,11 +17,6 @@ import java.util.stream.Stream;
 class SimpleMovingAveragerUnitTest {
 
     private final SimpleMovingAverager averager = new SimpleMovingAverager();
-
-    @Test
-    void getType_returnsSimple() {
-        Assertions.assertEquals(MovingAverageType.SIMPLE, averager.getType());
-    }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetAverages_withoutOrder_throwsIllegalArgumentException() {

@@ -1,11 +1,6 @@
 package ru.obukhov.trader.common.service.impl;
 
-import org.springframework.util.Assert;
-import ru.obukhov.trader.market.model.MovingAverageType;
-
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -14,26 +9,6 @@ import java.util.List;
  * @see <a href=https://www.investopedia.com/terms/m/movingaverage.asp">investopedia</a>
  */
 public abstract class MovingAverager {
-
-    private static final EnumMap<MovingAverageType, MovingAverager> INSTANCES = new EnumMap<>(MovingAverageType.class);
-
-    @PostConstruct
-    private void postConstruct() {
-        INSTANCES.put(getType(), this);
-    }
-
-    /**
-     * @return Instance of MovingAverager with given {@code type} of moving average
-     */
-    public static MovingAverager getByType(final MovingAverageType type) {
-        Assert.isTrue(INSTANCES.containsKey(type), "Not found MovingAverager instance for " + type);
-        return INSTANCES.get(type);
-    }
-
-    /**
-     * @return type of current MovingAverager
-     */
-    public abstract MovingAverageType getType();
 
     /**
      * Calculates moving averages
