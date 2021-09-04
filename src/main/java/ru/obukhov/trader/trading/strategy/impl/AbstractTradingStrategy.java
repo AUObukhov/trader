@@ -67,25 +67,21 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
      * or decision to wait otherwise
      */
     protected Decision getSellOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
-        final double profit = getProfit(data);
-
         Decision decision;
-        if (profit < params.getMinimumProfit()) {
+
+        final Float minimumProfit = params.getMinimumProfit();
+        if (minimumProfit < 0) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-            log.debug(
-                    "Potential profit {} is lower than minimum profit {}. Decision is {}",
-                    profit,
-                    params.getMinimumProfit(),
-                    decision.toPrettyString()
-            );
+            log.debug("Minimum profit {} is negative. Decision is {}", minimumProfit, decision.toPrettyString());
         } else {
-            decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
-            log.debug(
-                    "Potential profit {} is greater than minimum profit {}. Decision is {}",
-                    profit,
-                    params.getMinimumProfit(),
-                    decision.toPrettyString()
-            );
+            final double profit = getProfit(data);
+            if (profit < minimumProfit) {
+                decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+                log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
+            } else {
+                decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
+                log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
+            }
         }
 
         return decision;

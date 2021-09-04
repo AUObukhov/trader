@@ -81,15 +81,17 @@ class AbstractTradingStrategyUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSellOrWaitDecision() {
         return Stream.of(
-                Arguments.of(1000.0, 10, 1, 1100.0, DecisionAction.WAIT, null),
-                Arguments.of(1000.0, 10, 3, 900.0, DecisionAction.WAIT, null),
-                Arguments.of(100.0, 10, 2, 1000.0, DecisionAction.SELL, 5)
+                Arguments.of(0.1f, 1000.0, 10, 1, 1100.0, DecisionAction.WAIT, null),
+                Arguments.of(0.1f, 1000.0, 10, 3, 900.0, DecisionAction.WAIT, null),
+                Arguments.of(0.1f, 100.0, 10, 2, 1000.0, DecisionAction.SELL, 5),
+                Arguments.of(-1.0f, 100.0, 10, 2, 1000.0, DecisionAction.WAIT, null)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetSellOrWaitDecision")
     void getSellOrWaitDecision(
+            final float minimumProfit,
             final double averagePositionPrice,
             final int positionLotsCount,
             final int lotSize,
@@ -97,7 +99,7 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction,
             final @Nullable Integer expectedLots
     ) {
-        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
+        final TradingStrategyParams params = new TradingStrategyParams(minimumProfit);
         final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
         final DecisionData data = TestData.createDecisionData(averagePositionPrice, positionLotsCount, lotSize, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();

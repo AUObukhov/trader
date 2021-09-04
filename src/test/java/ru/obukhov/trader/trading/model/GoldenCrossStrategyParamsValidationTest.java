@@ -31,10 +31,6 @@ class GoldenCrossStrategyParamsValidationTest {
                         new GoldenCrossStrategyParams(null, 1, 0.6f, false, 3, 5),
                         "minimumProfit is mandatory"
                 ),
-                Arguments.of(
-                        new GoldenCrossStrategyParams(-0.1f, 1, 0.6f, false, 3, 5),
-                        "minimumProfit min value is 0"
-                ),
 
                 Arguments.of(
                         new GoldenCrossStrategyParams(0.1f, null, 0.6f, false, 3, 5),

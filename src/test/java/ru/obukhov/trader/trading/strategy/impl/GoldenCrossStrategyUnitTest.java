@@ -154,6 +154,30 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     @SuppressWarnings("unused")
+    void decide_returnsWait_whenCrossoverIsAbove_andMinimumProfitIsNegative() {
+        final GoldenCrossStrategyParams strategyParams = new GoldenCrossStrategyParams(
+                -0.1f,
+                1,
+                0.6f,
+                false,
+                3,
+                5
+        );
+        final GoldenCrossStrategy strategy = new GoldenCrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        data.setPosition(TestData.createPortfolioPosition(100, 10));
+
+        try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
+            final Decision decision = strategy.decide(data, strategy.initCache());
+
+            Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
+            Assertions.assertNull(decision.getLots());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unused")
     void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final GoldenCrossStrategyParams strategyParams = new GoldenCrossStrategyParams(
                 0.1f,

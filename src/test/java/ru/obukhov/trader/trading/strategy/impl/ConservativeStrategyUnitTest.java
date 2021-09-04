@@ -20,13 +20,13 @@ class ConservativeStrategyUnitTest {
 
     private final ConservativeStrategy strategy = new ConservativeStrategy(
             StrategyType.CONSERVATIVE.getValue(),
-            new TradingStrategyParams(0.1f),
+            new TradingStrategyParams(-1.0f),
             TRADING_PROPERTIES
     );
 
     @Test
     void getName_returnsProperName() {
-        Assertions.assertEquals("conservative [minimumProfit=0.1]", strategy.getName());
+        Assertions.assertEquals("conservative [minimumProfit=-1.0]", strategy.getName());
     }
 
     // region decide tests
