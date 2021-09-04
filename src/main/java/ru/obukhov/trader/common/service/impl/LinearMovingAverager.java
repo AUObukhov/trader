@@ -29,26 +29,30 @@ public class LinearMovingAverager extends MovingAverager {
 
     private List<BigDecimal> getAveragesInner(List<BigDecimal> values, int window) {
         final List<BigDecimal> weightedMovingAverages = new ArrayList<>(values.size());
-        for (int i = 0; i < values.size(); i++) {
-            weightedMovingAverages.add(getAverage(values, i, window));
+        int normalizedWindow = Math.min(window, values.size());
+
+        int i;
+        // filling of first {normalizedWindow} averages
+        for (i = 0; i < normalizedWindow; i++) {
+            weightedMovingAverages.add(getAverage(values, i, i + 1));
+        }
+        // filling of the rest averages
+        for (; i < values.size(); i++) {
+            weightedMovingAverages.add(getAverage(values, i, normalizedWindow));
         }
 
         return weightedMovingAverages;
     }
 
     private BigDecimal getAverage(final List<BigDecimal> values, final int index, final int window) {
-        final int maxPeriod = index + 1;
-        final int normalizedPeriod = Math.min(window, maxPeriod);
-        BigDecimal sum = DecimalUtils.multiply(values.get(index), normalizedPeriod);
-        BigDecimal weightsSum = BigDecimal.valueOf(normalizedPeriod);
+        BigDecimal sum = DecimalUtils.multiply(values.get(index), window);
 
-        for (int i = index - 1; i > index - normalizedPeriod; i--) {
-            int weight = normalizedPeriod - (index - i);
+        for (int i = index - 1; i > index - window; i--) {
+            int weight = window - (index - i);
             sum = sum.add(DecimalUtils.multiply(values.get(i), weight));
-            weightsSum = weightsSum.add(BigDecimal.valueOf(weight));
         }
 
-        final double divisor = normalizedPeriod * (normalizedPeriod + 1) / 2.0;
+        final double divisor = window * (window + 1) / 2.0;
         return DecimalUtils.divide(sum, divisor);
     }
 
