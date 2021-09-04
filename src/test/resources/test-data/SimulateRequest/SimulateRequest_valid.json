@@ -18,7 +18,7 @@
     },
     {
       "candleResolution": "1min",
-      "strategyType": "goldenCross",
+      "strategyType": "cross",
       "strategyParams": {
         "minimumProfit": 0.01,
         "smallWindow": 100,
@@ -29,7 +29,7 @@
     },
     {
       "candleResolution": "1min",
-      "strategyType": "goldenCross",
+      "strategyType": "cross",
       "strategyParams": {
         "minimumProfit": 0.01,
         "smallWindow": 100,

@@ -42,7 +42,7 @@ class TradingConfigUnitTest {
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         new TradingConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.GOLDEN_CROSS)
+                                .setStrategyType(StrategyType.CROSS)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         false
                 ),
@@ -102,7 +102,7 @@ class TradingConfigUnitTest {
     void testToString() {
         final TradingConfig config = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.GOLDEN_CROSS)
+                .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
                         "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
@@ -114,7 +114,7 @@ class TradingConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[candleResolution=1min, strategyType=goldenCross, strategyParams={";
+        final String expectedStart = "[candleResolution=1min, strategyType=cross, strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));
         Assertions.assertTrue(string.contains("movingAverageType=LWMA"));

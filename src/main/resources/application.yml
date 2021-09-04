@@ -11,7 +11,7 @@ scheduled-bot:
   enabled: false
   tickers: SBER
   candleResolution: 1min
-  strategy-type: "goldenCross"
+  strategy-type: "cross"
   strategy-params:
     minimumProfit: 0.1
     movingAverageType: SMA

@@ -24,7 +24,7 @@ public class TradingConfig {
     private CandleResolution candleResolution;
 
     @NotNull(message = "strategyType is mandatory")
-    @ApiModelProperty(value = "Trading strategy type", example = "goldenCross", required = true, position = 2)
+    @ApiModelProperty(value = "Trading strategy type", example = "cross", required = true, position = 2)
     private StrategyType strategyType;
 
     @ApiModelProperty(

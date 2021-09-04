@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.trading.model.GoldenCrossStrategyParams;
+import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -37,8 +37,8 @@ public class TradingStrategyFactory {
         switch (strategyType) {
             case CONSERVATIVE:
                 return createConservativeStrategy(strategyName, strategyParams);
-            case GOLDEN_CROSS:
-                return createGoldenCrossStrategy(strategyName, strategyParams);
+            case CROSS:
+                return createCrossStrategy(strategyName, strategyParams);
             default:
                 throw new IllegalArgumentException("Unknown strategy type " + strategyType);
         }
@@ -49,12 +49,12 @@ public class TradingStrategyFactory {
         return new ConservativeStrategy(name, tradingStrategyParams, tradingProperties);
     }
 
-    private GoldenCrossStrategy createGoldenCrossStrategy(final String name, final Map<String, Object> strategyParams) {
-        final GoldenCrossStrategyParams goldenCrossStrategyParams = getStrategyParams(strategyParams, GoldenCrossStrategyParams.class);
+    private CrossStrategy createCrossStrategy(final String name, final Map<String, Object> strategyParams) {
+        final CrossStrategyParams crossStrategyParams = getStrategyParams(strategyParams, CrossStrategyParams.class);
         final MovingAverageType movingAverageType = getMovingAverageType(strategyParams);
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final String fullName = name + " " + movingAverageType;
-        return new GoldenCrossStrategy(fullName, goldenCrossStrategyParams, tradingProperties, averager);
+        return new CrossStrategy(fullName, crossStrategyParams, tradingProperties, averager);
     }
 
     private MovingAverageType getMovingAverageType(Map<String, Object> strategyParams) {

@@ -165,7 +165,7 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final TradingConfig tradingConfig2 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.GOLDEN_CROSS)
+                .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
                         "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
@@ -191,7 +191,7 @@ class BotControllerWebTest extends ControllerWebTest {
 
         final TradingConfig tradingConfig3 = new TradingConfig()
                 .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.GOLDEN_CROSS)
+                .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
                         "minimumProfit", 0.01,
                         "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,

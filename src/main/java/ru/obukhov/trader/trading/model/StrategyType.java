@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 public enum StrategyType {
 
     CONSERVATIVE("conservative"),
-    GOLDEN_CROSS("goldenCross");
+    CROSS("cross");
 
     private static final Map<String, StrategyType> LOOKUP = Stream.of(StrategyType.values())
             .collect(Collectors.toMap(StrategyType::getValue, strategyType -> strategyType));

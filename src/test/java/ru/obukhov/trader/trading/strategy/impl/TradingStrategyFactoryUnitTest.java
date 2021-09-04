@@ -38,7 +38,7 @@ class TradingStrategyFactoryUnitTest {
                         "conservative [minimumProfit=0.1]"
                 ),
                 Arguments.of(
-                        StrategyType.GOLDEN_CROSS,
+                        StrategyType.CROSS,
                         Map.of(
                                 "minimumProfit", 0.1,
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
@@ -48,10 +48,10 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "goldenCross SMA [minimumProfit=0.1, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
+                        "cross SMA [minimumProfit=0.1, order=1, indexCoefficient=0.4, greedy=false, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
-                        StrategyType.GOLDEN_CROSS,
+                        StrategyType.CROSS,
                         Map.of(
                                 "minimumProfit", 0.1,
                                 "movingAverageType", MovingAverageType.LINEAR_WEIGHTED.getValue(),
@@ -61,10 +61,10 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 100,
                                 "bigWindow", 200
                         ),
-                        "goldenCross LWMA [minimumProfit=0.1, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
+                        "cross LWMA [minimumProfit=0.1, order=2, indexCoefficient=0.5, greedy=true, smallWindow=100, bigWindow=200]"
                 ),
                 Arguments.of(
-                        StrategyType.GOLDEN_CROSS,
+                        StrategyType.CROSS,
                         Map.of(
                                 "minimumProfit", 0.2,
                                 "movingAverageType", MovingAverageType.EXPONENTIAL_WEIGHTED.getValue(),
@@ -74,7 +74,7 @@ class TradingStrategyFactoryUnitTest {
                                 "smallWindow", 10,
                                 "bigWindow", 20
                         ),
-                        "goldenCross EWMA [minimumProfit=0.2, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
+                        "cross EWMA [minimumProfit=0.2, order=1, indexCoefficient=0.5, greedy=false, smallWindow=10, bigWindow=20]"
                 )
         );
     }
@@ -100,10 +100,10 @@ class TradingStrategyFactoryUnitTest {
 
     // endregion
 
-    // region GoldenCrossStrategy creation tests
+    // region CrossStrategy creation tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreNotValid() {
+    static Stream<Arguments> getData_forCreateStrategy_throwsIllegalArgumentException_whenCross_andParamsAreNotValid() {
         return Stream.of(
                 Arguments.of(
                         Map.of(
@@ -289,19 +289,19 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreNotValid")
-    void createStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreNotValid(
+    @MethodSource("getData_forCreateStrategy_throwsIllegalArgumentException_whenCross_andParamsAreNotValid")
+    void createStrategy_throwsIllegalArgumentException_whenCross_andParamsAreNotValid(
             final Map<String, Object> params,
             final String expectedMessage
     ) {
-        final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
+        final StrategyType strategyType = StrategyType.CROSS;
 
         final Executable executable = () -> factory.createStrategy(strategyType, params);
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void createStrategy_throwsNoSuchBeanDefinitionException_whenGoldenCross_andNoAveragerBean() {
+    void createStrategy_throwsNoSuchBeanDefinitionException_whenCross_andNoAveragerBean() {
         final Map<String, Object> params = Map.of(
                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                 "minimumProfit", 0.1,
@@ -312,7 +312,7 @@ class TradingStrategyFactoryUnitTest {
                 "bigWindow", 6
         );
         final String expectedMessage = "Averager with movingAverageType 'SMA' not found";
-        final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
+        final StrategyType strategyType = StrategyType.CROSS;
 
         final String averagerName = MovingAverageType.SIMPLE.getAveragerName();
         Mockito.when(applicationContext.getBean(averagerName, MovingAverager.class))
@@ -324,8 +324,8 @@ class TradingStrategyFactoryUnitTest {
     }
 
     @Test
-    void createStrategy_throwsIllegalArgumentException_whenGoldenCross_andParamsAreEmpty() {
-        final StrategyType strategyType = StrategyType.GOLDEN_CROSS;
+    void createStrategy_throwsIllegalArgumentException_whenCross_andParamsAreEmpty() {
+        final StrategyType strategyType = StrategyType.CROSS;
         final Map<String, Object> params = Map.of();
 
         final Executable executable = () -> factory.createStrategy(strategyType, params);

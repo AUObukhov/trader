@@ -7,7 +7,7 @@ class TradingStrategyParamsValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final GoldenCrossStrategyParams params = new GoldenCrossStrategyParams(
+        final CrossStrategyParams params = new CrossStrategyParams(
                 0.1f,
                 1,
                 0.6f,

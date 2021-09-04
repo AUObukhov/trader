@@ -6,11 +6,11 @@ import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.GoldenCrossStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 
 import java.math.BigDecimal;
@@ -18,21 +18,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving averag
- * e from below and to sell when from above.<br/>
+ * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving average
+ * from below and to sell when from above.<br/>
  * Exact algorithm of moving averages implemented by descendants.
  *
  * @see <a href="https://www.investopedia.com/terms/g/goldencross.asp">Golden Cross</a>
  * @see <a href="https://en.wikipedia.org/wiki/Moving_average">Moving average</a>
  */
 @Slf4j
-public class GoldenCrossStrategy extends AbstractTradingStrategy {
+public class CrossStrategy extends AbstractTradingStrategy {
 
     private final MovingAverager averager;
 
-    protected GoldenCrossStrategy(
+    protected CrossStrategy(
             final String name,
-            final GoldenCrossStrategyParams params,
+            final CrossStrategyParams params,
             final TradingProperties tradingProperties,
             final MovingAverager averager
     ) {
@@ -51,11 +51,11 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
             final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
                     .collect(Collectors.toList());
-            final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
-            final List<BigDecimal> shortAverages = averager.getAverages(values, goldenCrossStrategyParams.getSmallWindow());
-            final List<BigDecimal> longAverages = averager.getAverages(values, goldenCrossStrategyParams.getBigWindow());
+            final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+            final List<BigDecimal> shortAverages = averager.getAverages(values, crossStrategyParams.getSmallWindow());
+            final List<BigDecimal> longAverages = averager.getAverages(values, crossStrategyParams.getBigWindow());
 
-            final int index = (int) (goldenCrossStrategyParams.getIndexCoefficient() * (values.size() - 1));
+            final int index = (int) (crossStrategyParams.getIndexCoefficient() * (values.size() - 1));
             final Crossover crossover = TrendUtils.getCrossoverIfLast(shortAverages, longAverages, index);
             decision = decide(data, strategyCache, crossover);
         }
@@ -75,8 +75,8 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
                 break;
             case ABOVE:
                 decision = getSellOrWaitDecision(data, strategyCache);
-                final GoldenCrossStrategyParams goldenCrossStrategyParams = (GoldenCrossStrategyParams) params;
-                if (goldenCrossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
+                final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+                if (crossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
                     decision = getBuyOrWaitDecision(data, strategyCache);
                 }
                 break;
@@ -89,10 +89,10 @@ public class GoldenCrossStrategy extends AbstractTradingStrategy {
     @NotNull
     @Override
     public StrategyCache initCache() {
-        return new GoldenCrossStrategy.GoldenCrossStrategyCache();
+        return new CrossStrategy.CrossStrategyCache();
     }
 
-    private static class GoldenCrossStrategyCache implements StrategyCache {
+    private static class CrossStrategyCache implements StrategyCache {
     }
 
 }

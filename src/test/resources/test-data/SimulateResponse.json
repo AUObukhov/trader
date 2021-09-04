@@ -25,7 +25,7 @@
     {
       "tradingConfig": {
         "candleResolution": "1min",
-        "strategyType": "goldenCross",
+        "strategyType": "cross",
         "strategyParams": {
           "minimumProfit": 0.01,
           "movingAverageType": "LWMA",
@@ -52,7 +52,7 @@
     {
       "tradingConfig": {
         "candleResolution": "1min",
-        "strategyType": "goldenCross",
+        "strategyType": "cross",
         "strategyParams": {
           "minimumProfit": 0.01,
           "movingAverageType": "LWMA",

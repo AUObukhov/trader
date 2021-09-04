@@ -11,11 +11,8 @@ import java.util.function.Predicate;
 
 @Getter
 @NoArgsConstructor
-@PredicateConstraint(
-        message = "smallWindow must lower than bigWindow",
-        predicate = GoldenCrossStrategyParams.GoldenCrossStrategyParamsWindowsPredicate.class
-)
-public class GoldenCrossStrategyParams extends TradingStrategyParams {
+@PredicateConstraint(message = "smallWindow must lower than bigWindow", predicate = CrossStrategyParams.CrossStrategyParamsWindowsPredicate.class)
+public class CrossStrategyParams extends TradingStrategyParams {
 
     @NotNull(message = "order is mandatory")
     @Min(value = 1, message = "order min value is 1")
@@ -49,7 +46,7 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
     @NotNull(message = "bigWindow is mandatory")
     private Integer bigWindow;
 
-    public GoldenCrossStrategyParams(
+    public CrossStrategyParams(
             final Float minimumProfit,
             final Integer order,
             final Float indexCoefficient,
@@ -78,9 +75,9 @@ public class GoldenCrossStrategyParams extends TradingStrategyParams {
                 ']';
     }
 
-    protected static class GoldenCrossStrategyParamsWindowsPredicate implements Predicate<GoldenCrossStrategyParams> {
+    protected static class CrossStrategyParamsWindowsPredicate implements Predicate<CrossStrategyParams> {
         @Override
-        public boolean test(GoldenCrossStrategyParams params) {
+        public boolean test(CrossStrategyParams params) {
             return params.getSmallWindow() == null
                     || params.getBigWindow() == null
                     || params.getSmallWindow() < params.getBigWindow();
