@@ -31,6 +31,7 @@ public class TradingStrategyFactory {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ApplicationContext applicationContext;
 
+    @NotNull
     public TradingStrategy createStrategy(final StrategyType strategyType, final Map<String, Object> strategyParams) {
         final String strategyName = strategyType.getValue();
         switch (strategyType) {
@@ -43,7 +44,6 @@ public class TradingStrategyFactory {
         }
     }
 
-    @NotNull
     private ConservativeStrategy createConservativeStrategy(final String name, final Map<String, Object> strategyParams) {
         final TradingStrategyParams tradingStrategyParams = getStrategyParams(strategyParams, TradingStrategyParams.class);
         return new ConservativeStrategy(name, tradingStrategyParams, tradingProperties);
