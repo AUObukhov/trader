@@ -178,7 +178,7 @@ class GoldenCrossStrategyUnitTest {
 
     @Test
     @SuppressWarnings("unused")
-    void decide_returnsBuy_whenCrossoverIsMinusOne_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
+    void decide_returnsBuy_whenCrossoverIsAbove_andSellProfitIsLowerThanMinimum_andThereAreAvailableLots_andGreedy() {
         final GoldenCrossStrategyParams strategyParams = new GoldenCrossStrategyParams(
                 0.1f,
                 1,
