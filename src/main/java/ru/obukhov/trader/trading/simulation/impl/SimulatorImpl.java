@@ -5,9 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
@@ -16,6 +14,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.MathUtils;
+import ru.obukhov.trader.config.properties.SimulationProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -69,14 +68,12 @@ public class SimulatorImpl implements Simulator {
             final ExcelService excelService,
             final BotFactory fakeBotFactory,
             final TradingStrategyFactory strategyFactory,
-            @Value("${simulation.thread-count:4}") final Integer simulationThreadCount
+            final SimulationProperties simulationProperties
     ) {
-        Assert.isTrue(simulationThreadCount > 0, "simulationThreadCount must be positive");
-
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
         this.strategyFactory = strategyFactory;
-        this.executor = Executors.newFixedThreadPool(simulationThreadCount);
+        this.executor = Executors.newFixedThreadPool(simulationProperties.getThreadCount());
     }
 
     /**

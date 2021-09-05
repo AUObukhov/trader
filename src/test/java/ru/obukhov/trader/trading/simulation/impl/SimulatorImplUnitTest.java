@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -13,6 +12,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.config.properties.SimulationProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -71,21 +71,7 @@ class SimulatorImplUnitTest {
     @Mock
     private TradingStrategyFactory strategyFactory;
 
-    // region constructor tests
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsNegative() {
-        final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, -1);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "simulationThreadCount must be positive");
-    }
-
-    @Test
-    void constructor_throwsIllegalArgumentException_whenSimulationThreadCountIsZero() {
-        final Executable executable = () -> new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 0);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "simulationThreadCount must be positive");
-    }
-
-    // endregion
+    private final SimulationProperties simulationProperties = new SimulationProperties(2);
 
     // region simulate tests
 
@@ -93,7 +79,7 @@ class SimulatorImplUnitTest {
     void simulate_throwsIllegalArgumentException_whenFromIsInFuture() {
         final String ticker = "ticker";
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -116,7 +102,7 @@ class SimulatorImplUnitTest {
     void simulate_throwsIllegalArgumentException_whenToIsInFuture() {
         final String ticker = "ticker";
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -148,7 +134,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -203,7 +189,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -289,7 +275,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -363,7 +349,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -436,7 +422,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -511,7 +497,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -586,7 +572,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -638,7 +624,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -691,7 +677,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -744,7 +730,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -797,7 +783,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, null, BALANCE_INCREMENT_CRON);
 
@@ -854,7 +840,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -898,7 +884,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, 2);
+        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
