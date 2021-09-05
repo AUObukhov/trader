@@ -20,6 +20,8 @@ import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.OrdersContext;
 import ru.tinkoff.invest.openapi.PortfolioContext;
+import ru.tinkoff.invest.openapi.UserContext;
+import ru.tinkoff.invest.openapi.model.rest.BrokerAccountType;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Candles;
 import ru.tinkoff.invest.openapi.model.rest.Currencies;
@@ -36,6 +38,8 @@ import ru.tinkoff.invest.openapi.model.rest.Orderbook;
 import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
 import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import ru.tinkoff.invest.openapi.model.rest.Portfolio;
+import ru.tinkoff.invest.openapi.model.rest.UserAccount;
+import ru.tinkoff.invest.openapi.model.rest.UserAccounts;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -57,6 +61,8 @@ class RealTinkoffServiceUnitTest {
     private OrdersContext ordersContext;
     @Mock
     private PortfolioContext portfolioContext;
+    @Mock
+    private UserContext userContext;
 
     @Mock
     private OpenApi opeApi;
@@ -72,6 +78,7 @@ class RealTinkoffServiceUnitTest {
         Mockito.lenient().when(opeApi.getOperationsContext()).thenReturn(operationsContext);
         Mockito.lenient().when(opeApi.getOrdersContext()).thenReturn(ordersContext);
         Mockito.lenient().when(opeApi.getPortfolioContext()).thenReturn(portfolioContext);
+        Mockito.lenient().when(opeApi.getUserContext()).thenReturn(userContext);
 
         Mockito.lenient().when(applicationContext.getBean(RealTinkoffService.class)).thenReturn(realTinkoffService);
         realTinkoffService.setApplicationContext(applicationContext);
@@ -394,6 +401,30 @@ class RealTinkoffServiceUnitTest {
         final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies();
 
         Assertions.assertSame(currencies.getCurrencies(), result);
+    }
+
+    // endregion
+
+    // region UserContext methods tests
+
+    @Test
+    void getUserAccounts() {
+        final UserAccount userAccount1 = new UserAccount();
+        userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFFIIS);
+        userAccount1.setBrokerAccountId("2008941383");
+
+        final UserAccount userAccount2 = new UserAccount();
+        userAccount2.setBrokerAccountType(BrokerAccountType.TINKOFF);
+        userAccount2.setBrokerAccountId("2000124699");
+
+        final UserAccounts userAccounts = new UserAccounts();
+        userAccounts.setAccounts(List.of(userAccount1, userAccount2));
+
+        Mockito.when(userContext.getAccounts()).thenReturn(CompletableFuture.completedFuture(userAccounts));
+
+        final List<UserAccount> result = realTinkoffService.getAccounts();
+
+        Assertions.assertSame(userAccounts.getAccounts(), result);
     }
 
     // endregion

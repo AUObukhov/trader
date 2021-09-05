@@ -6,6 +6,7 @@ import ru.tinkoff.invest.openapi.OpenApi;
 import ru.tinkoff.invest.openapi.OperationsContext;
 import ru.tinkoff.invest.openapi.OrdersContext;
 import ru.tinkoff.invest.openapi.PortfolioContext;
+import ru.tinkoff.invest.openapi.UserContext;
 
 @RequiredArgsConstructor
 public abstract class TinkoffContextsAware {
@@ -26,6 +27,10 @@ public abstract class TinkoffContextsAware {
 
     protected PortfolioContext getPortfolioContext() {
         return opeApi.getPortfolioContext();
+    }
+
+    protected UserContext getUserContext() {
+        return opeApi.getUserContext();
     }
 
 }

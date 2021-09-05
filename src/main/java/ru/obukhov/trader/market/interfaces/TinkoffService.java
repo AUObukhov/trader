@@ -13,6 +13,7 @@ import ru.tinkoff.invest.openapi.model.rest.Order;
 import ru.tinkoff.invest.openapi.model.rest.Orderbook;
 import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
 import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
+import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -50,6 +51,8 @@ public interface TinkoffService {
     Collection<PortfolioPosition> getPortfolioPositions();
 
     List<CurrencyPosition> getPortfolioCurrencies();
+
+    List<UserAccount> getAccounts();
 
     OffsetDateTime getCurrentDateTime();
 

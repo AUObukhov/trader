@@ -25,6 +25,7 @@ import ru.tinkoff.invest.openapi.model.rest.Order;
 import ru.tinkoff.invest.openapi.model.rest.Orderbook;
 import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
 import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
+import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -163,6 +164,15 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     @Override
     public List<CurrencyPosition> getPortfolioCurrencies() {
         return getPortfolioContext().getPortfolioCurrencies(null).join().getCurrencies();
+    }
+
+    // endregion
+
+    // region UserContext
+
+    @Override
+    public List<UserAccount> getAccounts() {
+        return getUserContext().getAccounts().join().getAccounts();
     }
 
     // endregion

@@ -31,6 +31,7 @@ import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
 import ru.tinkoff.invest.openapi.model.rest.Orderbook;
 import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
 import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
+import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -379,6 +380,15 @@ public class FakeTinkoffService implements TinkoffService {
                     return currencyPosition;
                 })
                 .collect(Collectors.toList());
+    }
+
+    // endregion
+
+    // region UserContext proxy
+
+    @Override
+    public List<UserAccount> getAccounts() {
+        return realTinkoffService.getAccounts();
     }
 
     // endregion
