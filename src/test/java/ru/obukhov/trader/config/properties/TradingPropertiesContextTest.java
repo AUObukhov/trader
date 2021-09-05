@@ -14,7 +14,7 @@ import ru.obukhov.trader.test.utils.DateTimeTestData;
 import java.time.Duration;
 import java.time.OffsetTime;
 
-class TradingPropertiesIntegrationTest {
+class TradingPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withBean(OffsetTimeConverter.class)

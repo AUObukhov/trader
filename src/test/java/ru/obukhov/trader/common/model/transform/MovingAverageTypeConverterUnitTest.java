@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.MovingAverageType;
 
-class MovingAverageTypeConverterTest {
+class MovingAverageTypeConverterUnitTest {
 
     @Test
     void convert() {

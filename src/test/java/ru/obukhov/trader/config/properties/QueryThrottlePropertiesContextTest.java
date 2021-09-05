@@ -10,7 +10,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.List;
 
-class QueryThrottlePropertiesIntegrationTest {
+class QueryThrottlePropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)

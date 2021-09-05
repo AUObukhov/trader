@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
-class CandleResolutionConverterTest {
+class CandleResolutionConverterUnitTest {
 
     @Test
     void convert() {

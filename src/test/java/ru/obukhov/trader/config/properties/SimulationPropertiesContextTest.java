@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
-class SimulationPropertiesIntegrationTest {
+class SimulationPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)

@@ -6,10 +6,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
-class ReportPropertiesIntegrationTest {
+class ReportPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withUserConfiguration(ReportPropertiesIntegrationTest.EnableConfigurationPropertiesConfiguration.class);
+            .withUserConfiguration(ReportPropertiesContextTest.EnableConfigurationPropertiesConfiguration.class);
 
     @Test
     void saveDirectoryRead_whenSaveDirectoryFilled() {

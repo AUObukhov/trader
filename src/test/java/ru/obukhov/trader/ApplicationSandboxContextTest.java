@@ -14,7 +14,7 @@ import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;
 
 @SpringBootTest(args = {"--trading.token=i identify myself as token", "--trading.sandbox=true"})
 @ExtendWith(MockitoExtension.class)
-class ApplicationSandboxIntegrationTest {
+class ApplicationSandboxContextTest {
 
     @Autowired
     private SandboxController sandboxController;

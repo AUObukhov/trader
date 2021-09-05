@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 
-class InstrumentTypeConverterTest {
+class InstrumentTypeConverterUnitTest {
 
     @Test
     void convert() {

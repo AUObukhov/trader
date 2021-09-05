@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
-class ExecutionUtilsTest {
+class ExecutionUtilsUnitTest {
 
     // region run tests
 

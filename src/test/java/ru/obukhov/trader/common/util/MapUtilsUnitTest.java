@@ -7,7 +7,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.util.Map;
 
-class MapUtilsTest {
+class MapUtilsUnitTest {
 
     // region getRequiredString tests
 
