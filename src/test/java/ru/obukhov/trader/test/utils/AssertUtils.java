@@ -118,6 +118,14 @@ public class AssertUtils {
         }
     }
 
+    public static <K, V> void assertEquals(final Map<? extends K, ? extends V> expected, final Map<? extends K, ? extends V> actual) {
+        final Set<? extends K> actualKeys = actual.keySet();
+        Assertions.assertEquals(expected.keySet(), actualKeys);
+        for (K key : actualKeys) {
+            Assertions.assertEquals(expected.get(key), actual.get(key));
+        }
+    }
+
     // endregion
 
     public static void assertRangeInclusive(final long expectedMin, final long expectedMax, final long actual) {

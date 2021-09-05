@@ -4,11 +4,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 import ru.obukhov.trader.web.model.TradingConfig;
 
 import java.util.Collection;
 import java.util.Set;
 
+@Validated
 @EqualsAndHashCode(callSuper = true)
 @ConfigurationProperties(prefix = "scheduled-bot")
 public class ScheduledBotProperties extends TradingConfig {

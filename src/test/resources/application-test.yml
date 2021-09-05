@@ -6,6 +6,21 @@ trading:
   consecutive-empty-days-limit: 5
   start-date: 2000-01-01T00:00:00+03:00
 
+scheduled-bot:
+  delay: 60000
+  enabled: true
+  tickers: FXIT
+  candleResolution: 5min
+  strategy-type: "cross"
+  strategy-params:
+    minimumProfit: 0.1
+    movingAverageType: SMA
+    order: 1
+    smallWindow: 50
+    bigWindow: 200
+    indexCoefficient: 0.5
+    greedy: true
+
 query.throttle:
   interval: 60000
   limits:
