@@ -22,7 +22,7 @@ class SimulationPropertiesContextTest {
 
                     final SimulationProperties simulationProperties = context.getBean(SimulationProperties.class);
 
-                    AssertUtils.assertEquals(7, simulationProperties.getThreadCount());
+                    Assertions.assertEquals(7, simulationProperties.getThreadCount());
                 });
     }
 
