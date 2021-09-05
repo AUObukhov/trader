@@ -42,6 +42,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -61,8 +62,7 @@ public class AssertUtils {
 
     public static void assertEquals(final BigDecimal expected, final BigDecimal actual) {
         if (!DecimalUtils.numbersEqual(actual, expected)) {
-            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
-            Assertions.fail(message);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
@@ -70,8 +70,7 @@ public class AssertUtils {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
-            Assertions.fail(message);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
@@ -79,8 +78,7 @@ public class AssertUtils {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
-            Assertions.fail(message);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
@@ -88,8 +86,7 @@ public class AssertUtils {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
-            final String message = String.format("expected: <%s> but was: <%s>", expected, actual);
-            Assertions.fail(message);
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
@@ -145,9 +142,7 @@ public class AssertUtils {
             if (expectedValue instanceof List && actualValue instanceof List) {
                 assertListsAreEqual((List<?>) expectedValue, (List<?>) actualValue);
             } else if (!Objects.equals(expectedValue, actualValue)) {
-                final String message = String.format(
-                        "expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue
-                );
+                final String message = String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
@@ -159,8 +154,7 @@ public class AssertUtils {
             final BigDecimal expectedValue = expected.get(i);
             final BigDecimal actualValue = actual.get(i);
             if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
-                final String message = String.format("expected: <%s> at position <%s> but was: <%s>",
-                        expectedValue, i, actualValue);
+                final String message = String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue);
                 Assertions.fail(message);
             }
         }
@@ -278,8 +272,7 @@ public class AssertUtils {
     }
 
     public static void assertSeriesColor(final XDDFLineChartData.Series series, final Color color) {
-        final XDDFSolidFillProperties fillProperties1 =
-                (XDDFSolidFillProperties) series.getShapeProperties().getFillProperties();
+        final XDDFSolidFillProperties fillProperties1 = (XDDFSolidFillProperties) series.getShapeProperties().getFillProperties();
         final XDDFColorRgbBinary xddfColor1 = (XDDFColorRgbBinary) fillProperties1.getColor();
         AssertUtils.assertEquals(COLOR_MAPPER.mapToBytes(color), xddfColor1.getValue());
     }
