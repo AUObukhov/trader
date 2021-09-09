@@ -46,7 +46,7 @@ class AbstractTradingStrategyUnitTest {
             final double currentPrice,
             final int lotSize,
             final DecisionAction expectedAction,
-            final @Nullable Integer expectedLots
+            @Nullable final Integer expectedLots
     ) {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
         final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
@@ -97,7 +97,7 @@ class AbstractTradingStrategyUnitTest {
             final int lotSize,
             final double currentPrice,
             final DecisionAction expectedAction,
-            final @Nullable Integer expectedLots
+            @Nullable final Integer expectedLots
     ) {
         final TradingStrategyParams params = new TradingStrategyParams(minimumProfit);
         final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);

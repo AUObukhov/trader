@@ -103,7 +103,7 @@ public class DateUtils {
             final OffsetDateTime dateTime,
             final long amountToAdd,
             final TemporalUnit temporalUnit,
-            final @Nullable OffsetDateTime maxDateTime
+            @Nullable final OffsetDateTime maxDateTime
     ) {
         return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
     }
@@ -115,7 +115,7 @@ public class DateUtils {
             final OffsetDateTime dateTime,
             final long amountToSubtract,
             final TemporalUnit temporalUnit,
-            final @Nullable OffsetDateTime minDateTime
+            @Nullable final OffsetDateTime minDateTime
     ) {
         return DateUtils.getLatestDateTime(dateTime.minus(amountToSubtract, temporalUnit), minDateTime);
     }

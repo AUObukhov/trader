@@ -66,7 +66,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(final @Nullable Integer expected, final BigDecimal actual) {
+    public static void assertEquals(@Nullable final Integer expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
@@ -74,7 +74,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(final @Nullable Long expected, final BigDecimal actual) {
+    public static void assertEquals(@Nullable final Long expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
@@ -82,7 +82,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(final @Nullable Double expected, final BigDecimal actual) {
+    public static void assertEquals(@Nullable final Double expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
