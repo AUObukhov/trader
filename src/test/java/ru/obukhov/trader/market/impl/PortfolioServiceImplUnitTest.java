@@ -1,9 +1,12 @@
 package ru.obukhov.trader.market.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -30,8 +33,10 @@ class PortfolioServiceImplUnitTest {
 
     // region getPosition tests
 
-    @Test
-    void getPosition_returnsPositionByTicker_whenItExists() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getPosition_returnsPositionByTicker_whenItExists(@Nullable final String brokerAccountId) {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
@@ -41,15 +46,17 @@ class PortfolioServiceImplUnitTest {
                 TestData.createPortfolioPosition(ticker2),
                 TestData.createPortfolioPosition(ticker3)
         );
-        Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getPosition(ticker2);
+        final PortfolioPosition position = service.getPosition(brokerAccountId, ticker2);
 
         Assertions.assertEquals(ticker2, position.getTicker());
     }
 
-    @Test
-    void getPosition_returnsNull_whenNoPositionWithTicker() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getPosition_returnsNull_whenNoPositionWithTicker(@Nullable final String brokerAccountId) {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
@@ -59,9 +66,9 @@ class PortfolioServiceImplUnitTest {
                 TestData.createPortfolioPosition(ticker2),
                 TestData.createPortfolioPosition(ticker3)
         );
-        Mockito.when(tinkoffService.getPortfolioPositions()).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getPosition("ticker");
+        final PortfolioPosition position = service.getPosition(brokerAccountId, "ticker");
 
         Assertions.assertNull(position);
     }
@@ -70,8 +77,10 @@ class PortfolioServiceImplUnitTest {
 
     // region getAvailableBalance tests
 
-    @Test
-    void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists(@Nullable final String brokerAccountId) {
         final long rubBalance = 1000;
         final long rubBlocked = 100;
 
@@ -80,15 +89,17 @@ class PortfolioServiceImplUnitTest {
                 TestData.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
                 TestData.createCurrencyPosition(Currency.EUR, 10)
         );
-        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+        Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final BigDecimal balance = service.getAvailableBalance(Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance - rubBlocked, balance);
     }
 
-    @Test
-    void getAvailableBalance_returnsBalance_whenNoBlocked() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getAvailableBalance_returnsBalance_whenNoBlocked(@Nullable final String brokerAccountId) {
         final long rubBalance = 1000;
 
         final List<CurrencyPosition> currencies = List.of(
@@ -96,22 +107,24 @@ class PortfolioServiceImplUnitTest {
                 TestData.createCurrencyPosition(Currency.RUB, rubBalance),
                 TestData.createCurrencyPosition(Currency.EUR, 10)
         );
-        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+        Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final BigDecimal balance = service.getAvailableBalance(Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance, balance);
     }
 
-    @Test
-    void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency(@Nullable final String brokerAccountId) {
         final List<CurrencyPosition> currencies = List.of(
                 TestData.createCurrencyPosition(Currency.USD, 100),
                 TestData.createCurrencyPosition(Currency.EUR, 10)
         );
-        Mockito.when(tinkoffService.getPortfolioCurrencies()).thenReturn(currencies);
+        Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final Executable executable = () -> service.getAvailableBalance(Currency.RUB);
+        final Executable executable = () -> service.getAvailableBalance(brokerAccountId, Currency.RUB);
         Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
     }
 

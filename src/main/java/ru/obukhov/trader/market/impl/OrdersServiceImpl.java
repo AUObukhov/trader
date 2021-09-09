@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -26,29 +27,35 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public List<Order> getOrders(final String ticker) {
+    public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) {
         final String figi = marketService.getFigi(ticker);
-        return getOrders().stream()
+        return getOrders(brokerAccountId).stream()
                 .filter(order -> figi.equals(order.getFigi()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Order> getOrders() {
-        return tinkoffService.getOrders();
+    public List<Order> getOrders(@Nullable final String brokerAccountId) {
+        return tinkoffService.getOrders(brokerAccountId);
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(@NotNull final String ticker, final int lots, @NotNull final OperationType operationType) {
+    public PlacedMarketOrder placeMarketOrder(
+            @Nullable final String brokerAccountId,
+            @NotNull final String ticker,
+            final int lots,
+            @NotNull final OperationType operationType
+    ) {
         final MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);
-        return tinkoffService.placeMarketOrder(ticker, orderRequest);
+        return tinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
 
     }
 
     @Override
     public PlacedLimitOrder placeLimitOrder(
+            @Nullable final String brokerAccountId,
             @NotNull final String ticker,
             final int lots,
             @NotNull final OperationType operationType,
@@ -58,12 +65,12 @@ public class OrdersServiceImpl implements OrdersService {
                 .lots(lots)
                 .operation(operationType)
                 .price(price);
-        return tinkoffService.placeLimitOrder(ticker, orderRequest);
+        return tinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
     }
 
     @Override
-    public void cancelOrder(@NotNull String orderId) {
-        tinkoffService.cancelOrder(orderId);
+    public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) {
+        tinkoffService.cancelOrder(brokerAccountId, orderId);
     }
 
 }

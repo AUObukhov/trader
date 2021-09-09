@@ -1,6 +1,7 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
@@ -57,12 +58,12 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        tickers.forEach(ticker -> processTickerSafe(ticker, null));
+        tickers.forEach(ticker -> processTickerSafe(scheduledBotProperties.getBrokerAccountId(), ticker, null));
     }
 
-    public void processTickerSafe(String ticker, OffsetDateTime previousStartTime) {
+    public void processTickerSafe(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime previousStartTime) {
         try {
-            processTicker(ticker, previousStartTime, OffsetDateTime.now());
+            processTicker(brokerAccountId, ticker, previousStartTime, OffsetDateTime.now());
         } catch (Exception exception) {
             log.error("Failed to process ticker '{}'", ticker, exception);
         }

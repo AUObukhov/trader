@@ -9,21 +9,21 @@ class TradingConfigValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final TradingConfig tradingConfig = new TradingConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
 
         AssertUtils.assertNoViolations(tradingConfig);
     }
 
     @Test
     void validationFails_whenCandleResolutionIsNull() {
-        final TradingConfig tradingConfig = new TradingConfig(null, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(null, null, StrategyType.CONSERVATIVE);
 
         AssertUtils.assertViolation(tradingConfig, "candleResolution is mandatory");
     }
 
     @Test
     void validationFails_whenStrategyTypeIsNull() {
-        final TradingConfig tradingConfig = new TradingConfig(CandleResolution._1MIN, null);
+        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, null);
 
         AssertUtils.assertViolation(tradingConfig, "strategyType is mandatory");
     }

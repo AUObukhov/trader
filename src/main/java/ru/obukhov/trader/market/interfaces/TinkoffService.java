@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.interfaces;
 
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -38,19 +39,19 @@ public interface TinkoffService {
 
     MarketInstrument searchMarketInstrument(final String ticker);
 
-    List<Operation> getOperations(final Interval interval, final String ticker);
+    List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker);
 
-    List<Order> getOrders();
+    List<Order> getOrders(@Nullable final String brokerAccountId);
 
-    PlacedLimitOrder placeLimitOrder(final String ticker, final LimitOrderRequest orderRequest);
+    PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest);
 
-    PlacedMarketOrder placeMarketOrder(final String ticker, final MarketOrderRequest orderRequest);
+    PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest);
 
-    void cancelOrder(final String orderId);
+    void cancelOrder(@Nullable final String brokerAccountId, final String orderId);
 
-    Collection<PortfolioPosition> getPortfolioPositions();
+    Collection<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId);
 
-    List<CurrencyPosition> getPortfolioCurrencies();
+    List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId);
 
     List<UserAccount> getAccounts();
 

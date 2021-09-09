@@ -1,6 +1,9 @@
 package ru.obukhov.trader.web.controller;
 
-import org.junit.jupiter.api.Test;
+import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -20,8 +23,10 @@ class PortfolioControllerWebTest extends ControllerWebTest {
     @MockBean
     private PortfolioService portfolioService;
 
-    @Test
-    void getPositions() throws Exception {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getPositions(@Nullable final String brokerAccountId) throws Exception {
         final PortfolioPosition position1 = new PortfolioPosition(
                 "ticker1",
                 BigDecimal.valueOf(10000),
@@ -46,21 +51,24 @@ class PortfolioControllerWebTest extends ControllerWebTest {
                 "name2"
         );
 
-        Mockito.when(portfolioService.getPositions()).thenReturn(List.of(position1, position2));
+        Mockito.when(portfolioService.getPositions(brokerAccountId)).thenReturn(List.of(position1, position2));
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("GetPortfolioPositionsResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/positions")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("brokerAccountId", brokerAccountId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(portfolioService, Mockito.times(1)).getPositions();
+        Mockito.verify(portfolioService, Mockito.times(1)).getPositions(brokerAccountId);
     }
 
-    @Test
-    void getCurrencies() throws Exception {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getCurrencies(@Nullable final String brokerAccountId) throws Exception {
         final CurrencyPosition currencyPosition1 = new CurrencyPosition()
                 .currency(Currency.RUB)
                 .balance(BigDecimal.valueOf(10000))
@@ -70,17 +78,18 @@ class PortfolioControllerWebTest extends ControllerWebTest {
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(BigDecimal.valueOf(100));
 
-        Mockito.when(portfolioService.getCurrencies()).thenReturn(List.of(currencyPosition1, currencyPosition2));
+        Mockito.when(portfolioService.getCurrencies(brokerAccountId)).thenReturn(List.of(currencyPosition1, currencyPosition2));
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("getPortfolioCurrenciesResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/portfolio/currencies")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("brokerAccountId", brokerAccountId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(portfolioService, Mockito.times(1)).getCurrencies();
+        Mockito.verify(portfolioService, Mockito.times(1)).getCurrencies(brokerAccountId);
     }
 
 }

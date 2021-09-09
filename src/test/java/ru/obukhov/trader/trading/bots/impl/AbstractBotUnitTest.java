@@ -1,8 +1,11 @@
 package ru.obukhov.trader.trading.bots.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -49,14 +52,16 @@ class AbstractBotUnitTest {
     @InjectMocks
     private TestBot bot;
 
-    @Test
-    void processTicker_doesNothing_andReturnsEmptyDecisionData_whenThereAreOrders() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_doesNothing_andReturnsEmptyDecisionData_whenThereAreOrders(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
         final List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         Assertions.assertNull(decisionData.getBalance());
         Assertions.assertNull(decisionData.getPosition());
@@ -68,47 +73,55 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @Test
-    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_doesNoOrder_whenThereAreUncompletedOrders(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
         verifyNoOrdersMade();
     }
 
-    @Test
-    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
         verifyNoOrdersMade();
     }
 
-    @Test
-    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
-        final DecisionData decisionData = bot.processTicker(ticker, previousStartTime, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, previousStartTime, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
         verifyNoOrdersMade();
     }
 
-    @Test
-    void processTicker_doesNoOrder_whenDecisionIsWait() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_doesNoOrder_whenDecisionIsWait(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -120,7 +133,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -129,23 +142,25 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @Test
-    void processTicker_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final int lotSize = 10;
 
         final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(ticker))
+        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(new Operation());
-        Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -155,7 +170,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
@@ -164,26 +179,28 @@ class AbstractBotUnitTest {
         Assertions.assertEquals(instrument, decisionData.getInstrument());
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(ticker, decision.getLots(), OperationType.BUY);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
     }
 
-    @Test
-    void processTicker_returnsFilledData_andPlacesSellOrder_whenDecisionIsSell() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void processTicker_returnsFilledData_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final int lotSize = 10;
 
         final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(ticker))
+        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(new Operation());
-        Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -193,7 +210,7 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(ticker, null, OffsetDateTime.now());
+        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
@@ -202,7 +219,7 @@ class AbstractBotUnitTest {
         Assertions.assertEquals(instrument, decisionData.getInstrument());
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(ticker, decision.getLots(), OperationType.SELL);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
     }
 
     private void mockCandles(String ticker, List<Candle> candles) {
@@ -212,7 +229,7 @@ class AbstractBotUnitTest {
 
     private void verifyNoOrdersMade() {
         Mockito.verify(ordersService, Mockito.never())
-                .placeMarketOrder(Mockito.any(), Mockito.anyInt(), Mockito.any());
+                .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
     private static final class TestStrategyCache implements StrategyCache {

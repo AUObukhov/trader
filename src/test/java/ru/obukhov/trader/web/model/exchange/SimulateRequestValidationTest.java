@@ -114,7 +114,7 @@ class SimulateRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final TradingConfig tradingConfig = new TradingConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
         request.setTradingConfigs(List.of(tradingConfig));
 
         return request;

@@ -175,17 +175,19 @@ public class SimulatorImpl implements Simulator {
 
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
+        final String brokerAccountId = tradingConfig.getBrokerAccountId();
         final MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
         if (marketInstrument == null) {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeTinkoffService.init(interval.getFrom(), marketInstrument.getCurrency(), balanceConfig.getInitialBalance());
+        fakeTinkoffService.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig.getInitialBalance());
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = bot.processTicker(ticker, previousStartTime, fakeTinkoffService.getCurrentDateTime());
+
+            final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, previousStartTime, fakeTinkoffService.getCurrentDateTime());
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
                 previousStartTime = null;
@@ -237,7 +239,7 @@ public class SimulatorImpl implements Simulator {
             final List<Candle> candles,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        final List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(), candles);
+        final List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(tradingConfig.getBrokerAccountId()), candles);
         final Currency currency = getCurrency(fakeTinkoffService, ticker);
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
@@ -252,7 +254,7 @@ public class SimulatorImpl implements Simulator {
         final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
-        final List<Operation> operations = fakeTinkoffService.getOperations(interval, ticker);
+        final List<Operation> operations = fakeTinkoffService.getOperations(tradingConfig.getBrokerAccountId(), interval, ticker);
 
         return SimulationResult.builder()
                 .tradingConfig(tradingConfig)

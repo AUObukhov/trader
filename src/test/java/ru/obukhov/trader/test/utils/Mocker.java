@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils;
 
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
@@ -61,11 +62,12 @@ public class Mocker {
 
     public static void mockTinkoffOperations(
             final TinkoffService tinkoffService,
+            @Nullable final String brokerAccountId,
             final String ticker,
             final Interval interval,
             final Operation... operations
     ) {
-        Mockito.when(tinkoffService.getOperations(interval, ticker))
+        Mockito.when(tinkoffService.getOperations(brokerAccountId, interval, ticker))
                 .thenReturn(List.of(operations));
     }
 

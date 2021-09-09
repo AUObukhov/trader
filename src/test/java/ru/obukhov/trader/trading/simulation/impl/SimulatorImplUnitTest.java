@@ -1,9 +1,13 @@
 package ru.obukhov.trader.trading.simulation.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -53,7 +57,6 @@ class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final TradingConfig CONSERVATIVE_BOT_CONFIG = new TradingConfig(CandleResolution._1MIN, StrategyType.CONSERVATIVE);
     private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
             StringUtils.EMPTY,
             new TradingStrategyParams(0.1f),
@@ -125,7 +128,8 @@ class SimulatorImplUnitTest {
     void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -138,7 +142,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -173,12 +177,15 @@ class SimulatorImplUnitTest {
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
     }
 
-    @Test
-    void simulate_fillsCommonStatistics() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_fillsCommonStatistics(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -193,7 +200,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -214,7 +221,7 @@ class SimulatorImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -226,7 +233,7 @@ class SimulatorImplUnitTest {
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(portfolioPosition);
+        mockPortfolioPositions(brokerAccountId, portfolioPosition);
 
         // act
 
@@ -259,12 +266,15 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
     }
 
-    @Test
-    void simulate_callsBalanceIncrement() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_callsBalanceIncrement(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -279,7 +289,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -300,7 +310,7 @@ class SimulatorImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -312,7 +322,7 @@ class SimulatorImplUnitTest {
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(portfolioPosition);
+        mockPortfolioPositions(brokerAccountId, portfolioPosition);
 
         // act
 
@@ -333,12 +343,15 @@ class SimulatorImplUnitTest {
                 );
     }
 
-    @Test
-    void simulate_fillsPositions() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_fillsPositions(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -353,7 +366,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -374,7 +387,7 @@ class SimulatorImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -384,7 +397,7 @@ class SimulatorImplUnitTest {
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(portfolioPosition);
+        mockPortfolioPositions(brokerAccountId, portfolioPosition);
 
         // act
 
@@ -406,12 +419,15 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
     }
 
-    @Test
-    void simulate_fillsOperations() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_fillsOperations(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -426,7 +442,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -434,7 +450,7 @@ class SimulatorImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
         mockNextMinute(from);
@@ -454,9 +470,9 @@ class SimulatorImplUnitTest {
                 operationQuantity,
                 operationCommission
         );
-        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval, operation);
+        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval, operation);
 
-        mockPortfolioPositions();
+        mockPortfolioPositions(brokerAccountId);
 
         // act
 
@@ -481,12 +497,15 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
     }
 
-    @Test
-    void simulate_fillsCandles() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_fillsCandles(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -501,7 +520,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -522,7 +541,7 @@ class SimulatorImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
@@ -552,16 +571,19 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
+                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
-    @Test
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -576,13 +598,13 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(new DecisionData());
 
         mockNextMinute(from);
@@ -604,16 +626,19 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
+                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
-    @Test
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -628,13 +653,13 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(TestData.createDecisionData());
 
         mockNextMinute(from);
@@ -657,16 +682,19 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
+                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
-    @Test
-    void simulate_callsSaveToFile_whenSaveToFilesIsTrue() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_callsSaveToFile_whenSaveToFilesIsTrue(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -681,7 +709,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -689,7 +717,7 @@ class SimulatorImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
         mockNextMinute(from);
@@ -697,8 +725,8 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
-        mockPortfolioPositions();
+        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
+        mockPortfolioPositions(brokerAccountId);
 
         // act
 
@@ -714,12 +742,15 @@ class SimulatorImplUnitTest {
         Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
     }
 
-    @Test
-    void simulate_neverCallsSaveToFile_whenSaveToFilesIsFalse() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_neverCallsSaveToFile_whenSaveToFilesIsFalse(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -734,7 +765,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -742,7 +773,7 @@ class SimulatorImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
         mockNextMinute(from);
@@ -750,8 +781,8 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
-        mockPortfolioPositions();
+        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
+        mockPortfolioPositions(brokerAccountId);
 
         // act
 
@@ -767,12 +798,15 @@ class SimulatorImplUnitTest {
         Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any(), Mockito.any());
     }
 
-    @Test
-    void simulate_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_returnsZeroInvestmentsAndProfits_whenNoInvestments(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -787,7 +821,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -796,7 +830,8 @@ class SimulatorImplUnitTest {
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class))).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+                .thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -829,7 +864,8 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -844,7 +880,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -868,12 +904,15 @@ class SimulatorImplUnitTest {
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
     }
 
-    @Test
-    void simulate_catchesSaveToFileException() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_catchesSaveToFileException(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        mockStrategy(CONSERVATIVE_BOT_CONFIG, CONSERVATIVE_STRATEGY);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
         final String botName = "botName";
@@ -888,7 +927,7 @@ class SimulatorImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(CONSERVATIVE_BOT_CONFIG);
+        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -896,7 +935,7 @@ class SimulatorImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
         mockNextMinute(from);
@@ -904,8 +943,8 @@ class SimulatorImplUnitTest {
         mockInitialBalance(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeTinkoffService.getCurrentBalance(MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
-        Mocker.mockTinkoffOperations(fakeTinkoffService, ticker, interval);
-        mockPortfolioPositions();
+        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
+        mockPortfolioPositions(brokerAccountId);
 
         Mockito.doThrow(new IllegalArgumentException())
                 .when(excelService).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
@@ -950,8 +989,8 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeTinkoffService.getInvestments(currency)).thenReturn(investments);
     }
 
-    private void mockPortfolioPositions(PortfolioPosition... portfolioPositions) {
-        Mockito.when(fakeTinkoffService.getPortfolioPositions()).thenReturn(List.of(portfolioPositions));
+    private void mockPortfolioPositions(@Nullable final String brokerAccountId, PortfolioPosition... portfolioPositions) {
+        Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPositions));
     }
 
     // endregion

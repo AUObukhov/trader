@@ -3,6 +3,7 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -42,7 +43,12 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     @NotNull
-    public DecisionData processTicker(final String ticker, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
+    public DecisionData processTicker(
+            @Nullable final String brokerAccountId,
+            final String ticker,
+            final OffsetDateTime previousStartTime,
+            final OffsetDateTime now
+    ) {
         final DecisionData decisionData = new DecisionData();
 
         final List<Order> orders = ordersService.getOrders(ticker);
@@ -55,9 +61,9 @@ public abstract class AbstractBot implements Bot {
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                fillDecisionData(decisionData, ticker, now);
+                fillDecisionData(brokerAccountId, decisionData, ticker, now);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(ticker, decision);
+                performOperation(brokerAccountId, ticker, decision);
             }
         } else {
             log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
@@ -66,28 +72,33 @@ public abstract class AbstractBot implements Bot {
         return decisionData;
     }
 
-    private void fillDecisionData(final DecisionData decisionData, final String ticker, final OffsetDateTime now) {
+    private void fillDecisionData(
+            @Nullable final String brokerAccountId,
+            final DecisionData decisionData,
+            final String ticker,
+            final OffsetDateTime now
+    ) {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(instrument.getCurrency()));
-        decisionData.setPosition(portfolioService.getPosition(ticker));
-        decisionData.setLastOperations(getLastWeekOperations(ticker, now));
+        decisionData.setBalance(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()));
+        decisionData.setPosition(portfolioService.getPosition(brokerAccountId, ticker));
+        decisionData.setLastOperations(getLastWeekOperations(brokerAccountId, ticker, now));
         decisionData.setInstrument(instrument);
     }
 
-    private List<Operation> getLastWeekOperations(final String ticker, final OffsetDateTime now) {
+    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime now) {
         final OffsetDateTime from = now.minusWeeks(1);
-        return operationsService.getOperations(Interval.of(from, now), ticker);
+        return operationsService.getOperations(brokerAccountId, Interval.of(from, now), ticker);
     }
 
-    private void performOperation(final String ticker, final Decision decision) {
+    private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
         }
 
         final OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
-        final PlacedMarketOrder order = ordersService.placeMarketOrder(ticker, decision.getLots(), operation);
+        final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), operation);
         log.info("Placed order:\n{}", order);
     }
 

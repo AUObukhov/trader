@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -114,10 +115,10 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region OperationsContext
 
     @Override
-    public List<Operation> getOperations(final Interval interval, final String ticker) {
+    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         return getOperationsContext()
-                .getOperations(interval.getFrom(), interval.getTo(), figi, null)
+                .getOperations(interval.getFrom(), interval.getTo(), figi, brokerAccountId)
                 .join()
                 .getOperations();
     }
@@ -127,25 +128,25 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region OrdersContext
 
     @Override
-    public List<Order> getOrders() {
-        return getOrdersContext().getOrders(null).join();
+    public List<Order> getOrders(@Nullable final String brokerAccountId) {
+        return getOrdersContext().getOrders(brokerAccountId).join();
     }
 
     @Override
-    public PlacedLimitOrder placeLimitOrder(final String ticker, final LimitOrderRequest orderRequest) {
+    public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeLimitOrder(figi, orderRequest, null).join();
+        return getOrdersContext().placeLimitOrder(figi, orderRequest, brokerAccountId).join();
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(final String ticker, final MarketOrderRequest orderRequest) {
+    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeMarketOrder(figi, orderRequest, null).join();
+        return getOrdersContext().placeMarketOrder(figi, orderRequest, brokerAccountId).join();
     }
 
     @Override
-    public void cancelOrder(final String orderId) {
-        getOrdersContext().cancelOrder(orderId, null).join();
+    public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) {
+        getOrdersContext().cancelOrder(orderId, brokerAccountId).join();
     }
 
     // endregion
@@ -153,17 +154,17 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region PortfolioContext
 
     @Override
-    public Collection<PortfolioPosition> getPortfolioPositions() {
+    public Collection<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
         final List<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> positions = getPortfolioContext()
-                .getPortfolio(null)
+                .getPortfolio(brokerAccountId)
                 .join()
                 .getPositions();
         return portfolioPositionMapper.map(positions);
     }
 
     @Override
-    public List<CurrencyPosition> getPortfolioCurrencies() {
-        return getPortfolioContext().getPortfolioCurrencies(null).join().getCurrencies();
+    public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) {
+        return getPortfolioContext().getPortfolioCurrencies(brokerAccountId).join().getCurrencies();
     }
 
     // endregion

@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -17,13 +18,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final TinkoffService tinkoffService;
 
     @Override
-    public Collection<PortfolioPosition> getPositions() {
-        return tinkoffService.getPortfolioPositions();
+    public Collection<PortfolioPosition> getPositions(@Nullable final String brokerAccountId) {
+        return tinkoffService.getPortfolioPositions(brokerAccountId);
     }
 
     @Override
-    public PortfolioPosition getPosition(final String ticker) {
-        final Collection<PortfolioPosition> allPositions = getPositions();
+    public PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker) {
+        final Collection<PortfolioPosition> allPositions = getPositions(brokerAccountId);
         return allPositions.stream()
                 .filter(position -> ticker.equals(position.getTicker()))
                 .findFirst()
@@ -31,8 +32,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public BigDecimal getAvailableBalance(final Currency currency) {
-        return getCurrencies().stream()
+    public BigDecimal getAvailableBalance(@Nullable final String brokerAccountId, final Currency currency) {
+        return getCurrencies(brokerAccountId).stream()
                 .filter(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)
                 .findFirst()
                 .map(this::getAvailableBalance)
@@ -46,8 +47,8 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public List<CurrencyPosition> getCurrencies() {
-        return tinkoffService.getPortfolioCurrencies();
+    public List<CurrencyPosition> getCurrencies(@Nullable final String brokerAccountId) {
+        return tinkoffService.getPortfolioCurrencies(brokerAccountId);
     }
 
 }

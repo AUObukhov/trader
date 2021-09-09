@@ -18,8 +18,8 @@ public class OperationsServiceImpl implements OperationsService {
     }
 
     @Override
-    public List<Operation> getOperations(@NotNull final Interval interval, @Nullable final String ticker) {
-        return tinkoffService.getOperations(interval, ticker);
+    public List<Operation> getOperations(@Nullable final String brokerAccountId, @NotNull final Interval interval, @Nullable final String ticker) {
+        return tinkoffService.getOperations(brokerAccountId, interval, ticker);
     }
 
 }

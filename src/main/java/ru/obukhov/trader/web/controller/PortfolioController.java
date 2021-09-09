@@ -1,11 +1,13 @@
 package ru.obukhov.trader.web.controller;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -29,13 +31,16 @@ public class PortfolioController {
     }
 
     @GetMapping("/positions")
-    @ApiOperation("Get positions of portfolio at default broker account")
+    @ApiOperation("Get positions of portfolio at broker account")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetPortfolioPositionsResponse getPositions() {
-        final Collection<PortfolioPosition> positions = portfolioService.getPositions();
+    public GetPortfolioPositionsResponse getPositions(
+            @RequestParam(required = false)
+            @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
+    ) {
+        final Collection<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
 
         return new GetPortfolioPositionsResponse(positions);
     }
@@ -46,8 +51,11 @@ public class PortfolioController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetPortfolioCurrenciesResponse getCurrencies() {
-        final List<CurrencyPosition> currencies = portfolioService.getCurrencies();
+    public GetPortfolioCurrenciesResponse getCurrencies(
+            @RequestParam(required = false)
+            @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
+    ) {
+        final List<CurrencyPosition> currencies = portfolioService.getCurrencies(brokerAccountId);
 
         return new GetPortfolioCurrenciesResponse(currencies);
     }

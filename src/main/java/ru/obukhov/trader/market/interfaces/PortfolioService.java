@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.interfaces;
 
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -10,12 +11,12 @@ import java.util.List;
 
 public interface PortfolioService {
 
-    Collection<PortfolioPosition> getPositions();
+    Collection<PortfolioPosition> getPositions(@Nullable final String brokerAccountId);
 
-    PortfolioPosition getPosition(final String ticker);
+    PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker);
 
-    BigDecimal getAvailableBalance(final Currency currency);
+    BigDecimal getAvailableBalance(@Nullable final String brokerAccountId, final Currency currency);
 
-    List<CurrencyPosition> getCurrencies();
+    List<CurrencyPosition> getCurrencies(@Nullable final String brokerAccountId);
 
 }

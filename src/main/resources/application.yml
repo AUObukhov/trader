@@ -10,6 +10,7 @@ scheduled-bot:
   delay: 60000
   enabled: false
   tickers: SBER
+  brokerAccountId: "2000124699"
   candleResolution: 1min
   strategy-type: "cross"
   strategy-params:

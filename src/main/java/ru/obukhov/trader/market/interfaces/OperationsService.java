@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface OperationsService {
 
-    List<Operation> getOperations(@NotNull final Interval interval, @Nullable final String ticker);
+    List<Operation> getOperations(@Nullable final String brokerAccountId, @NotNull final Interval interval, @Nullable final String ticker);
 
 }

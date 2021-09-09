@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.model;
 
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
@@ -16,6 +17,9 @@ import java.util.Set;
  */
 @Data
 public class FakePortfolio {
+
+    @Nullable
+    private final String brokerAccountId;
 
     @NotNull
     private final EnumMap<Currency, FakeBalance> balances = new EnumMap<>(Currency.class);

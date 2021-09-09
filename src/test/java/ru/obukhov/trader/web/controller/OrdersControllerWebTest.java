@@ -1,6 +1,9 @@
 package ru.obukhov.trader.web.controller;
 
-import org.junit.jupiter.api.Test;
+import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,8 +24,10 @@ class OrdersControllerWebTest extends ControllerWebTest {
     @MockBean
     private OrdersService ordersService;
 
-    @Test
-    void getOrders_requestsAndReturnsOrders() throws Exception {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getOrders_requestsAndReturnsOrders(@Nullable final String brokerAccountId) throws Exception {
         final Order order1 = new Order()
                 .orderId("order1")
                 .figi("figi1")
@@ -43,17 +48,18 @@ class OrdersControllerWebTest extends ControllerWebTest {
                 .type(OrderType.MARKET)
                 .price(BigDecimal.valueOf(1000));
 
-        Mockito.when(ordersService.getOrders()).thenReturn(List.of(order1, order2));
+        Mockito.when(ordersService.getOrders(brokerAccountId)).thenReturn(List.of(order1, order2));
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("GetOrdersResponse.json");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/trader/orders/get")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .param("brokerAccountId", brokerAccountId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(ordersService, Mockito.times(1)).getOrders();
+        Mockito.verify(ordersService, Mockito.times(1)).getOrders(brokerAccountId);
     }
 
 }

@@ -1,8 +1,11 @@
 package ru.obukhov.trader.market.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,13 +31,16 @@ class OrdersServiceImplUnitTest {
     @InjectMocks
     private OrdersServiceImpl service;
 
-    @Test
-    void getOrders_filtersOrdersByFigi() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getOrders_filtersOrdersByFigi(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final String figi = "figi";
 
         Mockito.when(marketService.getFigi(ticker)).thenReturn(figi);
         mockOrders(
+                brokerAccountId,
                 createOrder("order0", figi),
                 createOrder("order1", figi),
                 createOrder("order2", "figi3"),
@@ -42,7 +48,7 @@ class OrdersServiceImplUnitTest {
                 createOrder("order4", figi)
         );
 
-        final List<Order> orders = service.getOrders(ticker);
+        final List<Order> orders = service.getOrders(brokerAccountId, ticker);
 
         Assertions.assertEquals(3, orders.size());
         Assertions.assertEquals("order0", orders.get(0).getOrderId());
@@ -50,8 +56,8 @@ class OrdersServiceImplUnitTest {
         Assertions.assertEquals("order4", orders.get(2).getOrderId());
     }
 
-    private void mockOrders(Order... orders) {
-        Mockito.when(tinkoffService.getOrders()).thenReturn(List.of(orders));
+    private void mockOrders(@Nullable final String brokerAccountId, Order... orders) {
+        Mockito.when(tinkoffService.getOrders(brokerAccountId)).thenReturn(List.of(orders));
     }
 
     private Order createOrder(String id, String figi) {

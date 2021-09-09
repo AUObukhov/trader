@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.interfaces;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 import ru.tinkoff.invest.openapi.model.rest.Order;
 import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
@@ -11,19 +12,21 @@ import java.util.List;
 
 public interface OrdersService {
 
-    List<Order> getOrders(final String ticker);
+    List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker);
 
-    List<Order> getOrders();
+    List<Order> getOrders(@Nullable final String brokerAccountId);
 
-    PlacedMarketOrder placeMarketOrder(@NotNull final String ticker, final int lots, @NotNull final OperationType operationType);
+    PlacedMarketOrder placeMarketOrder(
+            @Nullable final String brokerAccountId, @NotNull final String ticker, final int lots, @NotNull final OperationType operationType);
 
     PlacedLimitOrder placeLimitOrder(
+            @Nullable final String brokerAccountId,
             @NotNull final String ticker,
             final int lots,
             @NotNull final OperationType operationType,
             final BigDecimal price
     );
 
-    void cancelOrder(@NotNull final String orderId);
+    void cancelOrder(@Nullable final String brokerAccountId, @NotNull final String orderId);
 
 }

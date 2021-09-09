@@ -1,9 +1,13 @@
 package ru.obukhov.trader.market.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -268,8 +272,10 @@ class RealTinkoffServiceUnitTest {
 
     // region OperationsContext methods tests
 
-    @Test
-    void getOperations_returnsOperations() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getOperations_returnsOperations(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -280,9 +286,9 @@ class RealTinkoffServiceUnitTest {
         final Operation operation1 = new Operation();
         final Operation operation2 = new Operation();
         final Operations operations = new Operations().operations(List.of(operation1, operation2));
-        Mockito.when(operationsContext.getOperations(from, to, figi, null)).thenReturn(CompletableFuture.completedFuture(operations));
+        Mockito.when(operationsContext.getOperations(from, to, figi, brokerAccountId)).thenReturn(CompletableFuture.completedFuture(operations));
 
-        final List<Operation> result = realTinkoffService.getOperations(Interval.of(from, to), ticker);
+        final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
 
         Assertions.assertSame(operations.getOperations(), result);
     }
@@ -291,18 +297,22 @@ class RealTinkoffServiceUnitTest {
 
     // region OrdersContext methods tests
 
-    @Test
-    void getOrders() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getOrders(@Nullable final String brokerAccountId) {
         final List<Order> orders = List.of(new Order(), new Order());
-        Mockito.when(ordersContext.getOrders(null)).thenReturn(CompletableFuture.completedFuture(orders));
+        Mockito.when(ordersContext.getOrders(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(orders));
 
-        final List<Order> result = realTinkoffService.getOrders();
+        final List<Order> result = realTinkoffService.getOrders(brokerAccountId);
 
         Assertions.assertSame(orders, result);
     }
 
-    @Test
-    void placeLimitOrder() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void placeLimitOrder(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final String figi = "figi";
 
@@ -311,14 +321,16 @@ class RealTinkoffServiceUnitTest {
         final LimitOrderRequest orderRequest = new LimitOrderRequest();
 
         final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
-        Mockito.when(ordersContext.placeLimitOrder(figi, orderRequest, null)).thenReturn(CompletableFuture.completedFuture(placedOrder));
-        final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(ticker, orderRequest);
+        Mockito.when(ordersContext.placeLimitOrder(figi, orderRequest, brokerAccountId)).thenReturn(CompletableFuture.completedFuture(placedOrder));
+        final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
     }
 
-    @Test
-    void placeMarketOrder() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void placeMarketOrder(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final String figi = "figi";
 
@@ -327,22 +339,24 @@ class RealTinkoffServiceUnitTest {
         final MarketOrderRequest orderRequest = new MarketOrderRequest();
 
         final PlacedMarketOrder placedOrder = new PlacedMarketOrder();
-        Mockito.when(ordersContext.placeMarketOrder(figi, orderRequest, null))
+        Mockito.when(ordersContext.placeMarketOrder(figi, orderRequest, brokerAccountId))
                 .thenReturn(CompletableFuture.completedFuture(placedOrder));
 
-        final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(ticker, orderRequest);
+        final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
     }
 
-    @Test
-    void cancelOrder() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void cancelOrder(@Nullable final String brokerAccountId) {
         final String orderId = "orderId";
 
         final CompletableFuture<Void> futureSpy = Mockito.spy(CompletableFuture.completedFuture(null));
-        Mockito.when(ordersContext.cancelOrder(orderId, null)).thenReturn(futureSpy);
+        Mockito.when(ordersContext.cancelOrder(orderId, brokerAccountId)).thenReturn(futureSpy);
 
-        realTinkoffService.cancelOrder(orderId);
+        realTinkoffService.cancelOrder(brokerAccountId, orderId);
 
         Mockito.verify(futureSpy, Mockito.times(1)).join();
     }
@@ -351,8 +365,10 @@ class RealTinkoffServiceUnitTest {
 
     // region PortfolioContext methods tests
 
-    @Test
-    void getPortfolioPositions_returnsAndMapsPositions() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) {
         final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition tinkoffPosition1 =
                 new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
                         .ticker("ticker1")
@@ -375,9 +391,9 @@ class RealTinkoffServiceUnitTest {
                         .averagePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 440))
                         .name("name2");
         final Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
-        Mockito.when(portfolioContext.getPortfolio(null)).thenReturn(CompletableFuture.completedFuture(portfolio));
+        Mockito.when(portfolioContext.getPortfolio(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(portfolio));
 
-        final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions();
+        final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(brokerAccountId);
 
         Assertions.assertEquals(portfolio.getPositions().size(), result.size());
         Iterator<PortfolioPosition> resultIterator = result.iterator();
@@ -385,8 +401,10 @@ class RealTinkoffServiceUnitTest {
         AssertUtils.assertEquals(tinkoffPosition2, resultIterator.next());
     }
 
-    @Test
-    void getPortfolioCurrencies() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getPortfolioCurrencies(@Nullable final String brokerAccountId) {
         final CurrencyPosition currency1 = new CurrencyPosition()
                 .currency(Currency.RUB)
                 .balance(BigDecimal.valueOf(10000))
@@ -396,9 +414,9 @@ class RealTinkoffServiceUnitTest {
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(null);
         final Currencies currencies = new Currencies().currencies(List.of(currency1, currency2));
-        Mockito.when(portfolioContext.getPortfolioCurrencies(null)).thenReturn(CompletableFuture.completedFuture(currencies));
+        Mockito.when(portfolioContext.getPortfolioCurrencies(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(currencies));
 
-        final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies();
+        final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies(brokerAccountId);
 
         Assertions.assertSame(currencies.getCurrencies(), result);
     }

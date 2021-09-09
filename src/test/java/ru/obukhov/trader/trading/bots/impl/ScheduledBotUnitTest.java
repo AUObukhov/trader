@@ -1,8 +1,12 @@
 package ru.obukhov.trader.trading.bots.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -219,9 +223,11 @@ class ScheduledBotUnitTest {
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetAvailableBalanceThrowsException() {
+    void tick_doesNoOrder_whenGetAvailableBalanceThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
@@ -242,7 +248,7 @@ class ScheduledBotUnitTest {
             Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
             Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
-            Mockito.when(portfolioService.getAvailableBalance(Mockito.any(Currency.class)))
+            Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
                     .thenThrow(new IllegalArgumentException());
 
             bot.tick();
@@ -251,9 +257,11 @@ class ScheduledBotUnitTest {
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetPositionThrowsException() {
+    void tick_doesNoOrder_whenGetPositionThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
@@ -274,8 +282,8 @@ class ScheduledBotUnitTest {
             Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
             Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
-            Mockito.when(portfolioService.getPosition(ticker1)).thenThrow(new IllegalArgumentException());
-            Mockito.when(portfolioService.getPosition(ticker2)).thenThrow(new IllegalArgumentException());
+            Mockito.when(portfolioService.getPosition(brokerAccountId, ticker1)).thenThrow(new IllegalArgumentException());
+            Mockito.when(portfolioService.getPosition(brokerAccountId, ticker2)).thenThrow(new IllegalArgumentException());
 
             bot.tick();
 
@@ -306,9 +314,9 @@ class ScheduledBotUnitTest {
             Mocker.createAndMockInstrument(marketService, ticker1, lotSize);
             Mocker.createAndMockInstrument(marketService, ticker2, lotSize);
 
-            Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker1)))
+            Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker1)))
                     .thenThrow(new IllegalArgumentException());
-            Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker2)))
+            Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker2)))
                     .thenThrow(new IllegalArgumentException());
 
             bot.tick();
@@ -349,9 +357,11 @@ class ScheduledBotUnitTest {
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
     @SuppressWarnings({"unused", "java:S2699"})
-    void tick_catchesException_whenPlaceMarketOrderThrowsException() {
+    void tick_catchesException_whenPlaceMarketOrderThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
@@ -376,7 +386,7 @@ class ScheduledBotUnitTest {
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                     .thenReturn(decision);
 
-            Mockito.when(ordersService.placeMarketOrder(ticker1, decision.getLots(), OperationType.BUY))
+            Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker1, decision.getLots(), OperationType.BUY))
                     .thenThrow(new IllegalArgumentException());
 
             bot.tick();
@@ -456,12 +466,15 @@ class ScheduledBotUnitTest {
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
+    void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.getBrokerAccountId()).thenReturn(brokerAccountId);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -469,8 +482,8 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             final int lotSize = 10;
             mockTickers(ticker1, ticker2);
-            mockData(ticker1, lotSize);
-            mockData(ticker2, lotSize);
+            mockData(brokerAccountId, ticker1, lotSize);
+            mockData(brokerAccountId, ticker2, lotSize);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -479,18 +492,21 @@ class ScheduledBotUnitTest {
             bot.tick();
 
             Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(ticker1, decision.getLots(), OperationType.BUY);
+                    .placeMarketOrder(brokerAccountId, ticker1, decision.getLots(), OperationType.BUY);
             Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(ticker2, decision.getLots(), OperationType.BUY);
+                    .placeMarketOrder(brokerAccountId, ticker2, decision.getLots(), OperationType.BUY);
         }
     }
 
-    @Test
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_andPlacesSellOrder_whenDecisionIsSell() {
+    void tick_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+            Mockito.when(scheduledBotProperties.getBrokerAccountId()).thenReturn(brokerAccountId);
             Mockito.when(tradingProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(tradingProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
@@ -498,8 +514,8 @@ class ScheduledBotUnitTest {
             final String ticker2 = "ticker2";
             final int lotSize = 10;
             mockTickers(ticker1, ticker2);
-            mockData(ticker1, lotSize);
-            mockData(ticker2, lotSize);
+            mockData(brokerAccountId, ticker1, lotSize);
+            mockData(brokerAccountId, ticker2, lotSize);
 
             final Decision decision = new Decision(DecisionAction.SELL, 5);
             Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -508,9 +524,9 @@ class ScheduledBotUnitTest {
             bot.tick();
 
             Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(ticker1, decision.getLots(), OperationType.SELL);
+                    .placeMarketOrder(brokerAccountId, ticker1, decision.getLots(), OperationType.SELL);
             Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(ticker2, decision.getLots(), OperationType.SELL);
+                    .placeMarketOrder(brokerAccountId, ticker2, decision.getLots(), OperationType.SELL);
         }
     }
 
@@ -518,19 +534,19 @@ class ScheduledBotUnitTest {
         Mockito.when(scheduledBotProperties.getTickers()).thenReturn(Set.of(tickers));
     }
 
-    private void mockData(final String ticker, final int lotSize) {
+    private void mockData(@Nullable final String brokerAccountId, final String ticker, final int lotSize) {
         final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(ticker))
+        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(new Operation());
-        Mockito.when(operationsService.getOperations(Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
@@ -544,7 +560,7 @@ class ScheduledBotUnitTest {
 
     private void verifyNoOrdersMade() {
         Mockito.verify(ordersService, Mockito.never())
-                .placeMarketOrder(Mockito.any(), Mockito.anyInt(), Mockito.any());
+                .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
 }
