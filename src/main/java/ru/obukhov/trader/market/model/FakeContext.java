@@ -8,8 +8,6 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +25,12 @@ public class FakeContext {
     @Setter
     private OffsetDateTime currentDateTime;
 
-    private final EnumMap<Currency, FakeBalance> balances;
-    private final Map<String, PortfolioPosition> tickersToPositions;
-    private final Set<SimulatedOperation> operations;
+    private final FakePortfolio portfolio;
 
     public FakeContext(final OffsetDateTime currentDateTime) {
         this.currentDateTime = currentDateTime;
 
-        this.balances = new EnumMap<>(Currency.class);
-
-        this.operations = new HashSet<>();
-        this.tickersToPositions = new HashMap<>();
+        this.portfolio = new FakePortfolio();
     }
 
     /**
@@ -65,31 +58,31 @@ public class FakeContext {
     }
 
     public void addOperation(final SimulatedOperation operation) {
-        operations.add(operation);
+        portfolio.getOperations().add(operation);
     }
 
     public Set<SimulatedOperation> getOperations() {
-        return new HashSet<>(operations);
+        return new HashSet<>(portfolio.getOperations());
     }
 
     public void addPosition(final String ticker, PortfolioPosition position) {
-        tickersToPositions.put(ticker, position);
+        portfolio.getTickersToPositions().put(ticker, position);
     }
 
     public void removePosition(final String ticker) {
-        tickersToPositions.remove(ticker);
+        portfolio.getTickersToPositions().remove(ticker);
     }
 
     public PortfolioPosition getPosition(final String ticker) {
-        return tickersToPositions.get(ticker);
+        return portfolio.getTickersToPositions().get(ticker);
     }
 
     public List<PortfolioPosition> getPositions() {
-        return new ArrayList<>(tickersToPositions.values());
+        return new ArrayList<>(portfolio.getTickersToPositions().values());
     }
 
     private FakeBalance computeIfAbsentFakeBalance(final Currency currency) {
-        return balances.computeIfAbsent(currency, currencyKey -> new FakeBalance());
+        return portfolio.getBalances().computeIfAbsent(currency, currencyKey -> new FakeBalance());
     }
 
 }
