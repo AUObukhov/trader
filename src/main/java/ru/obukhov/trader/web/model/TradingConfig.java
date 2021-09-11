@@ -51,7 +51,8 @@ public class TradingConfig {
     @Override
     public String toString() {
         return "[" +
-                "candleResolution=" + candleResolution +
+                "brokerAccountId=" + brokerAccountId +
+                ", candleResolution=" + candleResolution +
                 ", strategyType=" + strategyType +
                 ", strategyParams=" + strategyParams +
                 ']';

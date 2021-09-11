@@ -128,7 +128,7 @@ class SimulatorImplUnitTest {
     void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig("2000124699", CandleResolution._1MIN, StrategyType.CONSERVATIVE);
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
@@ -170,8 +170,8 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' with ticker '%1$s' failed within " +
-                        "00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
+                "^Simulation for '\\[brokerAccountId=2000124699, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' " +
+                        "with ticker '%1$s' failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
                 ticker
         );
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
@@ -864,7 +864,7 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig("2000124699", CandleResolution._1MIN, StrategyType.CONSERVATIVE);
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
@@ -897,8 +897,8 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' with ticker '%s' failed within " +
-                        "00:00:00.\\d\\d\\d with error: %s$",
+                "^Simulation for '\\[brokerAccountId=2000124699, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' " +
+                        "with ticker '%s' failed within 00:00:00.\\d\\d\\d with error: %s$",
                 ticker, mockedExceptionMessage
         );
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);

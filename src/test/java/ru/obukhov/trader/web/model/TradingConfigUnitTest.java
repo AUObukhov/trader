@@ -101,6 +101,7 @@ class TradingConfigUnitTest {
     @Test
     void testToString() {
         final TradingConfig config = new TradingConfig()
+                .setBrokerAccountId("2000124699")
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
@@ -114,7 +115,7 @@ class TradingConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[candleResolution=1min, strategyType=cross, strategyParams={";
+        final String expectedStart = "[brokerAccountId=2000124699, candleResolution=1min, strategyType=cross, strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));
         Assertions.assertTrue(string.contains("movingAverageType=LWMA"));
