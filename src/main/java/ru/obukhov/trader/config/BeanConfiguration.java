@@ -88,7 +88,6 @@ public class BeanConfiguration {
                 ordersService,
                 portfolioService,
                 strategy,
-                scheduledBotProperties.getCandleResolution(),
                 scheduledBotProperties,
                 tradingProperties
         );

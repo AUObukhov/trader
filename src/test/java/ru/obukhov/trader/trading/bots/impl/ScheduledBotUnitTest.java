@@ -69,13 +69,13 @@ class ScheduledBotUnitTest {
 
     @BeforeEach
     void setUp() {
+        Mockito.when(scheduledBotProperties.getCandleResolution()).thenReturn(CandleResolution._1MIN);
         bot = new ScheduledBot(
                 marketService,
                 operationsService,
                 ordersService,
                 portfolioService,
                 strategy,
-                CandleResolution._1MIN,
                 scheduledBotProperties,
                 tradingProperties
         );

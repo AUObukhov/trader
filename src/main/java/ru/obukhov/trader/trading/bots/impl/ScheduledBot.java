@@ -11,7 +11,6 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -29,11 +28,18 @@ public class ScheduledBot extends AbstractBot {
             final OrdersService ordersService,
             final PortfolioService portfolioService,
             final TradingStrategy strategy,
-            final CandleResolution candleResolution,
             final ScheduledBotProperties scheduledBotProperties,
             final TradingProperties tradingProperties
     ) {
-        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache(), candleResolution);
+        super(
+                marketService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                strategy,
+                strategy.initCache(),
+                scheduledBotProperties.getCandleResolution()
+        );
 
         this.scheduledBotProperties = scheduledBotProperties;
         this.tradingProperties = tradingProperties;
