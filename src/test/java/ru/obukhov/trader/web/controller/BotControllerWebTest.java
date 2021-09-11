@@ -31,7 +31,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 class BotControllerWebTest extends ControllerWebTest {
 
@@ -260,43 +259,5 @@ class BotControllerWebTest extends ControllerWebTest {
 
         Assertions.assertFalse(scheduledBotProperties.isEnabled());
     }
-
-    // region setTickers tests
-
-    @Test
-    void setTickers_setsTickers() throws Exception {
-        scheduledBotProperties.setTickers(Set.of());
-
-        final String tickers = ResourceUtils.getTestDataAsString("SetTickersRequest.json");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/tickers").content(tickers).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        final Set<String> tickersList = scheduledBotProperties.getTickers();
-        Assertions.assertEquals(3, tickersList.size());
-        Assertions.assertTrue(tickersList.contains("ticker1"));
-        Assertions.assertTrue(tickersList.contains("ticker2"));
-        Assertions.assertTrue(tickersList.contains("ticker3"));
-    }
-
-    @Test
-    void setTickers_returnsBadRequest_whenNoTickers() throws Exception {
-        scheduledBotProperties.setTickers(Set.of());
-
-        final String tickers = "{}";
-
-        assertBadRequestError("/trader/bot/tickers", tickers, "tickers are mandatory");
-    }
-
-    @Test
-    void setTickers_returnsBadRequest_whenTickersAreEmpty() throws Exception {
-        scheduledBotProperties.setTickers(Set.of());
-
-        final String tickers = "{\"tickers\": []}";
-
-        assertBadRequestError("/trader/bot/tickers", tickers, "tickers are mandatory");
-    }
-
-    // endregion
 
 }

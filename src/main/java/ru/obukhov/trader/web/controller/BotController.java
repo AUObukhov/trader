@@ -15,7 +15,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.web.model.SimulationResult;
-import ru.obukhov.trader.web.model.exchange.SetTickersRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateRequest;
 import ru.obukhov.trader.web.model.exchange.SimulateResponse;
 
@@ -74,17 +73,6 @@ public class BotController {
     })
     public void disableScheduling() {
         scheduledBotProperties.setEnabled(false);
-    }
-
-    @PostMapping("/tickers")
-    @ApiOperation("Sets collection of tickers for real trading")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public void setTickers(@Valid @RequestBody final SetTickersRequest request) {
-        scheduledBotProperties.setTickers(request.getTickers());
     }
 
 }
