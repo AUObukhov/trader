@@ -24,12 +24,16 @@ public class TradingConfig {
     @ApiModelProperty(value = "Account id", example = "2000124699", position = 1)
     private String brokerAccountId;
 
+    @NotNull(message = "ticker is mandatory")
+    @ApiModelProperty(value = "Ticker", example = "FXIT", position = 2)
+    private String ticker;
+
     @NotNull(message = "candleResolution is mandatory")
-    @ApiModelProperty(value = "Candle interval", example = "1min", required = true, position = 2)
+    @ApiModelProperty(value = "Candle interval", example = "1min", required = true, position = 3)
     private CandleResolution candleResolution;
 
     @NotNull(message = "strategyType is mandatory")
-    @ApiModelProperty(value = "Trading strategy type", example = "cross", required = true, position = 3)
+    @ApiModelProperty(value = "Trading strategy type", example = "cross", required = true, position = 4)
     private StrategyType strategyType;
 
     @ApiModelProperty(
@@ -41,7 +45,13 @@ public class TradingConfig {
     )
     private Map<String, Object> strategyParams;
 
-    public TradingConfig(@Nullable final String brokerAccountId, final CandleResolution candleResolution, final StrategyType strategyType) {
+    public TradingConfig(
+            @Nullable final String brokerAccountId,
+            final String ticker,
+            final CandleResolution candleResolution,
+            final StrategyType strategyType
+    ) {
+        this.ticker = ticker;
         this.brokerAccountId = brokerAccountId;
         this.candleResolution = candleResolution;
         this.strategyType = strategyType;
@@ -52,6 +62,7 @@ public class TradingConfig {
     public String toString() {
         return "[" +
                 "brokerAccountId=" + brokerAccountId +
+                ", ticker=" + ticker +
                 ", candleResolution=" + candleResolution +
                 ", strategyType=" + strategyType +
                 ", strategyParams=" + strategyParams +

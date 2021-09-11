@@ -1,5 +1,5 @@
 {
-  "ticker": "ticker",
+
   "from": "2021-01-01T10:00:00+03:00",
   "balanceConfig": {
     "initialBalance": 1000,
@@ -8,6 +8,8 @@
   },
   "tradingConfigs": [
     {
+      "brokerAccountId": "2000124699",
+      "ticker": "ticker",
       "strategyType": "conservative",
       "strategyParams": {
         "minimumProfit": 0.01

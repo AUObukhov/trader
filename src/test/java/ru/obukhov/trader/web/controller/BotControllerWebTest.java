@@ -43,30 +43,6 @@ class BotControllerWebTest extends ControllerWebTest {
     // region simulate tests
 
     @Test
-    void simulate_returnsBadRequest_whenTickerIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_tickerIsNull.json",
-                "ticker is mandatory"
-        );
-    }
-
-    @Test
-    void simulate_returnsBadRequest_whenTickerIsEmpty() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_tickerIsEmpty.json",
-                "ticker is mandatory"
-        );
-    }
-
-    @Test
-    void simulate_returnsBadRequest_whenTickerIsBlank() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_tickerIsBlank.json",
-                "ticker is mandatory"
-        );
-    }
-
-    @Test
     void simulate_returnsBadRequest_whenFromIsNull() throws Exception {
         simulate_returnsBadRequest_withError("SimulateRequest/SimulateRequest_fromIsNull.json", "from is mandatory");
     }
@@ -220,15 +196,8 @@ class BotControllerWebTest extends ControllerWebTest {
         simulationResults.add(simulationResult2);
         simulationResults.add(simulationResult3);
 
-        Mockito.when(
-                simulator.simulate(
-                        Mockito.eq(ticker),
-                        Mockito.eq(balanceConfig),
-                        Mockito.anyList(),
-                        Mockito.any(Interval.class),
-                        Mockito.eq(true)
-                )
-        ).thenReturn(simulationResults);
+        Mockito.when(simulator.simulate(Mockito.anyList(), Mockito.eq(balanceConfig), Mockito.any(Interval.class), Mockito.eq(true)))
+                .thenReturn(simulationResults);
 
         final String expectedResponse = ResourceUtils.getTestDataAsString("SimulateResponse.json");
 

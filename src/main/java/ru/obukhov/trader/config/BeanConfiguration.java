@@ -79,8 +79,8 @@ public class BeanConfiguration {
             final TradingStrategyFactory strategyFactory
     ) {
         final TradingStrategy strategy = strategyFactory.createStrategy(
-                scheduledBotProperties.getStrategyType(),
-                scheduledBotProperties.getStrategyParams()
+                scheduledBotProperties.getTradingConfig().getStrategyType(),
+                scheduledBotProperties.getTradingConfig().getStrategyParams()
         );
         return new ScheduledBot(
                 marketService,

@@ -11,10 +11,9 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.web.model.TradingConfig;
 
 import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Slf4j
 public class ScheduledBot extends AbstractBot {
@@ -38,7 +37,7 @@ public class ScheduledBot extends AbstractBot {
                 portfolioService,
                 strategy,
                 strategy.initCache(),
-                scheduledBotProperties.getCandleResolution()
+                scheduledBotProperties.getTradingConfig().getCandleResolution()
         );
 
         this.scheduledBotProperties = scheduledBotProperties;
@@ -58,13 +57,9 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        final Set<String> tickers = new HashSet<>(scheduledBotProperties.getTickers());
-        if (tickers.isEmpty()) {
-            log.warn("No tickers configured for bot. Do nothing");
-            return;
-        }
+        final TradingConfig tradingConfig = scheduledBotProperties.getTradingConfig();
 
-        tickers.forEach(ticker -> processTickerSafe(scheduledBotProperties.getBrokerAccountId(), ticker, null));
+        processTickerSafe(tradingConfig.getBrokerAccountId(), tradingConfig.getTicker(), null);
     }
 
     public void processTickerSafe(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime previousStartTime) {

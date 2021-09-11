@@ -9,17 +9,19 @@ trading:
 scheduled-bot:
   delay: 60000
   enabled: true
-  tickers: FXIT
-  candleResolution: 5min
-  strategy-type: "cross"
-  strategy-params:
-    minimumProfit: 0.1
-    movingAverageType: SMA
-    order: 1
-    smallWindow: 50
-    bigWindow: 200
-    indexCoefficient: 0.5
-    greedy: true
+  trading-config:
+    broker-account-id: "2000124699"
+    ticker: FXIT
+    candle-resolution: 5min
+    strategy-type: "cross"
+    strategy-params:
+      minimumProfit: 0.1
+      movingAverageType: SMA
+      order: 1
+      smallWindow: 50
+      bigWindow: 200
+      indexCoefficient: 0.5
+      greedy: true
 
 query.throttle:
   interval: 60000

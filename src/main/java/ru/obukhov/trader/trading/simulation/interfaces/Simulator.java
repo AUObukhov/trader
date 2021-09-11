@@ -8,11 +8,12 @@ import ru.obukhov.trader.web.model.TradingConfig;
 import java.util.List;
 
 public interface Simulator {
+
     List<SimulationResult> simulate(
-            final String ticker,
-            final BalanceConfig balanceConfig,
             final List<TradingConfig> tradingConfigs,
+            final BalanceConfig balanceConfig,
             final Interval interval,
             final boolean saveToFiles
     );
+
 }

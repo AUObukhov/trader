@@ -64,29 +64,31 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig1 = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution.HOUR)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of());
-        final SimulationResult result1 = createSimulationResult(ticker, tradingConfig1);
+        final SimulationResult result1 = createSimulationResult(tradingConfig1);
 
         final TradingConfig tradingConfig2 = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result2 = createSimulationResult(ticker, tradingConfig2);
+        final SimulationResult result2 = createSimulationResult(tradingConfig2);
 
         final TradingConfig tradingConfig3 = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
-        final SimulationResult result3 = createSimulationResult(ticker, tradingConfig3);
+        final SimulationResult result3 = createSimulationResult(tradingConfig3);
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
-        excelService.saveSimulationResults(ticker, results);
+        excelService.saveSimulationResults(results);
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(3))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final List<ExtendedWorkbook> workbooks = workbookArgumentCaptor.getAllValues();
         Assertions.assertEquals(results.size(), workbooks.size());
@@ -117,16 +119,16 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result = createSimulationResult(tradingConfig);
 
-        excelService.saveSimulationResults(ticker, List.of(result));
+        excelService.saveSimulationResults(List.of(result));
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -150,17 +152,17 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result = createSimulationResult(tradingConfig);
         result.setError(StringUtils.EMPTY);
 
-        excelService.saveSimulationResults(ticker, List.of(result));
+        excelService.saveSimulationResults(List.of(result));
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -185,17 +187,17 @@ class ExcelServiceImplUnitTest {
         final String error = "error";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result = createSimulationResult(tradingConfig);
         result.setError(error);
 
-        excelService.saveSimulationResults(ticker, List.of(result));
+        excelService.saveSimulationResults(List.of(result));
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -222,17 +224,17 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result = createSimulationResult(tradingConfig);
         result.setCandles(null);
 
-        excelService.saveSimulationResults(ticker, List.of(result));
+        excelService.saveSimulationResults(List.of(result));
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -257,17 +259,17 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result = createSimulationResult(tradingConfig);
         result.setCandles(Collections.emptyList());
 
-        excelService.saveSimulationResults(ticker, List.of(result));
+        excelService.saveSimulationResults(List.of(result));
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -294,20 +296,20 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
+                .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of());
-        final SimulationResult result1 = createSimulationResult(ticker, tradingConfig);
-        final SimulationResult result2 = createSimulationResult(ticker, tradingConfig);
-        final SimulationResult result3 = createSimulationResult(ticker, tradingConfig);
+        final SimulationResult result1 = createSimulationResult(tradingConfig);
+        final SimulationResult result2 = createSimulationResult(tradingConfig);
+        final SimulationResult result3 = createSimulationResult(tradingConfig);
         final List<SimulationResult> results = List.of(result1, result2, result3);
 
-        final String fileNamePrefix = "SimulationResult for '" + ticker + "'";
         Mockito.doThrow(new IOException())
                 .when(excelFileService)
-                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
+                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith("SimulationResult"));
 
-        excelService.saveSimulationResults(ticker, results);
+        excelService.saveSimulationResults(results);
     }
 
     private void assertTradingConfig(TradingConfig tradingConfig, Iterator<Row> rowIterator) {
@@ -430,7 +432,7 @@ class ExcelServiceImplUnitTest {
         excelService.saveCandles(ticker, interval, response);
     }
 
-    private SimulationResult createSimulationResult(String ticker, TradingConfig tradingConfig) {
+    private SimulationResult createSimulationResult(TradingConfig tradingConfig) {
         return SimulationResult.builder()
                 .tradingConfig(tradingConfig)
                 .interval(createInterval())
@@ -442,8 +444,8 @@ class ExcelServiceImplUnitTest {
                 .absoluteProfit(BigDecimal.valueOf(300))
                 .relativeProfit(0.25)
                 .relativeYearProfit(6d)
-                .positions(createPositions(ticker))
-                .operations(createSimulatedOperations(ticker))
+                .positions(createPositions(tradingConfig.getTicker()))
+                .operations(createSimulatedOperations(tradingConfig.getTicker()))
                 .candles(createCandles())
                 .build();
     }

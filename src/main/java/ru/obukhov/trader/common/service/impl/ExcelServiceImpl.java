@@ -72,11 +72,11 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResults(final String ticker, final Collection<SimulationResult> results) {
+    public void saveSimulationResults(final Collection<SimulationResult> results) {
         for (final SimulationResult result : results) {
             final ExtendedWorkbook workBook = createWorkBook();
-            createSheet(workBook, ticker, result);
-            saveToFile(workBook, "SimulationResult for '" + ticker + "'");
+            createSheet(workBook, result);
+            saveToFile(workBook, "SimulationResult");
         }
     }
 
@@ -120,13 +120,13 @@ public class ExcelServiceImpl implements ExcelService {
         percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
     }
 
-    private void createSheet(final ExtendedWorkbook workbook, final String ticker, final SimulationResult result) {
+    private void createSheet(final ExtendedWorkbook workbook, final SimulationResult result) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
         putTradingConfig(sheet, result.getTradingConfig());
         sheet.addRow();
 
-        putCommonStatistics(sheet, ticker, result);
+        putCommonStatistics(sheet, result);
         sheet.addRow();
 
         putPositions(sheet, result.getPositions());
@@ -182,12 +182,12 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCommonStatistics(final ExtendedSheet sheet, final String ticker, final SimulationResult result) {
+    private void putCommonStatistics(final ExtendedSheet sheet, final SimulationResult result) {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
         putBrokerAccountId(sheet, result.getTradingConfig().getBrokerAccountId());
-        putTicker(sheet, ticker);
+        putTicker(sheet, result.getTradingConfig().getTicker());
         putInterval(sheet, result.getInterval());
         putInitialBalance(sheet, result.getInitialBalance());
         putTotalInvestment(sheet, result.getTotalInvestment());

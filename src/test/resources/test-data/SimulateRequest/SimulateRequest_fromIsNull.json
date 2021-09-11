@@ -1,5 +1,4 @@
 {
-  "ticker": "ticker",
   "balanceConfig": {
     "initialBalance": 1000,
     "balanceIncrement": 100,
@@ -7,6 +6,8 @@
   },
   "tradingConfigs": [
     {
+      "brokerAccountId": "2000124699",
+      "ticker": "ticker",
       "candleResolution": "1min",
       "strategyType": "conservative",
       "strategyParams": {

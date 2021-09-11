@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.model.exchange;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -23,34 +22,6 @@ class SimulateRequestValidationTest {
 
         AssertUtils.assertNoViolations(request);
     }
-
-    // region ticker validations tests
-
-    @Test
-    void validationFails_whenTickerIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setTicker(null);
-
-        AssertUtils.assertViolation(request, "ticker is mandatory");
-    }
-
-    @Test
-    void validationFails_whenTickerIsEmpty() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setTicker(StringUtils.EMPTY);
-
-        AssertUtils.assertViolation(request, "ticker is mandatory");
-    }
-
-    @Test
-    void validationFails_whenTickerIsBlank() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
-        request.setTicker("     ");
-
-        AssertUtils.assertViolation(request, "ticker is mandatory");
-    }
-
-    // endregion
 
     @Test
     void validationFails_whenFromIsNull() throws ParseException {
@@ -107,14 +78,15 @@ class SimulateRequestValidationTest {
     private SimulateRequest createValidSimulationRequest() throws ParseException {
         final SimulateRequest request = new SimulateRequest();
 
-        request.setTicker("ticker");
+        final String brokerAccountId = "2000124699";
+        final String ticker = "ticker";
 
         BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
         request.setBalanceConfig(balanceConfig);
 
         request.setFrom(OffsetDateTime.now());
 
-        final TradingConfig tradingConfig = new TradingConfig(null, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
         request.setTradingConfigs(List.of(tradingConfig));
 
         return request;

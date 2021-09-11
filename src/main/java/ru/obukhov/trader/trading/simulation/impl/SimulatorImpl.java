@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
-import org.quartz.CronExpression;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
@@ -77,40 +76,34 @@ public class SimulatorImpl implements Simulator {
     }
 
     /**
-     * @param ticker        ticker for all simulations
-     * @param balanceConfig balance configuration of each simulation
-     * @param interval      all simulations interval
-     * @param saveToFiles   flag to save simulations results to file
+     * @param tradingConfigs trading configurations of each simulation
+     * @param balanceConfig  all simulations balance configuration
+     * @param interval       all simulations interval
+     * @param saveToFiles    flag to save simulations results to file
      * @return map of simulations results by tickers
      */
     @Override
     public List<SimulationResult> simulate(
-            final String ticker,
-            final BalanceConfig balanceConfig,
             final List<TradingConfig> tradingConfigs,
+            final BalanceConfig balanceConfig,
             final Interval interval,
             final boolean saveToFiles
     ) {
-        log.info("Simulation for ticker = '{}' started", ticker);
+        log.info("Simulation started");
 
-        ExecutionResult<List<SimulationResult>> executionResult = ExecutionUtils.get(() -> simulate(ticker, balanceConfig, tradingConfigs, interval));
+        ExecutionResult<List<SimulationResult>> executionResult = ExecutionUtils.get(() -> simulate(tradingConfigs, balanceConfig, interval));
 
         final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
-        log.info("Simulation for ticker = '{}' ended within {}", ticker, simulationDurationString);
+        log.info("Simulation ended within {}", simulationDurationString);
 
         if (saveToFiles) {
-            saveSimulationResultsSafe(ticker, executionResult.getResult());
+            saveSimulationResultsSafe(executionResult.getResult());
         }
 
         return executionResult.getResult();
     }
 
-    private List<SimulationResult> simulate(
-            final String ticker,
-            final BalanceConfig balanceConfig,
-            final List<TradingConfig> tradingConfigs,
-            final Interval interval
-    ) {
+    private List<SimulationResult> simulate(final List<TradingConfig> tradingConfigs, final BalanceConfig balanceConfig, final Interval interval) {
         final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
@@ -118,7 +111,7 @@ public class SimulatorImpl implements Simulator {
         final Interval finiteInterval = interval.limitByNowIfNull(now);
 
         final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
-                .map(tradingConfig -> startSimulation(tradingConfig, ticker, balanceConfig, finiteInterval))
+                .map(tradingConfig -> startSimulation(tradingConfig, balanceConfig, finiteInterval))
                 .collect(Collectors.toList());
         return simulationFutures.stream()
                 .map(CompletableFuture::join)
@@ -133,49 +126,39 @@ public class SimulatorImpl implements Simulator {
 
     private CompletableFuture<SimulationResult> startSimulation(
             final TradingConfig tradingConfig,
-            final String ticker,
             final BalanceConfig balanceConfig,
             final Interval interval
     ) {
-        return CompletableFuture.supplyAsync(() -> simulateSafe(tradingConfig, ticker, balanceConfig, interval), executor);
+        return CompletableFuture.supplyAsync(() -> simulateSafe(tradingConfig, balanceConfig, interval), executor);
     }
 
-    private SimulationResult simulateSafe(
-            final TradingConfig tradingConfig,
-            final String ticker,
-            final BalanceConfig balanceConfig,
-            final Interval interval
-    ) {
-        log.info("Starting simulation for '{}' with ticker = '{}'", tradingConfig, ticker);
+    private SimulationResult simulateSafe(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
+        log.info("Starting simulation for '{}'", tradingConfig);
 
-        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.getSafe(() -> simulate(tradingConfig, ticker, balanceConfig, interval));
+        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.getSafe(() -> simulate(tradingConfig, balanceConfig, interval));
 
         final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
 
         if (executionResult.getException() == null) {
-            log.info("Simulation for '{}' with ticker = '{}' succeed within {}", tradingConfig, ticker, simulationDurationString);
+            log.info("Simulation for '{}' succeed within {}", tradingConfig, simulationDurationString);
             return executionResult.getResult();
         } else {
             final String message = String.format(
-                    "Simulation for '%s' with ticker '%s' failed within %s with error: %s",
-                    tradingConfig, ticker, simulationDurationString, executionResult.getException().getMessage()
+                    "Simulation for '%s' failed within %s with error: %s",
+                    tradingConfig, simulationDurationString, executionResult.getException().getMessage()
             );
             log.error(message, executionResult.getException());
-            return createFailedSimulationResult(tradingConfig, interval, balanceConfig, message);
+            return createFailedSimulationResult(tradingConfig, balanceConfig, interval, message);
         }
     }
 
-    private SimulationResult simulate(
-            final TradingConfig tradingConfig,
-            final String ticker,
-            final BalanceConfig balanceConfig,
-            final Interval interval
-    ) {
+    private SimulationResult simulate(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
         final FakeBot bot = createFakeBot(tradingConfig);
 
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
         final String brokerAccountId = tradingConfig.getBrokerAccountId();
+        final String ticker = tradingConfig.getTicker();
         final MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
         if (marketInstrument == null) {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
@@ -186,7 +169,6 @@ public class SimulatorImpl implements Simulator {
         OffsetDateTime previousStartTime = null;
 
         do {
-
             final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, previousStartTime, fakeTinkoffService.getCurrentDateTime());
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
@@ -196,10 +178,10 @@ public class SimulatorImpl implements Simulator {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinute(ticker, balanceConfig.getBalanceIncrement(), balanceConfig.getBalanceIncrementCron(), fakeTinkoffService);
+            moveToNextMinute(ticker, balanceConfig, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createSucceedSimulationResult(tradingConfig, interval, ticker, historicalCandles, bot.getFakeTinkoffService());
+        return createSucceedSimulationResult(tradingConfig, interval, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -209,21 +191,16 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private void moveToNextMinute(
-            final String ticker,
-            final BigDecimal balanceIncrement,
-            final CronExpression balanceIncrementCron,
-            final FakeTinkoffService fakeTinkoffService
-    ) {
-        if (balanceIncrement == null) {
+    private void moveToNextMinute(final String ticker, final BalanceConfig balanceConfig, final FakeTinkoffService fakeTinkoffService) {
+        if (balanceConfig.getBalanceIncrement() == null) {
             fakeTinkoffService.nextMinute();
         } else {
             final OffsetDateTime previousDate = fakeTinkoffService.getCurrentDateTime();
             final OffsetDateTime nextDate = fakeTinkoffService.nextMinute();
 
-            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, previousDate, nextDate);
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
             if (incrementsCount > 0) {
-                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceIncrement, incrementsCount);
+                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 final Currency currency = getCurrency(fakeTinkoffService, ticker);
                 final BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
                 log.debug("Incrementing balance {} by {}", currentBalance, totalBalanceIncrement);
@@ -235,12 +212,11 @@ public class SimulatorImpl implements Simulator {
     private SimulationResult createSucceedSimulationResult(
             final TradingConfig tradingConfig,
             final Interval interval,
-            final String ticker,
             final List<Candle> candles,
             final FakeTinkoffService fakeTinkoffService
     ) {
         final List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(tradingConfig.getBrokerAccountId()), candles);
-        final Currency currency = getCurrency(fakeTinkoffService, ticker);
+        final Currency currency = getCurrency(fakeTinkoffService, tradingConfig.getTicker());
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
 
@@ -254,7 +230,7 @@ public class SimulatorImpl implements Simulator {
         final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
-        final List<Operation> operations = fakeTinkoffService.getOperations(tradingConfig.getBrokerAccountId(), interval, ticker);
+        final List<Operation> operations = fakeTinkoffService.getOperations(tradingConfig.getBrokerAccountId(), interval, tradingConfig.getTicker());
 
         return SimulationResult.builder()
                 .tradingConfig(tradingConfig)
@@ -268,15 +244,15 @@ public class SimulatorImpl implements Simulator {
                 .relativeProfit(relativeProfit)
                 .relativeYearProfit(relativeYearProfit)
                 .positions(positions)
-                .operations(getOperations(operations, ticker))
+                .operations(getOperations(operations, tradingConfig.getTicker()))
                 .candles(candles)
                 .build();
     }
 
     private SimulationResult createFailedSimulationResult(
             final TradingConfig tradingConfig,
-            final Interval interval,
             final BalanceConfig balanceConfig,
+            final Interval interval,
             final String message
     ) {
         return SimulationResult.builder()
@@ -331,9 +307,7 @@ public class SimulatorImpl implements Simulator {
                 : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
     }
 
-    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(
-            final SortedMap<OffsetDateTime, BigDecimal> investments
-    ) {
+    private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(final SortedMap<OffsetDateTime, BigDecimal> investments) {
         final SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
         BigDecimal currentBalance = BigDecimal.ZERO;
         for (final Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
@@ -356,12 +330,12 @@ public class SimulatorImpl implements Simulator {
         return simulatedOperations;
     }
 
-    private void saveSimulationResultsSafe(final String ticker, final List<SimulationResult> simulationResults) {
+    private void saveSimulationResultsSafe(final List<SimulationResult> simulationResults) {
         try {
-            log.debug("Saving simulation for ticker {} result to file", ticker);
-            excelService.saveSimulationResults(ticker, simulationResults);
+            log.debug("Saving simulation result to file");
+            excelService.saveSimulationResults(simulationResults);
         } catch (Exception ex) {
-            log.error("Failed to save simulation for ticker {} result to file", ticker, ex);
+            log.error("Failed to save simulation result to file", ex);
         }
     }
 

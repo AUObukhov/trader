@@ -95,7 +95,7 @@ class SimulatorImplUnitTest {
         final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
+                () -> simulator.simulate(tradingConfigs, balanceConfig, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
@@ -118,7 +118,7 @@ class SimulatorImplUnitTest {
         final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false),
+                () -> simulator.simulate(tradingConfigs, balanceConfig, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
@@ -128,10 +128,9 @@ class SimulatorImplUnitTest {
     void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig("2000124699", CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig("2000124699", ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -149,7 +148,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -169,8 +168,9 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=2000124699, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' " +
-                        "with ticker '%1$s' failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
+                "^Simulation for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, strategyType=conservative, " +
+                        "strategyParams=\\{\\}\\]' " +
+                        "failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
                 ticker
         );
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
@@ -183,10 +183,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -235,7 +234,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -271,10 +270,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -323,7 +321,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -347,10 +345,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -397,7 +394,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -422,10 +419,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -471,7 +467,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -499,10 +495,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -546,7 +541,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -576,10 +571,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -607,7 +601,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -630,10 +624,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -662,7 +655,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -685,10 +678,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -721,7 +713,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, true);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, true);
 
         // assert
 
@@ -730,7 +722,7 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
-        Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
+        Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.anyCollection());
     }
 
     @ParameterizedTest
@@ -740,10 +732,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -776,7 +767,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -785,7 +776,7 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
         Assertions.assertNull(simulationResult.getError());
 
-        Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any(), Mockito.any());
+        Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any());
     }
 
     @ParameterizedTest
@@ -795,10 +786,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -830,7 +820,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -848,15 +838,16 @@ class SimulatorImplUnitTest {
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
-    @Test
-    void simulate_catchesSimulationException() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void simulate_catchesSimulationException(@Nullable final String brokerAccountId) {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig("2000124699", CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         final String mockedExceptionMessage = "mocked exception";
@@ -876,7 +867,7 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, false);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -885,9 +876,9 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=2000124699, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]' " +
-                        "with ticker '%s' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                ticker, mockedExceptionMessage
+                "^Simulation for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]'" +
+                        " failed within 00:00:00.\\d\\d\\d with error: %s$",
+                brokerAccountId, ticker, mockedExceptionMessage
         );
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
     }
@@ -899,10 +890,9 @@ class SimulatorImplUnitTest {
 
         // arrange
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
-
         final String ticker = "ticker";
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -934,11 +924,12 @@ class SimulatorImplUnitTest {
         mockPortfolioPositions(brokerAccountId);
 
         Mockito.doThrow(new IllegalArgumentException())
-                .when(excelService).saveSimulationResults(Mockito.eq(ticker), Mockito.anyCollection());
+                .when(excelService)
+                .saveSimulationResults(Mockito.anyCollection());
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(ticker, balanceConfig, tradingConfigs, interval, true);
+        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, true);
 
         // assert
 

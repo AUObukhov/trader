@@ -43,13 +43,7 @@ public class BotController {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        final List<SimulationResult> results = simulator.simulate(
-                request.getTicker(),
-                request.getBalanceConfig(),
-                request.getTradingConfigs(),
-                interval,
-                saveToFiles
-        );
+        final List<SimulationResult> results = simulator.simulate(request.getTradingConfigs(), request.getBalanceConfig(), interval, saveToFiles);
 
         return new SimulateResponse(results);
 

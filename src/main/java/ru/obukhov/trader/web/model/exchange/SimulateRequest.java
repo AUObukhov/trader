@@ -6,7 +6,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.TradingConfig;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
@@ -14,15 +13,6 @@ import java.util.List;
 
 @Data
 public class SimulateRequest {
-
-    @NotBlank(message = "ticker is mandatory")
-    @ApiModelProperty(
-            value = "Ticker on which the simulation will run",
-            example = "FXIT",
-            required = true,
-            position = 1
-    )
-    private String ticker;
 
     @NotNull(message = "from is mandatory")
     @ApiModelProperty(

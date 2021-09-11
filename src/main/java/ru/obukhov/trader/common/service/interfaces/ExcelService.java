@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface ExcelService {
 
-    void saveSimulationResults(final String ticker, final Collection<SimulationResult> results);
+    void saveSimulationResults(Collection<SimulationResult> results);
 
     void saveCandles(final String ticker, final Interval interval, final GetCandlesResponse response);
 
