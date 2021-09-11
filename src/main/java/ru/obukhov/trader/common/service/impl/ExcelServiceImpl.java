@@ -69,12 +69,6 @@ public class ExcelServiceImpl implements ExcelService {
     private static final MarkerProperties BUY_OPERATION_MARKER_PROPERTIES =
             new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.RED);
 
-    private static final MarkerProperties MAXIMUMS_MARKER_PROPERTIES =
-            new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.GREEN);
-
-    private static final MarkerProperties MINIMUMS_MARKER_PROPERTIES =
-            new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.RED);
-
     private final ExcelFileService excelFileService;
 
     @Override
