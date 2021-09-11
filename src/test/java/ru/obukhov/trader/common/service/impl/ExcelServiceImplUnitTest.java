@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @ExtendWith(MockitoExtension.class)
 class ExcelServiceImplUnitTest {
 
-    private static final int MINIMUM_ROWS_COUNT = 21;
+    private static final int MINIMUM_ROWS_COUNT = 22;
 
     private final MovingAverager averager = new SimpleMovingAverager();
 
@@ -322,6 +322,7 @@ class ExcelServiceImplUnitTest {
     private void assertCommonStatistics(String ticker, SimulationResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
+        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getTradingConfig().getBrokerAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
