@@ -23,14 +23,14 @@ import java.util.Objects;
 public class BalanceConfig {
 
     @NotNull(message = "initial balance is mandatory")
-    @ApiModelProperty(value = "Initial balance before the simulation in ticker currency", example = "100000", required = true, position = 1)
+    @ApiModelProperty(value = "Initial balance before the simulation in ticker currency", required = true, position = 1, example = "100000")
     private BigDecimal initialBalance;
 
     @Min(value = 1, message = "balanceIncrement must be positive")
-    @ApiModelProperty(value = "Sum to add to balance", example = "1000", allowableValues = "range[0, infinity]", position = 2)
+    @ApiModelProperty(value = "Sum to add to balance", allowableValues = "range[0, infinity]", position = 2, example = "1000")
     private BigDecimal balanceIncrement;
 
-    @ApiModelProperty(value = "Cron expression describing schedule of balance increments", example = "0 0 0 1 * ?", position = 3)
+    @ApiModelProperty(value = "Cron expression describing schedule of balance increments", position = 3, example = "0 0 0 1 * ?")
     private CronExpression balanceIncrementCron;
 
     @Override

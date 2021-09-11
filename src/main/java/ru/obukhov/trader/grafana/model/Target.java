@@ -20,7 +20,7 @@ public class Target {
     @ApiModelProperty(required = true, position = 2, example = "timeseries")
     private TargetType type;
 
-    @ApiModelProperty(value = "additional data with custom structure", position = 3)
+    @ApiModelProperty(value = "Additional data with custom structure", position = 3)
     private Object data;
 
 }

@@ -21,27 +21,27 @@ import java.util.Map;
 public class TradingConfig {
 
     @Nullable
-    @ApiModelProperty(value = "Account id", example = "2000124699", position = 1)
+    @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
     private String brokerAccountId;
 
     @NotNull(message = "ticker is mandatory")
-    @ApiModelProperty(value = "Ticker", example = "FXIT", position = 2)
+    @ApiModelProperty(value = "Ticker", position = 2, example = "FXIT")
     private String ticker;
 
     @NotNull(message = "candleResolution is mandatory")
-    @ApiModelProperty(value = "Candle interval", example = "1min", required = true, position = 3)
+    @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "1min")
     private CandleResolution candleResolution;
 
     @NotNull(message = "strategyType is mandatory")
-    @ApiModelProperty(value = "Trading strategy type", example = "cross", required = true, position = 4)
+    @ApiModelProperty(value = "Trading strategy type", required = true, position = 4, example = "cross")
     private StrategyType strategyType;
 
     @ApiModelProperty(
             value = "Map of trading strategy params. Required keys name and values types depend on strategyType",
-            example = "{\"minimumProfit\": 0.01, \"movingAverageType\": \"LWMA\", \"order\": 1, \"indexCoefficient\": 0.3, \"greedy\": false, " +
-                    "\"smallWindow\": 100, \"bigWindow\": 200}",
             dataType = "java.util.Map",
-            position = 3
+            position = 5,
+            example = "{\"minimumProfit\": 0.01, \"movingAverageType\": \"LWMA\", \"order\": 1, \"indexCoefficient\": 0.3, \"greedy\": false, " +
+                    "\"smallWindow\": 100, \"bigWindow\": 200}"
     )
     private Map<String, Object> strategyParams;
 

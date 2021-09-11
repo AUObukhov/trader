@@ -17,15 +17,15 @@ public class SimulateRequest {
     @NotNull(message = "from is mandatory")
     @ApiModelProperty(
             value = "The simulation start date time",
-            example = "2019-01-01T00:00:00+03:00",
             required = true,
-            position = 2)
+            position = 2,
+            example = "2019-01-01T00:00:00+03:00")
     private OffsetDateTime from;
 
     @ApiModelProperty(
             value = "The simulation end date time. Default value is current date time",
-            example = "2020-01-01T00:00:00+03:00",
-            position = 3
+            position = 3,
+            example = "2020-01-01T00:00:00+03:00"
     )
     private OffsetDateTime to;
 
