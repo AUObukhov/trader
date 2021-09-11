@@ -132,9 +132,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -188,9 +187,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -277,9 +275,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -354,9 +351,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -430,9 +426,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -508,9 +503,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -586,9 +580,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -641,9 +634,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -697,9 +689,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -753,9 +744,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -809,9 +799,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -868,9 +857,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         final String mockedExceptionMessage = "mocked exception";
         Mockito.when(fakeBot.getFakeTinkoffService()).thenThrow(new IllegalArgumentException(mockedExceptionMessage));
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -915,9 +903,8 @@ class SimulatorImplUnitTest {
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final String ticker = "ticker";
-        final String botName = "botName";
 
-        final FakeBot fakeBot = createFakeBotMock(botName);
+        final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
@@ -966,7 +953,7 @@ class SimulatorImplUnitTest {
         Mockito.when(strategyFactory.createStrategy(tradingConfig.getStrategyType(), tradingConfig.getStrategyParams())).thenReturn(strategy);
     }
 
-    private FakeBot createFakeBotMock(String botName) {
+    private FakeBot createFakeBotMock() {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
