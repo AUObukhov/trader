@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.assertj.AssertableApplicationContext;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.common.model.transform.OffsetTimeConverter;
-import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 
 import java.time.Duration;
@@ -30,8 +29,6 @@ class TradingPropertiesContextTest {
                     Assertions.assertNull(context.getStartupFailure());
 
                     final TradingProperties tradingProperties = context.getBean(TradingProperties.class);
-
-                    AssertUtils.assertEquals(0.1d, tradingProperties.getCommission());
 
                     final OffsetTime expectedWorkStartTime = DateTimeTestData.createTime(12, 0, 0);
                     Assertions.assertEquals(expectedWorkStartTime, tradingProperties.getWorkStartTime());

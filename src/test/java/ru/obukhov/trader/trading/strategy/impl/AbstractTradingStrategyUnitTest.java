@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -24,8 +23,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class AbstractTradingStrategyUnitTest {
-
-    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     // region getBuyOrWaitDecision tests
 
@@ -49,7 +46,7 @@ class AbstractTradingStrategyUnitTest {
             @Nullable final Integer expectedLots
     ) {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
         final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize);
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -67,7 +64,7 @@ class AbstractTradingStrategyUnitTest {
     @Test
     void getSellOrWaitDecision_returnsWait_whenPositionIsNull() {
         final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
         final DecisionData decisionData = new DecisionData();
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -100,7 +97,7 @@ class AbstractTradingStrategyUnitTest {
             @Nullable final Integer expectedLots
     ) {
         final TradingStrategyParams params = new TradingStrategyParams(minimumProfit);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, TRADING_PROPERTIES);
+        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
         final DecisionData data = TestData.createDecisionData(averagePositionPrice, positionLotsCount, lotSize, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -150,8 +147,8 @@ class AbstractTradingStrategyUnitTest {
 
     private static class TestStrategy extends AbstractTradingStrategy {
 
-        public TestStrategy(final TradingStrategyParams params, final TradingProperties tradingProperties) {
-            super(StringUtils.EMPTY, params, tradingProperties);
+        public TestStrategy(final TradingStrategyParams params, final Double commission) {
+            super(StringUtils.EMPTY, params, commission);
         }
 
         @Override

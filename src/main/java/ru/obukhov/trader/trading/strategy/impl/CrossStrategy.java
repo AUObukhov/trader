@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
@@ -30,13 +29,8 @@ public class CrossStrategy extends AbstractTradingStrategy {
 
     private final MovingAverager averager;
 
-    protected CrossStrategy(
-            final String name,
-            final CrossStrategyParams params,
-            final TradingProperties tradingProperties,
-            final MovingAverager averager
-    ) {
-        super(name, params, tradingProperties);
+    protected CrossStrategy(final String name, final CrossStrategyParams params, final double commission, final MovingAverager averager) {
+        super(name, params, commission);
 
         this.averager = averager;
     }

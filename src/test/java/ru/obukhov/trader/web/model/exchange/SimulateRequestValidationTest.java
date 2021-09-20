@@ -86,7 +86,7 @@ class SimulateRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         request.setTradingConfigs(List.of(tradingConfig));
 
         return request;

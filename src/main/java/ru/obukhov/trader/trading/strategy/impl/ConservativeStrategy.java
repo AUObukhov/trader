@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -15,8 +14,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final String name, final TradingStrategyParams params, final TradingProperties tradingProperties) {
-        super(name, params, tradingProperties);
+    public ConservativeStrategy(final String name, final TradingStrategyParams params, final double commission) {
+        super(name, params, commission);
     }
 
     @Override

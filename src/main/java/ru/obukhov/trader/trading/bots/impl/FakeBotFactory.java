@@ -13,7 +13,7 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
-import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 @Service
@@ -28,8 +28,9 @@ public class FakeBotFactory extends AbstractBotFactory {
     }
 
     @Override
-    public Bot createBot(final TradingStrategy strategy, final CandleResolution candleResolution) {
-        final FakeTinkoffService fakeTinkoffService = new FakeTinkoffService(tradingProperties, realMarketService, realTinkoffService);
+    public Bot createBot(final AbstractTradingStrategy strategy, final CandleResolution candleResolution) {
+        final FakeTinkoffService fakeTinkoffService =
+                new FakeTinkoffService(tradingProperties, strategy.getCommission(), realMarketService, realTinkoffService);
         final MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);

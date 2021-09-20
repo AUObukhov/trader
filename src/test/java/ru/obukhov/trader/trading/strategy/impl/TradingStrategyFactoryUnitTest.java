@@ -17,6 +17,7 @@ import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.web.model.TradingConfig;
 
 import java.util.Map;
 import java.util.stream.Stream;
@@ -82,7 +83,10 @@ class TradingStrategyFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_givesStrategyProperName")
     void createStrategy_givesStrategyProperName(final StrategyType strategyType, final Map<String, Object> params, final String expectedName) {
-        TradingStrategy strategy = factory.createStrategy(strategyType, params);
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setStrategyType(strategyType)
+                .setStrategyParams(params);
+        TradingStrategy strategy = factory.createStrategy(tradingConfig);
 
         Assertions.assertEquals(expectedName, strategy.getName());
     }
@@ -91,10 +95,11 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
-        final StrategyType strategyType = StrategyType.CONSERVATIVE;
-        final Map<String, Object> params = Map.of();
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setStrategyType(StrategyType.CONSERVATIVE)
+                .setStrategyParams(Map.of());
 
-        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        final Executable executable = () -> factory.createStrategy(tradingConfig);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "minimumProfit is mandatory");
     }
 
@@ -294,9 +299,11 @@ class TradingStrategyFactoryUnitTest {
             final Map<String, Object> params,
             final String expectedMessage
     ) {
-        final StrategyType strategyType = StrategyType.CROSS;
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setStrategyType(StrategyType.CROSS)
+                .setStrategyParams(params);
 
-        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        final Executable executable = () -> factory.createStrategy(tradingConfig);
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -311,24 +318,28 @@ class TradingStrategyFactoryUnitTest {
                 "smallWindow", 3,
                 "bigWindow", 6
         );
-        final String expectedMessage = "Averager with movingAverageType 'SMA' not found";
-        final StrategyType strategyType = StrategyType.CROSS;
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setStrategyType(StrategyType.CROSS)
+                .setStrategyParams(params);
 
         final String averagerName = MovingAverageType.SIMPLE.getAveragerName();
         Mockito.when(applicationContext.getBean(averagerName, MovingAverager.class))
                 .thenThrow(new NoSuchBeanDefinitionException("No bean named '" + averagerName + "' available"));
-        factory = new TradingStrategyFactory(null, applicationContext);
+        factory = new TradingStrategyFactory(applicationContext);
 
-        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        final String expectedMessage = "Averager with movingAverageType 'SMA' not found";
+
+        final Executable executable = () -> factory.createStrategy(tradingConfig);
         Assertions.assertThrows(NoSuchBeanDefinitionException.class, executable, expectedMessage);
     }
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenCross_andParamsAreEmpty() {
-        final StrategyType strategyType = StrategyType.CROSS;
-        final Map<String, Object> params = Map.of();
+        final TradingConfig tradingConfig = new TradingConfig()
+                .setStrategyType(StrategyType.CROSS)
+                .setStrategyParams(Map.of());
 
-        final Executable executable = () -> factory.createStrategy(strategyType, params);
+        final Executable executable = () -> factory.createStrategy(tradingConfig);
         final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, executable);
 
         final String message = exception.getMessage();

@@ -51,7 +51,7 @@ class FakeTinkoffServiceUnitTest {
 
     @BeforeEach
     void setUpEach() {
-        this.service = new FakeTinkoffService(TRADING_PROPERTIES, marketService, realTinkoffService);
+        this.service = new FakeTinkoffService(TRADING_PROPERTIES, 0.003, marketService, realTinkoffService);
     }
 
     // region init tests

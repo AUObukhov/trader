@@ -24,8 +24,6 @@ public class TradingProperties {
     @NotBlank
     private final String token;
 
-    private final double commission;
-
     @NotNull
     private final OffsetTime workStartTime;
 
@@ -39,17 +37,15 @@ public class TradingProperties {
     private final OffsetDateTime startDate;
 
     public TradingProperties(
-            boolean sandbox,
-            String token,
-            double commission,
-            OffsetTime workStartTime,
-            @DurationUnit(ChronoUnit.MINUTES) Duration workDuration,
-            Integer consecutiveEmptyDaysLimit,
-            OffsetDateTime startDate
+            final boolean sandbox,
+            final String token,
+            final OffsetTime workStartTime,
+            final @DurationUnit(ChronoUnit.MINUTES) Duration workDuration,
+            final Integer consecutiveEmptyDaysLimit,
+            final OffsetDateTime startDate
     ) {
         this.sandbox = sandbox;
         this.token = token;
-        this.commission = commission;
         this.workStartTime = workStartTime;
         this.workDuration = workDuration;
         this.consecutiveEmptyDaysLimit = consecutiveEmptyDaysLimit;

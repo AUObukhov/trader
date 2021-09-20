@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 public class FakeTinkoffService implements TinkoffService {
 
     private final TradingProperties tradingProperties;
+    private final double commission;
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
 
@@ -60,10 +61,12 @@ public class FakeTinkoffService implements TinkoffService {
 
     public FakeTinkoffService(
             final TradingProperties tradingProperties,
+            final double commission,
             final MarketService marketService,
             final RealTinkoffService realTinkoffService
     ) {
         this.tradingProperties = tradingProperties;
+        this.commission = commission;
         this.marketService = marketService;
         this.realTinkoffService = realTinkoffService;
     }
@@ -214,17 +217,17 @@ public class FakeTinkoffService implements TinkoffService {
         final BigDecimal currentPrice = getCurrentPrice(ticker);
         final int count = instrument.getLot() * orderRequest.getLots();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
-        final BigDecimal commissionAmount = DecimalUtils.getFraction(totalPrice, tradingProperties.getCommission());
-        final MoneyAmount commission = new MoneyAmount(Currency.RUB, commissionAmount);
+        final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
+        final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
 
         if (orderRequest.getOperation() == OperationType.BUY) {
-            buyPosition(brokerAccountId, ticker, currentPrice, count, totalPrice, commissionAmount);
+            buyPosition(brokerAccountId, ticker, currentPrice, count, totalPrice, totalCommissionAmount);
         } else {
-            sellPosition(brokerAccountId, ticker, count, totalPrice, commissionAmount);
+            sellPosition(brokerAccountId, ticker, count, totalPrice, totalCommissionAmount);
         }
 
-        addOperation(brokerAccountId, ticker, currentPrice, count, commission, orderRequest.getOperation());
-        return createOrder(orderRequest, commission);
+        addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.getOperation());
+        return createOrder(orderRequest, totalCommission);
     }
 
     private BigDecimal getCurrentPrice(final String ticker) {
@@ -351,14 +354,14 @@ public class FakeTinkoffService implements TinkoffService {
             final String ticker,
             final BigDecimal price,
             final int count,
-            final MoneyAmount commission,
+            final BigDecimal commissionAmount,
             final OperationType operationType
     ) {
         final SimulatedOperation operation = SimulatedOperation.builder()
                 .ticker(ticker)
                 .price(price)
                 .quantity(count)
-                .commission(commission.getValue())
+                .commission(commissionAmount)
                 .dateTime(fakeContext.getCurrentDateTime())
                 .operationType(operationType)
                 .build();

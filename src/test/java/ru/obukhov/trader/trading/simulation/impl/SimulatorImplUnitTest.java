@@ -30,9 +30,9 @@ import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
+import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
@@ -57,11 +57,8 @@ class SimulatorImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(
-            StringUtils.EMPTY,
-            new TradingStrategyParams(0.1f),
-            null
-    );
+    private static final ConservativeStrategy CONSERVATIVE_STRATEGY =
+            new ConservativeStrategy(StringUtils.EMPTY, new TradingStrategyParams(0.1f), 0.0);
 
     private static final CronExpression BALANCE_INCREMENT_CRON = TestData.createCronExpression();
 
@@ -80,8 +77,6 @@ class SimulatorImplUnitTest {
 
     @Test
     void simulate_throwsIllegalArgumentException_whenFromIsInFuture() {
-        final String ticker = "ticker";
-
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
@@ -103,8 +98,6 @@ class SimulatorImplUnitTest {
 
     @Test
     void simulate_throwsIllegalArgumentException_whenToIsInFuture() {
-        final String ticker = "ticker";
-
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
@@ -129,11 +122,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig("2000124699", ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                "2000124699",
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
@@ -168,7 +167,7 @@ class SimulatorImplUnitTest {
         AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, strategyType=conservative, " +
+                "^Simulation for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
                         "strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
                 ticker
@@ -184,11 +183,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -271,11 +276,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -346,11 +357,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -420,11 +437,12 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final double commission = 0.003;
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -453,7 +471,7 @@ class SimulatorImplUnitTest {
         final OperationTypeWithCommission operationType = OperationTypeWithCommission.BUY;
         final BigDecimal operationPrice = BigDecimal.valueOf(100);
         final int operationQuantity = 2;
-        final BigDecimal operationCommission = BigDecimal.valueOf(0.03);
+        final BigDecimal operationCommission = BigDecimal.valueOf(commission);
         final Operation operation = TestData.createTinkoffOperation(
                 operationDateTime,
                 operationType,
@@ -496,11 +514,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -572,11 +596,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -625,11 +655,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -679,11 +715,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -733,11 +775,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.093,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -787,11 +835,17 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(
+                brokerAccountId,
+                ticker,
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CONSERVATIVE
+        );
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -846,13 +900,13 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         final String mockedExceptionMessage = "mocked exception";
         Mockito.when(fakeBot.getFakeTinkoffService()).thenThrow(new IllegalArgumentException(mockedExceptionMessage));
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
@@ -876,8 +930,8 @@ class SimulatorImplUnitTest {
         final SimulationResult simulationResult = simulationResults.get(0);
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, strategyType=conservative, strategyParams=\\{\\}\\]'" +
-                        " failed within 00:00:00.\\d\\d\\d with error: %s$",
+                "^Simulation for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
+                        "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
                 brokerAccountId, ticker, mockedExceptionMessage
         );
         AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
@@ -891,11 +945,11 @@ class SimulatorImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, StrategyType.CONSERVATIVE);
+        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(TradingStrategy.class), Mockito.any(CandleResolution.class)))
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
@@ -940,8 +994,8 @@ class SimulatorImplUnitTest {
         Assertions.assertNull(simulationResult.getError());
     }
 
-    private void mockStrategy(TradingConfig tradingConfig, TradingStrategy strategy) {
-        Mockito.when(strategyFactory.createStrategy(tradingConfig.getStrategyType(), tradingConfig.getStrategyParams())).thenReturn(strategy);
+    private void mockStrategy(TradingConfig tradingConfig, AbstractTradingStrategy strategy) {
+        Mockito.when(strategyFactory.createStrategy(tradingConfig)).thenReturn(strategy);
     }
 
     private FakeBot createFakeBotMock() {

@@ -22,8 +22,8 @@ import ru.obukhov.trader.trading.bots.interfaces.BotFactory;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
+import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.SimulatedOperation;
 import ru.obukhov.trader.web.model.SimulatedPosition;
@@ -120,7 +120,7 @@ public class SimulatorImpl implements Simulator {
     }
 
     private FakeBot createFakeBot(final TradingConfig tradingConfig) {
-        final TradingStrategy strategy = strategyFactory.createStrategy(tradingConfig.getStrategyType(), tradingConfig.getStrategyParams());
+        final AbstractTradingStrategy strategy = strategyFactory.createStrategy(tradingConfig);
         return (FakeBot) fakeBotFactory.createBot(strategy, tradingConfig.getCandleResolution());
     }
 

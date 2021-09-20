@@ -22,6 +22,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -274,15 +275,8 @@ public class TestData {
     }
 
     public static TradingProperties createTradingProperties() {
-        return new TradingProperties(
-                false,
-                "token",
-                0.003,
-                DateTimeTestData.createTime(10, 0, 0),
-                Duration.ofHours(9),
-                7,
-                OffsetDateTime.now()
-        );
+        final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
+        return new TradingProperties(false, "token", workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
     }
 
 }

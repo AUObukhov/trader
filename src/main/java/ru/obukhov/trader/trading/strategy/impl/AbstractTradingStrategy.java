@@ -3,7 +3,6 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -23,12 +22,13 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     @Getter
     protected final String name;
     protected final TradingStrategyParams params;
-    protected final TradingProperties tradingProperties;
+    @Getter
+    protected final double commission;
 
-    protected AbstractTradingStrategy(final String name, final TradingStrategyParams params, final TradingProperties tradingProperties) {
+    protected AbstractTradingStrategy(final String name, final TradingStrategyParams params, final double commission) {
         this.name = name + " " + params;
         this.params = params;
-        this.tradingProperties = tradingProperties;
+        this.commission = commission;
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     private int getAvailableLots(final DecisionData data) {
         final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, tradingProperties.getCommission());
+        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, commission);
         return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
@@ -97,10 +97,10 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         }
 
         final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
-        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, tradingProperties.getCommission());
+        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, commission);
 
         final BigDecimal currentPrice = data.getCurrentPrice();
-        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, tradingProperties.getCommission());
+        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, commission);
 
         final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
                 .doubleValue();

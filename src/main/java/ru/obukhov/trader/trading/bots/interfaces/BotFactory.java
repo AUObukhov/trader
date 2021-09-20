@@ -1,10 +1,10 @@
 package ru.obukhov.trader.trading.bots.interfaces;
 
-import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 public interface BotFactory {
 
-    Bot createBot(final TradingStrategy strategy, final CandleResolution candleResolution);
+    Bot createBot(final AbstractTradingStrategy strategy, final CandleResolution candleResolution);
 
 }

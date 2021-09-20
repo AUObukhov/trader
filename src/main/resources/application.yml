@@ -1,6 +1,5 @@
 trading:
   sandbox: false
-  commission: 0.003
   work-start-time: 07:00:00+03:00
   work-duration: 720
   consecutive-empty-days-limit: 7
@@ -13,6 +12,7 @@ scheduled-bot:
     broker-account-id: "2000124699"
     ticker: SBER
     candle-resolution: 1min
+    commission: 0.003
     strategy-type: "cross"
     strategy-params:
       minimumProfit: 0.1

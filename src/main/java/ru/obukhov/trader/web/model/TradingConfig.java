@@ -32,14 +32,18 @@ public class TradingConfig {
     @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "1min")
     private CandleResolution candleResolution;
 
+    @NotNull(message = "commission is mandatory")
+    @ApiModelProperty(value = "Operating commission", required = true, position = 4, example = "0.003")
+    private Double commission = 0.0;
+
     @NotNull(message = "strategyType is mandatory")
-    @ApiModelProperty(value = "Trading strategy type", required = true, position = 4, example = "cross")
+    @ApiModelProperty(value = "Trading strategy type", required = true, position = 5, example = "cross")
     private StrategyType strategyType;
 
     @ApiModelProperty(
             value = "Map of trading strategy params. Required keys name and values types depend on strategyType",
             dataType = "java.util.Map",
-            position = 5,
+            position = 6,
             example = "{\"minimumProfit\": 0.01, \"movingAverageType\": \"LWMA\", \"order\": 1, \"indexCoefficient\": 0.3, \"greedy\": false, " +
                     "\"smallWindow\": 100, \"bigWindow\": 200}"
     )
@@ -49,11 +53,13 @@ public class TradingConfig {
             @Nullable final String brokerAccountId,
             final String ticker,
             final CandleResolution candleResolution,
+            final Double commission,
             final StrategyType strategyType
     ) {
         this.ticker = ticker;
         this.brokerAccountId = brokerAccountId;
         this.candleResolution = candleResolution;
+        this.commission = commission;
         this.strategyType = strategyType;
         this.strategyParams = Map.of();
     }
@@ -64,6 +70,7 @@ public class TradingConfig {
                 "brokerAccountId=" + brokerAccountId +
                 ", ticker=" + ticker +
                 ", candleResolution=" + candleResolution +
+                ", commission=" + commission +
                 ", strategyType=" + strategyType +
                 ", strategyParams=" + strategyParams +
                 ']';

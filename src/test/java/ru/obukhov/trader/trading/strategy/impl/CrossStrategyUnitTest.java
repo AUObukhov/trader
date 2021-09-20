@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
@@ -24,8 +23,6 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class CrossStrategyUnitTest {
-
-    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
 
     @Mock
     private MovingAverager averager;
@@ -42,7 +39,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
         final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
@@ -67,7 +64,7 @@ class CrossStrategyUnitTest {
                 false,
                 3,
                 5);
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
 
@@ -93,7 +90,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
 
@@ -116,7 +113,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 1000.0, 1);
 
@@ -139,7 +136,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestData.createPortfolioPosition(100, 10));
@@ -163,7 +160,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestData.createPortfolioPosition(100, 10));
@@ -187,7 +184,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
@@ -211,7 +208,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
@@ -235,7 +232,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, TRADING_PROPERTIES, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
 
         final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
@@ -251,8 +248,7 @@ class CrossStrategyUnitTest {
     // endregion
 
     private static MockedStatic<TrendUtils> mock_TrendUtils_getCrossoverIfLast(Crossover crossover) {
-        final MockedStatic<TrendUtils> trendUtilsStaticMock =
-                Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
+        final MockedStatic<TrendUtils> trendUtilsStaticMock = Mockito.mockStatic(TrendUtils.class, Mockito.CALLS_REAL_METHODS);
 
         trendUtilsStaticMock.when(() -> TrendUtils.getCrossoverIfLast(Mockito.anyList(), Mockito.anyList(), Mockito.anyInt()))
                 .thenReturn(crossover);
