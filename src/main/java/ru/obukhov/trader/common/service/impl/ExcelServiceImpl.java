@@ -30,9 +30,9 @@ import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.web.model.SimulatedOperation;
-import ru.obukhov.trader.web.model.SimulatedPosition;
-import ru.obukhov.trader.web.model.SimulationResult;
+import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BackTestPosition;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -72,11 +72,11 @@ public class ExcelServiceImpl implements ExcelService {
     private final ExcelFileService excelFileService;
 
     @Override
-    public void saveSimulationResults(final Collection<SimulationResult> results) {
-        for (final SimulationResult result : results) {
+    public void saveBackTestResults(final Collection<BackTestResult> results) {
+        for (final BackTestResult result : results) {
             final ExtendedWorkbook workBook = createWorkBook();
             createSheet(workBook, result);
-            saveToFile(workBook, "SimulationResult");
+            saveToFile(workBook, "BackTestResult");
         }
     }
 
@@ -120,7 +120,7 @@ public class ExcelServiceImpl implements ExcelService {
         percentCellStyle.setDataFormat(workbook.createDataFormat().getFormat(PERCENT_FORMAT));
     }
 
-    private void createSheet(final ExtendedWorkbook workbook, final SimulationResult result) {
+    private void createSheet(final ExtendedWorkbook workbook, final BackTestResult result) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
         putTradingConfig(sheet, result.getTradingConfig());
@@ -182,7 +182,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putCommonStatistics(final ExtendedSheet sheet, final SimulationResult result) {
+    private void putCommonStatistics(final ExtendedSheet sheet, final BackTestResult result) {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
@@ -269,7 +269,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putPositions(final ExtendedSheet sheet, final List<SimulatedPosition> positions) {
+    private void putPositions(final ExtendedSheet sheet, final List<BackTestPosition> positions) {
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(positions)) {
@@ -278,14 +278,14 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Позиции", 3);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Цена", "Количество");
-            for (final SimulatedPosition position : positions) {
+            for (final BackTestPosition position : positions) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(position.getPrice(), position.getQuantity());
             }
         }
     }
 
-    private void putOperations(final ExtendedSheet sheet, final List<SimulatedOperation> operations) {
+    private void putOperations(final ExtendedSheet sheet, final List<BackTestOperation> operations) {
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(operations)) {
@@ -294,7 +294,7 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Операции", 6);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
-            for (final SimulatedOperation operation : operations) {
+            for (final BackTestOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(operation.getDateTime(),
                         operation.getOperationType().name(),
@@ -343,7 +343,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void putChartWithOperations(
             final ExtendedSheet sheet,
             final List<Candle> candles,
-            final List<SimulatedOperation> operations
+            final List<BackTestOperation> operations
     ) {
         if (CollectionUtils.isNotEmpty(candles)) {
             final ExtendedChart chart = createChart(sheet);
@@ -377,13 +377,13 @@ public class ExcelServiceImpl implements ExcelService {
     private void addCandlesAndPricesAndOperations(
             final ExtendedChartData chartData,
             final List<Candle> candles,
-            final List<SimulatedOperation> operations
+            final List<BackTestOperation> operations
     ) {
         final List<Candle> innerCandles = new ArrayList<>(candles);
 
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
-        for (final SimulatedOperation operation : operations) {
+        for (final BackTestOperation operation : operations) {
             final OffsetDateTime operationDateTime = operation.getDateTime();
             final Candle keyCandle = new Candle();
             keyCandle.setTime(operationDateTime);
@@ -453,7 +453,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void addOperations(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,
-            final List<SimulatedOperation> operations,
+            final List<BackTestOperation> operations,
             final List<Integer> operationsIndices
     ) {
 
@@ -462,7 +462,7 @@ public class ExcelServiceImpl implements ExcelService {
         boolean buyOperationsExist = false;
         boolean sellOperationsExist = false;
         for (int i = 0; i < operations.size(); i++) {
-            final SimulatedOperation operation = operations.get(i);
+            final BackTestOperation operation = operations.get(i);
             final int index = operationsIndices.get(i);
             if (operation.getOperationType() == OperationType.BUY) {
                 buyOperationsPrices[index] = operation.getPrice();

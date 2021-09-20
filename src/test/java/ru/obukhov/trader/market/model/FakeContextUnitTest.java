@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
@@ -135,7 +135,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = new FakeContext(currentDateTime);
         fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
 
-        final SimulatedOperation operation = new SimulatedOperation(null,
+        final BackTestOperation operation = new BackTestOperation(null,
                 DateTimeTestData.createDateTime(2021, 1, 1, 10),
                 null,
                 null,
@@ -143,7 +143,7 @@ class FakeContextUnitTest {
                 null);
         fakeContext.addOperation(brokerAccountId, operation);
 
-        final Set<SimulatedOperation> operations = fakeContext.getOperations(brokerAccountId);
+        final Set<BackTestOperation> operations = fakeContext.getOperations(brokerAccountId);
         Assertions.assertEquals(1, operations.size());
         Assertions.assertSame(operation, operations.iterator().next());
     }

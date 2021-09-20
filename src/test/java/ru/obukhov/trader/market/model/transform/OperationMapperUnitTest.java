@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -17,7 +17,7 @@ class OperationMapperUnitTest {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     @Test
-    void mapsOperationToSimulatedOperation() {
+    void mapsOperationToBackTestOperation() {
         final Operation source = new Operation();
 
         final MoneyAmount commission = new MoneyAmount();
@@ -29,7 +29,7 @@ class OperationMapperUnitTest {
         source.setDate(OffsetDateTime.now());
         source.setOperationType(OperationTypeWithCommission.BUY);
 
-        final SimulatedOperation target = operationMapper.map(source);
+        final BackTestOperation target = operationMapper.map(source);
 
         Assertions.assertEquals(source.getDate(), target.getDateTime());
         Assertions.assertEquals(OperationType.BUY, target.getOperationType());
@@ -40,8 +40,8 @@ class OperationMapperUnitTest {
     }
 
     @Test
-    void mapsSimulatedOperationToOperation() {
-        final SimulatedOperation source = SimulatedOperation.builder()
+    void mapsBackTestOperationToOperation() {
+        final BackTestOperation source = BackTestOperation.builder()
                 .dateTime(OffsetDateTime.now())
                 .operationType(OperationType.BUY)
                 .price(BigDecimal.TEN)

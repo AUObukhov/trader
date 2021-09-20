@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Class, containing in memory data about simulated portfolio and current market dateTime
+ * Class, containing in memory data about back tested portfolio and current market dateTime
  */
 public class FakeContext {
 
@@ -58,11 +58,11 @@ public class FakeContext {
         computeIfAbsentBalance(brokerAccountId, currency).setCurrentAmount(amount);
     }
 
-    public void addOperation(@Nullable final String brokerAccountId, final SimulatedOperation operation) {
+    public void addOperation(@Nullable final String brokerAccountId, final BackTestOperation operation) {
         computeIfAbsentPortfolio(brokerAccountId).getOperations().add(operation);
     }
 
-    public Set<SimulatedOperation> getOperations(@Nullable final String brokerAccountId) {
+    public Set<BackTestOperation> getOperations(@Nullable final String brokerAccountId) {
         return new HashSet<>(computeIfAbsentPortfolio(brokerAccountId).getOperations());
     }
 

@@ -70,7 +70,7 @@ public class StatisticsController {
             final Integer bigWindow,
 
             @RequestParam(required = false, defaultValue = "false")
-            @ApiParam(value = "Flag indicating to save the simulation result to a file. Default value is false", example = "true")
+            @ApiParam(value = "Flag indicating to save the back test result to a file. Default value is false", example = "true")
             final boolean saveToFile
     ) {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);

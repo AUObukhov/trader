@@ -1,15 +1,15 @@
-package ru.obukhov.trader.trading.simulation.interfaces;
+package ru.obukhov.trader.trading.backtest.interfaces;
 
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 
 import java.util.List;
 
-public interface Simulator {
+public interface BackTester {
 
-    List<SimulationResult> simulate(
+    List<BackTestResult> test(
             final List<TradingConfig> tradingConfigs,
             final BalanceConfig balanceConfig,
             final Interval interval,

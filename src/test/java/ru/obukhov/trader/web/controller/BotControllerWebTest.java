@@ -16,12 +16,12 @@ import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
+import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BackTestPosition;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.SimulatedOperation;
-import ru.obukhov.trader.web.model.SimulatedPosition;
-import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -35,76 +35,76 @@ import java.util.Map;
 class BotControllerWebTest extends ControllerWebTest {
 
     @MockBean
-    private Simulator simulator;
+    private BackTester backTester;
 
     @Autowired
     private ScheduledBotProperties scheduledBotProperties;
 
-    // region simulate tests
+    // region test tests
 
     @Test
-    void simulate_returnsBadRequest_whenFromIsNull() throws Exception {
-        simulate_returnsBadRequest_withError("SimulateRequest/SimulateRequest_fromIsNull.json", "from is mandatory");
+    void test_returnsBadRequest_whenFromIsNull() throws Exception {
+        test_returnsBadRequest_withError("BackTestRequest/BackTestRequest_fromIsNull.json", "from is mandatory");
     }
 
     @Test
-    void simulate_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_balanceConfigsIsNull.json",
+    void test_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
+        test_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_balanceConfigsIsNull.json",
                 "balanceConfig is mandatory"
         );
     }
 
     @Test
-    void simulate_returnsBadRequest_whenTradingConfigsIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_tradingConfigsIsNull.json",
+    void test_returnsBadRequest_whenTradingConfigsIsNull() throws Exception {
+        test_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_tradingConfigsIsNull.json",
                 "tradingConfigs is mandatory"
         );
     }
 
     @Test
-    void simulate_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_tradingConfigsIsEmpty.json",
+    void test_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
+        test_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_tradingConfigsIsEmpty.json",
                 "tradingConfigs is mandatory"
         );
     }
 
     @Test
-    void simulate_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_candleResolutionIsNull.json",
+    void test_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
+        test_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_candleResolutionIsNull.json",
                 "candleResolution is mandatory"
         );
     }
 
     @Test
-    void simulate_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
-        simulate_returnsBadRequest_withError(
-                "SimulateRequest/SimulateRequest_strategyTypeIsNull.json",
+    void test_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
+        test_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_strategyTypeIsNull.json",
                 "strategyType is mandatory"
         );
     }
 
-    private void simulate_returnsBadRequest_withError(String simulateRequestResource, String expectedError) throws Exception {
-        final String requestString = ResourceUtils.getTestDataAsString(simulateRequestResource);
+    private void test_returnsBadRequest_withError(String backTestRequestResource, String expectedError) throws Exception {
+        final String requestString = ResourceUtils.getTestDataAsString(backTestRequestResource);
 
-        assertBadRequestError("/trader/bot/simulate", requestString, expectedError);
+        assertBadRequestError("/trader/bot/back-test", requestString, expectedError);
     }
 
     @Test
-    void simulate_returnsSimulationResults_whenRequestIsValid() throws Exception {
+    void test_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String ticker = "ticker";
 
-        final String request = ResourceUtils.getTestDataAsString("SimulateRequest/SimulateRequest_valid.json");
+        final String request = ResourceUtils.getTestDataAsString("BackTestRequest/BackTestRequest_valid.json");
 
-        final List<SimulationResult> simulationResults = new ArrayList<>();
+        final List<BackTestResult> backTestResults = new ArrayList<>();
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
-        final SimulatedOperation operation = new SimulatedOperation(
+        final BackTestOperation operation = new BackTestOperation(
                 ticker,
                 from,
                 OperationType.BUY,
@@ -123,7 +123,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult simulationResult1 = SimulationResult.builder()
+        final BackTestResult backTestResult1 = BackTestResult.builder()
                 .tradingConfig(tradingConfig1)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
@@ -149,8 +149,8 @@ class BotControllerWebTest extends ControllerWebTest {
                         "indexCoefficient", 0.3,
                         "greedy", false
                 ));
-        final SimulatedPosition simulatedPosition1 = new SimulatedPosition(ticker, BigDecimal.valueOf(100000), 10);
-        final SimulationResult simulationResult2 = SimulationResult.builder()
+        final BackTestPosition backTestPosition1 = new BackTestPosition(ticker, BigDecimal.valueOf(100000), 10);
+        final BackTestResult backTestResult2 = BackTestResult.builder()
                 .tradingConfig(tradingConfig2)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
@@ -161,7 +161,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .absoluteProfit(BigDecimal.valueOf(1000))
                 .relativeProfit(1.0)
                 .relativeYearProfit(12.0)
-                .positions(List.of(simulatedPosition1))
+                .positions(List.of(backTestPosition1))
                 .build();
 
         final TradingConfig tradingConfig3 = new TradingConfig()
@@ -175,9 +175,9 @@ class BotControllerWebTest extends ControllerWebTest {
                         "indexCoefficient", 0.3,
                         "greedy", false
                 ));
-        final SimulatedPosition simulatedPosition2 = new SimulatedPosition(ticker, BigDecimal.valueOf(100), 10);
-        final SimulatedPosition simulatedPosition3 = new SimulatedPosition(ticker, BigDecimal.valueOf(1000), 1);
-        final SimulationResult simulationResult3 = SimulationResult.builder()
+        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, BigDecimal.valueOf(100), 10);
+        final BackTestPosition backTestPosition3 = new BackTestPosition(ticker, BigDecimal.valueOf(1000), 1);
+        final BackTestResult backTestResult3 = BackTestResult.builder()
                 .tradingConfig(tradingConfig3)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
@@ -188,20 +188,20 @@ class BotControllerWebTest extends ControllerWebTest {
                 .absoluteProfit(BigDecimal.valueOf(1000))
                 .relativeProfit(0.33)
                 .relativeYearProfit(4.0)
-                .positions(List.of(simulatedPosition2, simulatedPosition3))
+                .positions(List.of(backTestPosition2, backTestPosition3))
                 .error("error")
                 .build();
 
-        simulationResults.add(simulationResult1);
-        simulationResults.add(simulationResult2);
-        simulationResults.add(simulationResult3);
+        backTestResults.add(backTestResult1);
+        backTestResults.add(backTestResult2);
+        backTestResults.add(backTestResult3);
 
-        Mockito.when(simulator.simulate(Mockito.anyList(), Mockito.eq(balanceConfig), Mockito.any(Interval.class), Mockito.eq(true)))
-                .thenReturn(simulationResults);
+        Mockito.when(backTester.test(Mockito.anyList(), Mockito.eq(balanceConfig), Mockito.any(Interval.class), Mockito.eq(true)))
+                .thenReturn(backTestResults);
 
-        final String expectedResponse = ResourceUtils.getTestDataAsString("SimulateResponse.json");
+        final String expectedResponse = ResourceUtils.getTestDataAsString("BackTestResponse.json");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/simulate").content(request).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/back-test").content(request).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));

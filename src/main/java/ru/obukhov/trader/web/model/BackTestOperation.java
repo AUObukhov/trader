@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class SimulatedOperation {
+public class BackTestOperation {
 
     @JsonIgnore
     private String ticker;

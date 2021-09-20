@@ -25,9 +25,9 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.web.model.SimulatedOperation;
-import ru.obukhov.trader.web.model.SimulatedPosition;
-import ru.obukhov.trader.web.model.SimulationResult;
+import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BackTestPosition;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -57,10 +57,10 @@ class ExcelServiceImplUnitTest {
     @InjectMocks
     private ExcelServiceImpl excelService;
 
-    // region saveSimulationResult tests
+    // region saveBackTestResult tests
 
     @Test
-    void saveSimulationResult_savesMultipleResults() throws IOException {
+    void saveBackTestResult_savesMultipleResults() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig1 = new TradingConfig()
@@ -68,33 +68,33 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution.HOUR)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of());
-        final SimulationResult result1 = createSimulationResult(tradingConfig1);
+        final BackTestResult result1 = createBackTestResult(tradingConfig1);
 
         final TradingConfig tradingConfig2 = new TradingConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result2 = createSimulationResult(tradingConfig2);
+        final BackTestResult result2 = createBackTestResult(tradingConfig2);
 
         final TradingConfig tradingConfig3 = new TradingConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
-        final SimulationResult result3 = createSimulationResult(tradingConfig3);
-        final List<SimulationResult> results = List.of(result1, result2, result3);
+        final BackTestResult result3 = createBackTestResult(tradingConfig3);
+        final List<BackTestResult> results = List.of(result1, result2, result3);
 
-        excelService.saveSimulationResults(results);
+        excelService.saveBackTestResults(results);
 
         Mockito.verify(excelFileService, Mockito.times(3))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final List<ExtendedWorkbook> workbooks = workbookArgumentCaptor.getAllValues();
         Assertions.assertEquals(results.size(), workbooks.size());
 
         for (int i = 0; i < results.size(); i++) {
-            final SimulationResult result = results.get(i);
+            final BackTestResult result = results.get(i);
 
             final ExtendedWorkbook workbook = workbooks.get(i);
             Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -115,7 +115,7 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    void saveSimulationResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
+    void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
@@ -123,12 +123,12 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(tradingConfig);
 
-        excelService.saveSimulationResults(List.of(result));
+        excelService.saveBackTestResults(List.of(result));
 
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -148,7 +148,7 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    void saveSimulationResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
+    void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
@@ -156,13 +156,13 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(tradingConfig);
         result.setError(StringUtils.EMPTY);
 
-        excelService.saveSimulationResults(List.of(result));
+        excelService.saveBackTestResults(List.of(result));
 
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -182,7 +182,7 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    void saveSimulationResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
+    void saveBackTestResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
         final String ticker = "ticker";
         final String error = "error";
 
@@ -191,13 +191,13 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(tradingConfig);
         result.setError(error);
 
-        excelService.saveSimulationResults(List.of(result));
+        excelService.saveBackTestResults(List.of(result));
 
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -220,7 +220,7 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    void saveSimulationResult_skipsChart_whenCandlesAreNull() throws IOException {
+    void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
@@ -228,13 +228,13 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(tradingConfig);
         result.setCandles(null);
 
-        excelService.saveSimulationResults(List.of(result));
+        excelService.saveBackTestResults(List.of(result));
 
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -255,7 +255,7 @@ class ExcelServiceImplUnitTest {
     }
 
     @Test
-    void saveSimulationResult_skipsChart_whenCandlesAreEmpty() throws IOException {
+    void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
@@ -263,13 +263,13 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final SimulationResult result = createSimulationResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(tradingConfig);
         result.setCandles(Collections.emptyList());
 
-        excelService.saveSimulationResults(List.of(result));
+        excelService.saveBackTestResults(List.of(result));
 
         Mockito.verify(excelFileService, Mockito.times(1))
-                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("SimulationResult"));
+                .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith("BackTestResul"));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
@@ -292,7 +292,7 @@ class ExcelServiceImplUnitTest {
     @Test
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
-    void saveSimulationResult_catchesIOExceptionOfFileSaving() throws IOException {
+    void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
         final TradingConfig tradingConfig = new TradingConfig()
@@ -300,16 +300,16 @@ class ExcelServiceImplUnitTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of());
-        final SimulationResult result1 = createSimulationResult(tradingConfig);
-        final SimulationResult result2 = createSimulationResult(tradingConfig);
-        final SimulationResult result3 = createSimulationResult(tradingConfig);
-        final List<SimulationResult> results = List.of(result1, result2, result3);
+        final BackTestResult result1 = createBackTestResult(tradingConfig);
+        final BackTestResult result2 = createBackTestResult(tradingConfig);
+        final BackTestResult result3 = createBackTestResult(tradingConfig);
+        final List<BackTestResult> results = List.of(result1, result2, result3);
 
         Mockito.doThrow(new IOException())
                 .when(excelFileService)
-                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith("SimulationResult"));
+                .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith("BackTestResul"));
 
-        excelService.saveSimulationResults(results);
+        excelService.saveBackTestResults(results);
     }
 
     private void assertTradingConfig(TradingConfig tradingConfig, Iterator<Row> rowIterator) {
@@ -321,7 +321,7 @@ class ExcelServiceImplUnitTest {
         }
     }
 
-    private void assertCommonStatistics(String ticker, SimulationResult result, Iterator<Row> rowIterator) {
+    private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
         AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getTradingConfig().getBrokerAccountId());
@@ -337,21 +337,21 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
     }
 
-    private void assertPositions(SimulationResult result, Iterator<Row> rowIterator) {
+    private void assertPositions(BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
-        for (final SimulatedPosition position : result.getPositions()) {
+        for (final BackTestPosition position : result.getPositions()) {
             AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
         }
     }
 
-    private void assertOperations(SimulationResult result, Iterator<Row> rowIterator) {
+    private void assertOperations(BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
         AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
 
-        for (final SimulatedOperation operation : result.getOperations()) {
+        for (final BackTestOperation operation : result.getOperations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     operation.getDateTime(),
@@ -432,8 +432,8 @@ class ExcelServiceImplUnitTest {
         excelService.saveCandles(ticker, interval, response);
     }
 
-    private SimulationResult createSimulationResult(TradingConfig tradingConfig) {
-        return SimulationResult.builder()
+    private BackTestResult createBackTestResult(TradingConfig tradingConfig) {
+        return BackTestResult.builder()
                 .tradingConfig(tradingConfig)
                 .interval(createInterval())
                 .initialBalance(BigDecimal.valueOf(700))
@@ -445,7 +445,7 @@ class ExcelServiceImplUnitTest {
                 .relativeProfit(0.25)
                 .relativeYearProfit(6d)
                 .positions(createPositions(tradingConfig.getTicker()))
-                .operations(createSimulatedOperations(tradingConfig.getTicker()))
+                .operations(createBackTestOperations(tradingConfig.getTicker()))
                 .candles(createCandles())
                 .build();
     }
@@ -456,15 +456,15 @@ class ExcelServiceImplUnitTest {
         return Interval.of(from, to);
     }
 
-    private List<SimulatedPosition> createPositions(String ticker) {
+    private List<BackTestPosition> createPositions(String ticker) {
         return List.of(
-                new SimulatedPosition(ticker, BigDecimal.valueOf(200), 3),
-                new SimulatedPosition(ticker, BigDecimal.valueOf(100), 2)
+                new BackTestPosition(ticker, BigDecimal.valueOf(200), 3),
+                new BackTestPosition(ticker, BigDecimal.valueOf(100), 2)
         );
     }
 
-    private List<SimulatedOperation> createSimulatedOperations(String ticker) {
-        SimulatedOperation operation1 = SimulatedOperation.builder()
+    private List<BackTestOperation> createBackTestOperations(String ticker) {
+        BackTestOperation operation1 = BackTestOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
                 .operationType(OperationType.BUY)
@@ -472,7 +472,7 @@ class ExcelServiceImplUnitTest {
                 .quantity(1)
                 .commission(BigDecimal.valueOf(0.45))
                 .build();
-        SimulatedOperation operation2 = SimulatedOperation.builder()
+        BackTestOperation operation2 = BackTestOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
                 .operationType(OperationType.SELL)
@@ -480,7 +480,7 @@ class ExcelServiceImplUnitTest {
                 .quantity(1)
                 .commission(BigDecimal.valueOf(0.54))
                 .build();
-        SimulatedOperation operation3 = SimulatedOperation.builder()
+        BackTestOperation operation3 = BackTestOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
                 .operationType(OperationType.BUY)
@@ -488,7 +488,7 @@ class ExcelServiceImplUnitTest {
                 .quantity(3)
                 .commission(BigDecimal.valueOf(0.48))
                 .build();
-        SimulatedOperation operation4 = SimulatedOperation.builder()
+        BackTestOperation operation4 = BackTestOperation.builder()
                 .ticker(ticker)
                 .dateTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
                 .operationType(OperationType.BUY)
@@ -524,7 +524,7 @@ class ExcelServiceImplUnitTest {
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }
 
-    private int getExpectedRowCount(SimulationResult result) {
+    private int getExpectedRowCount(BackTestResult result) {
         return MINIMUM_ROWS_COUNT +
                 result.getTradingConfig().getStrategyParams().size() +
                 result.getPositions().size() +

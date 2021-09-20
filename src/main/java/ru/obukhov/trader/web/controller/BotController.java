@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
-import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
-import ru.obukhov.trader.web.model.SimulationResult;
-import ru.obukhov.trader.web.model.exchange.SimulateRequest;
-import ru.obukhov.trader.web.model.exchange.SimulateResponse;
+import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
+import ru.obukhov.trader.web.model.BackTestResult;
+import ru.obukhov.trader.web.model.exchange.BackTestRequest;
+import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -28,24 +28,24 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class BotController {
 
-    private final Simulator simulator;
+    private final BackTester backTester;
     private final ScheduledBotProperties scheduledBotProperties;
 
-    @PostMapping("/simulate")
-    @ApiOperation("Simulates bot trading on historical data and returns result of it")
+    @PostMapping("/back-test")
+    @ApiOperation("Performs back test of bot trading on historical data and returns result of it")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public SimulateResponse simulate(@Valid @RequestBody final SimulateRequest request) {
+    public BackTestResponse backTest(@Valid @RequestBody final BackTestRequest request) {
 
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        final List<SimulationResult> results = simulator.simulate(request.getTradingConfigs(), request.getBalanceConfig(), interval, saveToFiles);
+        final List<BackTestResult> results = backTester.test(request.getTradingConfigs(), request.getBalanceConfig(), interval, saveToFiles);
 
-        return new SimulateResponse(results);
+        return new BackTestResponse(results);
 
     }
 

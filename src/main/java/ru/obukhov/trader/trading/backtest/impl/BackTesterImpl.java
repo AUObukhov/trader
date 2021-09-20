@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.simulation.impl;
+package ru.obukhov.trader.trading.backtest.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,21 +13,21 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.MathUtils;
-import ru.obukhov.trader.config.properties.SimulationProperties;
+import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
+import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.interfaces.BotFactory;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.simulation.interfaces.Simulator;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
+import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BackTestPosition;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.SimulatedOperation;
-import ru.obukhov.trader.web.model.SimulatedPosition;
-import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
@@ -50,11 +50,11 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Simulates trading by bots
+ * Back tests trading by bots
  */
 @Slf4j
 @Service
-public class SimulatorImpl implements Simulator {
+public class BackTesterImpl implements BackTester {
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
@@ -63,59 +63,59 @@ public class SimulatorImpl implements Simulator {
     private final ExecutorService executor;
     private final TradingStrategyFactory strategyFactory;
 
-    public SimulatorImpl(
+    public BackTesterImpl(
             final ExcelService excelService,
             final BotFactory fakeBotFactory,
             final TradingStrategyFactory strategyFactory,
-            final SimulationProperties simulationProperties
+            final BackTestProperties backTestProperties
     ) {
         this.excelService = excelService;
         this.fakeBotFactory = fakeBotFactory;
         this.strategyFactory = strategyFactory;
-        this.executor = Executors.newFixedThreadPool(simulationProperties.getThreadCount());
+        this.executor = Executors.newFixedThreadPool(backTestProperties.getThreadCount());
     }
 
     /**
-     * @param tradingConfigs trading configurations of each simulation
-     * @param balanceConfig  all simulations balance configuration
-     * @param interval       all simulations interval
-     * @param saveToFiles    flag to save simulations results to file
-     * @return map of simulations results by tickers
+     * @param tradingConfigs trading configurations of each back test
+     * @param balanceConfig  all back tests balance configuration
+     * @param interval       all back tests interval
+     * @param saveToFiles    flag to save back tests results to file
+     * @return map of back tests results by tickers
      */
     @Override
-    public List<SimulationResult> simulate(
+    public List<BackTestResult> test(
             final List<TradingConfig> tradingConfigs,
             final BalanceConfig balanceConfig,
             final Interval interval,
             final boolean saveToFiles
     ) {
-        log.info("Simulation started");
+        log.info("Back test started");
 
-        ExecutionResult<List<SimulationResult>> executionResult = ExecutionUtils.get(() -> simulate(tradingConfigs, balanceConfig, interval));
+        ExecutionResult<List<BackTestResult>> executionResult = ExecutionUtils.get(() -> test(tradingConfigs, balanceConfig, interval));
 
-        final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
-        log.info("Simulation ended within {}", simulationDurationString);
+        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+        log.info("Back test ended within {}", backTestDurationString);
 
         if (saveToFiles) {
-            saveSimulationResultsSafe(executionResult.getResult());
+            saveBackTestResultsSafe(executionResult.getResult());
         }
 
         return executionResult.getResult();
     }
 
-    private List<SimulationResult> simulate(final List<TradingConfig> tradingConfigs, final BalanceConfig balanceConfig, final Interval interval) {
+    private List<BackTestResult> test(final List<TradingConfig> tradingConfigs, final BalanceConfig balanceConfig, final Interval interval) {
         final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
 
         final Interval finiteInterval = interval.limitByNowIfNull(now);
 
-        final List<CompletableFuture<SimulationResult>> simulationFutures = tradingConfigs.stream()
-                .map(tradingConfig -> startSimulation(tradingConfig, balanceConfig, finiteInterval))
+        final List<CompletableFuture<BackTestResult>> backTestFutures = tradingConfigs.stream()
+                .map(tradingConfig -> startBackTest(tradingConfig, balanceConfig, finiteInterval))
                 .collect(Collectors.toList());
-        return simulationFutures.stream()
+        return backTestFutures.stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(SimulationResult::getFinalTotalBalance).reversed())
+                .sorted(Comparator.comparing(BackTestResult::getFinalTotalBalance).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -124,35 +124,35 @@ public class SimulatorImpl implements Simulator {
         return (FakeBot) fakeBotFactory.createBot(strategy, tradingConfig.getCandleResolution());
     }
 
-    private CompletableFuture<SimulationResult> startSimulation(
+    private CompletableFuture<BackTestResult> startBackTest(
             final TradingConfig tradingConfig,
             final BalanceConfig balanceConfig,
             final Interval interval
     ) {
-        return CompletableFuture.supplyAsync(() -> simulateSafe(tradingConfig, balanceConfig, interval), executor);
+        return CompletableFuture.supplyAsync(() -> backTestSafe(tradingConfig, balanceConfig, interval), executor);
     }
 
-    private SimulationResult simulateSafe(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        log.info("Starting simulation for '{}'", tradingConfig);
+    private BackTestResult backTestSafe(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
+        log.info("Starting back test for '{}'", tradingConfig);
 
-        ExecutionResult<SimulationResult> executionResult = ExecutionUtils.getSafe(() -> simulate(tradingConfig, balanceConfig, interval));
+        ExecutionResult<BackTestResult> executionResult = ExecutionUtils.getSafe(() -> test(tradingConfig, balanceConfig, interval));
 
-        final String simulationDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
 
         if (executionResult.getException() == null) {
-            log.info("Simulation for '{}' succeed within {}", tradingConfig, simulationDurationString);
+            log.info("Back test for '{}' succeed within {}", tradingConfig, backTestDurationString);
             return executionResult.getResult();
         } else {
             final String message = String.format(
-                    "Simulation for '%s' failed within %s with error: %s",
-                    tradingConfig, simulationDurationString, executionResult.getException().getMessage()
+                    "Back test for '%s' failed within %s with error: %s",
+                    tradingConfig, backTestDurationString, executionResult.getException().getMessage()
             );
             log.error(message, executionResult.getException());
-            return createFailedSimulationResult(tradingConfig, balanceConfig, interval, message);
+            return createFailedBackTestResult(tradingConfig, balanceConfig, interval, message);
         }
     }
 
-    private SimulationResult simulate(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
+    private BackTestResult test(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
         final FakeBot bot = createFakeBot(tradingConfig);
 
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
@@ -181,7 +181,7 @@ public class SimulatorImpl implements Simulator {
             moveToNextMinute(ticker, balanceConfig, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createSucceedSimulationResult(tradingConfig, interval, historicalCandles, bot.getFakeTinkoffService());
+        return createSucceedBackTestResult(tradingConfig, interval, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -209,13 +209,13 @@ public class SimulatorImpl implements Simulator {
         }
     }
 
-    private SimulationResult createSucceedSimulationResult(
+    private BackTestResult createSucceedBackTestResult(
             final TradingConfig tradingConfig,
             final Interval interval,
             final List<Candle> candles,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        final List<SimulatedPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(tradingConfig.getBrokerAccountId()), candles);
+        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(tradingConfig.getBrokerAccountId()), candles);
         final Currency currency = getCurrency(fakeTinkoffService, tradingConfig.getTicker());
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
@@ -232,7 +232,7 @@ public class SimulatorImpl implements Simulator {
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
         final List<Operation> operations = fakeTinkoffService.getOperations(tradingConfig.getBrokerAccountId(), interval, tradingConfig.getTicker());
 
-        return SimulationResult.builder()
+        return BackTestResult.builder()
                 .tradingConfig(tradingConfig)
                 .interval(interval)
                 .initialBalance(initialBalance)
@@ -249,13 +249,13 @@ public class SimulatorImpl implements Simulator {
                 .build();
     }
 
-    private SimulationResult createFailedSimulationResult(
+    private BackTestResult createFailedBackTestResult(
             final TradingConfig tradingConfig,
             final BalanceConfig balanceConfig,
             final Interval interval,
             final String message
     ) {
-        return SimulationResult.builder()
+        return BackTestResult.builder()
                 .tradingConfig(tradingConfig)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
@@ -277,20 +277,20 @@ public class SimulatorImpl implements Simulator {
         return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<SimulatedPosition> getPositions(final Collection<PortfolioPosition> portfolioPositions, final List<Candle> candles) {
+    private List<BackTestPosition> getPositions(final Collection<PortfolioPosition> portfolioPositions, final List<Candle> candles) {
         final Candle lastCandle = CollectionsUtils.getLast(candles);
         final BigDecimal currentPrice = lastCandle == null ? null : lastCandle.getClosePrice();
 
         return portfolioPositions.stream()
-                .map(portfolioPosition -> createSimulatedPosition(portfolioPosition, currentPrice))
+                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, currentPrice))
                 .collect(Collectors.toList());
     }
 
-    private SimulatedPosition createSimulatedPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
-        return new SimulatedPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getCount());
+    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
+        return new BackTestPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getCount());
     }
 
-    private BigDecimal getTotalBalance(final BigDecimal balance, final List<SimulatedPosition> positions) {
+    private BigDecimal getTotalBalance(final BigDecimal balance, final List<BackTestPosition> positions) {
         return positions.stream()
                 .map(position -> DecimalUtils.multiply(position.getPrice(), position.getQuantity()))
                 .reduce(balance, BigDecimal::add);
@@ -322,20 +322,20 @@ public class SimulatorImpl implements Simulator {
         return BigDecimal.valueOf(relativeProfit).divide(partOfYear, RoundingMode.HALF_UP).doubleValue();
     }
 
-    private List<SimulatedOperation> getOperations(final List<Operation> operations, final String ticker) {
-        final List<SimulatedOperation> simulatedOperations = operations.stream()
+    private List<BackTestOperation> getOperations(final List<Operation> operations, final String ticker) {
+        final List<BackTestOperation> backTestOperations = operations.stream()
                 .map(operationMapper::map)
                 .collect(Collectors.toList());
-        simulatedOperations.forEach(operation -> operation.setTicker(ticker));
-        return simulatedOperations;
+        backTestOperations.forEach(operation -> operation.setTicker(ticker));
+        return backTestOperations;
     }
 
-    private void saveSimulationResultsSafe(final List<SimulationResult> simulationResults) {
+    private void saveBackTestResultsSafe(final List<BackTestResult> backTestResults) {
         try {
-            log.debug("Saving simulation result to file");
-            excelService.saveSimulationResults(simulationResults);
+            log.debug("Saving back test result to file");
+            excelService.saveBackTestResults(backTestResults);
         } catch (Exception ex) {
-            log.error("Failed to save simulation result to file", ex);
+            log.error("Failed to save back test result to file", ex);
         }
     }
 

@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 
 @ConstructorBinding
 @AllArgsConstructor
-@ConfigurationProperties(prefix = "simulation")
+@ConfigurationProperties(prefix = "back-test")
 @Validated
-public class SimulationProperties {
+public class BackTestProperties {
 
     @Getter
     @NotNull(message = "threadCount is mandatory")

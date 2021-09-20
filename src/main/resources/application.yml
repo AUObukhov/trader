@@ -23,7 +23,7 @@ scheduled-bot:
       indexCoefficient: 0.5
       greedy: true
 
-simulation:
+back-test:
   thread-count: 4
 
 query.throttle:

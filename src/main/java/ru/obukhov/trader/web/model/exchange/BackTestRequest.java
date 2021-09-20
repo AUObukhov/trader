@@ -12,29 +12,29 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
-public class SimulateRequest {
+public class BackTestRequest {
 
     @NotNull(message = "from is mandatory")
     @ApiModelProperty(
-            value = "The simulation start date time",
+            value = "The back test start date time",
             required = true,
             position = 2,
             example = "2019-01-01T00:00:00+03:00")
     private OffsetDateTime from;
 
     @ApiModelProperty(
-            value = "The simulation end date time. Default value is current date time",
+            value = "The back test end date time. Default value is current date time",
             position = 3,
             example = "2020-01-01T00:00:00+03:00"
     )
     private OffsetDateTime to;
 
     @NotNull(message = "balanceConfig is mandatory")
-    @ApiModelProperty(value = "configuration of balance in the simulation", required = true, position = 4)
+    @ApiModelProperty(value = "configuration of balance in the back test", required = true, position = 4)
     private BalanceConfig balanceConfig;
 
     @ApiModelProperty(
-            value = "Flag indicating to save the simulation result to a file. Default value is false",
+            value = "Flag indicating to save the back test result to a file. Default value is false",
             position = 4
     )
     private Boolean saveToFiles;
@@ -42,7 +42,7 @@ public class SimulateRequest {
     @Valid
     @NotEmpty(message = "tradingConfigs is mandatory")
     @ApiModelProperty(
-            value = "List of trading strategies configurations. Separate simulation created for each tradingConfig",
+            value = "List of trading strategies configurations. Separate back test created for each tradingConfig",
             required = true,
             position = 5
     )

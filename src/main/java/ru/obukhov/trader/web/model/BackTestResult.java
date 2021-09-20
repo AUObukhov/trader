@@ -11,15 +11,15 @@ import java.util.List;
 
 @Data
 @Builder
-public class SimulationResult {
+public class BackTestResult {
 
     /**
-     * config of bot for which simulation was ran
+     * config of bot for which back test was ran
      */
     private TradingConfig tradingConfig;
 
     /**
-     * simulation interval
+     * back test interval
      */
     private Interval interval;
 
@@ -39,12 +39,12 @@ public class SimulationResult {
     private BigDecimal weightedAverageInvestment;
 
     /**
-     * currency balance + costs of all position after simulation
+     * currency balance + costs of all position after back test
      */
     private BigDecimal finalTotalBalance;
 
     /**
-     * currency balance after simulation
+     * currency balance after back test
      */
     private BigDecimal finalBalance;
 
@@ -64,19 +64,19 @@ public class SimulationResult {
     private Double relativeYearProfit;
 
     /**
-     * positions after simulation
+     * positions after back test
      */
     @JsonIgnore
-    private List<SimulatedPosition> positions;
+    private List<BackTestPosition> positions;
 
     /**
-     * operations made during simulation
+     * operations made during back test
      */
     @JsonIgnore
-    private List<SimulatedOperation> operations;
+    private List<BackTestOperation> operations;
 
     /**
-     * all candles in simulation {@code interval}
+     * all candles in back test {@code interval}
      */
     @JsonIgnore
     private List<Candle> candles;

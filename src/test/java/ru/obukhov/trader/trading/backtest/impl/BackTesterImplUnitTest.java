@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.simulation.impl;
+package ru.obukhov.trader.trading.backtest.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.SimulationProperties;
+import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -33,10 +33,10 @@ import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
+import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BackTestPosition;
+import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.SimulatedOperation;
-import ru.obukhov.trader.web.model.SimulatedPosition;
-import ru.obukhov.trader.web.model.SimulationResult;
 import ru.obukhov.trader.web.model.TradingConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
@@ -53,7 +53,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 @ExtendWith(MockitoExtension.class)
-class SimulatorImplUnitTest {
+class BackTesterImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
@@ -71,13 +71,13 @@ class SimulatorImplUnitTest {
     @Mock
     private TradingStrategyFactory strategyFactory;
 
-    private final SimulationProperties simulationProperties = new SimulationProperties(2);
+    private final BackTestProperties backTestProperties = new BackTestProperties(2);
 
-    // region simulate tests
+    // region test tests
 
     @Test
-    void simulate_throwsIllegalArgumentException_whenFromIsInFuture() {
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+    void test_throwsIllegalArgumentException_whenFromIsInFuture() {
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -90,15 +90,15 @@ class SimulatorImplUnitTest {
         final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(tradingConfigs, balanceConfig, interval, false),
+                () -> backTester.test(tradingConfigs, balanceConfig, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
     }
 
     @Test
-    void simulate_throwsIllegalArgumentException_whenToIsInFuture() {
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+    void test_throwsIllegalArgumentException_whenToIsInFuture() {
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -111,14 +111,14 @@ class SimulatorImplUnitTest {
         final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> simulator.simulate(tradingConfigs, balanceConfig, interval, false),
+                () -> backTester.test(tradingConfigs, balanceConfig, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
     }
 
     @Test
-    void simulate_returnsResultWithEmptyValues_whenTickerNotFound() {
+    void test_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
         final String ticker = "ticker";
@@ -135,7 +135,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -147,38 +147,38 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
-        Assertions.assertEquals(interval, simulationResult.getInterval());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getInitialBalance());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getTotalInvestment());
-        AssertUtils.assertEquals(0, simulationResult.getFinalTotalBalance());
-        AssertUtils.assertEquals(0, simulationResult.getFinalBalance());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getWeightedAverageInvestment());
-        AssertUtils.assertEquals(0, simulationResult.getAbsoluteProfit());
-        AssertUtils.assertEquals(0.0, simulationResult.getRelativeProfit());
-        AssertUtils.assertEquals(0.0, simulationResult.getRelativeYearProfit());
+        Assertions.assertEquals(tradingConfigs.get(0), backTestResult.getTradingConfig());
+        Assertions.assertEquals(interval, backTestResult.getInterval());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getInitialBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getTotalInvestment());
+        AssertUtils.assertEquals(0, backTestResult.getFinalTotalBalance());
+        AssertUtils.assertEquals(0, backTestResult.getFinalBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(0, backTestResult.getAbsoluteProfit());
+        AssertUtils.assertEquals(0.0, backTestResult.getRelativeProfit());
+        AssertUtils.assertEquals(0.0, backTestResult.getRelativeYearProfit());
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
+                "^Back test for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
                         "strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
                 ticker
         );
-        AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
+        AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_fillsCommonStatistics(@Nullable final String brokerAccountId) {
+    void test_fillsCommonStatistics(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -198,7 +198,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -239,39 +239,39 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertEquals(tradingConfigs.get(0), simulationResult.getTradingConfig());
-        Assertions.assertEquals(interval, simulationResult.getInterval());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getInitialBalance());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getTotalInvestment());
+        Assertions.assertEquals(tradingConfigs.get(0), backTestResult.getTradingConfig());
+        Assertions.assertEquals(interval, backTestResult.getInterval());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getInitialBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getTotalInvestment());
 
         final BigDecimal positionsPrice = DecimalUtils.multiply(candle4.getClosePrice(), positionLotsCount);
         final BigDecimal expectedFinalTotalBalance = currentBalance.add(positionsPrice);
-        AssertUtils.assertEquals(expectedFinalTotalBalance, simulationResult.getFinalTotalBalance());
+        AssertUtils.assertEquals(expectedFinalTotalBalance, backTestResult.getFinalTotalBalance());
 
-        AssertUtils.assertEquals(currentBalance, simulationResult.getFinalBalance());
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), simulationResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(currentBalance, backTestResult.getFinalBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getWeightedAverageInvestment());
 
         final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(balanceConfig.getInitialBalance()).add(positionsPrice);
-        AssertUtils.assertEquals(expectedAbsoluteProfit, simulationResult.getAbsoluteProfit());
+        AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.getAbsoluteProfit());
 
-        AssertUtils.assertEquals(1.1, simulationResult.getRelativeProfit());
-        AssertUtils.assertEquals(115711.2, simulationResult.getRelativeYearProfit());
+        AssertUtils.assertEquals(1.1, backTestResult.getRelativeProfit());
+        AssertUtils.assertEquals(115711.2, backTestResult.getRelativeYearProfit());
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_callsBalanceIncrement(@Nullable final String brokerAccountId) {
+    void test_callsBalanceIncrement(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -291,7 +291,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -332,15 +332,15 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
 
         Mockito.verify(fakeTinkoffService, Mockito.times(5))
                 .incrementBalance(
@@ -352,7 +352,7 @@ class SimulatorImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_fillsPositions(@Nullable final String brokerAccountId) {
+    void test_fillsPositions(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -372,7 +372,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -411,28 +411,28 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        final List<SimulatedPosition> positions = simulationResult.getPositions();
+        final List<BackTestPosition> positions = backTestResult.getPositions();
         Assertions.assertEquals(1, positions.size());
-        final SimulatedPosition simulatedPosition = positions.get(0);
-        Assertions.assertEquals(ticker, simulatedPosition.getTicker());
-        Assertions.assertEquals(candle4.getClosePrice(), simulatedPosition.getPrice());
-        Assertions.assertEquals(positionLotsCount, simulatedPosition.getQuantity());
+        final BackTestPosition backTestPosition = positions.get(0);
+        Assertions.assertEquals(ticker, backTestPosition.getTicker());
+        Assertions.assertEquals(candle4.getClosePrice(), backTestPosition.getPrice());
+        Assertions.assertEquals(positionLotsCount, backTestPosition.getQuantity());
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_fillsOperations(@Nullable final String brokerAccountId) {
+    void test_fillsOperations(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -447,7 +447,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -485,31 +485,31 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        List<SimulatedOperation> resultOperations = simulationResult.getOperations();
+        List<BackTestOperation> resultOperations = backTestResult.getOperations();
         Assertions.assertEquals(1, resultOperations.size());
-        final SimulatedOperation simulatedOperation = resultOperations.get(0);
-        Assertions.assertEquals(ticker, simulatedOperation.getTicker());
-        Assertions.assertEquals(operationDateTime, simulatedOperation.getDateTime());
-        Assertions.assertEquals(OperationType.BUY, simulatedOperation.getOperationType());
-        AssertUtils.assertEquals(operationPrice, simulatedOperation.getPrice());
-        Assertions.assertEquals(operationQuantity, simulatedOperation.getQuantity());
-        AssertUtils.assertEquals(operationCommission, simulatedOperation.getCommission());
+        final BackTestOperation backTestOperation = resultOperations.get(0);
+        Assertions.assertEquals(ticker, backTestOperation.getTicker());
+        Assertions.assertEquals(operationDateTime, backTestOperation.getDateTime());
+        Assertions.assertEquals(OperationType.BUY, backTestOperation.getOperationType());
+        AssertUtils.assertEquals(operationPrice, backTestOperation.getPrice());
+        Assertions.assertEquals(operationQuantity, backTestOperation.getQuantity());
+        AssertUtils.assertEquals(operationCommission, backTestOperation.getCommission());
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_fillsCandles(@Nullable final String brokerAccountId) {
+    void test_fillsCandles(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -529,7 +529,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -565,15 +565,15 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        List<Candle> candles = simulationResult.getCandles();
+        List<Candle> candles = backTestResult.getCandles();
         Assertions.assertEquals(5, candles.size());
         Assertions.assertSame(candle0, candles.get(0));
         Assertions.assertSame(candle1, candles.get(1));
@@ -581,7 +581,7 @@ class SimulatorImplUnitTest {
         Assertions.assertSame(candle3, candles.get(3));
         Assertions.assertSame(candle4, candles.get(4));
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
                 .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
@@ -591,7 +591,7 @@ class SimulatorImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(@Nullable final String brokerAccountId) {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -611,7 +611,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -631,16 +631,16 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertTrue(backTestResult.getCandles().isEmpty());
+        Assertions.assertNull(backTestResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
                 .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
@@ -650,7 +650,7 @@ class SimulatorImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(@Nullable final String brokerAccountId) {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -670,7 +670,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
@@ -691,16 +691,16 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertTrue(simulationResult.getCandles().isEmpty());
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertTrue(backTestResult.getCandles().isEmpty());
+        Assertions.assertNull(backTestResult.getError());
 
         Mockito.verify(fakeBot, Mockito.times(5))
                 .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
@@ -710,7 +710,7 @@ class SimulatorImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_callsSaveToFile_whenSaveToFilesIsTrue(@Nullable final String brokerAccountId) {
+    void test_callsSaveToFile_whenSaveToFilesIsTrue(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -730,7 +730,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -755,22 +755,22 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, true);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, true);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
-        Assertions.assertNull(simulationResult.getError());
+        final BackTestResult backTestResult = backTestResults.get(0);
+        Assertions.assertNull(backTestResult.getError());
 
-        Mockito.verify(excelService, Mockito.only()).saveSimulationResults(Mockito.anyCollection());
+        Mockito.verify(excelService, Mockito.only()).saveBackTestResults(Mockito.anyCollection());
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_neverCallsSaveToFile_whenSaveToFilesIsFalse(@Nullable final String brokerAccountId) {
+    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -790,7 +790,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -815,22 +815,22 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
-        Assertions.assertNull(simulationResult.getError());
+        final BackTestResult backTestResult = backTestResults.get(0);
+        Assertions.assertNull(backTestResult.getError());
 
-        Mockito.verify(excelService, Mockito.never()).saveSimulationResults(Mockito.any());
+        Mockito.verify(excelService, Mockito.never()).saveBackTestResults(Mockito.any());
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_returnsZeroInvestmentsAndProfits_whenNoInvestments(@Nullable final String brokerAccountId) {
+    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -850,7 +850,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, null, BALANCE_INCREMENT_CRON);
 
@@ -874,20 +874,20 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
 
-        AssertUtils.assertEquals(0, simulationResult.getTotalInvestment());
-        AssertUtils.assertEquals(0, simulationResult.getWeightedAverageInvestment());
-        AssertUtils.assertEquals(0, simulationResult.getRelativeProfit());
-        AssertUtils.assertEquals(0, simulationResult.getRelativeYearProfit());
+        AssertUtils.assertEquals(0, backTestResult.getTotalInvestment());
+        AssertUtils.assertEquals(0, backTestResult.getWeightedAverageInvestment());
+        AssertUtils.assertEquals(0, backTestResult.getRelativeProfit());
+        AssertUtils.assertEquals(0, backTestResult.getRelativeYearProfit());
 
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
@@ -895,7 +895,7 @@ class SimulatorImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_catchesSimulationException(@Nullable final String brokerAccountId) {
+    void test_catchesBackTestException(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -909,7 +909,7 @@ class SimulatorImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
                 .thenReturn(fakeBot);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -921,26 +921,26 @@ class SimulatorImplUnitTest {
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
         final String expectedErrorPattern = String.format(
-                "^Simulation for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
                         "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
                 brokerAccountId, ticker, mockedExceptionMessage
         );
-        AssertUtils.assertMatchesRegex(simulationResult.getError(), expectedErrorPattern);
+        AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void simulate_catchesSaveToFileException(@Nullable final String brokerAccountId) {
+    void test_catchesSaveToFileException(@Nullable final String brokerAccountId) {
 
         // arrange
 
@@ -954,7 +954,7 @@ class SimulatorImplUnitTest {
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
-        final SimulatorImpl simulator = new SimulatorImpl(excelService, fakeBotFactory, strategyFactory, simulationProperties);
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -979,19 +979,19 @@ class SimulatorImplUnitTest {
 
         Mockito.doThrow(new IllegalArgumentException())
                 .when(excelService)
-                .saveSimulationResults(Mockito.anyCollection());
+                .saveBackTestResults(Mockito.anyCollection());
 
         // act
 
-        final List<SimulationResult> simulationResults = simulator.simulate(tradingConfigs, balanceConfig, interval, true);
+        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, true);
 
         // assert
 
-        Assertions.assertEquals(1, simulationResults.size());
+        Assertions.assertEquals(1, backTestResults.size());
 
-        final SimulationResult simulationResult = simulationResults.get(0);
+        final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertNull(simulationResult.getError());
+        Assertions.assertNull(backTestResult.getError());
     }
 
     private void mockStrategy(TradingConfig tradingConfig, AbstractTradingStrategy strategy) {

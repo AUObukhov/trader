@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimulatedPosition {
+public class BackTestPosition {
 
     private String ticker;
 

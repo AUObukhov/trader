@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
-class SimulationPropertiesContextTest {
+class BackTestPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withUserConfiguration(EnableConfigurationPropertiesConfiguration.class)
@@ -16,13 +16,13 @@ class SimulationPropertiesContextTest {
 
     @Test
     void beanCreated_andValueInitialized_whenPropertiesFilled() {
-        contextRunner.withPropertyValues("simulation.thread-count: 7")
+        contextRunner.withPropertyValues("back-test.thread-count: 7")
                 .run(context -> {
                     Assertions.assertNull(context.getStartupFailure());
 
-                    final SimulationProperties simulationProperties = context.getBean(SimulationProperties.class);
+                    final BackTestProperties backTestProperties = context.getBean(BackTestProperties.class);
 
-                    Assertions.assertEquals(7, simulationProperties.getThreadCount());
+                    Assertions.assertEquals(7, backTestProperties.getThreadCount());
                 });
     }
 
@@ -30,7 +30,7 @@ class SimulationPropertiesContextTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenThreadCountIsNull() {
-        contextRunner.withPropertyValues("simulation.thread-count:")
+        contextRunner.withPropertyValues("back-test.thread-count:")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("threadCount is mandatory"));
     }
 
@@ -38,7 +38,7 @@ class SimulationPropertiesContextTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenThreadCountIsNegative() {
-        contextRunner.withPropertyValues("simulation.thread-count: -1")
+        contextRunner.withPropertyValues("back-test.thread-count: -1")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("threadCount must be positive"));
     }
 
@@ -46,11 +46,11 @@ class SimulationPropertiesContextTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenThreadCountIsZero() {
-        contextRunner.withPropertyValues("simulation.thread-count: 0")
+        contextRunner.withPropertyValues("back-test.thread-count: 0")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("threadCount must be positive"));
     }
 
-    @EnableConfigurationProperties(SimulationProperties.class)
+    @EnableConfigurationProperties(BackTestProperties.class)
     private static class EnableConfigurationPropertiesConfiguration {
     }
 

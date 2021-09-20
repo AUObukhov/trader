@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.util.EnumMap;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * POJO keeping portfolio data for simulation purposes
+ * POJO keeping portfolio data for back testing purposes
  */
 @Data
 public class FakePortfolio {
@@ -28,6 +28,6 @@ public class FakePortfolio {
     private final Map<String, PortfolioPosition> tickersToPositions = new HashMap<>();
 
     @NotNull
-    private final Set<SimulatedOperation> operations = new HashSet<>();
+    private final Set<BackTestOperation> operations = new HashSet<>();
 
 }

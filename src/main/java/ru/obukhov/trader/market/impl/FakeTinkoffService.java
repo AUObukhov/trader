@@ -17,7 +17,7 @@ import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
-import ru.obukhov.trader.web.model.SimulatedOperation;
+import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -178,14 +178,14 @@ public class FakeTinkoffService implements TinkoffService {
      */
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker) {
-        Stream<SimulatedOperation> operationsStream = fakeContext.getOperations(brokerAccountId).stream()
+        Stream<BackTestOperation> operationsStream = fakeContext.getOperations(brokerAccountId).stream()
                 .filter(operation -> interval.contains(operation.getDateTime()));
         if (ticker != null) {
             operationsStream = operationsStream.filter(operation -> ticker.equals(operation.getTicker()));
         }
 
         return operationsStream
-                .sorted(Comparator.comparing(SimulatedOperation::getDateTime))
+                .sorted(Comparator.comparing(BackTestOperation::getDateTime))
                 .map(operationMapper::map)
                 .collect(Collectors.toList());
     }
@@ -201,7 +201,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) {
-        throw new UnsupportedOperationException("Only market orders supported in simulation");
+        throw new UnsupportedOperationException("Only market orders supported in back test");
     }
 
     /**
@@ -357,7 +357,7 @@ public class FakeTinkoffService implements TinkoffService {
             final BigDecimal commissionAmount,
             final OperationType operationType
     ) {
-        final SimulatedOperation operation = SimulatedOperation.builder()
+        final BackTestOperation operation = BackTestOperation.builder()
                 .ticker(ticker)
                 .price(price)
                 .quantity(count)
@@ -414,7 +414,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     // endregion
 
-    // region methods for simulation
+    // region methods for back test
 
     @Override
     public OffsetDateTime getCurrentDateTime() {

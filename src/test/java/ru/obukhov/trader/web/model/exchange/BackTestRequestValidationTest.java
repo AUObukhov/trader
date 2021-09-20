@@ -14,18 +14,18 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-class SimulateRequestValidationTest {
+class BackTestRequestValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
 
         AssertUtils.assertNoViolations(request);
     }
 
     @Test
     void validationFails_whenFromIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.setFrom(null);
 
         AssertUtils.assertViolation(request, "from is mandatory");
@@ -33,7 +33,7 @@ class SimulateRequestValidationTest {
 
     @Test
     void validationFails_whenBalanceConfigIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.setBalanceConfig(null);
 
         AssertUtils.assertViolation(request, "balanceConfig is mandatory");
@@ -43,7 +43,7 @@ class SimulateRequestValidationTest {
 
     @Test
     void validationFails_whenBotsConfigsIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.setTradingConfigs(null);
 
         AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
@@ -51,7 +51,7 @@ class SimulateRequestValidationTest {
 
     @Test
     void validationFails_whenBotsConfigsIsEmpty() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.setTradingConfigs(Collections.emptyList());
 
         AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
@@ -59,7 +59,7 @@ class SimulateRequestValidationTest {
 
     @Test
     void validationFails_whenCandleResolutionIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.getTradingConfigs().get(0).setCandleResolution(null);
 
         AssertUtils.assertViolation(request, "candleResolution is mandatory");
@@ -67,7 +67,7 @@ class SimulateRequestValidationTest {
 
     @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
-        final SimulateRequest request = createValidSimulationRequest();
+        final BackTestRequest request = createValidBackTestRequest();
         request.getTradingConfigs().get(0).setStrategyType(null);
 
         AssertUtils.assertViolation(request, "strategyType is mandatory");
@@ -75,8 +75,8 @@ class SimulateRequestValidationTest {
 
     // endregion
 
-    private SimulateRequest createValidSimulationRequest() throws ParseException {
-        final SimulateRequest request = new SimulateRequest();
+    private BackTestRequest createValidBackTestRequest() throws ParseException {
+        final BackTestRequest request = new BackTestRequest();
 
         final String brokerAccountId = "2000124699";
         final String ticker = "ticker";
