@@ -12,11 +12,9 @@ import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedChart;
 import ru.obukhov.trader.common.model.poi.ExtendedChartData;
@@ -439,15 +437,6 @@ public class ExcelServiceImpl implements ExcelService {
         if (values.stream().anyMatch(Objects::nonNull)) {
             addSeries(chartData, timesDataSource, values.toArray(new BigDecimal[0]), markerProperties, seriesColor);
         }
-    }
-
-    @Nullable
-    private BigDecimal getValueAtTime(final List<Point> points, final OffsetDateTime time) {
-        return points.stream()
-                .filter(extreme -> extreme.getTime().equals(time))
-                .findFirst()
-                .map(Point::getValue)
-                .orElse(null);
     }
 
     private void addOperations(
