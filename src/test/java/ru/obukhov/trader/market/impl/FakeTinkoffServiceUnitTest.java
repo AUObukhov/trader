@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 @ExtendWith(MockitoExtension.class)
 class FakeTinkoffServiceUnitTest {
 
-    private static final TradingProperties TRADING_PROPERTIES = TestData.createTradingProperties();
+    private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
     private MarketService marketService;
@@ -51,7 +51,7 @@ class FakeTinkoffServiceUnitTest {
 
     @BeforeEach
     void setUpEach() {
-        this.service = new FakeTinkoffService(TRADING_PROPERTIES, 0.003, marketService, realTinkoffService);
+        this.service = new FakeTinkoffService(MARKET_PROPERTIES, 0.003, marketService, realTinkoffService);
     }
 
     // region init tests
@@ -223,7 +223,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), TRADING_PROPERTIES.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), MARKET_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
@@ -238,7 +238,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), TRADING_PROPERTIES.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), MARKET_PROPERTIES.getWorkStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }

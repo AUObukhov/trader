@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 public class ScheduledBot extends AbstractBot {
 
     private final ScheduledBotProperties scheduledBotProperties;
-    private final TradingProperties tradingProperties;
+    private final MarketProperties marketProperties;
 
     public ScheduledBot(
             final MarketService marketService,
@@ -28,7 +28,7 @@ public class ScheduledBot extends AbstractBot {
             final PortfolioService portfolioService,
             final TradingStrategy strategy,
             final ScheduledBotProperties scheduledBotProperties,
-            final TradingProperties tradingProperties
+            final MarketProperties marketProperties
     ) {
         super(
                 marketService,
@@ -41,7 +41,7 @@ public class ScheduledBot extends AbstractBot {
         );
 
         this.scheduledBotProperties = scheduledBotProperties;
-        this.tradingProperties = tradingProperties;
+        this.marketProperties = marketProperties;
     }
 
     @Scheduled(fixedDelayString = "${scheduled-bot.delay}")
@@ -52,7 +52,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        if (!DateUtils.isWorkTimeNow(tradingProperties.getWorkStartTime(), tradingProperties.getWorkDuration())) {
+        if (!DateUtils.isWorkTimeNow(marketProperties.getWorkStartTime(), marketProperties.getWorkDuration())) {
             log.debug("Not work time. Do nothing");
             return;
         }

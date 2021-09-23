@@ -1,7 +1,7 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import org.springframework.stereotype.Service;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
@@ -20,18 +20,18 @@ import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 public class FakeBotFactory extends AbstractBotFactory {
 
     public FakeBotFactory(
-            final TradingProperties tradingProperties,
+            final MarketProperties marketProperties,
             final MarketService realMarketService,
             final RealTinkoffService realTinkoffService
     ) {
-        super(tradingProperties, realMarketService, realTinkoffService);
+        super(marketProperties, realMarketService, realTinkoffService);
     }
 
     @Override
     public Bot createBot(final AbstractTradingStrategy strategy, final CandleResolution candleResolution) {
         final FakeTinkoffService fakeTinkoffService =
-                new FakeTinkoffService(tradingProperties, strategy.getCommission(), realMarketService, realTinkoffService);
-        final MarketService fakeMarketService = new MarketServiceImpl(tradingProperties, fakeTinkoffService);
+                new FakeTinkoffService(marketProperties, strategy.getCommission(), realMarketService, realTinkoffService);
+        final MarketService fakeMarketService = new MarketServiceImpl(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
         final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);

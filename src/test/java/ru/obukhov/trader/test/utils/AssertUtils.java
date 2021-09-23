@@ -376,4 +376,20 @@ public class AssertUtils {
 
     // endregion
 
+    public static void assertContextStartupFailed(final AssertableApplicationContext context, final String... messageSubstrings) {
+        final Throwable startupFailure = context.getStartupFailure();
+
+        Assertions.assertNotNull(startupFailure);
+
+        final String message = getBindValidationExceptionMessage(startupFailure);
+        for (final String substring : messageSubstrings) {
+            Assertions.assertTrue(message.contains(substring));
+        }
+    }
+
+    private String getBindValidationExceptionMessage(final Throwable startupFailure) {
+        final BindValidationException bindValidationException = (BindValidationException) startupFailure.getCause().getCause();
+        return bindValidationException.getMessage();
+    }
+
 }

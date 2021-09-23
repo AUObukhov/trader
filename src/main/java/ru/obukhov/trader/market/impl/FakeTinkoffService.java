@@ -8,7 +8,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ValidationUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  */
 public class FakeTinkoffService implements TinkoffService {
 
-    private final TradingProperties tradingProperties;
+    private final MarketProperties marketProperties;
     private final double commission;
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
@@ -60,12 +60,12 @@ public class FakeTinkoffService implements TinkoffService {
     private FakeContext fakeContext;
 
     public FakeTinkoffService(
-            final TradingProperties tradingProperties,
+            final MarketProperties marketProperties,
             final double commission,
             final MarketService marketService,
             final RealTinkoffService realTinkoffService
     ) {
-        this.tradingProperties = tradingProperties;
+        this.marketProperties = marketProperties;
         this.commission = commission;
         this.marketService = marketService;
         this.realTinkoffService = realTinkoffService;
@@ -102,8 +102,8 @@ public class FakeTinkoffService implements TinkoffService {
 
         final OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(
                 currentDateTime,
-                tradingProperties.getWorkStartTime(),
-                tradingProperties.getWorkDuration()
+                marketProperties.getWorkStartTime(),
+                marketProperties.getWorkDuration()
         );
 
         this.fakeContext = new FakeContext(shiftedCurrentDateTime);
@@ -120,8 +120,8 @@ public class FakeTinkoffService implements TinkoffService {
     public OffsetDateTime nextMinute() {
         final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(
                 fakeContext.getCurrentDateTime(),
-                tradingProperties.getWorkStartTime(),
-                tradingProperties.getWorkDuration()
+                marketProperties.getWorkStartTime(),
+                marketProperties.getWorkDuration()
         );
         fakeContext.setCurrentDateTime(nextWorkMinute);
 

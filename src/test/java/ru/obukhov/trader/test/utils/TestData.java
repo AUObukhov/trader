@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -274,9 +274,9 @@ public class TestData {
         return new CronExpression("0 * * * * ?");
     }
 
-    public static TradingProperties createTradingProperties() {
+    public static MarketProperties createMarketProperties() {
         final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
-        return new TradingProperties(false, "token", workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
+        return new MarketProperties(workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
     }
 
 }

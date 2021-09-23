@@ -1,5 +1,8 @@
 trading:
+  sandbox: true
   token: i identify myself as token
+
+market:
   work-start-time: 12:00:00+03:00
   work-duration: 480
   consecutive-empty-days-limit: 5

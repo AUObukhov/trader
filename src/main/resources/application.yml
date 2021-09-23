@@ -1,5 +1,7 @@
 trading:
   sandbox: false
+
+market:
   work-start-time: 07:00:00+03:00
   work-duration: 720
   consecutive-empty-days-limit: 7

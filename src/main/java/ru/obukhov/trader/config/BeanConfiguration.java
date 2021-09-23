@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
-import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -37,8 +37,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketService realMarketService(final TradingProperties tradingProperties, final TinkoffService realTinkoffService) {
-        return new MarketServiceImpl(tradingProperties, realTinkoffService);
+    public MarketService realMarketService(final MarketProperties marketProperties, final TinkoffService realTinkoffService) {
+        return new MarketServiceImpl(marketProperties, realTinkoffService);
     }
 
     @Bean
@@ -74,7 +74,7 @@ public class BeanConfiguration {
             final OrdersService ordersService,
             final PortfolioService portfolioService,
             final ScheduledBotProperties scheduledBotProperties,
-            final TradingProperties tradingProperties,
+            final MarketProperties marketProperties,
             final TradingStrategyFactory strategyFactory
     ) {
         return new ScheduledBot(
@@ -84,7 +84,7 @@ public class BeanConfiguration {
                 portfolioService,
                 strategyFactory.createStrategy(scheduledBotProperties.getTradingConfig()),
                 scheduledBotProperties,
-                tradingProperties
+                marketProperties
         );
 
     }

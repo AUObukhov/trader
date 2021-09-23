@@ -8,7 +8,7 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MarketServiceImpl implements MarketService {
 
-    private final TradingProperties tradingProperties;
+    private final MarketProperties marketProperties;
     private final TinkoffService tinkoffService;
 
     /**
@@ -56,7 +56,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private List<Candle> getAllCandlesByDays(final String ticker, final Interval interval, final CandleResolution candleResolution) {
-        final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), tradingProperties.getStartDate());
+        final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), marketProperties.getStartDate());
         final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
 
         final List<Interval> subIntervals = Interval.of(innerFrom, innerTo).splitIntoDailyIntervals();
@@ -64,7 +64,7 @@ public class MarketServiceImpl implements MarketService {
 
         final List<List<Candle>> candles = new ArrayList<>();
         int emptyDaysCount = 0;
-        while (listIterator.hasPrevious() && emptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit()) {
+        while (listIterator.hasPrevious() && emptyDaysCount <= marketProperties.getConsecutiveEmptyDaysLimit()) {
             final Interval subInterval = listIterator.previous();
             final List<Candle> currentCandles = loadDayCandles(ticker, subInterval, candleResolution);
             if (currentCandles.isEmpty()) {
@@ -146,10 +146,10 @@ public class MarketServiceImpl implements MarketService {
      */
     @Override
     public Candle getLastCandle(final String ticker, final OffsetDateTime to) {
-        final OffsetDateTime candlesFrom = to.minusDays(tradingProperties.getConsecutiveEmptyDaysLimit());
+        final OffsetDateTime candlesFrom = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit());
 
         List<Interval> intervals = Interval.of(candlesFrom, to).splitIntoDailyIntervals();
-        intervals = CollectionsUtils.getTail(intervals, tradingProperties.getConsecutiveEmptyDaysLimit() + 1);
+        intervals = CollectionsUtils.getTail(intervals, marketProperties.getConsecutiveEmptyDaysLimit() + 1);
         final ListIterator<Interval> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             final Interval interval = listIterator.previous();
@@ -201,7 +201,7 @@ public class MarketServiceImpl implements MarketService {
             }
 
             interval = interval.minusDays(1);
-        } while (candles.size() < limit && consecutiveEmptyDaysCount <= tradingProperties.getConsecutiveEmptyDaysLimit());
+        } while (candles.size() < limit && consecutiveEmptyDaysCount <= marketProperties.getConsecutiveEmptyDaysLimit());
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);
