@@ -11,7 +11,6 @@ import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import ru.obukhov.trader.common.model.Interval;
@@ -61,11 +60,8 @@ public class ExcelServiceImpl implements ExcelService {
     private static final int CHART_HEIGHT = 40;
     private static final short MARKER_SIZE = (short) 10;
 
-    private static final MarkerProperties SELL_OPERATION_MARKER_PROPERTIES =
-            new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.GREEN);
-
-    private static final MarkerProperties BUY_OPERATION_MARKER_PROPERTIES =
-            new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.RED);
+    private static final MarkerProperties SELL_OPERATION_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.DIAMOND, Color.GREEN);
+    private static final MarkerProperties BUY_OPERATION_MARKER_PROPERTIES = new MarkerProperties(MARKER_SIZE, MarkerStyle.TRIANGLE, Color.RED);
 
     private final ExcelFileService excelFileService;
 
@@ -98,7 +94,6 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    @NotNull
     private ExtendedWorkbook createWorkBook() {
         final ExtendedWorkbook workbook = new ExtendedWorkbook(new XSSFWorkbook());
 
@@ -137,12 +132,7 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithOperations(sheet, result.getCandles(), result.getOperations());
     }
 
-    private void createSheet(
-            final ExtendedWorkbook workbook,
-            final String ticker,
-            final Interval interval,
-            final GetCandlesResponse response
-    ) {
+    private void createSheet(final ExtendedWorkbook workbook, final String ticker, final Interval interval, final GetCandlesResponse response) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
 
         putTicker(sheet, ticker);
@@ -294,11 +284,13 @@ public class ExcelServiceImpl implements ExcelService {
             headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
             for (final BackTestOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
-                row.createCells(operation.getDateTime(),
+                row.createCells(
+                        operation.getDateTime(),
                         operation.getOperationType().name(),
                         operation.getPrice(),
                         operation.getQuantity(),
-                        operation.getCommission());
+                        operation.getCommission()
+                );
             }
         }
     }
@@ -306,13 +298,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void putCandles(final ExtendedSheet sheet, final List<Candle> candles) {
         sheet.addRow();
         sheet.addRow().createUnitedCell("Свечи", 6);
-        sheet.addRow().createCells(
-                "Дата-время",
-                "Цена открытия",
-                "Цена закрытия",
-                "Набольшая цена",
-                "Наименьшая цена"
-        );
+        sheet.addRow().createCells("Дата-время", "Цена открытия", "Цена закрытия", "Набольшая цена", "Наименьшая цена");
 
         for (final Candle candle : candles) {
             putCandle(sheet, candle);
@@ -321,28 +307,17 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putCandle(final ExtendedSheet sheet, final Candle candle) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells(
-                candle.getTime(),
-                candle.getOpenPrice(),
-                candle.getClosePrice(),
-                candle.getHighestPrice(),
-                candle.getLowestPrice()
-        );
+        row.createCells(candle.getTime(), candle.getOpenPrice(), candle.getClosePrice(), candle.getHighestPrice(), candle.getLowestPrice());
     }
 
     private void putChartWithAverages(final ExtendedSheet sheet, final GetCandlesResponse response) {
         final ExtendedChart chart = createChart(sheet);
-        final ExtendedChartData chartData =
-                chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
+        final ExtendedChartData chartData = chart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
         addCandles(chartData, response);
         chart.plot(chartData);
     }
 
-    private void putChartWithOperations(
-            final ExtendedSheet sheet,
-            final List<Candle> candles,
-            final List<BackTestOperation> operations
-    ) {
+    private void putChartWithOperations(final ExtendedSheet sheet, final List<Candle> candles, final List<BackTestOperation> operations) {
         if (CollectionUtils.isNotEmpty(candles)) {
             final ExtendedChart chart = createChart(sheet);
             final ExtendedChartData chartData =
@@ -416,11 +391,7 @@ public class ExcelServiceImpl implements ExcelService {
         return XDDFDataSourcesFactory.fromArray(times);
     }
 
-    private void addOpenPrices(
-            final ExtendedChartData chartData,
-            final XDDFCategoryDataSource timesDataSource,
-            final List<Candle> candles
-    ) {
+    private void addOpenPrices(final ExtendedChartData chartData, final XDDFCategoryDataSource timesDataSource, final List<Candle> candles) {
         final BigDecimal[] prices = candles.stream()
                 .map(Candle::getOpenPrice)
                 .toArray(BigDecimal[]::new);
@@ -489,4 +460,5 @@ public class ExcelServiceImpl implements ExcelService {
         final XDDFNumericalDataSource<Number> numericalDataSource = XDDFDataSourcesFactory.fromArray(numbers);
         chartData.addSeries(timesDataSource, numericalDataSource, markerProperties, seriesColor);
     }
+
 }
