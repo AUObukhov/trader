@@ -22,7 +22,7 @@ import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BackTestPosition;
 import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
 
@@ -56,18 +56,18 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     @Test
-    void test_returnsBadRequest_whenTradingConfigsIsNull() throws Exception {
+    void test_returnsBadRequest_whenBotConfigsIsNull() throws Exception {
         test_returnsBadRequest_withError(
-                "BackTestRequest/BackTestRequest_tradingConfigsIsNull.json",
-                "tradingConfigs is mandatory"
+                "BackTestRequest/BackTestRequest_botConfigsIsNull.json",
+                "botConfigs is mandatory"
         );
     }
 
     @Test
     void test_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
         test_returnsBadRequest_withError(
-                "BackTestRequest/BackTestRequest_tradingConfigsIsEmpty.json",
-                "tradingConfigs is mandatory"
+                "BackTestRequest/BackTestRequest_botConfigsIsEmpty.json",
+                "botConfigs is mandatory"
         );
     }
 
@@ -119,12 +119,12 @@ class BotControllerWebTest extends ControllerWebTest {
                 BigDecimal.valueOf(100),
                 new CronExpression("0 0 0 1 * ?")
         );
-        final TradingConfig tradingConfig1 = new TradingConfig()
+        final BotConfig botConfig1 = new BotConfig()
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
         final BackTestResult backTestResult1 = BackTestResult.builder()
-                .tradingConfig(tradingConfig1)
+                .botConfig(botConfig1)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(1000))
@@ -138,7 +138,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .candles(List.of(candle))
                 .build();
 
-        final TradingConfig tradingConfig2 = new TradingConfig()
+        final BotConfig botConfig2 = new BotConfig()
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
@@ -151,7 +151,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 ));
         final BackTestPosition backTestPosition1 = new BackTestPosition(ticker, BigDecimal.valueOf(100000), 10);
         final BackTestResult backTestResult2 = BackTestResult.builder()
-                .tradingConfig(tradingConfig2)
+                .botConfig(botConfig2)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(10000))
@@ -164,7 +164,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .positions(List.of(backTestPosition1))
                 .build();
 
-        final TradingConfig tradingConfig3 = new TradingConfig()
+        final BotConfig botConfig3 = new BotConfig()
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of(
@@ -178,7 +178,7 @@ class BotControllerWebTest extends ControllerWebTest {
         final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, BigDecimal.valueOf(100), 10);
         final BackTestPosition backTestPosition3 = new BackTestPosition(ticker, BigDecimal.valueOf(1000), 1);
         final BackTestResult backTestResult3 = BackTestResult.builder()
-                .tradingConfig(tradingConfig3)
+                .botConfig(botConfig3)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(BigDecimal.valueOf(2000))

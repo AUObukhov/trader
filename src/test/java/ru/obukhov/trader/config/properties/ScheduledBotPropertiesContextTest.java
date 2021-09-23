@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.util.Map;
@@ -29,10 +29,10 @@ class ScheduledBotPropertiesContextTest {
 
                     Assertions.assertTrue(scheduledBotProperties.isEnabled());
 
-                    final TradingConfig tradingConfig = scheduledBotProperties.getTradingConfig();
-                    Assertions.assertEquals("FXIT", tradingConfig.getTicker());
-                    Assertions.assertEquals(CandleResolution._5MIN, tradingConfig.getCandleResolution());
-                    Assertions.assertEquals(StrategyType.CROSS, tradingConfig.getStrategyType());
+                    final BotConfig botConfig = scheduledBotProperties.getBotConfig();
+                    Assertions.assertEquals("FXIT", botConfig.getTicker());
+                    Assertions.assertEquals(CandleResolution._5MIN, botConfig.getCandleResolution());
+                    Assertions.assertEquals(StrategyType.CROSS, botConfig.getStrategyType());
 
                     Map<String, Object> expectedStrategyParams = Map.of(
                             "minimumProfit", 0.1,
@@ -43,15 +43,15 @@ class ScheduledBotPropertiesContextTest {
                             "indexCoefficient", 0.5,
                             "greedy", true
                     );
-                    AssertUtils.assertEquals(expectedStrategyParams, tradingConfig.getStrategyParams());
+                    AssertUtils.assertEquals(expectedStrategyParams, botConfig.getStrategyParams());
                 });
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
-    void beanCreationFails_whenTradingConfigsIsNull() {
-        contextRunner.run(AssertUtils.createBindValidationExceptionAssertConsumer("tradingConfig is mandatory"));
+    void beanCreationFails_whenBotConfigsIsNull() {
+        contextRunner.run(AssertUtils.createBindValidationExceptionAssertConsumer("botConfig is mandatory"));
     }
 
     @Test
@@ -59,8 +59,8 @@ class ScheduledBotPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenTickerIsNull() {
         contextRunner
-                .withPropertyValues("scheduled-bot.trading-config.candle-resolution:1min")
-                .withPropertyValues("scheduled-bot.trading-config.strategy-type:cross")
+                .withPropertyValues("scheduled-bot.bot-config.candle-resolution:1min")
+                .withPropertyValues("scheduled-bot.bot-config.strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("ticker is mandatory"));
     }
 
@@ -69,8 +69,8 @@ class ScheduledBotPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenCandleResolutionIsNull() {
         contextRunner
-                .withPropertyValues("scheduled-bot.trading-config.ticker:FXCN")
-                .withPropertyValues("scheduled-bot.trading-config.strategy-type:cross")
+                .withPropertyValues("scheduled-bot.bot-config.ticker:FXCN")
+                .withPropertyValues("scheduled-bot.bot-config.strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("candleResolution is mandatory"));
     }
 
@@ -79,8 +79,8 @@ class ScheduledBotPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenStrategyTypeIsNull() {
         contextRunner
-                .withPropertyValues("scheduled-bot.trading-config.ticker:FXCN")
-                .withPropertyValues("scheduled-bot.trading-config.candle-resolution:1min")
+                .withPropertyValues("scheduled-bot.bot-config.ticker:FXCN")
+                .withPropertyValues("scheduled-bot.bot-config.candle-resolution:1min")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("strategyType is mandatory"));
     }
 

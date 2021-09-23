@@ -7,7 +7,7 @@
     "balanceIncrementCron": "0 0 0 1 * ?"
   },
   "saveToFiles": true,
-  "tradingConfigs": [
+  "botConfigs": [
     {
       "brokerAccountId": "2000124699",
       "ticker": "ticker",

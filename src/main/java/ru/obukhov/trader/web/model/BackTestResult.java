@@ -16,7 +16,7 @@ public class BackTestResult {
     /**
      * config of bot for which back test was ran
      */
-    private TradingConfig tradingConfig;
+    private BotConfig botConfig;
 
     /**
      * back test interval

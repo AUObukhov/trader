@@ -28,7 +28,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BackTestPosition;
 import ru.obukhov.trader.web.model.BackTestResult;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -63,26 +63,26 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_savesMultipleResults() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig1 = new TradingConfig()
+        final BotConfig botConfig1 = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution.HOUR)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of());
-        final BackTestResult result1 = createBackTestResult(tradingConfig1);
+        final BackTestResult result1 = createBackTestResult(botConfig1);
 
-        final TradingConfig tradingConfig2 = new TradingConfig()
+        final BotConfig botConfig2 = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result2 = createBackTestResult(tradingConfig2);
+        final BackTestResult result2 = createBackTestResult(botConfig2);
 
-        final TradingConfig tradingConfig3 = new TradingConfig()
+        final BotConfig botConfig3 = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
-        final BackTestResult result3 = createBackTestResult(tradingConfig3);
+        final BackTestResult result3 = createBackTestResult(botConfig3);
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         excelService.saveBackTestResults(results);
@@ -105,7 +105,7 @@ class ExcelServiceImplUnitTest {
             Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
             final Iterator<Row> rowIterator = sheet.iterator();
-            assertTradingConfig(result.getTradingConfig(), rowIterator);
+            assertBotConfig(result.getBotConfig(), rowIterator);
             assertCommonStatistics(ticker, result, rowIterator);
             assertPositions(result, rowIterator);
             assertOperations(result, rowIterator);
@@ -118,12 +118,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result = createBackTestResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(botConfig);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -139,7 +139,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertTradingConfig(result.getTradingConfig(), rowIterator);
+        assertBotConfig(result.getBotConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -151,12 +151,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result = createBackTestResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(botConfig);
         result.setError(StringUtils.EMPTY);
 
         excelService.saveBackTestResults(List.of(result));
@@ -173,7 +173,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertTradingConfig(result.getTradingConfig(), rowIterator);
+        assertBotConfig(result.getBotConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -186,12 +186,12 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
         final String error = "error";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result = createBackTestResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(botConfig);
         result.setError(error);
 
         excelService.saveBackTestResults(List.of(result));
@@ -208,7 +208,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertTradingConfig(result.getTradingConfig(), rowIterator);
+        assertBotConfig(result.getBotConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.getError());
 
@@ -223,12 +223,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result = createBackTestResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(botConfig);
         result.setCandles(null);
 
         excelService.saveBackTestResults(List.of(result));
@@ -245,7 +245,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertTradingConfig(result.getTradingConfig(), rowIterator);
+        assertBotConfig(result.getBotConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -258,12 +258,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
-        final BackTestResult result = createBackTestResult(tradingConfig);
+        final BackTestResult result = createBackTestResult(botConfig);
         result.setCandles(Collections.emptyList());
 
         excelService.saveBackTestResults(List.of(result));
@@ -280,7 +280,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertTradingConfig(result.getTradingConfig(), rowIterator);
+        assertBotConfig(result.getBotConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -295,14 +295,14 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
-        final TradingConfig tradingConfig = new TradingConfig()
+        final BotConfig botConfig = new BotConfig()
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CROSS)
                 .setStrategyParams(Map.of());
-        final BackTestResult result1 = createBackTestResult(tradingConfig);
-        final BackTestResult result2 = createBackTestResult(tradingConfig);
-        final BackTestResult result3 = createBackTestResult(tradingConfig);
+        final BackTestResult result1 = createBackTestResult(botConfig);
+        final BackTestResult result2 = createBackTestResult(botConfig);
+        final BackTestResult result3 = createBackTestResult(botConfig);
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
         Mockito.doThrow(new IOException())
@@ -312,11 +312,11 @@ class ExcelServiceImplUnitTest {
         excelService.saveBackTestResults(results);
     }
 
-    private void assertTradingConfig(TradingConfig tradingConfig, Iterator<Row> rowIterator) {
+    private void assertBotConfig(BotConfig botConfig, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next(), "Конфигурация");
-        AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", tradingConfig.getCandleResolution().toString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", tradingConfig.getStrategyType().toString());
-        for (final Map.Entry<String, Object> entry : tradingConfig.getStrategyParams().entrySet()) {
+        AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", botConfig.getCandleResolution().toString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", botConfig.getStrategyType().toString());
+        for (final Map.Entry<String, Object> entry : botConfig.getStrategyParams().entrySet()) {
             AssertUtils.assertRowValues(rowIterator.next(), entry.getKey(), entry.getValue());
         }
     }
@@ -324,7 +324,7 @@ class ExcelServiceImplUnitTest {
     private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
-        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getTradingConfig().getBrokerAccountId());
+        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getBotConfig().getBrokerAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
@@ -432,9 +432,9 @@ class ExcelServiceImplUnitTest {
         excelService.saveCandles(ticker, interval, response);
     }
 
-    private BackTestResult createBackTestResult(TradingConfig tradingConfig) {
+    private BackTestResult createBackTestResult(BotConfig botConfig) {
         return BackTestResult.builder()
-                .tradingConfig(tradingConfig)
+                .botConfig(botConfig)
                 .interval(createInterval())
                 .initialBalance(BigDecimal.valueOf(700))
                 .finalTotalBalance(BigDecimal.valueOf(1000))
@@ -444,8 +444,8 @@ class ExcelServiceImplUnitTest {
                 .absoluteProfit(BigDecimal.valueOf(300))
                 .relativeProfit(0.25)
                 .relativeYearProfit(6d)
-                .positions(createPositions(tradingConfig.getTicker()))
-                .operations(createBackTestOperations(tradingConfig.getTicker()))
+                .positions(createPositions(botConfig.getTicker()))
+                .operations(createBackTestOperations(botConfig.getTicker()))
                 .candles(createCandles())
                 .build();
     }
@@ -526,7 +526,7 @@ class ExcelServiceImplUnitTest {
 
     private int getExpectedRowCount(BackTestResult result) {
         return MINIMUM_ROWS_COUNT +
-                result.getTradingConfig().getStrategyParams().size() +
+                result.getBotConfig().getStrategyParams().size() +
                 result.getPositions().size() +
                 result.getOperations().size() +
                 (StringUtils.isEmpty(result.getError()) ? 0 : 1);

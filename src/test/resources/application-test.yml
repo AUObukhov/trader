@@ -11,7 +11,7 @@ market:
 scheduled-bot:
   delay: 60000
   enabled: true
-  trading-config:
+  bot-config:
     broker-account-id: "2000124699"
     ticker: FXIT
     candle-resolution: 5min

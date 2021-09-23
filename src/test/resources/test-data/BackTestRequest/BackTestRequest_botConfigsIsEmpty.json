@@ -5,5 +5,5 @@
     "balanceIncrement": 100,
     "balanceIncrementCron": "0 0 0 1 * ?"
   },
-  "tradingConfigs": []
+  "botConfigs": []
 }

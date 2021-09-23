@@ -82,7 +82,7 @@ public class BeanConfiguration {
                 operationsService,
                 ordersService,
                 portfolioService,
-                strategyFactory.createStrategy(scheduledBotProperties.getTradingConfig()),
+                strategyFactory.createStrategy(scheduledBotProperties.getBotConfig()),
                 scheduledBotProperties,
                 marketProperties
         );

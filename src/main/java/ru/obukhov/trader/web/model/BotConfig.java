@@ -18,7 +18,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @NoArgsConstructor
 @Accessors(chain = true)
-public class TradingConfig {
+public class BotConfig {
 
     @Nullable
     @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
@@ -49,15 +49,15 @@ public class TradingConfig {
     )
     private Map<String, Object> strategyParams;
 
-    public TradingConfig(
+    public BotConfig(
             @Nullable final String brokerAccountId,
             final String ticker,
             final CandleResolution candleResolution,
             final Double commission,
             final StrategyType strategyType
     ) {
-        this.ticker = ticker;
         this.brokerAccountId = brokerAccountId;
+        this.ticker = ticker;
         this.candleResolution = candleResolution;
         this.commission = commission;
         this.strategyType = strategyType;
@@ -75,4 +75,5 @@ public class TradingConfig {
                 ", strategyParams=" + strategyParams +
                 ']';
     }
+
 }

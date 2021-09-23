@@ -3,7 +3,7 @@ package ru.obukhov.trader.web.model.exchange;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -40,12 +40,12 @@ public class BackTestRequest {
     private Boolean saveToFiles;
 
     @Valid
-    @NotEmpty(message = "tradingConfigs is mandatory")
+    @NotEmpty(message = "botConfigs is mandatory")
     @ApiModelProperty(
-            value = "List of trading strategies configurations. Separate back test created for each tradingConfig",
+            value = "List of bot configurations. Separate back test created for each config",
             required = true,
             position = 5
     )
-    private List<TradingConfig> tradingConfigs;
+    private List<BotConfig> botConfigs;
 
 }

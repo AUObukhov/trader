@@ -33,7 +33,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BackTestPosition;
 import ru.obukhov.trader.web.model.BackTestResult;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -123,7 +123,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void createSheet(final ExtendedWorkbook workbook, final BackTestResult result) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
-        putTradingConfig(sheet, result.getTradingConfig());
+        putBotConfig(sheet, result.getBotConfig());
         sheet.addRow();
 
         putCommonStatistics(sheet, result);
@@ -156,13 +156,13 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithAverages(sheet, response);
     }
 
-    private void putTradingConfig(ExtendedSheet sheet, TradingConfig tradingConfig) {
+    private void putBotConfig(ExtendedSheet sheet, BotConfig botConfig) {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Конфигурация", 2);
 
-        putCandleResolution(sheet, tradingConfig.getCandleResolution());
-        putStrategyType(sheet, tradingConfig.getStrategyType());
-        putStrategyParams(sheet, tradingConfig.getStrategyParams());
+        putCandleResolution(sheet, botConfig.getCandleResolution());
+        putStrategyType(sheet, botConfig.getStrategyType());
+        putStrategyParams(sheet, botConfig.getStrategyParams());
     }
 
     private void putCandleResolution(ExtendedSheet sheet, CandleResolution candleResolution) {
@@ -186,8 +186,8 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
-        putBrokerAccountId(sheet, result.getTradingConfig().getBrokerAccountId());
-        putTicker(sheet, result.getTradingConfig().getTicker());
+        putBrokerAccountId(sheet, result.getBotConfig().getBrokerAccountId());
+        putTicker(sheet, result.getBotConfig().getTicker());
         putInterval(sheet, result.getInterval());
         putInitialBalance(sheet, result.getInitialBalance());
         putTotalInvestment(sheet, result.getTotalInvestment());

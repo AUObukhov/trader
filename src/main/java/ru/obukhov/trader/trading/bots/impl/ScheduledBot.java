@@ -11,7 +11,7 @@ import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 
 import java.time.OffsetDateTime;
 
@@ -37,7 +37,7 @@ public class ScheduledBot extends AbstractBot {
                 portfolioService,
                 strategy,
                 strategy.initCache(),
-                scheduledBotProperties.getTradingConfig().getCandleResolution()
+                scheduledBotProperties.getBotConfig().getCandleResolution()
         );
 
         this.scheduledBotProperties = scheduledBotProperties;
@@ -57,9 +57,9 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        final TradingConfig tradingConfig = scheduledBotProperties.getTradingConfig();
+        final BotConfig botConfig = scheduledBotProperties.getBotConfig();
 
-        processTickerSafe(tradingConfig.getBrokerAccountId(), tradingConfig.getTicker(), null);
+        processTickerSafe(botConfig.getBrokerAccountId(), botConfig.getTicker(), null);
     }
 
     public void processTickerSafe(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime previousStartTime) {

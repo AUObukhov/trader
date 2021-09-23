@@ -37,7 +37,7 @@ import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BackTestPosition;
 import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
@@ -81,7 +81,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = Collections.emptyList();
+        final List<BotConfig> botConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().plusDays(1);
         final OffsetDateTime to = from.plusDays(1);
@@ -90,7 +90,7 @@ class BackTesterImplUnitTest {
         final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> backTester.test(tradingConfigs, balanceConfig, interval, false),
+                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 IllegalArgumentException.class,
                 expectedMessagePattern
         );
@@ -102,7 +102,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = Collections.emptyList();
+        final List<BotConfig> botConfigs = Collections.emptyList();
 
         final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
         final OffsetDateTime to = from.plusDays(2);
@@ -111,7 +111,7 @@ class BackTesterImplUnitTest {
         final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> backTester.test(tradingConfigs, balanceConfig, interval, false),
+                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 RuntimeException.class,
                 expectedMessagePattern
         );
@@ -122,14 +122,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -139,7 +139,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -147,7 +147,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -155,7 +155,7 @@ class BackTesterImplUnitTest {
 
         final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertEquals(tradingConfigs.get(0), backTestResult.getTradingConfig());
+        Assertions.assertEquals(botConfigs.get(0), backTestResult.getBotConfig());
         Assertions.assertEquals(interval, backTestResult.getInterval());
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getInitialBalance());
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getTotalInvestment());
@@ -183,14 +183,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -202,7 +202,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -239,7 +239,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -247,7 +247,7 @@ class BackTesterImplUnitTest {
 
         final BackTestResult backTestResult = backTestResults.get(0);
 
-        Assertions.assertEquals(tradingConfigs.get(0), backTestResult.getTradingConfig());
+        Assertions.assertEquals(botConfigs.get(0), backTestResult.getBotConfig());
         Assertions.assertEquals(interval, backTestResult.getInterval());
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getInitialBalance());
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getTotalInvestment());
@@ -276,14 +276,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -295,7 +295,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -332,7 +332,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -357,14 +357,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -376,7 +376,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -411,7 +411,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -438,8 +438,8 @@ class BackTesterImplUnitTest {
 
         final String ticker = "ticker";
         final double commission = 0.003;
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -451,7 +451,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -485,7 +485,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -514,14 +514,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -533,7 +533,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -565,7 +565,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -596,14 +596,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -615,7 +615,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -631,7 +631,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -655,14 +655,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -674,7 +674,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -691,7 +691,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -715,14 +715,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -734,7 +734,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -755,7 +755,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, true);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, true);
 
         // assert
 
@@ -775,14 +775,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.093,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -794,7 +794,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -815,7 +815,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -835,14 +835,14 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(
+        final BotConfig botConfig = new BotConfig(
                 brokerAccountId,
                 ticker,
                 CandleResolution._1MIN,
                 0.003,
                 StrategyType.CONSERVATIVE
         );
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -854,7 +854,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, null, BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -874,7 +874,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -900,8 +900,8 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         final String mockedExceptionMessage = "mocked exception";
@@ -913,7 +913,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -921,7 +921,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, false);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
 
         // assert
 
@@ -945,8 +945,8 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
-        mockStrategy(tradingConfig, CONSERVATIVE_STRATEGY);
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
+        mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
         Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
@@ -958,7 +958,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
-        final List<TradingConfig> tradingConfigs = List.of(tradingConfig);
+        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
@@ -983,7 +983,7 @@ class BackTesterImplUnitTest {
 
         // act
 
-        final List<BackTestResult> backTestResults = backTester.test(tradingConfigs, balanceConfig, interval, true);
+        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, true);
 
         // assert
 
@@ -994,8 +994,8 @@ class BackTesterImplUnitTest {
         Assertions.assertNull(backTestResult.getError());
     }
 
-    private void mockStrategy(TradingConfig tradingConfig, AbstractTradingStrategy strategy) {
-        Mockito.when(strategyFactory.createStrategy(tradingConfig)).thenReturn(strategy);
+    private void mockStrategy(BotConfig botConfig, AbstractTradingStrategy strategy) {
+        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(strategy);
     }
 
     private FakeBot createFakeBotMock() {

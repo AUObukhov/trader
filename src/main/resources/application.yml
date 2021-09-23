@@ -10,7 +10,7 @@ market:
 scheduled-bot:
   delay: 60000
   enabled: false
-  trading-config:
+  bot-config:
     broker-account-id: "2000124699"
     ticker: SBER
     candle-resolution: 1min

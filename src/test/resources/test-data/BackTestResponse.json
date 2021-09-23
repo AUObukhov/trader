@@ -1,7 +1,7 @@
 {
   "results": [
     {
-      "tradingConfig": {
+      "botConfig": {
         "candleResolution": "1min",
         "strategyType": "conservative",
         "strategyParams": {
@@ -23,7 +23,7 @@
       "error": null
     },
     {
-      "tradingConfig": {
+      "botConfig": {
         "candleResolution": "1min",
         "strategyType": "cross",
         "strategyParams": {
@@ -50,7 +50,7 @@
       "error": null
     },
     {
-      "tradingConfig": {
+      "botConfig": {
         "candleResolution": "1min",
         "strategyType": "cross",
         "strategyParams": {

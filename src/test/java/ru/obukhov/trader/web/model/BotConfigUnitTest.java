@@ -12,7 +12,7 @@ import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import java.util.Map;
 import java.util.stream.Stream;
 
-class TradingConfigUnitTest {
+class BotConfigUnitTest {
 
     // region equals tests
 
@@ -20,55 +20,55 @@ class TradingConfigUnitTest {
     static Stream<Arguments> getData_forEquals() {
         return Stream.of(
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         true
                 ),
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._2MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._2MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         false
                 ),
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CROSS)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
                         false
                 ),
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1)),
                         false
                 ),
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param", 2)),
                         false
                 ),
                 Arguments.of(
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
                                 .setStrategyType(StrategyType.CONSERVATIVE)
                                 .setStrategyParams(Map.of("param1", 1, "param2", 22)),
                         false
@@ -78,7 +78,7 @@ class TradingConfigUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forEquals")
-    void testEquals(TradingConfig config1, TradingConfig config2, boolean expectedResult) {
+    void testEquals(BotConfig config1, BotConfig config2, boolean expectedResult) {
         boolean result = config1.equals(config2);
 
         Assertions.assertEquals(expectedResult, result);
@@ -88,10 +88,10 @@ class TradingConfigUnitTest {
 
     @Test
     void testHashCode() {
-        TradingConfig config1 = new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+        BotConfig config1 = new BotConfig().setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of("param1", 1, "param2", 2));
-        TradingConfig config2 = new TradingConfig().setCandleResolution(CandleResolution._1MIN)
+        BotConfig config2 = new BotConfig().setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of("param1", 1, "param2", 2));
 
@@ -100,7 +100,7 @@ class TradingConfigUnitTest {
 
     @Test
     void testToString() {
-        final TradingConfig config = new TradingConfig()
+        final BotConfig config = new BotConfig()
                 .setBrokerAccountId("2000124699")
                 .setTicker("ticker")
                 .setCandleResolution(CandleResolution._1MIN)

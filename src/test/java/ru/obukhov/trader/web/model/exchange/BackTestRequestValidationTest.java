@@ -5,7 +5,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
@@ -39,28 +39,28 @@ class BackTestRequestValidationTest {
         AssertUtils.assertViolation(request, "balanceConfig is mandatory");
     }
 
-    // region tradingConfigs validation tests
+    // region botConfigs validation tests
 
     @Test
     void validationFails_whenBotsConfigsIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.setTradingConfigs(null);
+        request.setBotConfigs(null);
 
-        AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
+        AssertUtils.assertViolation(request, "botConfigs is mandatory");
     }
 
     @Test
     void validationFails_whenBotsConfigsIsEmpty() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.setTradingConfigs(Collections.emptyList());
+        request.setBotConfigs(Collections.emptyList());
 
-        AssertUtils.assertViolation(request, "tradingConfigs is mandatory");
+        AssertUtils.assertViolation(request, "botConfigs is mandatory");
     }
 
     @Test
     void validationFails_whenCandleResolutionIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.getTradingConfigs().get(0).setCandleResolution(null);
+        request.getBotConfigs().get(0).setCandleResolution(null);
 
         AssertUtils.assertViolation(request, "candleResolution is mandatory");
     }
@@ -68,7 +68,7 @@ class BackTestRequestValidationTest {
     @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.getTradingConfigs().get(0).setStrategyType(null);
+        request.getBotConfigs().get(0).setStrategyType(null);
 
         AssertUtils.assertViolation(request, "strategyType is mandatory");
     }
@@ -86,8 +86,8 @@ class BackTestRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final TradingConfig tradingConfig = new TradingConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
-        request.setTradingConfigs(List.of(tradingConfig));
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
+        request.setBotConfigs(List.of(botConfig));
 
         return request;
     }

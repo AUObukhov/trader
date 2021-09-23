@@ -43,7 +43,7 @@ public class BotController {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        final List<BackTestResult> results = backTester.test(request.getTradingConfigs(), request.getBalanceConfig(), interval, saveToFiles);
+        final List<BackTestResult> results = backTester.test(request.getBotConfigs(), request.getBalanceConfig(), interval, saveToFiles);
 
         return new BackTestResponse(results);
 

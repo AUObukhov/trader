@@ -28,7 +28,7 @@ import ru.obukhov.trader.web.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BackTestPosition;
 import ru.obukhov.trader.web.model.BackTestResult;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -76,22 +76,22 @@ public class BackTesterImpl implements BackTester {
     }
 
     /**
-     * @param tradingConfigs trading configurations of each back test
-     * @param balanceConfig  all back tests balance configuration
-     * @param interval       all back tests interval
-     * @param saveToFiles    flag to save back tests results to file
+     * @param botConfigs    bot configurations of each back test
+     * @param balanceConfig all back tests balance configuration
+     * @param interval      all back tests interval
+     * @param saveToFiles   flag to save back tests results to file
      * @return map of back tests results by tickers
      */
     @Override
     public List<BackTestResult> test(
-            final List<TradingConfig> tradingConfigs,
+            final List<BotConfig> botConfigs,
             final BalanceConfig balanceConfig,
             final Interval interval,
             final boolean saveToFiles
     ) {
         log.info("Back test started");
 
-        ExecutionResult<List<BackTestResult>> executionResult = ExecutionUtils.get(() -> test(tradingConfigs, balanceConfig, interval));
+        ExecutionResult<List<BackTestResult>> executionResult = ExecutionUtils.get(() -> test(botConfigs, balanceConfig, interval));
 
         final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
         log.info("Back test ended within {}", backTestDurationString);
@@ -103,15 +103,15 @@ public class BackTesterImpl implements BackTester {
         return executionResult.getResult();
     }
 
-    private List<BackTestResult> test(final List<TradingConfig> tradingConfigs, final BalanceConfig balanceConfig, final Interval interval) {
+    private List<BackTestResult> test(final List<BotConfig> botConfigs, final BalanceConfig balanceConfig, final Interval interval) {
         final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
 
         final Interval finiteInterval = interval.limitByNowIfNull(now);
 
-        final List<CompletableFuture<BackTestResult>> backTestFutures = tradingConfigs.stream()
-                .map(tradingConfig -> startBackTest(tradingConfig, balanceConfig, finiteInterval))
+        final List<CompletableFuture<BackTestResult>> backTestFutures = botConfigs.stream()
+                .map(botConfig -> startBackTest(botConfig, balanceConfig, finiteInterval))
                 .collect(Collectors.toList());
         return backTestFutures.stream()
                 .map(CompletableFuture::join)
@@ -119,46 +119,46 @@ public class BackTesterImpl implements BackTester {
                 .collect(Collectors.toList());
     }
 
-    private FakeBot createFakeBot(final TradingConfig tradingConfig) {
-        final AbstractTradingStrategy strategy = strategyFactory.createStrategy(tradingConfig);
-        return (FakeBot) fakeBotFactory.createBot(strategy, tradingConfig.getCandleResolution());
+    private FakeBot createFakeBot(final BotConfig botConfig) {
+        final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
+        return (FakeBot) fakeBotFactory.createBot(strategy, botConfig.getCandleResolution());
     }
 
     private CompletableFuture<BackTestResult> startBackTest(
-            final TradingConfig tradingConfig,
+            final BotConfig botConfig,
             final BalanceConfig balanceConfig,
             final Interval interval
     ) {
-        return CompletableFuture.supplyAsync(() -> backTestSafe(tradingConfig, balanceConfig, interval), executor);
+        return CompletableFuture.supplyAsync(() -> backTestSafe(botConfig, balanceConfig, interval), executor);
     }
 
-    private BackTestResult backTestSafe(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        log.info("Starting back test for '{}'", tradingConfig);
+    private BackTestResult backTestSafe(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
+        log.info("Starting back test for '{}'", botConfig);
 
-        ExecutionResult<BackTestResult> executionResult = ExecutionUtils.getSafe(() -> test(tradingConfig, balanceConfig, interval));
+        ExecutionResult<BackTestResult> executionResult = ExecutionUtils.getSafe(() -> test(botConfig, balanceConfig, interval));
 
         final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
 
         if (executionResult.getException() == null) {
-            log.info("Back test for '{}' succeed within {}", tradingConfig, backTestDurationString);
+            log.info("Back test for '{}' succeed within {}", botConfig, backTestDurationString);
             return executionResult.getResult();
         } else {
             final String message = String.format(
                     "Back test for '%s' failed within %s with error: %s",
-                    tradingConfig, backTestDurationString, executionResult.getException().getMessage()
+                    botConfig, backTestDurationString, executionResult.getException().getMessage()
             );
             log.error(message, executionResult.getException());
-            return createFailedBackTestResult(tradingConfig, balanceConfig, interval, message);
+            return createFailedBackTestResult(botConfig, balanceConfig, interval, message);
         }
     }
 
-    private BackTestResult test(final TradingConfig tradingConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        final FakeBot bot = createFakeBot(tradingConfig);
+    private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
+        final FakeBot bot = createFakeBot(botConfig);
 
         final FakeTinkoffService fakeTinkoffService = bot.getFakeTinkoffService();
 
-        final String brokerAccountId = tradingConfig.getBrokerAccountId();
-        final String ticker = tradingConfig.getTicker();
+        final String brokerAccountId = botConfig.getBrokerAccountId();
+        final String ticker = botConfig.getTicker();
         final MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
         if (marketInstrument == null) {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
@@ -181,7 +181,7 @@ public class BackTesterImpl implements BackTester {
             moveToNextMinute(ticker, balanceConfig, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createSucceedBackTestResult(tradingConfig, interval, historicalCandles, bot.getFakeTinkoffService());
+        return createSucceedBackTestResult(botConfig, interval, historicalCandles, bot.getFakeTinkoffService());
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -210,13 +210,13 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestResult createSucceedBackTestResult(
-            final TradingConfig tradingConfig,
+            final BotConfig botConfig,
             final Interval interval,
             final List<Candle> candles,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(tradingConfig.getBrokerAccountId()), candles);
-        final Currency currency = getCurrency(fakeTinkoffService, tradingConfig.getTicker());
+        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(botConfig.getBrokerAccountId()), candles);
+        final Currency currency = getCurrency(fakeTinkoffService, botConfig.getTicker());
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
 
@@ -230,10 +230,10 @@ public class BackTesterImpl implements BackTester {
         final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
         final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
-        final List<Operation> operations = fakeTinkoffService.getOperations(tradingConfig.getBrokerAccountId(), interval, tradingConfig.getTicker());
+        final List<Operation> operations = fakeTinkoffService.getOperations(botConfig.getBrokerAccountId(), interval, botConfig.getTicker());
 
         return BackTestResult.builder()
-                .tradingConfig(tradingConfig)
+                .botConfig(botConfig)
                 .interval(interval)
                 .initialBalance(initialBalance)
                 .finalTotalBalance(totalBalance)
@@ -244,19 +244,19 @@ public class BackTesterImpl implements BackTester {
                 .relativeProfit(relativeProfit)
                 .relativeYearProfit(relativeYearProfit)
                 .positions(positions)
-                .operations(getOperations(operations, tradingConfig.getTicker()))
+                .operations(getOperations(operations, botConfig.getTicker()))
                 .candles(candles)
                 .build();
     }
 
     private BackTestResult createFailedBackTestResult(
-            final TradingConfig tradingConfig,
+            final BotConfig botConfig,
             final BalanceConfig balanceConfig,
             final Interval interval,
             final String message
     ) {
         return BackTestResult.builder()
-                .tradingConfig(tradingConfig)
+                .botConfig(botConfig)
                 .interval(interval)
                 .initialBalance(balanceConfig.getInitialBalance())
                 .totalInvestment(balanceConfig.getInitialBalance())

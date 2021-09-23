@@ -11,7 +11,7 @@ import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -27,13 +27,13 @@ public class TradingStrategyFactory {
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ApplicationContext applicationContext;
 
-    public AbstractTradingStrategy createStrategy(final TradingConfig tradingConfig) {
-        final StrategyType strategyType = tradingConfig.getStrategyType();
+    public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
+        final StrategyType strategyType = botConfig.getStrategyType();
         switch (strategyType) {
             case CONSERVATIVE:
-                return createConservativeStrategy(strategyType.getValue(), tradingConfig.getCommission(), tradingConfig.getStrategyParams());
+                return createConservativeStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
             case CROSS:
-                return createCrossStrategy(strategyType.getValue(), tradingConfig.getCommission(), tradingConfig.getStrategyParams());
+                return createCrossStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
             default:
                 throw new IllegalArgumentException("Unknown strategy type " + strategyType);
         }

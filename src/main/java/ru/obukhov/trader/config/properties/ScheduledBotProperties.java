@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
-import ru.obukhov.trader.web.model.TradingConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +16,7 @@ public class ScheduledBotProperties {
 
     private boolean enabled;
 
-    @NotNull(message = "tradingConfig is mandatory")
-    private TradingConfig tradingConfig;
+    @NotNull(message = "botConfig is mandatory")
+    private BotConfig botConfig;
 
 }

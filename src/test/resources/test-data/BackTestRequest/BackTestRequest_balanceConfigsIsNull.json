@@ -2,7 +2,7 @@
   "from": "2021-01-01T10:00:00+03:00",
   "to": "2021-02-01T00:00:00+03:00",
   "saveToFiles": true,
-  "tradingConfigs": [
+  "botConfigs": [
     {
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
