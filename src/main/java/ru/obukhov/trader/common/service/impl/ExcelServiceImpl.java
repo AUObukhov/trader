@@ -156,7 +156,7 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithAverages(sheet, response);
     }
 
-    private void putBotConfig(ExtendedSheet sheet, BotConfig botConfig) {
+    private void putBotConfig(final ExtendedSheet sheet, final BotConfig botConfig) {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Конфигурация", 2);
 
@@ -165,17 +165,17 @@ public class ExcelServiceImpl implements ExcelService {
         putStrategyParams(sheet, botConfig.getStrategyParams());
     }
 
-    private void putCandleResolution(ExtendedSheet sheet, CandleResolution candleResolution) {
+    private void putCandleResolution(final ExtendedSheet sheet, final CandleResolution candleResolution) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Размер свечи", candleResolution.getValue());
     }
 
-    private void putStrategyType(ExtendedSheet sheet, StrategyType strategyType) {
+    private void putStrategyType(final ExtendedSheet sheet, final StrategyType strategyType) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Стратегия", strategyType.toString());
     }
 
-    private void putStrategyParams(ExtendedSheet sheet, Map<String, Object> strategyParams) {
+    private void putStrategyParams(final ExtendedSheet sheet, final Map<String, Object> strategyParams) {
         for (final Map.Entry<String, Object> entry : strategyParams.entrySet()) {
             final ExtendedRow row = sheet.addRow();
             row.createCells(entry.getKey(), entry.getValue());

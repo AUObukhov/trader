@@ -48,7 +48,7 @@ public class ExcelFileServiceImpl implements ExcelFileService {
         return file;
     }
 
-    private File getFile(String initialFileName) {
+    private File getFile(final String initialFileName) {
         int count = 0;
         String fileName = initialFileName;
         File file = new File(reportProperties.getSaveDirectory(), fileName);
@@ -61,7 +61,7 @@ public class ExcelFileServiceImpl implements ExcelFileService {
         return file;
     }
 
-    private Pair<String, String> splitFileName(String fileName) {
+    private Pair<String, String> splitFileName(final String fileName) {
         final int dotIndex = fileName.lastIndexOf(".");
         return dotIndex == -1
                 ? Pair.of(fileName, StringUtils.EMPTY)
