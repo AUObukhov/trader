@@ -315,8 +315,8 @@ public class BackTesterImpl implements BackTester {
     private Profits getProfits(final Balances balances, final Interval interval) {
         final BigDecimal absoluteProfit = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
         final double relativeProfit = getRelativeProfit(balances.getWeightedAverageInvestment(), absoluteProfit);
-        final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
-        return new Profits(absoluteProfit, relativeProfit, relativeYearProfit);
+        final double averageAnnualProfitability = getRelativeYearProfit(interval, relativeProfit);
+        return new Profits(absoluteProfit, relativeProfit, averageAnnualProfitability);
     }
 
     private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
