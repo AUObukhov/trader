@@ -30,7 +30,7 @@ public class PortfolioPosition {
     private final BigDecimal expectedYield;
 
     /**
-     * Count of papers, not lots
+     * Count of securities, not lots
      */
     private final int count;
 

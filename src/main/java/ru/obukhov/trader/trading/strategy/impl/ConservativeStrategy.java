@@ -9,7 +9,7 @@ import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 
 /**
- * Strategy which decides to buy paper always when possible and never to sell
+ * Strategy which decides to buy security always when possible and never to sell
  */
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {

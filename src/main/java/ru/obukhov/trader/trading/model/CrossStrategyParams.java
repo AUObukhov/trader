@@ -27,7 +27,7 @@ public class CrossStrategyParams extends TradingStrategyParams {
     protected Float indexCoefficient;
 
     /**
-     * flag allowing to buy papers even when short-term moving average crosses a long-term moving average from above
+     * flag allowing to buy securities even when short-term moving average crosses a long-term moving average from above
      * and selling is not profitable enough
      */
     @NotNull(message = "greedy is mandatory")

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 public class TradingStrategyParams {
 
     /**
-     * Minimum value of profit in percent, which allows selling papers.
+     * Minimum value of profit in percent, which allows selling securities.
      * Negative value means never sell.
      */
     @NotNull(message = "minimumProfit is mandatory")
