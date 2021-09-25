@@ -149,8 +149,8 @@ public class AssertUtils {
         for (int i = 0; i < expected.size(); i++) {
             final Object expectedValue = expected.get(i);
             final Object actualValue = actual.get(i);
-            if (expectedValue instanceof List && actualValue instanceof List) {
-                assertListsAreEqual((List<?>) expectedValue, (List<?>) actualValue);
+            if (expectedValue instanceof List expectedValueList && actualValue instanceof List actualValueList) {
+                assertListsAreEqual(expectedValueList, actualValueList);
             } else if (!Objects.equals(expectedValue, actualValue)) {
                 messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
                         .append(System.lineSeparator());
@@ -233,16 +233,16 @@ public class AssertUtils {
             case NUMERIC:
                 if (value == null) {
                     AssertUtils.assertEquals(NumberUtils.DOUBLE_ZERO, cell.getNumericCellValue());
-                } else if (value instanceof BigDecimal) {
-                    assertCellValue(cell, (BigDecimal) value);
-                } else if (value instanceof Double) {
-                    assertCellValue(cell, (Double) value);
-                } else if (value instanceof Integer) {
-                    assertCellValue(cell, (Integer) value);
-                } else if (value instanceof LocalDateTime) {
-                    assetCellValue(cell, (LocalDateTime) value);
-                } else if (value instanceof OffsetDateTime) {
-                    assertCellValue(cell, (OffsetDateTime) value);
+                } else if (value instanceof BigDecimal bigDecimalValue) {
+                    assertCellValue(cell, bigDecimalValue);
+                } else if (value instanceof Double doubleValue) {
+                    assertCellValue(cell, doubleValue);
+                } else if (value instanceof Integer integerValue) {
+                    assertCellValue(cell, integerValue);
+                } else if (value instanceof LocalDateTime localDateTimeValue) {
+                    assetCellValue(cell, localDateTimeValue);
+                } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
+                    assertCellValue(cell, offsetDateTimeValue);
                 } else {
                     throw new IllegalArgumentException("Unexpected value " + value);
                 }

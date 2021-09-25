@@ -134,20 +134,20 @@ public class ExtendedRow implements Row {
     public ExtendedCell createCell(final int column, @Nullable final Object value) {
         if (value == null) {
             return (ExtendedCell) createCell(column);
-        } else if (value instanceof String) {
-            return createCell(column, (String) value);
-        } else if (value instanceof BigDecimal) {
-            return createCell(column, (BigDecimal) value);
-        } else if (value instanceof Double) {
-            return createCell(column, (Double) value);
-        } else if (value instanceof Integer) {
-            return createCell(column, (Integer) value);
-        } else if (value instanceof LocalDateTime) {
-            return createCell(column, (LocalDateTime) value);
-        } else if (value instanceof OffsetDateTime) {
-            return createCell(column, (OffsetDateTime) value);
-        } else if (value instanceof Boolean) {
-            return createCell(column, (Boolean) value);
+        } else if (value instanceof String stringValue) {
+            return createCell(column, stringValue);
+        } else if (value instanceof BigDecimal bigDecimalValue) {
+            return createCell(column, bigDecimalValue);
+        } else if (value instanceof Double doubleValue) {
+            return createCell(column, doubleValue);
+        } else if (value instanceof Integer integerValue) {
+            return createCell(column, integerValue);
+        } else if (value instanceof LocalDateTime localDateTimeValue) {
+            return createCell(column, localDateTimeValue);
+        } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
+            return createCell(column, offsetDateTimeValue);
+        } else if (value instanceof Boolean booleanValue) {
+            return createCell(column, booleanValue);
         } else {
             throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
         }

@@ -74,6 +74,7 @@ public class ExtendedWorkbook implements Workbook {
         return cellStyleName;
     }
 
+    @SuppressWarnings("java:S6204") // Sonar issue "Stream.toList()" method should be used instead of "collectors" when unmodifiable list needed
     private List<ExtendedSheet> initSheets(final Workbook delegate) {
         return StreamSupport.stream(delegate.spliterator(), false)
                 .map(this::createSheet)
