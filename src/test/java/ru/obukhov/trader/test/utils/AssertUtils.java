@@ -144,27 +144,41 @@ public class AssertUtils {
 
     public static void assertListsAreEqual(final List<?> expected, final List<?> actual) {
         assertListSize(expected, actual);
+
+        final StringBuilder messageBuilder = new StringBuilder();
         for (int i = 0; i < expected.size(); i++) {
             final Object expectedValue = expected.get(i);
             final Object actualValue = actual.get(i);
             if (expectedValue instanceof List && actualValue instanceof List) {
                 assertListsAreEqual((List<?>) expectedValue, (List<?>) actualValue);
             } else if (!Objects.equals(expectedValue, actualValue)) {
-                final String message = String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue);
-                Assertions.fail(message);
+                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
+                        .append(System.lineSeparator());
             }
+        }
+
+        final String message = messageBuilder.toString();
+        if (!message.isEmpty()) {
+            Assertions.fail(message);
         }
     }
 
     public static void assertBigDecimalListsAreEqual(final List<BigDecimal> expected, final List<BigDecimal> actual) {
         assertListSize(expected, actual);
+
+        final StringBuilder messageBuilder = new StringBuilder();
         for (int i = 0; i < expected.size(); i++) {
             final BigDecimal expectedValue = expected.get(i);
             final BigDecimal actualValue = actual.get(i);
             if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
-                final String message = String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue);
-                Assertions.fail(message);
+                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
+                        .append(System.lineSeparator());
             }
+        }
+
+        final String message = messageBuilder.toString();
+        if (!message.isEmpty()) {
+            Assertions.fail(message);
         }
     }
 
