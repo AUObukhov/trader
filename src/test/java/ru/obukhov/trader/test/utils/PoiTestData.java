@@ -16,7 +16,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PoiTestData {
 
@@ -58,13 +57,13 @@ public class PoiTestData {
     public static List<Row> addRows(ExtendedSheet extendedSheet, int... rownums) {
         return Arrays.stream(rownums)
                 .mapToObj(extendedSheet::createRow)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static List<Sheet> createSheets(Workbook workbook, String... sheetNames) {
         return Arrays.stream(sheetNames)
                 .map(workbook::createSheet)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static Cell createCell(Row row, int column, String value) {

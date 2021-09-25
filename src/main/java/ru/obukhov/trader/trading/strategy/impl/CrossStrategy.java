@@ -14,7 +14,6 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Trading strategy based on idea to buy when short-term moving average crosses a long-term moving average
@@ -44,7 +43,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
         } else {
             final List<BigDecimal> values = data.getCurrentCandles().stream()
                     .map(Candle::getOpenPrice)
-                    .collect(Collectors.toList());
+                    .toList();
             final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
             final List<BigDecimal> shortAverages = averager.getAverages(values, crossStrategyParams.getSmallWindow());
             final List<BigDecimal> longAverages = averager.getAverages(values, crossStrategyParams.getBigWindow());

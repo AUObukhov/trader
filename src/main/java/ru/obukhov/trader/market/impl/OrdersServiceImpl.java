@@ -14,7 +14,6 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrdersServiceImpl implements OrdersService {
 
@@ -31,7 +30,7 @@ public class OrdersServiceImpl implements OrdersService {
         final String figi = marketService.getFigi(ticker);
         return getOrders(brokerAccountId).stream()
                 .filter(order -> figi.equals(order.getFigi()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

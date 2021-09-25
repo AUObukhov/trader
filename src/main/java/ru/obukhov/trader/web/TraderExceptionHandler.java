@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
@@ -49,7 +48,7 @@ public class TraderExceptionHandler {
     private Map<String, Object> createResponseMap(final MethodArgumentNotValidException exception) {
         List<String> errors = exception.getBindingResult().getAllErrors().stream()
                 .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.toList());
+                .toList();
 
         return createResponseMap("Invalid request", errors);
     }

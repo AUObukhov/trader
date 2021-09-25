@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CandleMocker {
     private final TinkoffService tinkoffService;
@@ -28,7 +27,7 @@ public class CandleMocker {
             final Interval interval = invocation.getArgument(1);
             return candles.stream()
                     .filter(candle -> interval.contains(candle.getTime()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
     };
 

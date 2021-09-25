@@ -49,7 +49,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * Back tests trading by bots
@@ -114,11 +113,11 @@ public class BackTesterImpl implements BackTester {
 
         final List<CompletableFuture<BackTestResult>> backTestFutures = botConfigs.stream()
                 .map(botConfig -> startBackTest(botConfig, balanceConfig, finiteInterval))
-                .collect(Collectors.toList());
+                .toList();
         return backTestFutures.stream()
                 .map(CompletableFuture::join)
                 .sorted(Comparator.comparing(result -> ((BackTestResult) result).getBalances().getFinalTotalSavings()).reversed())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private FakeBot createFakeBot(final BotConfig botConfig) {
@@ -265,7 +264,7 @@ public class BackTesterImpl implements BackTester {
 
         return portfolioPositions.stream()
                 .map(portfolioPosition -> createBackTestPosition(portfolioPosition, currentPrice))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
@@ -333,7 +332,7 @@ public class BackTesterImpl implements BackTester {
     private List<BackTestOperation> getOperations(final List<Operation> operations, final String ticker) {
         final List<BackTestOperation> backTestOperations = operations.stream()
                 .map(operationMapper::map)
-                .collect(Collectors.toList());
+                .toList();
         backTestOperations.forEach(operation -> operation.setTicker(ticker));
         return backTestOperations;
     }

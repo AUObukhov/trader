@@ -7,7 +7,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class with methods for calculation of exponentially weighted moving averages
@@ -31,7 +30,7 @@ public class ExponentialMovingAverager extends MovingAverager {
             updateAverages(averages, weightDecrease, revertedWeightDecrease);
         }
 
-        return averages.stream().map(DecimalUtils::setDefaultScale).collect(Collectors.toList());
+        return averages.stream().map(DecimalUtils::setDefaultScale).toList();
     }
 
     private void updateAverages(final List<BigDecimal> averages, final double weightDecrease, final double revertedWeightDecrease) {

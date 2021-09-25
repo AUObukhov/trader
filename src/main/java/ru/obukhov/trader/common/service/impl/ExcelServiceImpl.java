@@ -47,7 +47,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -338,7 +337,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void addCandles(final ExtendedChartData chartData, final GetCandlesResponse response) {
         final List<OffsetDateTime> times = response.getCandles().stream()
                 .map(Candle::getTime)
-                .collect(Collectors.toList());
+                .toList();
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
         addOpenPrices(chartData, timesDataSource, response.getCandles());
         addLine(chartData, timesDataSource, response.getAverages1(), MarkerProperties.NO_MARKER, Color.BLUE);

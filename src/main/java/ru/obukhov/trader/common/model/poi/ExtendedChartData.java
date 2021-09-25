@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Decorator of {@link XDDFChartData} with additional handy methods
@@ -120,7 +119,7 @@ public class ExtendedChartData {
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .map(Number::doubleValue)
-                .collect(Collectors.toList());
+                .toList();
 
         if (!values.isEmpty()) {
             final Double minimum = MathUtils.min(values);

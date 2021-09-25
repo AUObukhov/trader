@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class ExcelServiceImplUnitTest {
@@ -520,7 +519,7 @@ class ExcelServiceImplUnitTest {
 
     private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
-        final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).collect(Collectors.toList());
+        final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();
         final List<BigDecimal> shortAverages = averager.getAverages(openPrices, 2);
         final List<BigDecimal> longAverages = averager.getAverages(openPrices, 5);
 

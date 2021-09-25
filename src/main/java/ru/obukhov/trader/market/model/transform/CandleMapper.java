@@ -8,7 +8,6 @@ import ru.tinkoff.invest.openapi.model.rest.Candles;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Maps:
@@ -29,7 +28,7 @@ public abstract class CandleMapper {
     public List<Candle> map(final Candles source) {
         return source.getCandles().stream()
                 .map(this::map)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected OffsetDateTime mapOffsetDateTime(final OffsetDateTime source) {

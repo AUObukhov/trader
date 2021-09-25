@@ -12,7 +12,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class with util methods to transform or analyse trends
@@ -70,7 +69,7 @@ public class TrendUtils {
     ) {
         return localExtremesIndices.stream()
                 .map(extremum -> Point.of(times.get(extremum), values.get(extremum)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -109,7 +108,7 @@ public class TrendUtils {
         return extremes.stream()
                 .sorted(Comparator.comparing(Pair::getRight, comparator.reversed()))
                 .map(Pair::getLeft)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // endregion

@@ -8,7 +8,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ThrottledCounterUnitTest {
@@ -101,7 +100,7 @@ class ThrottledCounterUnitTest {
             }
         };
 
-        final List<Thread> threads = Stream.generate(() -> new Thread(target)).limit(5).collect(Collectors.toList());
+        final List<Thread> threads = Stream.generate(() -> new Thread(target)).limit(5).toList();
 
         threads.forEach(Thread::start);
 

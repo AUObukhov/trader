@@ -40,7 +40,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -187,7 +186,7 @@ public class FakeTinkoffService implements TinkoffService {
         return operationsStream
                 .sorted(Comparator.comparing(BackTestOperation::getDateTime))
                 .map(operationMapper::map)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // endregion
@@ -400,7 +399,7 @@ public class FakeTinkoffService implements TinkoffService {
                     currencyPosition.setBalance(entry.getValue());
                     return currencyPosition;
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // endregion

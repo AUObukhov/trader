@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,7 +51,7 @@ public class MarketServiceImpl implements MarketService {
 
         return candles.stream()
                 .sorted(Comparator.comparing(Candle::getTime))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Candle> getAllCandlesByDays(final String ticker, final Interval interval, final CandleResolution candleResolution) {
@@ -76,7 +75,7 @@ public class MarketServiceImpl implements MarketService {
         }
 
         Collections.reverse(candles);
-        return candles.stream().flatMap(Collection::stream).collect(Collectors.toList());
+        return candles.stream().flatMap(Collection::stream).toList();
     }
 
     private List<Candle> getAllCandlesByYears(final String ticker, final Interval interval, final CandleResolution candleResolution) {
@@ -94,7 +93,7 @@ public class MarketServiceImpl implements MarketService {
             currentCandles = loadCandles(ticker, currentFrom, currentTo, candleResolution)
                     .stream()
                     .filter(candle -> interval.contains(candle.getTime()))
-                    .collect(Collectors.toList());
+                    .toList();
             allCandles.addAll(currentCandles);
         } while (DateUtils.isAfter(currentFrom, interval.getFrom()) && !currentCandles.isEmpty());
 
@@ -115,14 +114,14 @@ public class MarketServiceImpl implements MarketService {
         return tinkoffService.getMarketCandles(ticker, interval.extendToDay(), candleResolution)
                 .stream()
                 .filter(candle -> interval.contains(candle.getTime()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<Candle> loadYearCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         return tinkoffService.getMarketCandles(ticker, interval.extendToYear(), candleResolution)
                 .stream()
                 .filter(candle -> interval.contains(candle.getTime()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
