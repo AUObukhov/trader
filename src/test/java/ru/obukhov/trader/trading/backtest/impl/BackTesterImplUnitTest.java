@@ -183,13 +183,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -276,13 +270,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -357,13 +345,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -514,13 +496,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -596,13 +572,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -655,13 +625,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -715,13 +679,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -775,13 +733,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.093,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.093, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
@@ -835,13 +787,7 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final BotConfig botConfig = new BotConfig(
-                brokerAccountId,
-                ticker,
-                CandleResolution._1MIN,
-                0.003,
-                StrategyType.CONSERVATIVE
-        );
+        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
