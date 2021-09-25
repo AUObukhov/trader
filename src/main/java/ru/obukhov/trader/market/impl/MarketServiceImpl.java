@@ -246,18 +246,12 @@ public class MarketServiceImpl implements MarketService {
             return getAllInstruments();
         }
 
-        switch (type) {
-            case ETF:
-                return tinkoffService.getMarketEtfs();
-            case STOCK:
-                return tinkoffService.getMarketStocks();
-            case BOND:
-                return tinkoffService.getMarketBonds();
-            case CURRENCY:
-                return tinkoffService.getMarketCurrencies();
-            default:
-                throw new IllegalArgumentException("Unknown ticker type " + type);
-        }
+        return switch (type) {
+            case ETF -> tinkoffService.getMarketEtfs();
+            case STOCK -> tinkoffService.getMarketStocks();
+            case BOND -> tinkoffService.getMarketBonds();
+            case CURRENCY -> tinkoffService.getMarketCurrencies();
+        };
     }
 
     private List<MarketInstrument> getAllInstruments() {

@@ -42,14 +42,10 @@ public class GrafanaServiceImpl implements GrafanaService {
     @Override
     public List<QueryResult> getData(GetDataRequest request) {
         Metric metric = getRequiredMetric(request);
-        switch (metric) {
-            case CANDLES:
-                return getCandles(request);
-            case EXTENDED_CANDLES:
-                return getExtendedCandles(request);
-            default:
-                throw new IllegalArgumentException("Unknown metric: " + metric);
-        }
+        return switch (metric) {
+            case CANDLES -> getCandles(request);
+            case EXTENDED_CANDLES -> getExtendedCandles(request);
+        };
     }
 
     private Metric getRequiredMetric(GetDataRequest request) {

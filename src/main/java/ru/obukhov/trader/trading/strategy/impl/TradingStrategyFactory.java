@@ -29,14 +29,10 @@ public class TradingStrategyFactory {
 
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
         final StrategyType strategyType = botConfig.getStrategyType();
-        switch (strategyType) {
-            case CONSERVATIVE:
-                return createConservativeStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
-            case CROSS:
-                return createCrossStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
-            default:
-                throw new IllegalArgumentException("Unknown strategy type " + strategyType);
-        }
+        return switch (strategyType) {
+            case CONSERVATIVE -> createConservativeStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
+            case CROSS -> createCrossStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
+        };
     }
 
     private ConservativeStrategy createConservativeStrategy(final String name, final double commission, final Map<String, Object> strategyParams) {

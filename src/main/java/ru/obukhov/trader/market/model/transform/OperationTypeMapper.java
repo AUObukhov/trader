@@ -17,14 +17,11 @@ public interface OperationTypeMapper {
     }
 
     default OperationType map(final OperationTypeWithCommission source) {
-        switch (source) {
-            case BUY:
-                return OperationType.BUY;
-            case SELL:
-                return OperationType.SELL;
-            default:
-                throw new IllegalArgumentException("Expected buy or sell operation, got " + source);
-        }
+        return switch (source) {
+            case BUY -> OperationType.BUY;
+            case SELL -> OperationType.SELL;
+            default -> throw new IllegalArgumentException("Expected buy or sell operation, got " + source);
+        };
     }
 
 }

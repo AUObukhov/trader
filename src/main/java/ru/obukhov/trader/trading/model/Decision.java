@@ -25,16 +25,11 @@ public class Decision {
     }
 
     public String toPrettyString() {
-        switch (action) {
-            case WAIT:
-                return "Wait";
-            case BUY:
-                return "Buy " + lots + " lots";
-            case SELL:
-                return "Sell " + lots + " lots";
-            default:
-                throw new IllegalStateException("Unknown action: " + action);
-        }
+        return switch (action) {
+            case WAIT -> "Wait";
+            case BUY -> "Buy " + lots + " lots";
+            case SELL -> "Sell " + lots + " lots";
+        };
     }
 
 }
