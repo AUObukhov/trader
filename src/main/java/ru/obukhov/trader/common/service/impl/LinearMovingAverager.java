@@ -12,7 +12,7 @@ import java.util.List;
  * Class with methods for calculation of linear weighted moving averages
  */
 @Service
-public class LinearMovingAverager extends MovingAverager {
+public class LinearMovingAverager implements MovingAverager {
 
     @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order) {

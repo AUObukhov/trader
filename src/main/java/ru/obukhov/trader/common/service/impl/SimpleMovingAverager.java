@@ -12,7 +12,7 @@ import java.util.List;
  * Class with methods for calculation of simple moving averages
  */
 @Service
-public class SimpleMovingAverager extends MovingAverager {
+public class SimpleMovingAverager implements MovingAverager {
 
     @Override
     public List<BigDecimal> getAverages(final List<BigDecimal> values, final int window, final int order) {
