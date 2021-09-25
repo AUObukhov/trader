@@ -3,34 +3,68 @@ package ru.obukhov.trader.common.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 class DecimalUtilsUnitTest {
 
-    @Test
-    void subtract() {
-        final BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(100.1), 1.5);
+    // region subtract tests
 
-        AssertUtils.assertEquals(98.6, result);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSubtract() {
+        return Stream.of(
+                Arguments.of(100.1, 1.5, 98.6),
+                Arguments.of(100.000055, 1.5, 98.50006)
+        );
     }
+
+    @ParameterizedTest
+    @MethodSource("getData_forSubtract")
+    void subtract(final double minuend, final double subtrahend, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.subtract(BigDecimal.valueOf(minuend), subtrahend);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
 
     // region multiply tests
 
-    @Test
-    void multiplyByDouble() {
-        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 1.5);
-
-        AssertUtils.assertEquals(150.15, result);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forMultiplyByDouble() {
+        return Stream.of(
+                Arguments.of(100.1, 1.5, 150.15),
+                Arguments.of(100.000055, 5.9, 590.00032)
+        );
     }
 
-    @Test
-    void multiplyByInteger() {
-        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(100.1), 2);
+    @ParameterizedTest
+    @MethodSource("getData_forMultiplyByDouble")
+    void multiplyByDouble(final double multiplier, final double multiplicand, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(multiplier), multiplicand);
 
-        AssertUtils.assertEquals(200.2, result);
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forMultiplyByInt() {
+        return Stream.of(
+                Arguments.of(100.1, 2, 200.2),
+                Arguments.of(100.000015, 3, 300.00005)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forMultiplyByInt")
+    void multiplyByInteger(final double multiplier, final int multiplicand, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.multiply(BigDecimal.valueOf(multiplier), multiplicand);
+
+        AssertUtils.assertEquals(expectedResult, result);
     }
 
     // endregion
@@ -44,25 +78,16 @@ class DecimalUtilsUnitTest {
         AssertUtils.assertEquals(33.33333, result);
     }
 
-    @Test
-    void divideBigDecimalByDouble() {
-        final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3.5);
+    @ParameterizedTest
+    @CsvSource("100.000055, 0.099, 1010.10157")
+    void multiplyByInteger(final double dividend, final double divisor, final double expectedResult) {
+        final BigDecimal divideBigDecimalByDoubleResult = DecimalUtils.divide(BigDecimal.valueOf(dividend), divisor);
+        final BigDecimal divideDoubleByDoubleResult = DecimalUtils.divide(dividend, divisor);
+        final BigDecimal divideBigDecimalByBigDecimal = DecimalUtils.divide(BigDecimal.valueOf(dividend), BigDecimal.valueOf(divisor));
 
-        AssertUtils.assertEquals(28.57143, result);
-    }
-
-    @Test
-    void divideDoubleByDouble() {
-        final BigDecimal result = DecimalUtils.divide(100., 3.5);
-
-        AssertUtils.assertEquals(28.57143, result);
-    }
-
-    @Test
-    void divideBigDecimalByBigDecimal() {
-        final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), BigDecimal.valueOf(3.5));
-
-        AssertUtils.assertEquals(28.57143, result);
+        AssertUtils.assertEquals(expectedResult, divideBigDecimalByDoubleResult);
+        AssertUtils.assertEquals(expectedResult, divideDoubleByDoubleResult);
+        AssertUtils.assertEquals(expectedResult, divideBigDecimalByBigDecimal);
     }
 
     // endregion

@@ -15,23 +15,23 @@ public class DecimalUtils {
      * @return minuend - subtrahend
      */
     public static BigDecimal subtract(final BigDecimal minuend, final double subtrahend) {
-        return minuend.subtract(BigDecimal.valueOf(subtrahend));
+        return setDefaultScale(minuend.subtract(BigDecimal.valueOf(subtrahend)));
     }
 
     // region multiply overloads
 
     /**
-     * @return multiplier * multiplicand
+     * @return multiplier * multiplicand with scale = {@link DecimalUtils#DEFAULT_SCALE}
      */
     public static BigDecimal multiply(final BigDecimal multiplier, final double multiplicand) {
-        return multiplier.multiply(BigDecimal.valueOf(multiplicand));
+        return setDefaultScale(multiplier.multiply(BigDecimal.valueOf(multiplicand)));
     }
 
     /**
-     * @return multiplier * multiplicand
+     * @return multiplier * multiplicand with scale = {@link DecimalUtils#DEFAULT_SCALE}
      */
     public static BigDecimal multiply(final BigDecimal multiplier, final int multiplicand) {
-        return multiplier.multiply(BigDecimal.valueOf(multiplicand));
+        return setDefaultScale(multiplier.multiply(BigDecimal.valueOf(multiplicand)));
     }
 
     // endregion
