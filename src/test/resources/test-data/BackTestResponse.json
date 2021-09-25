@@ -12,11 +12,13 @@
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"
       },
-      "initialBalance": 1000,
-      "totalInvestment": 1000,
-      "weightedAverageInvestment": 1000,
-      "finalTotalBalance": 2000,
-      "finalBalance": 2000,
+      "balances": {
+        "initialInvestment": 1000,
+        "totalInvestment": 1000,
+        "weightedAverageInvestment": 1000,
+        "finalBalance": 2000,
+        "finalTotalSavings": 2000
+      },
       "profits": {
         "absolute": 1000,
         "relative": 1.0,
@@ -41,11 +43,13 @@
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"
       },
-      "initialBalance": 1000,
-      "totalInvestment": 10000,
-      "weightedAverageInvestment": 10000,
-      "finalTotalBalance": 20000,
-      "finalBalance": 10000,
+      "balances": {
+        "initialInvestment": 1000,
+        "totalInvestment": 10000,
+        "weightedAverageInvestment": 10000,
+        "finalBalance": 10000,
+        "finalTotalSavings": 20000
+      },
       "profits": {
         "absolute": 1000,
         "relative": 1.0,
@@ -70,11 +74,13 @@
         "from": "2021-01-01T10:00:00+03:00",
         "to": "2021-02-01T00:00:00+03:00"
       },
-      "initialBalance": 1000,
-      "totalInvestment": 2000,
-      "weightedAverageInvestment": 2000,
-      "finalTotalBalance": 4000,
-      "finalBalance": 3000,
+      "balances": {
+        "initialInvestment": 1000,
+        "totalInvestment": 2000,
+        "weightedAverageInvestment": 2000,
+        "finalBalance": 3000,
+        "finalTotalSavings": 4000
+      },
       "profits": {
         "absolute": 1000,
         "relative": 0.33,

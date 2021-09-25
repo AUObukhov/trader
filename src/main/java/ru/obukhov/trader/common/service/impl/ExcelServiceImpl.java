@@ -177,12 +177,12 @@ public class ExcelServiceImpl implements ExcelService {
         putBrokerAccountId(sheet, result.getBotConfig().getBrokerAccountId());
         putTicker(sheet, result.getBotConfig().getTicker());
         putInterval(sheet, result.getInterval());
-        putInitialBalance(sheet, result.getInitialBalance());
-        putTotalInvestment(sheet, result.getTotalInvestment());
-        putFinalTotalBalance(sheet, result.getFinalTotalBalance());
-        putFinalBalance(sheet, result.getFinalBalance());
+        putInitialInvestment(sheet, result.getBalances().getInitialInvestment());
+        putTotalInvestment(sheet, result.getBalances().getTotalInvestment());
+        putFinalTotalSavings(sheet, result.getBalances().getFinalTotalSavings());
+        putFinalBalance(sheet, result.getBalances().getFinalBalance());
 
-        putWeightedAverageInvestment(sheet, result.getWeightedAverageInvestment());
+        putWeightedAverageInvestment(sheet, result.getBalances().getWeightedAverageInvestment());
         putAbsoluteProfit(sheet, result.getProfits().getAbsolute());
         putRelativeProfit(sheet, result.getProfits().getRelative());
         putRelativeYearProfit(sheet, result.getProfits().getAverageAnnualProfitability());
@@ -204,9 +204,9 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Интервал", interval.toPrettyString());
     }
 
-    private void putInitialBalance(final ExtendedSheet sheet, final BigDecimal initialBalance) {
+    private void putInitialInvestment(final ExtendedSheet sheet, final BigDecimal initialInvestment) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Начальный баланс", initialBalance);
+        row.createCells("Начальный баланс", initialInvestment);
     }
 
     private void putTotalInvestment(final ExtendedSheet sheet, final BigDecimal totalInvestment) {
@@ -214,7 +214,7 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Вложения", totalInvestment);
     }
 
-    private void putFinalTotalBalance(final ExtendedSheet sheet, final BigDecimal totalBalance) {
+    private void putFinalTotalSavings(final ExtendedSheet sheet, final BigDecimal totalBalance) {
         final ExtendedRow row = sheet.addRow();
         row.createCells("Итоговый общий баланс", totalBalance);
     }

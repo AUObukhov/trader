@@ -20,6 +20,7 @@ import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -124,14 +125,17 @@ class BotControllerWebTest extends ControllerWebTest {
                 .setCandleResolution(CandleResolution._1MIN)
                 .setStrategyType(StrategyType.CONSERVATIVE)
                 .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final Balances balances1 = new Balances(
+                balanceConfig.getInitialBalance(),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(2000)
+        );
         final BackTestResult backTestResult1 = BackTestResult.builder()
                 .botConfig(botConfig1)
                 .interval(interval)
-                .initialBalance(balanceConfig.getInitialBalance())
-                .totalInvestment(BigDecimal.valueOf(1000))
-                .weightedAverageInvestment(BigDecimal.valueOf(1000))
-                .finalTotalBalance(BigDecimal.valueOf(2000))
-                .finalBalance(BigDecimal.valueOf(2000))
+                .balances(balances1)
                 .profits(new Profits(BigDecimal.valueOf(1000), 1.0, 12.0))
                 .operations(List.of(operation))
                 .candles(List.of(candle))
@@ -149,14 +153,17 @@ class BotControllerWebTest extends ControllerWebTest {
                         "greedy", false
                 ));
         final BackTestPosition backTestPosition1 = new BackTestPosition(ticker, BigDecimal.valueOf(100000), 10);
+        final Balances balances2 = new Balances(
+                balanceConfig.getInitialBalance(),
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(10000),
+                BigDecimal.valueOf(20000)
+        );
         final BackTestResult backTestResult2 = BackTestResult.builder()
                 .botConfig(botConfig2)
                 .interval(interval)
-                .initialBalance(balanceConfig.getInitialBalance())
-                .totalInvestment(BigDecimal.valueOf(10000))
-                .weightedAverageInvestment(BigDecimal.valueOf(10000))
-                .finalTotalBalance(BigDecimal.valueOf(20000))
-                .finalBalance(BigDecimal.valueOf(10000))
+                .balances(balances2)
                 .profits(new Profits(BigDecimal.valueOf(1000), 1.0, 12.0))
                 .positions(List.of(backTestPosition1))
                 .build();
@@ -174,14 +181,17 @@ class BotControllerWebTest extends ControllerWebTest {
                 ));
         final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, BigDecimal.valueOf(100), 10);
         final BackTestPosition backTestPosition3 = new BackTestPosition(ticker, BigDecimal.valueOf(1000), 1);
+        final Balances balances3 = new Balances(
+                balanceConfig.getInitialBalance(),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(2000),
+                BigDecimal.valueOf(3000),
+                BigDecimal.valueOf(4000)
+        );
         final BackTestResult backTestResult3 = BackTestResult.builder()
                 .botConfig(botConfig3)
                 .interval(interval)
-                .initialBalance(balanceConfig.getInitialBalance())
-                .totalInvestment(BigDecimal.valueOf(2000))
-                .weightedAverageInvestment(BigDecimal.valueOf(2000))
-                .finalTotalBalance(BigDecimal.valueOf(4000))
-                .finalBalance(BigDecimal.valueOf(3000))
+                .balances(balances3)
                 .profits(new Profits(BigDecimal.valueOf(1000), 0.33, 4.0))
                 .positions(List.of(backTestPosition2, backTestPosition3))
                 .error("error")

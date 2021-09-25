@@ -24,6 +24,7 @@ import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
@@ -116,7 +117,7 @@ public class BackTesterImpl implements BackTester {
                 .collect(Collectors.toList());
         return backTestFutures.stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(BackTestResult::getFinalTotalBalance).reversed())
+                .sorted(Comparator.comparing(result -> ((BackTestResult) result).getBalances().getFinalTotalSavings()).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -149,7 +150,7 @@ public class BackTesterImpl implements BackTester {
                     botConfig, backTestDurationString, executionResult.getException().getMessage()
             );
             log.error(message, executionResult.getException());
-            return createFailedBackTestResult(botConfig, balanceConfig, interval, message);
+            return createFailedBackTestResult(botConfig, balanceConfig.getInitialBalance(), interval, message);
         }
     }
 
@@ -216,50 +217,36 @@ public class BackTesterImpl implements BackTester {
             final List<Candle> candles,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(botConfig.getBrokerAccountId()), candles);
-        final Currency currency = getCurrency(fakeTinkoffService, botConfig.getTicker());
+        final String brokerAccountId = botConfig.getBrokerAccountId();
+        final String ticker = botConfig.getTicker();
 
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
-
-        final BigDecimal initialBalance = investments.get(investments.firstKey());
-        final BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
-        final BigDecimal totalBalance = getTotalBalance(currentBalance, positions);
-
-        final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
-
-        final Profits profits = getProfits(totalBalance, totalInvestment, weightedAverageInvestment, interval);
-        final List<Operation> operations = fakeTinkoffService.getOperations(botConfig.getBrokerAccountId(), interval, botConfig.getTicker());
+        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(brokerAccountId), candles);
+        final Balances balances = getBalances(interval, fakeTinkoffService, positions, ticker);
+        final Profits profits = getProfits(balances, interval);
+        final List<Operation> operations = fakeTinkoffService.getOperations(brokerAccountId, interval, ticker);
 
         return BackTestResult.builder()
                 .botConfig(botConfig)
                 .interval(interval)
-                .initialBalance(initialBalance)
-                .finalTotalBalance(totalBalance)
-                .finalBalance(currentBalance)
-                .totalInvestment(totalInvestment)
-                .weightedAverageInvestment(weightedAverageInvestment)
+                .balances(balances)
                 .profits(profits)
                 .positions(positions)
-                .operations(getOperations(operations, botConfig.getTicker()))
+                .operations(getOperations(operations, ticker))
                 .candles(candles)
                 .build();
     }
 
     private BackTestResult createFailedBackTestResult(
             final BotConfig botConfig,
-            final BalanceConfig balanceConfig,
+            final BigDecimal initialInvestment,
             final Interval interval,
             final String message
     ) {
+        final Balances balances = new Balances(initialInvestment, initialInvestment, initialInvestment, BigDecimal.ZERO, BigDecimal.ZERO);
         return BackTestResult.builder()
                 .botConfig(botConfig)
                 .interval(interval)
-                .initialBalance(balanceConfig.getInitialBalance())
-                .totalInvestment(balanceConfig.getInitialBalance())
-                .weightedAverageInvestment(balanceConfig.getInitialBalance())
-                .finalBalance(BigDecimal.ZERO)
-                .finalTotalBalance(BigDecimal.ZERO)
+                .balances(balances)
                 .profits(Profits.ZEROS)
                 .positions(Collections.emptyList())
                 .operations(Collections.emptyList())
@@ -285,10 +272,29 @@ public class BackTesterImpl implements BackTester {
         return new BackTestPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getCount());
     }
 
-    private BigDecimal getTotalBalance(final BigDecimal balance, final List<BackTestPosition> positions) {
+    private Balances getBalances(
+            final Interval interval,
+            final FakeTinkoffService fakeTinkoffService,
+            final List<BackTestPosition> positions,
+            final String ticker
+    ) {
+        final Currency currency = getCurrency(fakeTinkoffService, ticker);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
+
+        final BigDecimal initialInvestment = investments.get(investments.firstKey());
+        final BigDecimal finalBalance = fakeTinkoffService.getCurrentBalance(currency);
+        final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
+
+        final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
+
+        return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
+    }
+
+    private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<BackTestPosition> positions) {
         return positions.stream()
                 .map(position -> DecimalUtils.multiply(position.getPrice(), position.getQuantity()))
-                .reduce(balance, BigDecimal::add);
+                .reduce(currentBalance, BigDecimal::add);
     }
 
     private BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> investments, final OffsetDateTime endDateTime) {
@@ -306,14 +312,9 @@ public class BackTesterImpl implements BackTester {
         return balances;
     }
 
-    private Profits getProfits(
-            final BigDecimal totalBalance,
-            final BigDecimal totalInvestment,
-            final BigDecimal weightedAverageInvestment,
-            final Interval interval
-    ) {
-        final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
-        final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
+    private Profits getProfits(final Balances balances, final Interval interval) {
+        final BigDecimal absoluteProfit = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
+        final double relativeProfit = getRelativeProfit(balances.getWeightedAverageInvestment(), absoluteProfit);
         final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
         return new Profits(absoluteProfit, relativeProfit, relativeYearProfit);
     }

@@ -27,6 +27,7 @@ import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -328,11 +329,11 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getBotConfig().getBrokerAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getInitialBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getTotalInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getBalances().getInitialInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getBalances().getTotalInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getBalances().getFinalTotalSavings());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getBalances().getFinalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getBalances().getWeightedAverageInvestment());
         AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getProfits().getAbsolute());
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getProfits().getRelative());
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getProfits().getAverageAnnualProfitability());
@@ -434,14 +435,17 @@ class ExcelServiceImplUnitTest {
     }
 
     private BackTestResult createBackTestResult(BotConfig botConfig) {
+        final Balances balances = new Balances(
+                BigDecimal.valueOf(700),
+                BigDecimal.valueOf(800),
+                BigDecimal.valueOf(750),
+                BigDecimal.valueOf(200),
+                BigDecimal.valueOf(1000)
+        );
         return BackTestResult.builder()
                 .botConfig(botConfig)
                 .interval(createInterval())
-                .initialBalance(BigDecimal.valueOf(700))
-                .finalTotalBalance(BigDecimal.valueOf(1000))
-                .finalBalance(BigDecimal.valueOf(200))
-                .totalInvestment(BigDecimal.valueOf(800))
-                .weightedAverageInvestment(BigDecimal.valueOf(750))
+                .balances(balances)
                 .profits(new Profits(BigDecimal.valueOf(300), 0.25, 6.0))
                 .positions(createPositions(botConfig.getTicker()))
                 .operations(createBackTestOperations(botConfig.getTicker()))

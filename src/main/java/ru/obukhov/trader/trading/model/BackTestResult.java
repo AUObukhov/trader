@@ -7,7 +7,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.web.model.BotConfig;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -24,30 +23,7 @@ public class BackTestResult {
      */
     private Interval interval;
 
-    /**
-     * initial investment
-     */
-    private BigDecimal initialBalance;
-
-    /**
-     * sum of all investments
-     */
-    private BigDecimal totalInvestment;
-
-    /**
-     * weighted average value of all investments where weight is time of corresponding investment being last investment
-     */
-    private BigDecimal weightedAverageInvestment;
-
-    /**
-     * currency balance + costs of all position after back test
-     */
-    private BigDecimal finalTotalBalance;
-
-    /**
-     * currency balance after back test
-     */
-    private BigDecimal finalBalance;
+    private Balances balances;
 
     private Profits profits;
 
