@@ -25,6 +25,7 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -227,9 +228,7 @@ public class BackTesterImpl implements BackTester {
         final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
-        final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
-        final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
-        final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
+        final Profits profits = getProfits(totalBalance, totalInvestment, weightedAverageInvestment, interval);
         final List<Operation> operations = fakeTinkoffService.getOperations(botConfig.getBrokerAccountId(), interval, botConfig.getTicker());
 
         return BackTestResult.builder()
@@ -240,9 +239,7 @@ public class BackTesterImpl implements BackTester {
                 .finalBalance(currentBalance)
                 .totalInvestment(totalInvestment)
                 .weightedAverageInvestment(weightedAverageInvestment)
-                .absoluteProfit(absoluteProfit)
-                .relativeProfit(relativeProfit)
-                .relativeYearProfit(relativeYearProfit)
+                .profits(profits)
                 .positions(positions)
                 .operations(getOperations(operations, botConfig.getTicker()))
                 .candles(candles)
@@ -263,9 +260,7 @@ public class BackTesterImpl implements BackTester {
                 .weightedAverageInvestment(balanceConfig.getInitialBalance())
                 .finalBalance(BigDecimal.ZERO)
                 .finalTotalBalance(BigDecimal.ZERO)
-                .absoluteProfit(BigDecimal.ZERO)
-                .relativeProfit(0.0)
-                .relativeYearProfit(0.0)
+                .profits(Profits.ZEROS)
                 .positions(Collections.emptyList())
                 .operations(Collections.emptyList())
                 .candles(Collections.emptyList())
@@ -301,12 +296,6 @@ public class BackTesterImpl implements BackTester {
         return MathUtils.getWeightedAverage(totalInvestments, endDateTime);
     }
 
-    private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
-        return weightedAverageInvestment.signum() == 0
-                ? 0.0
-                : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
-    }
-
     private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(final SortedMap<OffsetDateTime, BigDecimal> investments) {
         final SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
         BigDecimal currentBalance = BigDecimal.ZERO;
@@ -315,6 +304,24 @@ public class BackTesterImpl implements BackTester {
             balances.put(entry.getKey(), currentBalance);
         }
         return balances;
+    }
+
+    private Profits getProfits(
+            final BigDecimal totalBalance,
+            final BigDecimal totalInvestment,
+            final BigDecimal weightedAverageInvestment,
+            final Interval interval
+    ) {
+        final BigDecimal absoluteProfit = totalBalance.subtract(totalInvestment);
+        final double relativeProfit = getRelativeProfit(weightedAverageInvestment, absoluteProfit);
+        final double relativeYearProfit = getRelativeYearProfit(interval, relativeProfit);
+        return new Profits(absoluteProfit, relativeProfit, relativeYearProfit);
+    }
+
+    private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
+        return weightedAverageInvestment.signum() == 0
+                ? 0.0
+                : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
     }
 
     private double getRelativeYearProfit(final Interval interval, final double relativeProfit) {

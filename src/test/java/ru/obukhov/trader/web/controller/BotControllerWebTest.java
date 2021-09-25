@@ -20,6 +20,7 @@ import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -131,9 +132,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .weightedAverageInvestment(BigDecimal.valueOf(1000))
                 .finalTotalBalance(BigDecimal.valueOf(2000))
                 .finalBalance(BigDecimal.valueOf(2000))
-                .absoluteProfit(BigDecimal.valueOf(1000))
-                .relativeProfit(1.0)
-                .relativeYearProfit(12.0)
+                .profits(new Profits(BigDecimal.valueOf(1000), 1.0, 12.0))
                 .operations(List.of(operation))
                 .candles(List.of(candle))
                 .build();
@@ -158,9 +157,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .weightedAverageInvestment(BigDecimal.valueOf(10000))
                 .finalTotalBalance(BigDecimal.valueOf(20000))
                 .finalBalance(BigDecimal.valueOf(10000))
-                .absoluteProfit(BigDecimal.valueOf(1000))
-                .relativeProfit(1.0)
-                .relativeYearProfit(12.0)
+                .profits(new Profits(BigDecimal.valueOf(1000), 1.0, 12.0))
                 .positions(List.of(backTestPosition1))
                 .build();
 
@@ -185,9 +182,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 .weightedAverageInvestment(BigDecimal.valueOf(2000))
                 .finalTotalBalance(BigDecimal.valueOf(4000))
                 .finalBalance(BigDecimal.valueOf(3000))
-                .absoluteProfit(BigDecimal.valueOf(1000))
-                .relativeProfit(0.33)
-                .relativeYearProfit(4.0)
+                .profits(new Profits(BigDecimal.valueOf(1000), 0.33, 4.0))
                 .positions(List.of(backTestPosition2, backTestPosition3))
                 .error("error")
                 .build();

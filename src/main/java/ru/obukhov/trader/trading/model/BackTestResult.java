@@ -49,20 +49,7 @@ public class BackTestResult {
      */
     private BigDecimal finalBalance;
 
-    /**
-     * {@code finalBalance} - {@code totalInvestment}
-     */
-    private BigDecimal absoluteProfit;
-
-    /**
-     * relation of {@code absoluteProfit} to {@code weightedAverageInvestment}
-     */
-    private Double relativeProfit;
-
-    /**
-     * average profit per annum
-     */
-    private Double relativeYearProfit;
+    private Profits profits;
 
     /**
      * positions after back test

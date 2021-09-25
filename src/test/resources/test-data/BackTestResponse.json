@@ -17,9 +17,11 @@
       "weightedAverageInvestment": 1000,
       "finalTotalBalance": 2000,
       "finalBalance": 2000,
-      "absoluteProfit": 1000,
-      "relativeProfit": 1.0,
-      "relativeYearProfit": 12.0,
+      "profits": {
+        "absolute": 1000,
+        "relative": 1.0,
+        "averageAnnualProfitability": 12.0
+      },
       "error": null
     },
     {
@@ -44,9 +46,11 @@
       "weightedAverageInvestment": 10000,
       "finalTotalBalance": 20000,
       "finalBalance": 10000,
-      "absoluteProfit": 1000,
-      "relativeProfit": 1.0,
-      "relativeYearProfit": 12.0,
+      "profits": {
+        "absolute": 1000,
+        "relative": 1.0,
+        "averageAnnualProfitability": 12.0
+      },
       "error": null
     },
     {
@@ -71,9 +75,11 @@
       "weightedAverageInvestment": 2000,
       "finalTotalBalance": 4000,
       "finalBalance": 3000,
-      "absoluteProfit": 1000,
-      "relativeProfit": 0.33,
-      "relativeYearProfit": 4.0,
+      "profits": {
+        "absolute": 1000,
+        "relative": 0.33,
+        "averageAnnualProfitability": 4.0
+      },
       "error": "error"
     }
   ]

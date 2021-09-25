@@ -27,6 +27,7 @@ import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -332,9 +333,9 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getFinalTotalBalance());
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getFinalBalance());
         AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getWeightedAverageInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getAbsoluteProfit());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getRelativeProfit());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getRelativeYearProfit());
+        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getProfits().getAbsolute());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getProfits().getRelative());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getProfits().getAverageAnnualProfitability());
     }
 
     private void assertPositions(BackTestResult result, Iterator<Row> rowIterator) {
@@ -441,9 +442,7 @@ class ExcelServiceImplUnitTest {
                 .finalBalance(BigDecimal.valueOf(200))
                 .totalInvestment(BigDecimal.valueOf(800))
                 .weightedAverageInvestment(BigDecimal.valueOf(750))
-                .absoluteProfit(BigDecimal.valueOf(300))
-                .relativeProfit(0.25)
-                .relativeYearProfit(6d)
+                .profits(new Profits(BigDecimal.valueOf(300), 0.25, 6.0))
                 .positions(createPositions(botConfig.getTicker()))
                 .operations(createBackTestOperations(botConfig.getTicker()))
                 .candles(createCandles())
