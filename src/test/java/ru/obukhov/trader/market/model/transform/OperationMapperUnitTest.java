@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;

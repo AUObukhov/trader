@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.model;
+package ru.obukhov.trader.trading.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

@@ -2,7 +2,7 @@ package ru.obukhov.trader.market.model.transform;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 /**

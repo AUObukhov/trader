@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;

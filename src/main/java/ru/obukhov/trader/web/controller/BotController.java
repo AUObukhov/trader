@@ -14,7 +14,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
-import ru.obukhov.trader.web.model.BackTestResult;
+import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 

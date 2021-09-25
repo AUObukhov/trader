@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.web.model.BackTestOperation;
+import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;

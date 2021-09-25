@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.model;
+package ru.obukhov.trader.trading.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
