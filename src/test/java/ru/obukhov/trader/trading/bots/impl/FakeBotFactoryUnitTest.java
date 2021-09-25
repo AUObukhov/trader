@@ -34,7 +34,7 @@ class FakeBotFactoryUnitTest {
 
         final Bot bot = factory.createBot(strategy, CandleResolution._1MIN);
 
-        Assertions.assertTrue(bot instanceof FakeBot);
+        Assertions.assertInstanceOf(FakeBot.class, bot);
     }
 
 }
