@@ -28,8 +28,8 @@ public class Profits {
     private double relative;
 
     /**
-     * Average profitability per annum
+     * Average profitability per year
      */
-    private double averageAnnualProfitability;
+    private double relativeAnnual;
 
 }

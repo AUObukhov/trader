@@ -184,7 +184,7 @@ public class ExcelServiceImpl implements ExcelService {
         putWeightedAverageInvestment(sheet, result.getBalances().getWeightedAverageInvestment());
         putAbsoluteProfit(sheet, result.getProfits().getAbsolute());
         putRelativeProfit(sheet, result.getProfits().getRelative());
-        putRelativeYearProfit(sheet, result.getProfits().getAverageAnnualProfitability());
+        putRelativeYearProfit(sheet, result.getProfits().getRelativeAnnual());
         putError(sheet, result.getError());
     }
 

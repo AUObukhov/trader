@@ -312,10 +312,10 @@ public class BackTesterImpl implements BackTester {
     }
 
     private Profits getProfits(final Balances balances, final Interval interval) {
-        final BigDecimal absoluteProfit = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
-        final double relativeProfit = getRelativeProfit(balances.getWeightedAverageInvestment(), absoluteProfit);
-        final double averageAnnualProfitability = getRelativeYearProfit(interval, relativeProfit);
-        return new Profits(absoluteProfit, relativeProfit, averageAnnualProfitability);
+        final BigDecimal absolute = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
+        final double relative = getRelativeProfit(balances.getWeightedAverageInvestment(), absolute);
+        final double relativeAnnual = getRelativeAnnual(interval, relative);
+        return new Profits(absolute, relative, relativeAnnual);
     }
 
     private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
@@ -324,7 +324,7 @@ public class BackTesterImpl implements BackTester {
                 : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
     }
 
-    private double getRelativeYearProfit(final Interval interval, final double relativeProfit) {
+    private double getRelativeAnnual(final Interval interval, final double relativeProfit) {
         final BigDecimal partOfYear = BigDecimal.valueOf(interval.toDays() / DateUtils.DAYS_IN_YEAR);
         return BigDecimal.valueOf(relativeProfit).divide(partOfYear, RoundingMode.HALF_UP).doubleValue();
     }

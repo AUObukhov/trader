@@ -164,7 +164,7 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.getBalances().getWeightedAverageInvestment());
         AssertUtils.assertEquals(0, backTestResult.getProfits().getAbsolute());
         AssertUtils.assertEquals(0.0, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(0.0, backTestResult.getProfits().getAverageAnnualProfitability());
+        AssertUtils.assertEquals(0.0, backTestResult.getProfits().getRelativeAnnual());
 
         final String expectedErrorPattern = String.format(
                 "^Back test for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
@@ -257,7 +257,7 @@ class BackTesterImplUnitTest {
         final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(initialInvestment).add(positionsPrice);
         AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.getProfits().getAbsolute());
         AssertUtils.assertEquals(1.1, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(115711.2, backTestResult.getProfits().getAverageAnnualProfitability());
+        AssertUtils.assertEquals(115711.2, backTestResult.getProfits().getRelativeAnnual());
 
         Assertions.assertNull(backTestResult.getError());
     }
@@ -833,7 +833,7 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(0, backTestResult.getBalances().getTotalInvestment());
         AssertUtils.assertEquals(0, backTestResult.getBalances().getWeightedAverageInvestment());
         AssertUtils.assertEquals(0, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(0, backTestResult.getProfits().getAverageAnnualProfitability());
+        AssertUtils.assertEquals(0, backTestResult.getProfits().getRelativeAnnual());
 
         Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
