@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -47,6 +48,7 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
@@ -118,6 +120,22 @@ class BackTesterImplUnitTest {
     }
 
     @Test
+    void test_throwsIllegalArgumentException_whenToIntervalIsShorterThanOneDay() {
+        final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
+
+        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
+
+        final List<BotConfig> botConfigs = Collections.emptyList();
+
+        final OffsetDateTime from = OffsetDateTime.now().minusDays(1);
+        final OffsetDateTime to = from.plusDays(1).minusNanos(1);
+        final Interval interval = Interval.of(from, to);
+
+        final Executable executable = () -> backTester.test(botConfigs, balanceConfig, interval, false);
+        Assertions.assertThrows(RuntimeException.class, executable, "interval can't be shorter than 1 day");
+    }
+
+    @Test
     void test_returnsResultWithEmptyValues_whenTickerNotFound() {
         // arrange
 
@@ -141,8 +159,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         // act
@@ -199,8 +217,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestData.createCandleWithClosePrice(100);
@@ -257,7 +275,7 @@ class BackTesterImplUnitTest {
         final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(initialInvestment).add(positionsPrice);
         AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.getProfits().getAbsolute());
         AssertUtils.assertEquals(1.1, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(115711.2, backTestResult.getProfits().getRelativeAnnual());
+        AssertUtils.assertEquals(401.8, backTestResult.getProfits().getRelativeAnnual());
 
         Assertions.assertNull(backTestResult.getError());
     }
@@ -285,8 +303,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestData.createCandleWithClosePrice(100);
@@ -330,7 +348,7 @@ class BackTesterImplUnitTest {
 
         Assertions.assertNull(backTestResult.getError());
 
-        Mockito.verify(fakeTinkoffService, Mockito.times(5))
+        Mockito.verify(fakeTinkoffService, Mockito.times(24))
                 .incrementBalance(
                         Mockito.eq(MarketInstrument.getCurrency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceConfig.getBalanceIncrement()))
@@ -360,8 +378,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle0 = TestData.createCandleWithClosePrice(100);
@@ -435,8 +453,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
@@ -511,27 +529,11 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
-
-        final Candle candle1 = TestData.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
-
-        final Candle candle2 = TestData.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
-
-        final Candle candle3 = TestData.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
-
-        final Candle candle4 = TestData.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
-
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
+        final List<Candle> candles = mockDecisionDataWithCandles(brokerAccountId, ticker, fakeBot, from, to);
 
         mockNextMinute(from);
 
@@ -546,22 +548,9 @@ class BackTesterImplUnitTest {
         // assert
 
         Assertions.assertEquals(1, backTestResults.size());
-
         final BackTestResult backTestResult = backTestResults.get(0);
-
-        List<Candle> candles = backTestResult.getCandles();
-        Assertions.assertEquals(5, candles.size());
-        Assertions.assertSame(candle0, candles.get(0));
-        Assertions.assertSame(candle1, candles.get(1));
-        Assertions.assertSame(candle2, candles.get(2));
-        Assertions.assertSame(candle3, candles.get(3));
-        Assertions.assertSame(candle4, candles.get(4));
-
+        AssertUtils.assertListsAreEqual(candles, backTestResult.getCandles());
         Assertions.assertNull(backTestResult.getError());
-
-        Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
-        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -587,8 +576,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
@@ -611,10 +600,6 @@ class BackTesterImplUnitTest {
 
         Assertions.assertTrue(backTestResult.getCandles().isEmpty());
         Assertions.assertNull(backTestResult.getError());
-
-        Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
-        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -640,8 +625,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
@@ -665,10 +650,6 @@ class BackTesterImplUnitTest {
 
         Assertions.assertTrue(backTestResult.getCandles().isEmpty());
         Assertions.assertNull(backTestResult.getError());
-
-        Mockito.verify(fakeBot, Mockito.times(5))
-                .processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class));
-        Mockito.verify(fakeTinkoffService, Mockito.never()).incrementBalance(Mockito.any(), Mockito.any());
     }
 
     @ParameterizedTest
@@ -694,8 +675,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
@@ -748,8 +729,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
@@ -802,8 +783,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
@@ -861,8 +842,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         // act
@@ -906,8 +887,8 @@ class BackTesterImplUnitTest {
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 7);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1, 7, 5);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
@@ -948,6 +929,32 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
         Mockito.when(fakeBot.getFakeTinkoffService()).thenReturn(fakeTinkoffService);
         return fakeBot;
+    }
+
+    private List<Candle> mockDecisionDataWithCandles(
+            final String brokerAccountId,
+            final String ticker,
+            final FakeBot fakeBot,
+            final OffsetDateTime from,
+            final OffsetDateTime to
+    ) {
+        final List<Candle> candles = new ArrayList<>();
+
+        // mocking first DecisionData with previousStartTime = null
+        candles.add(new Candle().setTime(from));
+        DecisionData decisionData = new DecisionData().setCurrentCandles(new ArrayList<>(candles));
+        Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, null, from))
+                .thenReturn(decisionData);
+
+        // mocking DecisionData for all last minutes
+        for (OffsetDateTime dateTime = from.plusMinutes(1); dateTime.isBefore(to); dateTime = dateTime.plusMinutes(1)) {
+            candles.add(new Candle().setTime(dateTime));
+            decisionData = new DecisionData().setCurrentCandles(new ArrayList<>(candles));
+            Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, from, dateTime))
+                    .thenReturn(decisionData);
+        }
+
+        return candles;
     }
 
     private void mockNextMinute(OffsetDateTime from) {

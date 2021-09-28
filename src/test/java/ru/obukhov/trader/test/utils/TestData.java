@@ -271,7 +271,7 @@ public class TestData {
 
     @SneakyThrows
     public static CronExpression createCronExpression() {
-        return new CronExpression("0 * * * * ?");
+        return new CronExpression("0 0 * * * ?");
     }
 
     public static MarketProperties createMarketProperties() {

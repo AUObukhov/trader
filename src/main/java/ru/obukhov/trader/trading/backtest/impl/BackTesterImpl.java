@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
@@ -108,6 +109,7 @@ public class BackTesterImpl implements BackTester {
         final OffsetDateTime now = OffsetDateTime.now();
         DateUtils.assertDateTimeNotFuture(interval.getFrom(), now, "from");
         DateUtils.assertDateTimeNotFuture(interval.getTo(), now, "to");
+        Assert.isTrue(interval.toDays() >= 1, "interval can't be shorter than 1 day");
 
         final Interval finiteInterval = interval.limitByNowIfNull(now);
 

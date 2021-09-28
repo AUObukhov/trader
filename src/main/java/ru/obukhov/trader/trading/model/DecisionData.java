@@ -1,6 +1,7 @@
 package ru.obukhov.trader.trading.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@Accessors(chain = true)
 public class DecisionData {
 
     private BigDecimal balance;
