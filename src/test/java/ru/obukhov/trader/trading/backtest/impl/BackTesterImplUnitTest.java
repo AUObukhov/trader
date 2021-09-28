@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.backtest.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -196,7 +195,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_fillsCommonStatistics(@Nullable final String brokerAccountId) {
+    void test_fillsCommonStatistics(final String brokerAccountId) {
 
         // arrange
 
@@ -283,7 +282,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_callsBalanceIncrement(@Nullable final String brokerAccountId) {
+    void test_callsBalanceIncrement(final String brokerAccountId) {
 
         // arrange
 
@@ -358,7 +357,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_fillsPositions(@Nullable final String brokerAccountId) {
+    void test_fillsPositions(final String brokerAccountId) {
 
         // arrange
 
@@ -432,7 +431,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_fillsOperations(@Nullable final String brokerAccountId) {
+    void test_fillsOperations(final String brokerAccountId) {
 
         // arrange
 
@@ -509,7 +508,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_fillsCandles(@Nullable final String brokerAccountId) {
+    void test_fillsCandles(final String brokerAccountId) {
 
         // arrange
 
@@ -556,7 +555,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(@Nullable final String brokerAccountId) {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(final String brokerAccountId) {
 
         // arrange
 
@@ -605,7 +604,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(@Nullable final String brokerAccountId) {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(final String brokerAccountId) {
 
         // arrange
 
@@ -655,7 +654,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_callsSaveToFile_whenSaveToFilesIsTrue(@Nullable final String brokerAccountId) {
+    void test_callsSaveToFile_whenSaveToFilesIsTrue(final String brokerAccountId) {
 
         // arrange
 
@@ -709,7 +708,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse(@Nullable final String brokerAccountId) {
+    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse(final String brokerAccountId) {
 
         // arrange
 
@@ -763,7 +762,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments(@Nullable final String brokerAccountId) {
+    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments(final String brokerAccountId) {
 
         // arrange
 
@@ -822,7 +821,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_catchesBackTestException(@Nullable final String brokerAccountId) {
+    void test_catchesBackTestException(final String brokerAccountId) {
 
         // arrange
 
@@ -867,7 +866,7 @@ class BackTesterImplUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void test_catchesSaveToFileException(@Nullable final String brokerAccountId) {
+    void test_catchesSaveToFileException(final String brokerAccountId) {
 
         // arrange
 
@@ -921,7 +920,7 @@ class BackTesterImplUnitTest {
         Assertions.assertNull(backTestResult.getError());
     }
 
-    private void mockStrategy(BotConfig botConfig, AbstractTradingStrategy strategy) {
+    private void mockStrategy(final BotConfig botConfig, final AbstractTradingStrategy strategy) {
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(strategy);
     }
 
@@ -957,7 +956,7 @@ class BackTesterImplUnitTest {
         return candles;
     }
 
-    private void mockNextMinute(OffsetDateTime from) {
+    private void mockNextMinute(final OffsetDateTime from) {
         Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(from);
 
         Mockito.when(fakeTinkoffService.nextMinute()).thenAnswer(invocationOnMock -> {
@@ -968,13 +967,13 @@ class BackTesterImplUnitTest {
         });
     }
 
-    private void mockInitialInvestment(Currency currency, OffsetDateTime dateTime, BigDecimal initialInvestment) {
+    private void mockInitialInvestment(final Currency currency, final OffsetDateTime dateTime, final BigDecimal initialInvestment) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
         investments.put(dateTime, initialInvestment);
         Mockito.when(fakeTinkoffService.getInvestments(currency)).thenReturn(investments);
     }
 
-    private void mockPortfolioPositions(@Nullable final String brokerAccountId, PortfolioPosition... portfolioPositions) {
+    private void mockPortfolioPositions(final String brokerAccountId, final PortfolioPosition... portfolioPositions) {
         Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPositions));
     }
 
