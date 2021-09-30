@@ -100,16 +100,19 @@ public class TestData {
     }
 
     public static Candle createCandleWithClosePrice(final double closePrice) {
-        final Candle candle = new Candle();
-        candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
-        return candle;
+        return new Candle()
+                .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
+    }
+
+    public static Candle createCandleWithClosePriceAndTime(final double closePrice, final OffsetDateTime time) {
+        return createCandleWithClosePrice(closePrice)
+                .setTime(time);
     }
 
     public static Candle createCandleWithOpenPriceAndClosePrice(final double openPrice, final double closePrice) {
-        final Candle candle = new Candle();
-        candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
-        candle.setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
-        return candle;
+        return new Candle()
+                .setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)))
+                .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
     }
 
     // endregion

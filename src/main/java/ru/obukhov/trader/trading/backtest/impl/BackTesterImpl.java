@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
@@ -37,7 +38,6 @@ import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -315,20 +315,9 @@ public class BackTesterImpl implements BackTester {
 
     private Profits getProfits(final Balances balances, final Interval interval) {
         final BigDecimal absolute = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
-        final double relative = getRelativeProfit(balances.getWeightedAverageInvestment(), absolute);
-        final double relativeAnnual = getRelativeAnnual(interval, relative);
+        final double relative = FinUtils.getRelativeProfit(balances.getWeightedAverageInvestment(), absolute);
+        final double relativeAnnual = FinUtils.getAverageAnnualReturn(interval.toDays(), relative);
         return new Profits(absolute, relative, relativeAnnual);
-    }
-
-    private double getRelativeProfit(BigDecimal weightedAverageInvestment, BigDecimal absoluteProfit) {
-        return weightedAverageInvestment.signum() == 0
-                ? 0.0
-                : DecimalUtils.divide(absoluteProfit, weightedAverageInvestment).doubleValue();
-    }
-
-    private double getRelativeAnnual(final Interval interval, final double relativeProfit) {
-        final BigDecimal partOfYear = BigDecimal.valueOf(interval.toDays() / DateUtils.DAYS_IN_YEAR);
-        return BigDecimal.valueOf(relativeProfit).divide(partOfYear, RoundingMode.HALF_UP).doubleValue();
     }
 
     private List<BackTestOperation> getOperations(final List<Operation> operations, final String ticker) {
