@@ -168,7 +168,7 @@ public class BackTesterImpl implements BackTester {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeTinkoffService.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig.getInitialBalance());
+        fakeTinkoffService.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig);
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
+import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -19,6 +20,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -35,7 +37,9 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,7 +84,7 @@ public class FakeTinkoffService implements TinkoffService {
      * @param currentDateTime start dateTime for search dateTime to set as current
      */
     public void init(@Nullable final String brokerAccountId, final OffsetDateTime currentDateTime) {
-        init(brokerAccountId, currentDateTime, null, null);
+        init(brokerAccountId, currentDateTime, null, new BalanceConfig());
     }
 
     /**
@@ -90,26 +94,52 @@ public class FakeTinkoffService implements TinkoffService {
      * @param brokerAccountId account id
      * @param currentDateTime start dateTime for search dateTime to set as current
      * @param currency        currency which balance is initialized not by zero.
-     * @param balance         initial balance of {@code currency}. When null {@code currency} is not initialized.
-     *                        {@code currency} and {@code balance} must be both null or both not null.
+     * @param balanceConfig   balance config.
+     *                        {@code currency} and {@code balanceConfig.initialBalance} must be both null or both not null.
      */
     public void init(
             @Nullable final String brokerAccountId,
             final OffsetDateTime currentDateTime,
             @Nullable final Currency currency,
-            @Nullable final BigDecimal balance
+            final BalanceConfig balanceConfig
     ) {
-        ValidationUtils.assertNullConsistent(currency, balance, "currency and balance must be both null or both not null");
+        initFakeContext(currentDateTime);
 
-        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(
-                currentDateTime,
-                marketProperties.getWorkStartTime(),
-                marketProperties.getWorkDuration()
-        );
+        initBalance(brokerAccountId, currentDateTime, currency, balanceConfig);
+    }
+
+    private void initFakeContext(OffsetDateTime currentDateTime) {
+        final OffsetTime workStartTime = marketProperties.getWorkStartTime();
+        final Duration workDuration = marketProperties.getWorkDuration();
+        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, workStartTime, workDuration);
 
         this.fakeContext = new FakeContext(ceilingWorkTime);
-        if (balance != null) {
-            this.fakeContext.addInvestment(brokerAccountId, currency, balance);
+    }
+
+    private void initBalance(
+            @Nullable final String brokerAccountId,
+            final OffsetDateTime currentDateTime,
+            @Nullable final Currency currency,
+            final BalanceConfig balanceConfig
+    ) {
+        ValidationUtils.assertNullConsistent(
+                currency,
+                balanceConfig.getInitialBalance(),
+                "currency and balanceConfig.balance must be both null or both not null"
+        );
+
+        if (currency != null) {
+            this.fakeContext.addInvestment(brokerAccountId, currency, balanceConfig.getInitialBalance());
+        }
+
+        // adding balance increments which were skipped by moving to ceiling work time
+        final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
+        if (balanceIncrementCron != null) {
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, fakeContext.getCurrentDateTime());
+            if (incrementsCount > 0) {
+                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
+                incrementBalance(brokerAccountId, currency, totalBalanceIncrement);
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -280,6 +281,13 @@ public class TestData {
     public static MarketProperties createMarketProperties() {
         final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
         return new MarketProperties(workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
+    }
+
+    public static BalanceConfig createBalanceConfig(double initialBalance) {
+        final BalanceConfig balanceConfig = new BalanceConfig();
+        final BigDecimal decimalInitialBalance = DecimalUtils.setDefaultScale(initialBalance);
+        balanceConfig.setInitialBalance(decimalInitialBalance);
+        return balanceConfig;
     }
 
 }
