@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
@@ -46,6 +47,7 @@ import java.util.stream.Stream;
  * Prices are loaded from real market, but any operations do not affect the real portfolio - all data is stored in
  * memory.
  */
+@Slf4j
 public class FakeTinkoffService implements TinkoffService {
 
     private final MarketProperties marketProperties;
@@ -429,6 +431,10 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     public void incrementBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
+        if (log.isDebugEnabled()) {
+            log.debug("Incrementing balance {} by {}", getCurrentBalance(brokerAccountId, currency), increment);
+        }
+
         fakeContext.addInvestment(brokerAccountId, currency, increment);
     }
 

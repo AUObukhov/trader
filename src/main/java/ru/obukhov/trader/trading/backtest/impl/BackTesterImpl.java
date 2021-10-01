@@ -211,8 +211,6 @@ public class BackTesterImpl implements BackTester {
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 final Currency currency = getCurrency(fakeTinkoffService, ticker);
-                final BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(brokerAccountId, currency);
-                log.debug("Incrementing balance {} by {}", currentBalance, totalBalanceIncrement);
                 fakeTinkoffService.incrementBalance(brokerAccountId, currency, totalBalanceIncrement);
             }
         }
