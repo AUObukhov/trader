@@ -99,7 +99,7 @@ class ThrottlingInterceptorUnitTest {
                 120
         );
 
-        final long maximumNotThrottledTime = 60;
+        final long maximumNotThrottledTime = 70;
         final long minimumThrottledTime = queryThrottleProperties.getInterval() - 250;
 
         final ThrottlingInterceptor interceptor = new ThrottlingInterceptor(queryThrottleProperties);
