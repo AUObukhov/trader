@@ -350,19 +350,17 @@ public class DateUtils {
     }
 
     /**
-     * @return number of dates which match given {@code expression} and between given {@code from} exclusively and {@code to}
-     * inclusively
+     * @return number of dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively
      */
     public static int getCronHitsBetweenDates(final CronExpression expression, final OffsetDateTime from, final OffsetDateTime to) {
         Assert.isTrue(from.isBefore(to), "from must be before to");
 
         final Date dateFrom = DateUtils.toDate(from);
         final Date dateTo = DateUtils.toDate(to);
-        final Date finalValidDate = expression.getNextValidTimeAfter(dateTo);
 
-        int count = 0;
+        int count = expression.isSatisfiedBy(dateFrom) ? 1 : 0;
         Date currentValidDate = expression.getNextValidTimeAfter(dateFrom);
-        while (!currentValidDate.equals(finalValidDate)) {
+        while (currentValidDate.before(dateTo)) {
             count++;
             currentValidDate = expression.getNextValidTimeAfter(currentValidDate);
         }

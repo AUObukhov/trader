@@ -1038,57 +1038,91 @@ class DateUtilsUnitTest {
 
     // region getCronHitsBetweenDates tests
 
-    @Test
-    void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsEqualToTo() throws ParseException {
-        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
-
-        final Executable executable = () -> DateUtils.getCronHitsBetweenDates(expression, from, to);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "from must be before to");
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCronHitsBetweenDates_throwsIllegalArgumentException() {
+        return Stream.of(
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 11),
+                        DateTimeTestData.createDateTime(2021, 10, 11),
+                        "from must be before to"
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 11, 0, 0, 0, 1),
+                        DateTimeTestData.createDateTime(2021, 10, 11),
+                        "from must be before to"
+                )
+        );
     }
 
-    @Test
-    void getCronHitsBetweenDates_throwsIllegalArgumentException_whenFromIsAfterTo() throws ParseException {
-        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 15);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
+    @ParameterizedTest
+    @MethodSource("getData_forGetCronHitsBetweenDates_throwsIllegalArgumentException")
+    void getCronHitsBetweenDates_throwsIllegalArgumentException(
+            final String expression,
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final String expectedMessage
+    ) throws ParseException {
 
-        final Executable executable = () -> DateUtils.getCronHitsBetweenDates(expression, from, to);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "from must be before to");
+        final CronExpression cronExpression = new CronExpression(expression);
+
+        final Executable executable = () -> DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
-    @Test
-    void getCronHitsBetweenDates_returnsProperCount_whenValidDatesAreBetweenFromAndTo() throws ParseException {
-        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 12, 11, 12, 13, 14);
-
-        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
-
-        Assertions.assertEquals(2, count);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetCronHitsBetweenDates() {
+        return Stream.of(
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 1),
+                        DateTimeTestData.createDateTime(2021, 10, 2),
+                        1
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 1),
+                        DateTimeTestData.createDateTime(2021, 12, 2),
+                        3
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 2),
+                        DateTimeTestData.createDateTime(2021, 12, 2),
+                        2
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 10, 2),
+                        DateTimeTestData.createDateTime(2022, 1, 1),
+                        2
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 12, 2),
+                        DateTimeTestData.createDateTime(2022, 1, 1),
+                        0
+                ),
+                Arguments.of(
+                        "0 0 0 1 * ?",
+                        DateTimeTestData.createDateTime(2021, 1, 2),
+                        DateTimeTestData.createDateTime(2021, 1, 30),
+                        0
+                )
+        );
     }
 
-    @Test
-    void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToFrom() throws ParseException {
-        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 12, 11, 12, 13, 14);
+    @ParameterizedTest
+    @MethodSource("getData_forGetCronHitsBetweenDates")
+    void getCronHitsBetweenDates(final String expression, final OffsetDateTime from, final OffsetDateTime to, final int expectedCount)
+            throws ParseException {
 
-        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
+        final CronExpression cronExpression = new CronExpression(expression);
 
-        Assertions.assertEquals(2, count);
-    }
+        final int count = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
 
-    @Test
-    void getCronHitsBetweenDates_returnsProperCount_whenFirstValidDateIsEqualToTo() throws ParseException {
-        final CronExpression expression = new CronExpression("0 0 0 1 * ?");
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 10, 11, 12, 13, 14);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 1, 1);
-
-        final int count = DateUtils.getCronHitsBetweenDates(expression, from, to);
-
-        Assertions.assertEquals(3, count);
+        Assertions.assertEquals(expectedCount, count);
     }
 
     // endregion
