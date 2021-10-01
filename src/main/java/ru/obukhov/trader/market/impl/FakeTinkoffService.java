@@ -99,13 +99,13 @@ public class FakeTinkoffService implements TinkoffService {
     ) {
         ValidationUtils.assertNullConsistent(currency, balance, "currency and balance must be both null or both not null");
 
-        final OffsetDateTime shiftedCurrentDateTime = DateUtils.getNearestWorkTime(
+        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(
                 currentDateTime,
                 marketProperties.getWorkStartTime(),
                 marketProperties.getWorkDuration()
         );
 
-        this.fakeContext = new FakeContext(shiftedCurrentDateTime);
+        this.fakeContext = new FakeContext(ceilingWorkTime);
         if (balance != null) {
             this.fakeContext.addInvestment(brokerAccountId, currency, balance);
         }

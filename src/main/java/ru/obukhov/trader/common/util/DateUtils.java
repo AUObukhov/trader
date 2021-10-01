@@ -237,7 +237,7 @@ public class DateUtils {
      * @param workTimeDuration duration of work period
      * @return first minute of work time not before {@code dateTime}
      */
-    public static OffsetDateTime getNearestWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
+    public static OffsetDateTime getCeilingWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
         validateWorkTimeDuration(workTimeDuration);
 
         if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {

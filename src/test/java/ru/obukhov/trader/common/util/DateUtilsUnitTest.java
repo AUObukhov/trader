@@ -698,7 +698,7 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region getNearestWorkTime tests
+    // region getCeilingWorkTime tests
 
     @Test
     void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
@@ -706,7 +706,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(-1);
 
-        final Executable executable = () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final Executable executable = () -> DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be positive");
     }
 
@@ -742,7 +742,7 @@ class DateUtilsUnitTest {
             final Duration duration,
             final String expectedErrorMessage
     ) {
-        final Executable executable = () -> DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final Executable executable = () -> DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedErrorMessage);
     }
 
@@ -752,7 +752,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         Assertions.assertEquals(dateTime, nextWorkMinute);
     }
@@ -763,7 +763,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -775,7 +775,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -787,7 +787,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -799,7 +799,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -811,7 +811,7 @@ class DateUtilsUnitTest {
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getNearestWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
         Assertions.assertEquals(expected, nextWorkMinute);

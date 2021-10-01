@@ -181,7 +181,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinute(ticker, balanceConfig, fakeTinkoffService);
+            moveToNextMinuteAndApplyBalanceIncrement(ticker, balanceConfig, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, bot.getFakeTinkoffService());
@@ -194,7 +194,11 @@ public class BackTesterImpl implements BackTester {
         }
     }
 
-    private void moveToNextMinute(final String ticker, final BalanceConfig balanceConfig, final FakeTinkoffService fakeTinkoffService) {
+    private void moveToNextMinuteAndApplyBalanceIncrement(
+            final String ticker,
+            final BalanceConfig balanceConfig,
+            final FakeTinkoffService fakeTinkoffService
+    ) {
         if (balanceConfig.getBalanceIncrement() == null) {
             fakeTinkoffService.nextMinute();
         } else {
