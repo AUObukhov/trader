@@ -182,7 +182,7 @@ class FakeTinkoffServiceUnitTest {
         service.init(brokerAccountId, newDateTime, currency, newBalance);
 
         Assertions.assertEquals(newDateTime, service.getCurrentDateTime());
-        Assertions.assertEquals(newBalance, service.getCurrentBalance(currency));
+        Assertions.assertEquals(newBalance, service.getCurrentBalance(brokerAccountId, currency));
 
         final Interval interval = Interval.of(dateTime, newDateTime);
         Assertions.assertTrue(service.getOperations(brokerAccountId, interval, ticker).isEmpty());
@@ -361,7 +361,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions(brokerAccountId).isEmpty());
-        AssertUtils.assertEquals(1000, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(1000, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -385,7 +385,7 @@ class FakeTinkoffServiceUnitTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(10, portfolioPosition.getCount());
-        AssertUtils.assertEquals(989970, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(989970, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -411,7 +411,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(30, portfolioPosition.getCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(939820, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(939820, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -452,7 +452,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker3, portfolioPosition3.getTicker());
         Assertions.assertEquals(1, portfolioPosition3.getCount());
 
-        AssertUtils.assertEquals(988866.7, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(988866.7, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -482,7 +482,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(30, portfolioPosition.getCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(939820, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(939820, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -506,7 +506,7 @@ class FakeTinkoffServiceUnitTest {
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertTrue(positions.isEmpty());
-        AssertUtils.assertEquals(1029550, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(1029550, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
@@ -534,7 +534,7 @@ class FakeTinkoffServiceUnitTest {
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(20, portfolioPosition.getCount());
         AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
-        AssertUtils.assertEquals(969730, service.getCurrentBalance(currency));
+        AssertUtils.assertEquals(969730, service.getCurrentBalance(brokerAccountId, currency));
     }
 
     // endregion
@@ -593,7 +593,7 @@ class FakeTinkoffServiceUnitTest {
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
         service.init(brokerAccountId, dateTime);
-        service.incrementBalance(currency, balance);
+        service.incrementBalance(brokerAccountId, currency, balance);
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 

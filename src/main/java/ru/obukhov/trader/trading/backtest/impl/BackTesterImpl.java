@@ -3,6 +3,7 @@ package ru.obukhov.trader.trading.backtest.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -181,7 +182,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(ticker, balanceConfig, fakeTinkoffService);
+            moveToNextMinuteAndApplyBalanceIncrement(brokerAccountId, ticker, balanceConfig, fakeTinkoffService);
         } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, bot.getFakeTinkoffService());
@@ -195,6 +196,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private void moveToNextMinuteAndApplyBalanceIncrement(
+            @Nullable final String brokerAccountId,
             final String ticker,
             final BalanceConfig balanceConfig,
             final FakeTinkoffService fakeTinkoffService
@@ -209,9 +211,9 @@ public class BackTesterImpl implements BackTester {
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 final Currency currency = getCurrency(fakeTinkoffService, ticker);
-                final BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(currency);
+                final BigDecimal currentBalance = fakeTinkoffService.getCurrentBalance(brokerAccountId, currency);
                 log.debug("Incrementing balance {} by {}", currentBalance, totalBalanceIncrement);
-                fakeTinkoffService.incrementBalance(currency, totalBalanceIncrement);
+                fakeTinkoffService.incrementBalance(brokerAccountId, currency, totalBalanceIncrement);
             }
         }
     }
@@ -226,7 +228,7 @@ public class BackTesterImpl implements BackTester {
         final String ticker = botConfig.getTicker();
 
         final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(brokerAccountId), candles);
-        final Balances balances = getBalances(interval, fakeTinkoffService, positions, ticker);
+        final Balances balances = getBalances(brokerAccountId, interval, fakeTinkoffService, positions, ticker);
         final Profits profits = getProfits(balances, interval);
         final List<Operation> operations = fakeTinkoffService.getOperations(brokerAccountId, interval, ticker);
 
@@ -278,6 +280,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private Balances getBalances(
+            @Nullable final String brokerAccountId,
             final Interval interval,
             final FakeTinkoffService fakeTinkoffService,
             final List<BackTestPosition> positions,
@@ -287,7 +290,7 @@ public class BackTesterImpl implements BackTester {
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
-        final BigDecimal finalBalance = fakeTinkoffService.getCurrentBalance(currency);
+        final BigDecimal finalBalance = fakeTinkoffService.getCurrentBalance(brokerAccountId, currency);
         final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
 
         final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);

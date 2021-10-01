@@ -420,16 +420,16 @@ public class FakeTinkoffService implements TinkoffService {
         return fakeContext.getCurrentDateTime();
     }
 
-    public BigDecimal getCurrentBalance(final Currency currency) {
-        return fakeContext.getBalance(null, currency);
+    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
+        return fakeContext.getBalance(brokerAccountId, currency);
     }
 
     public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final Currency currency) {
         return fakeContext.getInvestments(null, currency);
     }
 
-    public void incrementBalance(final Currency currency, final BigDecimal increment) {
-        fakeContext.addInvestment(null, currency, increment);
+    public void incrementBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
+        fakeContext.addInvestment(brokerAccountId, currency, increment);
     }
 
     // endregion
