@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -21,8 +22,9 @@ import java.util.Objects;
 )
 public class BalanceConfig {
 
-    @ApiModelProperty(value = "Initial balance before the back test in ticker currency. Default value 0", position = 1, example = "100000")
-    private BigDecimal initialBalance = BigDecimal.ZERO;
+    @NotNull(message = "initial balance is mandatory")
+    @ApiModelProperty(value = "Initial balance before the back test in ticker currency", required = true, position = 1, example = "100000")
+    private BigDecimal initialBalance;
 
     @Min(value = 1, message = "balanceIncrement must be positive")
     @ApiModelProperty(value = "Sum to add to balance", allowableValues = "range[0, infinity]", position = 2, example = "1000")

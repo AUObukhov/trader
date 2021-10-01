@@ -17,6 +17,13 @@ class BalanceConfigValidationTest {
     }
 
     @Test
+    void validationFails_whenInitialBalanceIsNull() throws ParseException {
+        final BalanceConfig balanceConfig = new BalanceConfig(null, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
+
+        AssertUtils.assertViolation(balanceConfig, "initial balance is mandatory");
+    }
+
+    @Test
     void validationFails_whenBalanceIncrementIsNegative() throws ParseException {
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.valueOf(-1), new CronExpression("0 0 0 1 * ?"));
 
