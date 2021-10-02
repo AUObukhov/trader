@@ -9,7 +9,6 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.ValidationUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -77,17 +76,6 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     /**
-     * Initializes current dateTime and no currencies.
-     * current dateTime is initialized by nearest work time to given {@code currentDateTime}
-     *
-     * @param brokerAccountId account id
-     * @param currentDateTime start dateTime for search dateTime to set as current
-     */
-    public void init(@Nullable final String brokerAccountId, final OffsetDateTime currentDateTime) {
-        init(brokerAccountId, currentDateTime, null, new BalanceConfig());
-    }
-
-    /**
      * Initializes current dateTime and one currency.
      * current dateTime is initialized by nearest work time to given {@code currentDateTime}
      *
@@ -119,18 +107,10 @@ public class FakeTinkoffService implements TinkoffService {
     private void initBalance(
             @Nullable final String brokerAccountId,
             final OffsetDateTime currentDateTime,
-            @Nullable final Currency currency,
+            final Currency currency,
             final BalanceConfig balanceConfig
     ) {
-        ValidationUtils.assertNullConsistent(
-                currency,
-                balanceConfig.getInitialBalance(),
-                "currency and balanceConfig.balance must be both null or both not null"
-        );
-
-        if (currency != null) {
-            this.fakeContext.addInvestment(brokerAccountId, currency, balanceConfig.getInitialBalance());
-        }
+        this.fakeContext.addInvestment(brokerAccountId, currency, balanceConfig.getInitialBalance());
 
         // adding balance increments which were skipped by moving to ceiling work time
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();

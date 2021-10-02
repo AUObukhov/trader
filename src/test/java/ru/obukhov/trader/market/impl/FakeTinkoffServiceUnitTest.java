@@ -131,32 +131,9 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forInit")
     void init(@Nullable final String brokerAccountId, final OffsetDateTime dateTime, final OffsetDateTime expectedCurrentDateTime) {
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         Assertions.assertEquals(expectedCurrentDateTime, service.getCurrentDateTime());
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void init_throwsIllegalArgumentException_whenCurrencyIsNullAndBalanceIsNotNull(@Nullable final String brokerAccountId) {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10);
-
-        final Executable executable = () -> service.init(brokerAccountId, dateTime, null, balanceConfig);
-        final String expectedMessage = "currency and balance must be both null or both not null";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void init_throwsIllegalArgumentException_whenCurrencyIsNotNullAndInitialBalanceIsNull(@Nullable final String brokerAccountId) {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-
-        final Executable executable = () -> service.init(brokerAccountId, dateTime, Currency.RUB, new BalanceConfig());
-        final String expectedMessage = "currency and balanceConfig.balance must be both null or both not null";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @ParameterizedTest
@@ -207,7 +184,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToNextMinute_whenMiddleOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -222,7 +199,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -237,7 +214,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -550,7 +527,7 @@ class FakeTinkoffServiceUnitTest {
     void getPortfolioCurrencies_returnsAllCurrencies_whenCurrenciesAreNotInitialized(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
@@ -595,7 +572,7 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
-        service.init(brokerAccountId, dateTime);
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
         service.incrementBalance(brokerAccountId, currency, balance);
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
