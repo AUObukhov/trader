@@ -58,7 +58,7 @@ class FakeTinkoffServiceUnitTest {
     // region init tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forInit() {
+    static Stream<Arguments> getData_forInit_movesCurrentDateTimeToCeilingWorkTime() {
         return Stream.of(
                 Arguments.of(
                         null,
@@ -129,8 +129,12 @@ class FakeTinkoffServiceUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forInit")
-    void init(@Nullable final String brokerAccountId, final OffsetDateTime dateTime, final OffsetDateTime expectedCurrentDateTime) {
+    @MethodSource("getData_forInit_movesCurrentDateTimeToCeilingWorkTime")
+    void init_movesCurrentDateTimeToCeilingWorkTime(
+            @Nullable final String brokerAccountId,
+            final OffsetDateTime dateTime,
+            final OffsetDateTime expectedCurrentDateTime
+    ) {
         service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
 
         Assertions.assertEquals(expectedCurrentDateTime, service.getCurrentDateTime());
@@ -172,6 +176,33 @@ class FakeTinkoffServiceUnitTest {
         AssertUtils.assertEquals(newBalanceConfig.getInitialBalance(), investments.get(newDateTime));
 
         Assertions.assertTrue(service.getPortfolioPositions(brokerAccountId).isEmpty());
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forInit_initsBalance() {
+        return Stream.of(
+                Arguments.of(TestData.createBalanceConfig(1000000, 1000, "0 0 0 1 * ?"), 1001000.0),
+                Arguments.of(TestData.createBalanceConfig(1000000, 1000, "0 0 0 2 * ?"), 1000000.0),
+                Arguments.of(TestData.createBalanceConfig(1000000), 1000000.0)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "getData_forInit_initsBalance")
+    void init_initsBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
+        init_initsBalance(null, balanceConfig, expectedBalance);
+        init_initsBalance("2000124699", balanceConfig, expectedBalance);
+    }
+
+    private void init_initsBalance(final String brokerAccountId, final BalanceConfig balanceConfig, final double expectedBalance) {
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 1);
+        final Currency currency = Currency.RUB;
+
+        service.init(brokerAccountId, dateTime, currency, balanceConfig);
+
+        final BigDecimal balance = service.getCurrentBalance(brokerAccountId, currency);
+
+        AssertUtils.assertEquals(expectedBalance, balance);
     }
 
     // endregion

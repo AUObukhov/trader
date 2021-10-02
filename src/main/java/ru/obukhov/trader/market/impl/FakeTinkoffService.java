@@ -110,7 +110,7 @@ public class FakeTinkoffService implements TinkoffService {
             final Currency currency,
             final BalanceConfig balanceConfig
     ) {
-        this.fakeContext.addInvestment(brokerAccountId, currency, balanceConfig.getInitialBalance());
+        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? BigDecimal.ZERO : balanceConfig.getInitialBalance();
 
         // adding balance increments which were skipped by moving to ceiling work time
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
@@ -118,9 +118,11 @@ public class FakeTinkoffService implements TinkoffService {
             final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, fakeContext.getCurrentDateTime());
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
-                incrementBalance(brokerAccountId, currency, totalBalanceIncrement);
+                initialBalance = initialBalance.add(totalBalanceIncrement);
             }
         }
+
+        this.fakeContext.addInvestment(brokerAccountId, currency, initialBalance);
     }
 
     /**

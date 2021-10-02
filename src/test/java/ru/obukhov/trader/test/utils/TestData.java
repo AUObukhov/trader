@@ -283,10 +283,18 @@ public class TestData {
         return new MarketProperties(workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
     }
 
-    public static BalanceConfig createBalanceConfig(double initialBalance) {
+    public static BalanceConfig createBalanceConfig(final double initialBalance) {
         final BalanceConfig balanceConfig = new BalanceConfig();
-        final BigDecimal decimalInitialBalance = DecimalUtils.setDefaultScale(initialBalance);
-        balanceConfig.setInitialBalance(decimalInitialBalance);
+        balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
+        return balanceConfig;
+    }
+
+    @SneakyThrows
+    public static BalanceConfig createBalanceConfig(final double initialBalance, final double balanceIncrement, final String balanceIncrementCron) {
+        final BalanceConfig balanceConfig = new BalanceConfig();
+        balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
+        balanceConfig.setBalanceIncrement(DecimalUtils.setDefaultScale(balanceIncrement));
+        balanceConfig.setBalanceIncrementCron(new CronExpression(balanceIncrementCron));
         return balanceConfig;
     }
 
