@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.Application;
+import ru.obukhov.trader.ContextTest;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
@@ -35,7 +36,7 @@ import java.time.OffsetDateTime;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         args = "--trading.token=i identify myself as token"
 )
-class TraderExceptionHandlerWebTest {
+class TraderExceptionHandlerWebTest extends ContextTest {
 
     private final TestController controller = new TestController();
     private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller)

@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
+import ru.obukhov.trader.ContextTest;
 
 @AutoConfigureMockMvc
 @SpringBootTest(
@@ -18,7 +19,7 @@ import ru.obukhov.trader.Application;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         args = "--trading.token=i identify myself as token"
 )
-abstract class ControllerWebTest {
+abstract class ControllerWebTest extends ContextTest {
 
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

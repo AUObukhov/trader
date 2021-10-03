@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.obukhov.trader.web.controller.SandboxController;
 
 @SpringBootTest(args = {"--trading.token=i identify myself as token", "--trading.sandbox=false"})
-class ApplicationContextTest {
+class ApplicationContextTest extends ContextTest {
 
     @Autowired(required = false)
     private SandboxController sandboxController;
