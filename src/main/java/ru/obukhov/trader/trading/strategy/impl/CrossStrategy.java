@@ -66,8 +66,9 @@ public class CrossStrategy extends AbstractTradingStrategy {
 
     private Decision getDecisionForAboveCrossover(DecisionData data, StrategyCache strategyCache) {
         final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+        final boolean greedy = crossStrategyParams.getGreedy();
         Decision decision = getSellOrWaitDecision(data, crossStrategyParams.getMinimumProfit(), strategyCache);
-        if (crossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
+        if (greedy && decision.getAction() == DecisionAction.WAIT) {
             decision = getBuyOrWaitDecision(data, strategyCache);
         }
         return decision;

@@ -90,7 +90,7 @@ public class ExtendedChartData {
     @SneakyThrows
     private CTMarker getMarker(final XDDFLineChartData.Series series) {
         final Method getMarkerMethod = series.getClass().getDeclaredMethod("getMarker");
-        getMarkerMethod.setAccessible(true);
+        getMarkerMethod.trySetAccessible();
         return (CTMarker) getMarkerMethod.invoke(series);
     }
 
