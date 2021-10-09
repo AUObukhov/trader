@@ -67,8 +67,8 @@ public class CrossStrategy extends AbstractTradingStrategy {
                 decision = getBuyOrWaitDecision(data, strategyCache);
                 break;
             case ABOVE:
-                decision = getSellOrWaitDecision(data, strategyCache);
                 final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+                decision = getSellOrWaitDecision(data, crossStrategyParams.getMinimumProfit(), strategyCache);
                 if (crossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
                     decision = getBuyOrWaitDecision(data, strategyCache);
                 }

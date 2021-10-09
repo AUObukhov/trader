@@ -1,7 +1,7 @@
 package ru.obukhov.trader.trading.strategy.impl;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +15,7 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
+import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
@@ -23,6 +24,26 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class AbstractTradingStrategyUnitTest {
+
+    // region getName tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetName_returnsProperName() {
+        return Stream.of(
+                Arguments.of("testStrategy", null, "testStrategy"),
+                Arguments.of("testStrategy", new TestTradingStrategyParams("fieldValue"), "testStrategy [field=fieldValue]")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetName_returnsProperName")
+    void getName_returnsProperName(final String name, final TradingStrategyParams params, final String expectedValue) {
+        final TradingStrategy strategy = new TestStrategy(name, params, 0.0);
+
+        Assertions.assertEquals(expectedValue, strategy.getName());
+    }
+
+    // endregion
 
     // region getBuyOrWaitDecision tests
 
@@ -45,8 +66,7 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction,
             @Nullable final Integer expectedLots
     ) {
-        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
         final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize);
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -63,12 +83,12 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void getSellOrWaitDecision_returnsWait_whenPositionIsNull() {
-        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
+        final float minimumProfit = 0.1f;
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
         final DecisionData decisionData = new DecisionData();
         final StrategyCache strategyCache = new TestStrategyCache();
 
-        final Decision decision = strategy.getSellOrWaitDecision(decisionData, strategyCache);
+        final Decision decision = strategy.getSellOrWaitDecision(decisionData, minimumProfit, strategyCache);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
         Assertions.assertNull(decision.getLots());
@@ -96,12 +116,11 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction,
             @Nullable final Integer expectedLots
     ) {
-        final TradingStrategyParams params = new TradingStrategyParams(minimumProfit);
-        final AbstractTradingStrategy strategy = new TestStrategy(params, 0.003);
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
         final DecisionData data = TestData.createDecisionData(averagePositionPrice, positionLotsCount, lotSize, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
-        final Decision decision = strategy.getSellOrWaitDecision(data, strategyCache);
+        final Decision decision = strategy.getSellOrWaitDecision(data, minimumProfit, strategyCache);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
         Assertions.assertEquals(expectedLots, decision.getLots());
@@ -147,8 +166,8 @@ class AbstractTradingStrategyUnitTest {
 
     private static class TestStrategy extends AbstractTradingStrategy {
 
-        public TestStrategy(final TradingStrategyParams params, final Double commission) {
-            super(StringUtils.EMPTY, params, commission);
+        public TestStrategy(final String name, final TradingStrategyParams params, final Double commission) {
+            super(name, params, commission);
         }
 
         @Override
@@ -169,6 +188,17 @@ class AbstractTradingStrategyUnitTest {
     }
 
     private static class TestStrategyCache implements StrategyCache {
+    }
+
+    @AllArgsConstructor
+    private static class TestTradingStrategyParams implements TradingStrategyParams {
+
+        private final String field;
+
+        @Override
+        public String toString() {
+            return "[field=" + field + ']';
+        }
     }
 
 }

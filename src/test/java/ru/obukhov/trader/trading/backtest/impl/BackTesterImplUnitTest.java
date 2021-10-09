@@ -32,7 +32,6 @@ import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -58,8 +57,7 @@ class BackTesterImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final ConservativeStrategy CONSERVATIVE_STRATEGY =
-            new ConservativeStrategy(StringUtils.EMPTY, new TradingStrategyParams(0.1f), 0.0);
+    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StringUtils.EMPTY, 0.0);
 
     private static final CronExpression BALANCE_INCREMENT_CRON = TestData.createCronExpression();
 

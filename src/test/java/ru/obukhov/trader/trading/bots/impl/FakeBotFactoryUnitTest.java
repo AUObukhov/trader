@@ -11,7 +11,6 @@ import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
-import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -29,8 +28,7 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_createsFakeBot() {
-        final TradingStrategyParams params = new TradingStrategyParams(0.1f);
-        final AbstractTradingStrategy strategy = new ConservativeStrategy(StringUtils.EMPTY, params, 0.0);
+        final AbstractTradingStrategy strategy = new ConservativeStrategy(StringUtils.EMPTY, 0.0);
 
         final Bot bot = factory.createBot(strategy, CandleResolution._1MIN);
 

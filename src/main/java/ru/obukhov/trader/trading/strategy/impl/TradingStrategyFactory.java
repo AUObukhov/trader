@@ -30,14 +30,13 @@ public class TradingStrategyFactory {
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
         final StrategyType strategyType = botConfig.getStrategyType();
         return switch (strategyType) {
-            case CONSERVATIVE -> createConservativeStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
+            case CONSERVATIVE -> createConservativeStrategy(strategyType.getValue(), botConfig.getCommission());
             case CROSS -> createCrossStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
         };
     }
 
-    private ConservativeStrategy createConservativeStrategy(final String name, final double commission, final Map<String, Object> strategyParams) {
-        final TradingStrategyParams tradingStrategyParams = getStrategyParams(strategyParams, TradingStrategyParams.class);
-        return new ConservativeStrategy(name, tradingStrategyParams, commission);
+    private ConservativeStrategy createConservativeStrategy(final String name, final double commission) {
+        return new ConservativeStrategy(name, commission);
     }
 
     private CrossStrategy createCrossStrategy(final String name, final double commission, final Map<String, Object> strategyParams) {

@@ -36,7 +36,7 @@ class TradingStrategyFactoryUnitTest {
                 Arguments.of(
                         StrategyType.CONSERVATIVE,
                         Map.of("minimumProfit", 0.1),
-                        "conservative [minimumProfit=0.1]"
+                        "conservative"
                 ),
                 Arguments.of(
                         StrategyType.CROSS,
@@ -90,20 +90,6 @@ class TradingStrategyFactoryUnitTest {
 
         Assertions.assertEquals(expectedName, strategy.getName());
     }
-
-    // region ConservativeStrategy strategy creation tests
-
-    @Test
-    void createStrategy_throwIllegalArgumentException_whenConservative_andMinimumProfitIsNull() {
-        final BotConfig botConfig = new BotConfig()
-                .setStrategyType(StrategyType.CONSERVATIVE)
-                .setStrategyParams(Map.of());
-
-        final Executable executable = () -> factory.createStrategy(botConfig);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "minimumProfit is mandatory");
-    }
-
-    // endregion
 
     // region CrossStrategy creation tests
 

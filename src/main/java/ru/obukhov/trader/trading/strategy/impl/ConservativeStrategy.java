@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 
 /**
@@ -14,8 +13,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final String name, final TradingStrategyParams params, final double commission) {
-        super(name, params, commission);
+    public ConservativeStrategy(final String name, final double commission) {
+        super(name, null, commission);
     }
 
     @Override

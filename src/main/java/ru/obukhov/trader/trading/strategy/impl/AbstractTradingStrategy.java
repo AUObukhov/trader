@@ -26,7 +26,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     protected final double commission;
 
     protected AbstractTradingStrategy(final String name, final TradingStrategyParams params, final double commission) {
-        this.name = name + " " + params;
+        this.name = params == null ? name : name + " " + params;
         this.params = params;
         this.commission = commission;
     }
@@ -66,10 +66,9 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
      * @return decision to sell all position if it is profitable with commission
      * or decision to wait otherwise
      */
-    protected Decision getSellOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
+    protected Decision getSellOrWaitDecision(final DecisionData data, final Float minimumProfit, final StrategyCache strategyCache) {
         Decision decision;
 
-        final Float minimumProfit = params.getMinimumProfit();
         if (minimumProfit < 0) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Minimum profit {} is negative. Decision is {}", minimumProfit, decision.toPrettyString());

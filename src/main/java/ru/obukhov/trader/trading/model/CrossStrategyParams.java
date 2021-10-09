@@ -12,7 +12,14 @@ import java.util.function.Predicate;
 @Getter
 @NoArgsConstructor
 @PredicateConstraint(message = "smallWindow must lower than bigWindow", predicate = CrossStrategyParams.CrossStrategyParamsWindowsPredicate.class)
-public class CrossStrategyParams extends TradingStrategyParams {
+public class CrossStrategyParams implements TradingStrategyParams {
+
+    /**
+     * Minimum value of profit in percent, which allows selling securities.
+     * Negative value means never sell.
+     */
+    @NotNull(message = "minimumProfit is mandatory")
+    protected Float minimumProfit;
 
     @NotNull(message = "order is mandatory")
     @Min(value = 1, message = "order min value is 1")
@@ -54,8 +61,7 @@ public class CrossStrategyParams extends TradingStrategyParams {
             final Integer smallWindow,
             final Integer bigWindow
     ) {
-        super(minimumProfit);
-
+        this.minimumProfit = minimumProfit;
         this.order = order;
         this.indexCoefficient = indexCoefficient;
         this.greedy = greedy;
