@@ -2,7 +2,7 @@ package ru.obukhov.trader.trading.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
+import ru.obukhov.trader.common.model.validation.PredicateConstraint;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

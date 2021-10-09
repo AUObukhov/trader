@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.model.validation.validator;
+package ru.obukhov.trader.common.model.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,15 +10,14 @@ import org.hibernate.validator.internal.util.annotation.ConstraintAnnotationDesc
 import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.common.model.validation.constraint.PredicateConstraint;
 
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.util.function.Predicate;
 
-class PredicateConstraintValidatorUnitTest {
+class PredicateConstraintUnitTest {
 
-    private final PredicateConstraintValidator validator = new PredicateConstraintValidator();
+    private final PredicateConstraint.PredicateConstraintValidator validator = new PredicateConstraint.PredicateConstraintValidator();
 
     @Test
     void isValid_returnsTrue_whenPredicateReturnsTrue() {
