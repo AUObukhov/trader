@@ -57,24 +57,26 @@ public class CrossStrategy extends AbstractTradingStrategy {
     }
 
     private Decision decide(final DecisionData data, final StrategyCache strategyCache, final Crossover crossover) {
-        Decision decision;
-        switch (crossover) {
-            case NONE:
-                decision = new Decision(DecisionAction.WAIT, null, strategyCache);
-                log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
-                break;
-            case BELOW:
-                decision = getBuyOrWaitDecision(data, strategyCache);
-                break;
-            case ABOVE:
-                final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
-                decision = getSellOrWaitDecision(data, crossStrategyParams.getMinimumProfit(), strategyCache);
-                if (crossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
-                    decision = getBuyOrWaitDecision(data, strategyCache);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown crossover type: " + crossover);
+        return switch (crossover) {
+            case BELOW -> getBuyOrWaitDecision(data, strategyCache);
+            case ABOVE -> getDecisionForAboveCrossover(data, strategyCache);
+            case NONE -> getDecisionForNoCrossover(strategyCache);
+        };
+    }
+
+    private Decision getDecisionForAboveCrossover(DecisionData data, StrategyCache strategyCache) {
+        final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
+        Decision decision = getSellOrWaitDecision(data, crossStrategyParams.getMinimumProfit(), strategyCache);
+        if (crossStrategyParams.getGreedy() && decision.getAction() == DecisionAction.WAIT) {
+            decision = getBuyOrWaitDecision(data, strategyCache);
+        }
+        return decision;
+    }
+
+    private Decision getDecisionForNoCrossover(StrategyCache strategyCache) {
+        Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
+        if (log.isDebugEnabled()) {
+            log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
         }
         return decision;
     }
