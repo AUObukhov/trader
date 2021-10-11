@@ -258,7 +258,7 @@ class AbstractBotUnitTest {
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
     }
 
-    private void mockCandles(String ticker, List<Candle> candles) {
+    private void mockCandles(final String ticker, final List<Candle> candles) {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                 .thenReturn(candles);
     }
@@ -273,11 +273,11 @@ class AbstractBotUnitTest {
 
     private static class TestBot extends AbstractBot {
         public TestBot(
-                TradingStrategy strategy,
-                MarketService marketService,
-                OperationsService operationsService,
-                OrdersService ordersService,
-                PortfolioService portfolioService
+                final TradingStrategy strategy,
+                final MarketService marketService,
+                final OperationsService operationsService,
+                final OrdersService ordersService,
+                final PortfolioService portfolioService
         ) {
             super(marketService, operationsService, ordersService, portfolioService, strategy, new TestStrategyCache());
         }
