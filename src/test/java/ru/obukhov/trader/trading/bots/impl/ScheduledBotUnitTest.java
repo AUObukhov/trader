@@ -61,8 +61,6 @@ class ScheduledBotUnitTest {
 
     @Mock
     private ScheduledBotProperties scheduledBotProperties;
-    @Mock
-    private BotConfig botConfig;
 
     @Mock
     private MarketProperties marketProperties;
@@ -71,8 +69,6 @@ class ScheduledBotUnitTest {
 
     @BeforeEach
     void setUp() {
-        Mockito.when(scheduledBotProperties.getBotConfig()).thenReturn(botConfig);
-        Mockito.when(botConfig.getCandleResolution()).thenReturn(CandleResolution._1MIN);
         bot = new ScheduledBot(
                 marketService,
                 operationsService,
@@ -119,7 +115,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             final List<Order> orders1 = List.of(new Order());
             Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
@@ -142,7 +139,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                     .thenThrow(new IllegalArgumentException());
@@ -163,7 +161,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
@@ -185,7 +184,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -210,7 +210,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(brokerAccountId, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -240,7 +241,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(brokerAccountId, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -267,7 +269,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -294,7 +297,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(null, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -324,7 +328,8 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+
+            mockBotConfig(brokerAccountId, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -354,7 +359,7 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+            mockBotConfig(null, ticker);
 
             Mocker.mockEmptyOrder(ordersService, ticker);
 
@@ -374,7 +379,6 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
 
             bot.tick();
 
@@ -392,7 +396,7 @@ class ScheduledBotUnitTest {
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+            mockBotConfig(null, ticker);
 
             final Candle candle1 = new Candle().setTime(mockedNow);
             mockCandles(ticker, List.of(candle1));
@@ -418,13 +422,12 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
             Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
             final int lotSize = 10;
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+            mockBotConfig(brokerAccountId, ticker);
             mockData(brokerAccountId, ticker, lotSize);
 
             final Decision decision = new Decision(DecisionAction.BUY, 5);
@@ -446,13 +449,12 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
             Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
             Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
             final String ticker = "ticker";
             final int lotSize = 10;
-            Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+            mockBotConfig(brokerAccountId, ticker);
             mockData(brokerAccountId, ticker, lotSize);
 
             final Decision decision = new Decision(DecisionAction.SELL, 5);
@@ -464,6 +466,14 @@ class ScheduledBotUnitTest {
             Mockito.verify(ordersService, Mockito.times(1))
                     .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
         }
+    }
+
+    private void mockBotConfig(String brokerAccountId, String ticker) {
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+        Mockito.when(scheduledBotProperties.getBotConfig()).thenReturn(botConfig);
     }
 
     private void mockData(@Nullable final String brokerAccountId, final String ticker, final int lotSize) {

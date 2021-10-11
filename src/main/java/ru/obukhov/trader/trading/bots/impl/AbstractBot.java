@@ -39,13 +39,13 @@ public abstract class AbstractBot implements Bot {
 
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
-    protected final CandleResolution candleResolution;
 
     @Override
     @NotNull
     public DecisionData processTicker(
             @Nullable final String brokerAccountId,
             final String ticker,
+            final CandleResolution candleResolution,
             final OffsetDateTime previousStartTime,
             final OffsetDateTime now
     ) {

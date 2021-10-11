@@ -9,7 +9,6 @@ import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 @Slf4j
 public class FakeBotImpl extends AbstractBot implements FakeBot {
@@ -23,10 +22,9 @@ public class FakeBotImpl extends AbstractBot implements FakeBot {
             final OrdersService ordersService,
             final PortfolioService portfolioService,
             final TradingStrategy strategy,
-            final CandleResolution candleResolution,
             final FakeTinkoffService fakeTinkoffService
     ) {
-        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache(), candleResolution);
+        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache());
 
         this.fakeTinkoffService = fakeTinkoffService;
     }

@@ -218,14 +218,20 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.any(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(new DecisionData());
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.any(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(new DecisionData());
 
-        mockDecisionDataWithCandle(brokerAccountId, ticker, fakeBot, 1000, from.plusMinutes(10));
-        mockDecisionDataWithCandle(brokerAccountId, ticker, fakeBot, 1001, from.plusMinutes(20));
-        mockDecisionDataWithCandle(brokerAccountId, ticker, fakeBot, 1002, from.plusMinutes(30));
-        mockDecisionDataWithCandle(brokerAccountId, ticker, fakeBot, 1003, from.plusMinutes(40));
-        final Candle lastCandle = mockDecisionDataWithCandle(brokerAccountId, ticker, fakeBot, 1004, from.plusMinutes(50));
+        mockDecisionDataWithCandle(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, 1000, from.plusMinutes(10));
+        mockDecisionDataWithCandle(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, 1001, from.plusMinutes(20));
+        mockDecisionDataWithCandle(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, 1002, from.plusMinutes(30));
+        mockDecisionDataWithCandle(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, 1003, from.plusMinutes(40));
+        final Candle lastCandle = mockDecisionDataWithCandle(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, 1004,
+                from.plusMinutes(50));
 
         mockNextMinute(from);
         mockInitialInvestment(MarketInstrument.getCurrency(), from, initialInvestment);
@@ -309,8 +315,13 @@ class BackTesterImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
 
@@ -385,8 +396,13 @@ class BackTesterImplUnitTest {
         final Candle candle4 = TestData.createCandleWithClosePrice(500);
         final DecisionData decisionData5 = TestData.createDecisionData(candle4);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
 
         mockNextMinute(from);
 
@@ -447,7 +463,12 @@ class BackTesterImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
+        Mockito.when(fakeBot.processTicker(
+                        Mockito.eq(brokerAccountId),
+                        Mockito.eq(ticker),
+                        Mockito.eq(botConfig.getCandleResolution()),
+                        Mockito.isNull(),
+                        Mockito.any(OffsetDateTime.class)))
                 .thenReturn(decisionData);
 
         mockNextMinute(from);
@@ -521,7 +542,7 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final List<Candle> candles = mockDecisionDataWithCandles(brokerAccountId, ticker, fakeBot, from, to);
+        final List<Candle> candles = mockDecisionDataWithCandles(brokerAccountId, ticker, botConfig.getCandleResolution(), fakeBot, from, to);
 
         mockNextMinute(from);
 
@@ -568,8 +589,13 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(new DecisionData());
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(new DecisionData());
 
         mockNextMinute(from);
 
@@ -617,8 +643,13 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(TestData.createDecisionData());
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(TestData.createDecisionData());
 
         mockNextMinute(from);
 
@@ -669,8 +700,13 @@ class BackTesterImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -723,8 +759,13 @@ class BackTesterImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -778,8 +819,13 @@ class BackTesterImplUnitTest {
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
 
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -879,8 +925,13 @@ class BackTesterImplUnitTest {
 
         final Candle candle = TestData.createCandleWithClosePrice(100);
         final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processTicker(Mockito.eq(brokerAccountId), Mockito.eq(ticker), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(
+                Mockito.eq(brokerAccountId),
+                Mockito.eq(ticker),
+                Mockito.eq(botConfig.getCandleResolution()),
+                Mockito.isNull(),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(decisionData);
 
         mockNextMinute(from);
 
@@ -920,6 +971,7 @@ class BackTesterImplUnitTest {
     private Candle mockDecisionDataWithCandle(
             final String brokerAccountId,
             final String ticker,
+            final CandleResolution candleResolution,
             final FakeBot fakeBot,
             final double closePrice,
             final OffsetDateTime time
@@ -927,7 +979,7 @@ class BackTesterImplUnitTest {
         final Candle candle = TestData.createCandleWithClosePriceAndTime(closePrice, time);
         final DecisionData decisionData = TestData.createDecisionData(candle);
 
-        Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, null, time)).thenReturn(decisionData);
+        Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, candleResolution, null, time)).thenReturn(decisionData);
 
         return candle;
     }
@@ -935,6 +987,7 @@ class BackTesterImplUnitTest {
     private List<Candle> mockDecisionDataWithCandles(
             final String brokerAccountId,
             final String ticker,
+            final CandleResolution candleResolution,
             final FakeBot fakeBot,
             final OffsetDateTime from,
             final OffsetDateTime to
@@ -944,14 +997,14 @@ class BackTesterImplUnitTest {
         // mocking first DecisionData with previousStartTime = null
         candles.add(new Candle().setTime(from));
         DecisionData decisionData = new DecisionData().setCurrentCandles(new ArrayList<>(candles));
-        Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, null, from))
+        Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, candleResolution, null, from))
                 .thenReturn(decisionData);
 
         // mocking DecisionData for all last minutes
         for (OffsetDateTime dateTime = from.plusMinutes(1); dateTime.isBefore(to); dateTime = dateTime.plusMinutes(1)) {
             candles.add(new Candle().setTime(dateTime));
             decisionData = new DecisionData().setCurrentCandles(new ArrayList<>(candles));
-            Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, from, dateTime))
+            Mockito.when(fakeBot.processTicker(brokerAccountId, ticker, candleResolution, from, dateTime))
                     .thenReturn(decisionData);
         }
 

@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
@@ -30,15 +29,7 @@ public class ScheduledBot extends AbstractBot {
             final ScheduledBotProperties scheduledBotProperties,
             final MarketProperties marketProperties
     ) {
-        super(
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                strategy,
-                strategy.initCache(),
-                scheduledBotProperties.getBotConfig().getCandleResolution()
-        );
+        super(marketService, operationsService, ordersService, portfolioService, strategy, strategy.initCache());
 
         this.scheduledBotProperties = scheduledBotProperties;
         this.marketProperties = marketProperties;
@@ -57,16 +48,20 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        final BotConfig botConfig = scheduledBotProperties.getBotConfig();
-
-        processTickerSafe(botConfig.getBrokerAccountId(), botConfig.getTicker(), null);
+        processBotConfigSafe(scheduledBotProperties.getBotConfig());
     }
 
-    public void processTickerSafe(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime previousStartTime) {
+    public void processBotConfigSafe(final BotConfig botConfig) {
         try {
-            processTicker(brokerAccountId, ticker, previousStartTime, OffsetDateTime.now());
+            processTicker(
+                    botConfig.getBrokerAccountId(),
+                    botConfig.getTicker(),
+                    botConfig.getCandleResolution(),
+                    null,
+                    OffsetDateTime.now()
+            );
         } catch (Exception exception) {
-            log.error("Failed to process ticker '{}'", ticker, exception);
+            log.error("Failed to process botConfig {}", botConfig, exception);
         }
     }
 

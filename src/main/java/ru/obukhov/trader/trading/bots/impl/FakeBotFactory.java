@@ -36,15 +36,7 @@ public class FakeBotFactory extends AbstractBotFactory {
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
         final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
 
-        return new FakeBotImpl(
-                fakeMarketService,
-                fakeOperationsService,
-                fakeOrdersService,
-                fakePortfolioService,
-                strategy,
-                candleResolution,
-                fakeTinkoffService
-        );
+        return new FakeBotImpl(fakeMarketService, fakeOperationsService, fakeOrdersService, fakePortfolioService, strategy, fakeTinkoffService);
     }
 
 }
