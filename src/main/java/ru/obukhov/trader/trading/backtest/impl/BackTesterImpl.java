@@ -173,13 +173,7 @@ public class BackTesterImpl implements BackTester {
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = bot.processTicker(
-                    brokerAccountId,
-                    ticker,
-                    botConfig.getCandleResolution(),
-                    previousStartTime,
-                    fakeTinkoffService.getCurrentDateTime()
-            );
+            final DecisionData decisionData = bot.processBotConfig(botConfig, previousStartTime, fakeTinkoffService.getCurrentDateTime());
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
                 previousStartTime = null;

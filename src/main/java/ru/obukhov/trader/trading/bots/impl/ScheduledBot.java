@@ -53,13 +53,7 @@ public class ScheduledBot extends AbstractBot {
 
     public void processBotConfigSafe(final BotConfig botConfig) {
         try {
-            processTicker(
-                    botConfig.getBrokerAccountId(),
-                    botConfig.getTicker(),
-                    botConfig.getCandleResolution(),
-                    null,
-                    OffsetDateTime.now()
-            );
+            processBotConfig(botConfig, null, OffsetDateTime.now());
         } catch (Exception exception) {
             log.error("Failed to process botConfig {}", botConfig, exception);
         }

@@ -16,7 +16,7 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationType;
@@ -42,18 +42,13 @@ public abstract class AbstractBot implements Bot {
 
     @Override
     @NotNull
-    public DecisionData processTicker(
-            @Nullable final String brokerAccountId,
-            final String ticker,
-            final CandleResolution candleResolution,
-            final OffsetDateTime previousStartTime,
-            final OffsetDateTime now
-    ) {
+    public DecisionData processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
         final DecisionData decisionData = new DecisionData();
 
+        final String ticker = botConfig.getTicker();
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, candleResolution);
+            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.getCandleResolution());
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {
@@ -61,9 +56,9 @@ public abstract class AbstractBot implements Bot {
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                fillDecisionData(brokerAccountId, decisionData, ticker, now);
+                fillDecisionData(botConfig.getBrokerAccountId(), decisionData, ticker, now);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(brokerAccountId, ticker, decision);
+                performOperation(botConfig.getBrokerAccountId(), ticker, decision);
             }
         } else {
             log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);

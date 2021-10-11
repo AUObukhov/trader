@@ -25,6 +25,7 @@ import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -61,7 +62,12 @@ class AbstractBotUnitTest {
         final List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         Assertions.assertNull(decisionData.getBalance());
         Assertions.assertNull(decisionData.getPosition());
@@ -81,7 +87,12 @@ class AbstractBotUnitTest {
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -94,7 +105,12 @@ class AbstractBotUnitTest {
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -111,7 +127,12 @@ class AbstractBotUnitTest {
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, previousStartTime, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, previousStartTime, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -133,7 +154,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         Assertions.assertNotNull(decisionData);
 
@@ -170,7 +196,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
@@ -210,7 +241,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final DecisionData decisionData = bot.processTicker(brokerAccountId, ticker, CandleResolution._1MIN, null, OffsetDateTime.now());
+        final BotConfig botConfig = new BotConfig()
+                .setBrokerAccountId(brokerAccountId)
+                .setTicker(ticker)
+                .setCandleResolution(CandleResolution._1MIN);
+
+        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
         AssertUtils.assertEquals(balance, decisionData.getBalance());
         Assertions.assertEquals(position, decisionData.getPosition());
