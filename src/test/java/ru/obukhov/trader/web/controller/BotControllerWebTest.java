@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
@@ -42,61 +41,61 @@ class BotControllerWebTest extends ControllerWebTest {
     @Autowired
     private ScheduledBotProperties scheduledBotProperties;
 
-    // region test tests
+    // region backTest tests
 
     @Test
-    void test_returnsBadRequest_whenFromIsNull() throws Exception {
-        test_returnsBadRequest_withError("BackTestRequest/BackTestRequest_fromIsNull.json", "from is mandatory");
+    void backTest_returnsBadRequest_whenFromIsNull() throws Exception {
+        backTest_returnsBadRequest_withError("BackTestRequest/BackTestRequest_fromIsNull.json", "from is mandatory");
     }
 
     @Test
-    void test_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
-        test_returnsBadRequest_withError(
+    void backTest_returnsBadRequest_whenBalanceConfigIsNull() throws Exception {
+        backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_balanceConfigsIsNull.json",
                 "balanceConfig is mandatory"
         );
     }
 
     @Test
-    void test_returnsBadRequest_whenBotConfigsIsNull() throws Exception {
-        test_returnsBadRequest_withError(
+    void backTest_returnsBadRequest_whenBotConfigsIsNull() throws Exception {
+        backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_botConfigsIsNull.json",
                 "botConfigs is mandatory"
         );
     }
 
     @Test
-    void test_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
-        test_returnsBadRequest_withError(
+    void backTest_returnsBadRequest_whenBotsConfigsIsEmpty() throws Exception {
+        backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_botConfigsIsEmpty.json",
                 "botConfigs is mandatory"
         );
     }
 
     @Test
-    void test_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
-        test_returnsBadRequest_withError(
+    void backTest_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
+        backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_candleResolutionIsNull.json",
                 "candleResolution is mandatory"
         );
     }
 
     @Test
-    void test_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
-        test_returnsBadRequest_withError(
+    void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
+        backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_strategyTypeIsNull.json",
                 "strategyType is mandatory"
         );
     }
 
-    private void test_returnsBadRequest_withError(String backTestRequestResource, String expectedError) throws Exception {
+    private void backTest_returnsBadRequest_withError(String backTestRequestResource, String expectedError) throws Exception {
         final String requestString = ResourceUtils.getTestDataAsString(backTestRequestResource);
 
         assertBadRequestError("/trader/bot/back-test", requestString, expectedError);
     }
 
     @Test
-    void test_returnsBackTestResults_whenRequestIsValid() throws Exception {
+    void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String ticker = "ticker";
 
         final String request = ResourceUtils.getTestDataAsString("BackTestRequest/BackTestRequest_valid.json");
@@ -213,25 +212,5 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     // endregion
-
-    @Test
-    void enableScheduling_enablesScheduling() throws Exception {
-        scheduledBotProperties.setEnabled(false);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        Assertions.assertTrue(scheduledBotProperties.isEnabled());
-    }
-
-    @Test
-    void disableScheduling_disablesScheduling() throws Exception {
-        scheduledBotProperties.setEnabled(true);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        Assertions.assertFalse(scheduledBotProperties.isEnabled());
-    }
 
 }
