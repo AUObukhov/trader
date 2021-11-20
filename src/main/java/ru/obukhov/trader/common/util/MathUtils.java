@@ -8,11 +8,9 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class MathUtils {
@@ -48,53 +46,27 @@ public class MathUtils {
      * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}
      * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
      */
-    public static BigDecimal getWeightedAverage(final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
-        if (dateTimesToAmounts.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-
-        final Map<BigDecimal, Double> weightedAmounts = getWeightedAmounts(dateTimesToAmounts, endDateTime);
+    public static BigDecimal getWeightedAverage(final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
+        final Map<Long, BigDecimal> weightedAmounts = dateTimesToAmounts.entrySet().stream()
+                .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endDateTime), Map.Entry::getValue));
 
         return getWeightedAverage(weightedAmounts);
     }
 
-    private static Map<BigDecimal, Double> getWeightedAmounts(
-            final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts,
-            final OffsetDateTime endDateTime
-    ) {
-        final Map<BigDecimal, Double> weightedInvestments = new HashMap<>();
-        final Iterator<Map.Entry<OffsetDateTime, BigDecimal>> iterator = dateTimesToAmounts.entrySet().iterator();
-        Map.Entry<OffsetDateTime, BigDecimal> currentEntry = iterator.next();
-        while (iterator.hasNext()) {
-            final Map.Entry<OffsetDateTime, BigDecimal> nextEntry = iterator.next();
-            addWeightedAmount(weightedInvestments, currentEntry.getValue(), currentEntry.getKey(), nextEntry.getKey());
-
-            currentEntry = nextEntry;
-        }
-        addWeightedAmount(weightedInvestments, currentEntry.getValue(), currentEntry.getKey(), endDateTime);
-
-        return weightedInvestments;
+    private static long getWeight(final OffsetDateTime dateTime, final OffsetDateTime endDateTime) {
+        return Duration.between(dateTime, endDateTime).toMillis();
     }
 
-    private static void addWeightedAmount(
-            final Map<BigDecimal, Double> weightedAmounts,
-            final BigDecimal amount,
-            final OffsetDateTime from,
-            final OffsetDateTime to
-    ) {
-        final Double weight = (double) Duration.between(from, to).toMillis();
-        weightedAmounts.put(amount, weight);
-    }
-
-    private static BigDecimal getWeightedAverage(final Map<BigDecimal, Double> weightedAmounts) {
-        final double weightsSum = weightedAmounts.values().stream().reduce(0.0, Double::sum);
+    private static BigDecimal getWeightedAverage(final Map<Long, BigDecimal> weightedAmounts) {
+        final BigDecimal weightsSum = BigDecimal.valueOf(weightedAmounts.keySet().stream().reduce(0L, Long::sum));
 
         BigDecimal weightedAverage = BigDecimal.ZERO;
-        for (final Map.Entry<BigDecimal, Double> entry : weightedAmounts.entrySet()) {
-            final double weight = entry.getValue() / weightsSum;
-            final BigDecimal weightedAmount = DecimalUtils.multiply(entry.getKey(), weight);
+        for (final Map.Entry<Long, BigDecimal> entry : weightedAmounts.entrySet()) {
+            final BigDecimal normalizedWeight = DecimalUtils.divide(entry.getKey(), weightsSum);
+            final BigDecimal weightedAmount = entry.getValue().multiply(normalizedWeight);
             weightedAverage = weightedAverage.add(weightedAmount);
         }
+
         return DecimalUtils.setDefaultScale(weightedAverage);
     }
 

@@ -12,9 +12,9 @@ import ru.obukhov.trader.test.utils.TestData;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 class MathUtilsUnitTest {
@@ -73,7 +73,7 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
-        final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
@@ -83,15 +83,21 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
-        final SortedMap<OffsetDateTime, BigDecimal> dateTimesToAmounts = new TreeMap<>();
-        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 1, 1, 10), BigDecimal.valueOf(100000));
-        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 2, 1, 10), BigDecimal.valueOf(110000));
-        dateTimesToAmounts.put(DateTimeTestData.createDateTime(2021, 3, 1, 10), BigDecimal.valueOf(120000));
-        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 10);
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        BigDecimal amount = BigDecimal.valueOf(10000);
+        dateTimesToAmounts.put(dateTime, amount);
+        for (int i = 0; i < 24; i++) {
+            dateTime = dateTime.plusDays(1);
+            amount = amount.add(BigDecimal.valueOf(1000));
+            dateTimesToAmounts.put(dateTime, amount);
+        }
+
+        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 30);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(106764.70588, weightedAverage);
+        AssertUtils.assertEquals(18941.12000, weightedAverage);
     }
 
     // endregion
