@@ -78,9 +78,19 @@ class DecimalUtilsUnitTest {
         AssertUtils.assertEquals(33.33333, result);
     }
 
-    @ParameterizedTest
-    @CsvSource("100.000055, 0.099, 1010.10157")
-    void multiplyByInteger(final double dividend, final double divisor, final double expectedResult) {
+    @Test
+    void divideLongByBigDecimal() {
+        final BigDecimal result = DecimalUtils.divide(100, BigDecimal.valueOf(3));
+
+        AssertUtils.assertEquals(33.33333, result);
+    }
+
+    @Test
+    void divide() {
+        final double dividend = 100.000055;
+        final double divisor = 0.099;
+        final double expectedResult = 1010.10157;
+
         final BigDecimal divideBigDecimalByDoubleResult = DecimalUtils.divide(BigDecimal.valueOf(dividend), divisor);
         final BigDecimal divideDoubleByDoubleResult = DecimalUtils.divide(dividend, divisor);
         final BigDecimal divideBigDecimalByBigDecimal = DecimalUtils.divide(BigDecimal.valueOf(dividend), BigDecimal.valueOf(divisor));

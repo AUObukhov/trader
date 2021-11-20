@@ -70,6 +70,10 @@ public class DecimalUtils {
         return dividend.divide(divisor, DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
+    public static BigDecimal divide(long dividend, BigDecimal divisor) {
+        return divide(BigDecimal.valueOf(dividend), divisor);
+    }
+
     // endregion
 
     /**
