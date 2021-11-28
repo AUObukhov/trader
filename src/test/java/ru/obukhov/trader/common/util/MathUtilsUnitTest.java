@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -72,6 +73,24 @@ class MathUtilsUnitTest {
     // region getWeightedAverage tests
 
     @Test
+    void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
+        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        BigDecimal amount = BigDecimal.valueOf(10000);
+        dateTimesToAmounts.put(dateTime, amount);
+        for (int i = 0; i < 24; i++) {
+            dateTime = dateTime.plusDays(1);
+            amount = amount.add(BigDecimal.valueOf(1000));
+            dateTimesToAmounts.put(dateTime, amount);
+        }
+
+        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 24);
+
+        final Executable executable = () -> MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+        Assertions.assertThrows(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
+    }
+
+    @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
@@ -93,11 +112,11 @@ class MathUtilsUnitTest {
             dateTimesToAmounts.put(dateTime, amount);
         }
 
-        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 30);
+        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 25);
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(18941.12000, weightedAverage);
+        AssertUtils.assertEquals(17666.64, weightedAverage);
     }
 
     // endregion

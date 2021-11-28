@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.util;
 
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -43,7 +44,8 @@ public class MathUtils {
      * The last amount is actual until given {@code endDateTime}
      *
      * @param dateTimesToAmounts begin dateTimes and corresponding amounts
-     * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}
+     * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}.
+     *                           Can't be before any of dateTime in {@code dateTimesToAmounts}
      * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
      */
     public static BigDecimal getWeightedAverage(final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
@@ -54,6 +56,8 @@ public class MathUtils {
     }
 
     private static long getWeight(final OffsetDateTime dateTime, final OffsetDateTime endDateTime) {
+        Assert.isTrue(!endDateTime.isBefore(dateTime), "All dateTimes must be before endDateTime");
+
         return Duration.between(dateTime, endDateTime).toMillis();
     }
 
