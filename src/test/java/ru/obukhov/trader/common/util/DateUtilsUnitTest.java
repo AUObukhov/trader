@@ -701,7 +701,7 @@ class DateUtilsUnitTest {
     // region getCeilingWorkTime tests
 
     @Test
-    void getNearestWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
+    void getCeilingWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(-1);
@@ -711,7 +711,7 @@ class DateUtilsUnitTest {
     }
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException() {
+    static Stream<Arguments> getData_getCeilingWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(
                         DateTimeTestData.createDateTime(2020, 10, 5, 12),
@@ -735,8 +735,8 @@ class DateUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
-    void getNearestWorkTime_throwsIllegalArgumentException(
+    @MethodSource("getData_getCeilingWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
+    void getCeilingWorkTime_throwsIllegalArgumentException(
             final OffsetDateTime dateTime,
             final OffsetTime startTime,
             final Duration duration,
@@ -747,7 +747,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsCurrentMinute_whenMiddleOfWorkDay() {
+    void getCeilingWorkTime_returnsCurrentMinute_whenMiddleOfWorkDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
@@ -758,7 +758,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsStartOfNextDay_whenAtEndOfWorkDay() {
+    void getCeilingWorkTime_returnsStartOfNextDay_whenAtEndOfWorkDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
@@ -770,7 +770,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
+    void getCeilingWorkTime_returnsStartOfNextDay_whenAfterEndOfWorkDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19, 20);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
@@ -782,7 +782,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsStartOfNextWeek_whenEndOfWorkWeek() {
+    void getCeilingWorkTime_returnsStartOfNextWeek_whenEndOfWorkWeek() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 19);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
@@ -794,7 +794,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsStartOfNextWeek_whenAtWeekend() {
+    void getCeilingWorkTime_returnsStartOfNextWeek_whenAtWeekend() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 12);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
@@ -806,7 +806,7 @@ class DateUtilsUnitTest {
     }
 
     @Test
-    void getNearestWorkTime_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
+    void getCeilingWorkTime_returnsStartOfTodayWorkDay_whenBeforeStartOfTodayWorkDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 9);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
