@@ -235,16 +235,14 @@ public class DateUtils {
     /**
      * @param workStartTime    start time of work
      * @param workTimeDuration duration of work period
-     * @return first minute of work time not before {@code dateTime}
+     * @return first minute of work time equal to or after given {@code dateTime}
      */
     public static OffsetDateTime getCeilingWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
         validateWorkTimeDuration(workTimeDuration);
 
-        if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
-            return dateTime;
-        }
-
-        return toWorkStartTime(dateTime, workStartTime);
+        return isWorkTime(dateTime, workStartTime, workTimeDuration)
+                ? dateTime
+                : toWorkStartTime(dateTime, workStartTime);
     }
 
     /**
@@ -266,11 +264,10 @@ public class DateUtils {
     }
 
     private static OffsetDateTime toWorkStartTime(final OffsetDateTime dateTime, final OffsetTime workStartTime) {
-        if (dateTime.toOffsetTime().isBefore(workStartTime)) {
-            return setTime(dateTime, workStartTime);
-        }
-
-        return setTime(getNextWorkDay(dateTime), workStartTime);
+        final OffsetDateTime workDay = dateTime.toOffsetTime().isBefore(workStartTime)
+                ? dateTime
+                : getNextWorkDay(dateTime);
+        return setTime(workDay, workStartTime);
     }
 
     private static void validateWorkTimeDuration(final Duration workTimeDuration) {
