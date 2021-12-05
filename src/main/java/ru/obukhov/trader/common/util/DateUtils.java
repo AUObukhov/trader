@@ -205,8 +205,8 @@ public class DateUtils {
 
     /**
      * Checks if given {@code dateTime} is work time, which means than it is between {@code workStartTime} included and
-     * {@code workStartTime + workTimeDuration} and not at weekend except Saturday, when
-     * {@code workStartTime + workTimeDuration} is after midnight
+     * {@code workStartTime + workTimeDuration} excluded and not at weekend
+     * (except Saturday, when {@code workStartTime + workTimeDuration} is after midnight)
      *
      * @param dateTime         checked dateTime
      * @param workStartTime    start time of work
