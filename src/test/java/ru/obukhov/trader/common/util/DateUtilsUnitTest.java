@@ -700,18 +700,8 @@ class DateUtilsUnitTest {
 
     // region getCeilingWorkTime tests
 
-    @Test
-    void getCeilingWorkTime_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofHours(-1);
-
-        final Executable executable = () -> DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be positive");
-    }
-
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_getCeilingWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException() {
+    static Stream<Arguments> getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(
                         DateTimeTestData.createDateTime(2020, 10, 5, 12),
@@ -735,7 +725,7 @@ class DateUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_getCeilingWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
+    @MethodSource("getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException")
     void getCeilingWorkTime_throwsIllegalArgumentException(
             final OffsetDateTime dateTime,
             final OffsetTime startTime,
@@ -832,7 +822,7 @@ class DateUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_getNearestWorkTime_orGetNextWorkMinute_throwsIllegalArgumentException")
+    @MethodSource("getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException")
     void getNextWorkMinute_throwsIllegalArgumentException(
             final OffsetDateTime dateTime,
             final OffsetTime startTime,
