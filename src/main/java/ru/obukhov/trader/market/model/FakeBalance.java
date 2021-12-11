@@ -28,11 +28,8 @@ public class FakeBalance {
      * Adds given {@code amount} to balance and record to history of investments with given {@code dateTime}
      */
     public void addInvestment(final OffsetDateTime dateTime, final BigDecimal amount) {
-        if (investments.containsKey(dateTime)) {
-            throw new IllegalArgumentException("investment at " + dateTime + " alreadyExists");
-        }
-
-        investments.put(dateTime, amount);
+        final BigDecimal newAmount = investments.containsKey(dateTime) ? investments.get(dateTime).add(amount) : amount;
+        investments.put(dateTime, newAmount);
         currentAmount = currentAmount.add(amount);
     }
 

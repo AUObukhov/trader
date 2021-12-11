@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -34,29 +33,13 @@ class FakeContextUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void addInvestment_throwsIllegalArgumentException_whenInvestmentWithCurrentDateTimeAlreadyExists(@Nullable final String brokerAccountId) {
-        final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.valueOf(20);
-
-        final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.addInvestment(brokerAccountId, currency, balance);
-
-        final Executable executable = () -> fakeContext.addInvestment(brokerAccountId, currency, investment);
-        final String expectedMessage = "investment at " + currentDateTime + " alreadyExists";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
     void addInvestment_changesInvestmentsAndCurrentBalance(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment1 = BigDecimal.valueOf(20);
         final BigDecimal investment2 = BigDecimal.valueOf(50);
+        final BigDecimal investment3 = BigDecimal.valueOf(30);
         final OffsetDateTime investment1DateTime = currentDateTime.plusHours(1);
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
@@ -68,12 +51,13 @@ class FakeContextUnitTest {
 
         fakeContext.setCurrentDateTime(investment2DateTime);
         fakeContext.addInvestment(brokerAccountId, currency, investment2);
+        fakeContext.addInvestment(brokerAccountId, currency, investment3);
 
         Assertions.assertEquals(2, fakeContext.getInvestments(brokerAccountId, currency).size());
-        Assertions.assertEquals(investment1, fakeContext.getInvestments(brokerAccountId, currency).get(investment1DateTime));
-        Assertions.assertEquals(investment2, fakeContext.getInvestments(brokerAccountId, currency).get(investment2DateTime));
+        AssertUtils.assertEquals(20, fakeContext.getInvestments(brokerAccountId, currency).get(investment1DateTime));
+        AssertUtils.assertEquals(80, fakeContext.getInvestments(brokerAccountId, currency).get(investment2DateTime));
 
-        AssertUtils.assertEquals(170, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(200, fakeContext.getBalance(brokerAccountId, currency));
     }
 
     @ParameterizedTest
