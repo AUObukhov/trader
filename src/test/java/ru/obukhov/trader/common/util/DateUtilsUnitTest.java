@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
@@ -21,6 +22,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.stream.Stream;
 
 class DateUtilsUnitTest {
@@ -1026,7 +1028,34 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region getCronHitsBetweenDates tests
+    // region fromDate tests
+
+    @Test
+    void fromDate_returnsEqualDate() {
+        final int year = 2021;
+        final int month = Calendar.OCTOBER;
+        final int dayOfMonth = 11;
+        final int hour = 12;
+        final int minute = 13;
+        final int second = 14;
+
+        final Calendar calendar = new GregorianCalendar();
+        calendar.set(year, Calendar.OCTOBER, dayOfMonth, hour, minute, second);
+        final Date date = calendar.getTime();
+
+        final OffsetDateTime dateTime = DateUtils.fromDate(date);
+
+        Assertions.assertEquals(year, dateTime.getYear());
+        Assertions.assertEquals(month + 1, dateTime.getMonthValue());
+        Assertions.assertEquals(dayOfMonth, dateTime.getDayOfMonth());
+        Assertions.assertEquals(hour, dateTime.getHour());
+        Assertions.assertEquals(minute, dateTime.getMinute());
+        Assertions.assertEquals(second, dateTime.getSecond());
+    }
+
+    // endregion
+
+    // region getCronHitsCountBetweenDates tests
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetCronHitsBetweenDates_throwsIllegalArgumentException() {
@@ -1068,51 +1097,61 @@ class DateUtilsUnitTest {
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 1),
                         DateTimeTestData.createDateTime(2021, 10, 2),
-                        1
+                        List.of(DateTimeTestData.createDateTime(2021, 10, 1))
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 1),
                         DateTimeTestData.createDateTime(2021, 12, 2),
-                        3
+                        List.of(
+                                DateTimeTestData.createDateTime(2021, 10, 1),
+                                DateTimeTestData.createDateTime(2021, 11, 1),
+                                DateTimeTestData.createDateTime(2021, 12, 1)
+                        )
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 2),
                         DateTimeTestData.createDateTime(2021, 12, 2),
-                        2
+                        List.of(
+                                DateTimeTestData.createDateTime(2021, 11, 1),
+                                DateTimeTestData.createDateTime(2021, 12, 1)
+                        )
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 2),
                         DateTimeTestData.createDateTime(2022, 1, 1),
-                        2
+                        List.of(
+                                DateTimeTestData.createDateTime(2021, 11, 1),
+                                DateTimeTestData.createDateTime(2021, 12, 1)
+                        )
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 12, 2),
                         DateTimeTestData.createDateTime(2022, 1, 1),
-                        0
+                        List.of()
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 1, 2),
                         DateTimeTestData.createDateTime(2021, 1, 30),
-                        0
+                        List.of()
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetCronHitsBetweenDates")
-    void getCronHitsBetweenDates(final String expression, final OffsetDateTime from, final OffsetDateTime to, final int expectedCount)
+    void getCronHitsBetweenDates(final String expression, final OffsetDateTime from, final OffsetDateTime to, final List<OffsetDateTime> expectedHits)
             throws ParseException {
 
         final CronExpression cronExpression = new CronExpression(expression);
 
-        final int count = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
+        final List<OffsetDateTime> hits = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
 
-        Assertions.assertEquals(expectedCount, count);
+        AssertUtils.assertListsAreEqual(expectedHits, hits);
     }
 
     // endregion

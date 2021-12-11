@@ -207,7 +207,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime previousDate = fakeTinkoffService.getCurrentDateTime();
             final OffsetDateTime nextDate = fakeTinkoffService.nextMinute();
 
-            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate).size();
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 final Currency currency = getCurrency(fakeTinkoffService, ticker);

@@ -115,7 +115,8 @@ public class FakeTinkoffService implements TinkoffService {
         // adding balance increments which were skipped by moving to ceiling work time
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
         if (balanceIncrementCron != null) {
-            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, fakeContext.getCurrentDateTime());
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, fakeContext.getCurrentDateTime())
+                    .size();
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 initialBalance = initialBalance.add(totalBalanceIncrement);

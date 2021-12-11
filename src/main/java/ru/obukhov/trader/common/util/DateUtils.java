@@ -16,7 +16,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @UtilityClass
 public class DateUtils {
@@ -346,23 +348,31 @@ public class DateUtils {
         return Date.from(instant);
     }
 
+    public static OffsetDateTime fromDate(final Date date) {
+        return date.toInstant().atOffset(DEFAULT_OFFSET);
+    }
+
     /**
-     * @return number of dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively
+     * @return dates which match given {@code expression} and between given {@code from} inclusively and {@code to} exclusively
      */
-    public static int getCronHitsBetweenDates(final CronExpression expression, final OffsetDateTime from, final OffsetDateTime to) {
+    public static List<OffsetDateTime> getCronHitsBetweenDates(final CronExpression expression, final OffsetDateTime from, final OffsetDateTime to) {
         Assert.isTrue(from.isBefore(to), "from must be before to");
 
         final Date dateFrom = DateUtils.toDate(from);
         final Date dateTo = DateUtils.toDate(to);
 
-        int count = expression.isSatisfiedBy(dateFrom) ? 1 : 0;
+        final List<OffsetDateTime> hits = new ArrayList<>();
+        if (expression.isSatisfiedBy(dateFrom)) {
+            hits.add(fromDate(dateFrom));
+        }
+
         Date currentValidDate = expression.getNextValidTimeAfter(dateFrom);
         while (currentValidDate.before(dateTo)) {
-            count++;
+            hits.add(fromDate(currentValidDate));
             currentValidDate = expression.getNextValidTimeAfter(currentValidDate);
         }
 
-        return count;
+        return hits;
     }
 
 }
