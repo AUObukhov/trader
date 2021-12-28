@@ -102,6 +102,28 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
+    // region divideAccurate tests
+
+    @Test
+    void divideAccurateLongByBigDecimal() {
+        final BigDecimal result = DecimalUtils.divideAccurate(100, BigDecimal.valueOf(3));
+
+        AssertUtils.assertEquals(new BigDecimal("33.333333333333333"), result);
+    }
+
+    @Test
+    void divideAccurate() {
+        final double dividend = 100.0000055;
+        final double divisor = 0.0099;
+        final BigDecimal expectedResult = new BigDecimal("10101.010656565656566");
+
+        final BigDecimal result = DecimalUtils.divideAccurate(BigDecimal.valueOf(dividend), BigDecimal.valueOf(divisor));
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
     @ParameterizedTest
     @CsvSource({
             "10, 5, 7.5",

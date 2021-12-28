@@ -9,7 +9,17 @@ import java.math.RoundingMode;
 @UtilityClass
 public class DecimalUtils {
 
+    /**
+     * Scale for operations with money
+     */
     public static final int DEFAULT_SCALE = 6;
+
+    /**
+     * Some complex operations, such as weighted average, loose accuracy due to rounding of each intermediate result.
+     * This constant is intended to reduce this inaccuracy by increasing accuracy of intermediate operations.
+     * Must be significantly larger than {@link DecimalUtils#DEFAULT_SCALE}
+     */
+    private static final int HIGH_SCALE = 15;
 
     /**
      * @return minuend - subtrahend
@@ -70,8 +80,28 @@ public class DecimalUtils {
         return dividend.divide(divisor, DEFAULT_SCALE, RoundingMode.HALF_UP);
     }
 
+    /**
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#DEFAULT_SCALE}
+     * and rounding mode = Half Up
+     */
     public static BigDecimal divide(long dividend, BigDecimal divisor) {
         return divide(BigDecimal.valueOf(dividend), divisor);
+    }
+
+    /**
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#HIGH_SCALE}
+     * and rounding mode = Half Up
+     */
+    public static BigDecimal divideAccurate(final BigDecimal dividend, final BigDecimal divisor) {
+        return dividend.divide(divisor, HIGH_SCALE, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * @return result of division of {@code dividend} by {@code divisor} with scale = {@link DecimalUtils#HIGH_SCALE}
+     * and rounding mode = Half Up
+     */
+    public static BigDecimal divideAccurate(long dividend, BigDecimal divisor) {
+        return divideAccurate(BigDecimal.valueOf(dividend), divisor);
     }
 
     // endregion

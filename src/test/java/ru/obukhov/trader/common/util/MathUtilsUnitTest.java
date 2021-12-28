@@ -116,7 +116,7 @@ class MathUtilsUnitTest {
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(17666.664, weightedAverage);
+        AssertUtils.assertEquals(17666.666667, weightedAverage);
     }
 
     // endregion

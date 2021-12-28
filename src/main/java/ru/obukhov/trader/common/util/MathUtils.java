@@ -66,7 +66,7 @@ public class MathUtils {
 
         BigDecimal weightedAverage = BigDecimal.ZERO;
         for (final Map.Entry<Long, BigDecimal> entry : weightedAmounts.entrySet()) {
-            final BigDecimal normalizedWeight = DecimalUtils.divide(entry.getKey(), weightsSum);
+            final BigDecimal normalizedWeight = DecimalUtils.divideAccurate(entry.getKey(), weightsSum);
             final BigDecimal weightedAmount = entry.getValue().multiply(normalizedWeight);
             weightedAverage = weightedAverage.add(weightedAmount);
         }
