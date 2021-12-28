@@ -263,7 +263,7 @@ class BackTesterImplUnitTest {
         final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(initialInvestment).add(positionsPrice);
         AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.getProfits().getAbsolute());
         AssertUtils.assertEquals(0.0032, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(2.21213, backTestResult.getProfits().getRelativeAnnual());
+        AssertUtils.assertEquals(2.212129, backTestResult.getProfits().getRelativeAnnual());
 
         Assertions.assertNull(backTestResult.getError());
     }

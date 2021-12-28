@@ -28,7 +28,7 @@ class FinUtilsUnitTest {
                 Arguments.of(0, -10, 0.0),
                 Arguments.of(0, 10, 0.0),
                 Arguments.of(100, 10, 0.1),
-                Arguments.of(30, 10, 0.33333)
+                Arguments.of(30, 10, 0.333333)
         );
     }
 
@@ -69,10 +69,10 @@ class FinUtilsUnitTest {
                 Arguments.of(DateUtils.DAYS_IN_YEAR / 2, 0.1, 0.21),
                 Arguments.of(DateUtils.DAYS_IN_YEAR / 2, 1.0, 3.0),
                 Arguments.of(DateUtils.DAYS_IN_YEAR / 2, 1.5, 5.25),
-                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, -0.1, -0.05132),
-                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 0.1, 0.04881),
-                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 1.0, 0.41421),
-                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 1.5, 0.58114)
+                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, -0.1, -0.051317),
+                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 0.1, 0.048809),
+                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 1.0, 0.414214),
+                Arguments.of(DateUtils.DAYS_IN_YEAR * 2, 1.5, 0.581139)
         );
     }
 

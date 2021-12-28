@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 @UtilityClass
 public class DecimalUtils {
 
-    public static final int DEFAULT_SCALE = 5;
+    public static final int DEFAULT_SCALE = 6;
 
     /**
      * @return minuend - subtrahend
