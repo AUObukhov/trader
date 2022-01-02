@@ -28,8 +28,8 @@ public class CrossStrategy extends AbstractTradingStrategy {
 
     private final MovingAverager averager;
 
-    protected CrossStrategy(final String name, final CrossStrategyParams params, final double commission, final MovingAverager averager) {
-        super(name, params, commission);
+    protected CrossStrategy(final String name, final CrossStrategyParams params, final MovingAverager averager) {
+        super(name, params);
 
         this.averager = averager;
     }

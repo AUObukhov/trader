@@ -20,6 +20,7 @@ public class DecisionData {
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
     private MarketInstrument instrument;
+    private double commission;
 
     public Integer getPositionLotsCount() {
         return position.getCount() / instrument.getLot();

@@ -57,7 +57,7 @@ class BackTesterImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StringUtils.EMPTY, 0.0);
+    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StringUtils.EMPTY);
 
     private static final CronExpression BALANCE_INCREMENT_CRON = TestData.createCronExpression();
 
@@ -147,8 +147,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
@@ -202,8 +201,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -280,8 +278,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -356,8 +353,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -431,8 +427,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -507,8 +502,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -554,8 +548,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -603,8 +596,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -653,8 +645,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -707,8 +698,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -761,8 +751,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -820,8 +809,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = createFakeBotMock();
         final String mockedExceptionMessage = "mocked exception";
         Mockito.when(fakeBot.getFakeTinkoffService()).thenThrow(new IllegalArgumentException(mockedExceptionMessage));
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final BackTesterImpl backTester = new BackTesterImpl(excelService, fakeBotFactory, strategyFactory, backTestProperties);
 
@@ -863,8 +851,7 @@ class BackTesterImplUnitTest {
         mockStrategy(botConfig, CONSERVATIVE_STRATEGY);
 
         final FakeBot fakeBot = createFakeBotMock();
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.any(CandleResolution.class)))
-                .thenReturn(fakeBot);
+        mockBot(fakeBotFactory, botConfig.getCandleResolution(), botConfig.getCommission(), fakeBot);
 
         final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -906,6 +893,16 @@ class BackTesterImplUnitTest {
         final BackTestResult backTestResult = backTestResults.get(0);
 
         Assertions.assertNull(backTestResult.getError());
+    }
+
+    private void mockBot(
+            final FakeBotFactory fakeBotFactory,
+            final CandleResolution candleResolution,
+            final double commission,
+            final FakeBot fakeBot
+    ) {
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(AbstractTradingStrategy.class), Mockito.eq(candleResolution), Mockito.eq(commission)))
+                .thenReturn(fakeBot);
     }
 
     private void mockStrategy(final BotConfig botConfig, final AbstractTradingStrategy strategy) {

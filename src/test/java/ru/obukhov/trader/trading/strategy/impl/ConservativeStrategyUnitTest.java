@@ -14,7 +14,7 @@ import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
-    private final ConservativeStrategy strategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue(), 0.003);
+    private final ConservativeStrategy strategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     @Test
     void getName_returnsProperName() {
@@ -40,7 +40,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsWait_whenNoAvailableLots() {
-        final DecisionData data = TestData.createDecisionData(2000.0, 2000.0, 1);
+        final DecisionData data = TestData.createDecisionData(2000.0, 2000.0, 1, 0.003);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 
@@ -50,7 +50,7 @@ class ConservativeStrategyUnitTest {
 
     @Test
     void decide_returnsBuy_whenThereAreAvailableLots() {
-        final DecisionData data = TestData.createDecisionData(10000.0, 2000.0, 1);
+        final DecisionData data = TestData.createDecisionData(10000.0, 2000.0, 1, 0.003);
 
         final Decision decision = strategy.decide(data, strategy.initCache());
 

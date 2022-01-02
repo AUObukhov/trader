@@ -140,12 +140,13 @@ public class TestData {
         return decisionData;
     }
 
-    public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize) {
+    public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setInstrument(new MarketInstrument().lot(lotSize));
+        decisionData.setCommission(commission);
 
         return decisionData;
     }

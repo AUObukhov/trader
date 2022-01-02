@@ -39,7 +39,7 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final Operation operation1 = new Operation().status(OperationStatus.DONE);
         final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
@@ -64,9 +64,9 @@ class CrossStrategyUnitTest {
                 false,
                 3,
                 5);
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1, 0.003);
 
         try (
                 final MockedStatic<TrendUtils> trendUtilsStaticMock =
@@ -90,9 +90,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 100.0, 1, 0.003);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -113,9 +113,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 1000.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 1000.0, 1, 0.003);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.BELOW)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -136,9 +136,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         data.setPosition(TestData.createPortfolioPosition(100, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
@@ -160,9 +160,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         data.setPosition(TestData.createPortfolioPosition(100, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
@@ -184,9 +184,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
@@ -208,9 +208,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1);
+        final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
@@ -232,9 +232,9 @@ class CrossStrategyUnitTest {
                 3,
                 5
         );
-        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, 0.003, averager);
+        final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1);
+        final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1, 0.003);
         data.setPosition(TestData.createPortfolioPosition(199, 10));
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {

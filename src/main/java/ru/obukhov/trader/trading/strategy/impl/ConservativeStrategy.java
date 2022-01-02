@@ -13,8 +13,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 @Slf4j
 public class ConservativeStrategy extends AbstractTradingStrategy {
 
-    public ConservativeStrategy(final String name, final double commission) {
-        super(name, null, commission);
+    public ConservativeStrategy(final String name) {
+        super(name, null);
     }
 
     @Override

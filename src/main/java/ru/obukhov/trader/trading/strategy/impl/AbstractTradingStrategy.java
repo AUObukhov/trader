@@ -22,13 +22,10 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     @Getter
     protected final String name;
     protected final TradingStrategyParams params;
-    @Getter
-    protected final double commission;
 
-    protected AbstractTradingStrategy(final String name, final TradingStrategyParams params, final double commission) {
+    protected AbstractTradingStrategy(final String name, final TradingStrategyParams params) {
         this.name = params == null ? name : name + " " + params;
         this.params = params;
-        this.commission = commission;
     }
 
     /**
@@ -58,7 +55,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
 
     private int getAvailableLots(final DecisionData data) {
         final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
-        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, commission);
+        final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, data.getCommission());
         return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
     }
 
@@ -96,10 +93,10 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         }
 
         final BigDecimal averagePositionPrice = data.getAveragePositionPrice();
-        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, commission);
+        final BigDecimal buyPricePlusCommission = DecimalUtils.addFraction(averagePositionPrice, data.getCommission());
 
         final BigDecimal currentPrice = data.getCurrentPrice();
-        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, commission);
+        final BigDecimal sellPriceMinusCommission = DecimalUtils.subtractFraction(currentPrice, data.getCommission());
 
         final double profit = DecimalUtils.getFractionDifference(sellPriceMinusCommission, buyPricePlusCommission)
                 .doubleValue();

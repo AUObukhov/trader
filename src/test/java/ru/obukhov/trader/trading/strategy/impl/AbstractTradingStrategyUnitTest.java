@@ -38,7 +38,7 @@ class AbstractTradingStrategyUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetName_returnsProperName")
     void getName_returnsProperName(final String name, final TradingStrategyParams params, final String expectedValue) {
-        final TradingStrategy strategy = new TestStrategy(name, params, 0.0);
+        final TradingStrategy strategy = new TestStrategy(name, params);
 
         Assertions.assertEquals(expectedValue, strategy.getName());
     }
@@ -66,8 +66,8 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction,
             @Nullable final Integer expectedLots
     ) {
-        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
-        final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize);
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
+        final DecisionData data = TestData.createDecisionData(balance, currentPrice, lotSize, 0.003);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
@@ -84,7 +84,7 @@ class AbstractTradingStrategyUnitTest {
     @Test
     void getSellOrWaitDecision_returnsWait_whenPositionIsNull() {
         final float minimumProfit = 0.1f;
-        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
         final DecisionData decisionData = new DecisionData();
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -116,7 +116,7 @@ class AbstractTradingStrategyUnitTest {
             final DecisionAction expectedAction,
             @Nullable final Integer expectedLots
     ) {
-        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null, 0.003);
+        final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
         final DecisionData data = TestData.createDecisionData(averagePositionPrice, positionLotsCount, lotSize, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
@@ -166,8 +166,8 @@ class AbstractTradingStrategyUnitTest {
 
     private static class TestStrategy extends AbstractTradingStrategy {
 
-        public TestStrategy(final String name, final TradingStrategyParams params, final Double commission) {
-            super(name, params, commission);
+        public TestStrategy(final String name, final TradingStrategyParams params) {
+            super(name, params);
         }
 
         @Override

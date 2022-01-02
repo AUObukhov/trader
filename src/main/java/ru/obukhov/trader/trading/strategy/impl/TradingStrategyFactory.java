@@ -30,21 +30,17 @@ public class TradingStrategyFactory {
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
         final StrategyType strategyType = botConfig.getStrategyType();
         return switch (strategyType) {
-            case CONSERVATIVE -> createConservativeStrategy(strategyType.getValue(), botConfig.getCommission());
-            case CROSS -> createCrossStrategy(strategyType.getValue(), botConfig.getCommission(), botConfig.getStrategyParams());
+            case CONSERVATIVE -> new ConservativeStrategy(strategyType.getValue());
+            case CROSS -> createCrossStrategy(strategyType.getValue(), botConfig.getStrategyParams());
         };
     }
 
-    private ConservativeStrategy createConservativeStrategy(final String name, final double commission) {
-        return new ConservativeStrategy(name, commission);
-    }
-
-    private CrossStrategy createCrossStrategy(final String name, final double commission, final Map<String, Object> strategyParams) {
+    private CrossStrategy createCrossStrategy(final String name, final Map<String, Object> strategyParams) {
         final CrossStrategyParams crossStrategyParams = getStrategyParams(strategyParams, CrossStrategyParams.class);
         final MovingAverageType movingAverageType = getMovingAverageType(strategyParams);
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final String fullName = name + " " + movingAverageType;
-        return new CrossStrategy(fullName, crossStrategyParams, commission, averager);
+        return new CrossStrategy(fullName, crossStrategyParams, averager);
     }
 
     private MovingAverageType getMovingAverageType(Map<String, Object> strategyParams) {

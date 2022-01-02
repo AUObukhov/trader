@@ -28,9 +28,8 @@ public class FakeBotFactory extends AbstractBotFactory {
     }
 
     @Override
-    public Bot createBot(final AbstractTradingStrategy strategy, final CandleResolution candleResolution) {
-        final FakeTinkoffService fakeTinkoffService =
-                new FakeTinkoffService(marketProperties, strategy.getCommission(), realMarketService, realTinkoffService);
+    public Bot createBot(final AbstractTradingStrategy strategy, final CandleResolution candleResolution, final double commission) {
+        final FakeTinkoffService fakeTinkoffService = new FakeTinkoffService(marketProperties, commission, realMarketService, realTinkoffService);
         final MarketService fakeMarketService = new MarketServiceImpl(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);

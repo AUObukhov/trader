@@ -28,9 +28,9 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_createsFakeBot() {
-        final AbstractTradingStrategy strategy = new ConservativeStrategy(StringUtils.EMPTY, 0.0);
+        final AbstractTradingStrategy strategy = new ConservativeStrategy(StringUtils.EMPTY);
 
-        final Bot bot = factory.createBot(strategy, CandleResolution._1MIN);
+        final Bot bot = factory.createBot(strategy, CandleResolution._1MIN, 0.0);
 
         Assertions.assertInstanceOf(FakeBot.class, bot);
     }
