@@ -125,7 +125,7 @@ public class BackTesterImpl implements BackTester {
 
     private FakeBot createFakeBot(final BotConfig botConfig) {
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
-        return (FakeBot) fakeBotFactory.createBot(strategy, botConfig.getCandleResolution(), botConfig.getCommission());
+        return (FakeBot) fakeBotFactory.createBot(strategy, botConfig.getCommission());
     }
 
     private CompletableFuture<BackTestResult> startBackTest(
