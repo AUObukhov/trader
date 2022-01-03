@@ -198,7 +198,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BigDecimal initialInvestment = BigDecimal.valueOf(10000);
         final BalanceConfig balanceConfig = new BalanceConfig(initialInvestment, BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
@@ -220,10 +220,10 @@ class BackTesterImplUnitTest {
                 from.plusMinutes(50));
 
         mockNextMinute(from);
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, initialInvestment);
+        mockInitialInvestment(marketInstrument.getCurrency(), from, initialInvestment);
 
         final BigDecimal currentBalance = BigDecimal.valueOf(2000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(currentBalance);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 8;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
@@ -274,7 +274,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -304,10 +304,10 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
 
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(currentBalance);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
@@ -329,7 +329,7 @@ class BackTesterImplUnitTest {
                 .addInvestment(
                         Mockito.eq(brokerAccountId),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(MarketInstrument.getCurrency()),
+                        Mockito.eq(marketInstrument.getCurrency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceConfig.getBalanceIncrement()))
                 );
     }
@@ -349,7 +349,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -379,8 +379,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final int positionLotsCount = 2;
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
@@ -421,7 +421,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -438,8 +438,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         final OffsetDateTime operationDateTime = from.plusMinutes(2);
         final OperationTypeWithCommission operationType = OperationTypeWithCommission.BUY;
@@ -495,7 +495,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
 
@@ -509,8 +509,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency()))
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
                 .thenReturn(BigDecimal.valueOf(20000));
 
         // act
@@ -540,7 +540,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
 
@@ -555,8 +555,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
 
         // act
 
@@ -587,7 +587,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
 
@@ -602,8 +602,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency()))
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
                 .thenReturn(BigDecimal.valueOf(20000));
 
         // act
@@ -635,7 +635,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -652,8 +652,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
         mockPortfolioPositions(brokerAccountId);
@@ -687,7 +687,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -704,8 +704,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         // act
 
@@ -736,7 +736,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
 
@@ -754,8 +754,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency()))
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
                 .thenReturn(BigDecimal.valueOf(20000));
 
         // act
@@ -834,7 +834,7 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot();
 
-        final MarketInstrument MarketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
         final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
 
@@ -851,8 +851,8 @@ class BackTesterImplUnitTest {
 
         mockNextMinute(from);
 
-        mockInitialInvestment(MarketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, MarketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
+        mockInitialInvestment(marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
 
         Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
         mockPortfolioPositions(brokerAccountId);
