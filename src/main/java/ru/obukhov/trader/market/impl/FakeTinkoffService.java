@@ -443,12 +443,13 @@ public class FakeTinkoffService implements TinkoffService {
         return fakeContext.getInvestments(null, currency);
     }
 
-    public void incrementBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
-        if (log.isDebugEnabled()) {
-            log.debug("Incrementing balance {} by {}", getCurrentBalance(brokerAccountId, currency), increment);
-        }
-
-        fakeContext.addInvestment(brokerAccountId, currency, increment);
+    public void addInvestment(
+            final String brokerAccountId,
+            final OffsetDateTime dateTime,
+            final Currency currency,
+            final BigDecimal increment
+    ) {
+        fakeContext.addInvestment(brokerAccountId, dateTime, currency, increment);
     }
 
     // endregion

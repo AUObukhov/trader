@@ -598,13 +598,13 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPortfolioCurrencies_returnsCurrencyWithBalance_afterIncrementBalance(@Nullable final String brokerAccountId) {
+    void getPortfolioCurrencies_returnsCurrencyWithBalance_afterAddInvestment(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
         service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
-        service.incrementBalance(brokerAccountId, currency, balance);
+        service.addInvestment(brokerAccountId, dateTime, currency, balance);
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 

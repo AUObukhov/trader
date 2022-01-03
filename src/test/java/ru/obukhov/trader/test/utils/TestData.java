@@ -281,7 +281,8 @@ public class TestData {
 
     public static MarketProperties createMarketProperties() {
         final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
-        return new MarketProperties(workStartTime, Duration.ofHours(9), 7, OffsetDateTime.now());
+        final OffsetDateTime startDate = DateTimeTestData.createDateTime(2000, 1, 1);
+        return new MarketProperties(workStartTime, Duration.ofHours(9), 7, startDate);
     }
 
     public static BalanceConfig createBalanceConfig(final double initialBalance) {

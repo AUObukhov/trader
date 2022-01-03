@@ -7,16 +7,16 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
-import ru.obukhov.trader.trading.bots.interfaces.FakeBot;
+import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
 @Slf4j
-public class FakeBotImpl extends AbstractBot implements FakeBot {
+public class FakeBot extends AbstractBot implements Bot {
 
     @Getter
     private final FakeTinkoffService fakeTinkoffService;
 
-    public FakeBotImpl(
+    public FakeBot(
             final MarketService marketService,
             final OperationsService operationsService,
             final OrdersService ordersService,

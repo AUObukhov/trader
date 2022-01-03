@@ -35,11 +35,22 @@ public class FakeContext {
     }
 
     /**
-     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current
-     * dateTime
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current dateTime
      */
     public void addInvestment(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal amount) {
         computeIfAbsentBalance(brokerAccountId, currency).addInvestment(currentDateTime, amount);
+    }
+
+    /**
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code dateTime}
+     */
+    public void addInvestment(
+            @Nullable final String brokerAccountId,
+            final OffsetDateTime dateTime,
+            final Currency currency,
+            final BigDecimal amount
+    ) {
+        computeIfAbsentBalance(brokerAccountId, currency).addInvestment(dateTime, amount);
     }
 
     public BigDecimal getBalance(@Nullable final String brokerAccountId, final Currency currency) {
