@@ -135,7 +135,7 @@ class FakeTinkoffServiceUnitTest {
             final OffsetDateTime dateTime,
             final OffsetDateTime expectedCurrentDateTime
     ) {
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
 
         Assertions.assertEquals(expectedCurrentDateTime, service.getCurrentDateTime());
     }
@@ -146,7 +146,7 @@ class FakeTinkoffServiceUnitTest {
     void init_clearsPortfolio(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
         final String ticker = "ticker";
@@ -161,7 +161,7 @@ class FakeTinkoffServiceUnitTest {
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         final OffsetDateTime newDateTime = DateTimeTestData.createDateTime(2021, 10, 5, 12);
-        final BalanceConfig newBalanceConfig = TestData.createBalanceConfig(1000);
+        final BalanceConfig newBalanceConfig = TestData.createBalanceConfig(1000.0);
 
         service.init(brokerAccountId, newDateTime, currency, newBalanceConfig);
 
@@ -181,9 +181,9 @@ class FakeTinkoffServiceUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forInit_initsBalance() {
         return Stream.of(
-                Arguments.of(TestData.createBalanceConfig(1000000, 1000, "0 0 0 1 * ?"), 1001000.0),
-                Arguments.of(TestData.createBalanceConfig(1000000, 1000, "0 0 0 2 * ?"), 1000000.0),
-                Arguments.of(TestData.createBalanceConfig(1000000), 1000000.0)
+                Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"), 1001000.0),
+                Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"), 1000000.0),
+                Arguments.of(TestData.createBalanceConfig(1000000.0), 1000000.0)
         );
     }
 
@@ -215,7 +215,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToNextMinute_whenMiddleOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -230,7 +230,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -245,7 +245,7 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -263,7 +263,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getOperations_filtersOperationsByInterval(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig);
 
@@ -294,7 +294,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getOperations_filtersOperationsByTicker_whenTickerIsNotNull(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig);
 
@@ -327,7 +327,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig);
 
@@ -360,7 +360,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
 
@@ -381,7 +381,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_buy_createsNewPosition_whenNoPositions(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
 
@@ -405,7 +405,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
 
@@ -431,7 +431,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_buy_createsMultiplePositions_whenDifferentTickersAreBought(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
 
@@ -472,7 +472,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
@@ -502,7 +502,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_sell_removesPosition_whenAllLotsAreSold(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
@@ -526,7 +526,7 @@ class FakeTinkoffServiceUnitTest {
     void placeMarketOrder_sell_reducesLotsCount(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
@@ -558,7 +558,7 @@ class FakeTinkoffServiceUnitTest {
     void getPortfolioCurrencies_returnsAllCurrencies_whenCurrenciesAreNotInitialized(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
@@ -581,7 +581,7 @@ class FakeTinkoffServiceUnitTest {
     void getPortfolioCurrencies_returnsCurrencyWithBalance_whenBalanceInitialized(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
         service.init(brokerAccountId, dateTime, currency, balanceConfig);
 
@@ -603,7 +603,7 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0));
+        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
         service.addInvestment(brokerAccountId, dateTime, currency, balance);
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);

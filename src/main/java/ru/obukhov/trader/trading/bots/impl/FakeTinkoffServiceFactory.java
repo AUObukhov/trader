@@ -15,7 +15,7 @@ public class FakeTinkoffServiceFactory {
     private final MarketService realMarketService;
     private final RealTinkoffService realTinkoffService;
 
-    public FakeTinkoffService createService(final double commission) {
+    public FakeTinkoffService createService(final Double commission) {
         return new FakeTinkoffService(marketProperties, commission, realMarketService, realTinkoffService);
     }
 

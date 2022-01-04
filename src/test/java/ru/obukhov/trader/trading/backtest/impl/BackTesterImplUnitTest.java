@@ -5,15 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.Answer;
-import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -21,6 +17,7 @@ import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -33,10 +30,8 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -45,9 +40,11 @@ import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -56,8 +53,9 @@ class BackTesterImplUnitTest {
 
     private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
 
-    private static final CronExpression BALANCE_INCREMENT_CRON = TestData.createCronExpression();
-    private final static BackTestProperties BACK_TEST_PROPERTIES = new BackTestProperties(2);
+    private static final String BALANCE_INCREMENT_CRON = "0 0 * * * ?";
+    private static final BackTestProperties BACK_TEST_PROPERTIES = new BackTestProperties(2);
+    private static final OperationTypeMapper operationMapper = Mappers.getMapper(OperationTypeMapper.class);
 
     @Mock
     private ExcelService excelService;
@@ -73,11 +71,9 @@ class BackTesterImplUnitTest {
         backTester = new BackTesterImpl(excelService, fakeTinkoffServiceFactory, fakeBotFactory, BACK_TEST_PROPERTIES);
     }
 
-    // region test tests
-
     @Test
     void test_throwsIllegalArgumentException_whenFromIsInFuture() {
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -96,7 +92,7 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_throwsIllegalArgumentException_whenToIsInFuture() {
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -115,7 +111,7 @@ class BackTesterImplUnitTest {
 
     @Test
     void test_throwsIllegalArgumentException_whenToIntervalIsShorterThanOneDay() {
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = Collections.emptyList();
 
@@ -132,12 +128,12 @@ class BackTesterImplUnitTest {
         // arrange
 
         final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig("2000124699", ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
+        final Double commission = 0.003;
+        final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
 
         mockFakeTinkoffService(commission);
 
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         final List<BotConfig> botConfigs = List.of(botConfig);
 
@@ -175,49 +171,65 @@ class BackTesterImplUnitTest {
         AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_fillsCommonStatistics(final String brokerAccountId) {
+    @Test
+    void test_fillsCommonStatistics() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BigDecimal initialInvestment = BigDecimal.valueOf(10000);
-        final BalanceConfig balanceConfig = new BalanceConfig(initialInvestment, BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.any(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(new DecisionData());
+        final double initialInvestment = 10000;
 
-        mockDecisionDataWithCandle(botConfig, fakeBot, 1000, from.plusMinutes(10));
-        mockDecisionDataWithCandle(botConfig, fakeBot, 1001, from.plusMinutes(20));
-        mockDecisionDataWithCandle(botConfig, fakeBot, 1002, from.plusMinutes(30));
-        mockDecisionDataWithCandle(botConfig, fakeBot, 1003, from.plusMinutes(40));
-        final Candle lastCandle = mockDecisionDataWithCandle(botConfig, fakeBot, 1004, from.plusMinutes(50));
+        final BigDecimal finalBalance1 = BigDecimal.valueOf(2000);
+        final int finalPositionLotsCount1 = 8;
 
-        mockNextMinute(fakeTinkoffService, from);
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, initialInvestment);
+        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
+        prices1.put(1000.0, from.plusMinutes(10));
+        prices1.put(1001.0, from.plusMinutes(20));
+        prices1.put(1002.0, from.plusMinutes(30));
+        prices1.put(1003.0, from.plusMinutes(40));
+        final double finalPrice1 = 1004.0;
+        prices1.put(finalPrice1, from.plusMinutes(50));
 
-        final BigDecimal currentBalance = BigDecimal.valueOf(2000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                0.003,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(2000),
+                finalPositionLotsCount1,
+                prices1,
+                null
+        );
 
-        final int positionLotsCount = 8;
-        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId, portfolioPosition);
+        final BigDecimal finalBalance2 = BigDecimal.valueOf(100);
+        final int finalPositionLotsCount2 = 5;
+
+        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
+        prices2.put(2000.0, from.plusMinutes(100));
+        prices2.put(2001.0, from.plusMinutes(200));
+        prices2.put(2002.0, from.plusMinutes(300));
+        prices2.put(2003.0, from.plusMinutes(400));
+        final double finalPrice2 = 2004.0;
+        prices2.put(finalPrice2, from.plusMinutes(500));
+
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.001,
+                initialInvestment,
+                interval,
+                finalBalance2,
+                finalPositionLotsCount2,
+                prices2,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -225,82 +237,120 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
+        assertCommonStatistics(
+                backTestResults.get(0), botConfigs.get(1), // expected sorting of results by profit
+                interval, initialInvestment,
+                finalPrice2, finalPositionLotsCount2, finalBalance2,
+                0.012, 77.015733
+        );
 
-        Assertions.assertEquals(botConfigs.get(0), backTestResult.getBotConfig());
+        assertCommonStatistics(
+                backTestResults.get(1), botConfigs.get(0),
+                interval, initialInvestment,
+                finalPrice1, finalPositionLotsCount1, finalBalance1,
+                0.0032, 2.212129
+        );
+    }
+
+    private void assertCommonStatistics(
+            final BackTestResult backTestResult,
+            final BotConfig botConfig,
+            final Interval interval,
+            final double initialInvestment,
+            final Double currentPrice,
+            final int positionLotsCount,
+            final BigDecimal currentBalance,
+            final double expectedRelativeProfit,
+            final double expectedAnnualProfit
+    ) {
+        Assertions.assertNull(backTestResult.getError());
+
+        Assertions.assertEquals(botConfig, backTestResult.getBotConfig());
         Assertions.assertEquals(interval, backTestResult.getInterval());
         AssertUtils.assertEquals(initialInvestment, backTestResult.getBalances().getInitialInvestment());
         AssertUtils.assertEquals(initialInvestment, backTestResult.getBalances().getTotalInvestment());
 
-        final BigDecimal positionsPrice = DecimalUtils.multiply(lastCandle.getClosePrice(), positionLotsCount);
-        final BigDecimal expectedFinalTotalSavings = currentBalance.add(positionsPrice);
-        AssertUtils.assertEquals(expectedFinalTotalSavings, backTestResult.getBalances().getFinalTotalSavings());
+        final BigDecimal positionsPrice2 = DecimalUtils.setDefaultScale(currentPrice * positionLotsCount);
+        final BigDecimal expectedFinalTotalSavings2 = currentBalance.add(positionsPrice2);
+        AssertUtils.assertEquals(expectedFinalTotalSavings2, backTestResult.getBalances().getFinalTotalSavings());
 
         AssertUtils.assertEquals(currentBalance, backTestResult.getBalances().getFinalBalance());
         AssertUtils.assertEquals(initialInvestment, backTestResult.getBalances().getWeightedAverageInvestment());
 
-        final BigDecimal expectedAbsoluteProfit = currentBalance.subtract(initialInvestment).add(positionsPrice);
-        AssertUtils.assertEquals(expectedAbsoluteProfit, backTestResult.getProfits().getAbsolute());
-        AssertUtils.assertEquals(0.0032, backTestResult.getProfits().getRelative());
-        AssertUtils.assertEquals(2.212129, backTestResult.getProfits().getRelativeAnnual());
-
-        Assertions.assertNull(backTestResult.getError());
+        final BigDecimal expectedAbsoluteProfit2 = DecimalUtils.subtract(currentBalance, initialInvestment).add(positionsPrice2);
+        AssertUtils.assertEquals(expectedAbsoluteProfit2, backTestResult.getProfits().getAbsolute());
+        AssertUtils.assertEquals(expectedRelativeProfit, backTestResult.getProfits().getRelative());
+        AssertUtils.assertEquals(expectedAnnualProfit, backTestResult.getProfits().getRelativeAnnual());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_callsAddInvestment(final String brokerAccountId) {
+    @Test
+    void test_callsAddInvestment() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
+        final double initialInvestment = 10000;
+        final double balanceIncrement = 1000;
 
-        final Candle candle1 = TestData.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
+        final String brokerAccountId1 = null;
+        final String ticker1 = "ticker1";
+        final Double commission1 = 0.003;
 
-        final Candle candle2 = TestData.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
+        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
+        prices1.put(100.0, from.plusMinutes(10));
+        prices1.put(200.0, from.plusMinutes(20));
+        prices1.put(300.0, from.plusMinutes(30));
+        prices1.put(400.0, from.plusMinutes(40));
+        prices1.put(500.0, from.plusMinutes(50));
 
-        final Candle candle3 = TestData.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
+        final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
+        final int positionLotsCount1 = 2;
 
-        final Candle candle4 = TestData.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
+        final FakeTinkoffService fakeTinkoffService1 = mockFakeTinkoffService(commission1);
+        final FakeBot fakeBot1 = mockFakeBot(fakeTinkoffService1);
+        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeTinkoffService1, ticker1, 10);
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
+        final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
 
-        mockNextMinute(fakeTinkoffService, from);
+        mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
+        mockNextMinute(fakeTinkoffService1, from);
+        mockInvestments(fakeTinkoffService1, marketInstrument1.getCurrency(), from, balanceIncrement);
+        Mockito.when(fakeTinkoffService1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
+        mockPortfolioPosition(fakeTinkoffService1, brokerAccountId1, ticker1, positionLotsCount1);
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
+        final String brokerAccountId2 = "2000124699";
+        final String ticker2 = "ticker1";
+        final Double commission2 = 0.001;
 
-        final BigDecimal currentBalance = BigDecimal.valueOf(20000);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
+        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
+        prices2.put(10.0, from.plusMinutes(100));
+        prices2.put(20.0, from.plusMinutes(200));
+        prices2.put(30.0, from.plusMinutes(300));
+        prices2.put(40.0, from.plusMinutes(400));
+        prices2.put(50.0, from.plusMinutes(500));
 
-        final int positionLotsCount = 2;
-        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId, portfolioPosition);
+        final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
+        final int positionLotsCount2 = 2;
+
+        final FakeTinkoffService fakeTinkoffService2 = mockFakeTinkoffService(commission2);
+        final FakeBot fakeBot2 = mockFakeBot(fakeTinkoffService2);
+        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeTinkoffService2, ticker2, 10);
+
+        final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+
+        mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
+        mockNextMinute(fakeTinkoffService2, from);
+        mockInvestments(fakeTinkoffService2, marketInstrument2.getCurrency(), from, balanceIncrement);
+        Mockito.when(fakeTinkoffService2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
+        mockPortfolioPosition(fakeTinkoffService2, brokerAccountId2, ticker2, positionLotsCount2);
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -308,71 +358,89 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
+        Assertions.assertNull(backTestResults.get(0).getError());
+        Assertions.assertNull(backTestResults.get(1).getError());
 
-        Assertions.assertNull(backTestResult.getError());
-
-        Mockito.verify(fakeTinkoffService, Mockito.times(24))
+        Mockito.verify(fakeTinkoffService1, Mockito.times(24))
                 .addInvestment(
-                        Mockito.eq(brokerAccountId),
+                        Mockito.eq(brokerAccountId1),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(marketInstrument.getCurrency()),
-                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceConfig.getBalanceIncrement()))
+                        Mockito.eq(marketInstrument1.getCurrency()),
+                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
+                );
+
+        Mockito.verify(fakeTinkoffService2, Mockito.times(24))
+                .addInvestment(
+                        Mockito.eq(brokerAccountId2),
+                        Mockito.any(OffsetDateTime.class),
+                        Mockito.eq(marketInstrument2.getCurrency()),
+                        ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_fillsPositions(final String brokerAccountId) {
+    @Test
+    void test_fillsPositions() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle0 = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData1 = TestData.createDecisionData(candle0);
+        final double initialInvestment = 10000;
 
-        final Candle candle1 = TestData.createCandleWithClosePrice(200);
-        final DecisionData decisionData2 = TestData.createDecisionData(candle1);
+        final String ticker1 = "ticker1";
 
-        final Candle candle2 = TestData.createCandleWithClosePrice(300);
-        final DecisionData decisionData3 = TestData.createDecisionData(candle2);
+        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
+        prices1.put(100.0, from.plusMinutes(10));
+        prices1.put(200.0, from.plusMinutes(20));
+        prices1.put(300.0, from.plusMinutes(30));
+        prices1.put(400.0, from.plusMinutes(40));
+        final double currentPrice1 = 500.0;
+        prices1.put(currentPrice1, from.plusMinutes(50));
 
-        final Candle candle3 = TestData.createCandleWithClosePrice(400);
-        final DecisionData decisionData4 = TestData.createDecisionData(candle3);
+        final int positionLotsCount1 = 2;
 
-        final Candle candle4 = TestData.createCandleWithClosePrice(500);
-        final DecisionData decisionData5 = TestData.createDecisionData(candle4);
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                ticker1,
+                0.003,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(20000),
+                positionLotsCount1,
+                prices1,
+                null
+        );
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData1, decisionData2, decisionData3, decisionData4, decisionData5);
+        final String ticker2 = "ticker2";
 
-        mockNextMinute(fakeTinkoffService, from);
+        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
+        prices2.put(1000.0, from.plusMinutes(10));
+        prices2.put(2000.0, from.plusMinutes(20));
+        prices2.put(3000.0, from.plusMinutes(30));
+        prices2.put(4000.0, from.plusMinutes(40));
+        final double currentPrice2 = 5000.0;
+        prices2.put(currentPrice2, from.plusMinutes(50));
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        final int positionLotsCount2 = 1;
 
-        final int positionLotsCount = 2;
-        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId, portfolioPosition);
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                ticker2,
+                0.001,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(10000),
+                positionLotsCount2,
+                prices2,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -380,69 +448,100 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
+        assertPosition(backTestResults.get(0), ticker1, currentPrice1, positionLotsCount1);
+        assertPosition(backTestResults.get(1), ticker2, currentPrice2, positionLotsCount2);
+    }
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-
+    private void assertPosition(final BackTestResult backTestResult, final String ticker, final double currentPrice, final int positionLotsCount) {
+        Assertions.assertNull(backTestResult.getError());
         final List<BackTestPosition> positions = backTestResult.getPositions();
         Assertions.assertEquals(1, positions.size());
         final BackTestPosition backTestPosition = positions.get(0);
         Assertions.assertEquals(ticker, backTestPosition.getTicker());
-        Assertions.assertEquals(candle4.getClosePrice(), backTestPosition.getPrice());
+        AssertUtils.assertEquals(currentPrice, backTestPosition.getPrice());
         Assertions.assertEquals(positionLotsCount, backTestPosition.getQuantity());
-
-        Assertions.assertNull(backTestResult.getError());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_fillsOperations(final String brokerAccountId) {
+    @Test
+    void test_fillsOperations() {
 
         // arrange
 
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
+        final double initialInvestment = 10000;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        final String ticker1 = "ticker1";
+        final double commission1 = 0.003;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final Map<Double, OffsetDateTime> prices1 = Map.of(100.0, from.plusMinutes(1));
+        final BigDecimal currentBalance1 = BigDecimal.valueOf(20000);
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        final int positionLotsCount1 = 1;
 
-        final OffsetDateTime operationDateTime = from.plusMinutes(2);
-        final OperationTypeWithCommission operationType = OperationTypeWithCommission.BUY;
-        final BigDecimal operationPrice = BigDecimal.valueOf(100);
-        final int operationQuantity = 2;
-        final BigDecimal operationCommission = BigDecimal.valueOf(commission);
-        final Operation operation = TestData.createTinkoffOperation(
-                operationDateTime,
-                operationType,
-                operationPrice,
-                operationQuantity,
-                operationCommission
+        final OffsetDateTime operationDateTime1 = from.plusMinutes(2);
+        final OperationTypeWithCommission operationType1 = OperationTypeWithCommission.BUY;
+        final BigDecimal operationPrice1 = BigDecimal.valueOf(100);
+        final int operationQuantity1 = 2;
+        final BigDecimal operationCommission1 = BigDecimal.valueOf(commission1);
+        final Operation operation1 = TestData.createTinkoffOperation(
+                operationDateTime1,
+                operationType1,
+                operationPrice1,
+                operationQuantity1,
+                operationCommission1
         );
-        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval, operation);
 
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId);
+        final String ticker2 = "ticker2";
+        final double commission2 = 0.001;
+
+        final Map<Double, OffsetDateTime> prices2 = Map.of(1000.0, from.plusMinutes(3));
+        final BigDecimal currentBalance2 = BigDecimal.valueOf(10000);
+
+        final int positionLotsCount2 = 1;
+
+        final OffsetDateTime operationDateTime2 = from.plusMinutes(3);
+        final OperationTypeWithCommission operationType2 = OperationTypeWithCommission.SELL;
+        final BigDecimal operationPrice2 = BigDecimal.valueOf(1000);
+        final int operationQuantity2 = 4;
+        final BigDecimal operationCommission2 = BigDecimal.valueOf(commission2);
+        final Operation operation2 = TestData.createTinkoffOperation(
+                operationDateTime2,
+                operationType2,
+                operationPrice2,
+                operationQuantity2,
+                operationCommission2
+        );
+
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                ticker1,
+                commission1,
+                initialInvestment,
+                interval,
+                currentBalance1,
+                positionLotsCount1,
+                prices1,
+                operation1
+        );
+
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                ticker2,
+                commission2,
+                initialInvestment,
+                interval,
+                currentBalance2,
+                positionLotsCount2,
+                prices2,
+                operation2
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -450,54 +549,102 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
+        assertOperation(
+                backTestResults.get(0),
+                ticker1,
+                operationDateTime1,
+                operationMapper.map(operationType1),
+                operationPrice1,
+                operationQuantity1,
+                operationCommission1
+        );
 
-        List<BackTestOperation> resultOperations = backTestResult.getOperations();
+        assertOperation(
+                backTestResults.get(1),
+                ticker2,
+                operationDateTime2,
+                operationMapper.map(operationType2),
+                operationPrice2,
+                operationQuantity2,
+                operationCommission2
+        );
+    }
+
+    private void assertOperation(
+            final BackTestResult backTestResult,
+            final String expectedTicker,
+            final OffsetDateTime expectedOperationDateTime,
+            final OperationType expectedOperationType,
+            final BigDecimal expectedOperationPrice,
+            final int expectedOperationQuantity,
+            final BigDecimal expectedOperationCommission
+    ) {
+        Assertions.assertNull(backTestResult.getError());
+
+        final List<BackTestOperation> resultOperations = backTestResult.getOperations();
         Assertions.assertEquals(1, resultOperations.size());
+
         final BackTestOperation backTestOperation = resultOperations.get(0);
-        Assertions.assertEquals(ticker, backTestOperation.getTicker());
-        Assertions.assertEquals(operationDateTime, backTestOperation.getDateTime());
-        Assertions.assertEquals(OperationType.BUY, backTestOperation.getOperationType());
-        AssertUtils.assertEquals(operationPrice, backTestOperation.getPrice());
-        Assertions.assertEquals(operationQuantity, backTestOperation.getQuantity());
-        AssertUtils.assertEquals(operationCommission, backTestOperation.getCommission());
-
-        Assertions.assertNull(backTestResult.getError());
+        Assertions.assertEquals(expectedTicker, backTestOperation.getTicker());
+        Assertions.assertEquals(expectedOperationDateTime, backTestOperation.getDateTime());
+        Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
+        AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.getPrice());
+        Assertions.assertEquals(expectedOperationQuantity, backTestOperation.getQuantity());
+        AssertUtils.assertEquals(expectedOperationCommission, backTestOperation.getCommission());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_fillsCandles(final String brokerAccountId) {
+    @Test
+    void test_fillsCandles() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final List<Candle> candles = mockDecisionDataWithCandles(botConfig, fakeBot, from);
+        final double initialInvestment = 10000;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
+        prices1.put(100.0, from.plusMinutes(1));
+        prices1.put(200.0, from.plusMinutes(2));
+        prices1.put(300.0, from.plusMinutes(3));
+        prices1.put(400.0, from.plusMinutes(4));
+        prices1.put(500.0, from.plusMinutes(5));
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
-                .thenReturn(BigDecimal.valueOf(20000));
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                0.003,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(20000),
+                1,
+                prices1,
+                null
+        );
+
+        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
+        prices2.put(1000.0, from.plusMinutes(10));
+        prices2.put(2000.0, from.plusMinutes(20));
+        prices2.put(3000.0, from.plusMinutes(30));
+        prices2.put(4000.0, from.plusMinutes(40));
+
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.001,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(10000),
+                2,
+                prices2,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -505,43 +652,62 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
-        final BackTestResult backTestResult = backTestResults.get(0);
-        AssertUtils.assertListsAreEqual(candles, backTestResult.getCandles());
-        Assertions.assertNull(backTestResult.getError());
+        Assertions.assertEquals(2, backTestResults.size());
+        assertCandles(backTestResults.get(0), prices1);
+        assertCandles(backTestResults.get(1), prices2);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsNull(final String brokerAccountId) {
+    private void assertCandles(final BackTestResult backTestResult, final Map<Double, OffsetDateTime> prices) {
+        Assertions.assertNull(backTestResult.getError());
+
+        final List<Candle> candles = backTestResult.getCandles();
+        Assertions.assertEquals(prices.size(), candles.size());
+
+        final Iterator<Candle> candlesIterator = candles.iterator();
+        for (final Map.Entry<Double, OffsetDateTime> entry : prices.entrySet()) {
+            final Candle candle = candlesIterator.next();
+            AssertUtils.assertEquals(entry.getKey(), candle.getClosePrice());
+            Assertions.assertEquals(entry.getValue(), candle.getTime());
+        }
+    }
+
+    @Test
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(new DecisionData());
+        final double initialInvestment = 10000;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                0.003,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(20000),
+                null,
+                null,
+                null
+        );
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.valueOf(20000));
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.001,
+                initialInvestment,
+                interval,
+                BigDecimal.valueOf(10000),
+                null,
+                Map.of(),
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -549,97 +715,64 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
+        final BackTestResult backTestResult1 = backTestResults.get(0);
+        Assertions.assertNull(backTestResult1.getError());
+        Assertions.assertTrue(backTestResult1.getCandles().isEmpty());
 
-        Assertions.assertTrue(backTestResult.getCandles().isEmpty());
-        Assertions.assertNull(backTestResult.getError());
+        final BackTestResult backTestResult2 = backTestResults.get(1);
+        Assertions.assertNull(backTestResult2.getError());
+        Assertions.assertTrue(backTestResult2.getCandles().isEmpty());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsEmpty(final String brokerAccountId) {
+    @Test
+    void test_callsSaveToFile_whenSaveToFilesIsTrue() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(TestData.createDecisionData());
+        final double initialInvestment = 10000;
+        final BigDecimal currentBalance = BigDecimal.ZERO;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final double commission1 = 0.001;
+        final Operation operation = TestData.createTinkoffOperation(
+                from.plusMinutes(2),
+                OperationTypeWithCommission.BUY,
+                BigDecimal.valueOf(100),
+                2,
+                BigDecimal.valueOf(commission1)
+        );
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
-                .thenReturn(BigDecimal.valueOf(20000));
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                commission1,
+                initialInvestment,
+                interval,
+                currentBalance,
+                1,
+                Map.of(100.0, from.plusMinutes(1)),
+                operation
+        );
 
-        // act
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.003,
+                initialInvestment,
+                interval,
+                currentBalance,
+                null,
+                null,
+                null
+        );
 
-        final List<BackTestResult> backTestResults = backTester.test(botConfigs, balanceConfig, interval, false);
-
-        // assert
-
-        Assertions.assertEquals(1, backTestResults.size());
-
-        final BackTestResult backTestResult = backTestResults.get(0);
-
-        Assertions.assertTrue(backTestResult.getCandles().isEmpty());
-        Assertions.assertNull(backTestResult.getError());
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_callsSaveToFile_whenSaveToFilesIsTrue(final String brokerAccountId) {
-
-        // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
-        final Interval interval = Interval.of(from, to);
-
-        final Candle candle = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
-
-        mockNextMinute(fakeTinkoffService, from);
-
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
-
-        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId);
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -647,47 +780,61 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-        Assertions.assertNull(backTestResult.getError());
+        Assertions.assertNull(backTestResults.get(0).getError());
+        Assertions.assertNull(backTestResults.get(1).getError());
 
         Mockito.verify(excelService, Mockito.only()).saveBackTestResults(Mockito.anyCollection());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse(final String brokerAccountId) {
+    @Test
+    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.093;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        final double initialInvestment = 10000;
+        final BigDecimal currentBalance = BigDecimal.ZERO;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final double commission1 = 0.001;
+        final Operation operation = TestData.createTinkoffOperation(
+                from.plusMinutes(2),
+                OperationTypeWithCommission.BUY,
+                BigDecimal.valueOf(100),
+                2,
+                BigDecimal.valueOf(commission1)
+        );
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                commission1,
+                initialInvestment,
+                interval,
+                currentBalance,
+                1,
+                Map.of(100.0, from.plusMinutes(1)),
+                operation
+        );
+
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.003,
+                initialInvestment,
+                interval,
+                currentBalance,
+                null,
+                null,
+                null
+        );
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -695,49 +842,60 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-        Assertions.assertNull(backTestResult.getError());
+        Assertions.assertNull(backTestResults.get(0).getError());
+        Assertions.assertNull(backTestResults.get(1).getError());
 
         Mockito.verify(excelService, Mockito.never()).saveBackTestResults(Mockito.any());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments(final String brokerAccountId) {
+    @Test
+    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.ZERO, BigDecimal.ZERO, BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
+        final double initialInvestment = 0;
+        final BigDecimal currentBalance = BigDecimal.valueOf(20000);
 
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        final double commission1 = 0.003;
+        final Operation operation = TestData.createTinkoffOperation(
+                from.plusMinutes(2),
+                OperationTypeWithCommission.BUY,
+                BigDecimal.valueOf(100),
+                2,
+                BigDecimal.valueOf(commission1)
+        );
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                commission1,
+                initialInvestment,
+                interval,
+                currentBalance,
+                10,
+                Map.of(100.0, from.plusMinutes(1)),
+                operation
+        );
 
-        mockNextMinute(fakeTinkoffService, from);
+        final BotConfig botConfig2 = arrangeBackTest(
+                null,
+                "ticker2",
+                0.001,
+                initialInvestment,
+                interval,
+                currentBalance,
+                null,
+                null,
+                null
+        );
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency()))
-                .thenReturn(BigDecimal.valueOf(20000));
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         // act
 
@@ -745,10 +903,12 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
+        assertNoInvestmentsAndProfits(backTestResults.get(0));
+        assertNoInvestmentsAndProfits(backTestResults.get(1));
+    }
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-
+    private void assertNoInvestmentsAndProfits(final BackTestResult backTestResult) {
         Assertions.assertNull(backTestResult.getError());
 
         AssertUtils.assertEquals(0, backTestResult.getBalances().getTotalInvestment());
@@ -757,30 +917,40 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(0, backTestResult.getProfits().getRelativeAnnual());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_catchesBackTestException(final String brokerAccountId) {
+    @Test
+    void test_catchesBackTestException() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        mockFakeTinkoffService(commission);
-
-        final String mockedExceptionMessage = "mocked exception";
-        Mockito.when(fakeBotFactory.createBot(Mockito.eq(botConfig), Mockito.any(FakeTinkoffService.class)))
-                .thenThrow(new IllegalArgumentException(mockedExceptionMessage));
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
+
+        final String brokerAccountId1 = null;
+        final String ticker1 = "ticker1";
+        final Double commission1 = 0.003;
+
+        mockFakeTinkoffService(commission1);
+
+        final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
+        final String mockedExceptionMessage1 = "mocked exception 1";
+        Mockito.when(fakeBotFactory.createBot(Mockito.eq(botConfig1), Mockito.any(FakeTinkoffService.class)))
+                .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
+
+        final String brokerAccountId2 = "2000124699";
+        final String ticker2 = "ticker2";
+        final Double commission2 = 0.001;
+
+        mockFakeTinkoffService(commission2);
+
+        final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+        final String mockedExceptionMessage2 = "mocked exception 2";
+        Mockito.when(fakeBotFactory.createBot(Mockito.eq(botConfig2), Mockito.any(FakeTinkoffService.class)))
+                .thenThrow(new IllegalArgumentException(mockedExceptionMessage2));
+
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         // act
 
@@ -788,54 +958,70 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-
-        final String expectedErrorPattern = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
+        final String expectedErrorPattern1 = String.format(
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=%s, strategyType=conservative, " +
                         "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId, ticker, mockedExceptionMessage
+                brokerAccountId1, ticker1, commission1, mockedExceptionMessage1
         );
-        AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
+        AssertUtils.assertMatchesRegex(backTestResults.get(0).getError(), expectedErrorPattern1);
+
+        final String expectedErrorPattern2 = String.format(
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=%s, strategyType=conservative, " +
+                        "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
+                brokerAccountId2, ticker2, commission2, mockedExceptionMessage2
+        );
+        AssertUtils.assertMatchesRegex(backTestResults.get(1).getError(), expectedErrorPattern2);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void test_catchesSaveToFileException(final String brokerAccountId) {
+    @Test
+    void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() {
 
         // arrange
-
-        final String ticker = "ticker";
-        final double commission = 0.003;
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
-
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(commission);
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
-
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
-
-        final BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.valueOf(10000), BigDecimal.valueOf(1000), BALANCE_INCREMENT_CRON);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Candle candle = TestData.createCandleWithClosePrice(100);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(decisionData);
+        final double initialInvestment = 10000;
+        final BigDecimal currentBalance = BigDecimal.ZERO;
 
-        mockNextMinute(fakeTinkoffService, from);
+        final double commission1 = 0.003;
+        final Operation operation = TestData.createTinkoffOperation(
+                from.plusMinutes(2),
+                OperationTypeWithCommission.BUY,
+                BigDecimal.valueOf(100),
+                2,
+                BigDecimal.valueOf(commission1)
+        );
+        final BotConfig botConfig1 = arrangeBackTest(
+                null,
+                "ticker1",
+                commission1,
+                initialInvestment,
+                interval,
+                currentBalance,
+                2,
+                Map.of(100.0, from.plusMinutes(1)),
+                operation
+        );
 
-        mockInitialInvestment(fakeTinkoffService, marketInstrument.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(BigDecimal.ZERO);
+        final BotConfig botConfig2 = arrangeBackTest(
+                "2000124699",
+                "ticker2",
+                0.001,
+                initialInvestment,
+                interval,
+                currentBalance,
+                null,
+                null,
+                null
+        );
 
-        Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval);
-        mockPortfolioPositions(fakeTinkoffService, brokerAccountId);
+        final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
+
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         Mockito.doThrow(new IllegalArgumentException())
                 .when(excelService)
@@ -847,16 +1033,46 @@ class BackTesterImplUnitTest {
 
         // assert
 
-        Assertions.assertEquals(1, backTestResults.size());
+        Assertions.assertEquals(2, backTestResults.size());
 
-        final BackTestResult backTestResult = backTestResults.get(0);
-
-        Assertions.assertNull(backTestResult.getError());
+        Assertions.assertNull(backTestResults.get(0).getError());
+        Assertions.assertNull(backTestResults.get(1).getError());
     }
 
-    private FakeTinkoffService mockFakeTinkoffService(final double commission) {
+    private BotConfig arrangeBackTest(
+            final String brokerAccountId,
+            final String ticker,
+            final double commission,
+            final double initialInvestment,
+            final Interval interval,
+            final BigDecimal currentBalance,
+            final Integer positionLotsCount,
+            final Map<Double, OffsetDateTime> prices,
+            final Operation operation
+    ) {
+        final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
+
+        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(botConfig.getCommission());
+        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
+
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        mockDecisionDataWithCandles(botConfig, fakeBot, prices);
+        mockNextMinute(fakeTinkoffService, interval.getFrom());
+        mockInvestments(fakeTinkoffService, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
+        if (positionLotsCount != null) {
+            mockPortfolioPosition(fakeTinkoffService, brokerAccountId, ticker, positionLotsCount);
+        }
+        if (operation != null) {
+            Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval, operation);
+        }
+
+        return botConfig;
+    }
+
+    private FakeTinkoffService mockFakeTinkoffService(final Double commission) {
         final FakeTinkoffService fakeTinkoffService = Mockito.mock(FakeTinkoffService.class);
-        Mockito.when(fakeTinkoffServiceFactory.createService(commission)).thenReturn(fakeTinkoffService);
+        Mockito.doReturn(fakeTinkoffService).when(fakeTinkoffServiceFactory).createService(Mockito.same(commission));
         return fakeTinkoffService;
     }
 
@@ -866,32 +1082,26 @@ class BackTesterImplUnitTest {
         return fakeBot;
     }
 
-    private Candle mockDecisionDataWithCandle(final BotConfig botConfig, final FakeBot fakeBot, final double closePrice, final OffsetDateTime time) {
-        final Candle candle = TestData.createCandleWithClosePriceAndTime(closePrice, time);
-        final DecisionData decisionData = TestData.createDecisionData(candle);
+    private void mockDecisionDataWithCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<Double, OffsetDateTime> prices) {
+        if (prices == null) {
+            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
+                    .thenReturn(new DecisionData());
+        } else if (prices.isEmpty()) {
+            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
+                    .thenReturn(TestData.createDecisionData());
+        } else {
+            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
+                    .thenReturn(new DecisionData());
 
-        Mockito.when(fakeBot.processBotConfig(botConfig, null, time)).thenReturn(decisionData);
+            for (final Map.Entry<Double, OffsetDateTime> entry : prices.entrySet()) {
+                final OffsetDateTime dateTime = entry.getValue();
+                final Candle candle = TestData.createCandleWithClosePriceAndTime(entry.getKey(), dateTime);
+                final DecisionData decisionData = TestData.createDecisionData(candle);
 
-        return candle;
-    }
-
-    private List<Candle> mockDecisionDataWithCandles(final BotConfig botConfig, final FakeBot fakeBot, final OffsetDateTime from) {
-        final List<Candle> candles = new ArrayList<>();
-
-        // mocking first DecisionData with previousStartTime = null and at work start time
-        candles.add(new Candle().setTime(from));
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.isNull(), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(new DecisionData().setCurrentCandles(new ArrayList<>(candles)));
-
-        // mocking DecisionData for all last minutes
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.eq(from), Mockito.any(OffsetDateTime.class)))
-                .thenAnswer((Answer<DecisionData>) invocation -> {
-                    final OffsetDateTime dateTime = (OffsetDateTime) invocation.getArguments()[2];
-                    candles.add(new Candle().setTime(dateTime));
-                    return new DecisionData().setCurrentCandles(new ArrayList<>(candles));
-                });
-
-        return candles;
+                Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.eq(dateTime)))
+                        .thenReturn(decisionData);
+            }
+        }
     }
 
     private void mockNextMinute(final FakeTinkoffService fakeTinkoffService, final OffsetDateTime from) {
@@ -905,20 +1115,25 @@ class BackTesterImplUnitTest {
         });
     }
 
-    private void mockInitialInvestment(final FakeTinkoffService fakeTinkoffService, final Currency currency, final OffsetDateTime dateTime, final BigDecimal initialInvestment) {
+    private void mockInvestments(
+            final FakeTinkoffService fakeTinkoffService,
+            final Currency currency,
+            final OffsetDateTime dateTime,
+            final double initialInvestment
+    ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
-        investments.put(dateTime, initialInvestment);
+        investments.put(dateTime, DecimalUtils.setDefaultScale(initialInvestment));
         Mockito.when(fakeTinkoffService.getInvestments(currency)).thenReturn(investments);
     }
 
-    private void mockPortfolioPositions(
+    private void mockPortfolioPosition(
             final FakeTinkoffService fakeTinkoffService,
             final String brokerAccountId,
-            final PortfolioPosition... portfolioPositions
+            final String ticker,
+            final int positionLotsCount
     ) {
-        Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPositions));
+        final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
+        Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
     }
-
-    // endregion
 
 }

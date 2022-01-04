@@ -9,7 +9,9 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
@@ -275,8 +277,8 @@ public class TestData {
     // endregion
 
     @SneakyThrows
-    public static CronExpression createCronExpression() {
-        return new CronExpression("0 0 * * * ?");
+    public static CronExpression createCronExpression(final String expression) {
+        return new CronExpression(expression);
     }
 
     public static MarketProperties createMarketProperties() {
@@ -285,19 +287,38 @@ public class TestData {
         return new MarketProperties(workStartTime, Duration.ofHours(9), 7, startDate);
     }
 
-    public static BalanceConfig createBalanceConfig(final double initialBalance) {
+    // region BalanceConfig creation
+
+    public static BalanceConfig createBalanceConfig(final Double initialBalance) {
+        return createBalanceConfig(initialBalance, null);
+    }
+
+    public static BalanceConfig createBalanceConfig(final Double initialBalance, final Double balanceIncrement) {
+        return createBalanceConfig(initialBalance, balanceIncrement, null);
+    }
+
+    public static BalanceConfig createBalanceConfig(final Double initialBalance, final Double balanceIncrement, final String balanceIncrementCron) {
         final BalanceConfig balanceConfig = new BalanceConfig();
-        balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
+
+        if (initialBalance != null) {
+            balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
+        }
+
+        if (balanceIncrement != null) {
+            balanceConfig.setBalanceIncrement(DecimalUtils.setDefaultScale(balanceIncrement));
+        }
+
+        if (balanceIncrementCron != null) {
+            balanceConfig.setBalanceIncrementCron(createCronExpression(balanceIncrementCron));
+        }
+
         return balanceConfig;
     }
 
-    @SneakyThrows
-    public static BalanceConfig createBalanceConfig(final double initialBalance, final double balanceIncrement, final String balanceIncrementCron) {
-        final BalanceConfig balanceConfig = new BalanceConfig();
-        balanceConfig.setInitialBalance(DecimalUtils.setDefaultScale(initialBalance));
-        balanceConfig.setBalanceIncrement(DecimalUtils.setDefaultScale(balanceIncrement));
-        balanceConfig.setBalanceIncrementCron(new CronExpression(balanceIncrementCron));
-        return balanceConfig;
+    // endregion
+
+    public static BotConfig createBotConfig(final String brokerAccountId, final String ticker, final Double commission) {
+        return new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, commission, StrategyType.CONSERVATIVE);
     }
 
 }
