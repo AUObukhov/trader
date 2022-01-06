@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.impl;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -625,13 +626,29 @@ class FakeTinkoffServiceUnitTest {
             final OperationType operationType,
             final BigDecimal price
     ) {
-        final Candle candle = new Candle().setOpenPrice(price);
+        final Candle candle = new Candle().setClosePrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
         MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);
         service.placeMarketOrder(brokerAccountId, ticker, orderRequest);
+    }
+
+    @Test
+    void getCurrentPrice() {
+        final String ticker = "ticker";
+        final BigDecimal price = BigDecimal.valueOf(100);
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
+
+        service.init(null, dateTime, Currency.USD, TestData.createBalanceConfig(0.0));
+
+        Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime()))
+                .thenReturn(new Candle().setClosePrice(price));
+
+        final BigDecimal currentPrice = service.getCurrentPrice(ticker);
+
+        AssertUtils.assertEquals(price, currentPrice);
     }
 
 }

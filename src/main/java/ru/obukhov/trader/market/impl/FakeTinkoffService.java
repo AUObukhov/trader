@@ -244,10 +244,6 @@ public class FakeTinkoffService implements TinkoffService {
         return createOrder(orderRequest, totalCommission);
     }
 
-    private BigDecimal getCurrentPrice(final String ticker) {
-        return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getOpenPrice();
-    }
-
     private void buyPosition(
             @Nullable final String brokerAccountId,
             final String ticker,
@@ -450,6 +446,13 @@ public class FakeTinkoffService implements TinkoffService {
             final BigDecimal increment
     ) {
         fakeContext.addInvestment(brokerAccountId, dateTime, currency, increment);
+    }
+
+    /**
+     * @return last known price for instrument with given {@code ticker} not after current fake date time
+     */
+    public BigDecimal getCurrentPrice(final String ticker) {
+        return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getClosePrice();
     }
 
     // endregion

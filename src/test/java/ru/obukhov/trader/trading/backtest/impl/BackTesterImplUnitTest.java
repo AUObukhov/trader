@@ -202,6 +202,7 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(2000),
                 finalPositionLotsCount1,
                 prices1,
+                finalPrice1,
                 null
         );
 
@@ -225,6 +226,7 @@ class BackTesterImplUnitTest {
                 finalBalance2,
                 finalPositionLotsCount2,
                 prices2,
+                finalPrice2,
                 null
         );
 
@@ -318,6 +320,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
 
         mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
+        mockCurrentPrice(fakeTinkoffService1, ticker1, 500);
         mockNextMinute(fakeTinkoffService1, from);
         mockInvestments(fakeTinkoffService1, marketInstrument1.getCurrency(), from, balanceIncrement);
         Mockito.when(fakeTinkoffService1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
@@ -344,6 +347,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
 
         mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
+        mockCurrentPrice(fakeTinkoffService2, ticker2, 50);
         mockNextMinute(fakeTinkoffService2, from);
         mockInvestments(fakeTinkoffService2, marketInstrument2.getCurrency(), from, balanceIncrement);
         Mockito.when(fakeTinkoffService2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
@@ -412,20 +416,13 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(20000),
                 positionLotsCount1,
                 prices1,
+                currentPrice1,
                 null
         );
 
         final String ticker2 = "ticker2";
-
-        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
-        prices2.put(1000.0, from.plusMinutes(10));
-        prices2.put(2000.0, from.plusMinutes(20));
-        prices2.put(3000.0, from.plusMinutes(30));
-        prices2.put(4000.0, from.plusMinutes(40));
-        final double currentPrice2 = 5000.0;
-        prices2.put(currentPrice2, from.plusMinutes(50));
-
         final int positionLotsCount2 = 1;
+        final double currentPrice2 = 5000.0;
 
         final BotConfig botConfig2 = arrangeBackTest(
                 "2000124699",
@@ -435,7 +432,8 @@ class BackTesterImplUnitTest {
                 interval,
                 BigDecimal.valueOf(10000),
                 positionLotsCount2,
-                prices2,
+                null,
+                currentPrice2,
                 null
         );
 
@@ -525,6 +523,7 @@ class BackTesterImplUnitTest {
                 currentBalance1,
                 positionLotsCount1,
                 prices1,
+                100,
                 operation1
         );
 
@@ -537,6 +536,7 @@ class BackTesterImplUnitTest {
                 currentBalance2,
                 positionLotsCount2,
                 prices2,
+                1000,
                 operation2
         );
 
@@ -622,6 +622,7 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(20000),
                 1,
                 prices1,
+                500,
                 null
         );
 
@@ -640,6 +641,7 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(10000),
                 2,
                 prices2,
+                4000,
                 null
         );
 
@@ -691,6 +693,7 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(20000),
                 null,
                 null,
+                300,
                 null
         );
 
@@ -703,6 +706,7 @@ class BackTesterImplUnitTest {
                 BigDecimal.valueOf(10000),
                 null,
                 Map.of(),
+                200,
                 null
         );
 
@@ -756,6 +760,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 1,
                 Map.of(100.0, from.plusMinutes(1)),
+                100,
                 operation
         );
 
@@ -768,6 +773,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 null,
                 null,
+                200,
                 null
         );
 
@@ -818,6 +824,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 1,
                 Map.of(100.0, from.plusMinutes(1)),
+                100,
                 operation
         );
 
@@ -830,6 +837,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 null,
                 null,
+                150,
                 null
         );
 
@@ -879,6 +887,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 10,
                 Map.of(100.0, from.plusMinutes(1)),
+                100,
                 operation
         );
 
@@ -891,6 +900,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 null,
                 null,
+                300,
                 null
         );
 
@@ -1004,6 +1014,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 2,
                 Map.of(100.0, from.plusMinutes(1)),
+                100,
                 operation
         );
 
@@ -1016,6 +1027,7 @@ class BackTesterImplUnitTest {
                 currentBalance,
                 null,
                 null,
+                50,
                 null
         );
 
@@ -1048,6 +1060,7 @@ class BackTesterImplUnitTest {
             final BigDecimal currentBalance,
             final Integer positionLotsCount,
             final Map<Double, OffsetDateTime> prices,
+            final double currentPrice,
             final Operation operation
     ) {
         final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
@@ -1062,12 +1075,18 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
             mockPortfolioPosition(fakeTinkoffService, brokerAccountId, ticker, positionLotsCount);
+            mockCurrentPrice(fakeTinkoffService, ticker, currentPrice);
         }
         if (operation != null) {
             Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval, operation);
         }
 
         return botConfig;
+    }
+
+    private void mockCurrentPrice(final FakeTinkoffService fakeTinkoffService, final String ticker, final double currentPrice) {
+        Mockito.when(fakeTinkoffService.getCurrentPrice(ticker))
+                .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
     private FakeTinkoffService mockFakeTinkoffService(final Double commission) {

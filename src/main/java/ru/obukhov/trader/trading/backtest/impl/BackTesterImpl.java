@@ -10,7 +10,6 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
@@ -40,7 +39,6 @@ import ru.tinkoff.invest.openapi.model.rest.Operation;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -219,7 +217,7 @@ public class BackTesterImpl implements BackTester {
         final String brokerAccountId = botConfig.getBrokerAccountId();
         final String ticker = botConfig.getTicker();
 
-        final List<BackTestPosition> positions = getPositions(fakeTinkoffService.getPortfolioPositions(brokerAccountId), candles);
+        final List<BackTestPosition> positions = getPositions(brokerAccountId, fakeTinkoffService);
         final Balances balances = getBalances(brokerAccountId, interval, fakeTinkoffService, positions, ticker);
         final Profits profits = getProfits(balances, interval);
         final List<Operation> operations = fakeTinkoffService.getOperations(brokerAccountId, interval, ticker);
@@ -258,17 +256,15 @@ public class BackTesterImpl implements BackTester {
         return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<BackTestPosition> getPositions(final Collection<PortfolioPosition> portfolioPositions, final List<Candle> candles) {
-        final Candle lastCandle = CollectionsUtils.getLast(candles);
-        final BigDecimal currentPrice = lastCandle == null ? null : lastCandle.getClosePrice();
-
-        return portfolioPositions.stream()
-                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, currentPrice))
+    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeTinkoffService fakeTinkoffService) {
+        return fakeTinkoffService.getPortfolioPositions(brokerAccountId).stream()
+                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, fakeTinkoffService))
                 .toList();
     }
 
-    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final BigDecimal currentPrice) {
-        return new BackTestPosition(portfolioPosition.getTicker(), currentPrice, portfolioPosition.getCount());
+    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeTinkoffService fakeTinkoffService) {
+        final String ticker = portfolioPosition.getTicker();
+        return new BackTestPosition(ticker, fakeTinkoffService.getCurrentPrice(ticker), portfolioPosition.getCount());
     }
 
     private Balances getBalances(
