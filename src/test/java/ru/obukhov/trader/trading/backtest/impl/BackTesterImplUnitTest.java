@@ -320,7 +320,7 @@ class BackTesterImplUnitTest {
         mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
-        mockInvestments(fakeBot1, marketInstrument1.getCurrency(), from, balanceIncrement);
+        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.getCurrency(), from, balanceIncrement);
         Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
 
@@ -346,7 +346,7 @@ class BackTesterImplUnitTest {
         mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
-        mockInvestments(fakeBot2, marketInstrument2.getCurrency(), from, balanceIncrement);
+        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.getCurrency(), from, balanceIncrement);
         Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
         mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
 
@@ -1069,7 +1069,7 @@ class BackTesterImplUnitTest {
         final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
         mockDecisionDataWithCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
-        mockInvestments(fakeBot, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
+        mockInvestments(fakeBot, brokerAccountId, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
         Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
             mockPortfolioPosition(fakeBot, brokerAccountId, ticker, positionLotsCount);
@@ -1128,13 +1128,14 @@ class BackTesterImplUnitTest {
 
     private void mockInvestments(
             final FakeBot fakeBot,
+            final String brokerAccountId,
             final Currency currency,
             final OffsetDateTime dateTime,
             final double initialInvestment
     ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
         investments.put(dateTime, DecimalUtils.setDefaultScale(initialInvestment));
-        Mockito.when(fakeBot.getInvestments(currency)).thenReturn(investments);
+        Mockito.when(fakeBot.getInvestments(brokerAccountId, currency)).thenReturn(investments);
     }
 
     private void mockPortfolioPosition(

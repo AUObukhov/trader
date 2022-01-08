@@ -80,14 +80,16 @@ class FakeBotUnitTest {
         Assertions.assertEquals(expectedNextMinute, nextMinute);
     }
 
-    @Test
-    void getInvestments() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void getInvestments(final String brokerAccountId) {
         final Currency currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
-        Mockito.when(fakeTinkoffService.getInvestments(currency)).thenReturn(expectedInvestments);
+        Mockito.when(fakeTinkoffService.getInvestments(brokerAccountId, currency)).thenReturn(expectedInvestments);
 
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
 
         AssertUtils.assertMapsAreEqual(expectedInvestments, investments);
     }

@@ -172,7 +172,7 @@ class FakeTinkoffServiceUnitTest {
         final Interval interval = Interval.of(dateTime, newDateTime);
         Assertions.assertTrue(service.getOperations(brokerAccountId, interval, ticker).isEmpty());
 
-        final SortedMap<OffsetDateTime, BigDecimal> investments = service.getInvestments(currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = service.getInvestments(brokerAccountId, currency);
         Assertions.assertEquals(1, investments.size());
         AssertUtils.assertEquals(newBalanceConfig.getInitialBalance(), investments.get(newDateTime));
 

@@ -69,8 +69,8 @@ public class FakeBot extends AbstractBot implements Bot {
         fakeTinkoffService.addInvestment(brokerAccountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final Currency currency) {
-        return fakeTinkoffService.getInvestments(currency);
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
+        return fakeTinkoffService.getInvestments(brokerAccountId, currency);
     }
 
     public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {

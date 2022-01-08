@@ -272,7 +272,7 @@ public class BackTesterImpl implements BackTester {
             final String ticker
     ) {
         final Currency currency = getCurrency(fakeBot, ticker);
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
         final BigDecimal finalBalance = fakeBot.getCurrentBalance(brokerAccountId, currency);

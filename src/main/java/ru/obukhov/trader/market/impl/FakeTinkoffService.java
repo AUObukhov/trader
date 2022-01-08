@@ -434,8 +434,8 @@ public class FakeTinkoffService implements TinkoffService {
         return fakeContext.getBalance(brokerAccountId, currency);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final Currency currency) {
-        return fakeContext.getInvestments(null, currency);
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
+        return fakeContext.getInvestments(brokerAccountId, currency);
     }
 
     public void addInvestment(
