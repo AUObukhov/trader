@@ -6,8 +6,11 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
@@ -16,17 +19,59 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Set;
+import java.util.stream.Stream;
 
 class FakeContextUnitTest {
 
     @Test
-    void constructor_initializesCurrentDateTime() {
+    void constructor_withoutInitialBalance_initializesCurrentDateTime() {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
 
         Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
     }
+
+    // region constructor with initialBalance tests
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void constructor_withInitialBalance_initializesCurrentDateTime(@Nullable final String brokerAccountId) {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final Currency currency = Currency.RUB;
+        final BigDecimal balance = BigDecimal.valueOf(100);
+
+        final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, balance);
+
+        Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forConstructor_withInitialBalance_initializesBalance() {
+        return Stream.of(
+                Arguments.of(null, 100),
+                Arguments.of("2000124699", 100),
+                Arguments.of(null, -100),
+                Arguments.of("2000124699", -100),
+                Arguments.of(null, 0),
+                Arguments.of("2000124699", 0)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forConstructor_withInitialBalance_initializesBalance")
+    void constructor_withInitialBalance_initializesBalance(@Nullable final String brokerAccountId, final int balance) {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final Currency currency = Currency.RUB;
+
+        final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, DecimalUtils.setDefaultScale(balance));
+
+        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
+        AssertUtils.assertEquals(balance, fakeContext.getBalance(brokerAccountId, currency));
+    }
+
+    // endregion
 
     // region addInvestment without dateTime tests
 
@@ -63,7 +108,7 @@ class FakeContextUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void addInvestment_withoutDateTime_throwsIllegalArgumentException_whenAmountIsNegative(@Nullable final String brokerAccountId) {
+    void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -86,7 +131,7 @@ class FakeContextUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void addInvestment_withoutDateTime_throwsIllegalArgumentException_whenAmountIsZero(@Nullable final String brokerAccountId) {
+    void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);

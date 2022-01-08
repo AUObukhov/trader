@@ -34,6 +34,17 @@ public class FakeContext {
         this.portfolios = new ArrayList<>();
     }
 
+    public FakeContext(
+            final OffsetDateTime currentDateTime,
+            @Nullable final String brokerAccountId,
+            final Currency currency,
+            final BigDecimal initialBalance
+    ) {
+        this(currentDateTime);
+
+        addInvestment(brokerAccountId, currency, initialBalance);
+    }
+
     /**
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current dateTime
      */
