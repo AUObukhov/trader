@@ -47,9 +47,10 @@ public class FakeBot extends AbstractBot implements Bot {
             @Nullable final String brokerAccountId,
             final OffsetDateTime currentDateTime,
             @Nullable final Currency currency,
-            final BalanceConfig balanceConfig
+            final BalanceConfig balanceConfig,
+            final double commission
     ) {
-        fakeTinkoffService.init(brokerAccountId, currentDateTime, currency, balanceConfig);
+        fakeTinkoffService.init(brokerAccountId, currentDateTime, currency, balanceConfig, commission);
     }
 
     public MarketInstrument searchMarketInstrument(final String ticker) {

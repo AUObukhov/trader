@@ -30,7 +30,7 @@ class FakeBotFactoryUnitTest {
         final BotConfig botConfig = new BotConfig();
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(CONSERVATIVE_STRATEGY);
 
-        final FakeBot bot = factory.createBot(botConfig, 0.0);
+        final FakeBot bot = factory.createBot(botConfig);
 
         Assertions.assertNotNull(bot);
     }

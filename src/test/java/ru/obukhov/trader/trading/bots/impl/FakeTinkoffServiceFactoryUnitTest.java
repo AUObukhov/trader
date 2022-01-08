@@ -14,7 +14,7 @@ class FakeTinkoffServiceFactoryUnitTest {
 
     @Test
     void createBot_returnsNotNull() {
-        Assertions.assertNotNull(factory.createService(0.0));
+        Assertions.assertNotNull(factory.createService());
     }
 
 }

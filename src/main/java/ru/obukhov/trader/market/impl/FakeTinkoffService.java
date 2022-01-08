@@ -53,7 +53,6 @@ import java.util.stream.Stream;
 public class FakeTinkoffService implements TinkoffService {
 
     private final MarketProperties marketProperties;
-    private final double commission;
     private final MarketService marketService;
     private final RealTinkoffService realTinkoffService;
 
@@ -61,15 +60,14 @@ public class FakeTinkoffService implements TinkoffService {
     private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
 
     private FakeContext fakeContext;
+    private double commission;
 
     public FakeTinkoffService(
             final MarketProperties marketProperties,
-            final double commission,
             final MarketService marketService,
             final RealTinkoffService realTinkoffService
     ) {
         this.marketProperties = marketProperties;
-        this.commission = commission;
         this.marketService = marketService;
         this.realTinkoffService = realTinkoffService;
     }
@@ -88,11 +86,13 @@ public class FakeTinkoffService implements TinkoffService {
             @Nullable final String brokerAccountId,
             final OffsetDateTime currentDateTime,
             @Nullable final Currency currency,
-            final BalanceConfig balanceConfig
+            final BalanceConfig balanceConfig,
+            final double commission
     ) {
         initFakeContext(currentDateTime);
 
         initBalance(brokerAccountId, currentDateTime, currency, balanceConfig);
+        this.commission = commission;
     }
 
     private void initFakeContext(OffsetDateTime currentDateTime) {

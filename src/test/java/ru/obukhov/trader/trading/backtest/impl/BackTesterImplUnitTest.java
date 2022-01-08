@@ -130,7 +130,7 @@ class BackTesterImplUnitTest {
         final Double commission = 0.003;
         final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
 
-        mockFakeBot(commission);
+        mockFakeBot(botConfig);
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
@@ -312,10 +312,10 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
         final int positionLotsCount1 = 2;
 
-        final FakeBot fakeBot1 = mockFakeBot(commission1);
-        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
-
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
+
+        final FakeBot fakeBot1 = mockFakeBot(botConfig1);
+        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
 
         mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
@@ -338,10 +338,10 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
         final int positionLotsCount2 = 2;
 
-        final FakeBot fakeBot2 = mockFakeBot(commission2);
-        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
-
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+
+        final FakeBot fakeBot2 = mockFakeBot(botConfig2);
+        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
 
         mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
@@ -937,22 +937,24 @@ class BackTesterImplUnitTest {
         final String ticker1 = "ticker1";
         final Double commission1 = 0.003;
 
-        mockFakeBot(commission1);
-
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
+
+        mockFakeBot(botConfig1);
+
         final String mockedExceptionMessage1 = "mocked exception 1";
-        Mockito.when(fakeBotFactory.createBot(botConfig1, commission1))
+        Mockito.when(fakeBotFactory.createBot(botConfig1))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker2";
         final Double commission2 = 0.001;
 
-        mockFakeBot(commission2);
-
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+
+        mockFakeBot(botConfig2);
+
         final String mockedExceptionMessage2 = "mocked exception 2";
-        Mockito.when(fakeBotFactory.createBot(botConfig2, commission2))
+        Mockito.when(fakeBotFactory.createBot(botConfig2))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage2));
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
@@ -1062,7 +1064,7 @@ class BackTesterImplUnitTest {
     ) {
         final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
 
-        final FakeBot fakeBot = mockFakeBot(botConfig.getCommission());
+        final FakeBot fakeBot = mockFakeBot(botConfig);
 
         final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
         mockDecisionDataWithCandles(botConfig, fakeBot, prices);
@@ -1085,9 +1087,9 @@ class BackTesterImplUnitTest {
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
-    private FakeBot mockFakeBot(final Double commission) {
+    private FakeBot mockFakeBot(final BotConfig botConfig) {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(BotConfig.class), Mockito.eq(commission))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(botConfig)).thenReturn(fakeBot);
         return fakeBot;
     }
 

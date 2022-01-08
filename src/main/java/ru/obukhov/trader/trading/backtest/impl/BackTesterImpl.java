@@ -148,7 +148,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, botConfig.getCommission());
+        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig);
 
         final String brokerAccountId = botConfig.getBrokerAccountId();
         final String ticker = botConfig.getTicker();
@@ -157,7 +157,7 @@ public class BackTesterImpl implements BackTester {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeBot.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig);
+        fakeBot.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig, botConfig.getCommission());
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 
