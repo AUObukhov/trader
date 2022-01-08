@@ -59,18 +59,8 @@ public class FakeTinkoffService implements TinkoffService {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
     private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
 
-    private FakeContext fakeContext;
-    private double commission;
-
-    public FakeTinkoffService(
-            final MarketProperties marketProperties,
-            final MarketService marketService,
-            final RealTinkoffService realTinkoffService
-    ) {
-        this.marketProperties = marketProperties;
-        this.marketService = marketService;
-        this.realTinkoffService = realTinkoffService;
-    }
+    private final FakeContext fakeContext;
+    private final double commission;
 
     /**
      * Initializes current dateTime and one currency.
@@ -82,47 +72,51 @@ public class FakeTinkoffService implements TinkoffService {
      * @param balanceConfig   balance config.
      *                        {@code currency} and {@code balanceConfig.initialBalance} must be both null or both not null.
      */
-    public void init(
-            @Nullable final String brokerAccountId,
+    public FakeTinkoffService(
+            final MarketProperties marketProperties,
+            final MarketService marketService,
+            final RealTinkoffService realTinkoffService,
+            final String brokerAccountId,
             final OffsetDateTime currentDateTime,
-            @Nullable final Currency currency,
-            final BalanceConfig balanceConfig,
-            final double commission
+            final Currency currency,
+            final double commission,
+            final BalanceConfig balanceConfig
     ) {
-        initFakeContext(currentDateTime);
-
-        initBalance(brokerAccountId, currentDateTime, currency, balanceConfig);
+        this.marketProperties = marketProperties;
+        this.marketService = marketService;
+        this.realTinkoffService = realTinkoffService;
+        this.fakeContext = createFakeContext(brokerAccountId, currentDateTime, currency, balanceConfig);
         this.commission = commission;
     }
 
-    private void initFakeContext(OffsetDateTime currentDateTime) {
-        final OffsetTime workStartTime = marketProperties.getWorkStartTime();
-        final Duration workDuration = marketProperties.getWorkDuration();
-        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, workStartTime, workDuration);
-
-        this.fakeContext = new FakeContext(ceilingWorkTime);
-    }
-
-    private void initBalance(
-            @Nullable final String brokerAccountId,
+    private FakeContext createFakeContext(
+            final String brokerAccountId,
             final OffsetDateTime currentDateTime,
             final Currency currency,
             final BalanceConfig balanceConfig
     ) {
+        final OffsetTime workStartTime = marketProperties.getWorkStartTime();
+        final Duration workDuration = marketProperties.getWorkDuration();
+        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, workStartTime, workDuration);
+        final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
+
+        return new FakeContext(ceilingWorkTime, brokerAccountId, currency, initialBalance);
+    }
+
+    private BigDecimal getInitialBalance(OffsetDateTime currentDateTime, final OffsetDateTime ceilingWorkTime, BalanceConfig balanceConfig) {
         BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? BigDecimal.ZERO : balanceConfig.getInitialBalance();
 
-        // adding balance increments which were skipped by moving to ceiling work time
+        // adding balance increments which were skipped by moving to ceiling work time above
         final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
         if (balanceIncrementCron != null) {
-            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, fakeContext.getCurrentDateTime())
+            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, ceilingWorkTime)
                     .size();
             if (incrementsCount > 0) {
                 final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
                 initialBalance = initialBalance.add(totalBalanceIncrement);
             }
         }
-
-        this.fakeContext.addInvestment(brokerAccountId, currency, initialBalance);
+        return initialBalance;
     }
 
     /**

@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -120,22 +121,24 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_returnsResultWithEmptyValues_whenTickerNotFound() {
+    void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() {
         // arrange
-
-        final String ticker = "ticker";
-        final Double commission = 0.003;
-        final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
-
-        mockFakeBot(botConfig);
-
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
-
-        final List<BotConfig> botConfigs = List.of(botConfig);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
+
+        final String ticker = "ticker";
+        final Double commission = 0.003;
+        final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+        final List<BotConfig> botConfigs = List.of(botConfig);
+
+        final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
+
+        final String exceptionMessage = "exception message";
+        Mockito.when(fakeBot.processBotConfig(botConfig, null, fakeBot.getCurrentDateTime()))
+                .thenThrow(new IllegalArgumentException(exceptionMessage));
 
         // act
 
@@ -159,10 +162,11 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(0.0, backTestResult.getProfits().getRelativeAnnual());
 
         final String expectedErrorPattern = String.format(
-                "^Back test for '\\[brokerAccountId=2000124699, ticker=%1$s, candleResolution=1min, commission=0.003, strategyType=conservative, " +
+                Locale.US,
+                "^Back test for '\\[brokerAccountId=2000124699, ticker=%s, candleResolution=1min, commission=%.3f, strategyType=conservative, " +
                         "strategyParams=\\{\\}\\]' " +
-                        "failed within 00:00:00.\\d\\d\\d with error: Not found instrument for ticker '%1$s'$",
-                ticker
+                        "failed within 00:00:00.\\d\\d\\d with error: %s$",
+                ticker, commission, exceptionMessage
         );
         AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
@@ -177,6 +181,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BigDecimal finalBalance1 = BigDecimal.valueOf(2000);
         final int finalPositionLotsCount1 = 8;
@@ -193,7 +198,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(2000),
                 finalPositionLotsCount1,
@@ -217,7 +222,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 finalBalance2,
                 finalPositionLotsCount2,
@@ -227,7 +232,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -295,6 +299,8 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final double balanceIncrement = 1000;
 
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
+
         final String brokerAccountId1 = null;
         final String ticker1 = "ticker1";
         final Double commission1 = 0.003;
@@ -311,13 +317,13 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
 
-        final FakeBot fakeBot1 = mockFakeBot(botConfig1);
+        final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
         final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
 
         mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
-        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.getCurrency(), from, balanceIncrement);
+        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
 
@@ -337,18 +343,17 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
 
-        final FakeBot fakeBot2 = mockFakeBot(botConfig2);
+        final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
         final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
 
         mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
-        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.getCurrency(), from, balanceIncrement);
+        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.getCurrency(), from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
         mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -388,6 +393,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final String ticker1 = "ticker1";
 
@@ -405,7 +411,7 @@ class BackTesterImplUnitTest {
                 null,
                 ticker1,
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(20000),
                 positionLotsCount1,
@@ -422,7 +428,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 ticker2,
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(10000),
                 positionLotsCount2,
@@ -432,7 +438,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -460,11 +465,12 @@ class BackTesterImplUnitTest {
 
         // arrange
 
-        final double initialInvestment = 10000;
-
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
+
+        final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final String ticker1 = "ticker1";
         final double commission1 = 0.003;
@@ -512,7 +518,7 @@ class BackTesterImplUnitTest {
                 null,
                 ticker1,
                 commission1,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance1,
                 positionLotsCount1,
@@ -525,7 +531,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 ticker2,
                 commission2,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance2,
                 positionLotsCount2,
@@ -535,7 +541,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -599,6 +604,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
         prices1.put(100.0, from.plusMinutes(1));
@@ -611,7 +617,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(20000),
                 1,
@@ -630,7 +636,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(10000),
                 2,
@@ -640,7 +646,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -677,12 +682,13 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 null,
                 "ticker1",
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(20000),
                 null,
@@ -695,7 +701,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 BigDecimal.valueOf(10000),
                 null,
@@ -705,7 +711,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -734,6 +739,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.001;
@@ -749,7 +755,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 commission1,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 1,
@@ -762,7 +768,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 null,
@@ -772,7 +778,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -798,6 +803,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.001;
@@ -813,7 +819,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 commission1,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 1,
@@ -826,7 +832,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.003,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 null,
@@ -836,7 +842,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         // act
 
@@ -863,6 +868,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 0;
         final BigDecimal currentBalance = BigDecimal.valueOf(20000);
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
         final Operation operation = TestData.createTinkoffOperation(
@@ -876,7 +882,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 commission1,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 10,
@@ -889,7 +895,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker2",
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 null,
@@ -899,7 +905,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         // act
 
@@ -930,16 +935,18 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
+
         final String brokerAccountId1 = null;
         final String ticker1 = "ticker1";
         final Double commission1 = 0.003;
 
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
 
-        mockFakeBot(botConfig1);
+        mockFakeBot(botConfig1, balanceConfig, from);
 
         final String mockedExceptionMessage1 = "mocked exception 1";
-        Mockito.when(fakeBotFactory.createBot(botConfig1))
+        Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String brokerAccountId2 = "2000124699";
@@ -948,15 +955,13 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
 
-        mockFakeBot(botConfig2);
+        mockFakeBot(botConfig2, balanceConfig, from);
 
         final String mockedExceptionMessage2 = "mocked exception 2";
-        Mockito.when(fakeBotFactory.createBot(botConfig2))
+        Mockito.when(fakeBotFactory.createBot(botConfig2, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage2));
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
         // act
 
@@ -991,6 +996,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 10000;
+        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.003;
@@ -1005,7 +1011,7 @@ class BackTesterImplUnitTest {
                 null,
                 "ticker1",
                 commission1,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 2,
@@ -1018,7 +1024,7 @@ class BackTesterImplUnitTest {
                 "2000124699",
                 "ticker2",
                 0.001,
-                initialInvestment,
+                balanceConfig,
                 interval,
                 currentBalance,
                 null,
@@ -1028,8 +1034,6 @@ class BackTesterImplUnitTest {
         );
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
-
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         Mockito.doThrow(new IllegalArgumentException())
                 .when(excelService)
@@ -1051,7 +1055,7 @@ class BackTesterImplUnitTest {
             final String brokerAccountId,
             final String ticker,
             final double commission,
-            final double initialInvestment,
+            final BalanceConfig balanceConfig,
             final Interval interval,
             final BigDecimal currentBalance,
             final Integer positionLotsCount,
@@ -1061,12 +1065,12 @@ class BackTesterImplUnitTest {
     ) {
         final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
 
-        final FakeBot fakeBot = mockFakeBot(botConfig);
+        final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
         final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
         mockDecisionDataWithCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
-        mockInvestments(fakeBot, brokerAccountId, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
+        mockInvestments(fakeBot, brokerAccountId, marketInstrument.getCurrency(), interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
             mockPortfolioPosition(fakeBot, brokerAccountId, ticker, positionLotsCount);
@@ -1084,9 +1088,9 @@ class BackTesterImplUnitTest {
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
-    private FakeBot mockFakeBot(final BotConfig botConfig) {
+    private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBotFactory.createBot(botConfig)).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(botConfig, balanceConfig, currentDateTime)).thenReturn(fakeBot);
         return fakeBot;
     }
 
@@ -1128,10 +1132,10 @@ class BackTesterImplUnitTest {
             final String brokerAccountId,
             final Currency currency,
             final OffsetDateTime dateTime,
-            final double initialInvestment
+            final BigDecimal initialInvestment
     ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
-        investments.put(dateTime, DecimalUtils.setDefaultScale(initialInvestment));
+        investments.put(dateTime, initialInvestment);
         Mockito.when(fakeBot.getInvestments(brokerAccountId, currency)).thenReturn(investments);
     }
 

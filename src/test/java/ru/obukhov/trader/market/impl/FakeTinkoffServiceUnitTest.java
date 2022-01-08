@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -36,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,11 +48,6 @@ class FakeTinkoffServiceUnitTest {
     private RealTinkoffService realTinkoffService;
 
     private FakeTinkoffService service;
-
-    @BeforeEach
-    void setUpEach() {
-        this.service = new FakeTinkoffService(MARKET_PROPERTIES, marketService, realTinkoffService);
-    }
 
     // region init tests
 
@@ -131,56 +124,27 @@ class FakeTinkoffServiceUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forInit_movesCurrentDateTimeToCeilingWorkTime")
-    void init_movesCurrentDateTimeToCeilingWorkTime(
+    void constructor_movesCurrentDateTimeToCeilingWorkTime(
             @Nullable final String brokerAccountId,
             final OffsetDateTime dateTime,
             final OffsetDateTime expectedCurrentDateTime
     ) {
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         Assertions.assertEquals(expectedCurrentDateTime, service.getCurrentDateTime());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void init_clearsPortfolio(@Nullable final String brokerAccountId) {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
-        final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
-
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
-        final String ticker = "ticker";
-        final int lotSize = 10;
-
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
-
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
-        service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(200));
-        service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
-
-        final OffsetDateTime newDateTime = DateTimeTestData.createDateTime(2021, 10, 5, 12);
-        final BalanceConfig newBalanceConfig = TestData.createBalanceConfig(1000.0);
-
-        service.init(brokerAccountId, newDateTime, currency, newBalanceConfig, 0.003);
-
-        Assertions.assertEquals(newDateTime, service.getCurrentDateTime());
-        AssertUtils.assertEquals(newBalanceConfig.getInitialBalance(), service.getCurrentBalance(brokerAccountId, currency));
-
-        final Interval interval = Interval.of(dateTime, newDateTime);
-        Assertions.assertTrue(service.getOperations(brokerAccountId, interval, ticker).isEmpty());
-
-        final SortedMap<OffsetDateTime, BigDecimal> investments = service.getInvestments(brokerAccountId, currency);
-        Assertions.assertEquals(1, investments.size());
-        AssertUtils.assertEquals(newBalanceConfig.getInitialBalance(), investments.get(newDateTime));
-
-        Assertions.assertTrue(service.getPortfolioPositions(brokerAccountId).isEmpty());
-    }
-
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forInit_initsBalance() {
+    static Stream<Arguments> getData_forConstructor_initsBalance() {
         return Stream.of(
                 Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 1 * ?"), 1001000.0),
                 Arguments.of(TestData.createBalanceConfig(1000000.0, 1000.0, "0 0 0 2 * ?"), 1000000.0),
@@ -189,17 +153,26 @@ class FakeTinkoffServiceUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource(value = "getData_forInit_initsBalance")
-    void init_initsBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
-        init_initsBalance(null, balanceConfig, expectedBalance);
-        init_initsBalance("2000124699", balanceConfig, expectedBalance);
+    @MethodSource(value = "getData_forConstructor_initsBalance")
+    void constructor_initsBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
+        constructor_initsBalance(null, balanceConfig, expectedBalance);
+        constructor_initsBalance("2000124699", balanceConfig, expectedBalance);
     }
 
-    private void init_initsBalance(final String brokerAccountId, final BalanceConfig balanceConfig, final double expectedBalance) {
+    private void constructor_initsBalance(final String brokerAccountId, final BalanceConfig balanceConfig, final double expectedBalance) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 1);
         final Currency currency = Currency.RUB;
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final BigDecimal balance = service.getCurrentBalance(brokerAccountId, currency);
 
@@ -216,7 +189,16 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToNextMinute_whenMiddleOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -231,7 +213,16 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -246,7 +237,16 @@ class FakeTinkoffServiceUnitTest {
     void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
@@ -266,7 +266,16 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.RUB,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
         final int lotSize = 10;
@@ -297,7 +306,16 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.RUB,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
@@ -330,7 +348,16 @@ class FakeTinkoffServiceUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, Currency.RUB, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.RUB,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
@@ -363,7 +390,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -384,7 +420,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -408,7 +453,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -434,7 +488,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
@@ -476,7 +539,16 @@ class FakeTinkoffServiceUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -506,7 +578,16 @@ class FakeTinkoffServiceUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -530,7 +611,16 @@ class FakeTinkoffServiceUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final String ticker = "ticker";
 
@@ -559,7 +649,16 @@ class FakeTinkoffServiceUnitTest {
     void getPortfolioCurrencies_returnsAllCurrencies_whenCurrenciesAreNotInitialized(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
@@ -584,7 +683,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
-        service.init(brokerAccountId, dateTime, currency, balanceConfig, 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                currency,
+                0.003,
+                balanceConfig
+        );
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
@@ -604,7 +712,16 @@ class FakeTinkoffServiceUnitTest {
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
-        service.init(brokerAccountId, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                brokerAccountId,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
         service.addInvestment(brokerAccountId, dateTime, currency, balance);
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
@@ -641,7 +758,16 @@ class FakeTinkoffServiceUnitTest {
         final BigDecimal price = BigDecimal.valueOf(100);
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
-        service.init(null, dateTime, Currency.USD, TestData.createBalanceConfig(0.0), 0.003);
+        service = new FakeTinkoffService(
+                MARKET_PROPERTIES,
+                marketService,
+                realTinkoffService,
+                null,
+                dateTime,
+                Currency.USD,
+                0.003,
+                TestData.createBalanceConfig(0.0)
+        );
 
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime()))
                 .thenReturn(new Candle().setClosePrice(price));

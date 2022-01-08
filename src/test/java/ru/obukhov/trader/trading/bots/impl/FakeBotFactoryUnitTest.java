@@ -1,36 +1,63 @@
 package ru.obukhov.trader.trading.bots.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.market.impl.RealTinkoffService;
+import ru.obukhov.trader.market.interfaces.MarketService;
+import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
+import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+
+import java.time.OffsetDateTime;
 
 @ExtendWith(MockitoExtension.class)
 class FakeBotFactoryUnitTest {
 
-    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StringUtils.EMPTY);
+    private static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
+    private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
     private TradingStrategyFactory strategyFactory;
     @Mock
-    private FakeTinkoffServiceFactory fakeTinkoffServiceFactory;
+    private MarketService realMarketService;
+    @Mock
+    private RealTinkoffService realTinkoffService;
 
     @InjectMocks
     private FakeBotFactory factory;
 
-    @Test
-    void createBot_returnsNotNull() {
-        final BotConfig botConfig = new BotConfig();
-        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(CONSERVATIVE_STRATEGY);
+    @BeforeEach
+    void setUp() {
+        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, realMarketService, realTinkoffService);
+    }
 
-        final FakeBot bot = factory.createBot(botConfig);
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "2000124699")
+    void createBot_returnsNotNull(final String brokerAccountId) {
+        final String ticker = "ticker";
+        final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, 0.003);
+
+        final BalanceConfig balanceConfig = new BalanceConfig();
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+
+        Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(CONSERVATIVE_STRATEGY);
+        Mocker.createAndMockInstrument(realTinkoffService, ticker, 10);
+
+        final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
         Assertions.assertNotNull(bot);
     }

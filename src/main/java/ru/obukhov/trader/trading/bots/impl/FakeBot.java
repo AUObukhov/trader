@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -42,16 +41,6 @@ public class FakeBot extends AbstractBot implements Bot {
     }
 
     // region FakeTinkoffService proxy
-
-    public void init(
-            @Nullable final String brokerAccountId,
-            final OffsetDateTime currentDateTime,
-            @Nullable final Currency currency,
-            final BalanceConfig balanceConfig,
-            final double commission
-    ) {
-        fakeTinkoffService.init(brokerAccountId, currentDateTime, currency, balanceConfig, commission);
-    }
 
     public MarketInstrument searchMarketInstrument(final String ticker) {
         return fakeTinkoffService.searchMarketInstrument(ticker);

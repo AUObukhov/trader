@@ -31,7 +31,6 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
@@ -140,16 +139,8 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig);
+        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
 
-        final String brokerAccountId = botConfig.getBrokerAccountId();
-        final String ticker = botConfig.getTicker();
-        final MarketInstrument marketInstrument = fakeBot.searchMarketInstrument(ticker);
-        if (marketInstrument == null) {
-            throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
-        }
-
-        fakeBot.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig, botConfig.getCommission());
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 
@@ -163,7 +154,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(brokerAccountId, ticker, balanceConfig, fakeBot, interval.getTo());
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.getBrokerAccountId(), botConfig.getTicker(), balanceConfig, fakeBot, interval.getTo());
         } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
