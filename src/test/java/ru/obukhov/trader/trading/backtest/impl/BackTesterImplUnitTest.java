@@ -14,7 +14,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationTypeMapper;
@@ -131,7 +130,7 @@ class BackTesterImplUnitTest {
         final Double commission = 0.003;
         final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
 
-        mockFakeTinkoffService(commission);
+        mockFakeBot(commission);
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
@@ -313,18 +312,17 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
         final int positionLotsCount1 = 2;
 
-        final FakeTinkoffService fakeTinkoffService1 = mockFakeTinkoffService(commission1);
-        final FakeBot fakeBot1 = mockFakeBot(fakeTinkoffService1);
-        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeTinkoffService1, ticker1, 10);
+        final FakeBot fakeBot1 = mockFakeBot(commission1);
+        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
 
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
 
         mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
-        mockCurrentPrice(fakeTinkoffService1, ticker1, 500);
-        mockNextMinute(fakeTinkoffService1, from);
-        mockInvestments(fakeTinkoffService1, marketInstrument1.getCurrency(), from, balanceIncrement);
-        Mockito.when(fakeTinkoffService1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
-        mockPortfolioPosition(fakeTinkoffService1, brokerAccountId1, ticker1, positionLotsCount1);
+        mockCurrentPrice(fakeBot1, ticker1, 500);
+        mockNextMinute(fakeBot1, from);
+        mockInvestments(fakeBot1, marketInstrument1.getCurrency(), from, balanceIncrement);
+        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
+        mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker1";
@@ -340,18 +338,17 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
         final int positionLotsCount2 = 2;
 
-        final FakeTinkoffService fakeTinkoffService2 = mockFakeTinkoffService(commission2);
-        final FakeBot fakeBot2 = mockFakeBot(fakeTinkoffService2);
-        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeTinkoffService2, ticker2, 10);
+        final FakeBot fakeBot2 = mockFakeBot(commission2);
+        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
 
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
 
         mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
-        mockCurrentPrice(fakeTinkoffService2, ticker2, 50);
-        mockNextMinute(fakeTinkoffService2, from);
-        mockInvestments(fakeTinkoffService2, marketInstrument2.getCurrency(), from, balanceIncrement);
-        Mockito.when(fakeTinkoffService2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
-        mockPortfolioPosition(fakeTinkoffService2, brokerAccountId2, ticker2, positionLotsCount2);
+        mockCurrentPrice(fakeBot2, ticker2, 50);
+        mockNextMinute(fakeBot2, from);
+        mockInvestments(fakeBot2, marketInstrument2.getCurrency(), from, balanceIncrement);
+        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
+        mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
@@ -367,7 +364,7 @@ class BackTesterImplUnitTest {
         Assertions.assertNull(backTestResults.get(0).getError());
         Assertions.assertNull(backTestResults.get(1).getError());
 
-        Mockito.verify(fakeTinkoffService1, Mockito.times(24))
+        Mockito.verify(fakeBot1, Mockito.times(24))
                 .addInvestment(
                         Mockito.eq(brokerAccountId1),
                         Mockito.any(OffsetDateTime.class),
@@ -375,7 +372,7 @@ class BackTesterImplUnitTest {
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
 
-        Mockito.verify(fakeTinkoffService2, Mockito.times(24))
+        Mockito.verify(fakeBot2, Mockito.times(24))
                 .addInvestment(
                         Mockito.eq(brokerAccountId2),
                         Mockito.any(OffsetDateTime.class),
@@ -940,22 +937,22 @@ class BackTesterImplUnitTest {
         final String ticker1 = "ticker1";
         final Double commission1 = 0.003;
 
-        mockFakeTinkoffService(commission1);
+        mockFakeBot(commission1);
 
         final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
         final String mockedExceptionMessage1 = "mocked exception 1";
-        Mockito.when(fakeBotFactory.createBot(Mockito.eq(botConfig1), Mockito.any(FakeTinkoffService.class)))
+        Mockito.when(fakeBotFactory.createBot(botConfig1, commission1))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker2";
         final Double commission2 = 0.001;
 
-        mockFakeTinkoffService(commission2);
+        mockFakeBot(commission2);
 
         final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
         final String mockedExceptionMessage2 = "mocked exception 2";
-        Mockito.when(fakeBotFactory.createBot(Mockito.eq(botConfig2), Mockito.any(FakeTinkoffService.class)))
+        Mockito.when(fakeBotFactory.createBot(botConfig2, commission2))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage2));
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
@@ -1065,39 +1062,32 @@ class BackTesterImplUnitTest {
     ) {
         final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
 
-        final FakeTinkoffService fakeTinkoffService = mockFakeTinkoffService(botConfig.getCommission());
-        final FakeBot fakeBot = mockFakeBot(fakeTinkoffService);
+        final FakeBot fakeBot = mockFakeBot(botConfig.getCommission());
 
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
         mockDecisionDataWithCandles(botConfig, fakeBot, prices);
-        mockNextMinute(fakeTinkoffService, interval.getFrom());
-        mockInvestments(fakeTinkoffService, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
+        mockNextMinute(fakeBot, interval.getFrom());
+        mockInvestments(fakeBot, marketInstrument.getCurrency(), interval.getFrom(), initialInvestment);
+        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
-            mockPortfolioPosition(fakeTinkoffService, brokerAccountId, ticker, positionLotsCount);
-            mockCurrentPrice(fakeTinkoffService, ticker, currentPrice);
+            mockPortfolioPosition(fakeBot, brokerAccountId, ticker, positionLotsCount);
+            mockCurrentPrice(fakeBot, ticker, currentPrice);
         }
         if (operation != null) {
-            Mocker.mockTinkoffOperations(fakeTinkoffService, brokerAccountId, ticker, interval, operation);
+            Mocker.mockTinkoffOperations(fakeBot, brokerAccountId, ticker, interval, operation);
         }
 
         return botConfig;
     }
 
-    private void mockCurrentPrice(final FakeTinkoffService fakeTinkoffService, final String ticker, final double currentPrice) {
-        Mockito.when(fakeTinkoffService.getCurrentPrice(ticker))
+    private void mockCurrentPrice(final FakeBot fakeBot, final String ticker, final double currentPrice) {
+        Mockito.when(fakeBot.getCurrentPrice(ticker))
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
-    private FakeTinkoffService mockFakeTinkoffService(final Double commission) {
-        final FakeTinkoffService fakeTinkoffService = Mockito.mock(FakeTinkoffService.class);
-        Mockito.doReturn(fakeTinkoffService).when(fakeTinkoffServiceFactory).createService(Mockito.same(commission));
-        return fakeTinkoffService;
-    }
-
-    private FakeBot mockFakeBot(final FakeTinkoffService fakeTinkoffService) {
+    private FakeBot mockFakeBot(final Double commission) {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
-        Mockito.when(fakeBotFactory.createBot(Mockito.any(BotConfig.class), Mockito.eq(fakeTinkoffService))).thenReturn(fakeBot);
+        Mockito.when(fakeBotFactory.createBot(Mockito.any(BotConfig.class), Mockito.eq(commission))).thenReturn(fakeBot);
         return fakeBot;
     }
 
@@ -1123,36 +1113,36 @@ class BackTesterImplUnitTest {
         }
     }
 
-    private void mockNextMinute(final FakeTinkoffService fakeTinkoffService, final OffsetDateTime from) {
-        Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(from);
+    private void mockNextMinute(final FakeBot fakeBot, final OffsetDateTime from) {
+        Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(from);
 
-        Mockito.when(fakeTinkoffService.nextMinute()).thenAnswer(invocationOnMock -> {
-            final OffsetDateTime currentDateTime = fakeTinkoffService.getCurrentDateTime();
+        Mockito.when(fakeBot.nextMinute()).thenAnswer(invocationOnMock -> {
+            final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
             final OffsetDateTime nextMinute = currentDateTime.plusMinutes(1);
-            Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(nextMinute);
+            Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(nextMinute);
             return nextMinute;
         });
     }
 
     private void mockInvestments(
-            final FakeTinkoffService fakeTinkoffService,
+            final FakeBot fakeBot,
             final Currency currency,
             final OffsetDateTime dateTime,
             final double initialInvestment
     ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
         investments.put(dateTime, DecimalUtils.setDefaultScale(initialInvestment));
-        Mockito.when(fakeTinkoffService.getInvestments(currency)).thenReturn(investments);
+        Mockito.when(fakeBot.getInvestments(currency)).thenReturn(investments);
     }
 
     private void mockPortfolioPosition(
-            final FakeTinkoffService fakeTinkoffService,
+            final FakeBot fakeBot,
             final String brokerAccountId,
             final String ticker,
             final int positionLotsCount
     ) {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
-        Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
+        Mockito.when(fakeBot.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
     }
 
 }

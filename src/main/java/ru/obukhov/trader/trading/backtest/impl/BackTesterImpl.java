@@ -16,14 +16,13 @@ import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
+import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
 import ru.obukhov.trader.trading.bots.impl.FakeTinkoffServiceFactory;
-import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -149,23 +148,21 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
-        final FakeTinkoffService fakeTinkoffService = fakeTinkoffServiceFactory.createService(botConfig.getCommission());
-
-        final Bot bot = fakeBotFactory.createBot(botConfig, fakeTinkoffService);
+        final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, botConfig.getCommission());
 
         final String brokerAccountId = botConfig.getBrokerAccountId();
         final String ticker = botConfig.getTicker();
-        final MarketInstrument marketInstrument = fakeTinkoffService.searchMarketInstrument(ticker);
+        final MarketInstrument marketInstrument = fakeBot.searchMarketInstrument(ticker);
         if (marketInstrument == null) {
             throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
         }
 
-        fakeTinkoffService.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig);
+        fakeBot.init(brokerAccountId, interval.getFrom(), marketInstrument.getCurrency(), balanceConfig);
         final List<Candle> historicalCandles = new ArrayList<>();
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = bot.processBotConfig(botConfig, previousStartTime, fakeTinkoffService.getCurrentDateTime());
+            final DecisionData decisionData = fakeBot.processBotConfig(botConfig, previousStartTime, fakeBot.getCurrentDateTime());
             final List<Candle> currentCandles = decisionData.getCurrentCandles();
             if (CollectionUtils.isEmpty(currentCandles)) {
                 previousStartTime = null;
@@ -174,10 +171,10 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(brokerAccountId, ticker, balanceConfig, fakeTinkoffService, interval.getTo());
-        } while (fakeTinkoffService.getCurrentDateTime().isBefore(interval.getTo()));
+            moveToNextMinuteAndApplyBalanceIncrement(brokerAccountId, ticker, balanceConfig, fakeBot, interval.getTo());
+        } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
-        return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeTinkoffService);
+        return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
     }
 
     private void addLastCandle(final List<Candle> historicalCandles, final List<Candle> currentCandles) {
@@ -191,19 +188,19 @@ public class BackTesterImpl implements BackTester {
             @Nullable final String brokerAccountId,
             final String ticker,
             final BalanceConfig balanceConfig,
-            final FakeTinkoffService fakeTinkoffService,
+            final FakeBot fakeBot,
             final OffsetDateTime to
     ) {
         if (balanceConfig.getBalanceIncrement() == null) {
-            fakeTinkoffService.nextMinute();
+            fakeBot.nextMinute();
         } else {
-            final OffsetDateTime previousDate = fakeTinkoffService.getCurrentDateTime();
-            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeTinkoffService.nextMinute(), to);
+            final OffsetDateTime previousDate = fakeBot.getCurrentDateTime();
+            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final Currency currency = getCurrency(fakeTinkoffService, ticker);
+            final Currency currency = getCurrency(fakeBot, ticker);
             for (OffsetDateTime investmentTime : investmentsTimes) {
-                fakeTinkoffService.addInvestment(brokerAccountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
+                fakeBot.addInvestment(brokerAccountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
         }
     }
@@ -212,15 +209,15 @@ public class BackTesterImpl implements BackTester {
             final BotConfig botConfig,
             final Interval interval,
             final List<Candle> candles,
-            final FakeTinkoffService fakeTinkoffService
+            final FakeBot fakeBot
     ) {
         final String brokerAccountId = botConfig.getBrokerAccountId();
         final String ticker = botConfig.getTicker();
 
-        final List<BackTestPosition> positions = getPositions(brokerAccountId, fakeTinkoffService);
-        final Balances balances = getBalances(brokerAccountId, interval, fakeTinkoffService, positions, ticker);
+        final List<BackTestPosition> positions = getPositions(brokerAccountId, fakeBot);
+        final Balances balances = getBalances(brokerAccountId, interval, fakeBot, positions, ticker);
         final Profits profits = getProfits(balances, interval);
-        final List<Operation> operations = fakeTinkoffService.getOperations(brokerAccountId, interval, ticker);
+        final List<Operation> operations = fakeBot.getOperations(brokerAccountId, interval, ticker);
 
         return BackTestResult.builder()
                 .botConfig(botConfig)
@@ -252,33 +249,33 @@ public class BackTesterImpl implements BackTester {
                 .build();
     }
 
-    private Currency getCurrency(final FakeTinkoffService fakeTinkoffService, final String ticker) {
-        return fakeTinkoffService.searchMarketInstrument(ticker).getCurrency();
+    private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
+        return fakeBot.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeTinkoffService fakeTinkoffService) {
-        return fakeTinkoffService.getPortfolioPositions(brokerAccountId).stream()
-                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, fakeTinkoffService))
+    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) {
+        return fakeBot.getPortfolioPositions(brokerAccountId).stream()
+                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, fakeBot))
                 .toList();
     }
 
-    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeTinkoffService fakeTinkoffService) {
+    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) {
         final String ticker = portfolioPosition.getTicker();
-        return new BackTestPosition(ticker, fakeTinkoffService.getCurrentPrice(ticker), portfolioPosition.getCount());
+        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.getCount());
     }
 
     private Balances getBalances(
             @Nullable final String brokerAccountId,
             final Interval interval,
-            final FakeTinkoffService fakeTinkoffService,
+            final FakeBot fakeBot,
             final List<BackTestPosition> positions,
             final String ticker
     ) {
-        final Currency currency = getCurrency(fakeTinkoffService, ticker);
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeTinkoffService.getInvestments(currency);
+        final Currency currency = getCurrency(fakeBot, ticker);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
-        final BigDecimal finalBalance = fakeTinkoffService.getCurrentBalance(brokerAccountId, currency);
+        final BigDecimal finalBalance = fakeBot.getCurrentBalance(brokerAccountId, currency);
         final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
 
         final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);

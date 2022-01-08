@@ -8,10 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -24,11 +20,7 @@ class FakeBotFactoryUnitTest {
     @Mock
     private TradingStrategyFactory strategyFactory;
     @Mock
-    private MarketProperties marketProperties;
-    @Mock
-    private MarketService marketService;
-    @Mock
-    private RealTinkoffService tinkoffService;
+    private FakeTinkoffServiceFactory fakeTinkoffServiceFactory;
 
     @InjectMocks
     private FakeBotFactory factory;
@@ -36,10 +28,9 @@ class FakeBotFactoryUnitTest {
     @Test
     void createBot_returnsNotNull() {
         final BotConfig botConfig = new BotConfig();
-        final FakeTinkoffService fakeTinkoffService = new FakeTinkoffService(marketProperties, 0.0, marketService, tinkoffService);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(CONSERVATIVE_STRATEGY);
 
-        final FakeBot bot = factory.createBot(botConfig, fakeTinkoffService);
+        final FakeBot bot = factory.createBot(botConfig, 0.0);
 
         Assertions.assertNotNull(bot);
     }

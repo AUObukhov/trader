@@ -22,8 +22,10 @@ public class FakeBotFactory {
 
     private final MarketProperties marketProperties;
     private final TradingStrategyFactory strategyFactory;
+    private final FakeTinkoffServiceFactory fakeTinkoffServiceFactory;
 
-    public FakeBot createBot(final BotConfig botConfig, final FakeTinkoffService fakeTinkoffService) {
+    public FakeBot createBot(final BotConfig botConfig, final Double commission) {
+        final FakeTinkoffService fakeTinkoffService = fakeTinkoffServiceFactory.createService(commission);
         final MarketService fakeMarketService = new MarketServiceImpl(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);

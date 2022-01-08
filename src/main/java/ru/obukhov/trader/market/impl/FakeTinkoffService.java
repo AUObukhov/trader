@@ -39,7 +39,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -397,7 +396,7 @@ public class FakeTinkoffService implements TinkoffService {
     // region PortfolioContext proxy
 
     @Override
-    public Collection<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
+    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
         return fakeContext.getPositions(brokerAccountId);
     }
 

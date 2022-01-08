@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
@@ -22,31 +23,31 @@ import java.util.List;
 public class Mocker {
 
     public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker, final int lotSize) {
-        final MarketInstrument instrument = new MarketInstrument()
-                .figi(StringUtils.EMPTY)
-                .ticker(ticker)
-                .lot(lotSize)
-                .currency(Currency.RUB)
-                .name(StringUtils.EMPTY)
-                .type(InstrumentType.STOCK);
-
+        final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        return instrument;
+    }
 
+    public static MarketInstrument createAndMockInstrument(final FakeBot fakeBot, final String ticker, final int lotSize) {
+        final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
+        Mockito.when(fakeBot.searchMarketInstrument(ticker)).thenReturn(instrument);
         return instrument;
     }
 
     public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker, final int lotSize) {
-        final MarketInstrument instrument = new MarketInstrument()
+        final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        return instrument;
+    }
+
+    private static MarketInstrument createMarketInstrument(String ticker, int lotSize) {
+        return new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
                 .lot(lotSize)
                 .currency(Currency.RUB)
                 .name(StringUtils.EMPTY)
                 .type(InstrumentType.STOCK);
-
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
-
-        return instrument;
     }
 
     public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) {
@@ -61,13 +62,13 @@ public class Mocker {
     }
 
     public static void mockTinkoffOperations(
-            final TinkoffService tinkoffService,
+            final FakeBot fakeBot,
             @Nullable final String brokerAccountId,
             final String ticker,
             final Interval interval,
             final Operation... operations
     ) {
-        Mockito.when(tinkoffService.getOperations(brokerAccountId, interval, ticker))
+        Mockito.when(fakeBot.getOperations(brokerAccountId, interval, ticker))
                 .thenReturn(List.of(operations));
     }
 

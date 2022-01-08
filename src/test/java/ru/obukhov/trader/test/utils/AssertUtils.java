@@ -191,6 +191,26 @@ public class AssertUtils {
 
     // endregion
 
+    public static <K, V> void assertMapsAreEqual(final Map<K, V> expected, final Map<K, V> actual) {
+        Assertions.assertEquals(expected.getClass(), actual.getClass());
+        Assertions.assertEquals(expected.size(), actual.size());
+
+        final StringBuilder messageBuilder = new StringBuilder();
+        for (K key : expected.keySet()) {
+            final V expectedValue = expected.get(key);
+            final V actualValue = actual.get(key);
+            if (!Objects.equals(expectedValue, actualValue)) {
+                messageBuilder.append(String.format("expected: <%s> at key <%s> but was: <%s>", expectedValue, key, actualValue))
+                        .append(System.lineSeparator());
+            }
+        }
+
+        final String message = messageBuilder.toString();
+        if (!message.isEmpty()) {
+            Assertions.fail(message);
+        }
+    }
+
     // region apache poi assertions
 
     public static void assertRowValues(final Row row, final Object... values) {
