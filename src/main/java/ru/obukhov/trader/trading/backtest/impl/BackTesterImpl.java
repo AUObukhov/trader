@@ -22,7 +22,6 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
-import ru.obukhov.trader.trading.bots.impl.FakeTinkoffServiceFactory;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -58,18 +57,11 @@ public class BackTesterImpl implements BackTester {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final ExcelService excelService;
-    private final FakeTinkoffServiceFactory fakeTinkoffServiceFactory;
     private final FakeBotFactory fakeBotFactory;
     private final ExecutorService executor;
 
-    public BackTesterImpl(
-            final ExcelService excelService,
-            final FakeTinkoffServiceFactory fakeTinkoffServiceFactory,
-            final FakeBotFactory fakeBotFactory,
-            final BackTestProperties backTestProperties
-    ) {
+    public BackTesterImpl(final ExcelService excelService, final FakeBotFactory fakeBotFactory, final BackTestProperties backTestProperties) {
         this.excelService = excelService;
-        this.fakeTinkoffServiceFactory = fakeTinkoffServiceFactory;
         this.fakeBotFactory = fakeBotFactory;
         this.executor = Executors.newFixedThreadPool(backTestProperties.getThreadCount());
     }

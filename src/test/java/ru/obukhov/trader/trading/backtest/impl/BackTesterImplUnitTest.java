@@ -24,7 +24,6 @@ import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
-import ru.obukhov.trader.trading.bots.impl.FakeTinkoffServiceFactory;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -59,15 +58,13 @@ class BackTesterImplUnitTest {
     @Mock
     private ExcelService excelService;
     @Mock
-    private FakeTinkoffServiceFactory fakeTinkoffServiceFactory;
-    @Mock
     private FakeBotFactory fakeBotFactory;
 
     private BackTesterImpl backTester;
 
     @BeforeEach
     void setUp() {
-        backTester = new BackTesterImpl(excelService, fakeTinkoffServiceFactory, fakeBotFactory, BACK_TEST_PROPERTIES);
+        backTester = new BackTesterImpl(excelService, fakeBotFactory, BACK_TEST_PROPERTIES);
     }
 
     @Test
