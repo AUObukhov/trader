@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -35,6 +36,8 @@ import java.util.stream.Stream;
 
 @UtilityClass
 public class TestData {
+
+    public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     // region Tinkoff Candle creation
 

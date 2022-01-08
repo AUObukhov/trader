@@ -6,7 +6,6 @@ import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
 import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
@@ -14,7 +13,7 @@ import java.util.List;
 
 class ConservativeStrategyUnitTest {
 
-    private final ConservativeStrategy strategy = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
+    private final ConservativeStrategy strategy = TestData.CONSERVATIVE_STRATEGY;
 
     @Test
     void getName_returnsProperName() {
