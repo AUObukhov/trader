@@ -64,7 +64,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
         };
     }
 
-    private Decision getDecisionForAboveCrossover(DecisionData data, StrategyCache strategyCache) {
+    private Decision getDecisionForAboveCrossover(final DecisionData data, final StrategyCache strategyCache) {
         final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
         final boolean greedy = crossStrategyParams.getGreedy();
         Decision decision = getSellOrWaitDecision(data, crossStrategyParams.getMinimumProfit(), strategyCache);
@@ -74,7 +74,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
         return decision;
     }
 
-    private Decision getDecisionForNoCrossover(StrategyCache strategyCache) {
+    private Decision getDecisionForNoCrossover(final StrategyCache strategyCache) {
         Decision decision = new Decision(DecisionAction.WAIT, null, strategyCache);
         if (log.isDebugEnabled()) {
             log.debug("No crossover at expected position. Decision is {}", decision.toPrettyString());
