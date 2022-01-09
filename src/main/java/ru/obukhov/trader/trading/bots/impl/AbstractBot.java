@@ -56,7 +56,7 @@ public abstract class AbstractBot implements Bot {
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                fillDecisionData(botConfig.getBrokerAccountId(), decisionData, ticker, now);
+                fillDecisionData(botConfig, decisionData, ticker, now);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(botConfig.getBrokerAccountId(), ticker, decision);
             }
@@ -68,17 +68,18 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(
-            @Nullable final String brokerAccountId,
+            final BotConfig botConfig,
             final DecisionData decisionData,
             final String ticker,
             final OffsetDateTime now
     ) {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()));
-        decisionData.setPosition(portfolioService.getPosition(brokerAccountId, ticker));
-        decisionData.setLastOperations(getLastWeekOperations(brokerAccountId, ticker, now));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.getCurrency()));
+        decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker, now));
         decisionData.setInstrument(instrument);
+        decisionData.setCommission(botConfig.getCommission());
     }
 
     private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime now) {
