@@ -60,6 +60,7 @@ class ScheduledBotPropertiesContextTest {
     void beanCreationFails_whenTickerIsNull() {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-config.candle-resolution:1min")
+                .withPropertyValues("scheduled-bot.bot-config.commission:0")
                 .withPropertyValues("scheduled-bot.bot-config.strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("ticker is mandatory"));
     }
@@ -70,8 +71,20 @@ class ScheduledBotPropertiesContextTest {
     void beanCreationFails_whenCandleResolutionIsNull() {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-config.ticker:FXCN")
+                .withPropertyValues("scheduled-bot.bot-config.commission:0")
                 .withPropertyValues("scheduled-bot.bot-config.strategy-type:cross")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("candleResolution is mandatory"));
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenCommissionIsNull() {
+        contextRunner
+                .withPropertyValues("scheduled-bot.bot-config.ticker:FXCN")
+                .withPropertyValues("scheduled-bot.bot-config.candle-resolution:1min")
+                .withPropertyValues("scheduled-bot.bot-config.strategy-type:cross")
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("commission is mandatory"));
     }
 
     @Test
@@ -81,6 +94,7 @@ class ScheduledBotPropertiesContextTest {
         contextRunner
                 .withPropertyValues("scheduled-bot.bot-config.ticker:FXCN")
                 .withPropertyValues("scheduled-bot.bot-config.candle-resolution:1min")
+                .withPropertyValues("scheduled-bot.bot-config.commission:0")
                 .run(AssertUtils.createBindValidationExceptionAssertConsumer("strategyType is mandatory"));
     }
 

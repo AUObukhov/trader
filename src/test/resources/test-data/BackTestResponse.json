@@ -3,6 +3,7 @@
     {
       "botConfig": {
         "candleResolution": "1min",
+        "commission": 0.001,
         "strategyType": "conservative",
         "strategyParams": {
           "minimumProfit": 0.01
@@ -29,6 +30,7 @@
     {
       "botConfig": {
         "candleResolution": "1min",
+        "commission": 0.002,
         "strategyType": "cross",
         "strategyParams": {
           "minimumProfit": 0.01,
@@ -60,6 +62,7 @@
     {
       "botConfig": {
         "candleResolution": "1min",
+        "commission": 0.003,
         "strategyType": "cross",
         "strategyParams": {
           "minimumProfit": 0.01,

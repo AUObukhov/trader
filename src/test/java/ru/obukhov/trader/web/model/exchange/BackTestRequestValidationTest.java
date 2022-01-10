@@ -60,7 +60,12 @@ class BackTestRequestValidationTest {
     @Test
     void validationFails_whenCandleResolutionIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.getBotConfigs().get(0).setCandleResolution(null);
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker("ticker")
+                .commission(0.003)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .build();
+        request.setBotConfigs(List.of(botConfig));
 
         AssertUtils.assertViolation(request, "candleResolution is mandatory");
     }
@@ -68,7 +73,12 @@ class BackTestRequestValidationTest {
     @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        request.getBotConfigs().get(0).setStrategyType(null);
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker("ticker")
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .build();
+        request.setBotConfigs(List.of(botConfig));
 
         AssertUtils.assertViolation(request, "strategyType is mandatory");
     }
@@ -86,7 +96,13 @@ class BackTestRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final BotConfig botConfig = new BotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.003, StrategyType.CONSERVATIVE);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .build();
         request.setBotConfigs(List.of(botConfig));
 
         return request;

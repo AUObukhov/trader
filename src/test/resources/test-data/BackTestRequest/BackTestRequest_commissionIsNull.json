@@ -9,7 +9,7 @@
     {
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
-      "commission": 0,
+      "candleResolution": "1min",
       "strategyType": "conservative",
       "strategyParams": {
         "minimumProfit": 0.01

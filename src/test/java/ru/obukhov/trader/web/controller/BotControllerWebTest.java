@@ -81,6 +81,14 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     @Test
+    void backTest_returnsBadRequest_whenCommissionIsNull() throws Exception {
+        backTest_returnsBadRequest_withError(
+                "BackTestRequest/BackTestRequest_commissionIsNull.json",
+                "commission is mandatory"
+        );
+    }
+
+    @Test
     void backTest_returnsBadRequest_whenStrategyTypeIsNull() throws Exception {
         backTest_returnsBadRequest_withError(
                 "BackTestRequest/BackTestRequest_strategyTypeIsNull.json",
@@ -120,10 +128,13 @@ class BotControllerWebTest extends ControllerWebTest {
                 BigDecimal.valueOf(100),
                 new CronExpression("0 0 0 1 * ?")
         );
-        final BotConfig botConfig1 = new BotConfig()
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CONSERVATIVE)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final Map<String, Object> strategyParams1 = Map.of("minimumProfit", 0.01);
+        final BotConfig botConfig1 = BotConfig.builder()
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.001)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .strategyParams(strategyParams1)
+                .build();
         final Balances balances1 = new Balances(
                 balanceConfig.getInitialBalance(),
                 BigDecimal.valueOf(1000),
@@ -140,17 +151,20 @@ class BotControllerWebTest extends ControllerWebTest {
                 .candles(List.of(candle))
                 .build();
 
-        final BotConfig botConfig2 = new BotConfig()
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of(
-                        "minimumProfit", 0.01,
-                        "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
-                        "smallWindow", 100,
-                        "bigWindow", 200,
-                        "indexCoefficient", 0.3,
-                        "greedy", false
-                ));
+        final Map<String, Object> strategyParams2 = Map.of(
+                "minimumProfit", 0.01,
+                "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
+                "smallWindow", 100,
+                "bigWindow", 200,
+                "indexCoefficient", 0.3,
+                "greedy", false
+        );
+        final BotConfig botConfig2 = BotConfig.builder()
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.002)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(strategyParams2)
+                .build();
         final BackTestPosition backTestPosition1 = new BackTestPosition(ticker, BigDecimal.valueOf(100000), 10);
         final Balances balances2 = new Balances(
                 balanceConfig.getInitialBalance(),
@@ -167,17 +181,21 @@ class BotControllerWebTest extends ControllerWebTest {
                 .positions(List.of(backTestPosition1))
                 .build();
 
-        final BotConfig botConfig3 = new BotConfig()
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of(
-                        "minimumProfit", 0.01,
-                        "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
-                        "smallWindow", 100,
-                        "bigWindow", 200,
-                        "indexCoefficient", 0.3,
-                        "greedy", false
-                ));
+        final Map<String, Object> strategyParams3 = Map.of(
+                "minimumProfit", 0.01,
+                "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
+                "smallWindow", 100,
+                "bigWindow", 200,
+                "indexCoefficient", 0.3,
+                "greedy", false
+        );
+        final BotConfig botConfig3 = BotConfig.builder()
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(strategyParams3)
+                .build();
+
         final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, BigDecimal.valueOf(100), 10);
         final BackTestPosition backTestPosition3 = new BackTestPosition(ticker, BigDecimal.valueOf(1000), 1);
         final Balances balances3 = new Balances(

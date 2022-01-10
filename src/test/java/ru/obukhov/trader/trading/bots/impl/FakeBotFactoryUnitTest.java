@@ -46,7 +46,11 @@ class FakeBotFactoryUnitTest {
     @ValueSource(strings = "2000124699")
     void createBot_returnsNotNull(final String brokerAccountId) {
         final String ticker = "ticker";
-        final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, 0.003);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .commission(0.003)
+                .build();
 
         final BalanceConfig balanceConfig = new BalanceConfig();
         final OffsetDateTime currentDateTime = OffsetDateTime.now();

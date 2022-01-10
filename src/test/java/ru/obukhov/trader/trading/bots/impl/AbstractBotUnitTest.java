@@ -65,10 +65,11 @@ class AbstractBotUnitTest {
         final List<Order> orders = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -86,10 +87,11 @@ class AbstractBotUnitTest {
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -104,10 +106,11 @@ class AbstractBotUnitTest {
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -126,10 +129,11 @@ class AbstractBotUnitTest {
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
 
@@ -155,10 +159,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -199,10 +205,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -242,10 +250,12 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final BotConfig botConfig = new BotConfig()
-                .setBrokerAccountId(brokerAccountId)
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.003)
+                .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 

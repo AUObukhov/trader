@@ -64,25 +64,28 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_savesMultipleResults() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig1 = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution.HOUR)
-                .setStrategyType(StrategyType.CONSERVATIVE)
-                .setStrategyParams(Map.of());
+        final BotConfig botConfig1 = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution.HOUR)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .strategyParams(Map.of())
+                .build();
         final BackTestResult result1 = createBackTestResult(botConfig1);
 
-        final BotConfig botConfig2 = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig2 = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result2 = createBackTestResult(botConfig2);
 
-        final BotConfig botConfig3 = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5));
+        final BotConfig botConfig3 = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5))
+                .build();
         final BackTestResult result3 = createBackTestResult(botConfig3);
         final List<BackTestResult> results = List.of(result1, result2, result3);
 
@@ -119,11 +122,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result = createBackTestResult(botConfig);
 
         excelService.saveBackTestResults(List.of(result));
@@ -152,11 +156,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result = createBackTestResult(botConfig);
         result.setError(StringUtils.EMPTY);
 
@@ -187,11 +192,12 @@ class ExcelServiceImplUnitTest {
         final String ticker = "ticker";
         final String error = "error";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result = createBackTestResult(botConfig);
         result.setError(error);
 
@@ -224,11 +230,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result = createBackTestResult(botConfig);
         result.setCandles(null);
 
@@ -259,11 +266,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of("minimumProfit", 0.01));
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Map.of("minimumProfit", 0.01))
+                .build();
         final BackTestResult result = createBackTestResult(botConfig);
         result.setCandles(Collections.emptyList());
 
@@ -296,11 +304,12 @@ class ExcelServiceImplUnitTest {
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
         final String ticker = "ticker";
 
-        final BotConfig botConfig = new BotConfig()
-                .setTicker(ticker)
-                .setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of());
+        final BotConfig botConfig = BotConfig.builder()
+                .ticker(ticker)
+                .candleResolution(CandleResolution._1MIN)
+                .strategyType(StrategyType.CROSS)
+                .strategyParams(Collections.emptyMap())
+                .build();
         final BackTestResult result1 = createBackTestResult(botConfig);
         final BackTestResult result2 = createBackTestResult(botConfig);
         final BackTestResult result3 = createBackTestResult(botConfig);

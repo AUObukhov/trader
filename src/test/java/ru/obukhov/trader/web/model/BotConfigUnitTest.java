@@ -20,57 +20,108 @@ class BotConfigUnitTest {
     static Stream<Arguments> getData_forEquals() {
         return Stream.of(
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
                         true
                 ),
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._2MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._2MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
                         false
                 ),
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CROSS)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.1)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.2)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
                         false
                 ),
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CROSS)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
                         false
                 ),
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param", 2)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1))
+                                .build(),
                         false
                 ),
                 Arguments.of(
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 2)),
-                        new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                                .setStrategyType(StrategyType.CONSERVATIVE)
-                                .setStrategyParams(Map.of("param1", 1, "param2", 22)),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param", 2))
+                                .build(),
+                        false
+                ),
+                Arguments.of(
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .candleResolution(CandleResolution._1MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 22))
+                                .build(),
                         false
                 )
         );
@@ -88,32 +139,39 @@ class BotConfigUnitTest {
 
     @Test
     void testHashCode() {
-        BotConfig config1 = new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CONSERVATIVE)
-                .setStrategyParams(Map.of("param1", 1, "param2", 2));
-        BotConfig config2 = new BotConfig().setCandleResolution(CandleResolution._1MIN)
-                .setStrategyType(StrategyType.CONSERVATIVE)
-                .setStrategyParams(Map.of("param1", 1, "param2", 2));
+        BotConfig config1 = BotConfig.builder()
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.0)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .strategyParams(Map.of("param1", 1, "param2", 2))
+                .build();
+        BotConfig config2 = BotConfig.builder()
+                .candleResolution(CandleResolution._1MIN)
+                .commission(0.0)
+                .strategyType(StrategyType.CONSERVATIVE)
+                .strategyParams(Map.of("param1", 1, "param2", 2))
+                .build();
 
         Assertions.assertEquals(config1.hashCode(), config2.hashCode());
     }
 
     @Test
     void testToString() {
-        final BotConfig config = new BotConfig()
-                .setBrokerAccountId("2000124699")
-                .setTicker("ticker")
-                .setCandleResolution(CandleResolution._1MIN)
-                .setCommission(0.003)
-                .setStrategyType(StrategyType.CROSS)
-                .setStrategyParams(Map.of(
+        final BotConfig config = new BotConfig(
+                "2000124699",
+                "ticker",
+                CandleResolution._1MIN,
+                0.003,
+                StrategyType.CROSS,
+                Map.of(
                         "minimumProfit", 0.01,
                         "movingAverageType", MovingAverageType.LINEAR_WEIGHTED,
                         "smallWindow", 100,
                         "bigWindow", 200,
                         "indexCoefficient", 0.3,
                         "greedy", false
-                ));
+                )
+        );
 
         final String string = config.toString();
 

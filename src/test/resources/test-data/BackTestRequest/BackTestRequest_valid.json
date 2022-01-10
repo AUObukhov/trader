@@ -12,6 +12,7 @@
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
       "candleResolution": "1min",
+      "commission": 0,
       "strategyType": "conservative",
       "strategyParams": {
         "minimumProfit": 0.01
@@ -21,6 +22,7 @@
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
       "candleResolution": "1min",
+      "commission": 0,
       "strategyType": "cross",
       "strategyParams": {
         "minimumProfit": 0.01,
@@ -34,6 +36,7 @@
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
       "candleResolution": "1min",
+      "commission": 0,
       "strategyType": "cross",
       "strategyParams": {
         "minimumProfit": 0.01,

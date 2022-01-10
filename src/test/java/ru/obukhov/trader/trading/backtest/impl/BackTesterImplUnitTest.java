@@ -27,8 +27,10 @@ import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
+import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import ru.tinkoff.invest.openapi.model.rest.Operation;
@@ -127,9 +129,19 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
+        final String brokerAccountId = "2000124699";
         final String ticker = "ticker";
+        final CandleResolution candleResolution = CandleResolution._1MIN;
         final Double commission = 0.003;
-        final BotConfig botConfig = TestData.createBotConfig("2000124699", ticker, commission);
+        final StrategyType strategyType = StrategyType.CONSERVATIVE;
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .candleResolution(candleResolution)
+                .commission(commission)
+                .strategyType(strategyType)
+                .strategyParams(Collections.emptyMap())
+                .build();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
         final List<BotConfig> botConfigs = List.of(botConfig);
 
@@ -162,10 +174,9 @@ class BackTesterImplUnitTest {
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
-                "^Back test for '\\[brokerAccountId=2000124699, ticker=%s, candleResolution=1min, commission=%.3f, strategyType=conservative, " +
-                        "strategyParams=\\{\\}\\]' " +
-                        "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                ticker, commission, exceptionMessage
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%.3f, strategyType=%s, " +
+                        "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
+                brokerAccountId, ticker, candleResolution, commission, strategyType, exceptionMessage
         );
         AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
@@ -314,7 +325,11 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
         final int positionLotsCount1 = 2;
 
-        final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
+        final BotConfig botConfig1 = BotConfig.builder()
+                .brokerAccountId(brokerAccountId1)
+                .ticker(ticker1)
+                .commission(commission1)
+                .build();
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
         final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
@@ -340,7 +355,11 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
         final int positionLotsCount2 = 2;
 
-        final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+        final BotConfig botConfig2 = BotConfig.builder()
+                .brokerAccountId(brokerAccountId2)
+                .ticker(ticker2)
+                .commission(commission2)
+                .build();
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
         final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
@@ -936,9 +955,18 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId1 = null;
         final String ticker1 = "ticker1";
+        final CandleResolution candleResolution1 = CandleResolution._1MIN;
         final Double commission1 = 0.003;
+        final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
-        final BotConfig botConfig1 = TestData.createBotConfig(brokerAccountId1, ticker1, commission1);
+        final BotConfig botConfig1 = BotConfig.builder()
+                .brokerAccountId(brokerAccountId1)
+                .ticker(ticker1)
+                .candleResolution(candleResolution1)
+                .commission(commission1)
+                .strategyType(strategyType1)
+                .strategyParams(Collections.emptyMap())
+                .build();
 
         mockFakeBot(botConfig1, balanceConfig, from);
 
@@ -948,9 +976,18 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker2";
+        final CandleResolution candleResolution2 = CandleResolution._1MIN;
         final Double commission2 = 0.001;
+        final StrategyType strategyType2 = StrategyType.CROSS;
 
-        final BotConfig botConfig2 = TestData.createBotConfig(brokerAccountId2, ticker2, commission2);
+        final BotConfig botConfig2 = BotConfig.builder()
+                .brokerAccountId(brokerAccountId2)
+                .ticker(ticker2)
+                .candleResolution(candleResolution2)
+                .commission(commission2)
+                .strategyType(strategyType2)
+                .strategyParams(Collections.emptyMap())
+                .build();
 
         mockFakeBot(botConfig2, balanceConfig, from);
 
@@ -969,16 +1006,16 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         final String expectedErrorPattern1 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=%s, strategyType=conservative, " +
-                        "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId1, ticker1, commission1, mockedExceptionMessage1
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                        "failed within 00:00:00.\\d\\d\\d with error: %s$",
+                brokerAccountId1, ticker1, candleResolution1, commission1, strategyType1, mockedExceptionMessage1
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(0).getError(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=1min, commission=%s, strategyType=conservative, " +
-                        "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId2, ticker2, commission2, mockedExceptionMessage2
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                        "failed within 00:00:00.\\d\\d\\d with error: %s$",
+                brokerAccountId2, ticker2, candleResolution2, commission2, strategyType2, mockedExceptionMessage2
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(1).getError(), expectedErrorPattern2);
     }
@@ -1060,7 +1097,11 @@ class BackTesterImplUnitTest {
             final double currentPrice,
             final Operation operation
     ) {
-        final BotConfig botConfig = TestData.createBotConfig(brokerAccountId, ticker, commission);
+        final BotConfig botConfig = BotConfig.builder()
+                .brokerAccountId(brokerAccountId)
+                .ticker(ticker)
+                .commission(commission)
+                .build();
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
