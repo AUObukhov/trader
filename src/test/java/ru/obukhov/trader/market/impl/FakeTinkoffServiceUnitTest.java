@@ -226,7 +226,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), MARKET_PROPERTIES.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), MARKET_PROPERTIES.getWorkSchedule().getStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }
@@ -250,7 +250,7 @@ class FakeTinkoffServiceUnitTest {
 
         final OffsetDateTime nextMinuteDateTime = service.nextMinute();
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), MARKET_PROPERTIES.getWorkStartTime());
+        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), MARKET_PROPERTIES.getWorkSchedule().getStartTime());
         Assertions.assertEquals(expected, nextMinuteDateTime);
         Assertions.assertEquals(expected, service.getCurrentDateTime());
     }

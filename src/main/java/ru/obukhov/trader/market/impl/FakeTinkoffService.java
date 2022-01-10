@@ -36,9 +36,7 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -95,9 +93,7 @@ public class FakeTinkoffService implements TinkoffService {
             final Currency currency,
             final BalanceConfig balanceConfig
     ) {
-        final OffsetTime workStartTime = marketProperties.getWorkStartTime();
-        final Duration workDuration = marketProperties.getWorkDuration();
-        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, workStartTime, workDuration);
+        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
 
         return new FakeContext(ceilingWorkTime, brokerAccountId, currency, initialBalance);
@@ -127,8 +123,7 @@ public class FakeTinkoffService implements TinkoffService {
     public OffsetDateTime nextMinute() {
         final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(
                 fakeContext.getCurrentDateTime(),
-                marketProperties.getWorkStartTime(),
-                marketProperties.getWorkDuration()
+                marketProperties.getWorkSchedule()
         );
         fakeContext.setCurrentDateTime(nextWorkMinute);
 

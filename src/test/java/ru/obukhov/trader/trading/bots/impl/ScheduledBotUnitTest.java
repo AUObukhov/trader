@@ -12,6 +12,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
@@ -95,8 +96,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().plusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().plusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             bot.tick();
 
@@ -110,8 +111,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -134,8 +135,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -156,8 +157,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -179,8 +180,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -205,8 +206,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -236,8 +237,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -265,8 +266,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
 
@@ -293,8 +294,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
 
@@ -324,8 +325,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
 
@@ -354,8 +355,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
             mockBotConfig(null, ticker);
@@ -374,8 +375,8 @@ class ScheduledBotUnitTest {
         final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
         try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+            final WorkSchedule workSchedule = new WorkSchedule(mockedNow.toOffsetTime().minusHours(1), Duration.ofHours(8));
+            Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
             final String ticker = "ticker";
 
@@ -392,8 +393,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
         mockBotConfig(null, ticker);
@@ -422,8 +423,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
         final int lotSize = 10;
@@ -449,8 +450,8 @@ class ScheduledBotUnitTest {
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
-        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
         final int lotSize = 10;

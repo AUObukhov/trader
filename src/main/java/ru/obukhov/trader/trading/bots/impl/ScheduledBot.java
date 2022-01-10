@@ -43,7 +43,7 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        if (!DateUtils.isWorkTimeNow(marketProperties.getWorkStartTime(), marketProperties.getWorkDuration())) {
+        if (!DateUtils.isWorkTimeNow(marketProperties.getWorkSchedule())) {
             log.debug("Not work time. Do nothing");
             return;
         }

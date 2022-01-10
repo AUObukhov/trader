@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -286,8 +287,9 @@ public class TestData {
 
     public static MarketProperties createMarketProperties() {
         final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
+        final WorkSchedule workSchedule = new WorkSchedule(workStartTime, Duration.ofHours(9));
         final OffsetDateTime startDate = DateTimeTestData.createDateTime(2000, 1, 1);
-        return new MarketProperties(workStartTime, Duration.ofHours(9), 7, startDate);
+        return new MarketProperties(workSchedule, 7, startDate);
     }
 
     // region BalanceConfig creation

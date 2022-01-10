@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.DayOfWeek;
@@ -197,12 +198,11 @@ public class DateUtils {
     }
 
     /**
-     * @param startTime start time of work
-     * @param duration  duration or work period
-     * @return true if today is work day and current time is between {@code startTime} and {@code startTime + duration}
+     * @return true if today is work day and current time is between {@code workSchedule.startTime} and
+     * {@code workSchedule.startTime + workSchedule.duration}
      */
-    public static boolean isWorkTimeNow(final OffsetTime startTime, final Duration duration) {
-        return isWorkTime(OffsetDateTime.now(), startTime, duration);
+    public static boolean isWorkTimeNow(final WorkSchedule workSchedule) {
+        return isWorkTime(OffsetDateTime.now(), workSchedule);
     }
 
     /**
@@ -210,17 +210,13 @@ public class DateUtils {
      * {@code workStartTime + workTimeDuration} excluded and not at weekend
      * (except Saturday, when {@code workStartTime + workTimeDuration} is after midnight)
      *
-     * @param dateTime         checked dateTime
-     * @param workStartTime    start time of work
-     * @param workTimeDuration duration of work period, must be positive and less than 1 day
+     * @param dateTime checked dateTime
      * @return true if given {@code dateTime} is work time, or else false
      * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
-    public static boolean isWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
-        validateWorkTimeDuration(workTimeDuration);
-
-        final OffsetTime workEndTime = workStartTime.plus(workTimeDuration);
-        final boolean livingAfterMidnight = workStartTime.isAfter(workEndTime);
+    public static boolean isWorkTime(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
+        final OffsetTime workEndTime = workSchedule.getEndTime();
+        final boolean livingAfterMidnight = workSchedule.getStartTime().isAfter(workEndTime);
         final OffsetTime time = dateTime.toOffsetTime();
 
         if (!isWorkDay(dateTime)) {
@@ -228,41 +224,33 @@ public class DateUtils {
         }
 
         if (livingAfterMidnight) {
-            return !time.isBefore(workStartTime) || time.isBefore(workEndTime);
+            return !time.isBefore(workSchedule.getStartTime()) || time.isBefore(workEndTime);
         } else {
-            return !time.isBefore(workStartTime) && time.isBefore(workEndTime);
+            return !time.isBefore(workSchedule.getStartTime()) && time.isBefore(workEndTime);
         }
     }
 
     /**
-     * @param workStartTime    start time of work
-     * @param workTimeDuration duration of work period
      * @return first minute of work time equal to or after given {@code dateTime}
      */
-    public static OffsetDateTime getCeilingWorkTime(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
-        validateWorkTimeDuration(workTimeDuration);
-
-        return isWorkTime(dateTime, workStartTime, workTimeDuration)
+    public static OffsetDateTime getCeilingWorkTime(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
+        return isWorkTime(dateTime, workSchedule)
                 ? dateTime
-                : toWorkStartTime(dateTime, workStartTime);
+                : toWorkStartTime(dateTime, workSchedule.getStartTime());
     }
 
     /**
-     * @param workStartTime    start time of work
-     * @param workTimeDuration duration of work period
      * @return next minute of work time after {@code dateTime}
      */
-    public static OffsetDateTime getNextWorkMinute(final OffsetDateTime dateTime, final OffsetTime workStartTime, final Duration workTimeDuration) {
-        validateWorkTimeDuration(workTimeDuration);
-
-        if (isWorkTime(dateTime, workStartTime, workTimeDuration)) {
+    public static OffsetDateTime getNextWorkMinute(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
+        if (isWorkTime(dateTime, workSchedule)) {
             final OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
-            if (isWorkTime(nextDateTime, workStartTime, workTimeDuration)) {
+            if (isWorkTime(nextDateTime, workSchedule)) {
                 return nextDateTime;
             }
         }
 
-        return toWorkStartTime(dateTime, workStartTime);
+        return toWorkStartTime(dateTime, workSchedule.getStartTime());
     }
 
     private static OffsetDateTime toWorkStartTime(final OffsetDateTime dateTime, final OffsetTime workStartTime) {
@@ -270,11 +258,6 @@ public class DateUtils {
                 ? dateTime
                 : getNextWorkDay(dateTime);
         return setTime(workDay, workStartTime);
-    }
-
-    private static void validateWorkTimeDuration(final Duration workTimeDuration) {
-        Assert.isTrue(workTimeDuration.toNanos() > 0, "workTimeDuration must be positive");
-        Assert.isTrue(Duration.ofDays(1).compareTo(workTimeDuration) > 0, "workTimeDuration must be less than 1 day");
     }
 
     /**

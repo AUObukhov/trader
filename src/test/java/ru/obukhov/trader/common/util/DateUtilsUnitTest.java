@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -504,46 +505,6 @@ class DateUtilsUnitTest {
 
     // region isWorkTime tests
 
-    @Test
-    void isWorkTime_throwsIllegalArgumentException_whenDurationIsNegative() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofHours(-1);
-
-        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be positive");
-    }
-
-    @Test
-    void isWorkTime_throwsIllegalArgumentException_whenDurationIsZero() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofHours(0);
-
-        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be positive");
-    }
-
-    @Test
-    void isWorkTime_throwsIllegalArgumentException_whenDurationIsOneDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofDays(1);
-
-        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be less than 1 day");
-    }
-
-    @Test
-    void isWorkTime_throwsIllegalArgumentException_whenDurationIsMoreThanOneDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofHours(25);
-
-        final Executable executable = () -> DateUtils.isWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be less than 1 day");
-    }
-
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_isWorkTime() {
         return Stream.of(
@@ -693,7 +654,8 @@ class DateUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_isWorkTime")
     void isWorkTime(final OffsetDateTime dateTime, final OffsetTime startTime, final Duration duration, final boolean expectedResult) {
-        final boolean result = DateUtils.isWorkTime(dateTime, startTime, duration);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
+        final boolean result = DateUtils.isWorkTime(dateTime, workSchedule);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -702,49 +664,14 @@ class DateUtilsUnitTest {
 
     // region getCeilingWorkTime tests
 
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException() {
-        return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
-                        DateTimeTestData.createTime(10, 0, 0),
-                        Duration.ofHours(0),
-                        "workTimeDuration must be positive"
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
-                        DateTimeTestData.createTime(10, 0, 0),
-                        Duration.ofHours(24),
-                        "workTimeDuration must be less than 1 day"
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
-                        DateTimeTestData.createTime(10, 0, 0),
-                        Duration.ofHours(25),
-                        "workTimeDuration must be less than 1 day"
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException")
-    void getCeilingWorkTime_throwsIllegalArgumentException(
-            final OffsetDateTime dateTime,
-            final OffsetTime startTime,
-            final Duration duration,
-            final String expectedErrorMessage
-    ) {
-        final Executable executable = () -> DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedErrorMessage);
-    }
-
     @Test
     void getCeilingWorkTime_returnsCurrentMinute_whenMiddleOfWorkDay() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         Assertions.assertEquals(dateTime, nextWorkMinute);
     }
@@ -754,8 +681,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -766,8 +694,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 19, 20);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -778,8 +707,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 19);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -790,8 +720,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 12);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(2), startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -802,8 +733,9 @@ class DateUtilsUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 9);
         final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
         final Duration duration = Duration.ofHours(9);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
 
-        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, startTime, duration);
+        final OffsetDateTime nextWorkMinute = DateUtils.getCeilingWorkTime(dateTime, workSchedule);
 
         final OffsetDateTime expected = DateUtils.setTime(dateTime, startTime);
         Assertions.assertEquals(expected, nextWorkMinute);
@@ -812,28 +744,6 @@ class DateUtilsUnitTest {
     // endregion
 
     // region getNextWorkMinute tests
-
-    @Test
-    void getNextWorkMinute_throwsIllegalArgumentException_whenWorkTimeDurationIsNegative() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetTime startTime = DateTimeTestData.createTime(10, 0, 0);
-        final Duration duration = Duration.ofHours(-1);
-
-        final Executable executable = () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "workTimeDuration must be positive");
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_validateWorkTimeDuration_caller_throwsIllegalArgumentException")
-    void getNextWorkMinute_throwsIllegalArgumentException(
-            final OffsetDateTime dateTime,
-            final OffsetTime startTime,
-            final Duration duration,
-            final String expectedErrorMessage
-    ) {
-        final Executable executable = () -> DateUtils.getNextWorkMinute(dateTime, startTime, duration);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedErrorMessage);
-    }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetNextWorkMinute() {
@@ -880,7 +790,8 @@ class DateUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forGetNextWorkMinute")
     void getNextWorkMinute(final OffsetDateTime dateTime, final OffsetTime startTime, final Duration duration, final OffsetDateTime expectedResult) {
-        final OffsetDateTime result = DateUtils.getNextWorkMinute(dateTime, startTime, duration);
+        final WorkSchedule workSchedule = new WorkSchedule(startTime, duration);
+        final OffsetDateTime result = DateUtils.getNextWorkMinute(dateTime, workSchedule);
 
         Assertions.assertEquals(expectedResult, result);
     }
