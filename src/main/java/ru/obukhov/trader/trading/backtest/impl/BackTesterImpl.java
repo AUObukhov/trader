@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.backtest.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
@@ -26,7 +25,6 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
-import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -145,9 +143,8 @@ public class BackTesterImpl implements BackTester {
         OffsetDateTime previousStartTime = null;
 
         do {
-            final DecisionData decisionData = fakeBot.processBotConfig(botConfig, previousStartTime, fakeBot.getCurrentDateTime());
-            final List<Candle> currentCandles = decisionData.getCurrentCandles();
-            if (CollectionUtils.isEmpty(currentCandles)) {
+            final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, previousStartTime, fakeBot.getCurrentDateTime());
+            if (currentCandles.isEmpty()) {
                 previousStartTime = null;
             } else {
                 previousStartTime = currentCandles.get(0).getTime();

@@ -27,7 +27,6 @@ import ru.obukhov.trader.trading.bots.impl.FakeBotFactory;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
-import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
@@ -320,7 +319,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
         final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
 
-        mockDecisionDataWithCandles(botConfig1, fakeBot1, prices1);
+        mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
         mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.getCurrency(), from, balanceConfig.getInitialBalance());
@@ -346,7 +345,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
         final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
 
-        mockDecisionDataWithCandles(botConfig2, fakeBot2, prices2);
+        mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
         mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.getCurrency(), from, balanceConfig.getInitialBalance());
@@ -432,7 +431,7 @@ class BackTesterImplUnitTest {
                 interval,
                 BigDecimal.valueOf(10000),
                 positionLotsCount2,
-                null,
+                Collections.emptyMap(),
                 currentPrice2,
                 null
         );
@@ -692,7 +691,7 @@ class BackTesterImplUnitTest {
                 interval,
                 BigDecimal.valueOf(20000),
                 null,
-                null,
+                Collections.emptyMap(),
                 300,
                 null
         );
@@ -772,7 +771,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                null,
+                Collections.emptyMap(),
                 200,
                 null
         );
@@ -836,7 +835,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                null,
+                Collections.emptyMap(),
                 150,
                 null
         );
@@ -899,7 +898,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                null,
+                Collections.emptyMap(),
                 300,
                 null
         );
@@ -1028,7 +1027,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 null,
-                null,
+                Collections.emptyMap(),
                 50,
                 null
         );
@@ -1068,7 +1067,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
         final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
-        mockDecisionDataWithCandles(botConfig, fakeBot, prices);
+        mockBotCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
         mockInvestments(fakeBot, brokerAccountId, marketInstrument.getCurrency(), interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
@@ -1094,24 +1093,16 @@ class BackTesterImplUnitTest {
         return fakeBot;
     }
 
-    private void mockDecisionDataWithCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<Double, OffsetDateTime> prices) {
-        if (prices == null) {
-            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
-                    .thenReturn(new DecisionData());
-        } else if (prices.isEmpty()) {
-            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
-                    .thenReturn(TestData.createDecisionData());
-        } else {
-            Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
-                    .thenReturn(new DecisionData());
-
+    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<Double, OffsetDateTime> prices) {
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
+                .thenReturn(Collections.emptyList());
+        if (!prices.isEmpty()) {
             for (final Map.Entry<Double, OffsetDateTime> entry : prices.entrySet()) {
                 final OffsetDateTime dateTime = entry.getValue();
                 final Candle candle = TestData.createCandleWithClosePriceAndTime(entry.getKey(), dateTime);
-                final DecisionData decisionData = TestData.createDecisionData(candle);
 
                 Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.eq(dateTime)))
-                        .thenReturn(decisionData);
+                        .thenReturn(List.of(candle));
             }
         }
     }

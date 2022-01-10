@@ -56,7 +56,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNothing_andReturnsEmptyDecisionData_whenThereAreOrders(@Nullable final String brokerAccountId) {
+    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
 
         final List<Order> orders = List.of(new Order());
@@ -67,13 +67,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        Assertions.assertNull(decisionData.getBalance());
-        Assertions.assertNull(decisionData.getPosition());
-        Assertions.assertNull(decisionData.getCurrentCandles());
-        Assertions.assertNull(decisionData.getLastOperations());
-        Assertions.assertNull(decisionData.getInstrument());
+        Assertions.assertTrue(candles.isEmpty());
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         verifyNoOrdersMade();
@@ -92,9 +88,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        Assertions.assertNotNull(decisionData);
+        Assertions.assertNotNull(candles);
 
         verifyNoOrdersMade();
     }
@@ -110,9 +106,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        Assertions.assertNotNull(decisionData);
+        Assertions.assertNotNull(candles);
 
         verifyNoOrdersMade();
     }
@@ -132,9 +128,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, previousStartTime, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime, OffsetDateTime.now());
 
-        Assertions.assertNotNull(decisionData);
+        Assertions.assertNotNull(candles);
 
         verifyNoOrdersMade();
     }
@@ -159,19 +155,19 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        Assertions.assertNotNull(decisionData);
+        Assertions.assertNotNull(candles);
 
         Mockito.verify(strategy, Mockito.times(1))
-                .decide(Mockito.eq(decisionData), Mockito.any(StrategyCache.class));
+                .decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class));
         verifyNoOrdersMade();
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
+    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -201,13 +197,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        AssertUtils.assertEquals(balance, decisionData.getBalance());
-        Assertions.assertEquals(position, decisionData.getPosition());
-        AssertUtils.assertListsAreEqual(currentCandles, decisionData.getCurrentCandles());
-        AssertUtils.assertListsAreEqual(operations, decisionData.getLastOperations());
-        Assertions.assertEquals(instrument, decisionData.getInstrument());
+        AssertUtils.assertListsAreEqual(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
@@ -216,7 +208,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_returnsFilledData_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
+    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -246,13 +238,9 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final DecisionData decisionData = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
 
-        AssertUtils.assertEquals(balance, decisionData.getBalance());
-        Assertions.assertEquals(position, decisionData.getPosition());
-        AssertUtils.assertListsAreEqual(currentCandles, decisionData.getCurrentCandles());
-        AssertUtils.assertListsAreEqual(operations, decisionData.getLastOperations());
-        Assertions.assertEquals(instrument, decisionData.getInstrument());
+        AssertUtils.assertListsAreEqual(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);

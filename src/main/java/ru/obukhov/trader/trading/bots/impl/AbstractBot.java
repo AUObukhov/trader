@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -24,6 +23,7 @@ import ru.tinkoff.invest.openapi.model.rest.Order;
 import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -41,8 +41,7 @@ public abstract class AbstractBot implements Bot {
     protected final StrategyCache strategyCache;
 
     @Override
-    @NotNull
-    public DecisionData processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
         final DecisionData decisionData = new DecisionData();
 
         final String ticker = botConfig.getTicker();
@@ -60,11 +59,11 @@ public abstract class AbstractBot implements Bot {
                 final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(botConfig.getBrokerAccountId(), ticker, decision);
             }
+            return currentCandles;
         } else {
             log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
+            return Collections.emptyList();
         }
-
-        return decisionData;
     }
 
     private void fillDecisionData(

@@ -1,14 +1,13 @@
 package ru.obukhov.trader.trading.bots.interfaces;
 
-import org.jetbrains.annotations.NotNull;
-import ru.obukhov.trader.trading.model.DecisionData;
+import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.web.model.BotConfig;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public interface Bot {
 
-    @NotNull
-    DecisionData processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now);
+    List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now);
 
 }
