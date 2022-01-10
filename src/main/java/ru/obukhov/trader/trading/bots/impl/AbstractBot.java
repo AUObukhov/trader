@@ -27,6 +27,10 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Contains method for trading.
+ * Descendants can define own invocation order and frequency.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractBot implements Bot {
@@ -42,6 +46,14 @@ public abstract class AbstractBot implements Bot {
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
 
+    /**
+     * Perform one trading step
+     *
+     * @param botConfig         bot configuration
+     * @param previousStartTime dateTime of previous call of the method. Null for the first call.
+     *                          Used to prevent repeated processing when no new candle
+     * @return list of last candles
+     */
     @Override
     public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
