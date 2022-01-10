@@ -417,7 +417,10 @@ public class AssertUtils {
 
         final String message = getBindValidationExceptionMessage(startupFailure);
         for (final String substring : messageSubstrings) {
-            Assertions.assertTrue(message.contains(substring));
+            if (!message.contains(substring)) {
+                String failMessage = String.format("Expected but not found substring '%s' in message '%s'", substring, message);
+                Assertions.fail(failMessage);
+            }
         }
     }
 
