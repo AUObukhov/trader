@@ -38,7 +38,7 @@ public class FakeBotFactory {
         final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 
-        return new FakeBot(fakeMarketService, fakeOperationsService, fakeOrdersService, fakePortfolioService, strategy, fakeTinkoffService);
+        return new FakeBot(fakeMarketService, fakeOperationsService, fakeOrdersService, fakePortfolioService, fakeTinkoffService, strategy);
     }
 
     private FakeTinkoffService createFakeTinkoffService(

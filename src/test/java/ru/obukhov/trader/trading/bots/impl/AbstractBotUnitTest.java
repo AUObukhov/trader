@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -40,8 +41,6 @@ import java.util.List;
 class AbstractBotUnitTest {
 
     @Mock
-    private TradingStrategy strategy;
-    @Mock
     private MarketService marketService;
     @Mock
     private OperationsService operationsService;
@@ -49,6 +48,10 @@ class AbstractBotUnitTest {
     private OrdersService ordersService;
     @Mock
     private PortfolioService portfolioService;
+    @Mock
+    private TinkoffService tinkoffService;
+    @Mock
+    private TradingStrategy strategy;
 
     @InjectMocks
     private TestBot bot;
@@ -67,7 +70,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         Assertions.assertTrue(candles.isEmpty());
 
@@ -88,7 +91,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         Assertions.assertNotNull(candles);
 
@@ -106,7 +109,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         Assertions.assertNotNull(candles);
 
@@ -128,7 +131,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
 
         Assertions.assertNotNull(candles);
 
@@ -147,6 +150,8 @@ class AbstractBotUnitTest {
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
@@ -155,7 +160,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         Assertions.assertNotNull(candles);
 
@@ -188,6 +193,8 @@ class AbstractBotUnitTest {
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+
         final Decision decision = new Decision(DecisionAction.BUY, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
@@ -197,7 +204,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         AssertUtils.assertListsAreEqual(currentCandles, candles);
 
@@ -229,6 +236,8 @@ class AbstractBotUnitTest {
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
+        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+
         final Decision decision = new Decision(DecisionAction.SELL, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
@@ -238,7 +247,7 @@ class AbstractBotUnitTest {
                 .setTicker(ticker)
                 .setCandleResolution(CandleResolution._1MIN);
 
-        final List<Candle> candles = bot.processBotConfig(botConfig, null, OffsetDateTime.now());
+        final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
         AssertUtils.assertListsAreEqual(currentCandles, candles);
 
@@ -261,13 +270,14 @@ class AbstractBotUnitTest {
 
     private static class TestBot extends AbstractBot {
         public TestBot(
-                final TradingStrategy strategy,
                 final MarketService marketService,
                 final OperationsService operationsService,
                 final OrdersService ordersService,
-                final PortfolioService portfolioService
+                final PortfolioService portfolioService,
+                final TinkoffService tinkoffService,
+                final TradingStrategy strategy
         ) {
-            super(marketService, operationsService, ordersService, portfolioService, strategy, new TestStrategyCache());
+            super(marketService, operationsService, ordersService, portfolioService, tinkoffService, strategy, new TestStrategyCache());
         }
     }
 

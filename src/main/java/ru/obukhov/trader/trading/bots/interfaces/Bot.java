@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface Bot {
 
-    List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now);
+    List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime);
 
 }

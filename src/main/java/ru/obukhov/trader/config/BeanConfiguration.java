@@ -73,15 +73,17 @@ public class BeanConfiguration {
             final OperationsService operationsService,
             final OrdersService ordersService,
             final PortfolioService portfolioService,
+            final RealTinkoffService realTinkoffService,
+            final TradingStrategyFactory strategyFactory,
             final ScheduledBotProperties scheduledBotProperties,
-            final MarketProperties marketProperties,
-            final TradingStrategyFactory strategyFactory
+            final MarketProperties marketProperties
     ) {
         return new ScheduledBot(
                 marketService,
                 operationsService,
                 ordersService,
                 portfolioService,
+                realTinkoffService,
                 strategyFactory.createStrategy(scheduledBotProperties.getBotConfig()),
                 scheduledBotProperties,
                 marketProperties

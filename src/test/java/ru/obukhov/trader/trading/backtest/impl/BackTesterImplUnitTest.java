@@ -136,7 +136,7 @@ class BackTesterImplUnitTest {
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, from);
 
         final String exceptionMessage = "exception message";
-        Mockito.when(fakeBot.processBotConfig(botConfig, null, fakeBot.getCurrentDateTime()))
+        Mockito.when(fakeBot.processBotConfig(botConfig, null))
                 .thenThrow(new IllegalArgumentException(exceptionMessage));
 
         // act
@@ -185,13 +185,13 @@ class BackTesterImplUnitTest {
         final BigDecimal finalBalance1 = BigDecimal.valueOf(2000);
         final int finalPositionLotsCount1 = 8;
 
-        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
-        prices1.put(1000.0, from.plusMinutes(10));
-        prices1.put(1001.0, from.plusMinutes(20));
-        prices1.put(1002.0, from.plusMinutes(30));
-        prices1.put(1003.0, from.plusMinutes(40));
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 1000.0);
+        prices1.put(from.plusMinutes(20), 1001.0);
+        prices1.put(from.plusMinutes(30), 1002.0);
+        prices1.put(from.plusMinutes(40), 1003.0);
         final double finalPrice1 = 1004.0;
-        prices1.put(finalPrice1, from.plusMinutes(50));
+        prices1.put(from.plusMinutes(50), finalPrice1);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 null,
@@ -209,13 +209,13 @@ class BackTesterImplUnitTest {
         final BigDecimal finalBalance2 = BigDecimal.valueOf(100);
         final int finalPositionLotsCount2 = 5;
 
-        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
-        prices2.put(2000.0, from.plusMinutes(100));
-        prices2.put(2001.0, from.plusMinutes(200));
-        prices2.put(2002.0, from.plusMinutes(300));
-        prices2.put(2003.0, from.plusMinutes(400));
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(100), 2000.0);
+        prices2.put(from.plusMinutes(200), 2001.0);
+        prices2.put(from.plusMinutes(300), 2002.0);
+        prices2.put(from.plusMinutes(400), 2003.0);
         final double finalPrice2 = 2004.0;
-        prices2.put(finalPrice2, from.plusMinutes(500));
+        prices2.put(from.plusMinutes(500), finalPrice2);
 
         final BotConfig botConfig2 = arrangeBackTest(
                 "2000124699",
@@ -304,12 +304,12 @@ class BackTesterImplUnitTest {
         final String ticker1 = "ticker1";
         final Double commission1 = 0.003;
 
-        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
-        prices1.put(100.0, from.plusMinutes(10));
-        prices1.put(200.0, from.plusMinutes(20));
-        prices1.put(300.0, from.plusMinutes(30));
-        prices1.put(400.0, from.plusMinutes(40));
-        prices1.put(500.0, from.plusMinutes(50));
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 100.0);
+        prices1.put(from.plusMinutes(20), 200.0);
+        prices1.put(from.plusMinutes(30), 300.0);
+        prices1.put(from.plusMinutes(40), 400.0);
+        prices1.put(from.plusMinutes(50), 500.0);
 
         final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
         final int positionLotsCount1 = 2;
@@ -330,12 +330,12 @@ class BackTesterImplUnitTest {
         final String ticker2 = "ticker1";
         final Double commission2 = 0.001;
 
-        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
-        prices2.put(10.0, from.plusMinutes(100));
-        prices2.put(20.0, from.plusMinutes(200));
-        prices2.put(30.0, from.plusMinutes(300));
-        prices2.put(40.0, from.plusMinutes(400));
-        prices2.put(50.0, from.plusMinutes(500));
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(100), 10.0);
+        prices2.put(from.plusMinutes(200), 20.0);
+        prices2.put(from.plusMinutes(300), 30.0);
+        prices2.put(from.plusMinutes(400), 40.0);
+        prices2.put(from.plusMinutes(500), 50.0);
 
         final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
         final int positionLotsCount2 = 2;
@@ -396,13 +396,13 @@ class BackTesterImplUnitTest {
 
         final String ticker1 = "ticker1";
 
-        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
-        prices1.put(100.0, from.plusMinutes(10));
-        prices1.put(200.0, from.plusMinutes(20));
-        prices1.put(300.0, from.plusMinutes(30));
-        prices1.put(400.0, from.plusMinutes(40));
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(10), 100.0);
+        prices1.put(from.plusMinutes(20), 200.0);
+        prices1.put(from.plusMinutes(30), 300.0);
+        prices1.put(from.plusMinutes(40), 400.0);
         final double currentPrice1 = 500.0;
-        prices1.put(currentPrice1, from.plusMinutes(50));
+        prices1.put(from.plusMinutes(50), currentPrice1);
 
         final int positionLotsCount1 = 2;
 
@@ -474,7 +474,6 @@ class BackTesterImplUnitTest {
         final String ticker1 = "ticker1";
         final double commission1 = 0.003;
 
-        final Map<Double, OffsetDateTime> prices1 = Map.of(100.0, from.plusMinutes(1));
         final BigDecimal currentBalance1 = BigDecimal.valueOf(20000);
 
         final int positionLotsCount1 = 1;
@@ -495,7 +494,6 @@ class BackTesterImplUnitTest {
         final String ticker2 = "ticker2";
         final double commission2 = 0.001;
 
-        final Map<Double, OffsetDateTime> prices2 = Map.of(1000.0, from.plusMinutes(3));
         final BigDecimal currentBalance2 = BigDecimal.valueOf(10000);
 
         final int positionLotsCount2 = 1;
@@ -521,7 +519,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance1,
                 positionLotsCount1,
-                prices1,
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation1
         );
@@ -534,7 +532,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance2,
                 positionLotsCount2,
-                prices2,
+                Map.of(from.plusMinutes(3), 1000.0),
                 1000,
                 operation2
         );
@@ -605,12 +603,12 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final Map<Double, OffsetDateTime> prices1 = new LinkedHashMap<>();
-        prices1.put(100.0, from.plusMinutes(1));
-        prices1.put(200.0, from.plusMinutes(2));
-        prices1.put(300.0, from.plusMinutes(3));
-        prices1.put(400.0, from.plusMinutes(4));
-        prices1.put(500.0, from.plusMinutes(5));
+        final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
+        prices1.put(from.plusMinutes(1), 100.0);
+        prices1.put(from.plusMinutes(2), 200.0);
+        prices1.put(from.plusMinutes(3), 300.0);
+        prices1.put(from.plusMinutes(4), 400.0);
+        prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
                 null,
@@ -625,11 +623,11 @@ class BackTesterImplUnitTest {
                 null
         );
 
-        final Map<Double, OffsetDateTime> prices2 = new LinkedHashMap<>();
-        prices2.put(1000.0, from.plusMinutes(10));
-        prices2.put(2000.0, from.plusMinutes(20));
-        prices2.put(3000.0, from.plusMinutes(30));
-        prices2.put(4000.0, from.plusMinutes(40));
+        final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
+        prices2.put(from.plusMinutes(10), 1000.0);
+        prices2.put(from.plusMinutes(20), 2000.0);
+        prices2.put(from.plusMinutes(30), 3000.0);
+        prices2.put(from.plusMinutes(40), 4000.0);
 
         final BotConfig botConfig2 = arrangeBackTest(
                 "2000124699",
@@ -657,17 +655,17 @@ class BackTesterImplUnitTest {
         assertCandles(backTestResults.get(1), prices2);
     }
 
-    private void assertCandles(final BackTestResult backTestResult, final Map<Double, OffsetDateTime> prices) {
+    private void assertCandles(final BackTestResult backTestResult, final Map<OffsetDateTime, Double> prices) {
         Assertions.assertNull(backTestResult.getError());
 
         final List<Candle> candles = backTestResult.getCandles();
         Assertions.assertEquals(prices.size(), candles.size());
 
         final Iterator<Candle> candlesIterator = candles.iterator();
-        for (final Map.Entry<Double, OffsetDateTime> entry : prices.entrySet()) {
+        for (final Map.Entry<OffsetDateTime, Double> entry : prices.entrySet()) {
             final Candle candle = candlesIterator.next();
-            AssertUtils.assertEquals(entry.getKey(), candle.getClosePrice());
-            Assertions.assertEquals(entry.getValue(), candle.getTime());
+            Assertions.assertEquals(entry.getKey(), candle.getTime());
+            AssertUtils.assertEquals(entry.getValue(), candle.getClosePrice());
         }
     }
 
@@ -704,7 +702,7 @@ class BackTesterImplUnitTest {
                 interval,
                 BigDecimal.valueOf(10000),
                 null,
-                Map.of(),
+                Collections.emptyMap(),
                 200,
                 null
         );
@@ -758,7 +756,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(100.0, from.plusMinutes(1)),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -822,7 +820,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 1,
-                Map.of(100.0, from.plusMinutes(1)),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -885,7 +883,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 10,
-                Map.of(100.0, from.plusMinutes(1)),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -1014,7 +1012,7 @@ class BackTesterImplUnitTest {
                 interval,
                 currentBalance,
                 2,
-                Map.of(100.0, from.plusMinutes(1)),
+                Map.of(from.plusMinutes(1), 100.0),
                 100,
                 operation
         );
@@ -1058,7 +1056,7 @@ class BackTesterImplUnitTest {
             final Interval interval,
             final BigDecimal currentBalance,
             final Integer positionLotsCount,
-            final Map<Double, OffsetDateTime> prices,
+            final Map<OffsetDateTime, Double> prices,
             final double currentPrice,
             final Operation operation
     ) {
@@ -1093,18 +1091,18 @@ class BackTesterImplUnitTest {
         return fakeBot;
     }
 
-    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<Double, OffsetDateTime> prices) {
-        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.any(OffsetDateTime.class)))
-                .thenReturn(Collections.emptyList());
-        if (!prices.isEmpty()) {
-            for (final Map.Entry<Double, OffsetDateTime> entry : prices.entrySet()) {
-                final OffsetDateTime dateTime = entry.getValue();
-                final Candle candle = TestData.createCandleWithClosePriceAndTime(entry.getKey(), dateTime);
-
-                Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class), Mockito.eq(dateTime)))
-                        .thenReturn(List.of(candle));
-            }
-        }
+    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
+        Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class)))
+                .thenAnswer(invocation -> {
+                    final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
+                    if (prices.containsKey(currentDateTime)) {
+                        final double closePrice = prices.get(currentDateTime);
+                        final Candle candle = TestData.createCandleWithClosePriceAndTime(closePrice, currentDateTime);
+                        return List.of(candle);
+                    } else {
+                        return Collections.emptyList();
+                    }
+                });
     }
 
     private void mockNextMinute(final FakeBot fakeBot, final OffsetDateTime from) {

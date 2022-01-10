@@ -143,7 +143,7 @@ public class BackTesterImpl implements BackTester {
         OffsetDateTime previousStartTime = null;
 
         do {
-            final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, previousStartTime, fakeBot.getCurrentDateTime());
+            final List<Candle> currentCandles = fakeBot.processBotConfig(botConfig, previousStartTime);
             if (currentCandles.isEmpty()) {
                 previousStartTime = null;
             } else {

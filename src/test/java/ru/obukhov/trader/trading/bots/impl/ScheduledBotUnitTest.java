@@ -1,12 +1,12 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
@@ -45,40 +46,38 @@ import java.util.List;
 class ScheduledBotUnitTest {
 
     @Mock
-    private TradingStrategy strategy;
-
-    @Mock
     private MarketService marketService;
-
     @Mock
     private OperationsService operationsService;
-
     @Mock
     private OrdersService ordersService;
-
     @Mock
     private PortfolioService portfolioService;
-
+    @Mock
+    private RealTinkoffService realTinkoffService;
+    @Mock
+    private TradingStrategy strategy;
     @Mock
     private ScheduledBotProperties scheduledBotProperties;
-
     @Mock
     private MarketProperties marketProperties;
 
+    @InjectMocks
     private ScheduledBot bot;
 
-    @BeforeEach
-    void setUp() {
-        bot = new ScheduledBot(
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                strategy,
-                scheduledBotProperties,
-                marketProperties
-        );
-    }
+//    @BeforeEach
+//    void setUp() {
+//        bot = new ScheduledBot(
+//                marketService,
+//                operationsService,
+//                ordersService,
+//                portfolioService,
+//                realTinkoffService,
+//                strategy,
+//                scheduledBotProperties,
+//                marketProperties
+//        );
+//    }
 
     @Test
     @SuppressWarnings("unused")
@@ -262,58 +261,58 @@ class ScheduledBotUnitTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNoOrder_whenGetOperationsThrowsException() {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            mockBotConfig(null, ticker);
+        final String ticker = "ticker";
 
-            final Candle candle1 = new Candle().setTime(mockedNow);
-            mockCandles(ticker, List.of(candle1));
+        mockBotConfig(null, ticker);
 
-            final int lotSize = 10;
+        final Candle candle1 = new Candle().setTime(currentDateTime);
+        mockCandles(ticker, List.of(candle1));
 
-            Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final int lotSize = 10;
 
-            Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
-                    .thenThrow(new IllegalArgumentException());
-            bot.tick();
+        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
-            verifyNoOrdersMade();
-        }
+        Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
+                .thenThrow(new IllegalArgumentException());
+        bot.tick();
+
+        verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
     void tick_doesNoOrder_whenDecideThrowsException() {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            mockBotConfig(null, ticker);
+        final String ticker = "ticker";
 
-            final Candle candle1 = new Candle().setTime(mockedNow);
-            mockCandles(ticker, List.of(candle1));
+        mockBotConfig(null, ticker);
 
-            final int lotSize = 10;
+        final Candle candle1 = new Candle().setTime(currentDateTime);
+        mockCandles(ticker, List.of(candle1));
 
-            Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final int lotSize = 10;
 
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
-                    .thenThrow(new IllegalArgumentException());
+        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
-            bot.tick();
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                .thenThrow(new IllegalArgumentException());
 
-            verifyNoOrdersMade();
-        }
+        bot.tick();
+
+        verifyNoOrdersMade();
     }
 
     @ParameterizedTest
@@ -321,32 +320,32 @@ class ScheduledBotUnitTest {
     @ValueSource(strings = "2000124699")
     @SuppressWarnings({"unused", "java:S2699"})
     void tick_catchesException_whenPlaceMarketOrderThrowsException(@Nullable final String brokerAccountId) {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            mockBotConfig(brokerAccountId, ticker);
+        final String ticker = "ticker";
 
-            final Candle candle1 = new Candle().setTime(mockedNow);
-            mockCandles(ticker, List.of(candle1));
+        mockBotConfig(brokerAccountId, ticker);
 
-            final int lotSize = 10;
+        final Candle candle1 = new Candle().setTime(currentDateTime);
+        mockCandles(ticker, List.of(candle1));
 
-            Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final int lotSize = 10;
 
-            final Decision decision = new Decision(DecisionAction.BUY, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
-                    .thenReturn(decision);
+        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
-            Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
-                    .thenThrow(new IllegalArgumentException());
+        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                .thenReturn(decision);
 
-            bot.tick();
-        }
+        Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
+                .thenThrow(new IllegalArgumentException());
+
+        bot.tick();
     }
 
     @Test
@@ -389,29 +388,29 @@ class ScheduledBotUnitTest {
     @Test
     @SuppressWarnings("unused")
     void tick_doesNoOrder_whenDecisionIsWait() {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
-            mockBotConfig(null, ticker);
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            final Candle candle1 = new Candle().setTime(mockedNow);
-            mockCandles(ticker, List.of(candle1));
+        final String ticker = "ticker";
+        mockBotConfig(null, ticker);
 
-            final int lotSize = 10;
+        final Candle candle1 = new Candle().setTime(currentDateTime);
+        mockCandles(ticker, List.of(candle1));
 
-            Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final int lotSize = 10;
 
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
-                    .thenReturn(new Decision(DecisionAction.WAIT));
+        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
 
-            bot.tick();
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
+                .thenReturn(new Decision(DecisionAction.WAIT));
 
-            verifyNoOrdersMade();
-        }
+        bot.tick();
+
+        verifyNoOrdersMade();
     }
 
     @ParameterizedTest
@@ -419,26 +418,26 @@ class ScheduledBotUnitTest {
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
     void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
-            final int lotSize = 10;
-            mockBotConfig(brokerAccountId, ticker);
-            mockData(brokerAccountId, ticker, lotSize);
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            final Decision decision = new Decision(DecisionAction.BUY, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
-                    .thenReturn(decision);
+        final String ticker = "ticker";
+        final int lotSize = 10;
+        mockBotConfig(brokerAccountId, ticker);
+        mockData(brokerAccountId, ticker, lotSize);
 
-            bot.tick();
+        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(decision);
 
-            Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
-        }
+        bot.tick();
+
+        Mockito.verify(ordersService, Mockito.times(1))
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
     }
 
     @ParameterizedTest
@@ -446,26 +445,26 @@ class ScheduledBotUnitTest {
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
     void tick_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
-        final OffsetDateTime mockedNow = DateTimeTestData.createDateTime(2020, 9, 23, 6);
-        try (MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
-            Mockito.when(marketProperties.getWorkStartTime()).thenReturn(mockedNow.toOffsetTime().minusHours(1));
-            Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-            final String ticker = "ticker";
-            final int lotSize = 10;
-            mockBotConfig(brokerAccountId, ticker);
-            mockData(brokerAccountId, ticker, lotSize);
+        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(scheduledBotProperties.isEnabled()).thenReturn(true);
+        Mockito.when(marketProperties.getWorkStartTime()).thenReturn(currentDateTime.toOffsetTime().minusHours(1));
+        Mockito.when(marketProperties.getWorkDuration()).thenReturn(Duration.ofHours(8));
 
-            final Decision decision = new Decision(DecisionAction.SELL, 5);
-            Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
-                    .thenReturn(decision);
+        final String ticker = "ticker";
+        final int lotSize = 10;
+        mockBotConfig(brokerAccountId, ticker);
+        mockData(brokerAccountId, ticker, lotSize);
 
-            bot.tick();
+        final Decision decision = new Decision(DecisionAction.SELL, 5);
+        Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
+                .thenReturn(decision);
 
-            Mockito.verify(ordersService, Mockito.times(1))
-                    .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
-        }
+        bot.tick();
+
+        Mockito.verify(ordersService, Mockito.times(1))
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
     }
 
     private void mockBotConfig(String brokerAccountId, String ticker) {

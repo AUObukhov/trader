@@ -8,6 +8,7 @@ import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.model.Decision;
@@ -36,12 +37,13 @@ public abstract class AbstractBot implements Bot {
     protected final OperationsService operationsService;
     protected final OrdersService ordersService;
     protected final PortfolioService portfolioService;
+    protected final TinkoffService tinkoffService;
 
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
 
     @Override
-    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime, final OffsetDateTime now) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
         final String ticker = botConfig.getTicker();
@@ -55,7 +57,7 @@ public abstract class AbstractBot implements Bot {
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
                 log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
             } else {
-                fillDecisionData(botConfig, decisionData, ticker, now);
+                fillDecisionData(botConfig, decisionData, ticker);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
                 performOperation(botConfig.getBrokerAccountId(), ticker, decision);
             }
@@ -66,24 +68,20 @@ public abstract class AbstractBot implements Bot {
         }
     }
 
-    private void fillDecisionData(
-            final BotConfig botConfig,
-            final DecisionData decisionData,
-            final String ticker,
-            final OffsetDateTime now
-    ) {
+    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker, now));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
         decisionData.setInstrument(instrument);
         decisionData.setCommission(botConfig.getCommission());
     }
 
-    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker, final OffsetDateTime now) {
-        final OffsetDateTime from = now.minusWeeks(1);
-        return operationsService.getOperations(brokerAccountId, Interval.of(from, now), ticker);
+    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker) {
+        final OffsetDateTime now = tinkoffService.getCurrentDateTime();
+        final Interval interval = Interval.of(now.minusWeeks(1), now);
+        return operationsService.getOperations(brokerAccountId, interval, ticker);
     }
 
     private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) {
