@@ -198,14 +198,6 @@ public class DateUtils {
     }
 
     /**
-     * @return true if today is work day and current time is between {@code workSchedule.startTime} and
-     * {@code workSchedule.startTime + workSchedule.duration}
-     */
-    public static boolean isWorkTimeNow(final WorkSchedule workSchedule) {
-        return isWorkTime(OffsetDateTime.now(), workSchedule);
-    }
-
-    /**
      * Checks if given {@code dateTime} is work time, which means than it is between {@code workStartTime} included and
      * {@code workStartTime + workTimeDuration} excluded and not at weekend
      * (except Saturday, when {@code workStartTime + workTimeDuration} is after midnight)
