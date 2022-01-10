@@ -17,7 +17,6 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.time.OffsetDateTime;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public interface TinkoffService {
 
     void cancelOrder(@Nullable final String brokerAccountId, final String orderId);
 
-    Collection<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId);
+    List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId);
 
     List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId);
 

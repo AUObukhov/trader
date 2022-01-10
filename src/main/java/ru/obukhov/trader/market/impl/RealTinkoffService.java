@@ -29,7 +29,6 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.time.OffsetDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,7 +153,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region PortfolioContext
 
     @Override
-    public Collection<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
+    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
         final List<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> positions = getPortfolioContext()
                 .getPortfolio(brokerAccountId)
                 .join()

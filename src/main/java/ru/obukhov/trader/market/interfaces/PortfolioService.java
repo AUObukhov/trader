@@ -6,12 +6,11 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 public interface PortfolioService {
 
-    Collection<PortfolioPosition> getPositions(@Nullable final String brokerAccountId);
+    List<PortfolioPosition> getPositions(@Nullable final String brokerAccountId);
 
     PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker);
 

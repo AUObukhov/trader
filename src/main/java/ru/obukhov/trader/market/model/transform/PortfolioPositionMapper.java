@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Maps {@link PortfolioPosition} to {@link PortfolioPosition}
@@ -19,6 +20,6 @@ public interface PortfolioPositionMapper {
     @Mapping(source = "averagePositionPriceNoNkd.value", target = "averagePositionPriceNoNkd")
     PortfolioPosition map(final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition source);
 
-    Collection<PortfolioPosition> map(final Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source);
+    List<PortfolioPosition> map(final Collection<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> source);
 
 }

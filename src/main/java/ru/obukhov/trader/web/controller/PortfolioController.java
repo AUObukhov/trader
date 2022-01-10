@@ -15,7 +15,6 @@ import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class PortfolioController {
             @RequestParam(required = false)
             @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
     ) {
-        final Collection<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
+        final List<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
 
         return new GetPortfolioPositionsResponse(positions);
     }

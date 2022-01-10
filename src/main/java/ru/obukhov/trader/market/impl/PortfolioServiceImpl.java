@@ -9,7 +9,6 @@ import ru.tinkoff.invest.openapi.model.rest.Currency;
 import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -18,13 +17,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final TinkoffService tinkoffService;
 
     @Override
-    public Collection<PortfolioPosition> getPositions(@Nullable final String brokerAccountId) {
+    public List<PortfolioPosition> getPositions(@Nullable final String brokerAccountId) {
         return tinkoffService.getPortfolioPositions(brokerAccountId);
     }
 
     @Override
     public PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker) {
-        final Collection<PortfolioPosition> allPositions = getPositions(brokerAccountId);
+        final List<PortfolioPosition> allPositions = getPositions(brokerAccountId);
         return allPositions.stream()
                 .filter(position -> ticker.equals(position.getTicker()))
                 .findFirst()
