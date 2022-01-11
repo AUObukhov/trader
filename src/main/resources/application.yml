@@ -13,20 +13,20 @@ scheduling:
   enabled: false
 
 scheduled-bot:
-  bot-config:
-    broker-account-id: "2000124699"
-    ticker: SBER
-    candle-resolution: 1min
-    commission: 0.003
-    strategy-type: "cross"
-    strategy-params:
-      minimumProfit: 0.1
-      movingAverageType: SMA
-      order: 1
-      smallWindow: 50
-      bigWindow: 200
-      indexCoefficient: 0.5
-      greedy: true
+  bot-configs:
+    - broker-account-id: "2000124699"
+      ticker: SBER
+      candle-resolution: 1min
+      commission: 0.003
+      strategy-type: "cross"
+      strategy-params:
+        minimumProfit: 0.1
+        movingAverageType: SMA
+        order: 1
+        smallWindow: 50
+        bigWindow: 200
+        indexCoefficient: 0.5
+        greedy: true
 
 back-test:
   thread-count: 4

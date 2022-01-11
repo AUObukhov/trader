@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -18,7 +17,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 public class ScheduledBot extends AbstractBot {
 
     private final SchedulingProperties schedulingProperties;
-    private final ScheduledBotProperties scheduledBotProperties;
+    private final BotConfig botConfig;
     private final MarketProperties marketProperties;
 
     public ScheduledBot(
@@ -29,13 +28,13 @@ public class ScheduledBot extends AbstractBot {
             final RealTinkoffService realTinkoffService,
             final TradingStrategy strategy,
             final SchedulingProperties schedulingProperties,
-            final ScheduledBotProperties scheduledBotProperties,
+            final BotConfig botConfig,
             final MarketProperties marketProperties
     ) {
         super(marketService, operationsService, ordersService, portfolioService, realTinkoffService, strategy, strategy.initCache());
 
         this.schedulingProperties = schedulingProperties;
-        this.scheduledBotProperties = scheduledBotProperties;
+        this.botConfig = botConfig;
         this.marketProperties = marketProperties;
     }
 
@@ -52,10 +51,6 @@ public class ScheduledBot extends AbstractBot {
             return;
         }
 
-        processBotConfigSafe(scheduledBotProperties.getBotConfig());
-    }
-
-    public void processBotConfigSafe(final BotConfig botConfig) {
         try {
             processBotConfig(botConfig, null);
         } catch (Exception exception) {

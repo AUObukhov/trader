@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.config.properties.ScheduledBotProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
@@ -61,7 +60,7 @@ class ScheduledBotUnitTest {
     @Mock
     private SchedulingProperties schedulingProperties;
     @Mock
-    private ScheduledBotProperties scheduledBotProperties;
+    private BotConfig botConfig;
     @Mock
     private MarketProperties marketProperties;
 
@@ -105,7 +104,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(null, ticker);
 
         final List<Order> orders1 = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
@@ -129,7 +128,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleResolution._1MIN);
 
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -151,7 +150,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(null, ticker);
 
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
@@ -174,7 +173,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleResolution._1MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -200,7 +199,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(brokerAccountId, ticker, CandleResolution._1MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -231,7 +230,7 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(brokerAccountId, ticker, CandleResolution._1MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -348,7 +347,7 @@ class ScheduledBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        mockBotConfig(null, ticker, CandleResolution._1MIN, 0.0);
+        mockBotConfig(null, ticker);
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
@@ -462,14 +461,27 @@ class ScheduledBotUnitTest {
             final CandleResolution candleResolution,
             final double commission
     ) {
-        final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
-                .ticker(ticker)
-                .candleResolution(candleResolution)
-                .commission(commission)
-                .build();
+        if (brokerAccountId != null) {
+            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
+        }
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.getCandleResolution()).thenReturn(candleResolution);
+        Mockito.when(botConfig.getCommission()).thenReturn(commission);
+    }
 
-        Mockito.when(scheduledBotProperties.getBotConfig()).thenReturn(botConfig);
+    private void mockBotConfig(@Nullable final String brokerAccountId, final String ticker, final CandleResolution candleResolution) {
+        if (brokerAccountId != null) {
+            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
+        }
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.getCandleResolution()).thenReturn(candleResolution);
+    }
+
+    private void mockBotConfig(@Nullable final String brokerAccountId, final String ticker) {
+        if (brokerAccountId != null) {
+            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
+        }
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
     }
 
     private void mockData(@Nullable final String brokerAccountId, final String ticker, final int lotSize) {

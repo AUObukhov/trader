@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
@@ -24,6 +24,8 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.ScheduledBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.invest.openapi.OpenApi;
+
+import java.util.List;
 
 /**
  * Configuration of beans, which need qualifying of dependencies
@@ -69,7 +71,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ScheduledBot scheduledBot(
+    public List<ScheduledBot> scheduledBots(
             final MarketService marketService,
             final OperationsService operationsService,
             final OrdersService ordersService,
@@ -77,20 +79,20 @@ public class BeanConfiguration {
             final RealTinkoffService realTinkoffService,
             final TradingStrategyFactory strategyFactory,
             final SchedulingProperties schedulingProperties,
-            final ScheduledBotProperties scheduledBotProperties,
+            final ScheduledBotsProperties scheduledBotsProperties,
             final MarketProperties marketProperties
     ) {
-        return new ScheduledBot(
-                marketService,
-                operationsService,
-                ordersService,
-                portfolioService,
-                realTinkoffService,
-                strategyFactory.createStrategy(scheduledBotProperties.getBotConfig()),
-                schedulingProperties,
-                scheduledBotProperties,
-                marketProperties
-        );
-
+        return scheduledBotsProperties.getBotConfigs().stream()
+                .map(botConfig -> new ScheduledBot(
+                        marketService,
+                        operationsService,
+                        ordersService,
+                        portfolioService,
+                        realTinkoffService,
+                        strategyFactory.createStrategy(botConfig),
+                        schedulingProperties,
+                        botConfig,
+                        marketProperties
+                )).toList();
     }
 }

@@ -14,20 +14,27 @@ scheduling:
   enabled: true
 
 scheduled-bot:
-  bot-config:
-    broker-account-id: "2000124699"
-    ticker: FXIT
-    candle-resolution: 5min
-    commission: 0.003
-    strategy-type: "cross"
-    strategy-params:
-      minimumProfit: 0.1
-      movingAverageType: SMA
-      order: 1
-      smallWindow: 50
-      bigWindow: 200
-      indexCoefficient: 0.5
-      greedy: true
+  bot-configs:
+    - broker-account-id: "2000124699"
+      ticker: FXIT
+      candle-resolution: 5min
+      commission: 0.003
+      strategy-type: "cross"
+      strategy-params:
+        minimumProfit: 0.1
+        movingAverageType: SMA
+        order: 1
+        smallWindow: 50
+        bigWindow: 200
+        indexCoefficient: 0.5
+        greedy: true
+    - broker-account-id: "2000124698"
+      ticker: FXIT
+      candle-resolution: 5min
+      commission: 0.003
+      strategy-type: "conservative"
+      strategy-params:
+        minimumProfit: 0.1
 
 query.throttle:
   interval: 60000

@@ -6,15 +6,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 import ru.obukhov.trader.web.model.BotConfig;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Validated
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "scheduled-bot")
-public class ScheduledBotProperties {
+public class ScheduledBotsProperties {
 
-    @NotNull(message = "botConfig is mandatory")
-    private BotConfig botConfig;
+    @NotEmpty(message = "botConfigs is mandatory")
+    private List<BotConfig> botConfigs;
 
 }

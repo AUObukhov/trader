@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -43,7 +43,7 @@ class BotControllerWebTest extends ControllerWebTest {
     @Autowired
     private SchedulingProperties schedulingProperties;
     @Autowired
-    private ScheduledBotProperties scheduledBotProperties;
+    private ScheduledBotsProperties scheduledBotsProperties;
 
     // region backTest tests
 
