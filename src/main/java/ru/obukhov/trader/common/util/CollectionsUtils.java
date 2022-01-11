@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -99,6 +101,14 @@ public class CollectionsUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Same as {@link Collections#binarySearch}, but in case if {@code key} not found in list, returns insertion point
+     */
+    public static <T> int binarySearch(final List<? extends T> list, final T key, final Comparator<? super T> comparator) {
+        int searchResult = Collections.binarySearch(list, key, comparator);
+        return searchResult < 0 ? -1 - searchResult : searchResult;
     }
 
 }

@@ -65,7 +65,7 @@ public class MarketServiceImpl implements MarketService {
         int emptyDaysCount = 0;
         while (listIterator.hasPrevious() && emptyDaysCount <= marketProperties.getConsecutiveEmptyDaysLimit()) {
             final Interval subInterval = listIterator.previous();
-            final List<Candle> currentCandles = loadDayCandles(ticker, subInterval, candleResolution);
+            final List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, subInterval.extendToDay(), subInterval, candleResolution);
             if (currentCandles.isEmpty()) {
                 emptyDaysCount++;
             } else {
@@ -110,18 +110,33 @@ public class MarketServiceImpl implements MarketService {
         return tinkoffService.getMarketCandles(ticker, Interval.of(from, innerTo), candleResolution);
     }
 
-    private List<Candle> loadDayCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
-        return tinkoffService.getMarketCandles(ticker, interval.extendToDay(), candleResolution)
-                .stream()
-                .filter(candle -> interval.contains(candle.getTime()))
-                .toList();
+    /**
+     * Loads candles from often used interval for better benefit from cache hits
+     *
+     * @param ticker            ticker of loaded candles
+     * @param loadInterval      often used interval, better be whole day, year, etc.
+     * @param effectiveInterval effective interval.
+     *                          Must smaller or equal to {@code loadInterval}, otherwise values outside of {@code loadInterval} will be lost
+     * @param candleResolution  resolution of loaded candles
+     * @return candles from given {@code effectiveInterval}
+     */
+    private List<Candle> loadCandlesBetterCacheable(
+            final String ticker,
+            final Interval loadInterval,
+            final Interval effectiveInterval,
+            final CandleResolution candleResolution
+    ) {
+        final List<Candle> candles = tinkoffService.getMarketCandles(ticker, loadInterval, candleResolution);
+        return effectiveInterval.equals(loadInterval) ? candles : filterCandles(candles, effectiveInterval);
     }
 
-    private List<Candle> loadYearCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
-        return tinkoffService.getMarketCandles(ticker, interval.extendToYear(), candleResolution)
-                .stream()
-                .filter(candle -> interval.contains(candle.getTime()))
-                .toList();
+    private List<Candle> filterCandles(final List<Candle> candles, final Interval interval) {
+        final Candle leftCandle = new Candle().setTime(interval.getFrom());
+        final Candle rightCandle = new Candle().setTime(interval.getTo());
+        final Comparator<Candle> comparator = Comparator.comparing(Candle::getTime);
+        final int fromIndex = CollectionsUtils.binarySearch(candles, leftCandle, comparator);
+        final int toIndex = CollectionsUtils.binarySearch(candles, rightCandle, comparator);
+        return candles.subList(fromIndex, toIndex);
     }
 
     /**
@@ -152,7 +167,7 @@ public class MarketServiceImpl implements MarketService {
         final ListIterator<Interval> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             final Interval interval = listIterator.previous();
-            final List<Candle> candles = loadDayCandles(ticker, interval, CandleResolution._1MIN);
+            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleResolution._1MIN);
             if (!candles.isEmpty()) {
                 return CollectionUtils.lastElement(candles);
             }
@@ -184,7 +199,7 @@ public class MarketServiceImpl implements MarketService {
         final OffsetDateTime from = DateUtils.atStartOfDay(to);
         Interval interval = Interval.of(from, to);
 
-        List<Candle> currentCandles = loadDayCandles(ticker, interval, candleResolution);
+        List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, candleResolution);
         final List<Candle> candles = new ArrayList<>(currentCandles);
         int consecutiveEmptyDaysCount = candles.isEmpty() ? 1 : 0;
 
@@ -211,7 +226,7 @@ public class MarketServiceImpl implements MarketService {
         final OffsetDateTime from = DateUtils.atStartOfYear(to);
         Interval interval = Interval.of(from, to);
 
-        List<Candle> currentCandles = loadYearCandles(ticker, interval, candleResolution);
+        List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, interval.extendToYear(), interval, candleResolution);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
         interval = interval.minusYears(1).extendToYear();

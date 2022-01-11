@@ -52,8 +52,8 @@ class MarketServiceImplUnitTest {
         new CandleMocker(tinkoffService, ticker, candleResolution)
                 .add(10, DateTimeTestData.createDateTime(2020, 1, 5))
                 .add(0, DateTimeTestData.createDateTime(2020, 1, 7))
-                .add(1, DateTimeTestData.createDateTime(2020, 1, 7))
-                .add(2, DateTimeTestData.createDateTime(2020, 1, 7))
+                .add(1, DateTimeTestData.createDateTime(2020, 1, 8))
+                .add(2, DateTimeTestData.createDateTime(2020, 1, 9))
                 .add(3, DateTimeTestData.createDateTime(2020, 1, 11))
                 .add(4, DateTimeTestData.createDateTime(2020, 1, 11))
                 .add(5, DateTimeTestData.createDateTime(2020, 1, 12))
@@ -82,15 +82,15 @@ class MarketServiceImplUnitTest {
         new CandleMocker(tinkoffService, ticker, candleResolution)
                 .add(10, DateTimeTestData.createDateTime(2020, 1, 1))
                 .add(0, DateTimeTestData.createDateTime(2020, 1, 10))
-                .add(1, DateTimeTestData.createDateTime(2020, 1, 10))
-                .add(2, DateTimeTestData.createDateTime(2020, 1, 10))
-                .add(3, DateTimeTestData.createDateTime(2020, 1, 18))
-                .add(4, DateTimeTestData.createDateTime(2020, 1, 18))
-                .add(5, DateTimeTestData.createDateTime(2020, 1, 19))
+                .add(1, DateTimeTestData.createDateTime(2020, 1, 11))
+                .add(2, DateTimeTestData.createDateTime(2020, 1, 12))
+                .add(3, DateTimeTestData.createDateTime(2020, 1, 20))
+                .add(4, DateTimeTestData.createDateTime(2020, 1, 21))
+                .add(5, DateTimeTestData.createDateTime(2020, 1, 22))
                 .mock();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 21);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 23);
         final List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleResolution);
 
         Assertions.assertEquals(6, candles.size());
@@ -463,7 +463,7 @@ class MarketServiceImplUnitTest {
                 .mock();
 
         Mockito.when(tinkoffService.getCurrentDateTime())
-                .thenReturn(DateTimeTestData.createDateTime(2020, 9, 9, 3));
+                .thenReturn(DateTimeTestData.createDateTime(2020, 9, 9, 4));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
@@ -638,10 +638,9 @@ class MarketServiceImplUnitTest {
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleResolution);
 
-        Assertions.assertEquals(3, candles.size());
+        Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getOpenPrice());
         AssertUtils.assertEquals(2, candles.get(1).getOpenPrice());
-        AssertUtils.assertEquals(3, candles.get(2).getOpenPrice());
     }
 
     // endregion
