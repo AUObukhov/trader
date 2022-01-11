@@ -9,9 +9,11 @@ market:
   consecutive-empty-days-limit: 5
   start-date: 2000-01-01T00:00:00+03:00
 
-scheduled-bot:
+scheduling:
   delay: 60000
   enabled: true
+
+scheduled-bot:
   bot-config:
     broker-account-id: "2000124699"
     ticker: FXIT

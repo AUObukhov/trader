@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
@@ -29,7 +29,7 @@ import java.util.List;
 public class BotController {
 
     private final BackTester backTester;
-    private final ScheduledBotProperties scheduledBotProperties;
+    private final SchedulingProperties schedulingProperties;
 
     @PostMapping("/back-test")
     @ApiOperation("Performs back test of bot trading on historical data and returns result of it")
@@ -49,24 +49,24 @@ public class BotController {
 
     }
 
-    @PostMapping("/enable")
+    @PostMapping("/enable-scheduling")
     @ApiOperation("Enables real trade bot, working by schedule")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public void enableScheduling() {
-        scheduledBotProperties.setEnabled(true);
+        schedulingProperties.setEnabled(true);
     }
 
-    @PostMapping("/disable")
+    @PostMapping("/disable-scheduling")
     @ApiOperation("Disables real trade bot, working by schedule")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public void disableScheduling() {
-        scheduledBotProperties.setEnabled(false);
+        schedulingProperties.setEnabled(false);
     }
 
 }

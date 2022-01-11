@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.quartz.CronExpression;
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -38,6 +40,8 @@ class BotControllerWebTest extends ControllerWebTest {
     @MockBean
     private BackTester backTester;
 
+    @Autowired
+    private SchedulingProperties schedulingProperties;
     @Autowired
     private ScheduledBotProperties scheduledBotProperties;
 
@@ -230,5 +234,25 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     // endregion
+
+    @Test
+    void enableScheduling_returnsOk_andEnablesScheduling() throws Exception {
+        schedulingProperties.setEnabled(false);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable-scheduling"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        Assertions.assertTrue(schedulingProperties.isEnabled());
+    }
+
+    @Test
+    void disableScheduling_returnsOk_andDisablesScheduling() throws Exception {
+        schedulingProperties.setEnabled(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable-scheduling"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        Assertions.assertFalse(schedulingProperties.isEnabled());
+    }
 
 }

@@ -27,8 +27,6 @@ class ScheduledBotPropertiesContextTest {
 
                     final ScheduledBotProperties scheduledBotProperties = context.getBean(ScheduledBotProperties.class);
 
-                    Assertions.assertTrue(scheduledBotProperties.isEnabled());
-
                     final BotConfig botConfig = scheduledBotProperties.getBotConfig();
                     Assertions.assertEquals("FXIT", botConfig.getTicker());
                     Assertions.assertEquals(CandleResolution._5MIN, botConfig.getCandleResolution());

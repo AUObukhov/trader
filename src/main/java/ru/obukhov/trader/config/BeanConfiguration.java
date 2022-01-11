@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.MarketServiceImpl;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
@@ -75,6 +76,7 @@ public class BeanConfiguration {
             final PortfolioService portfolioService,
             final RealTinkoffService realTinkoffService,
             final TradingStrategyFactory strategyFactory,
+            final SchedulingProperties schedulingProperties,
             final ScheduledBotProperties scheduledBotProperties,
             final MarketProperties marketProperties
     ) {
@@ -85,6 +87,7 @@ public class BeanConfiguration {
                 portfolioService,
                 realTinkoffService,
                 strategyFactory.createStrategy(scheduledBotProperties.getBotConfig()),
+                schedulingProperties,
                 scheduledBotProperties,
                 marketProperties
         );

@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotProperties;
+import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
@@ -16,6 +17,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 @Slf4j
 public class ScheduledBot extends AbstractBot {
 
+    private final SchedulingProperties schedulingProperties;
     private final ScheduledBotProperties scheduledBotProperties;
     private final MarketProperties marketProperties;
 
@@ -26,20 +28,22 @@ public class ScheduledBot extends AbstractBot {
             final PortfolioService portfolioService,
             final RealTinkoffService realTinkoffService,
             final TradingStrategy strategy,
+            final SchedulingProperties schedulingProperties,
             final ScheduledBotProperties scheduledBotProperties,
             final MarketProperties marketProperties
     ) {
         super(marketService, operationsService, ordersService, portfolioService, realTinkoffService, strategy, strategy.initCache());
 
+        this.schedulingProperties = schedulingProperties;
         this.scheduledBotProperties = scheduledBotProperties;
         this.marketProperties = marketProperties;
     }
 
-    @Scheduled(fixedDelayString = "${scheduled-bot.delay}")
+    @Scheduled(fixedDelayString = "${scheduling.delay}")
     @SuppressWarnings("unused")
     public void tick() {
-        if (!scheduledBotProperties.isEnabled()) {
-            log.trace("Bot is disabled. Do nothing");
+        if (!schedulingProperties.isEnabled()) {
+            log.trace("Scheduling is disabled. Do nothing");
             return;
         }
 

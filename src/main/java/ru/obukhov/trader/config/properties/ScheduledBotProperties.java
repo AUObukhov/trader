@@ -14,8 +14,6 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "scheduled-bot")
 public class ScheduledBotProperties {
 
-    private boolean enabled;
-
     @NotNull(message = "botConfig is mandatory")
     private BotConfig botConfig;
 
