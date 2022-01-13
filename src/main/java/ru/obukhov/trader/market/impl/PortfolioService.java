@@ -24,7 +24,8 @@ public class PortfolioService {
     }
 
     /**
-     * @return position with given {@code ticker} at given {@code brokerAccountId} or null, if such position does not exist
+     * @return position with given {@code ticker} at given {@code brokerAccountId} or null, if such position does not exist.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker) {
         final List<PortfolioPosition> allPositions = getPositions(brokerAccountId);
@@ -35,7 +36,8 @@ public class PortfolioService {
     }
 
     /**
-     * @return available balance of given {@code currency} at given {@code brokerAccountId}
+     * @return available balance of given {@code currency} at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
      *                                Currencies currently available: {@link Currency.EUR}, {@link Currency.USD}, {@link Currency.RUB}
      */
@@ -54,7 +56,8 @@ public class PortfolioService {
     }
 
     /**
-     * @return list of currencies balances at given {@code brokerAccountId}
+     * @return list of currencies balances at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public List<CurrencyPosition> getCurrencies(@Nullable final String brokerAccountId) {
         return tinkoffService.getPortfolioCurrencies(brokerAccountId);

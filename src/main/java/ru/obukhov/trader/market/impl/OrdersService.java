@@ -27,7 +27,8 @@ public class OrdersService {
     }
 
     /**
-     * @return returns list of active orders with given {@code ticker} at given {@code brokerAccountId}
+     * @return returns list of active orders with given {@code ticker} at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) {
         final String figi = marketService.getFigi(ticker);
@@ -37,14 +38,16 @@ public class OrdersService {
     }
 
     /**
-     * @return returns list of active orders
+     * @return returns list of active orders at given {@code brokerAccountId}
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public List<Order> getOrders(@Nullable final String brokerAccountId) {
         return tinkoffService.getOrders(brokerAccountId);
     }
 
     /**
-     * @return places new order with market price and given params
+     * @return places new order with market price and given params.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public PlacedMarketOrder placeMarketOrder(
             @Nullable final String brokerAccountId,
@@ -59,7 +62,8 @@ public class OrdersService {
     }
 
     /**
-     * @return places new order with given {@code price} and given params
+     * @return places new order with given {@code price} and given params.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public PlacedLimitOrder placeLimitOrder(
             @Nullable final String brokerAccountId,
@@ -76,7 +80,8 @@ public class OrdersService {
     }
 
     /**
-     * cancels order with given {@code orderId} at given {@code brokerAccountId}
+     * cancels order with given {@code orderId} at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
      */
     public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) {
         tinkoffService.cancelOrder(brokerAccountId, orderId);
