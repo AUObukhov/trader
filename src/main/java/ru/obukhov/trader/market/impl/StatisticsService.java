@@ -16,7 +16,9 @@ import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import java.math.BigDecimal;
 import java.util.List;
 
-
+/**
+ * Service to get extended statistics about market prices and instruments
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class StatisticsService {
