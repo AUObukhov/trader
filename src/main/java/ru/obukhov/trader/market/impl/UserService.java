@@ -6,6 +6,9 @@ import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.util.List;
 
+/**
+ * Service to get information about customer accounts
+ */
 @Service
 public class UserService {
 
@@ -15,6 +18,9 @@ public class UserService {
         this.tinkoffService = tinkoffService;
     }
 
+    /**
+     * @return list of current customer accounts. Current customer is defined by token passed to Tinkoff.
+     */
     public List<UserAccount> getAccounts() {
         return tinkoffService.getAccounts();
     }
