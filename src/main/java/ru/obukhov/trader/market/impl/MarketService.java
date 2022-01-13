@@ -34,8 +34,9 @@ public class MarketService {
     private final TinkoffService tinkoffService;
 
     /**
-     * Load candles by conditions period by period.
+     * Loads candles by conditions period by period.
      *
+     * @param interval search interval, default interval.from is start of trading, default interval.to is now
      * @return sorted by time list of loaded candles
      */
     public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {

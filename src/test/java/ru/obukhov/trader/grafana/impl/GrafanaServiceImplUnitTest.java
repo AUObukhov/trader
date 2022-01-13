@@ -20,6 +20,7 @@ import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.QueryResult;
 import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -38,6 +39,8 @@ import java.util.stream.Stream;
 @ExtendWith(MockitoExtension.class)
 class GrafanaServiceImplUnitTest {
 
+    @Mock
+    private MarketService marketService;
     @Mock
     private StatisticsService statisticsService;
 
@@ -214,7 +217,7 @@ class GrafanaServiceImplUnitTest {
                 TestData.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
                 TestData.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
         );
-        Mockito.when(statisticsService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
+        Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
 
         final List<QueryResult> results = service.getData(request);
 

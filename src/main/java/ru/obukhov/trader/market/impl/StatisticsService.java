@@ -27,18 +27,6 @@ public class StatisticsService {
     private final ApplicationContext applicationContext;
 
     /**
-     * Searches candles by conditions
-     *
-     * @param ticker           ticker of candles
-     * @param interval         search interval, default interval.from is start of trading, default interval.to is now
-     * @param candleResolution candle interval
-     * @return list of found candles
-     */
-    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
-        return marketService.getCandles(ticker, interval, candleResolution);
-    }
-
-    /**
      * Searches candles by conditions and calculates extra data by them
      *
      * @param ticker           ticker of candles

@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.impl;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +19,6 @@ import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,32 +33,6 @@ class StatisticsServiceUnitTest {
 
     @InjectMocks
     private StatisticsService service;
-
-    @Test
-    void getCandles_returnsCandlesFromMarketService() {
-
-        // arrange
-
-        final String ticker = "ticker";
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
-        final Interval interval = Interval.of(from, to);
-
-        final CandleResolution candleResolution = CandleResolution._1MIN;
-
-        final List<Candle> candles = new ArrayList<>();
-
-        Mockito.when(marketService.getCandles(ticker, interval, candleResolution)).thenReturn(candles);
-
-        // act
-
-        final List<Candle> candlesResponse = service.getCandles(ticker, interval, candleResolution);
-
-        // assert
-
-        Assertions.assertSame(candles, candlesResponse);
-    }
 
     @Test
     void getExtendedCandles_extendsCandles_withoutExtremes() {

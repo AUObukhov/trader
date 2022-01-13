@@ -13,6 +13,7 @@ import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.QueryResult;
 import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -33,6 +34,7 @@ public class GrafanaServiceImpl implements GrafanaService {
             new Column("open price", ColumnType.NUMBER)
     );
 
+    private final MarketService marketService;
     private final StatisticsService statisticsService;
 
     /**
@@ -109,7 +111,7 @@ public class GrafanaServiceImpl implements GrafanaService {
         queryResult.setColumns(CANDLES_COLUMNS);
 
         final List<List<Object>> rows = new ArrayList<>();
-        final List<Candle> candles = statisticsService.getCandles(ticker, interval, candleResolution);
+        final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
         for (Candle candle : candles) {
             rows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }
