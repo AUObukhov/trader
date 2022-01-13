@@ -10,6 +10,9 @@ import ru.tinkoff.invest.openapi.model.rest.SandboxSetPositionBalanceRequest;
 
 import java.math.BigDecimal;
 
+/**
+ * Service to manage sandbox
+ */
 public class SandboxService {
 
     private final MarketService marketService;
@@ -20,6 +23,10 @@ public class SandboxService {
         this.sandboxContext = opeApi.getSandboxContext();
     }
 
+    /**
+     * Sets given value ({@code balance}) of balance of given {@code currency} at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
+     */
     public void setCurrencyBalance(
             @NotNull final SandboxCurrency currency,
             @NotNull final BigDecimal balance,
@@ -32,6 +39,10 @@ public class SandboxService {
         sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId).join();
     }
 
+    /**
+     * Sets given value ({@code balance}) of balance of position with given {@code ticker} at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
+     */
     public void setPositionBalance(@NotNull final String ticker, @NotNull final BigDecimal balance, @Nullable final String brokerAccountId) {
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
                 .figi(marketService.getFigi(ticker))
@@ -40,6 +51,10 @@ public class SandboxService {
         sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId).join();
     }
 
+    /**
+     * Clears all balances at given {@code brokerAccountId}.
+     * If {@code brokerAccountId} null, works with default broker account
+     */
     public void clearAll(@Nullable final String brokerAccountId) {
         sandboxContext.clearAll(brokerAccountId).join();
     }
