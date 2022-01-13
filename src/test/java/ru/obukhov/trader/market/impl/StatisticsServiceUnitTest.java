@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class StatisticsServiceImplUnitTest {
+class StatisticsServiceUnitTest {
 
     @Mock
     private MovingAverager averager;
@@ -34,7 +34,7 @@ class StatisticsServiceImplUnitTest {
     private ApplicationContext applicationContext;
 
     @InjectMocks
-    private StatisticsServiceImpl service;
+    private StatisticsService service;
 
     @Test
     void getCandles_returnsCandlesFromMarketService() {

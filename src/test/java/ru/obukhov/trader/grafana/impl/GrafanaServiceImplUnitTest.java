@@ -20,7 +20,7 @@ import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.QueryResult;
 import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
-import ru.obukhov.trader.market.interfaces.StatisticsService;
+import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;

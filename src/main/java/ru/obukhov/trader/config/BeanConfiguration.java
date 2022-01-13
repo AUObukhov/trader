@@ -13,8 +13,7 @@ import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxService;
-import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
-import ru.obukhov.trader.market.interfaces.StatisticsService;
+import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.ScheduledBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -62,7 +61,7 @@ public class BeanConfiguration {
 
     @Bean
     public StatisticsService statisticsService(final MarketService realMarketService, final ApplicationContext applicationContext) {
-        return new StatisticsServiceImpl(realMarketService, applicationContext);
+        return new StatisticsService(realMarketService, applicationContext);
     }
 
     @Bean

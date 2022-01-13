@@ -6,7 +6,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -17,9 +16,10 @@ import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 import java.math.BigDecimal;
 import java.util.List;
 
+
 @Slf4j
 @RequiredArgsConstructor
-public class StatisticsServiceImpl implements StatisticsService {
+public class StatisticsService {
 
     private static final int ORDER = 1;
 
@@ -34,7 +34,6 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @param candleResolution candle interval
      * @return list of found candles
      */
-    @Override
     public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         return marketService.getCandles(ticker, interval, candleResolution);
     }
@@ -47,7 +46,6 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @param candleResolution candle interval
      * @return data structure with list of found candles and extra data
      */
-    @Override
     public GetCandlesResponse getExtendedCandles(
             final String ticker,
             final Interval interval,
@@ -70,7 +68,6 @@ public class StatisticsServiceImpl implements StatisticsService {
      * @param type nullable instrument type
      * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
      */
-    @Override
     public List<MarketInstrument> getInstruments(@Nullable final InstrumentType type) {
         return marketService.getInstruments(type);
     }
