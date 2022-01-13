@@ -13,6 +13,9 @@ import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Service to control customer orders at market
+ */
 public class OrdersService {
 
     private final TinkoffService tinkoffService;
@@ -23,6 +26,9 @@ public class OrdersService {
         this.marketService = marketService;
     }
 
+    /**
+     * @return returns list of active orders with given {@code ticker} at given {@code brokerAccountId}
+     */
     public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) {
         final String figi = marketService.getFigi(ticker);
         return getOrders(brokerAccountId).stream()
@@ -30,10 +36,16 @@ public class OrdersService {
                 .toList();
     }
 
+    /**
+     * @return returns list of active orders
+     */
     public List<Order> getOrders(@Nullable final String brokerAccountId) {
         return tinkoffService.getOrders(brokerAccountId);
     }
 
+    /**
+     * @return places new order with market price and given params
+     */
     public PlacedMarketOrder placeMarketOrder(
             @Nullable final String brokerAccountId,
             @NotNull final String ticker,
@@ -46,6 +58,9 @@ public class OrdersService {
         return tinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
     }
 
+    /**
+     * @return places new order with given {@code price} and given params
+     */
     public PlacedLimitOrder placeLimitOrder(
             @Nullable final String brokerAccountId,
             @NotNull final String ticker,
@@ -60,6 +75,9 @@ public class OrdersService {
         return tinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
     }
 
+    /**
+     * cancels order with given {@code orderId} at given {@code brokerAccountId}
+     */
     public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) {
         tinkoffService.cancelOrder(brokerAccountId, orderId);
     }
