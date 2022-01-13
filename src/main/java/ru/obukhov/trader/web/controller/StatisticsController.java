@@ -17,13 +17,9 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -97,20 +93,6 @@ public class StatisticsController {
         } catch (RuntimeException exception) {
             log.error("Failed to save candles for ticker {} to file", ticker, exception);
         }
-    }
-
-    @GetMapping("/instruments")
-    @ApiOperation("Get instruments by given criteria")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public GetInstrumentsResponse getInstruments(
-            @ApiParam(value = "Instrument type. If null all instruments are returned", example = "Stock") InstrumentType instrumentType
-    ) {
-        final List<MarketInstrument> instruments = statisticsService.getInstruments(instrumentType);
-
-        return new GetInstrumentsResponse(instruments);
     }
 
 }
