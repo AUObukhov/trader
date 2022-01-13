@@ -234,6 +234,9 @@ public class MarketService {
         return CollectionsUtils.getTail(candles, limit);
     }
 
+    /**
+     * @return market instrument with given {@code ticker}, or null if it does not exist
+     */
     public MarketInstrument getInstrument(final String ticker) {
         return getAllInstruments().stream()
                 .filter(instrument -> instrument.getTicker().equals(ticker))
@@ -269,6 +272,10 @@ public class MarketService {
         return result;
     }
 
+    /**
+     * @return FIGI of market instrument with given {@code ticker}
+     * @throws NullPointerException if instrument does not exist
+     */
     public String getFigi(final String ticker) {
         return tinkoffService.searchMarketInstrument(ticker).getFigi();
     }
