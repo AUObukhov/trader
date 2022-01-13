@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketServiceImpl;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
@@ -32,7 +31,7 @@ public class FakeBotFactory {
 
     public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
         final FakeTinkoffService fakeTinkoffService = createFakeTinkoffService(botConfig, balanceConfig, currentDateTime);
-        final MarketService fakeMarketService = new MarketServiceImpl(marketProperties, fakeTinkoffService);
+        final MarketService fakeMarketService = new MarketService(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsServiceImpl(fakeTinkoffService);
         final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
         final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);

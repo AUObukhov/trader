@@ -26,18 +26,18 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class MarketServiceImplUnitTest {
+class MarketServiceUnitTest {
 
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
     private TinkoffService tinkoffService;
 
-    private MarketServiceImpl service;
+    private MarketService service;
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new MarketServiceImpl(MARKET_PROPERTIES, tinkoffService);
+        this.service = new MarketService(MARKET_PROPERTIES, tinkoffService);
     }
 
     // region getCandles tests

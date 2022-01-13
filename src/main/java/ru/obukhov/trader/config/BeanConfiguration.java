@@ -7,14 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
-import ru.obukhov.trader.market.impl.MarketServiceImpl;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsServiceImpl;
 import ru.obukhov.trader.market.impl.OrdersServiceImpl;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxServiceImpl;
 import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
-import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
@@ -41,7 +40,7 @@ public class BeanConfiguration {
 
     @Bean
     public MarketService realMarketService(final MarketProperties marketProperties, final TinkoffService realTinkoffService) {
-        return new MarketServiceImpl(marketProperties, realTinkoffService);
+        return new MarketService(marketProperties, realTinkoffService);
     }
 
     @Bean

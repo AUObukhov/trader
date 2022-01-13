@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.interfaces.MarketService;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.interfaces.OperationsService;
 import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;

@@ -6,7 +6,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.market.interfaces.MarketService;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.tinkoff.invest.openapi.exceptions.WrongTokenException;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 

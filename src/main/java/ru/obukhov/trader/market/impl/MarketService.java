@@ -3,13 +3,11 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.interfaces.MarketService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
@@ -27,7 +25,7 @@ import java.util.ListIterator;
 
 @Slf4j
 @RequiredArgsConstructor
-public class MarketServiceImpl implements MarketService {
+public class MarketService {
 
     private final MarketProperties marketProperties;
     private final TinkoffService tinkoffService;
@@ -37,7 +35,6 @@ public class MarketServiceImpl implements MarketService {
      *
      * @return sorted by time list of loaded candles
      */
-    @Override
     public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
         DateUtils.assertDateTimeNotFuture(interval.getTo(), tinkoffService.getCurrentDateTime(), "to");
 
@@ -145,7 +142,6 @@ public class MarketServiceImpl implements MarketService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    @Override
     public Candle getLastCandle(final String ticker) {
         final OffsetDateTime to = tinkoffService.getCurrentDateTime();
         return getLastCandle(ticker, to);
@@ -158,7 +154,6 @@ public class MarketServiceImpl implements MarketService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    @Override
     public Candle getLastCandle(final String ticker, final OffsetDateTime to) {
         final OffsetDateTime candlesFrom = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit());
 
@@ -181,8 +176,6 @@ public class MarketServiceImpl implements MarketService {
      * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
      * within {@code trading.consecutive-empty-days-limit} days or one year (when candleResolution >= 1 day).
      */
-    @Override
-    @NotNull
     public List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution) {
         return DateUtils.getPeriodByCandleResolution(candleResolution) == ChronoUnit.DAYS
                 ? getLastCandlesDaily(ticker, limit, candleResolution)
@@ -241,7 +234,6 @@ public class MarketServiceImpl implements MarketService {
         return CollectionsUtils.getTail(candles, limit);
     }
 
-    @Override
     public MarketInstrument getInstrument(final String ticker) {
         return getAllInstruments().stream()
                 .filter(instrument -> instrument.getTicker().equals(ticker))
@@ -254,7 +246,6 @@ public class MarketServiceImpl implements MarketService {
      * @throws IllegalArgumentException when {@code type} is not
      *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
      */
-    @Override
     public List<MarketInstrument> getInstruments(final InstrumentType type) {
         if (type == null) {
             return getAllInstruments();
@@ -278,7 +269,6 @@ public class MarketServiceImpl implements MarketService {
         return result;
     }
 
-    @Override
     public String getFigi(final String ticker) {
         return tinkoffService.searchMarketInstrument(ticker).getFigi();
     }

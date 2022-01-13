@@ -11,7 +11,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
-import ru.obukhov.trader.market.interfaces.MarketService;
+import ru.obukhov.trader.market.impl.MarketService;
 import ru.tinkoff.invest.openapi.exceptions.WrongTokenException;
 import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 
