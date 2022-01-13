@@ -23,6 +23,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Service to get information about market prices and instruments
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class MarketService {
