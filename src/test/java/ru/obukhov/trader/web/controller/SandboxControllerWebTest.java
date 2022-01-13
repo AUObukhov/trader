@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
-import ru.obukhov.trader.market.interfaces.SandboxService;
+import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
 import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;

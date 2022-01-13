@@ -12,9 +12,8 @@ import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.impl.SandboxServiceImpl;
+import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
-import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.ScheduledBot;
@@ -43,7 +42,7 @@ public class BeanConfiguration {
     @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
     public SandboxService sandboxService(final OpenApi opeApi, final MarketService realMarketService) {
-        return new SandboxServiceImpl(opeApi, realMarketService);
+        return new SandboxService(opeApi, realMarketService);
     }
 
     @Bean
