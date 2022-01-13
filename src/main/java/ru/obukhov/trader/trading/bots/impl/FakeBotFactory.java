@@ -6,10 +6,9 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
-import ru.obukhov.trader.market.impl.OrdersServiceImpl;
+import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.interfaces.OrdersService;
 import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -32,7 +31,7 @@ public class FakeBotFactory {
         final FakeTinkoffService fakeTinkoffService = createFakeTinkoffService(botConfig, balanceConfig, currentDateTime);
         final MarketService fakeMarketService = new MarketService(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsService(fakeTinkoffService);
-        final OrdersService fakeOrdersService = new OrdersServiceImpl(fakeTinkoffService, fakeMarketService);
+        final OrdersService fakeOrdersService = new OrdersService(fakeTinkoffService, fakeMarketService);
         final PortfolioService fakePortfolioService = new PortfolioServiceImpl(fakeTinkoffService);
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 

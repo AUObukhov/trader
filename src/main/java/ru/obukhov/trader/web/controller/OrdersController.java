@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.trader.market.interfaces.OrdersService;
+import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 import ru.tinkoff.invest.openapi.model.rest.Order;
 

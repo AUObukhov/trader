@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class OrdersServiceImplUnitTest {
+class OrdersServiceUnitTest {
 
     @Mock
     private TinkoffService tinkoffService;
@@ -28,7 +28,7 @@ class OrdersServiceImplUnitTest {
     private MarketService marketService;
 
     @InjectMocks
-    private OrdersServiceImpl service;
+    private OrdersService service;
 
     @ParameterizedTest
     @NullSource

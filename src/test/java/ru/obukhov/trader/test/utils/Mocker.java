@@ -7,7 +7,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.interfaces.OrdersService;
+import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.tinkoff.invest.openapi.model.rest.Currency;
