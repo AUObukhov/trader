@@ -3,15 +3,12 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -52,14 +49,6 @@ public class StatisticsService {
         final List<BigDecimal> longAverages = averager.getAverages(openPrices, bigWindow, ORDER);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
-    }
-
-    /**
-     * @param type nullable instrument type
-     * @return all instruments of given {@code type}, or all instruments at all if {@code type} is null
-     */
-    public List<MarketInstrument> getInstruments(@Nullable final InstrumentType type) {
-        return marketService.getInstruments(type);
     }
 
 }
