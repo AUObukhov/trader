@@ -8,8 +8,8 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
+import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 

@@ -10,11 +10,10 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
-import ru.obukhov.trader.market.impl.PortfolioServiceImpl;
+import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxServiceImpl;
 import ru.obukhov.trader.market.impl.StatisticsServiceImpl;
-import ru.obukhov.trader.market.interfaces.PortfolioService;
 import ru.obukhov.trader.market.interfaces.SandboxService;
 import ru.obukhov.trader.market.interfaces.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -59,7 +58,7 @@ public class BeanConfiguration {
 
     @Bean
     public PortfolioService realPortfolioService(final TinkoffService realTinkoffService) {
-        return new PortfolioServiceImpl(realTinkoffService);
+        return new PortfolioService(realTinkoffService);
     }
 
     @Bean

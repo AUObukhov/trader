@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @ExtendWith(MockitoExtension.class)
-class PortfolioServiceImplUnitTest {
+class PortfolioServiceUnitTest {
 
     @Mock
     private TinkoffService tinkoffService;
 
     @InjectMocks
-    private PortfolioServiceImpl service;
+    private PortfolioService service;
 
     // region getPosition tests
 

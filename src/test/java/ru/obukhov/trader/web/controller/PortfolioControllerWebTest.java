@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.tinkoff.invest.openapi.model.rest.Currency;

@@ -14,7 +14,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
-import ru.obukhov.trader.market.interfaces.PortfolioService;
+import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
