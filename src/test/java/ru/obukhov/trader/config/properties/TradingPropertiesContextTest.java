@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
+@ActiveProfiles("test")
 class TradingPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -23,7 +25,7 @@ class TradingPropertiesContextTest {
                     final TradingProperties tradingProperties = context.getBean(TradingProperties.class);
 
                     Assertions.assertEquals("i identify myself as token", tradingProperties.getToken());
-                    Assertions.assertTrue(tradingProperties.isSandbox());
+                    Assertions.assertFalse(tradingProperties.isSandbox());
                 });
     }
 
