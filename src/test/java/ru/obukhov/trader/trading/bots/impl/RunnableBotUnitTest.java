@@ -19,6 +19,7 @@ import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
+import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -65,14 +66,14 @@ class RunnableBotUnitTest {
     private MarketProperties marketProperties;
 
     @InjectMocks
-    private RunnableBot bot;
+    private TinkoffServices tinkoffServices;
 
     @Test
     @SuppressWarnings("unused")
     void run_doesNothing_whenDisabled() {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(false);
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -87,7 +88,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().plusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -109,7 +110,7 @@ class RunnableBotUnitTest {
         final List<Order> orders1 = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
 
-        bot.run();
+        createRunnableBot().run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
@@ -133,7 +134,7 @@ class RunnableBotUnitTest {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -154,7 +155,7 @@ class RunnableBotUnitTest {
 
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
@@ -180,10 +181,11 @@ class RunnableBotUnitTest {
 
         Mockito.when(marketService.getInstrument(ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
+
 
     @ParameterizedTest
     @NullSource
@@ -211,7 +213,7 @@ class RunnableBotUnitTest {
         Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -241,7 +243,7 @@ class RunnableBotUnitTest {
 
         Mockito.when(portfolioService.getPosition(brokerAccountId, ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -269,7 +271,8 @@ class RunnableBotUnitTest {
 
         Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
-        bot.run();
+
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -298,7 +301,7 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -333,7 +336,7 @@ class RunnableBotUnitTest {
         Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.run();
+        createRunnableBot().run();
     }
 
     @Test
@@ -351,7 +354,7 @@ class RunnableBotUnitTest {
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -368,7 +371,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -396,7 +399,7 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        bot.run();
+        createRunnableBot().run();
 
         verifyNoOrdersMade();
     }
@@ -422,7 +425,7 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        bot.run();
+        createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
@@ -449,10 +452,14 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        bot.run();
+        createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
+    }
+
+    private RunnableBot createRunnableBot() {
+        return new RunnableBot(tinkoffServices, strategy, schedulingProperties, botConfig, marketProperties);
     }
 
     private void mockBotConfig(

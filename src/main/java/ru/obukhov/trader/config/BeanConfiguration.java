@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.StatisticsService;
+import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -71,11 +72,7 @@ public class BeanConfiguration {
     @Bean
     public List<RunnableBot> scheduledBots(
             final Environment environment,
-            final MarketService marketService,
-            final OperationsService operationsService,
-            final OrdersService ordersService,
-            final PortfolioService portfolioService,
-            final RealTinkoffService realTinkoffService,
+            final TinkoffServices tinkoffServices,
             final TradingStrategyFactory strategyFactory,
             final SchedulingProperties schedulingProperties,
             final ScheduledBotsProperties scheduledBotsProperties,
@@ -85,11 +82,7 @@ public class BeanConfiguration {
         return scheduledBotsProperties.getBotConfigs().stream()
                 .map(botConfig -> {
                     final RunnableBot bot = new RunnableBot(
-                            marketService,
-                            operationsService,
-                            ordersService,
-                            portfolioService,
-                            realTinkoffService,
+                            tinkoffServices,
                             strategyFactory.createStrategy(botConfig),
                             schedulingProperties,
                             botConfig,

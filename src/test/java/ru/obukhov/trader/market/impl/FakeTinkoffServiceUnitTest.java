@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,6 +46,8 @@ class FakeTinkoffServiceUnitTest {
     private MarketService marketService;
     @Mock
     private RealTinkoffService realTinkoffService;
+    @InjectMocks
+    private TinkoffServices tinkoffServices;
 
     private FakeTinkoffService service;
 
@@ -130,8 +133,7 @@ class FakeTinkoffServiceUnitTest {
     ) {
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -164,8 +166,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -190,8 +191,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -214,8 +214,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -238,8 +237,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -267,8 +265,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.RUB,
@@ -307,8 +304,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.RUB,
@@ -349,8 +345,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.RUB,
@@ -391,8 +386,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -421,8 +415,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -454,8 +447,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -489,8 +481,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -540,8 +531,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -579,8 +569,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -612,8 +601,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -650,8 +638,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -684,8 +671,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 currency,
@@ -713,8 +699,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 brokerAccountId,
                 dateTime,
                 Currency.USD,
@@ -759,8 +744,7 @@ class FakeTinkoffServiceUnitTest {
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
-                marketService,
-                realTinkoffService,
+                tinkoffServices,
                 null,
                 dateTime,
                 Currency.USD,

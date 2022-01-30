@@ -8,6 +8,7 @@ import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
@@ -45,6 +46,16 @@ public abstract class AbstractBot implements Bot {
 
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
+
+    protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
+        this.marketService = tinkoffServices.marketService();
+        this.operationsService = tinkoffServices.operationsService();
+        this.ordersService = tinkoffServices.ordersService();
+        this.portfolioService = tinkoffServices.portfolioService();
+        this.tinkoffService = tinkoffServices.realTinkoffService();
+        this.strategy = strategy;
+        this.strategyCache = strategyCache;
+    }
 
     /**
      * Perform one trading step

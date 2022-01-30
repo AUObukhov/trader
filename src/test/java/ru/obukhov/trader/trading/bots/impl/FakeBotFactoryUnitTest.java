@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
+import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -34,11 +35,13 @@ class FakeBotFactoryUnitTest {
     private RealTinkoffService realTinkoffService;
 
     @InjectMocks
+    private TinkoffServices tinkoffServices;
+
     private FakeBotFactory factory;
 
     @BeforeEach
     void setUp() {
-        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, realMarketService, realTinkoffService);
+        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, tinkoffServices);
     }
 
     @ParameterizedTest

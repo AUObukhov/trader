@@ -71,8 +71,7 @@ public class FakeTinkoffService implements TinkoffService {
      */
     public FakeTinkoffService(
             final MarketProperties marketProperties,
-            final MarketService marketService,
-            final RealTinkoffService realTinkoffService,
+            final TinkoffServices tinkoffServices,
             final String brokerAccountId,
             final OffsetDateTime currentDateTime,
             final Currency currency,
@@ -80,8 +79,8 @@ public class FakeTinkoffService implements TinkoffService {
             final BalanceConfig balanceConfig
     ) {
         this.marketProperties = marketProperties;
-        this.marketService = marketService;
-        this.realTinkoffService = realTinkoffService;
+        this.marketService = tinkoffServices.marketService();
+        this.realTinkoffService = tinkoffServices.realTinkoffService();
         this.fakeContext = createFakeContext(brokerAccountId, currentDateTime, currency, balanceConfig);
         this.commission = commission;
     }
