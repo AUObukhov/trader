@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -14,13 +13,13 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 
 @Slf4j
-public class ScheduledBot extends AbstractBot {
+public class RunnableBot extends AbstractBot implements Runnable {
 
     private final SchedulingProperties schedulingProperties;
     private final BotConfig botConfig;
     private final MarketProperties marketProperties;
 
-    public ScheduledBot(
+    public RunnableBot(
             final MarketService marketService,
             final OperationsService operationsService,
             final OrdersService ordersService,
@@ -38,9 +37,8 @@ public class ScheduledBot extends AbstractBot {
         this.marketProperties = marketProperties;
     }
 
-    @Scheduled(fixedDelayString = "${scheduling.delay}")
-    @SuppressWarnings("unused")
-    public void tick() {
+    @Override
+    public void run() {
         if (!schedulingProperties.isEnabled()) {
             log.trace("Scheduling is disabled. Do nothing");
             return;

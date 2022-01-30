@@ -43,7 +43,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class ScheduledBotUnitTest {
+class RunnableBotUnitTest {
 
     @Mock
     private MarketService marketService;
@@ -65,21 +65,21 @@ class ScheduledBotUnitTest {
     private MarketProperties marketProperties;
 
     @InjectMocks
-    private ScheduledBot bot;
+    private RunnableBot bot;
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNothing_whenDisabled() {
+    void run_doesNothing_whenDisabled() {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(false);
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNothing_whenNotWorkTime() {
+    void run_doesNothing_whenNotWorkTime() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -87,14 +87,14 @@ class ScheduledBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().plusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNothing_whenThereAreOrders() {
+    void run_doesNothing_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -109,7 +109,7 @@ class ScheduledBotUnitTest {
         final List<Order> orders1 = List.of(new Order());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
 
-        bot.tick();
+        bot.run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
@@ -118,7 +118,7 @@ class ScheduledBotUnitTest {
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetLastCandlesThrowsException() {
+    void run_doesNoOrder_whenGetLastCandlesThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -133,14 +133,14 @@ class ScheduledBotUnitTest {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNothing_whenGetOrdersThrowsException() {
+    void run_doesNothing_whenGetOrdersThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -154,7 +154,7 @@ class ScheduledBotUnitTest {
 
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
@@ -163,7 +163,7 @@ class ScheduledBotUnitTest {
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetInstrumentThrowsException() {
+    void run_doesNoOrder_whenGetInstrumentThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -180,7 +180,7 @@ class ScheduledBotUnitTest {
 
         Mockito.when(marketService.getInstrument(ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
@@ -189,7 +189,7 @@ class ScheduledBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetAvailableBalanceThrowsException(@Nullable final String brokerAccountId) {
+    void run_doesNoOrder_whenGetAvailableBalanceThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -211,7 +211,7 @@ class ScheduledBotUnitTest {
         Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
@@ -220,7 +220,7 @@ class ScheduledBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetPositionThrowsException(@Nullable final String brokerAccountId) {
+    void run_doesNoOrder_whenGetPositionThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -241,14 +241,14 @@ class ScheduledBotUnitTest {
 
         Mockito.when(portfolioService.getPosition(brokerAccountId, ticker)).thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenGetOperationsThrowsException() {
+    void run_doesNoOrder_whenGetOperationsThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -269,14 +269,14 @@ class ScheduledBotUnitTest {
 
         Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenDecideThrowsException() {
+    void run_doesNoOrder_whenDecideThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -298,7 +298,7 @@ class ScheduledBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
@@ -307,7 +307,7 @@ class ScheduledBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     @SuppressWarnings({"unused", "java:S2699"})
-    void tick_catchesException_whenPlaceMarketOrderThrowsException(@Nullable final String brokerAccountId) {
+    void run_catchesException_whenPlaceMarketOrderThrowsException(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -333,12 +333,12 @@ class ScheduledBotUnitTest {
         Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
                 .thenThrow(new IllegalArgumentException());
 
-        bot.tick();
+        bot.run();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenThereAreOrders() {
+    void run_doesNoOrder_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -351,14 +351,14 @@ class ScheduledBotUnitTest {
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenCurrentCandlesIsEmpty() {
+    void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -368,14 +368,14 @@ class ScheduledBotUnitTest {
 
         final String ticker = "ticker";
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
 
     @Test
     @SuppressWarnings("unused")
-    void tick_doesNoOrder_whenDecisionIsWait() {
+    void run_doesNoOrder_whenDecisionIsWait() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -396,7 +396,7 @@ class ScheduledBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        bot.tick();
+        bot.run();
 
         verifyNoOrdersMade();
     }
@@ -405,7 +405,7 @@ class ScheduledBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
+    void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -422,7 +422,7 @@ class ScheduledBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        bot.tick();
+        bot.run();
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
@@ -432,7 +432,7 @@ class ScheduledBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     @SuppressWarnings("unused")
-    void tick_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
+    void run_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -449,7 +449,7 @@ class ScheduledBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        bot.tick();
+        bot.run();
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);

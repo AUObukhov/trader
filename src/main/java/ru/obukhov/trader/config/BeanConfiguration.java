@@ -4,6 +4,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -15,10 +18,11 @@ import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.trading.bots.impl.ScheduledBot;
+import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.invest.openapi.OpenApi;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,7 +69,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public List<ScheduledBot> scheduledBots(
+    public List<RunnableBot> scheduledBots(
+            final Environment environment,
             final MarketService marketService,
             final OperationsService operationsService,
             final OrdersService ordersService,
@@ -74,19 +79,38 @@ public class BeanConfiguration {
             final TradingStrategyFactory strategyFactory,
             final SchedulingProperties schedulingProperties,
             final ScheduledBotsProperties scheduledBotsProperties,
-            final MarketProperties marketProperties
+            final MarketProperties marketProperties,
+            final TaskScheduler taskScheduler
     ) {
         return scheduledBotsProperties.getBotConfigs().stream()
-                .map(botConfig -> new ScheduledBot(
-                        marketService,
-                        operationsService,
-                        ordersService,
-                        portfolioService,
-                        realTinkoffService,
-                        strategyFactory.createStrategy(botConfig),
-                        schedulingProperties,
-                        botConfig,
-                        marketProperties
-                )).toList();
+                .map(botConfig -> {
+                    final RunnableBot bot = new RunnableBot(
+                            marketService,
+                            operationsService,
+                            ordersService,
+                            portfolioService,
+                            realTinkoffService,
+                            strategyFactory.createStrategy(botConfig),
+                            schedulingProperties,
+                            botConfig,
+                            marketProperties
+                    );
+                    registerScheduledJob(environment, schedulingProperties, taskScheduler, bot);
+                    return bot;
+                }).toList();
     }
+
+    private void registerScheduledJob(
+            final Environment environment,
+            final SchedulingProperties schedulingProperties,
+            final TaskScheduler taskScheduler,
+            final RunnableBot bot
+    ) {
+        if (Arrays.asList(environment.getActiveProfiles()).contains("prod")) {
+            final PeriodicTrigger trigger = new PeriodicTrigger(schedulingProperties.getDelay());
+            trigger.setInitialDelay(schedulingProperties.getDelay());
+            taskScheduler.schedule(bot, trigger);
+        }
+    }
+
 }
