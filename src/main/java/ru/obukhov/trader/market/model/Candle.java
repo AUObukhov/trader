@@ -1,6 +1,6 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,16 +17,16 @@ import java.time.OffsetDateTime;
 @Accessors(chain = true)
 public class Candle {
 
-    @JsonProperty("o")
+    @JsonAlias("o")
     protected BigDecimal openPrice;
 
-    @JsonProperty("c")
+    @JsonAlias("c")
     protected BigDecimal closePrice;
 
-    @JsonProperty("h")
+    @JsonAlias("h")
     protected BigDecimal highestPrice;
 
-    @JsonProperty("l")
+    @JsonAlias("l")
     protected BigDecimal lowestPrice;
 
     protected OffsetDateTime time;
