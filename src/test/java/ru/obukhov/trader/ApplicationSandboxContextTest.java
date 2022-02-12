@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.web.controller.SandboxController;
-import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 import ru.tinkoff.invest.openapi.okhttp.SandboxContext;
 
 @ActiveProfiles("test")
@@ -22,7 +22,7 @@ class ApplicationSandboxContextTest {
     private SandboxController sandboxController;
 
     @MockBean
-    private InterceptingOpenApi openApi;
+    private OpenApi openApi;
 
     @Mock
     private SandboxContext sandboxContext;

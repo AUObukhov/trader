@@ -11,7 +11,7 @@ import ru.obukhov.trader.Application;
 import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 
 import java.math.BigDecimal;
 
@@ -25,7 +25,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
     @MockBean
     private SandboxService sandboxService;
     @MockBean
-    private InterceptingOpenApi openApi; // to prevent registration on application start
+    private OpenApi openApi; // to prevent registration on application start
 
     @Test
     void setCurrencyBalance_setsBalance() throws Exception {
