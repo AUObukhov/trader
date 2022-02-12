@@ -1,13 +1,12 @@
 package ru.obukhov.trader.trading.model;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,17 +19,7 @@ class DecisionDataUnitTest {
     void getPositionLotsCount() {
         final DecisionData decisionData = new DecisionData();
 
-        final PortfolioPosition position = new PortfolioPosition(
-                null,
-                BigDecimal.ZERO,
-                null,
-                null,
-                null,
-                30,
-                null,
-                null,
-                StringUtils.EMPTY
-        );
+        final PortfolioPosition position = TestData.createPortfolioPosition(30);
         decisionData.setPosition(position);
 
         final MarketInstrument instrument = new MarketInstrument();

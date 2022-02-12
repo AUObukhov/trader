@@ -4,7 +4,6 @@ import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.trading.model.BackTestOperation;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.util.EnumMap;
 import java.util.HashMap;

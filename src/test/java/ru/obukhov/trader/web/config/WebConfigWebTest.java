@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.support.GenericConversionService;
 import ru.obukhov.trader.ContextTest;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
 
 @SpringBootTest(args = "--trading.token=i identify myself as token")
 class WebConfigWebTest extends ContextTest {

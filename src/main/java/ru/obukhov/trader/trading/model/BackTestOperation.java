@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
+import ru.obukhov.trader.market.model.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

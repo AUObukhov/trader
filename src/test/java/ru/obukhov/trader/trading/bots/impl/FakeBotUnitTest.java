@@ -16,13 +16,13 @@ import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

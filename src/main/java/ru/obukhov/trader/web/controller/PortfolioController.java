@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.util.List;
 

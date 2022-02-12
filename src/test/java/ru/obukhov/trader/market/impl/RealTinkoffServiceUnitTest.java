@@ -14,36 +14,35 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.BrokerAccountType;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.Candles;
+import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.obukhov.trader.market.model.LimitOrderRequest;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketInstrumentList;
+import ru.obukhov.trader.market.model.MarketOrderRequest;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.Operations;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.Orderbook;
+import ru.obukhov.trader.market.model.PlacedLimitOrder;
+import ru.obukhov.trader.market.model.PlacedMarketOrder;
+import ru.obukhov.trader.market.model.Portfolio;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.market.model.UserAccount;
+import ru.obukhov.trader.market.model.UserAccounts;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.tinkoff.invest.openapi.MarketContext;
-import ru.tinkoff.invest.openapi.OpenApi;
-import ru.tinkoff.invest.openapi.OperationsContext;
-import ru.tinkoff.invest.openapi.OrdersContext;
-import ru.tinkoff.invest.openapi.PortfolioContext;
-import ru.tinkoff.invest.openapi.UserContext;
-import ru.tinkoff.invest.openapi.model.rest.BrokerAccountType;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.Candles;
-import ru.tinkoff.invest.openapi.model.rest.Currencies;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
-import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrumentList;
-import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.Operations;
-import ru.tinkoff.invest.openapi.model.rest.Order;
-import ru.tinkoff.invest.openapi.model.rest.Orderbook;
-import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
-import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
-import ru.tinkoff.invest.openapi.model.rest.Portfolio;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
-import ru.tinkoff.invest.openapi.model.rest.UserAccounts;
+import ru.tinkoff.invest.openapi.okhttp.MarketContext;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OperationsContext;
+import ru.tinkoff.invest.openapi.okhttp.OrdersContext;
+import ru.tinkoff.invest.openapi.okhttp.PortfolioContext;
+import ru.tinkoff.invest.openapi.okhttp.UserContext;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -188,7 +187,7 @@ class RealTinkoffServiceUnitTest {
         final CandleResolution candleResolution = CandleResolution._1MIN;
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle1 = TestData.createTinkoffCandle(
+        final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
                 candleResolution,
                 1000,
                 1500,
@@ -196,7 +195,7 @@ class RealTinkoffServiceUnitTest {
                 500,
                 from.plusMinutes(1)
         );
-        final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle2 = TestData.createTinkoffCandle(
+        final Candle tinkoffCandle2 = TestData.createTinkoffCandle(
                 candleResolution,
                 1500,
                 2000,
@@ -211,8 +210,8 @@ class RealTinkoffServiceUnitTest {
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
 
         Assertions.assertEquals(tinkoffCandles.getCandles().size(), candles.size());
-        AssertUtils.assertEquals(tinkoffCandle1, candles.get(0));
-        AssertUtils.assertEquals(tinkoffCandle2, candles.get(1));
+        Assertions.assertEquals(tinkoffCandle1, candles.get(0));
+        Assertions.assertEquals(tinkoffCandle2, candles.get(1));
     }
 
     @Test
@@ -369,27 +368,27 @@ class RealTinkoffServiceUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) {
-        final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition tinkoffPosition1 =
-                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
-                        .ticker("ticker1")
-                        .balance(BigDecimal.valueOf(1000))
-                        .blocked(null)
-                        .expectedYield(TestData.createMoneyAmount(Currency.RUB, 100))
-                        .lots(10)
-                        .averagePositionPrice(TestData.createMoneyAmount(Currency.RUB, 110))
-                        .averagePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 110))
-                        .name("name1");
+        final PortfolioPosition tinkoffPosition1 = PortfolioPosition.builder()
+                .ticker("ticker1")
+                .balance(BigDecimal.valueOf(1000))
+                .blocked(null)
+                .expectedYield(BigDecimal.valueOf(100))
+                .count(10)
+                .averagePositionPrice(BigDecimal.valueOf(110))
+                .averagePositionPriceNoNkd(BigDecimal.valueOf(110))
+                .name("name1")
+                .build();
 
-        final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition tinkoffPosition2 =
-                new ru.tinkoff.invest.openapi.model.rest.PortfolioPosition()
-                        .ticker("ticker2")
-                        .balance(BigDecimal.valueOf(2000))
-                        .blocked(BigDecimal.valueOf(100))
-                        .expectedYield(TestData.createMoneyAmount(Currency.RUB, 200))
-                        .lots(5)
-                        .averagePositionPrice(TestData.createMoneyAmount(Currency.RUB, 440))
-                        .averagePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 440))
-                        .name("name2");
+        final PortfolioPosition tinkoffPosition2 = PortfolioPosition.builder()
+                .ticker("ticker2")
+                .balance(BigDecimal.valueOf(2000))
+                .blocked(BigDecimal.valueOf(100))
+                .expectedYield(BigDecimal.valueOf(200))
+                .count(5)
+                .averagePositionPrice(BigDecimal.valueOf(440))
+                .averagePositionPriceNoNkd(BigDecimal.valueOf(440))
+                .name("name2")
+                .build();
         final Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
         Mockito.when(portfolioContext.getPortfolio(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(portfolio));
 
@@ -397,8 +396,8 @@ class RealTinkoffServiceUnitTest {
 
         Assertions.assertEquals(portfolio.getPositions().size(), result.size());
         Iterator<PortfolioPosition> resultIterator = result.iterator();
-        AssertUtils.assertEquals(tinkoffPosition1, resultIterator.next());
-        AssertUtils.assertEquals(tinkoffPosition2, resultIterator.next());
+        Assertions.assertEquals(tinkoffPosition1, resultIterator.next());
+        Assertions.assertEquals(tinkoffPosition2, resultIterator.next());
     }
 
     @ParameterizedTest

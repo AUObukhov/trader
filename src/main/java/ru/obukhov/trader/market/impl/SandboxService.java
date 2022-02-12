@@ -2,11 +2,11 @@ package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.tinkoff.invest.openapi.OpenApi;
-import ru.tinkoff.invest.openapi.SandboxContext;
-import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
-import ru.tinkoff.invest.openapi.model.rest.SandboxSetCurrencyBalanceRequest;
-import ru.tinkoff.invest.openapi.model.rest.SandboxSetPositionBalanceRequest;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
+import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
+import ru.tinkoff.invest.openapi.okhttp.SandboxContext;
 
 import java.math.BigDecimal;
 
@@ -28,7 +28,7 @@ public class SandboxService {
      * If {@code brokerAccountId} null, works with default broker account
      */
     public void setCurrencyBalance(
-            @NotNull final SandboxCurrency currency,
+            @NotNull final Currency currency,
             @NotNull final BigDecimal balance,
             @Nullable final String brokerAccountId
     ) {

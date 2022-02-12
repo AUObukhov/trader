@@ -10,9 +10,9 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.model.MarketInstrument;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;

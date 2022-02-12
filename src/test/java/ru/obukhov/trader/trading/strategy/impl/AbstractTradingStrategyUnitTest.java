@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationStatus;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -16,8 +18,6 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.util.Collections;
 import java.util.List;

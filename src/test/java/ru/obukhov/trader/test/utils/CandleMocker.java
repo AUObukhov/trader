@@ -8,7 +8,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.obukhov.trader.market.model.CandleResolution;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

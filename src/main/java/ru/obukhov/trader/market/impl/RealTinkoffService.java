@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -12,21 +11,20 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.TinkoffContextsAware;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.Candles;
+import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.obukhov.trader.market.model.LimitOrderRequest;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketOrderRequest;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.Orderbook;
+import ru.obukhov.trader.market.model.PlacedLimitOrder;
+import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.transform.CandleMapper;
-import ru.obukhov.trader.market.model.transform.PortfolioPositionMapper;
-import ru.tinkoff.invest.openapi.OpenApi;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
-import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.Order;
-import ru.tinkoff.invest.openapi.model.rest.Orderbook;
-import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
-import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
+import ru.obukhov.trader.market.model.UserAccount;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -43,8 +41,6 @@ import java.util.List;
 @Slf4j
 public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService, ApplicationContextAware {
 
-    private final CandleMapper candleMapper = Mappers.getMapper(CandleMapper.class);
-    private final PortfolioPositionMapper portfolioPositionMapper = Mappers.getMapper(PortfolioPositionMapper.class);
     private RealTinkoffService self;
 
     public RealTinkoffService(final OpenApi opeApi) {
@@ -93,7 +89,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
         final List<Candle> candles = getMarketContext()
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleResolution)
                 .join()
-                .map(candleMapper::map)
+                .map(Candles::getCandles)
                 .orElse(Collections.emptyList());
         log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
         return candles;
@@ -154,11 +150,10 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
-        final List<ru.tinkoff.invest.openapi.model.rest.PortfolioPosition> positions = getPortfolioContext()
+        return getPortfolioContext()
                 .getPortfolio(brokerAccountId)
                 .join()
                 .getPositions();
-        return portfolioPositionMapper.map(positions);
     }
 
     @Override

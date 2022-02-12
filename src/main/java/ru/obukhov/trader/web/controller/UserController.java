@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.UserService;
+import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.web.model.exchange.GetUserAccountsResponse;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.util.List;
 

@@ -3,13 +3,13 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.OperationStatus;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
-import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.math.BigDecimal;
 

@@ -21,7 +21,7 @@ import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.tinkoff.invest.openapi.OpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 
 import java.util.Arrays;
 import java.util.List;

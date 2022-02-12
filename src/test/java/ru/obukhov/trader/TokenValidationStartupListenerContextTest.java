@@ -12,8 +12,8 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.tinkoff.invest.openapi.exceptions.WrongTokenException;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
 import java.util.concurrent.CompletionException;
 

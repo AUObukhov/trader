@@ -3,12 +3,12 @@ package ru.obukhov.trader.market.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
-import ru.tinkoff.invest.openapi.model.rest.Order;
-import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
-import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
+import ru.obukhov.trader.market.model.LimitOrderRequest;
+import ru.obukhov.trader.market.model.MarketOrderRequest;
+import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.PlacedLimitOrder;
+import ru.obukhov.trader.market.model.PlacedMarketOrder;
 
 import java.math.BigDecimal;
 import java.util.List;

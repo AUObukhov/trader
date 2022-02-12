@@ -7,9 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.market.impl.UserService;
+import ru.obukhov.trader.market.model.BrokerAccountType;
+import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.tinkoff.invest.openapi.model.rest.BrokerAccountType;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.util.List;
 

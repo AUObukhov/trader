@@ -9,12 +9,12 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.Order;
 
 import java.time.OffsetDateTime;
 import java.util.List;

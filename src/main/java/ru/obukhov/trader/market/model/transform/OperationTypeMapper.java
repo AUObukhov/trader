@@ -1,8 +1,8 @@
 package ru.obukhov.trader.market.model.transform;
 
 import org.mapstruct.Mapper;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
-import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
+import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.OperationTypeWithCommission;
 
 /**
  * Maps {@link OperationType} to {@link OperationTypeWithCommission}

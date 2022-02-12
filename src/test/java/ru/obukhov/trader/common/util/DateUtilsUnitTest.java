@@ -9,9 +9,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.text.ParseException;
 import java.time.Duration;

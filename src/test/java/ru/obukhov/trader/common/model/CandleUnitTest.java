@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.time.OffsetDateTime;
 

@@ -2,7 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
+import ru.obukhov.trader.market.model.UserAccount;
 
 import java.util.List;
 

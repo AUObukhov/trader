@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.MarketService;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package ru.obukhov.trader.market.model.transform;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.trading.model.BackTestOperation;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
 
 /**
  * Maps {@link Operation} to {@link BackTestOperation} and vice versa
@@ -17,6 +17,7 @@ public interface OperationMapper {
 
     @Mapping(target = "date", source = "dateTime")
     @Mapping(target = "commission.value", source = "commission")
+    @Mapping(target = "commission.currency", constant = "RUB")
     Operation map(final BackTestOperation source);
 
 }

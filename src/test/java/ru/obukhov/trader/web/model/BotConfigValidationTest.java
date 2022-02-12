@@ -1,9 +1,9 @@
 package ru.obukhov.trader.web.model;
 
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 class BotConfigValidationTest {
 

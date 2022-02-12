@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConstructorBinding;
+import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.trading.model.StrategyType;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;

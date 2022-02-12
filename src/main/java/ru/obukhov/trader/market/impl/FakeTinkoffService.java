@@ -12,27 +12,26 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.FakeContext;
+import ru.obukhov.trader.market.model.LimitOrderRequest;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.MoneyAmount;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.OrderStatus;
+import ru.obukhov.trader.market.model.Orderbook;
+import ru.obukhov.trader.market.model.PlacedLimitOrder;
+import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.transform.MoneyAmountMapper;
+import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
-import ru.tinkoff.invest.openapi.model.rest.LimitOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.MarketOrderRequest;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
-import ru.tinkoff.invest.openapi.model.rest.Order;
-import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
-import ru.tinkoff.invest.openapi.model.rest.Orderbook;
-import ru.tinkoff.invest.openapi.model.rest.PlacedLimitOrder;
-import ru.tinkoff.invest.openapi.model.rest.PlacedMarketOrder;
-import ru.tinkoff.invest.openapi.model.rest.UserAccount;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -54,7 +53,6 @@ public class FakeTinkoffService implements TinkoffService {
     private final RealTinkoffService realTinkoffService;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
-    private final MoneyAmountMapper moneyAmountMapper = Mappers.getMapper(MoneyAmountMapper.class);
 
     private final FakeContext fakeContext;
     private final double commission;
@@ -245,32 +243,19 @@ public class FakeTinkoffService implements TinkoffService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(null, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            position = createNewPosition(ticker, totalPrice, instrument.getCurrency(), currentPrice, count);
+            position = PortfolioPosition.builder()
+                    .ticker(ticker)
+                    .balance(totalPrice)
+                    .currency(instrument.getCurrency())
+                    .count(count)
+                    .averagePositionPrice(currentPrice)
+                    .name(StringUtils.EMPTY)
+                    .build();
         } else {
             position = addValuesToPosition(existingPosition, count, totalPrice);
         }
 
         fakeContext.addPosition(brokerAccountId, ticker, position);
-    }
-
-    private PortfolioPosition createNewPosition(
-            final String ticker,
-            final BigDecimal balance,
-            final Currency currency,
-            final BigDecimal averagePositionPrice,
-            final int count
-    ) {
-        return new PortfolioPosition(
-                ticker,
-                balance,
-                null,
-                currency,
-                null,
-                count,
-                averagePositionPrice,
-                null,
-                StringUtils.EMPTY
-        );
     }
 
     private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int count, final BigDecimal totalPrice) {
@@ -286,17 +271,17 @@ public class FakeTinkoffService implements TinkoffService {
             final int lotsCount,
             final BigDecimal averagePositionPrice
     ) {
-        return new PortfolioPosition(
-                position.getTicker(),
-                balance,
-                position.getBlocked(),
-                position.getCurrency(),
-                position.getExpectedYield(),
-                lotsCount,
-                averagePositionPrice,
-                position.getAveragePositionPriceNoNkd(),
-                position.getName()
-        );
+        return PortfolioPosition.builder()
+                .ticker(position.getTicker())
+                .balance(balance)
+                .blocked(position.getBlocked())
+                .currency(position.getCurrency())
+                .expectedYield(position.getExpectedYield())
+                .count(lotsCount)
+                .averagePositionPrice(averagePositionPrice)
+                .averagePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
+                .name(position.getName())
+                .build();
     }
 
     private void updateBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
@@ -332,17 +317,17 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
-        return new PortfolioPosition(
-                position.getTicker(),
-                position.getBalance(),
-                position.getBlocked(),
-                position.getCurrency(),
-                position.getExpectedYield(),
-                count,
-                position.getAveragePositionPrice(),
-                position.getAveragePositionPriceNoNkd(),
-                position.getName()
-        );
+        return PortfolioPosition.builder()
+                .ticker(position.getTicker())
+                .balance(position.getBalance())
+                .blocked(position.getBlocked())
+                .currency(position.getCurrency())
+                .expectedYield(position.getExpectedYield())
+                .count(count)
+                .averagePositionPrice(position.getAveragePositionPrice())
+                .averagePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
+                .name(position.getName())
+                .build();
     }
 
     private void addOperation(
@@ -370,7 +355,7 @@ public class FakeTinkoffService implements TinkoffService {
                 .status(OrderStatus.NEW)
                 .executedLots(orderRequest.getLots())
                 .requestedLots(orderRequest.getLots())
-                .commission(moneyAmountMapper.map(commission));
+                .commission(commission);
     }
 
     @Override

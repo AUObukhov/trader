@@ -10,10 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,29 +27,27 @@ class PortfolioControllerWebTest extends ControllerWebTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPositions(@Nullable final String brokerAccountId) throws Exception {
-        final PortfolioPosition position1 = new PortfolioPosition(
-                "ticker1",
-                BigDecimal.valueOf(10000),
-                null,
-                Currency.RUB,
-                BigDecimal.valueOf(1000),
-                5,
-                BigDecimal.valueOf(2000),
-                BigDecimal.valueOf(2000),
-                "name1"
-        );
+        final PortfolioPosition position1 = PortfolioPosition.builder()
+                .ticker("ticker1")
+                .balance(BigDecimal.valueOf(10000))
+                .currency(Currency.RUB)
+                .expectedYield(BigDecimal.valueOf(1000))
+                .count(5)
+                .averagePositionPrice(BigDecimal.valueOf(2000))
+                .averagePositionPriceNoNkd(BigDecimal.valueOf(2000))
+                .name("name1")
+                .build();
 
-        final PortfolioPosition position2 = new PortfolioPosition(
-                "ticker2",
-                BigDecimal.valueOf(20000),
-                null,
-                Currency.USD,
-                BigDecimal.valueOf(2000),
-                5,
-                BigDecimal.valueOf(4000),
-                BigDecimal.valueOf(4000),
-                "name2"
-        );
+        final PortfolioPosition position2 = PortfolioPosition.builder()
+                .ticker("ticker2")
+                .balance(BigDecimal.valueOf(20000))
+                .currency(Currency.USD)
+                .expectedYield(BigDecimal.valueOf(2000))
+                .count(5)
+                .averagePositionPrice(BigDecimal.valueOf(4000))
+                .averagePositionPriceNoNkd(BigDecimal.valueOf(4000))
+                .name("name2")
+                .build();
 
         Mockito.when(portfolioService.getPositions(brokerAccountId)).thenReturn(List.of(position1, position2));
 

@@ -8,20 +8,20 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketInstrumentList;
+import ru.obukhov.trader.market.model.MoneyAmount;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationStatus;
+import ru.obukhov.trader.market.model.OperationTypeWithCommission;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrumentList;
-import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
-import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -41,7 +41,7 @@ public class TestData {
 
     // region Tinkoff Candle creation
 
-    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+    public static Candle createTinkoffCandle(
             final double openPrice,
             final double closePrice,
             final double highestPrice,
@@ -50,7 +50,7 @@ public class TestData {
         return createTinkoffCandle(CandleResolution.DAY, openPrice, closePrice, highestPrice, lowestPrice);
     }
 
-    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+    public static Candle createTinkoffCandle(
             final CandleResolution interval,
             final double openPrice,
             final double closePrice,
@@ -60,7 +60,7 @@ public class TestData {
         return createTinkoffCandle(interval, openPrice, closePrice, highestPrice, lowestPrice, OffsetDateTime.now());
     }
 
-    public static ru.tinkoff.invest.openapi.model.rest.Candle createTinkoffCandle(
+    public static Candle createTinkoffCandle(
             final CandleResolution interval,
             final double openPrice,
             final double closePrice,
@@ -68,15 +68,13 @@ public class TestData {
             final double lowestPrice,
             final OffsetDateTime time
     ) {
-        return new ru.tinkoff.invest.openapi.model.rest.Candle()
-                .figi(StringUtils.EMPTY)
-                .interval(interval)
-                .o(DecimalUtils.setDefaultScale(openPrice))
-                .c(DecimalUtils.setDefaultScale(closePrice))
-                .h(DecimalUtils.setDefaultScale(highestPrice))
-                .l(DecimalUtils.setDefaultScale(lowestPrice))
-                .v(0)
-                .time(time);
+        return new Candle()
+                .setInterval(interval)
+                .setOpenPrice(DecimalUtils.setDefaultScale(openPrice))
+                .setClosePrice(DecimalUtils.setDefaultScale(closePrice))
+                .setHighestPrice(DecimalUtils.setDefaultScale(highestPrice))
+                .setLowestPrice(DecimalUtils.setDefaultScale(lowestPrice))
+                .setTime(time);
     }
 
     // endregion
@@ -165,31 +163,29 @@ public class TestData {
     }
 
     public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice, final int lotsCount) {
-        return new PortfolioPosition(
-                StringUtils.EMPTY,
-                BigDecimal.ZERO,
-                null,
-                Currency.RUB,
-                null,
-                lotsCount,
-                DecimalUtils.setDefaultScale(averagePositionPrice),
-                null,
-                StringUtils.EMPTY
-        );
+        return PortfolioPosition.builder()
+                .balance(BigDecimal.ZERO)
+                .averagePositionPrice(DecimalUtils.setDefaultScale(averagePositionPrice))
+                .count(lotsCount)
+                .name(StringUtils.EMPTY)
+                .build();
     }
 
     public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
-        return new PortfolioPosition(
-                ticker,
-                BigDecimal.ZERO,
-                null,
-                Currency.RUB,
-                null,
-                lotsCount,
-                null,
-                null,
-                StringUtils.EMPTY
-        );
+        return PortfolioPosition.builder()
+                .ticker(ticker)
+                .balance(BigDecimal.ZERO)
+                .count(lotsCount)
+                .name(StringUtils.EMPTY)
+                .build();
+    }
+
+    public static PortfolioPosition createPortfolioPosition(final int lotsCount) {
+        return PortfolioPosition.builder()
+                .balance(BigDecimal.ZERO)
+                .count(lotsCount)
+                .name(StringUtils.EMPTY)
+                .build();
     }
 
     // endregion
@@ -221,7 +217,7 @@ public class TestData {
         return new Operation()
                 .id(StringUtils.EMPTY)
                 .status(OperationStatus.DONE)
-                .commission(new MoneyAmount().value(commissionValue))
+                .commission(new MoneyAmount(Currency.RUB, commissionValue))
                 .currency(Currency.RUB)
                 .payment(BigDecimal.ZERO)
                 .price(operationPrice)
@@ -232,9 +228,7 @@ public class TestData {
     }
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
-        return new MoneyAmount()
-                .currency(currency)
-                .value(BigDecimal.valueOf(value));
+        return new MoneyAmount(currency, BigDecimal.valueOf(value));
     }
 
     // region MarketInstrument creation

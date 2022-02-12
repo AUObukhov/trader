@@ -7,8 +7,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.tinkoff.invest.openapi.exceptions.WrongTokenException;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
 /**
  * Class for failing application on startup if token is invalid

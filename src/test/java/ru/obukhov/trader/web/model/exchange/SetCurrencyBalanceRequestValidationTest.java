@@ -1,8 +1,8 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
 
 import java.math.BigDecimal;
 
@@ -11,7 +11,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(SandboxCurrency.RUB);
+        request.setCurrency(Currency.RUB);
         request.setBalance(BigDecimal.TEN);
 
         AssertUtils.assertNoViolations(request);
@@ -29,7 +29,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationFails_whenBalanceIsNull() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(SandboxCurrency.RUB);
+        request.setCurrency(Currency.RUB);
         request.setBalance(null);
 
         AssertUtils.assertViolation(request, "balance is mandatory");

@@ -2,12 +2,12 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationStatus;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.OperationStatus;
 
 import java.util.List;
 

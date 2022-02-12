@@ -1,15 +1,16 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
 
 import java.math.BigDecimal;
 
 @Data
+@Builder
 public class PortfolioPosition {
 
     @Nullable

@@ -3,11 +3,12 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.OperationTypeWithCommission;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
-import ru.tinkoff.invest.openapi.model.rest.MoneyAmount;
-import ru.tinkoff.invest.openapi.model.rest.Operation;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
-import ru.tinkoff.invest.openapi.model.rest.OperationTypeWithCommission;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -20,10 +21,7 @@ class OperationMapperUnitTest {
     void mapsOperationToBackTestOperation() {
         final Operation source = new Operation();
 
-        final MoneyAmount commission = new MoneyAmount();
-        commission.setValue(BigDecimal.ONE);
-        source.setCommission(commission);
-
+        source.setCommission(TestData.createMoneyAmount(Currency.RUB, 1));
         source.setPrice(BigDecimal.TEN);
         source.setQuantity(2);
         source.setDate(OffsetDateTime.now());
@@ -36,7 +34,6 @@ class OperationMapperUnitTest {
         Assertions.assertEquals(source.getPrice(), target.getPrice());
         Assertions.assertEquals(source.getQuantity(), target.getQuantity());
         Assertions.assertEquals(source.getCommission().getValue(), target.getCommission());
-
     }
 
     @Test

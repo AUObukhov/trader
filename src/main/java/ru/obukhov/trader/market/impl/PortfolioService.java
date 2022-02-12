@@ -3,9 +3,9 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.CurrencyPosition;
 
 import java.math.BigDecimal;
 import java.util.List;

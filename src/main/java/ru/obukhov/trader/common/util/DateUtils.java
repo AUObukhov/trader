@@ -6,7 +6,7 @@ import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
+import ru.obukhov.trader.market.model.CandleResolution;
 
 import java.time.DayOfWeek;
 import java.time.Duration;

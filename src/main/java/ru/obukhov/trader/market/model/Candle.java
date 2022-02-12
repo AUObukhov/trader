@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.tinkoff.invest.openapi.model.rest.CandleResolution;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -17,12 +17,16 @@ import java.time.OffsetDateTime;
 @Accessors(chain = true)
 public class Candle {
 
+    @JsonProperty("o")
     protected BigDecimal openPrice;
 
+    @JsonProperty("c")
     protected BigDecimal closePrice;
 
+    @JsonProperty("h")
     protected BigDecimal highestPrice;
 
+    @JsonProperty("l")
     protected BigDecimal lowestPrice;
 
     protected OffsetDateTime time;

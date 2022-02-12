@@ -11,10 +11,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.tinkoff.invest.openapi.model.rest.OperationType;
-import ru.tinkoff.invest.openapi.model.rest.Order;
-import ru.tinkoff.invest.openapi.model.rest.OrderStatus;
-import ru.tinkoff.invest.openapi.model.rest.OrderType;
+import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.OrderStatus;
+import ru.obukhov.trader.market.model.OrderType;
 
 import java.math.BigDecimal;
 import java.util.List;

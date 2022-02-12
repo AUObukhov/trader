@@ -28,8 +28,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
-import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -88,27 +86,6 @@ public class AssertUtils {
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
-    }
-
-    public static void assertEquals(final ru.tinkoff.invest.openapi.model.rest.Candle tinkoffCandle, final Candle candle) {
-        Assertions.assertEquals(tinkoffCandle.getInterval(), candle.getInterval());
-        AssertUtils.assertEquals(tinkoffCandle.getO(), candle.getOpenPrice());
-        AssertUtils.assertEquals(tinkoffCandle.getC(), candle.getClosePrice());
-        AssertUtils.assertEquals(tinkoffCandle.getH(), candle.getHighestPrice());
-        AssertUtils.assertEquals(tinkoffCandle.getL(), candle.getLowestPrice());
-        Assertions.assertEquals(tinkoffCandle.getTime(), candle.getTime());
-    }
-
-    public static void assertEquals(final ru.tinkoff.invest.openapi.model.rest.PortfolioPosition expected, final PortfolioPosition actual) {
-        Assertions.assertEquals(expected.getTicker(), actual.getTicker());
-        AssertUtils.assertEquals(expected.getBalance(), actual.getBalance());
-        AssertUtils.assertEquals(expected.getBlocked(), actual.getBlocked());
-        Assertions.assertEquals(expected.getExpectedYield().getCurrency(), actual.getCurrency());
-        AssertUtils.assertEquals(expected.getExpectedYield().getValue(), actual.getExpectedYield());
-        AssertUtils.assertEquals(expected.getLots(), actual.getCount());
-        AssertUtils.assertEquals(expected.getAveragePositionPrice().getValue(), actual.getAveragePositionPrice());
-        AssertUtils.assertEquals(expected.getAveragePositionPriceNoNkd().getValue(), actual.getAveragePositionPriceNoNkd());
-        Assertions.assertEquals(expected.getName(), actual.getName());
     }
 
     public static void assertEquals(final byte[] expected, final byte[] actual) {

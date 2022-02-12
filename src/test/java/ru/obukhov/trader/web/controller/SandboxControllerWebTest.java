@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
 import ru.obukhov.trader.market.impl.SandboxService;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.tinkoff.invest.openapi.model.rest.SandboxCurrency;
 import ru.tinkoff.invest.openapi.okhttp.InterceptingOpenApi;
 
 import java.math.BigDecimal;
@@ -37,7 +37,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         Mockito.verify(sandboxService, Mockito.times(1))
-                .setCurrencyBalance(SandboxCurrency.USD, BigDecimal.valueOf(100000), "brokerAccountId");
+                .setCurrencyBalance(Currency.USD, BigDecimal.valueOf(100000), "brokerAccountId");
     }
 
     @Test

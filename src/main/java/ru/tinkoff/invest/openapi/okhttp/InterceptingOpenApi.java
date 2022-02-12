@@ -5,15 +5,7 @@ import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.tinkoff.invest.openapi.MarketContext;
-import ru.tinkoff.invest.openapi.OpenApi;
-import ru.tinkoff.invest.openapi.OperationsContext;
-import ru.tinkoff.invest.openapi.OrdersContext;
-import ru.tinkoff.invest.openapi.PortfolioContext;
-import ru.tinkoff.invest.openapi.SandboxContext;
-import ru.tinkoff.invest.openapi.StreamingContext;
-import ru.tinkoff.invest.openapi.UserContext;
-import ru.tinkoff.invest.openapi.model.rest.SandboxRegisterRequest;
+import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 
 import java.time.Duration;
 import java.util.List;

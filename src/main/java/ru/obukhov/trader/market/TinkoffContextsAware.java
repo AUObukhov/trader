@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market;
 
 import lombok.RequiredArgsConstructor;
-import ru.tinkoff.invest.openapi.MarketContext;
-import ru.tinkoff.invest.openapi.OpenApi;
-import ru.tinkoff.invest.openapi.OperationsContext;
-import ru.tinkoff.invest.openapi.OrdersContext;
-import ru.tinkoff.invest.openapi.PortfolioContext;
-import ru.tinkoff.invest.openapi.UserContext;
+import ru.tinkoff.invest.openapi.okhttp.MarketContext;
+import ru.tinkoff.invest.openapi.okhttp.OpenApi;
+import ru.tinkoff.invest.openapi.okhttp.OperationsContext;
+import ru.tinkoff.invest.openapi.okhttp.OrdersContext;
+import ru.tinkoff.invest.openapi.okhttp.PortfolioContext;
+import ru.tinkoff.invest.openapi.okhttp.UserContext;
 
 @RequiredArgsConstructor
 public abstract class TinkoffContextsAware {

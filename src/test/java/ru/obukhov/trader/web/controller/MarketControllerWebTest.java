@@ -8,10 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.market.impl.MarketService;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
-import ru.tinkoff.invest.openapi.model.rest.Currency;
-import ru.tinkoff.invest.openapi.model.rest.InstrumentType;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.tinkoff.invest.openapi.model.rest.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketInstrument;
 
 import java.util.List;
 
