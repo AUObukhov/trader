@@ -2,29 +2,19 @@ package ru.tinkoff.invest.openapi.okhttp;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.market.model.Operations;
+import ru.obukhov.trader.market.model.Operation;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
-/**
- * Интерфейс работы с OpenAPI в части, касающейся получения информации об операциях.
- */
 public interface OperationsContext extends Context {
 
-    /**
-     * Асинхронное получение списка прошедших операций по заданному инструменту за определённый промежуток времени.
-     *
-     * @param from            Дата/время начала промежутка времени.
-     * @param to              Дата/время конца промежутка времени.
-     * @param figi            Идентификатор инструмента.
-     * @param brokerAccountId Идентификатор брокерского счёта.
-     * @return Список операций.
-     */
-    @NotNull
-    CompletableFuture<Operations> getOperations(@NotNull OffsetDateTime from,
-                                                @NotNull OffsetDateTime to,
-                                                @Nullable String figi,
-                                                @Nullable String brokerAccountId);
+    List<Operation> getOperations(
+            @Nullable final String brokerAccountId,
+            @NotNull final OffsetDateTime from,
+            @NotNull final OffsetDateTime to,
+            @Nullable final String figi
+    ) throws IOException;
 
 }

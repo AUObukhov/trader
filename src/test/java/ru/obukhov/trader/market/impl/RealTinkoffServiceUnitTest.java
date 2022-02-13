@@ -25,7 +25,6 @@ import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.Operations;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
@@ -272,12 +271,12 @@ class RealTinkoffServiceUnitTest {
 
         final Operation operation1 = new Operation();
         final Operation operation2 = new Operation();
-        final Operations operations = new Operations().operations(List.of(operation1, operation2));
-        Mockito.when(operationsContext.getOperations(from, to, figi, brokerAccountId)).thenReturn(CompletableFuture.completedFuture(operations));
+        final List<Operation> operations = List.of(operation1, operation2);
+        Mockito.when(operationsContext.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
 
         final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
 
-        Assertions.assertSame(operations.getOperations(), result);
+        Assertions.assertSame(operations, result);
     }
 
     // endregion

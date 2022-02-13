@@ -104,10 +104,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOperationsContext()
-                .getOperations(interval.getFrom(), interval.getTo(), figi, brokerAccountId)
-                .join()
-                .getOperations();
+        return getOperationsContext().getOperations(brokerAccountId, interval.getFrom(), interval.getTo(), figi);
     }
 
     // endregion
