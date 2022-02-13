@@ -32,12 +32,12 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.tinkoff.invest.openapi.okhttp.MarketContext;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
-import ru.tinkoff.invest.openapi.okhttp.OperationsContext;
-import ru.tinkoff.invest.openapi.okhttp.OrdersContext;
-import ru.tinkoff.invest.openapi.okhttp.PortfolioContext;
-import ru.tinkoff.invest.openapi.okhttp.UserContext;
+import ru.obukhov.trader.web.client.service.MarketClient;
+import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.OperationsClient;
+import ru.obukhov.trader.web.client.service.OrdersClient;
+import ru.obukhov.trader.web.client.service.PortfolioClient;
+import ru.obukhov.trader.web.client.service.UserClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -51,15 +51,15 @@ import java.util.List;
 class RealTinkoffServiceUnitTest {
 
     @Mock
-    private MarketContext marketContext;
+    private MarketClient marketClient;
     @Mock
-    private OperationsContext operationsContext;
+    private OperationsClient operationsClient;
     @Mock
-    private OrdersContext ordersContext;
+    private OrdersClient ordersClient;
     @Mock
-    private PortfolioContext portfolioContext;
+    private PortfolioClient portfolioClient;
     @Mock
-    private UserContext userContext;
+    private UserClient userClient;
 
     @Mock
     private OpenApi opeApi;
@@ -71,11 +71,11 @@ class RealTinkoffServiceUnitTest {
 
     @BeforeEach
     private void setUp() {
-        Mockito.lenient().when(opeApi.getMarketContext()).thenReturn(marketContext);
-        Mockito.lenient().when(opeApi.getOperationsContext()).thenReturn(operationsContext);
-        Mockito.lenient().when(opeApi.getOrdersContext()).thenReturn(ordersContext);
-        Mockito.lenient().when(opeApi.getPortfolioContext()).thenReturn(portfolioContext);
-        Mockito.lenient().when(opeApi.getUserContext()).thenReturn(userContext);
+        Mockito.lenient().when(opeApi.getMarketClient()).thenReturn(marketClient);
+        Mockito.lenient().when(opeApi.getOperationsClient()).thenReturn(operationsClient);
+        Mockito.lenient().when(opeApi.getOrdersClient()).thenReturn(ordersClient);
+        Mockito.lenient().when(opeApi.getPortfolioClient()).thenReturn(portfolioClient);
+        Mockito.lenient().when(opeApi.getUserClient()).thenReturn(userClient);
 
         Mockito.lenient().when(applicationContext.getBean(RealTinkoffService.class)).thenReturn(realTinkoffService);
         realTinkoffService.setApplicationContext(applicationContext);
@@ -87,7 +87,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketStocks_returnsStocks() throws IOException {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketStocks()).thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(marketClient.getMarketStocks()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketStocks();
 
@@ -100,7 +100,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketBonds_returnsBonds() throws IOException {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketBonds()).thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(marketClient.getMarketBonds()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketBonds();
 
@@ -113,7 +113,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketEtfs_returnsEtfs() throws IOException {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketEtfs()).thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(marketClient.getMarketEtfs()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketEtfs();
 
@@ -126,7 +126,7 @@ class RealTinkoffServiceUnitTest {
     void getMarketCurrencies_returnsCurrencies() throws IOException {
         final MarketInstrument instrument1 = new MarketInstrument();
         final MarketInstrument instrument2 = new MarketInstrument();
-        Mockito.when(marketContext.getMarketCurrencies()).thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(marketClient.getMarketCurrencies()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketCurrencies();
 
@@ -146,7 +146,7 @@ class RealTinkoffServiceUnitTest {
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
         final Orderbook orderbook = new Orderbook();
-        Mockito.when(marketContext.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
+        Mockito.when(marketClient.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
 
         final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
         Assertions.assertSame(orderbook, result);
@@ -195,7 +195,7 @@ class RealTinkoffServiceUnitTest {
                 from.plusMinutes(1)
         );
         final Candles tinkoffCandles = new Candles().candles(List.of(tinkoffCandle1, tinkoffCandle2));
-        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution)).thenReturn(tinkoffCandles);
+        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleResolution)).thenReturn(tinkoffCandles);
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
 
@@ -215,7 +215,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
-        Mockito.when(marketContext.getMarketCandles(figi, from, to, candleResolution)).thenReturn(new Candles());
+        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleResolution)).thenReturn(new Candles());
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
 
@@ -230,7 +230,7 @@ class RealTinkoffServiceUnitTest {
     void searchMarketInstrument_returnsNull_whenGetsNoInstruments() throws IOException {
         final String ticker = "ticker";
 
-        Mockito.when(marketContext.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of());
+        Mockito.when(marketClient.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of());
 
         final MarketInstrument result = realTinkoffService.searchMarketInstrument(ticker);
 
@@ -243,7 +243,7 @@ class RealTinkoffServiceUnitTest {
         final MarketInstrument instrument1 = new MarketInstrument().ticker(ticker);
         final MarketInstrument instrument2 = new MarketInstrument().ticker(ticker);
 
-        Mockito.when(marketContext.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of(instrument1, instrument2));
+        Mockito.when(marketClient.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of(instrument1, instrument2));
 
         final MarketInstrument result = realTinkoffService.searchMarketInstrument(ticker);
 
@@ -268,7 +268,7 @@ class RealTinkoffServiceUnitTest {
         final Operation operation1 = new Operation();
         final Operation operation2 = new Operation();
         final List<Operation> operations = List.of(operation1, operation2);
-        Mockito.when(operationsContext.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
+        Mockito.when(operationsClient.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
 
         final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
 
@@ -284,7 +284,7 @@ class RealTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getOrders(@Nullable final String brokerAccountId) throws IOException {
         final List<Order> orders = List.of(new Order(), new Order());
-        Mockito.when(ordersContext.getOrders(brokerAccountId)).thenReturn(orders);
+        Mockito.when(ordersClient.getOrders(brokerAccountId)).thenReturn(orders);
 
         final List<Order> result = realTinkoffService.getOrders(brokerAccountId);
 
@@ -303,7 +303,7 @@ class RealTinkoffServiceUnitTest {
         final LimitOrderRequest orderRequest = new LimitOrderRequest();
 
         final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
-        Mockito.when(ordersContext.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
+        Mockito.when(ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
         final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
@@ -321,7 +321,7 @@ class RealTinkoffServiceUnitTest {
         final MarketOrderRequest orderRequest = new MarketOrderRequest();
 
         final PlacedMarketOrder placedOrder = new PlacedMarketOrder();
-        Mockito.when(ordersContext.placeMarketOrder(brokerAccountId, figi, orderRequest))
+        Mockito.when(ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest))
                 .thenReturn(placedOrder);
 
         final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
@@ -337,7 +337,7 @@ class RealTinkoffServiceUnitTest {
 
         realTinkoffService.cancelOrder(brokerAccountId, orderId);
 
-        Mockito.verify(ordersContext, Mockito.times(1)).cancelOrder(brokerAccountId, orderId);
+        Mockito.verify(ordersClient, Mockito.times(1)).cancelOrder(brokerAccountId, orderId);
     }
 
     // endregion
@@ -370,7 +370,7 @@ class RealTinkoffServiceUnitTest {
                 .name("name2")
                 .build();
         final List<PortfolioPosition> portfolioPositions = List.of(tinkoffPosition1, tinkoffPosition2);
-        Mockito.when(portfolioContext.getPortfolio(brokerAccountId)).thenReturn(portfolioPositions);
+        Mockito.when(portfolioClient.getPortfolio(brokerAccountId)).thenReturn(portfolioPositions);
 
         final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(brokerAccountId);
 
@@ -393,7 +393,7 @@ class RealTinkoffServiceUnitTest {
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(null);
         final List<CurrencyPosition> currencies = List.of(currency1, currency2);
-        Mockito.when(portfolioContext.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
+        Mockito.when(portfolioClient.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
         final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies(brokerAccountId);
 
@@ -416,7 +416,7 @@ class RealTinkoffServiceUnitTest {
 
         final List<UserAccount> userAccounts = List.of(userAccount1, userAccount2);
 
-        Mockito.when(userContext.getAccounts()).thenReturn(userAccounts);
+        Mockito.when(userClient.getAccounts()).thenReturn(userAccounts);
 
         final List<UserAccount> result = realTinkoffService.getAccounts();
 
@@ -440,7 +440,7 @@ class RealTinkoffServiceUnitTest {
     }
 
     private void mockInstrument(MarketInstrument instrument) throws IOException {
-        Mockito.when(marketContext.searchMarketInstrumentsByTicker(instrument.getTicker()))
+        Mockito.when(marketClient.searchMarketInstrumentsByTicker(instrument.getTicker()))
                 .thenReturn(List.of(instrument));
     }
 

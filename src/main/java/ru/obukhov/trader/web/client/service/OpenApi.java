@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import lombok.Getter;
 import okhttp3.Interceptor;
@@ -21,17 +21,17 @@ public class OpenApi implements Closeable {
     private final OkHttpClient client;
     private final String apiUrl;
 
-    private SandboxContext sandboxContext;
+    private SandboxClient sandboxClient;
     @Getter
-    private final OrdersContext ordersContext;
+    private final OrdersClient ordersClient;
     @Getter
-    private final PortfolioContext portfolioContext;
+    private final PortfolioClient portfolioClient;
     @Getter
-    private final MarketContext marketContext;
+    private final MarketClient marketClient;
     @Getter
-    private final OperationsContext operationsContext;
+    private final OperationsClient operationsClient;
     @Getter
-    private final UserContext userContext;
+    private final UserClient userClient;
 
     public OpenApi(final ApiProperties apiProperties, final TradingProperties tradingProperties, final List<Interceptor> interceptors)
             throws IOException {
@@ -42,16 +42,16 @@ public class OpenApi implements Closeable {
 
         if (tradingProperties.isSandbox()) {
             this.apiUrl = apiProperties.sandboxHost();
-            getSandboxContext().performRegistration(new SandboxRegisterRequest());
+            getSandboxClient().performRegistration(new SandboxRegisterRequest());
         } else {
             this.apiUrl = apiProperties.host();
         }
 
-        this.ordersContext = new OrdersContextImpl(client, apiUrl, authToken);
-        this.portfolioContext = new PortfolioContextImpl(client, apiUrl, authToken);
-        this.marketContext = new MarketContextImpl(client, apiUrl, authToken);
-        this.operationsContext = new OperationsContextImpl(client, apiUrl, authToken);
-        this.userContext = new UserContextImpl(client, apiUrl, authToken);
+        this.ordersClient = new OrdersClientImpl(client, apiUrl, authToken);
+        this.portfolioClient = new PortfolioClientImpl(client, apiUrl, authToken);
+        this.marketClient = new MarketClientImpl(client, apiUrl, authToken);
+        this.operationsClient = new OperationsClientImpl(client, apiUrl, authToken);
+        this.userClient = new UserClientImpl(client, apiUrl, authToken);
     }
 
     private OkHttpClient createClient(final List<Interceptor> interceptors) {
@@ -60,12 +60,12 @@ public class OpenApi implements Closeable {
         return clientBuilder.build();
     }
 
-    public SandboxContext getSandboxContext() {
+    public SandboxClient getSandboxClient() {
         if (tradingProperties.isSandbox()) {
-            if (this.sandboxContext == null) {
-                this.sandboxContext = new SandboxContextImpl(client, apiUrl, authToken);
+            if (this.sandboxClient == null) {
+                this.sandboxClient = new SandboxClientImpl(client, apiUrl, authToken);
             }
-            return this.sandboxContext;
+            return this.sandboxClient;
         } else {
             throw new IllegalStateException("Attempt to use sandbox context from not sandbox mode");
         }

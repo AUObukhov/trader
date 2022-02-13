@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +11,7 @@ import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import java.io.IOException;
 import java.util.List;
 
-public interface OrdersContext {
+public interface OrdersClient {
 
     List<Order> getOrders(@Nullable String brokerAccountId) throws IOException;
 

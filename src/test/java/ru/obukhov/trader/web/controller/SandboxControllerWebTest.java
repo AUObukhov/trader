@@ -11,7 +11,7 @@ import ru.obukhov.trader.Application;
 import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
+import ru.obukhov.trader.web.client.service.OpenApi;
 
 import java.math.BigDecimal;
 

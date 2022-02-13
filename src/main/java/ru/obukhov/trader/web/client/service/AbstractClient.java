@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.util.Objects;
 
-public abstract class BaseContext {
+public abstract class AbstractClient {
 
     protected static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
 
@@ -29,7 +29,7 @@ public abstract class BaseContext {
 
     protected abstract String getPath();
 
-    protected BaseContext(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    protected AbstractClient(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         this.authToken = authToken;
         this.finalUrl = buildFinalUrl(url);
         this.client = client;

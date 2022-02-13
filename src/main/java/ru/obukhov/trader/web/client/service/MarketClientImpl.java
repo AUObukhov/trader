@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -19,9 +19,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class MarketContextImpl extends BaseContext implements MarketContext {
+final class MarketClientImpl extends AbstractClient implements MarketClient {
 
-    public MarketContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public MarketClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

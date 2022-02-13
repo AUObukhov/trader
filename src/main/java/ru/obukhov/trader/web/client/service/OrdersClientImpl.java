@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -17,11 +17,11 @@ import ru.obukhov.trader.web.client.exchange.OrdersResponse;
 import java.io.IOException;
 import java.util.List;
 
-final class OrdersContextImpl extends BaseContext implements OrdersContext {
+final class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public OrdersContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public OrdersClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

@@ -5,8 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
-import ru.tinkoff.invest.openapi.okhttp.SandboxContext;
+import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.SandboxClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -17,11 +17,11 @@ import java.math.BigDecimal;
 public class SandboxService {
 
     private final MarketService marketService;
-    private final SandboxContext sandboxContext;
+    private final SandboxClient sandboxClient;
 
     public SandboxService(final OpenApi opeApi, final MarketService marketService) {
         this.marketService = marketService;
-        this.sandboxContext = opeApi.getSandboxContext();
+        this.sandboxClient = opeApi.getSandboxClient();
     }
 
     /**
@@ -34,7 +34,7 @@ public class SandboxService {
                 .currency(currency)
                 .balance(balance);
 
-        sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId);
+        sandboxClient.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId);
     }
 
     /**
@@ -47,7 +47,7 @@ public class SandboxService {
                 .figi(marketService.getFigi(ticker))
                 .balance(balance);
 
-        sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId);
+        sandboxClient.setPositionBalance(setPositionBalanceRequest, brokerAccountId);
     }
 
     /**
@@ -55,7 +55,7 @@ public class SandboxService {
      * If {@code brokerAccountId} null, works with default broker account
      */
     public void clearAll(@Nullable final String brokerAccountId) throws IOException {
-        sandboxContext.clearAll(brokerAccountId);
+        sandboxClient.clearAll(brokerAccountId);
     }
 
 }

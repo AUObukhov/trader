@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface OperationsContext {
+public interface OperationsClient {
 
     List<Operation> getOperations(
             @Nullable final String brokerAccountId,

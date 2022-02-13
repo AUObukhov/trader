@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 
 import java.io.IOException;
 
-public interface SandboxContext {
+public interface SandboxClient {
 
     SandboxAccount performRegistration(@NotNull SandboxRegisterRequest registerRequest) throws IOException;
 

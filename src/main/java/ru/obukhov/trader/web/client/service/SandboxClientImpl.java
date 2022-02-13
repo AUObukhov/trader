@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -14,11 +14,11 @@ import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 
 import java.io.IOException;
 
-final class SandboxContextImpl extends BaseContext implements SandboxContext {
+final class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public SandboxContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public SandboxClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

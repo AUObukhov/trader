@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -10,9 +10,9 @@ import ru.obukhov.trader.market.model.UserAccounts;
 import java.io.IOException;
 import java.util.List;
 
-final class UserContextImpl extends BaseContext implements UserContext {
+final class UserClientImpl extends AbstractClient implements UserClient {
 
-    public UserContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public UserClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -14,9 +14,9 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class OperationsContextImpl extends BaseContext implements OperationsContext {
+final class OperationsClientImpl extends AbstractClient implements OperationsClient {
 
-    public OperationsContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public OperationsClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

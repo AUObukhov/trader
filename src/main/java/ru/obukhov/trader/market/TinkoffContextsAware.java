@@ -1,36 +1,36 @@
 package ru.obukhov.trader.market;
 
 import lombok.RequiredArgsConstructor;
-import ru.tinkoff.invest.openapi.okhttp.MarketContext;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
-import ru.tinkoff.invest.openapi.okhttp.OperationsContext;
-import ru.tinkoff.invest.openapi.okhttp.OrdersContext;
-import ru.tinkoff.invest.openapi.okhttp.PortfolioContext;
-import ru.tinkoff.invest.openapi.okhttp.UserContext;
+import ru.obukhov.trader.web.client.service.MarketClient;
+import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.OperationsClient;
+import ru.obukhov.trader.web.client.service.OrdersClient;
+import ru.obukhov.trader.web.client.service.PortfolioClient;
+import ru.obukhov.trader.web.client.service.UserClient;
 
 @RequiredArgsConstructor
 public abstract class TinkoffContextsAware {
 
     private final OpenApi opeApi;
 
-    protected MarketContext getMarketContext() {
-        return opeApi.getMarketContext();
+    protected MarketClient getMarketContext() {
+        return opeApi.getMarketClient();
     }
 
-    protected OperationsContext getOperationsContext() {
-        return opeApi.getOperationsContext();
+    protected OperationsClient getOperationsContext() {
+        return opeApi.getOperationsClient();
     }
 
-    protected OrdersContext getOrdersContext() {
-        return opeApi.getOrdersContext();
+    protected OrdersClient getOrdersContext() {
+        return opeApi.getOrdersClient();
     }
 
-    protected PortfolioContext getPortfolioContext() {
-        return opeApi.getPortfolioContext();
+    protected PortfolioClient getPortfolioContext() {
+        return opeApi.getPortfolioClient();
     }
 
-    protected UserContext getUserContext() {
-        return opeApi.getUserContext();
+    protected UserClient getUserContext() {
+        return opeApi.getUserClient();
     }
 
 }

@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -14,11 +14,11 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import java.io.IOException;
 import java.util.List;
 
-final class PortfolioContextImpl extends BaseContext implements PortfolioContext {
+final class PortfolioClientImpl extends AbstractClient implements PortfolioClient {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public PortfolioContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    public PortfolioClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

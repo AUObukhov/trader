@@ -23,7 +23,7 @@ import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
+import ru.obukhov.trader.web.client.service.OpenApi;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;

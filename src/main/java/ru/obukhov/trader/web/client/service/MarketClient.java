@@ -1,4 +1,4 @@
-package ru.tinkoff.invest.openapi.okhttp;
+package ru.obukhov.trader.web.client.service;
 
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.market.model.CandleResolution;
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface MarketContext {
+public interface MarketClient {
 
     List<MarketInstrument> getMarketStocks() throws IOException;
 

@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.SandboxClient;
 import ru.obukhov.trader.web.controller.SandboxController;
-import ru.tinkoff.invest.openapi.okhttp.OpenApi;
-import ru.tinkoff.invest.openapi.okhttp.SandboxContext;
 
 @ActiveProfiles("test")
 @SpringBootTest(args = {"--trading.token=i identify myself as token", "--trading.sandbox=true"})
 @ExtendWith(MockitoExtension.class)
-class ApplicationSandboxContextTest {
+class ApplicationSandboxClientTest {
 
     @Autowired
     private SandboxController sandboxController;
@@ -25,7 +25,7 @@ class ApplicationSandboxContextTest {
     private OpenApi openApi;
 
     @Mock
-    private SandboxContext sandboxContext;
+    private SandboxClient sandboxClient;
 
     @Test
     void sandboxControllerNotInitialized_whenSandboxModeIsOn() {
