@@ -11,6 +11,7 @@ import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.web.model.exchange.GetUserAccountsResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class UserController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetUserAccountsResponse getAccounts() {
+    public GetUserAccountsResponse getAccounts() throws IOException {
         final List<UserAccount> accounts = userService.getAccounts();
 
         return new GetUserAccountsResponse(accounts);

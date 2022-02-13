@@ -30,7 +30,6 @@ import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.market.model.UserAccounts;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.tinkoff.invest.openapi.okhttp.MarketContext;
@@ -47,7 +46,6 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @ExtendWith(MockitoExtension.class)
 class RealTinkoffServiceUnitTest {
@@ -407,7 +405,7 @@ class RealTinkoffServiceUnitTest {
     // region UserContext methods tests
 
     @Test
-    void getUserAccounts() {
+    void getUserAccounts() throws IOException {
         final UserAccount userAccount1 = new UserAccount();
         userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFFIIS);
         userAccount1.setBrokerAccountId("2008941383");
@@ -416,14 +414,13 @@ class RealTinkoffServiceUnitTest {
         userAccount2.setBrokerAccountType(BrokerAccountType.TINKOFF);
         userAccount2.setBrokerAccountId("2000124699");
 
-        final UserAccounts userAccounts = new UserAccounts();
-        userAccounts.setAccounts(List.of(userAccount1, userAccount2));
+        final List<UserAccount> userAccounts = List.of(userAccount1, userAccount2);
 
-        Mockito.when(userContext.getAccounts()).thenReturn(CompletableFuture.completedFuture(userAccounts));
+        Mockito.when(userContext.getAccounts()).thenReturn(userAccounts);
 
         final List<UserAccount> result = realTinkoffService.getAccounts();
 
-        Assertions.assertSame(userAccounts.getAccounts(), result);
+        Assertions.assertSame(userAccounts, result);
     }
 
     // endregion

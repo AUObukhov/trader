@@ -154,8 +154,8 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region UserContext
 
     @Override
-    public List<UserAccount> getAccounts() {
-        return getUserContext().getAccounts().join().getAccounts();
+    public List<UserAccount> getAccounts() throws IOException {
+        return getUserContext().getAccounts();
     }
 
     // endregion

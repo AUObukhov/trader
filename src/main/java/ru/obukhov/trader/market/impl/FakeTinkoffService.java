@@ -390,7 +390,7 @@ public class FakeTinkoffService implements TinkoffService {
     // region UserContext proxy
 
     @Override
-    public List<UserAccount> getAccounts() {
+    public List<UserAccount> getAccounts() throws IOException {
         return realTinkoffService.getAccounts();
     }
 
