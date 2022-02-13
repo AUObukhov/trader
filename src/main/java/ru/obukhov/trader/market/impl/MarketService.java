@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class MarketService {
      * @param interval search interval, default interval.from is start of trading, default interval.to is now
      * @return sorted by time list of loaded candles
      */
-    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
         DateUtils.assertDateTimeNotFuture(interval.getTo(), tinkoffService.getCurrentDateTime(), "to");
 
         final ChronoUnit period = DateUtils.getPeriodByCandleResolution(candleResolution);
@@ -55,7 +56,8 @@ public class MarketService {
                 .toList();
     }
 
-    private List<Candle> getAllCandlesByDays(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    private List<Candle> getAllCandlesByDays(final String ticker, final Interval interval, final CandleResolution candleResolution)
+            throws IOException {
         final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), marketProperties.getStartDate());
         final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
 
@@ -79,7 +81,8 @@ public class MarketService {
         return candles.stream().flatMap(Collection::stream).toList();
     }
 
-    private List<Candle> getAllCandlesByYears(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    private List<Candle> getAllCandlesByYears(final String ticker, final Interval interval, final CandleResolution candleResolution)
+            throws IOException {
         final OffsetDateTime innerFrom = DateUtils.roundDownToYear(interval.getFrom());
         final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
         OffsetDateTime currentFrom = DateUtils.roundUpToYear(innerTo);
@@ -106,7 +109,7 @@ public class MarketService {
             final OffsetDateTime from,
             final OffsetDateTime to,
             final CandleResolution candleResolution
-    ) {
+    ) throws IOException {
         final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, tinkoffService.getCurrentDateTime());
         return tinkoffService.getMarketCandles(ticker, Interval.of(from, innerTo), candleResolution);
     }
@@ -126,7 +129,7 @@ public class MarketService {
             final Interval loadInterval,
             final Interval effectiveInterval,
             final CandleResolution candleResolution
-    ) {
+    ) throws IOException {
         final List<Candle> candles = tinkoffService.getMarketCandles(ticker, loadInterval, candleResolution);
         return effectiveInterval.equals(loadInterval) ? candles : filterCandles(candles, effectiveInterval);
     }
@@ -146,7 +149,7 @@ public class MarketService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public Candle getLastCandle(final String ticker) {
+    public Candle getLastCandle(final String ticker) throws IOException {
         final OffsetDateTime to = tinkoffService.getCurrentDateTime();
         return getLastCandle(ticker, to);
     }
@@ -158,7 +161,7 @@ public class MarketService {
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public Candle getLastCandle(final String ticker, final OffsetDateTime to) {
+    public Candle getLastCandle(final String ticker, final OffsetDateTime to) throws IOException {
         final OffsetDateTime candlesFrom = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit());
 
         List<Interval> intervals = Interval.of(candlesFrom, to).splitIntoDailyIntervals();
@@ -180,7 +183,7 @@ public class MarketService {
      * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
      * within {@code trading.consecutive-empty-days-limit} days or one year (when candleResolution >= 1 day).
      */
-    public List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution) {
+    public List<Candle> getLastCandles(final String ticker, final int limit, final CandleResolution candleResolution) throws IOException {
         return DateUtils.getPeriodByCandleResolution(candleResolution) == ChronoUnit.DAYS
                 ? getLastCandlesDaily(ticker, limit, candleResolution)
                 : getLastCandlesYearly(ticker, limit, candleResolution);
@@ -191,7 +194,7 @@ public class MarketService {
      * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
      * within {@code trading.consecutive-empty-days-limit} days.
      */
-    private List<Candle> getLastCandlesDaily(final String ticker, final int limit, final CandleResolution candleResolution) {
+    private List<Candle> getLastCandlesDaily(final String ticker, final int limit, final CandleResolution candleResolution) throws IOException {
         final OffsetDateTime to = tinkoffService.getCurrentDateTime();
         final OffsetDateTime from = DateUtils.atStartOfDay(to);
         Interval interval = Interval.of(from, to);
@@ -218,7 +221,7 @@ public class MarketService {
         return CollectionsUtils.getTail(candles, limit);
     }
 
-    private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleResolution candleResolution) {
+    private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleResolution candleResolution) throws IOException {
         final OffsetDateTime to = tinkoffService.getCurrentDateTime();
         final OffsetDateTime from = DateUtils.atStartOfYear(to);
         Interval interval = Interval.of(from, to);
@@ -241,7 +244,7 @@ public class MarketService {
     /**
      * @return market instrument with given {@code ticker}, or null if it does not exist
      */
-    public MarketInstrument getInstrument(final String ticker) {
+    public MarketInstrument getInstrument(final String ticker) throws IOException {
         return getAllInstruments().stream()
                 .filter(instrument -> instrument.getTicker().equals(ticker))
                 .findFirst()
@@ -253,7 +256,7 @@ public class MarketService {
      * @throws IllegalArgumentException when {@code type} is not
      *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
      */
-    public List<MarketInstrument> getInstruments(final InstrumentType type) {
+    public List<MarketInstrument> getInstruments(final InstrumentType type) throws IOException {
         if (type == null) {
             return getAllInstruments();
         }
@@ -266,7 +269,7 @@ public class MarketService {
         };
     }
 
-    private List<MarketInstrument> getAllInstruments() {
+    private List<MarketInstrument> getAllInstruments() throws IOException {
         List<MarketInstrument> result = new ArrayList<>();
         result.addAll(tinkoffService.getMarketEtfs());
         result.addAll(tinkoffService.getMarketStocks());
@@ -280,7 +283,7 @@ public class MarketService {
      * @return FIGI of market instrument with given {@code ticker}
      * @throws NullPointerException if instrument does not exist
      */
-    public String getFigi(final String ticker) {
+    public String getFigi(final String ticker) throws IOException {
         return tinkoffService.searchMarketInstrument(ticker).getFigi();
     }
 

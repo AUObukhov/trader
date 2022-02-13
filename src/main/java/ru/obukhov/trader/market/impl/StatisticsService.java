@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class StatisticsService {
             final MovingAverageType movingAverageType,
             final int smallWindow,
             final int bigWindow
-    ) {
+    ) throws IOException {
         final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);

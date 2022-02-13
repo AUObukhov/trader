@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class MarketController {
     })
     public GetInstrumentsResponse getInstruments(
             @ApiParam(value = "Instrument type. If null all instruments are returned", example = "Stock") InstrumentType instrumentType
-    ) {
+    ) throws IOException {
         final List<MarketInstrument> instruments = marketService.getInstruments(instrumentType);
 
         return new GetInstrumentsResponse(instruments);

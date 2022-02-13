@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class OrdersService {
      * @return returns list of active orders with given {@code ticker} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) {
+    public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) throws IOException {
         final String figi = marketService.getFigi(ticker);
         return getOrders(brokerAccountId).stream()
                 .filter(order -> figi.equals(order.getFigi()))
@@ -54,7 +55,7 @@ public class OrdersService {
             @NotNull final String ticker,
             final int lots,
             @NotNull final OperationType operationType
-    ) {
+    ) throws IOException {
         final MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);
@@ -71,7 +72,7 @@ public class OrdersService {
             final int lots,
             @NotNull final OperationType operationType,
             final BigDecimal price
-    ) {
+    ) throws IOException {
         final LimitOrderRequest orderRequest = new LimitOrderRequest()
                 .lots(lots)
                 .operation(operationType)

@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.TinkoffContextsAware;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleResolution;
-import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -26,8 +25,8 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,57 +50,50 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     @Cacheable(value = "marketStocks", sync = true)
-    public List<MarketInstrument> getMarketStocks() {
-        return getMarketContext().getMarketStocks().join().getInstruments();
+    public List<MarketInstrument> getMarketStocks() throws IOException {
+        return getMarketContext().getMarketStocks();
     }
 
     @Override
     @Cacheable(value = "marketBonds", sync = true)
-    public List<MarketInstrument> getMarketBonds() {
-        return getMarketContext().getMarketBonds().join().getInstruments();
+    public List<MarketInstrument> getMarketBonds() throws IOException {
+        return getMarketContext().getMarketBonds();
     }
 
     @Override
     @Cacheable(value = "marketEtfs", sync = true)
-    public List<MarketInstrument> getMarketEtfs() {
-        return getMarketContext().getMarketEtfs().join().getInstruments();
+    public List<MarketInstrument> getMarketEtfs() throws IOException {
+        return getMarketContext().getMarketEtfs();
     }
 
     @Override
     @Cacheable(value = "marketCurrencies", sync = true)
-    public List<MarketInstrument> getMarketCurrencies() {
-        return getMarketContext().getMarketCurrencies().join().getInstruments();
+    public List<MarketInstrument> getMarketCurrencies() throws IOException {
+        return getMarketContext().getMarketCurrencies();
     }
 
     @Override
-    public Orderbook getMarketOrderbook(final String ticker, final int depth) {
+    public Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getMarketContext()
-                .getMarketOrderbook(figi, depth)
-                .join()
-                .orElse(null);
+        return getMarketContext().getMarketOrderbook(figi, depth);
     }
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         final List<Candle> candles = getMarketContext()
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleResolution)
-                .join()
-                .map(Candles::getCandles)
-                .orElse(Collections.emptyList());
+                .getCandles();
+
         log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
         return candles;
     }
 
     @Override
     @Cacheable(value = "marketInstrument", sync = true)
-    public MarketInstrument searchMarketInstrument(final String ticker) {
-        final List<MarketInstrument> instruments = getMarketContext()
-                .searchMarketInstrumentsByTicker(ticker)
-                .join()
-                .getInstruments();
+    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
+        final List<MarketInstrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker);
         return CollectionUtils.firstElement(instruments);
     }
 
@@ -110,7 +102,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region OperationsContext
 
     @Override
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) {
+    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         return getOperationsContext()
                 .getOperations(interval.getFrom(), interval.getTo(), figi, brokerAccountId)
@@ -128,13 +120,15 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     }
 
     @Override
-    public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) {
+    public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
+            throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         return getOrdersContext().placeLimitOrder(figi, orderRequest, brokerAccountId).join();
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) {
+    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
+            throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         return getOrdersContext().placeMarketOrder(figi, orderRequest, brokerAccountId).join();
     }

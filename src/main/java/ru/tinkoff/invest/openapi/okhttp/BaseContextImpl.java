@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -22,12 +23,12 @@ import java.util.Objects;
 
 public abstract class BaseContextImpl implements Context {
 
-    protected static final TypeReference<Error> errorTypeReference =
-            new TypeReference<Error>() {
-            };
-    protected static final TypeReference<Empty> emptyPayloadTypeReference =
-            new TypeReference<Empty>() {
-            };
+    protected static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
+
+    protected static final TypeReference<Error> errorTypeReference = new TypeReference<>() {
+    };
+    protected static final TypeReference<Empty> emptyPayloadTypeReference = new TypeReference<>() {
+    };
 
     protected final String authToken;
     protected final HttpUrl finalUrl;
@@ -35,9 +36,7 @@ public abstract class BaseContextImpl implements Context {
     protected final ObjectMapper mapper;
     protected final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-    public BaseContextImpl(@NotNull final OkHttpClient client,
-                           @NotNull final String url,
-                           @NotNull final String authToken) {
+    public BaseContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
 
         this.authToken = authToken;
         this.finalUrl = Objects.requireNonNull(HttpUrl.parse(url))
@@ -63,12 +62,12 @@ public abstract class BaseContextImpl implements Context {
     protected <D> D handleResponse(@NotNull final Response response,
                                    @NotNull final TypeReference<D> tr) throws IOException, OpenApiException {
         switch (response.code()) {
-            case 200:
+            case 200 -> {
                 final InputStream bodyStream = Objects.requireNonNull(response.body()).byteStream();
                 return mapper.readValue(bodyStream, tr);
-            case 401:
-                throw new WrongTokenException();
-            default:
+            }
+            case 401 -> throw new WrongTokenException();
+            default -> {
                 final InputStream errorStream = Objects.requireNonNull(response.body()).byteStream();
                 if (errorStream.available() == 0) {
                     final String message = String.format("Запрос завершился с кодом %d без тела", response.code());
@@ -81,8 +80,13 @@ public abstract class BaseContextImpl implements Context {
                     logger.error(message);
                     throw new OpenApiException(error.getMessage(), error.getCode());
                 }
-
+            }
         }
+    }
+
+    protected <T> T executeAndGetBody(final Request request, Class<T> valueType) throws IOException {
+        final String responseBody = client.newCall(request).execute().body().string();
+        return mapper.readValue(responseBody, valueType);
     }
 
 }

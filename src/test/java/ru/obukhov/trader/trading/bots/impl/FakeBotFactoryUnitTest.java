@@ -1,5 +1,6 @@
 package ru.obukhov.trader.trading.bots.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +49,7 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void createBot_returnsNotNull(final String brokerAccountId) {
+    void createBot_returnsNotNull(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)

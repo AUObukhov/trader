@@ -15,6 +15,8 @@ import ru.obukhov.trader.web.model.exchange.ClearAllRequest;
 import ru.obukhov.trader.web.model.exchange.SetCurrencyBalanceRequest;
 import ru.obukhov.trader.web.model.exchange.SetPositionBalanceRequest;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequestMapping("/trader/sandbox")
@@ -41,7 +43,7 @@ public class SandboxController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public void setPositionBalance(@RequestBody final SetPositionBalanceRequest request) {
+    public void setPositionBalance(@RequestBody final SetPositionBalanceRequest request) throws IOException {
         sandboxService.setPositionBalance(request.getTicker(), request.getBalance(), request.getBrokerAccountId());
     }
 

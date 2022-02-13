@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -118,7 +117,7 @@ final class OrdersContextImpl extends BaseContextImpl implements OrdersContext {
                 .addQueryParameter("figi", figi)
                 .build();
         final Request request = prepareRequest(requestUrl)
-                .post(RequestBody.create(renderedBody, MediaType.get("application/json")))
+                .post(RequestBody.create(renderedBody, JSON_MEDIA_TYPE))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -164,7 +163,7 @@ final class OrdersContextImpl extends BaseContextImpl implements OrdersContext {
                 .addQueryParameter("figi", figi)
                 .build();
         final Request request = prepareRequest(requestUrl)
-                .post(RequestBody.create(renderedBody, MediaType.get("application/json")))
+                .post(RequestBody.create(renderedBody, JSON_MEDIA_TYPE))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

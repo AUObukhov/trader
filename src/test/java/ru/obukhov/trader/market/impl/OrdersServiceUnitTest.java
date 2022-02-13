@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -33,7 +34,7 @@ class OrdersServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOrders_filtersOrdersByFigi(@Nullable final String brokerAccountId) {
+    void getOrders_filtersOrdersByFigi(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
         final String figi = "figi";
 

@@ -39,7 +39,7 @@ public class ExecutionUtils {
      *
      * @return result of execution of given {@code supplier} and execution time and exception if it has occurred during execution
      */
-    public static <T> ExecutionResult<T> getSafe(Supplier<T> supplier) {
+    public static <T> ExecutionResult<T> getSafe(ThrowingSupplier<T> supplier) {
         T result = null;
         Duration duration;
         Exception exception = null;

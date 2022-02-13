@@ -31,6 +31,7 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -136,7 +137,7 @@ public class BackTesterImpl implements BackTester {
         }
     }
 
-    private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
+    private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) throws IOException {
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
 
         final List<Candle> historicalCandles = new ArrayList<>();
@@ -170,7 +171,7 @@ public class BackTesterImpl implements BackTester {
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
             final OffsetDateTime to
-    ) {
+    ) throws IOException {
         if (balanceConfig.getBalanceIncrement() == null) {
             fakeBot.nextMinute();
         } else {
@@ -190,7 +191,7 @@ public class BackTesterImpl implements BackTester {
             final Interval interval,
             final List<Candle> candles,
             final FakeBot fakeBot
-    ) {
+    ) throws IOException {
         final String brokerAccountId = botConfig.getBrokerAccountId();
         final String ticker = botConfig.getTicker();
 
@@ -229,17 +230,20 @@ public class BackTesterImpl implements BackTester {
                 .build();
     }
 
-    private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
+    private Currency getCurrency(final FakeBot fakeBot, final String ticker) throws IOException {
         return fakeBot.searchMarketInstrument(ticker).getCurrency();
     }
 
-    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) {
-        return fakeBot.getPortfolioPositions(brokerAccountId).stream()
-                .map(portfolioPosition -> createBackTestPosition(portfolioPosition, fakeBot))
-                .toList();
+    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) throws IOException {
+        List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(brokerAccountId);
+        List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
+        for (PortfolioPosition portfolioPosition : portfolioPositions) {
+            backTestPositions.add(createBackTestPosition(portfolioPosition, fakeBot));
+        }
+        return backTestPositions;
     }
 
-    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) {
+    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) throws IOException {
         final String ticker = portfolioPosition.getTicker();
         return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.getCount());
     }
@@ -250,7 +254,7 @@ public class BackTesterImpl implements BackTester {
             final FakeBot fakeBot,
             final List<BackTestPosition> positions,
             final String ticker
-    ) {
+    ) throws IOException {
         final Currency currency = getCurrency(fakeBot, ticker);
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
 

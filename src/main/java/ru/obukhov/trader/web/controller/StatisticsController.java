@@ -19,6 +19,7 @@ import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @Slf4j
@@ -58,17 +59,14 @@ public class StatisticsController {
             @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true) final MovingAverageType movingAverageType,
 
             @RequestParam
-            @ApiParam(value = "Window of short-term moving average", example = "50", required = true)
-            final Integer smallWindow,
+            @ApiParam(value = "Window of short-term moving average", example = "50", required = true) final Integer smallWindow,
 
             @RequestParam
-            @ApiParam(value = "Window of long-term moving average", example = "200", required = true)
-            final Integer bigWindow,
+            @ApiParam(value = "Window of long-term moving average", example = "200", required = true) final Integer bigWindow,
 
             @RequestParam(required = false, defaultValue = "false")
-            @ApiParam(value = "Flag indicating to save the back test result to a file. Default value is false", example = "true")
-            final boolean saveToFile
-    ) {
+            @ApiParam(value = "Flag indicating to save the back test result to a file. Default value is false", example = "true") final boolean saveToFile
+    ) throws IOException {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,

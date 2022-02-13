@@ -37,6 +37,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -122,7 +123,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() {
+    void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() throws IOException {
         // arrange
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
@@ -182,7 +183,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsCommonStatistics() {
+    void test_fillsCommonStatistics() throws IOException {
 
         // arrange
 
@@ -298,7 +299,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_callsAddInvestment() {
+    void test_callsAddInvestment() throws IOException {
 
         // arrange
 
@@ -402,7 +403,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsPositions() {
+    void test_fillsPositions() throws IOException {
 
         // arrange
 
@@ -479,7 +480,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsOperations() {
+    void test_fillsOperations() throws IOException {
 
         // arrange
 
@@ -611,7 +612,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsCandles() {
+    void test_fillsCandles() throws IOException {
 
         // arrange
 
@@ -689,7 +690,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() throws IOException {
 
         // arrange
 
@@ -746,7 +747,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_callsSaveToFile_whenSaveToFilesIsTrue() {
+    void test_callsSaveToFile_whenSaveToFilesIsTrue() throws IOException {
 
         // arrange
 
@@ -810,7 +811,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse() {
+    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse() throws IOException {
 
         // arrange
 
@@ -874,7 +875,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
+    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() throws IOException {
 
         // arrange
 
@@ -943,7 +944,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_catchesBackTestException() {
+    void test_catchesBackTestException() throws IOException {
 
         // arrange
 
@@ -1021,7 +1022,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() {
+    void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() throws IOException {
 
         // arrange
 
@@ -1096,7 +1097,7 @@ class BackTesterImplUnitTest {
             final Map<OffsetDateTime, Double> prices,
             final double currentPrice,
             final Operation operation
-    ) {
+    ) throws IOException {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
@@ -1121,18 +1122,18 @@ class BackTesterImplUnitTest {
         return botConfig;
     }
 
-    private void mockCurrentPrice(final FakeBot fakeBot, final String ticker, final double currentPrice) {
+    private void mockCurrentPrice(final FakeBot fakeBot, final String ticker, final double currentPrice) throws IOException {
         Mockito.when(fakeBot.getCurrentPrice(ticker))
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
 
-    private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+    private FakeBot mockFakeBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) throws IOException {
         final FakeBot fakeBot = Mockito.mock(FakeBot.class);
         Mockito.when(fakeBotFactory.createBot(botConfig, balanceConfig, currentDateTime)).thenReturn(fakeBot);
         return fakeBot;
     }
 
-    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
+    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) throws IOException {
         Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class)))
                 .thenAnswer(invocation -> {
                     final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();

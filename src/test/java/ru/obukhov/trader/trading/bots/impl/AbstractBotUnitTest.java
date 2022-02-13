@@ -33,6 +33,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -59,7 +60,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders(@Nullable final String brokerAccountId) {
+    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
 
         final List<Order> orders = List.of(new Order());
@@ -82,7 +83,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenThereAreUncompletedOrders(@Nullable final String brokerAccountId) {
+    void processTicker_doesNoOrder_whenThereAreUncompletedOrders(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
 
         Mocker.mockEmptyOrder(ordersService, ticker);
@@ -103,7 +104,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) {
+    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
 
         final BotConfig botConfig = BotConfig.builder()
@@ -122,7 +123,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime(@Nullable final String brokerAccountId) {
+    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
@@ -145,7 +146,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenDecisionIsWait(@Nullable final String brokerAccountId) {
+    void processTicker_doesNoOrder_whenDecisionIsWait(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -178,7 +179,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) {
+    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -223,7 +224,7 @@ class AbstractBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) {
+    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -265,12 +266,12 @@ class AbstractBotUnitTest {
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
     }
 
-    private void mockCandles(final String ticker, final List<Candle> candles) {
+    private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
                 .thenReturn(candles);
     }
 
-    private void verifyNoOrdersMade() {
+    private void verifyNoOrdersMade() throws IOException {
         Mockito.verify(ordersService, Mockito.never())
                 .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }

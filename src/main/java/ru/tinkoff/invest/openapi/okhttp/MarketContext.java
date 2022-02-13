@@ -3,93 +3,31 @@ package ru.tinkoff.invest.openapi.okhttp;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.Candles;
-import ru.obukhov.trader.market.model.MarketInstrumentList;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.SearchMarketInstrument;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
-/**
- * Интерфейс работы с OpenAPI в части, касающейся получения рыночной информации.
- */
 public interface MarketContext extends Context {
 
-    /**
-     * Асинхронное получение списка акций, доступных для торговли.
-     *
-     * @return Список акций.
-     */
-    @NotNull
-    CompletableFuture<MarketInstrumentList> getMarketStocks();
+    List<MarketInstrument> getMarketStocks() throws IOException;
 
+    List<MarketInstrument> getMarketBonds() throws IOException;
 
-    /**
-     * Асинхронное получение бондов, доступных для торговли.
-     *
-     * @return Список облигаций.
-     */
-    @NotNull
-    CompletableFuture<MarketInstrumentList> getMarketBonds();
+    List<MarketInstrument> getMarketEtfs() throws IOException;
 
-    /**
-     * Асинхронное получение списка фондов, доступных для торговли.
-     *
-     * @return Список фондов.
-     */
-    @NotNull
-    CompletableFuture<MarketInstrumentList> getMarketEtfs();
+    List<MarketInstrument> getMarketCurrencies() throws IOException;
 
-    /**
-     * Асинхронное получение списка валют, доступных для торговли.
-     *
-     * @return Список валют.
-     */
-    @NotNull
-    CompletableFuture<MarketInstrumentList> getMarketCurrencies();
+    Orderbook getMarketOrderbook(@NotNull String figi, int depth) throws IOException;
 
-    /**
-     * Асинхронное получение текущего состояния торгового "стакана".
-     *
-     * @param figi  Идентификатор инструмента.
-     * @param depth Глубина стакана.
-     * @return "Стакан" по инструменту или ничего, если инструмент не найден.
-     */
-    @NotNull
-    CompletableFuture<Optional<Orderbook>> getMarketOrderbook(@NotNull String figi, int depth);
+    Candles getMarketCandles(@NotNull String figi, @NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull CandleResolution interval)
+            throws IOException;
 
-    /**
-     * Асинхронное получение исторических данных по свечам.
-     *
-     * @param figi     Идентификатор инструмента.
-     * @param from     Начальный момент рассматриваемого отрезка временного интервала.
-     * @param to       Конечный момент рассматриваемого отрезка временного интервала.
-     * @param interval Разрешающий интервал свечей.
-     * @return Данные по свечам инструмента или ничего, если инструмент не найден.
-     */
-    @NotNull
-    CompletableFuture<Optional<Candles>> getMarketCandles(@NotNull String figi,
-                                                          @NotNull OffsetDateTime from,
-                                                          @NotNull OffsetDateTime to,
-                                                          @NotNull CandleResolution interval);
+    List<MarketInstrument> searchMarketInstrumentsByTicker(@NotNull String ticker) throws IOException;
 
-    /**
-     * Асинхронный поиск инструментов по тикеру.
-     *
-     * @param ticker Искомый тикер.
-     * @return Список инструментов.
-     */
-    @NotNull
-    CompletableFuture<MarketInstrumentList> searchMarketInstrumentsByTicker(@NotNull String ticker);
-
-    /**
-     * Асинхронный поиск инструмента по идентификатору.
-     *
-     * @param figi Искомый тикер.
-     * @return Найденный инструмент или ничего, если инструмент не найден.
-     */
-    @NotNull
-    CompletableFuture<Optional<SearchMarketInstrument>> searchMarketInstrumentByFigi(@NotNull String figi);
+    SearchMarketInstrument searchMarketInstrumentByFigi(@NotNull String figi) throws IOException;
 
 }

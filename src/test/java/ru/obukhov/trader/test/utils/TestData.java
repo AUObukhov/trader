@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationStatus;
@@ -30,7 +29,6 @@ import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -237,13 +235,6 @@ public class TestData {
         final MarketInstrument instrument = new MarketInstrument();
         instrument.setLot(lotSize);
         return instrument;
-    }
-
-
-    public static CompletableFuture<MarketInstrumentList> createInstrumentsFuture(final MarketInstrument... instruments) {
-        final List<MarketInstrument> instrumentList = List.of(instruments);
-        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList().instruments(instrumentList);
-        return CompletableFuture.completedFuture(marketInstrumentList);
     }
 
     // endregion

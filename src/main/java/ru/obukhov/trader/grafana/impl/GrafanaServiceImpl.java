@@ -20,6 +20,7 @@ import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class GrafanaServiceImpl implements GrafanaService {
      * @return list of single {@link QueryResult} containing data
      */
     @Override
-    public List<QueryResult> getData(GetDataRequest request) {
+    public List<QueryResult> getData(GetDataRequest request) throws IOException {
         Metric metric = getRequiredMetric(request);
         return switch (metric) {
             case CANDLES -> getCandles(request);
@@ -61,7 +62,7 @@ public class GrafanaServiceImpl implements GrafanaService {
      *                Must contain single values in targets and keys "ticker" and "candleResolution" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times and open prices
      */
-    private List<QueryResult> getCandles(GetDataRequest request) {
+    private List<QueryResult> getCandles(GetDataRequest request) throws IOException {
         final Map<String, Object> data = getRequiredTargetData(request);
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
         final CandleResolution candleResolution = getRequiredCandleResolution(data);
@@ -76,7 +77,7 @@ public class GrafanaServiceImpl implements GrafanaService {
      *                Must contain single values in targets and keys "ticker" and "candleResolution" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times, open prices and moving average values
      */
-    private List<QueryResult> getExtendedCandles(GetDataRequest request) {
+    private List<QueryResult> getExtendedCandles(GetDataRequest request) throws IOException {
         final Map<String, Object> data = getRequiredTargetData(request);
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
         final Interval interval = request.getInterval();
@@ -106,7 +107,7 @@ public class GrafanaServiceImpl implements GrafanaService {
         return MovingAverageType.from(movingAverageType);
     }
 
-    private QueryResult getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    private QueryResult getCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
         final QueryTableResult queryResult = new QueryTableResult();
         queryResult.setColumns(CANDLES_COLUMNS);
 
@@ -127,7 +128,7 @@ public class GrafanaServiceImpl implements GrafanaService {
             final MovingAverageType movingAverageType,
             final Integer window1,
             final Integer window2
-    ) {
+    ) throws IOException {
         final GetCandlesResponse candlesResponse = statisticsService.getExtendedCandles(
                 ticker,
                 interval,

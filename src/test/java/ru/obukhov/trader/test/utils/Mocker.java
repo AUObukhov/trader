@@ -16,25 +16,28 @@ import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @UtilityClass
 public class Mocker {
 
-    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker, final int lotSize) {
+    public static MarketInstrument createAndMockInstrument(final TinkoffService tinkoffService, final String ticker, final int lotSize)
+            throws IOException {
         final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
         return instrument;
     }
 
-    public static MarketInstrument createAndMockInstrument(final FakeBot fakeBot, final String ticker, final int lotSize) {
+    public static MarketInstrument createAndMockInstrument(final FakeBot fakeBot, final String ticker, final int lotSize) throws IOException {
         final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
         Mockito.when(fakeBot.searchMarketInstrument(ticker)).thenReturn(instrument);
         return instrument;
     }
 
-    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker, final int lotSize) {
+    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker, final int lotSize)
+            throws IOException {
         final MarketInstrument instrument = createMarketInstrument(ticker, lotSize);
         Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
         return instrument;
@@ -67,7 +70,7 @@ public class Mocker {
             final String ticker,
             final Interval interval,
             final Operation... operations
-    ) {
+    ) throws IOException {
         Mockito.when(fakeBot.getOperations(brokerAccountId, interval, ticker))
                 .thenReturn(List.of(operations));
     }

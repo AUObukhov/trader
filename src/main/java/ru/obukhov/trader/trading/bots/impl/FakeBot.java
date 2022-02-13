@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -40,7 +41,7 @@ public class FakeBot extends AbstractBot implements Bot {
 
     // region FakeTinkoffService proxy
 
-    public MarketInstrument searchMarketInstrument(final String ticker) {
+    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
         return tinkoffService.searchMarketInstrument(ticker);
     }
 
@@ -48,7 +49,8 @@ public class FakeBot extends AbstractBot implements Bot {
         return tinkoffService.getCurrentDateTime();
     }
 
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker) {
+    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker)
+            throws IOException {
         return tinkoffService.getOperations(brokerAccountId, interval, ticker);
     }
 
@@ -72,7 +74,7 @@ public class FakeBot extends AbstractBot implements Bot {
         return getFakeTinkoffService().getCurrentBalance(brokerAccountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String ticker) {
+    public BigDecimal getCurrentPrice(final String ticker) throws IOException {
         return getFakeTinkoffService().getCurrentPrice(ticker);
     }
 

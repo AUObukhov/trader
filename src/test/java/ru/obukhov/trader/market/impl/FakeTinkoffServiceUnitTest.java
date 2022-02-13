@@ -30,6 +30,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -259,7 +260,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOperations_filtersOperationsByInterval(@Nullable final String brokerAccountId) {
+    void getOperations_filtersOperationsByInterval(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
@@ -298,7 +299,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOperations_filtersOperationsByTicker_whenTickerIsNotNull(@Nullable final String brokerAccountId) {
+    void getOperations_filtersOperationsByTicker_whenTickerIsNotNull(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
@@ -339,7 +340,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull(@Nullable final String brokerAccountId) {
+    void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
@@ -379,7 +380,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
@@ -408,7 +409,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_buy_createsNewPosition_whenNoPositions(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_buy_createsNewPosition_whenNoPositions(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -440,7 +441,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -474,7 +475,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_buy_createsMultiplePositions_whenDifferentTickersAreBought(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_buy_createsMultiplePositions_whenDifferentTickersAreBought(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -523,7 +524,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -561,7 +562,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_sell_removesPosition_whenAllLotsAreSold(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_sell_removesPosition_whenAllLotsAreSold(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -593,7 +594,7 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void placeMarketOrder_sell_reducesLotsCount(@Nullable final String brokerAccountId) {
+    void placeMarketOrder_sell_reducesLotsCount(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
@@ -726,7 +727,7 @@ class FakeTinkoffServiceUnitTest {
             final int lots,
             final OperationType operationType,
             final BigDecimal price
-    ) {
+    ) throws IOException {
         final Candle candle = new Candle().setClosePrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
@@ -737,7 +738,7 @@ class FakeTinkoffServiceUnitTest {
     }
 
     @Test
-    void getCurrentPrice() {
+    void getCurrentPrice() throws IOException {
         final String ticker = "ticker";
         final BigDecimal price = BigDecimal.valueOf(100);
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);

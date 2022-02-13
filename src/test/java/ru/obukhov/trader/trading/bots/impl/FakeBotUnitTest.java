@@ -24,6 +24,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ class FakeBotUnitTest {
     private FakeBot fakeBot;
 
     @Test
-    void searchMarketInstrument() {
+    void searchMarketInstrument() throws IOException {
         final String ticker = "ticker";
         final MarketInstrument expectedInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
 
@@ -110,7 +111,7 @@ class FakeBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOperations(final String brokerAccountId) {
+    void getOperations(final String brokerAccountId) throws IOException {
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String ticker = "ticker";
         final List<Operation> expectedOperations = new ArrayList<>();
@@ -134,7 +135,7 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getCurrentPrice() {
+    void getCurrentPrice() throws IOException {
         final String ticker = "ticker";
         final BigDecimal expectedCurrentPrice = BigDecimal.TEN;
         Mockito.when(fakeTinkoffService.getCurrentPrice(ticker)).thenReturn(expectedCurrentPrice);

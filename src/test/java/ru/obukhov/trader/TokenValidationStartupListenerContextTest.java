@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
+import java.io.IOException;
 import java.util.concurrent.CompletionException;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +29,7 @@ class TokenValidationStartupListenerContextTest {
             .withInitializer(new ConfigDataApplicationContextInitializer());
 
     @Test
-    void test_throwsException_whenTokenIsWrong() {
+    void test_throwsException_whenTokenIsWrong() throws IOException {
         final WrongTokenException wrongTokenException = new WrongTokenException();
         final String message = "ru.tinkoff.invest.openapi.exceptions.WrongTokenException: Попытка использовать неверный токен";
         final CompletionException completionException = new CompletionException(message, wrongTokenException);
@@ -40,7 +41,7 @@ class TokenValidationStartupListenerContextTest {
     }
 
     @Test
-    void test_skipsUnknownExceptions() {
+    void test_skipsUnknownExceptions() throws IOException {
         Mockito.when(marketService.getInstruments(InstrumentType.STOCK)).thenThrow(new RuntimeException());
         contextRunner
                 .withBean(MarketService.class, () -> marketService)

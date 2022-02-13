@@ -24,6 +24,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +67,7 @@ public abstract class AbstractBot implements Bot {
      * @return list of last candles
      */
     @Override
-    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) throws IOException {
         final DecisionData decisionData = new DecisionData();
 
         final String ticker = botConfig.getTicker();
@@ -91,7 +92,7 @@ public abstract class AbstractBot implements Bot {
         }
     }
 
-    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) {
+    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
         decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.getCurrency()));
@@ -101,13 +102,13 @@ public abstract class AbstractBot implements Bot {
         decisionData.setCommission(botConfig.getCommission());
     }
 
-    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker) {
+    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker) throws IOException {
         final OffsetDateTime now = tinkoffService.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
         return operationsService.getOperations(brokerAccountId, interval, ticker);
     }
 
-    private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) {
+    private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) throws IOException {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;

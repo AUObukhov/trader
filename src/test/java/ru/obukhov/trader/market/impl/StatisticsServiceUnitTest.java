@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -35,7 +36,7 @@ class StatisticsServiceUnitTest {
     private StatisticsService service;
 
     @Test
-    void getExtendedCandles_extendsCandles_withoutExtremes() {
+    void getExtendedCandles_extendsCandles_withoutExtremes() throws IOException {
 
         // arrange
 
@@ -81,7 +82,7 @@ class StatisticsServiceUnitTest {
     }
 
     @Test
-    void getExtendedCandles_extendsCandles_withExtremes() {
+    void getExtendedCandles_extendsCandles_withExtremes() throws IOException {
 
         // arrange
 

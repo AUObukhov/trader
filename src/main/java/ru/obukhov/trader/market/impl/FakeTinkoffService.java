@@ -33,6 +33,7 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -129,22 +130,22 @@ public class FakeTinkoffService implements TinkoffService {
     // region MarketContext proxy
 
     @Override
-    public List<MarketInstrument> getMarketStocks() {
+    public List<MarketInstrument> getMarketStocks() throws IOException {
         return realTinkoffService.getMarketStocks();
     }
 
     @Override
-    public List<MarketInstrument> getMarketBonds() {
+    public List<MarketInstrument> getMarketBonds() throws IOException {
         return realTinkoffService.getMarketBonds();
     }
 
     @Override
-    public List<MarketInstrument> getMarketEtfs() {
+    public List<MarketInstrument> getMarketEtfs() throws IOException {
         return realTinkoffService.getMarketEtfs();
     }
 
     @Override
-    public List<MarketInstrument> getMarketCurrencies() {
+    public List<MarketInstrument> getMarketCurrencies() throws IOException {
         return realTinkoffService.getMarketCurrencies();
     }
 
@@ -154,12 +155,12 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
         return realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
     }
 
     @Override
-    public MarketInstrument searchMarketInstrument(final String ticker) {
+    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
         return realTinkoffService.searchMarketInstrument(ticker);
     }
 
@@ -210,7 +211,7 @@ public class FakeTinkoffService implements TinkoffService {
      * @return result of order execution
      */
     @Override
-    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) {
+    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
         final int count = instrument.getLot() * orderRequest.getLots();
@@ -235,7 +236,7 @@ public class FakeTinkoffService implements TinkoffService {
             final int count,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
-    ) {
+    ) throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
 
         updateBalance(brokerAccountId, instrument.getCurrency(), totalPrice.negate().subtract(commissionAmount));
@@ -297,7 +298,7 @@ public class FakeTinkoffService implements TinkoffService {
             final int count,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
-    ) {
+    ) throws IOException {
         final PortfolioPosition existingPosition = fakeContext.getPosition(brokerAccountId, ticker);
         final int newLotsCount = existingPosition.getCount() - count;
         if (newLotsCount < 0) {
@@ -422,7 +423,7 @@ public class FakeTinkoffService implements TinkoffService {
     /**
      * @return last known price for instrument with given {@code ticker} not after current fake date time
      */
-    public BigDecimal getCurrentPrice(final String ticker) {
+    public BigDecimal getCurrentPrice(final String ticker) throws IOException {
         return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getClosePrice();
     }
 

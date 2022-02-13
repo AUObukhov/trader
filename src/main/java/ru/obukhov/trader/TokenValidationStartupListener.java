@@ -1,6 +1,7 @@
 package ru.obukhov.trader;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
@@ -20,6 +21,7 @@ public class TokenValidationStartupListener implements ApplicationListener<Appli
 
     private final MarketService marketService;
 
+    @SneakyThrows
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
         try {

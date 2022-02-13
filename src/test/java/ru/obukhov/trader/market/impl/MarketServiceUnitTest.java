@@ -22,6 +22,7 @@ import ru.obukhov.trader.test.utils.DateTestUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -43,7 +44,7 @@ class MarketServiceUnitTest {
     // region getCandles tests
 
     @Test
-    void getCandles_skipsCandlesByDays_whenFromIsReached() {
+    void getCandles_skipsCandlesByDays_whenFromIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -73,7 +74,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
+    void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -103,7 +104,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getCandles_filterCandlesByYears() {
+    void getCandles_filterCandlesByYears() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -134,7 +135,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenFromIsReached() {
+    void getCandles_skipsCandlesByYears_whenFromIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution.MONTH;
@@ -166,7 +167,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
+    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution.MONTH;
@@ -198,7 +199,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
+    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleResolution candleResolution = CandleResolution.MONTH;
@@ -241,7 +242,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+    void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
         final OffsetDateTime now = OffsetDateTime.now();
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(now);
 
@@ -258,7 +259,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final String ticker = "ticker";
@@ -290,7 +291,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
+    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
         final String ticker = "ticker";
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
         final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
@@ -306,7 +307,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
         final String ticker = "ticker";
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
         final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() - 1);
@@ -328,7 +329,7 @@ class MarketServiceUnitTest {
     // region getLastCandles daily tests
 
     @Test
-    void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
+    void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
 
@@ -341,7 +342,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
+    void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -369,7 +370,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
+    void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -398,7 +399,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
+    void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -422,7 +423,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
+    void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -449,7 +450,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
+    void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution._1MIN;
@@ -478,7 +479,7 @@ class MarketServiceUnitTest {
     // region getLastCandles yearly tests
 
     @Test
-    void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
+    void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
 
@@ -491,7 +492,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
+    void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -518,7 +519,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
+    void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -546,7 +547,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
+    void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -574,7 +575,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
+    void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -596,7 +597,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
+    void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -621,7 +622,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
+    void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
         final CandleResolution candleResolution = CandleResolution.DAY;
@@ -648,7 +649,7 @@ class MarketServiceUnitTest {
     // region getInstrument tests
 
     @Test
-    void getInstrument_returnsNull_whenNoMatchingTicker() {
+    void getInstrument_returnsNull_whenNoMatchingTicker() throws IOException {
         final String ticker = "ticker";
 
         final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
@@ -673,7 +674,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getInstrument_filtersInstruments() {
+    void getInstrument_filtersInstruments() throws IOException {
         final String ticker = "ticker";
 
         final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
@@ -702,7 +703,7 @@ class MarketServiceUnitTest {
     // region getInstruments tests
 
     @Test
-    void getInstruments_returnsEtfs_whenTypeIsEtf() {
+    void getInstruments_returnsEtfs_whenTypeIsEtf() throws IOException {
         final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
         Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
@@ -715,7 +716,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getInstruments_returnsStocks_whenTypeIsStock() {
+    void getInstruments_returnsStocks_whenTypeIsStock() throws IOException {
         final MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
         final MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
         Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
@@ -728,7 +729,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getInstruments_returnsBonds_whenTypeIsBond() {
+    void getInstruments_returnsBonds_whenTypeIsBond() throws IOException {
         final MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
         final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
         Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
@@ -741,7 +742,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getInstruments_returnsCurrencies_whenTypeIsCurrency() {
+    void getInstruments_returnsCurrencies_whenTypeIsCurrency() throws IOException {
         final MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
         final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
         Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
@@ -754,7 +755,7 @@ class MarketServiceUnitTest {
     }
 
     @Test
-    void getInstruments_returnsAllInstruments_whenTypeIsNull() {
+    void getInstruments_returnsAllInstruments_whenTypeIsNull() throws IOException {
         final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
         final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
         Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));

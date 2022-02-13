@@ -29,6 +29,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -196,7 +197,7 @@ class GrafanaServiceImplUnitTest {
     }
 
     @Test
-    void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() {
+    void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() throws IOException {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
@@ -239,7 +240,7 @@ class GrafanaServiceImplUnitTest {
     }
 
     @Test
-    void getData_returnsExtendedCandles_whenMetricIsExtendedCandles_andParamsAreValid() {
+    void getData_returnsExtendedCandles_whenMetricIsExtendedCandles_andParamsAreValid() throws IOException {
 
         // arrange
 

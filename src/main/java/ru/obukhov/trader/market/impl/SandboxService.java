@@ -8,6 +8,7 @@ import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 import ru.tinkoff.invest.openapi.okhttp.OpenApi;
 import ru.tinkoff.invest.openapi.okhttp.SandboxContext;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -43,7 +44,8 @@ public class SandboxService {
      * Sets given value ({@code balance}) of balance of position with given {@code ticker} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public void setPositionBalance(@NotNull final String ticker, @NotNull final BigDecimal balance, @Nullable final String brokerAccountId) {
+    public void setPositionBalance(@NotNull final String ticker, @NotNull final BigDecimal balance, @Nullable final String brokerAccountId)
+            throws IOException {
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
                 .figi(marketService.getFigi(ticker))
                 .balance(balance);

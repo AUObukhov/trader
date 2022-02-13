@@ -15,6 +15,7 @@ import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @Service
@@ -25,7 +26,7 @@ public class FakeBotFactory {
     private final TradingStrategyFactory strategyFactory;
     private final TinkoffServices tinkoffServices;
 
-    public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+    public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) throws IOException {
         final FakeTinkoffService fakeTinkoffService = createFakeTinkoffService(botConfig, balanceConfig, currentDateTime);
         final MarketService fakeMarketService = new MarketService(marketProperties, fakeTinkoffService);
         final OperationsService fakeOperationsService = new OperationsService(fakeTinkoffService);
@@ -40,7 +41,7 @@ public class FakeBotFactory {
             final BotConfig botConfig,
             final BalanceConfig balanceConfig,
             final OffsetDateTime currentDateTime
-    ) {
+    ) throws IOException {
         final MarketInstrument marketInstrument = tinkoffServices.realTinkoffService().searchMarketInstrument(botConfig.getTicker());
         if (marketInstrument == null) {
             throw new IllegalArgumentException("Not found instrument for ticker '" + botConfig.getTicker() + "'");

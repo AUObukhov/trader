@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -24,27 +25,27 @@ import java.util.List;
  */
 public interface TinkoffService {
 
-    List<MarketInstrument> getMarketStocks();
+    List<MarketInstrument> getMarketStocks() throws IOException;
 
-    List<MarketInstrument> getMarketBonds();
+    List<MarketInstrument> getMarketBonds() throws IOException;
 
-    List<MarketInstrument> getMarketEtfs();
+    List<MarketInstrument> getMarketEtfs() throws IOException;
 
-    List<MarketInstrument> getMarketCurrencies();
+    List<MarketInstrument> getMarketCurrencies() throws IOException;
 
-    Orderbook getMarketOrderbook(final String ticker, final int depth);
+    Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException;
 
-    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution);
+    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException;
 
-    MarketInstrument searchMarketInstrument(final String ticker);
+    MarketInstrument searchMarketInstrument(final String ticker) throws IOException;
 
-    List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker);
+    List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
 
     List<Order> getOrders(@Nullable final String brokerAccountId);
 
-    PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest);
+    PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) throws IOException;
 
-    PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest);
+    PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException;
 
     void cancelOrder(@Nullable final String brokerAccountId, final String orderId);
 

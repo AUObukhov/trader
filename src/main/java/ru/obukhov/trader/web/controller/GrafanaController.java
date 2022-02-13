@@ -15,6 +15,7 @@ import ru.obukhov.trader.grafana.model.GetDataRequest;
 import ru.obukhov.trader.grafana.model.QueryResult;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class GrafanaController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<QueryResult> getData(@Valid @RequestBody GetDataRequest request) {
+    public List<QueryResult> getData(@Valid @RequestBody GetDataRequest request) throws IOException {
         return grafanaService.getData(request);
     }
 

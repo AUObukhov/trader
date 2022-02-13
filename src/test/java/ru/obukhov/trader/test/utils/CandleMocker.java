@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleResolution;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class CandleMocker {
         return candle;
     }
 
-    public void mock() {
+    public void mock() throws IOException {
         Mockito.when(tinkoffService.getMarketCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution))).then(answer);
     }
 
