@@ -12,7 +12,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 
 @Service
 public class OpenApi implements Closeable {
@@ -33,8 +32,6 @@ public class OpenApi implements Closeable {
     private final OperationsContext operationsContext;
     @Getter
     private final UserContext userContext;
-    @Getter
-    private final StreamingContext streamingContext;
 
     public OpenApi(final ApiProperties apiProperties, final TradingProperties tradingProperties, final List<Interceptor> interceptors)
             throws IOException {
@@ -55,13 +52,6 @@ public class OpenApi implements Closeable {
         this.marketContext = new MarketContextImpl(client, apiUrl, authToken);
         this.operationsContext = new OperationsContextImpl(client, apiUrl, authToken);
         this.userContext = new UserContextImpl(client, apiUrl, authToken);
-        this.streamingContext = new StreamingContextImpl(
-                client,
-                apiProperties.streamingUrl(),
-                authToken,
-                apiProperties.streamingParallelism(),
-                ForkJoinPool.commonPool()
-        );
     }
 
     private OkHttpClient createClient(final List<Interceptor> interceptors) {
