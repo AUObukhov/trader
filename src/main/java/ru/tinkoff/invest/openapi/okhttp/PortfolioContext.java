@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import java.io.IOException;
 import java.util.List;
 
-public interface PortfolioContext extends Context {
+public interface PortfolioContext {
 
     List<PortfolioPosition> getPortfolio(@Nullable final String brokerAccountId) throws IOException;
 

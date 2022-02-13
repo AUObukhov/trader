@@ -14,7 +14,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class OperationsContextImpl extends BaseContextImpl implements OperationsContext {
+final class OperationsContextImpl extends BaseContext implements OperationsContext {
 
     public OperationsContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);

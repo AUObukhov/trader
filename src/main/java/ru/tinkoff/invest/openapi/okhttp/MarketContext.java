@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface MarketContext extends Context {
+public interface MarketContext {
 
     List<MarketInstrument> getMarketStocks() throws IOException;
 

@@ -14,13 +14,11 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import java.io.IOException;
 import java.util.List;
 
-final class PortfolioContextImpl extends BaseContextImpl implements PortfolioContext {
+final class PortfolioContextImpl extends BaseContext implements PortfolioContext {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public PortfolioContextImpl(@NotNull final OkHttpClient client,
-                                @NotNull final String url,
-                                @NotNull final String authToken) {
+    public PortfolioContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 

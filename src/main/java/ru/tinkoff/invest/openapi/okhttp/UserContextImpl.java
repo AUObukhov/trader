@@ -10,7 +10,7 @@ import ru.obukhov.trader.market.model.UserAccounts;
 import java.io.IOException;
 import java.util.List;
 
-final class UserContextImpl extends BaseContextImpl implements UserContext {
+final class UserContextImpl extends BaseContext implements UserContext {
 
     public UserContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);

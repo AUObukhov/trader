@@ -19,13 +19,12 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class MarketContextImpl extends BaseContextImpl implements MarketContext {
+final class MarketContextImpl extends BaseContext implements MarketContext {
 
     public MarketContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
         super(client, url, authToken);
     }
 
-    @NotNull
     @Override
     public String getPath() {
         return "market";

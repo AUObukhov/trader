@@ -17,7 +17,7 @@ import ru.obukhov.trader.web.client.exchange.OrdersResponse;
 import java.io.IOException;
 import java.util.List;
 
-final class OrdersContextImpl extends BaseContextImpl implements OrdersContext {
+final class OrdersContextImpl extends BaseContext implements OrdersContext {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface OperationsContext extends Context {
+public interface OperationsContext {
 
     List<Operation> getOperations(
             @Nullable final String brokerAccountId,

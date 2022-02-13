@@ -9,7 +9,7 @@ import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 
 import java.io.IOException;
 
-public interface SandboxContext extends Context {
+public interface SandboxContext {
 
     SandboxAccount performRegistration(@NotNull SandboxRegisterRequest registerRequest) throws IOException;
 

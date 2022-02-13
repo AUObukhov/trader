@@ -11,7 +11,7 @@ import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import java.io.IOException;
 import java.util.List;
 
-public interface OrdersContext extends Context {
+public interface OrdersContext {
 
     List<Order> getOrders(@Nullable String brokerAccountId) throws IOException;
 

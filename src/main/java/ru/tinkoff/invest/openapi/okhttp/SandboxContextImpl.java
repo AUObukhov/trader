@@ -14,7 +14,7 @@ import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 
 import java.io.IOException;
 
-final class SandboxContextImpl extends BaseContextImpl implements SandboxContext {
+final class SandboxContextImpl extends BaseContext implements SandboxContext {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
