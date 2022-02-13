@@ -18,6 +18,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,7 +37,7 @@ class PortfolioServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPosition_returnsPositionByTicker_whenItExists(@Nullable final String brokerAccountId) {
+    void getPosition_returnsPositionByTicker_whenItExists(@Nullable final String brokerAccountId) throws IOException {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
@@ -56,7 +57,7 @@ class PortfolioServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPosition_returnsNull_whenNoPositionWithTicker(@Nullable final String brokerAccountId) {
+    void getPosition_returnsNull_whenNoPositionWithTicker(@Nullable final String brokerAccountId) throws IOException {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
@@ -80,7 +81,7 @@ class PortfolioServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists(@Nullable final String brokerAccountId) {
+    void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists(@Nullable final String brokerAccountId) throws IOException {
         final long rubBalance = 1000;
         final long rubBlocked = 100;
 
@@ -99,7 +100,7 @@ class PortfolioServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getAvailableBalance_returnsBalance_whenNoBlocked(@Nullable final String brokerAccountId) {
+    void getAvailableBalance_returnsBalance_whenNoBlocked(@Nullable final String brokerAccountId) throws IOException {
         final long rubBalance = 1000;
 
         final List<CurrencyPosition> currencies = List.of(
@@ -117,7 +118,7 @@ class PortfolioServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency(@Nullable final String brokerAccountId) {
+    void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency(@Nullable final String brokerAccountId) throws IOException {
         final List<CurrencyPosition> currencies = List.of(
                 TestData.createCurrencyPosition(Currency.USD, 100),
                 TestData.createCurrencyPosition(Currency.EUR, 10)

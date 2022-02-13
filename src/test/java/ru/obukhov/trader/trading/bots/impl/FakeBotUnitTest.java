@@ -125,7 +125,7 @@ class FakeBotUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPortfolioPositions(final String brokerAccountId) {
+    void getPortfolioPositions(final String brokerAccountId) throws IOException {
         final List<PortfolioPosition> expectedPositions = new ArrayList<>();
         Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(expectedPositions);
 

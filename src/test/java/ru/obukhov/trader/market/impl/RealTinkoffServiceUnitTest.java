@@ -18,7 +18,6 @@ import ru.obukhov.trader.market.model.BrokerAccountType;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.Candles;
-import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
@@ -29,7 +28,6 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
-import ru.obukhov.trader.market.model.Portfolio;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.UserAccounts;
@@ -351,7 +349,7 @@ class RealTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) {
+    void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) throws IOException {
         final PortfolioPosition tinkoffPosition1 = PortfolioPosition.builder()
                 .ticker("ticker1")
                 .balance(BigDecimal.valueOf(1000))
@@ -373,12 +371,12 @@ class RealTinkoffServiceUnitTest {
                 .averagePositionPriceNoNkd(BigDecimal.valueOf(440))
                 .name("name2")
                 .build();
-        final Portfolio portfolio = new Portfolio().positions(List.of(tinkoffPosition1, tinkoffPosition2));
-        Mockito.when(portfolioContext.getPortfolio(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(portfolio));
+        final List<PortfolioPosition> portfolioPositions = List.of(tinkoffPosition1, tinkoffPosition2);
+        Mockito.when(portfolioContext.getPortfolio(brokerAccountId)).thenReturn(portfolioPositions);
 
         final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(brokerAccountId);
 
-        Assertions.assertEquals(portfolio.getPositions().size(), result.size());
+        Assertions.assertEquals(portfolioPositions.size(), result.size());
         Iterator<PortfolioPosition> resultIterator = result.iterator();
         Assertions.assertEquals(tinkoffPosition1, resultIterator.next());
         Assertions.assertEquals(tinkoffPosition2, resultIterator.next());
@@ -387,7 +385,7 @@ class RealTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getPortfolioCurrencies(@Nullable final String brokerAccountId) {
+    void getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
         final CurrencyPosition currency1 = new CurrencyPosition()
                 .currency(Currency.RUB)
                 .balance(BigDecimal.valueOf(10000))
@@ -396,12 +394,12 @@ class RealTinkoffServiceUnitTest {
                 .currency(Currency.USD)
                 .balance(BigDecimal.valueOf(1000))
                 .blocked(null);
-        final Currencies currencies = new Currencies().currencies(List.of(currency1, currency2));
-        Mockito.when(portfolioContext.getPortfolioCurrencies(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(currencies));
+        final List<CurrencyPosition> currencies = List.of(currency1, currency2);
+        Mockito.when(portfolioContext.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
         final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies(brokerAccountId);
 
-        Assertions.assertSame(currencies.getCurrencies(), result);
+        Assertions.assertSame(currencies, result);
     }
 
     // endregion

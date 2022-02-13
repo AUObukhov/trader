@@ -140,16 +140,13 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region PortfolioContext
 
     @Override
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
-        return getPortfolioContext()
-                .getPortfolio(brokerAccountId)
-                .join()
-                .getPositions();
+    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
+        return getPortfolioContext().getPortfolio(brokerAccountId);
     }
 
     @Override
-    public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) {
-        return getPortfolioContext().getPortfolioCurrencies(brokerAccountId).join().getCurrencies();
+    public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
+        return getPortfolioContext().getPortfolioCurrencies(brokerAccountId);
     }
 
     // endregion

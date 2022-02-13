@@ -54,7 +54,7 @@ public class FakeBot extends AbstractBot implements Bot {
         return tinkoffService.getOperations(brokerAccountId, interval, ticker);
     }
 
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
+    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
         return tinkoffService.getPortfolioPositions(brokerAccountId);
     }
 

@@ -49,9 +49,9 @@ public interface TinkoffService {
 
     void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException;
 
-    List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId);
+    List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException;
 
-    List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId);
+    List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException;
 
     List<UserAccount> getAccounts();
 

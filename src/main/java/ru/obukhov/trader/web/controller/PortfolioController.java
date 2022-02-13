@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -38,7 +39,7 @@ public class PortfolioController {
     public GetPortfolioPositionsResponse getPositions(
             @RequestParam(required = false)
             @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
-    ) {
+    ) throws IOException {
         final List<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
 
         return new GetPortfolioPositionsResponse(positions);
@@ -53,7 +54,7 @@ public class PortfolioController {
     public GetPortfolioCurrenciesResponse getCurrencies(
             @RequestParam(required = false)
             @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
-    ) {
+    ) throws IOException {
         final List<CurrencyPosition> currencies = portfolioService.getCurrencies(brokerAccountId);
 
         return new GetPortfolioCurrenciesResponse(currencies);

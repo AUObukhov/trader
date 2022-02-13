@@ -1175,7 +1175,7 @@ class BackTesterImplUnitTest {
             final String brokerAccountId,
             final String ticker,
             final int positionLotsCount
-    ) {
+    ) throws IOException {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, positionLotsCount);
         Mockito.when(fakeBot.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
     }
