@@ -9,6 +9,7 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,9 @@ public class OpenApi implements Closeable {
     private UserContext userContext;
     private StreamingContext streamingContext;
 
-    public OpenApi(final ApiProperties apiProperties, final TradingProperties tradingProperties, final List<Interceptor> interceptors) {
+    public OpenApi(final ApiProperties apiProperties, final TradingProperties tradingProperties, final List<Interceptor> interceptors)
+            throws IOException {
+
         this.apiProperties = apiProperties;
         this.tradingProperties = tradingProperties;
 
@@ -45,7 +48,7 @@ public class OpenApi implements Closeable {
 
         if (tradingProperties.isSandbox()) {
             this.apiUrl = this.apiProperties.sandboxHost();
-            getSandboxContext().performRegistration(new SandboxRegisterRequest()).join();
+            getSandboxContext().performRegistration(new SandboxRegisterRequest());
         } else {
             this.apiUrl = this.apiProperties.host();
         }

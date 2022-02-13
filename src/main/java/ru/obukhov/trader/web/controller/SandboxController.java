@@ -33,8 +33,8 @@ public class SandboxController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public void setCurrencyBalance(@RequestBody final SetCurrencyBalanceRequest request) {
-        sandboxService.setCurrencyBalance(request.getCurrency(), request.getBalance(), request.getBrokerAccountId());
+    public void setCurrencyBalance(@RequestBody final SetCurrencyBalanceRequest request) throws IOException {
+        sandboxService.setCurrencyBalance(request.getBrokerAccountId(), request.getCurrency(), request.getBalance());
     }
 
     @PostMapping("/position-balance")
@@ -44,7 +44,7 @@ public class SandboxController {
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public void setPositionBalance(@RequestBody final SetPositionBalanceRequest request) throws IOException {
-        sandboxService.setPositionBalance(request.getTicker(), request.getBalance(), request.getBrokerAccountId());
+        sandboxService.setPositionBalance(request.getBrokerAccountId(), request.getTicker(), request.getBalance());
     }
 
     @PostMapping("/clear")
@@ -53,7 +53,7 @@ public class SandboxController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public void clearAll(@RequestBody final ClearAllRequest request) {
+    public void clearAll(@RequestBody final ClearAllRequest request) throws IOException {
         sandboxService.clearAll(request.getBrokerAccountId());
     }
 }

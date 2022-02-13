@@ -32,12 +32,12 @@ class SandboxControllerWebTest extends ControllerWebTest {
         final String request = ResourceUtils.getTestDataAsString("SetCurrencyBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/currency-balance")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         Mockito.verify(sandboxService, Mockito.times(1))
-                .setCurrencyBalance(Currency.USD, BigDecimal.valueOf(100000), "brokerAccountId");
+                .setCurrencyBalance("brokerAccountId", Currency.USD, BigDecimal.valueOf(100000));
     }
 
     @Test
@@ -45,12 +45,12 @@ class SandboxControllerWebTest extends ControllerWebTest {
         final String request = ResourceUtils.getTestDataAsString("SetPositionBalanceRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         Mockito.verify(sandboxService, Mockito.times(1))
-                .setPositionBalance("ticker", BigDecimal.valueOf(100000), "brokerAccountId");
+                .setPositionBalance("brokerAccountId", "ticker", BigDecimal.valueOf(100000));
     }
 
     @Test
@@ -58,8 +58,8 @@ class SandboxControllerWebTest extends ControllerWebTest {
         final String request = ResourceUtils.getTestDataAsString("ClearAllRequest.json");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/clear")
-                .content(request)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         Mockito.verify(sandboxService, Mockito.times(1))

@@ -11,6 +11,10 @@ import java.math.BigDecimal;
 @Data
 public class SetCurrencyBalanceRequest {
 
+    @Nullable
+    @ApiModelProperty(example = "2000124699", position = 3)
+    private String brokerAccountId;
+
     @NotNull(message = "currency is mandatory")
     @ApiModelProperty(example = "USD", required = true, position = 1)
     private Currency currency;
@@ -18,9 +22,5 @@ public class SetCurrencyBalanceRequest {
     @NotNull(message = "balance is mandatory")
     @ApiModelProperty(example = "10000", required = true, position = 2)
     private BigDecimal balance;
-
-    @Nullable
-    @ApiModelProperty(example = "2000124699", position = 3)
-    private String brokerAccountId;
 
 }

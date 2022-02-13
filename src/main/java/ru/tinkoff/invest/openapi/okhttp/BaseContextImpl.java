@@ -1,5 +1,6 @@
 package ru.tinkoff.invest.openapi.okhttp;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -9,8 +10,11 @@ import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import ru.obukhov.trader.web.client.exceptions.Error;
 import ru.obukhov.trader.web.client.exceptions.ErrorPayload;
 import ru.obukhov.trader.web.client.exceptions.OpenApiException;
@@ -84,9 +88,27 @@ public abstract class BaseContextImpl implements Context {
         }
     }
 
-    protected <T> T executeAndGetBody(final Request request, Class<T> valueType) throws IOException {
-        final String responseBody = client.newCall(request).execute().body().string();
-        return mapper.readValue(responseBody, valueType);
+    protected Response execute(final Request request) throws IOException {
+        final Response response = client.newCall(request).execute();
+        if (HttpStatus.valueOf(response.code()).isError()) {
+            throw new IllegalStateException(String.format("Request %s failed with response: %s", request, response));
+        }
+
+        return response;
+    }
+
+    protected <T> T executeAndGetBody(final Request request, final Class<T> valueType) throws IOException {
+        final ResponseBody body = execute(request).body();
+        if (body == null) {
+            return null;
+        }
+
+        return mapper.readValue(body.string(), valueType);
+    }
+
+    protected RequestBody getRequestBody(final Object request) throws JsonProcessingException {
+        final String renderedBody = mapper.writeValueAsString(request);
+        return RequestBody.create(renderedBody, JSON_MEDIA_TYPE);
     }
 
 }

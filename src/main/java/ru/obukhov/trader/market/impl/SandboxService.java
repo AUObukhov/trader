@@ -28,37 +28,34 @@ public class SandboxService {
      * Sets given value ({@code balance}) of balance of given {@code currency} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public void setCurrencyBalance(
-            @NotNull final Currency currency,
-            @NotNull final BigDecimal balance,
-            @Nullable final String brokerAccountId
-    ) {
+    public void setCurrencyBalance(@Nullable final String brokerAccountId, @NotNull final Currency currency, @NotNull final BigDecimal balance)
+            throws IOException {
         final SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest()
                 .currency(currency)
                 .balance(balance);
 
-        sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId).join();
+        sandboxContext.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId);
     }
 
     /**
      * Sets given value ({@code balance}) of balance of position with given {@code ticker} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public void setPositionBalance(@NotNull final String ticker, @NotNull final BigDecimal balance, @Nullable final String brokerAccountId)
+    public void setPositionBalance(@Nullable final String brokerAccountId, @NotNull final String ticker, @NotNull final BigDecimal balance)
             throws IOException {
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
                 .figi(marketService.getFigi(ticker))
                 .balance(balance);
 
-        sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId).join();
+        sandboxContext.setPositionBalance(setPositionBalanceRequest, brokerAccountId);
     }
 
     /**
      * Clears all balances at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public void clearAll(@Nullable final String brokerAccountId) {
-        sandboxContext.clearAll(brokerAccountId).join();
+    public void clearAll(@Nullable final String brokerAccountId) throws IOException {
+        sandboxContext.clearAll(brokerAccountId);
     }
 
 }
