@@ -112,27 +112,27 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     // region OrdersContext
 
     @Override
-    public List<Order> getOrders(@Nullable final String brokerAccountId) {
-        return getOrdersContext().getOrders(brokerAccountId).join();
+    public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
+        return getOrdersContext().getOrders(brokerAccountId);
     }
 
     @Override
     public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
             throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeLimitOrder(figi, orderRequest, brokerAccountId).join();
+        return getOrdersContext().placeLimitOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
     public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
             throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeMarketOrder(figi, orderRequest, brokerAccountId).join();
+        return getOrdersContext().placeMarketOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
-    public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) {
-        getOrdersContext().cancelOrder(orderId, brokerAccountId).join();
+    public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException {
+        getOrdersContext().cancelOrder(brokerAccountId, orderId);
     }
 
     // endregion

@@ -41,13 +41,13 @@ public interface TinkoffService {
 
     List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
 
-    List<Order> getOrders(@Nullable final String brokerAccountId);
+    List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException;
 
     PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) throws IOException;
 
     PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException;
 
-    void cancelOrder(@Nullable final String brokerAccountId, final String orderId);
+    void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException;
 
     List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId);
 

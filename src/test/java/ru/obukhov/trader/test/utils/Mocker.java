@@ -53,7 +53,7 @@ public class Mocker {
                 .type(InstrumentType.STOCK);
     }
 
-    public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) {
+    public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) throws IOException {
         final Order order = new Order();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }

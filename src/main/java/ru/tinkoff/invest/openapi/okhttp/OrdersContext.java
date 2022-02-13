@@ -8,57 +8,25 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-/**
- * Интерфейс работы с OpenAPI в части, касающейся заявок.
- */
 public interface OrdersContext extends Context {
 
-    /**
-     * Асинхронное получение списка активных заявок.
-     *
-     * @param brokerAccountId Идентификатор брокерского счёта.
-     * @return Список заявок.
-     */
-    @NotNull
-    CompletableFuture<List<Order>> getOrders(@Nullable String brokerAccountId);
+    List<Order> getOrders(@Nullable String brokerAccountId) throws IOException;
 
-    /**
-     * Размещение лимитной заявки.
-     *
-     * @param figi            Идентификатор инструмента.
-     * @param limitOrder      Параметры отправляемой заявки.
-     * @param brokerAccountId Идентификатор брокерского счёта.
-     * @return Размещённая заявка.
-     */
-    @NotNull
-    CompletableFuture<PlacedLimitOrder> placeLimitOrder(@NotNull String figi,
-                                                        @NotNull LimitOrderRequest limitOrder,
-                                                        @Nullable String brokerAccountId);
+    PlacedLimitOrder placeLimitOrder(
+            @Nullable final String brokerAccountId,
+            @NotNull final String figi,
+            @NotNull final LimitOrderRequest limitOrder
+    ) throws IOException;
 
-    /**
-     * Размещение рыночной заявки.
-     *
-     * @param figi            Идентификатор инструмента.
-     * @param marketOrder     Параметры отправляемой заявки.
-     * @param brokerAccountId Идентификатор брокерского счёта.
-     * @return Размещённая заявка.
-     */
-    @NotNull
-    CompletableFuture<PlacedMarketOrder> placeMarketOrder(@NotNull String figi,
-                                                          @NotNull MarketOrderRequest marketOrder,
-                                                          @Nullable String brokerAccountId);
+    PlacedMarketOrder placeMarketOrder(
+            @Nullable final String brokerAccountId,
+            @NotNull final String figi,
+            @NotNull final MarketOrderRequest marketOrder
+    ) throws IOException;
 
-    /**
-     * Отзыв лимитной заявки.
-     *
-     * @param orderId         Идентификатор заявки.
-     * @param brokerAccountId Идентификатор брокерского счёта.
-     * @return Ничего.
-     */
-    @NotNull
-    CompletableFuture<Void> cancelOrder(@NotNull String orderId, @Nullable String brokerAccountId);
+    void cancelOrder(@Nullable final String brokerAccountId, @NotNull final String orderId) throws IOException;
 
 }

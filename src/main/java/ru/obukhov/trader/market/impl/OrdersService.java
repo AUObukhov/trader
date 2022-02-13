@@ -42,7 +42,7 @@ public class OrdersService {
      * @return returns list of active orders at given {@code brokerAccountId}
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public List<Order> getOrders(@Nullable final String brokerAccountId) {
+    public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
         return tinkoffService.getOrders(brokerAccountId);
     }
 
@@ -84,7 +84,7 @@ public class OrdersService {
      * cancels order with given {@code orderId} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      */
-    public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) {
+    public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) throws IOException {
         tinkoffService.cancelOrder(brokerAccountId, orderId);
     }
 

@@ -56,7 +56,7 @@ class OrdersServiceUnitTest {
         Assertions.assertEquals("order4", orders.get(2).getOrderId());
     }
 
-    private void mockOrders(@Nullable final String brokerAccountId, Order... orders) {
+    private void mockOrders(@Nullable final String brokerAccountId, final Order... orders) throws IOException {
         Mockito.when(tinkoffService.getOrders(brokerAccountId)).thenReturn(List.of(orders));
     }
 

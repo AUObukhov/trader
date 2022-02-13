@@ -286,9 +286,9 @@ class RealTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void getOrders(@Nullable final String brokerAccountId) {
+    void getOrders(@Nullable final String brokerAccountId) throws IOException {
         final List<Order> orders = List.of(new Order(), new Order());
-        Mockito.when(ordersContext.getOrders(brokerAccountId)).thenReturn(CompletableFuture.completedFuture(orders));
+        Mockito.when(ordersContext.getOrders(brokerAccountId)).thenReturn(orders);
 
         final List<Order> result = realTinkoffService.getOrders(brokerAccountId);
 
@@ -307,7 +307,7 @@ class RealTinkoffServiceUnitTest {
         final LimitOrderRequest orderRequest = new LimitOrderRequest();
 
         final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
-        Mockito.when(ordersContext.placeLimitOrder(figi, orderRequest, brokerAccountId)).thenReturn(CompletableFuture.completedFuture(placedOrder));
+        Mockito.when(ordersContext.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
         final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
@@ -325,8 +325,8 @@ class RealTinkoffServiceUnitTest {
         final MarketOrderRequest orderRequest = new MarketOrderRequest();
 
         final PlacedMarketOrder placedOrder = new PlacedMarketOrder();
-        Mockito.when(ordersContext.placeMarketOrder(figi, orderRequest, brokerAccountId))
-                .thenReturn(CompletableFuture.completedFuture(placedOrder));
+        Mockito.when(ordersContext.placeMarketOrder(brokerAccountId, figi, orderRequest))
+                .thenReturn(placedOrder);
 
         final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
 
@@ -336,15 +336,12 @@ class RealTinkoffServiceUnitTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
-    void cancelOrder(@Nullable final String brokerAccountId) {
+    void cancelOrder(@Nullable final String brokerAccountId) throws IOException {
         final String orderId = "orderId";
-
-        final CompletableFuture<Void> futureSpy = Mockito.spy(CompletableFuture.completedFuture(null));
-        Mockito.when(ordersContext.cancelOrder(orderId, brokerAccountId)).thenReturn(futureSpy);
 
         realTinkoffService.cancelOrder(brokerAccountId, orderId);
 
-        Mockito.verify(futureSpy, Mockito.times(1)).join();
+        Mockito.verify(ordersContext, Mockito.times(1)).cancelOrder(brokerAccountId, orderId);
     }
 
     // endregion
