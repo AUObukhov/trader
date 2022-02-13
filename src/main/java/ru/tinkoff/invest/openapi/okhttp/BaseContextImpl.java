@@ -40,7 +40,7 @@ public abstract class BaseContextImpl implements Context {
     protected final ObjectMapper mapper;
     protected final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-    public BaseContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
+    protected BaseContextImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
 
         this.authToken = authToken;
         this.finalUrl = Objects.requireNonNull(HttpUrl.parse(url))
@@ -55,11 +55,14 @@ public abstract class BaseContextImpl implements Context {
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
     }
 
-    @NotNull
     protected Request.Builder prepareRequest(@NotNull final HttpUrl requestUrl) {
         return new Request.Builder()
                 .url(requestUrl)
                 .addHeader("Authorization", this.authToken);
+    }
+
+    protected Request buildRequest(@NotNull final HttpUrl requestUrl) {
+        return prepareRequest(requestUrl).build();
     }
 
     @NotNull

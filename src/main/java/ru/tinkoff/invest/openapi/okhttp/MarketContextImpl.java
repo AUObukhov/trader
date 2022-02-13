@@ -36,7 +36,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
         final HttpUrl requestUrl = finalUrl.newBuilder()
                 .addPathSegment("stocks")
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
     }
@@ -46,7 +46,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
         final HttpUrl requestUrl = finalUrl.newBuilder()
                 .addPathSegment("bonds")
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
     }
@@ -56,7 +56,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
         final HttpUrl requestUrl = finalUrl.newBuilder()
                 .addPathSegment("etfs")
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
     }
@@ -66,7 +66,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
         final HttpUrl requestUrl = finalUrl.newBuilder()
                 .addPathSegment("currencies")
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
     }
@@ -78,7 +78,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
                 .addQueryParameter("figi", figi)
                 .addQueryParameter("depth", Integer.toString(depth))
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, OrderbookResponse.class).getPayload();
     }
@@ -101,7 +101,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
                 .addQueryParameter("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                 .addQueryParameter("interval", renderedInterval)
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, CandlesResponse.class).getPayload();
     }
@@ -113,7 +113,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
                 .addPathSegment("by-ticker")
                 .addQueryParameter("ticker", ticker)
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
     }
@@ -125,7 +125,7 @@ final class MarketContextImpl extends BaseContextImpl implements MarketContext {
                 .addPathSegment("by-figi")
                 .addQueryParameter("figi", figi)
                 .build();
-        final Request request = prepareRequest(requestUrl).build();
+        final Request request = buildRequest(requestUrl);
 
         return executeAndGetBody(request, SearchMarketInstrumentResponse.class).getPayload();
     }
