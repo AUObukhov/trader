@@ -1,11 +1,14 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-/**
- * Интервал свечи.
- */
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@RequiredArgsConstructor
 public enum CandleInterval {
     _1MIN("1min"),
     _2MIN("2min"),
@@ -21,29 +24,20 @@ public enum CandleInterval {
     WEEK("week"),
     MONTH("month");
 
-    private final String value;
+    private static final Map<String, CandleInterval> LOOKUP = Stream.of(CandleInterval.values())
+            .collect(Collectors.toMap(CandleInterval::getValue, candleInterval -> candleInterval));
 
-    CandleInterval(String value) {
-        this.value = value;
-    }
-
+    @Getter
     @JsonValue
-    public String getValue() {
-        return value;
-    }
+    private final String value;
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
-    @JsonCreator
     public static CandleInterval fromValue(String text) {
-        for (CandleInterval b : CandleInterval.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
+        return LOOKUP.get(text);
     }
+
 }
