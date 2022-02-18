@@ -1,9 +1,12 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.impl;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Service;
+import ru.obukhov.trader.config.properties.ApiProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.CandleResolution;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -13,16 +16,18 @@ import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.client.exchange.OrderbookResponse;
 import ru.obukhov.trader.web.client.exchange.SearchMarketInstrumentResponse;
+import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class MarketClientImpl extends AbstractClient implements MarketClient {
+@Service
+public class MarketClientImpl extends AbstractClient implements MarketClient {
 
-    public MarketClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
-        super(client, url, authToken);
+    protected MarketClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        super(client, tradingProperties, apiProperties);
     }
 
     @Override

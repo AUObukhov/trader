@@ -8,12 +8,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.Application;
-import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
+import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
+import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @SpringBootTest(
         classes = Application.class,
@@ -23,9 +27,9 @@ import java.math.BigDecimal;
 class SandboxControllerWebTest extends ControllerWebTest {
 
     @MockBean
-    private SandboxService sandboxService;
+    private SandboxClient sandboxClient;
     @MockBean
-    private OpenApi openApi; // to prevent registration on application start
+    private MarketClient marketClient;
 
     @Test
     void setCurrencyBalance_setsBalance() throws Exception {
@@ -36,21 +40,32 @@ class SandboxControllerWebTest extends ControllerWebTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(sandboxService, Mockito.times(1))
-                .setCurrencyBalance("brokerAccountId", Currency.USD, BigDecimal.valueOf(100000));
+        final SandboxSetCurrencyBalanceRequest expectedRequest = new SandboxSetCurrencyBalanceRequest();
+        expectedRequest.setBalance(BigDecimal.valueOf(100000));
+        expectedRequest.setCurrency(Currency.USD);
+        Mockito.verify(sandboxClient, Mockito.times(1))
+                .setCurrencyBalance(expectedRequest, "brokerAccountId");
     }
 
     @Test
     void setPositionBalance_setsBalance() throws Exception {
+        final String figi = "Figi";
+
         final String request = ResourceUtils.getTestDataAsString("SetPositionBalanceRequest.json");
+
+        final MarketInstrument instrument = new MarketInstrument().figi(figi);
+        Mockito.when(marketClient.searchMarketInstrumentsByTicker("ticker")).thenReturn(List.of(instrument));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(sandboxService, Mockito.times(1))
-                .setPositionBalance("brokerAccountId", "ticker", BigDecimal.valueOf(100000));
+        final SandboxSetPositionBalanceRequest expectedRequest = new SandboxSetPositionBalanceRequest();
+        expectedRequest.setBalance(BigDecimal.valueOf(100000));
+        expectedRequest.setFigi(figi);
+        Mockito.verify(sandboxClient, Mockito.times(1))
+                .setPositionBalance(expectedRequest, "brokerAccountId");
     }
 
     @Test
@@ -62,7 +77,7 @@ class SandboxControllerWebTest extends ControllerWebTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(sandboxService, Mockito.times(1))
+        Mockito.verify(sandboxClient, Mockito.times(1))
                 .clearAll("brokerAccountId");
     }
 

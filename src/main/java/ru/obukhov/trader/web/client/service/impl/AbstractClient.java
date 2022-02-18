@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -14,6 +14,8 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
+import ru.obukhov.trader.config.properties.ApiProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -29,9 +31,9 @@ public abstract class AbstractClient {
 
     protected abstract String getPath();
 
-    protected AbstractClient(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
-        this.authToken = authToken;
-        this.finalUrl = buildFinalUrl(url);
+    protected AbstractClient(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        this.authToken = "Bearer " + tradingProperties.getToken();
+        this.finalUrl = buildFinalUrl(tradingProperties.isSandbox() ? apiProperties.sandboxHost() : apiProperties.host());
         this.client = client;
         this.mapper = createMapper();
     }

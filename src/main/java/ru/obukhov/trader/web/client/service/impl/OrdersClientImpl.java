@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.impl;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -7,22 +7,27 @@ import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Service;
+import ru.obukhov.trader.config.properties.ApiProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.web.client.exchange.OrdersResponse;
+import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 
 import java.io.IOException;
 import java.util.List;
 
-final class OrdersClientImpl extends AbstractClient implements OrdersClient {
+@Service
+public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public OrdersClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
-        super(client, url, authToken);
+    protected OrdersClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        super(client, tradingProperties, apiProperties);
     }
 
     @Override

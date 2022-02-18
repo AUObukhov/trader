@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.TinkoffContextsAware;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleResolution;
@@ -23,7 +23,11 @@ import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
+import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
+import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
+import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
+import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -38,51 +42,54 @@ import java.util.List;
  * - replaces some unnecessary parameters by hardcoded values
  */
 @Slf4j
-public class RealTinkoffService extends TinkoffContextsAware implements TinkoffService, ApplicationContextAware {
+@RequiredArgsConstructor
+public class RealTinkoffService implements TinkoffService, ApplicationContextAware {
 
     private RealTinkoffService self;
 
-    public RealTinkoffService(final OpenApi opeApi) {
-        super(opeApi);
-    }
+    private final MarketClient marketClient;
+    private final OperationsClient operationsClient;
+    private final OrdersClient ordersClient;
+    private final PortfolioClient portfolioClient;
+    private final UserClient userClient;
 
     // region MarketContext
 
     @Override
     @Cacheable(value = "marketStocks", sync = true)
     public List<MarketInstrument> getMarketStocks() throws IOException {
-        return getMarketContext().getMarketStocks();
+        return marketClient.getMarketStocks();
     }
 
     @Override
     @Cacheable(value = "marketBonds", sync = true)
     public List<MarketInstrument> getMarketBonds() throws IOException {
-        return getMarketContext().getMarketBonds();
+        return marketClient.getMarketBonds();
     }
 
     @Override
     @Cacheable(value = "marketEtfs", sync = true)
     public List<MarketInstrument> getMarketEtfs() throws IOException {
-        return getMarketContext().getMarketEtfs();
+        return marketClient.getMarketEtfs();
     }
 
     @Override
     @Cacheable(value = "marketCurrencies", sync = true)
     public List<MarketInstrument> getMarketCurrencies() throws IOException {
-        return getMarketContext().getMarketCurrencies();
+        return marketClient.getMarketCurrencies();
     }
 
     @Override
     public Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getMarketContext().getMarketOrderbook(figi, depth);
+        return marketClient.getMarketOrderbook(figi, depth);
     }
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
     public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        final List<Candle> candles = getMarketContext()
+        final List<Candle> candles = marketClient
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleResolution)
                 .getCandles();
 
@@ -93,7 +100,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     @Override
     @Cacheable(value = "marketInstrument", sync = true)
     public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
-        final List<MarketInstrument> instruments = getMarketContext().searchMarketInstrumentsByTicker(ticker);
+        final List<MarketInstrument> instruments = marketClient.searchMarketInstrumentsByTicker(ticker);
         return CollectionUtils.firstElement(instruments);
     }
 
@@ -104,7 +111,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOperationsContext().getOperations(brokerAccountId, interval.getFrom(), interval.getTo(), figi);
+        return operationsClient.getOperations(brokerAccountId, interval.getFrom(), interval.getTo(), figi);
     }
 
     // endregion
@@ -113,26 +120,26 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
-        return getOrdersContext().getOrders(brokerAccountId);
+        return ordersClient.getOrders(brokerAccountId);
     }
 
     @Override
     public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
             throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeLimitOrder(brokerAccountId, figi, orderRequest);
+        return ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
     public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
             throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
-        return getOrdersContext().placeMarketOrder(brokerAccountId, figi, orderRequest);
+        return ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
     public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException {
-        getOrdersContext().cancelOrder(brokerAccountId, orderId);
+        ordersClient.cancelOrder(brokerAccountId, orderId);
     }
 
     // endregion
@@ -141,12 +148,12 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
-        return getPortfolioContext().getPortfolio(brokerAccountId);
+        return portfolioClient.getPortfolio(brokerAccountId);
     }
 
     @Override
     public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
-        return getPortfolioContext().getPortfolioCurrencies(brokerAccountId);
+        return portfolioClient.getPortfolioCurrencies(brokerAccountId);
     }
 
     // endregion
@@ -155,7 +162,7 @@ public class RealTinkoffService extends TinkoffContextsAware implements TinkoffS
 
     @Override
     public List<UserAccount> getAccounts() throws IOException {
-        return getUserContext().getAccounts();
+        return userClient.getAccounts();
     }
 
     // endregion

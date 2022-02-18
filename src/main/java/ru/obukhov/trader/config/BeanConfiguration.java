@@ -1,5 +1,7 @@
 package ru.obukhov.trader.config;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +23,14 @@ import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.web.client.service.OpenApi;
+import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
+import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
+import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
+import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
+import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
+import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,8 +42,14 @@ import java.util.List;
 public class BeanConfiguration {
 
     @Bean
-    public TinkoffService realTinkoffService(final OpenApi opeApi) {
-        return new RealTinkoffService(opeApi);
+    public TinkoffService realTinkoffService(
+            final MarketClient marketClient,
+            final OperationsClient operationsClient,
+            final OrdersClient ordersClient,
+            final PortfolioClient portfolioClient,
+            final UserClient userClient
+    ) {
+        return new RealTinkoffService(marketClient, operationsClient, ordersClient, portfolioClient, userClient);
     }
 
     @Bean
@@ -45,8 +59,8 @@ public class BeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(final OpenApi opeApi, final MarketService realMarketService) {
-        return new SandboxService(opeApi, realMarketService);
+    public SandboxService sandboxService(final MarketService realMarketService, final SandboxClient sandboxClient) {
+        return new SandboxService(realMarketService, sandboxClient);
     }
 
     @Bean
@@ -105,5 +119,13 @@ public class BeanConfiguration {
             taskScheduler.schedule(bot, trigger);
         }
     }
+
+    @Bean
+    public OkHttpClient okHttpClient(final List<Interceptor> interceptors) {
+        final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder().pingInterval(Duration.ofSeconds(5));
+        clientBuilder.interceptors().addAll(interceptors);
+        return clientBuilder.build();
+    }
+
 
 }

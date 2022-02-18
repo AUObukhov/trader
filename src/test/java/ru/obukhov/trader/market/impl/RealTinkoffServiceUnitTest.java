@@ -32,12 +32,11 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.obukhov.trader.web.client.service.MarketClient;
-import ru.obukhov.trader.web.client.service.OpenApi;
-import ru.obukhov.trader.web.client.service.OperationsClient;
-import ru.obukhov.trader.web.client.service.OrdersClient;
-import ru.obukhov.trader.web.client.service.PortfolioClient;
-import ru.obukhov.trader.web.client.service.UserClient;
+import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
+import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
+import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
+import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
+import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,8 +61,6 @@ class RealTinkoffServiceUnitTest {
     private UserClient userClient;
 
     @Mock
-    private OpenApi opeApi;
-    @Mock
     private ApplicationContext applicationContext;
 
     @InjectMocks
@@ -71,12 +68,6 @@ class RealTinkoffServiceUnitTest {
 
     @BeforeEach
     private void setUp() {
-        Mockito.lenient().when(opeApi.getMarketClient()).thenReturn(marketClient);
-        Mockito.lenient().when(opeApi.getOperationsClient()).thenReturn(operationsClient);
-        Mockito.lenient().when(opeApi.getOrdersClient()).thenReturn(ordersClient);
-        Mockito.lenient().when(opeApi.getPortfolioClient()).thenReturn(portfolioClient);
-        Mockito.lenient().when(opeApi.getUserClient()).thenReturn(userClient);
-
         Mockito.lenient().when(applicationContext.getBean(RealTinkoffService.class)).thenReturn(realTinkoffService);
         realTinkoffService.setApplicationContext(applicationContext);
     }

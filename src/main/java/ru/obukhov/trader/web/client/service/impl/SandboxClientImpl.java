@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.impl;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -7,24 +7,37 @@ import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
+import ru.obukhov.trader.config.properties.ApiProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.SandboxAccount;
 import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
+import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
-final class SandboxClientImpl extends AbstractClient implements SandboxClient {
+@Service
+@ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
+public class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
     private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
 
-    public SandboxClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
-        super(client, url, authToken);
+    protected SandboxClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        super(client, tradingProperties, apiProperties);
     }
 
     @Override
     public String getPath() {
         return "sandbox";
+    }
+
+    @PostConstruct
+    public void register() throws IOException {
+        performRegistration(new SandboxRegisterRequest());
     }
 
     @Override

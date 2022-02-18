@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.impl;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -6,18 +6,23 @@ import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.stereotype.Service;
+import ru.obukhov.trader.config.properties.ApiProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.Operations;
+import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-final class OperationsClientImpl extends AbstractClient implements OperationsClient {
+@Service
+public class OperationsClientImpl extends AbstractClient implements OperationsClient {
 
-    public OperationsClientImpl(@NotNull final OkHttpClient client, @NotNull final String url, @NotNull final String authToken) {
-        super(client, url, authToken);
+    protected OperationsClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        super(client, tradingProperties, apiProperties);
     }
 
     @Override

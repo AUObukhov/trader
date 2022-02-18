@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

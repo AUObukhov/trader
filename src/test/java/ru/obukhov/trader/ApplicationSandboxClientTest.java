@@ -3,14 +3,12 @@ package ru.obukhov.trader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import ru.obukhov.trader.web.client.service.OpenApi;
-import ru.obukhov.trader.web.client.service.SandboxClient;
+import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 import ru.obukhov.trader.web.controller.SandboxController;
 
 @ActiveProfiles("test")
@@ -22,9 +20,6 @@ class ApplicationSandboxClientTest {
     private SandboxController sandboxController;
 
     @MockBean
-    private OpenApi openApi;
-
-    @Mock
     private SandboxClient sandboxClient;
 
     @Test

@@ -1,12 +1,12 @@
 package ru.obukhov.trader.market.impl;
 
+import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
-import ru.obukhov.trader.web.client.service.OpenApi;
-import ru.obukhov.trader.web.client.service.SandboxClient;
+import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,15 +14,11 @@ import java.math.BigDecimal;
 /**
  * Service to manage sandbox
  */
+@AllArgsConstructor
 public class SandboxService {
 
     private final MarketService marketService;
     private final SandboxClient sandboxClient;
-
-    public SandboxService(final OpenApi opeApi, final MarketService marketService) {
-        this.marketService = marketService;
-        this.sandboxClient = opeApi.getSandboxClient();
-    }
 
     /**
      * Sets given value ({@code balance}) of balance of given {@code currency} at given {@code brokerAccountId}.

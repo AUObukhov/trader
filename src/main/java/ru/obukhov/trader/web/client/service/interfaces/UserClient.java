@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.client.service;
+package ru.obukhov.trader.web.client.service.interfaces;
 
 import ru.obukhov.trader.market.model.UserAccount;
 
