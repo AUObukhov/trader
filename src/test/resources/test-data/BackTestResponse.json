@@ -2,7 +2,7 @@
   "results": [
     {
       "botConfig": {
-        "candleResolution": "1min",
+        "candleInterval": "1min",
         "commission": 0.001,
         "strategyType": "conservative",
         "strategyParams": {
@@ -29,7 +29,7 @@
     },
     {
       "botConfig": {
-        "candleResolution": "1min",
+        "candleInterval": "1min",
         "commission": 0.002,
         "strategyType": "cross",
         "strategyParams": {
@@ -61,7 +61,7 @@
     },
     {
       "botConfig": {
-        "candleResolution": "1min",
+        "candleInterval": "1min",
         "commission": 0.003,
         "strategyType": "cross",
         "strategyParams": {

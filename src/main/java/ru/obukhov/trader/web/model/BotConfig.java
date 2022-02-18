@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.trading.model.StrategyType;
 
 import javax.validation.constraints.NotNull;
@@ -26,9 +26,9 @@ public class BotConfig {
     @ApiModelProperty(value = "Ticker", position = 2, example = "FXIT")
     private final String ticker;
 
-    @NotNull(message = "candleResolution is mandatory")
+    @NotNull(message = "candleInterval is mandatory")
     @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "1min")
-    private final CandleResolution candleResolution;
+    private final CandleInterval candleInterval;
 
     @NotNull(message = "commission is mandatory")
     @ApiModelProperty(value = "Operating commission", required = true, position = 4, example = "0.003")
@@ -50,14 +50,14 @@ public class BotConfig {
     public BotConfig(
             @Nullable final String brokerAccountId,
             final String ticker,
-            final CandleResolution candleResolution,
+            final CandleInterval candleInterval,
             final Double commission,
             final StrategyType strategyType,
             final Map<String, Object> strategyParams
     ) {
         this.brokerAccountId = brokerAccountId;
         this.ticker = ticker;
-        this.candleResolution = candleResolution;
+        this.candleInterval = candleInterval;
         this.commission = commission;
         this.strategyType = strategyType;
         this.strategyParams = strategyParams;
@@ -68,7 +68,7 @@ public class BotConfig {
         return "[" +
                 "brokerAccountId=" + brokerAccountId +
                 ", ticker=" + ticker +
-                ", candleResolution=" + candleResolution +
+                ", candleInterval=" + candleInterval +
                 ", commission=" + commission +
                 ", strategyType=" + strategyType +
                 ", strategyParams=" + strategyParams +

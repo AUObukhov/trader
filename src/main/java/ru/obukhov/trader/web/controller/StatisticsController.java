@@ -15,7 +15,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.impl.StatisticsService;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
@@ -44,16 +44,14 @@ public class StatisticsController {
 
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(value = "Start date time of candle search interval", example = "2019-01-01T00:00:00+03:00", required = true)
-            final OffsetDateTime from,
+            @ApiParam(value = "Start date time of candle search interval", example = "2019-01-01T00:00:00+03:00", required = true) final OffsetDateTime from,
 
             @RequestParam
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(value = "End date time of candle search interval", example = "2020-01-01T00:00:00+03:00", required = true)
-            final OffsetDateTime to,
+            @ApiParam(value = "End date time of candle search interval", example = "2020-01-01T00:00:00+03:00", required = true) final OffsetDateTime to,
 
             @RequestParam
-            @ApiParam(value = "Candle interval", example = "1min", required = true) final CandleResolution candleResolution,
+            @ApiParam(value = "Candle interval", example = "1min", required = true) final CandleInterval candleInterval,
 
             @RequestParam
             @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true) final MovingAverageType movingAverageType,
@@ -71,7 +69,7 @@ public class StatisticsController {
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,
                 interval,
-                candleResolution,
+                candleInterval,
                 movingAverageType,
                 smallWindow,
                 bigWindow

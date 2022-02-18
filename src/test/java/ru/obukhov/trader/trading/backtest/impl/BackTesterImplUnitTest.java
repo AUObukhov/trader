@@ -15,7 +15,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
@@ -132,13 +132,13 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId = "2000124699";
         final String ticker = "ticker";
-        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final CandleInterval candleInterval = CandleInterval._1MIN;
         final Double commission = 0.003;
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(candleResolution)
+                .candleInterval(candleInterval)
                 .commission(commission)
                 .strategyType(strategyType)
                 .strategyParams(Collections.emptyMap())
@@ -175,9 +175,9 @@ class BackTesterImplUnitTest {
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%.3f, strategyType=%s, " +
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%.3f, strategyType=%s, " +
                         "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId, ticker, candleResolution, commission, strategyType, exceptionMessage
+                brokerAccountId, ticker, candleInterval, commission, strategyType, exceptionMessage
         );
         AssertUtils.assertMatchesRegex(backTestResult.getError(), expectedErrorPattern);
     }
@@ -956,14 +956,14 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId1 = null;
         final String ticker1 = "ticker1";
-        final CandleResolution candleResolution1 = CandleResolution._1MIN;
+        final CandleInterval candleInterval1 = CandleInterval._1MIN;
         final Double commission1 = 0.003;
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
         final BotConfig botConfig1 = BotConfig.builder()
                 .brokerAccountId(brokerAccountId1)
                 .ticker(ticker1)
-                .candleResolution(candleResolution1)
+                .candleInterval(candleInterval1)
                 .commission(commission1)
                 .strategyType(strategyType1)
                 .strategyParams(Collections.emptyMap())
@@ -977,14 +977,14 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker2";
-        final CandleResolution candleResolution2 = CandleResolution._1MIN;
+        final CandleInterval candleInterval2 = CandleInterval._1MIN;
         final Double commission2 = 0.001;
         final StrategyType strategyType2 = StrategyType.CROSS;
 
         final BotConfig botConfig2 = BotConfig.builder()
                 .brokerAccountId(brokerAccountId2)
                 .ticker(ticker2)
-                .candleResolution(candleResolution2)
+                .candleInterval(candleInterval2)
                 .commission(commission2)
                 .strategyType(strategyType2)
                 .strategyParams(Collections.emptyMap())
@@ -1007,16 +1007,16 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         final String expectedErrorPattern1 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId1, ticker1, candleResolution1, commission1, strategyType1, mockedExceptionMessage1
+                brokerAccountId1, ticker1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(0).getError(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleResolution=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId2, ticker2, candleResolution2, commission2, strategyType2, mockedExceptionMessage2
+                brokerAccountId2, ticker2, candleInterval2, commission2, strategyType2, mockedExceptionMessage2
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(1).getError(), expectedErrorPattern2);
     }

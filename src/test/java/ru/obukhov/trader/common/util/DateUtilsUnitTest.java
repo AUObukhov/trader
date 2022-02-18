@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 
@@ -360,15 +360,15 @@ class DateUtilsUnitTest {
     // region getPeriodUnitByCandleInterval tests
 
     @Test
-    void getPeriodUnitByCandleResolution_returnsDays_whenResolutionIsHour() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleResolution(CandleResolution.HOUR);
+    void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.HOUR);
 
         Assertions.assertEquals(ChronoUnit.DAYS, unit);
     }
 
     @Test
-    void getPeriodUnitByCandleResolution_returnsYears_whenResolutionIsDay() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleResolution(CandleResolution.DAY);
+    void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.DAY);
 
         Assertions.assertEquals(ChronoUnit.YEARS, unit);
     }

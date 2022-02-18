@@ -31,7 +31,7 @@ public class Candle {
 
     protected OffsetDateTime time;
 
-    protected CandleResolution interval;
+    protected CandleInterval interval;
 
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}

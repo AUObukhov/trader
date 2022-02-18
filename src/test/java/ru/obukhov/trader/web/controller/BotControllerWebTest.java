@@ -13,7 +13,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -77,10 +77,10 @@ class BotControllerWebTest extends ControllerWebTest {
     }
 
     @Test
-    void backTest_returnsBadRequest_whenCandleResolutionIsNull() throws Exception {
+    void backTest_returnsBadRequest_whenCandleIntervalIsNull() throws Exception {
         backTest_returnsBadRequest_withError(
-                "BackTestRequest/BackTestRequest_candleResolutionIsNull.json",
-                "candleResolution is mandatory"
+                "BackTestRequest/BackTestRequest_candleIntervalIsNull.json",
+                "candleInterval is mandatory"
         );
     }
 
@@ -125,7 +125,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 1,
                 BigDecimal.valueOf(300)
         );
-        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleResolution.DAY);
+        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval.DAY);
 
         final BalanceConfig balanceConfig = new BalanceConfig(
                 BigDecimal.valueOf(1000),
@@ -134,7 +134,7 @@ class BotControllerWebTest extends ControllerWebTest {
         );
         final Map<String, Object> strategyParams1 = Map.of("minimumProfit", 0.01);
         final BotConfig botConfig1 = BotConfig.builder()
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.001)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .strategyParams(strategyParams1)
@@ -164,7 +164,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 "greedy", false
         );
         final BotConfig botConfig2 = BotConfig.builder()
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.002)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(strategyParams2)
@@ -194,7 +194,7 @@ class BotControllerWebTest extends ControllerWebTest {
                 "greedy", false
         );
         final BotConfig botConfig3 = BotConfig.builder()
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(strategyParams3)

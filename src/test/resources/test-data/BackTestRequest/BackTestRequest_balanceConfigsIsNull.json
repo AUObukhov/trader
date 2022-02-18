@@ -6,7 +6,7 @@
     {
       "brokerAccountId": "2000124699",
       "ticker": "ticker",
-      "candleResolution": "1min",
+      "candleInterval": "1min",
       "commission": 0,
       "strategyType": "conservative",
       "strategyParams": {

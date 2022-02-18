@@ -95,7 +95,7 @@
       },
       "targets": [
         {
-          "data": "{\r\n  \"ticker\": \"$ticker\",\r\n  \"candleResolution\": \"$candleResolution\",\r\n  \"movingAverageType\": \"$movingAverageType\",\r\n  \"window1\": $window1,\r\n  \"window2\": $window2\r\n}",
+          "data": "{\r\n  \"ticker\": \"$ticker\",\r\n  \"candleInterval\": \"candleInterval\",\r\n  \"movingAverageType\": \"$movingAverageType\",\r\n  \"window1\": $window1,\r\n  \"window2\": $window2\r\n}",
           "refId": "A",
           "target": "Extended candles",
           "type": "timeseries"
@@ -146,7 +146,7 @@
         "includeAll": false,
         "label": "Размер свечи",
         "multi": false,
-        "name": "candleResolution",
+        "name": "candleInterval",
         "options": [
           {
             "selected": true,

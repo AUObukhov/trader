@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
@@ -29,20 +29,20 @@ public class StatisticsService {
     /**
      * Searches candles by conditions and calculates extra data by them
      *
-     * @param ticker           ticker of candles
-     * @param interval         search interval, default interval.from is start of trading, default interval.to is now
-     * @param candleResolution candle interval
+     * @param ticker         ticker of candles
+     * @param interval       search interval, default interval.from is start of trading, default interval.to is now
+     * @param candleInterval candle interval
      * @return data structure with list of found candles and extra data
      */
     public GetCandlesResponse getExtendedCandles(
             final String ticker,
             final Interval interval,
-            final CandleResolution candleResolution,
+            final CandleInterval candleInterval,
             final MovingAverageType movingAverageType,
             final int smallWindow,
             final int bigWindow
     ) throws IOException {
-        final List<Candle> candles = marketService.getCandles(ticker, interval, candleResolution);
+        final List<Candle> candles = marketService.getCandles(ticker, interval, candleInterval);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();

@@ -1,7 +1,7 @@
 package ru.obukhov.trader.web.client.service.interfaces;
 
 import org.jetbrains.annotations.NotNull;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Orderbook;
@@ -23,7 +23,7 @@ public interface MarketClient {
 
     Orderbook getMarketOrderbook(@NotNull String figi, int depth) throws IOException;
 
-    Candles getMarketCandles(@NotNull String figi, @NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull CandleResolution interval)
+    Candles getMarketCandles(@NotNull String figi, @NotNull OffsetDateTime from, @NotNull OffsetDateTime to, @NotNull CandleInterval interval)
             throws IOException;
 
     List<MarketInstrument> searchMarketInstrumentsByTicker(@NotNull String ticker) throws IOException;

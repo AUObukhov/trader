@@ -16,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.BrokerAccountType;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
@@ -166,11 +166,11 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final CandleInterval candleInterval = CandleInterval._1MIN;
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
         final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
-                candleResolution,
+                candleInterval,
                 1000,
                 1500,
                 2000,
@@ -178,7 +178,7 @@ class RealTinkoffServiceUnitTest {
                 from.plusMinutes(1)
         );
         final Candle tinkoffCandle2 = TestData.createTinkoffCandle(
-                candleResolution,
+                candleInterval,
                 1500,
                 2000,
                 2500,
@@ -186,9 +186,9 @@ class RealTinkoffServiceUnitTest {
                 from.plusMinutes(1)
         );
         final Candles tinkoffCandles = new Candles().candles(List.of(tinkoffCandle1, tinkoffCandle2));
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleResolution)).thenReturn(tinkoffCandles);
+        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(tinkoffCandles);
 
-        final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
         Assertions.assertEquals(tinkoffCandles.getCandles().size(), candles.size());
         Assertions.assertEquals(tinkoffCandle1, candles.get(0));
@@ -202,13 +202,13 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleResolution candleResolution = CandleResolution._1MIN;
+        final CandleInterval candleInterval = CandleInterval._1MIN;
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleResolution)).thenReturn(new Candles());
+        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(new Candles());
 
-        final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleResolution);
+        final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
         Assertions.assertTrue(candles.isEmpty());
     }

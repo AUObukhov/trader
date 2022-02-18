@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Orderbook;
@@ -92,7 +92,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
             @NotNull final String figi,
             @NotNull final OffsetDateTime from,
             @NotNull final OffsetDateTime to,
-            @NotNull final CandleResolution interval
+            @NotNull final CandleInterval interval
     ) throws IOException {
 
         String renderedInterval = mapper.writeValueAsString(interval);

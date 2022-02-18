@@ -73,7 +73,7 @@ public abstract class AbstractBot implements Bot {
         final String ticker = botConfig.getTicker();
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.getCandleResolution());
+            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.getCandleInterval());
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {

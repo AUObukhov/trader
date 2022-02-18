@@ -8,7 +8,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -45,11 +45,11 @@ public class TestData {
             final double highestPrice,
             final double lowestPrice
     ) {
-        return createTinkoffCandle(CandleResolution.DAY, openPrice, closePrice, highestPrice, lowestPrice);
+        return createTinkoffCandle(CandleInterval.DAY, openPrice, closePrice, highestPrice, lowestPrice);
     }
 
     public static Candle createTinkoffCandle(
-            final CandleResolution interval,
+            final CandleInterval interval,
             final double openPrice,
             final double closePrice,
             final double highestPrice,
@@ -59,7 +59,7 @@ public class TestData {
     }
 
     public static Candle createTinkoffCandle(
-            final CandleResolution interval,
+            final CandleInterval interval,
             final double openPrice,
             final double closePrice,
             final double highestPrice,
@@ -85,7 +85,7 @@ public class TestData {
             final double highestPrice,
             final double lowestPrice,
             final OffsetDateTime time,
-            final CandleResolution interval
+            final CandleInterval interval
     ) {
         return new Candle(
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),

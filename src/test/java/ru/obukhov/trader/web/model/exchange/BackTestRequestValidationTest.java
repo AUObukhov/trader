@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -58,7 +58,7 @@ class BackTestRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenCandleResolutionIsNull() throws ParseException {
+    void validationFails_whenCandleIntervalIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
@@ -67,7 +67,7 @@ class BackTestRequestValidationTest {
                 .build();
         request.setBotConfigs(List.of(botConfig));
 
-        AssertUtils.assertViolation(request, "candleResolution is mandatory");
+        AssertUtils.assertViolation(request, "candleInterval is mandatory");
     }
 
     @Test
@@ -75,7 +75,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .build();
         request.setBotConfigs(List.of(botConfig));
@@ -99,7 +99,7 @@ class BackTestRequestValidationTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .build();

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.trading.model.StrategyType;
 
@@ -21,13 +21,13 @@ class BotConfigUnitTest {
         return Stream.of(
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
@@ -36,13 +36,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._2MIN)
+                                .candleInterval(CandleInterval._2MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
@@ -51,13 +51,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.1)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.2)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
@@ -66,13 +66,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CROSS)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
@@ -81,13 +81,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1))
@@ -96,13 +96,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param", 2))
@@ -111,13 +111,13 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
-                                .candleResolution(CandleResolution._1MIN)
+                                .candleInterval(CandleInterval._1MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 22))
@@ -140,13 +140,13 @@ class BotConfigUnitTest {
     @Test
     void testHashCode() {
         BotConfig config1 = BotConfig.builder()
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.0)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .strategyParams(Map.of("param1", 1, "param2", 2))
                 .build();
         BotConfig config2 = BotConfig.builder()
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.0)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .strategyParams(Map.of("param1", 1, "param2", 2))
@@ -160,7 +160,7 @@ class BotConfigUnitTest {
         final BotConfig config = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleResolution._1MIN,
+                CandleInterval._1MIN,
                 0.003,
                 StrategyType.CROSS,
                 Map.of(
@@ -175,7 +175,7 @@ class BotConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[brokerAccountId=2000124699, ticker=ticker, candleResolution=1min, commission=0.003, strategyType=cross, " +
+        final String expectedStart = "[brokerAccountId=2000124699, ticker=ticker, candleInterval=1min, commission=0.003, strategyType=cross, " +
                 "strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));

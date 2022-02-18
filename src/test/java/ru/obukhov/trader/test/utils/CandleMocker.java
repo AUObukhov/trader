@@ -8,7 +8,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ import java.util.List;
 public class CandleMocker {
     private final TinkoffService tinkoffService;
     private final String ticker;
-    private final CandleResolution candleResolution;
+    private final CandleInterval candleInterval;
     private final List<Candle> candles;
 
     private final Answer<List<Candle>> answer = new Answer<>() {
@@ -35,11 +35,11 @@ public class CandleMocker {
     public CandleMocker(
             @NotNull final TinkoffService tinkoffService,
             @NotNull final String ticker,
-            @NotNull final CandleResolution candleResolution
+            @NotNull final CandleInterval candleInterval
     ) {
         this.tinkoffService = tinkoffService;
         this.ticker = ticker;
-        this.candleResolution = candleResolution;
+        this.candleInterval = candleInterval;
         this.candles = new ArrayList<>();
     }
 
@@ -57,12 +57,12 @@ public class CandleMocker {
         final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setTime(time);
-        candle.setInterval(candleResolution);
+        candle.setInterval(candleInterval);
         return candle;
     }
 
     public void mock() throws IOException {
-        Mockito.when(tinkoffService.getMarketCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleResolution))).then(answer);
+        Mockito.when(tinkoffService.getMarketCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleInterval))).then(answer);
     }
 
 }

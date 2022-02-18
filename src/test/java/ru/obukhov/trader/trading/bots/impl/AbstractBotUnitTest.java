@@ -17,7 +17,7 @@ import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationType;
@@ -69,7 +69,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -91,7 +91,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -110,7 +110,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -133,7 +133,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
@@ -163,7 +163,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .build();
 
@@ -209,7 +209,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .build();
 
@@ -254,7 +254,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .commission(0.003)
                 .build();
 
@@ -267,7 +267,7 @@ class AbstractBotUnitTest {
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleResolution.class)))
+        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
     }
 

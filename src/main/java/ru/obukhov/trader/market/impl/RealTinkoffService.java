@@ -11,7 +11,7 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -87,10 +87,10 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         final List<Candle> candles = marketClient
-                .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleResolution)
+                .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval)
                 .getCandles();
 
         log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);

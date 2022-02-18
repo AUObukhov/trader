@@ -22,7 +22,7 @@ scheduled-bot:
   bot-configs:
     - broker-account-id: "2000124699"
       ticker: SBER
-      candle-resolution: 1min
+      candle-interval: 1min
       commission: 0.003
       strategy-type: "cross"
       strategy-params:

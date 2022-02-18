@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -35,7 +35,7 @@ public interface TinkoffService {
 
     Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException;
 
-    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleResolution candleResolution) throws IOException;
+    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 
     MarketInstrument searchMarketInstrument(final String ticker) throws IOException;
 

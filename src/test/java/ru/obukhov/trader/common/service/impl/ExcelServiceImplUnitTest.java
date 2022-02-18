@@ -21,7 +21,7 @@ import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -66,7 +66,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig1 = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution.HOUR)
+                .candleInterval(CandleInterval.HOUR)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .strategyParams(Map.of())
                 .build();
@@ -74,7 +74,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig2 = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -82,7 +82,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig3 = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5))
                 .build();
@@ -124,7 +124,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -158,7 +158,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -194,7 +194,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -232,7 +232,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -268,7 +268,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
@@ -306,7 +306,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig = BotConfig.builder()
                 .ticker(ticker)
-                .candleResolution(CandleResolution._1MIN)
+                .candleInterval(CandleInterval._1MIN)
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Collections.emptyMap())
                 .build();
@@ -324,7 +324,7 @@ class ExcelServiceImplUnitTest {
 
     private void assertBotConfig(BotConfig botConfig, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next(), "Конфигурация");
-        AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", botConfig.getCandleResolution().toString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Размер свечи", botConfig.getCandleInterval().toString());
         AssertUtils.assertRowValues(rowIterator.next(), "Стратегия", botConfig.getStrategyType().toString());
         for (final Map.Entry<String, Object> entry : botConfig.getStrategyParams().entrySet()) {
             AssertUtils.assertRowValues(rowIterator.next(), entry.getKey(), entry.getValue());

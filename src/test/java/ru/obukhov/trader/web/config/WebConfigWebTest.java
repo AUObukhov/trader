@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.support.GenericConversionService;
 import ru.obukhov.trader.ContextTest;
-import ru.obukhov.trader.market.model.CandleResolution;
+import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MovingAverageType;
 
@@ -17,10 +17,10 @@ class WebConfigWebTest extends ContextTest {
     private GenericConversionService conversionService;
 
     @Test
-    void testCandleResolutionConversion() {
-        for (CandleResolution candleResolution : CandleResolution.values()) {
-            CandleResolution convertedValue = conversionService.convert(candleResolution.getValue(), CandleResolution.class);
-            Assertions.assertEquals(candleResolution, convertedValue);
+    void testCandleIntervalConversion() {
+        for (CandleInterval candleInterval : CandleInterval.values()) {
+            CandleInterval convertedValue = conversionService.convert(candleInterval.getValue(), CandleInterval.class);
+            Assertions.assertEquals(candleInterval, convertedValue);
         }
     }
 

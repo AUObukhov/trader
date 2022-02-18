@@ -12,7 +12,7 @@ public class Candles {
   private String figi = null;
 
   @JsonProperty("interval")
-  private CandleResolution interval = null;
+  private CandleInterval interval = null;
 
   @JsonProperty("candles")
   private List<Candle> candles = new ArrayList<>();
@@ -36,7 +36,7 @@ public class Candles {
     this.figi = figi;
   }
 
-  public Candles interval(CandleResolution interval) {
+  public Candles interval(CandleInterval interval) {
     this.interval = interval;
     return this;
   }
@@ -47,11 +47,11 @@ public class Candles {
    * @return interval
    **/
   @Schema(required = true, description = "")
-  public CandleResolution getInterval() {
+  public CandleInterval getInterval() {
     return interval;
   }
 
-  public void setInterval(CandleResolution interval) {
+  public void setInterval(CandleInterval interval) {
     this.interval = interval;
   }
 
