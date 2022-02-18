@@ -21,7 +21,7 @@ class UserControllerWebTest extends ControllerWebTest {
     @Test
     void getAccounts() throws Exception {
         final UserAccount userAccount1 = new UserAccount();
-        userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFFIIS);
+        userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFF_IIS);
         userAccount1.setBrokerAccountId("2008941383");
 
         final UserAccount userAccount2 = new UserAccount();
