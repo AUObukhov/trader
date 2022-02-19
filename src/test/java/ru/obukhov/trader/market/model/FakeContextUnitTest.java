@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.model;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
@@ -295,17 +294,17 @@ class FakeContextUnitTest {
 
     @NotNull
     private PortfolioPosition createPosition() {
-        return new PortfolioPosition(
-                null,
-                BigDecimal.ZERO,
-                null,
-                Currency.RUB,
-                null,
-                0,
-                null,
-                null,
-                StringUtils.EMPTY
-        );
+        return new PortfolioPosition();
+//                null,
+//                BigDecimal.ZERO,
+//                null,
+//                Currency.RUB,
+//                null,
+//                0,
+//                null,
+//                null,
+//                StringUtils.EMPTY
+//        );
     }
 
 }

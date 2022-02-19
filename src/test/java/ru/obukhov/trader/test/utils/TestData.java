@@ -161,29 +161,26 @@ public class TestData {
     }
 
     public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice, final int lotsCount) {
-        return PortfolioPosition.builder()
-                .balance(BigDecimal.ZERO)
-                .averagePositionPrice(DecimalUtils.setDefaultScale(averagePositionPrice))
-                .count(lotsCount)
-                .name(StringUtils.EMPTY)
-                .build();
+        return new PortfolioPosition()
+                .setBalance(BigDecimal.ZERO)
+                .setAveragePositionPrice(createMoneyAmount(Currency.USD, averagePositionPrice))
+                .setCount(lotsCount)
+                .setName(StringUtils.EMPTY);
     }
 
     public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
-        return PortfolioPosition.builder()
-                .ticker(ticker)
-                .balance(BigDecimal.ZERO)
-                .count(lotsCount)
-                .name(StringUtils.EMPTY)
-                .build();
+        return new PortfolioPosition()
+                .setTicker(ticker)
+                .setBalance(BigDecimal.ZERO)
+                .setCount(lotsCount)
+                .setName(StringUtils.EMPTY);
     }
 
     public static PortfolioPosition createPortfolioPosition(final int lotsCount) {
-        return PortfolioPosition.builder()
-                .balance(BigDecimal.ZERO)
-                .count(lotsCount)
-                .name(StringUtils.EMPTY)
-                .build();
+        return new PortfolioPosition()
+                .setBalance(BigDecimal.ZERO)
+                .setCount(lotsCount)
+                .setName(StringUtils.EMPTY);
     }
 
     // endregion
@@ -223,6 +220,10 @@ public class TestData {
                 .quantityExecuted(operationQuantity)
                 .date(operationDateTime)
                 .operationType(operationType);
+    }
+
+    public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
+        return new MoneyAmount(currency, BigDecimal.valueOf(value));
     }
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {

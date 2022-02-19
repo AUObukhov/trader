@@ -1,8 +1,9 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
@@ -10,38 +11,36 @@ import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
 import java.math.BigDecimal;
 
 @Data
-@Builder
+@NoArgsConstructor
+@Accessors(chain = true)
 public class PortfolioPosition {
 
     @Nullable
-    private final String ticker;
+    private String ticker;
 
     @NotNull
     @JsonSerialize(using = BigDecimalSerializer.class)
-    private final BigDecimal balance;
+    private BigDecimal balance;
 
     @Nullable
     @JsonSerialize(using = BigDecimalSerializer.class)
-    private final BigDecimal blocked;
+    private BigDecimal blocked;
 
-    @Nullable
-    private final Currency currency;
-
-    @Nullable
-    private final BigDecimal expectedYield;
+    @NotNull
+    private MoneyAmount expectedYield;
 
     /**
      * Count of securities, not lots
      */
-    private final int count;
+    private int count;
 
     @Nullable
-    private final BigDecimal averagePositionPrice;
+    private MoneyAmount averagePositionPrice;
 
     @Nullable
-    private final BigDecimal averagePositionPriceNoNkd; // useful for bonds only
+    private MoneyAmount averagePositionPriceNoNkd; // useful for bonds only
 
     @NotNull
-    private final String name;
+    private String name;
 
 }

@@ -8,10 +8,10 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
-import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.CurrencyPosition;
-import ru.obukhov.trader.market.model.Portfolio;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.web.client.exchange.PortfolioCurrenciesResponse;
+import ru.obukhov.trader.web.client.exchange.PortfolioResponse;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
         final HttpUrl requestUrl = builder.build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, Portfolio.class).getPositions();
+        return executeAndGetBody(request, PortfolioResponse.class).getPayload().getPositions();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, Currencies.class).getCurrencies();
+        return executeAndGetBody(request, PortfolioCurrenciesResponse.class).getPayload().getCurrencies();
     }
 
 }

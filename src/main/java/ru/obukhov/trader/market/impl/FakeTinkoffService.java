@@ -244,14 +244,13 @@ public class FakeTinkoffService implements TinkoffService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(null, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            position = PortfolioPosition.builder()
-                    .ticker(ticker)
-                    .balance(totalPrice)
-                    .currency(instrument.getCurrency())
-                    .count(count)
-                    .averagePositionPrice(currentPrice)
-                    .name(StringUtils.EMPTY)
-                    .build();
+            position = new PortfolioPosition()
+                    .setTicker(ticker)
+                    .setBalance(totalPrice)
+                    .setExpectedYield(new MoneyAmount(instrument.getCurrency(), BigDecimal.ZERO))
+                    .setCount(count)
+                    .setAveragePositionPrice(new MoneyAmount(instrument.getCurrency(), currentPrice))
+                    .setName(StringUtils.EMPTY);
         } else {
             position = addValuesToPosition(existingPosition, count, totalPrice);
         }
@@ -272,17 +271,16 @@ public class FakeTinkoffService implements TinkoffService {
             final int lotsCount,
             final BigDecimal averagePositionPrice
     ) {
-        return PortfolioPosition.builder()
-                .ticker(position.getTicker())
-                .balance(balance)
-                .blocked(position.getBlocked())
-                .currency(position.getCurrency())
-                .expectedYield(position.getExpectedYield())
-                .count(lotsCount)
-                .averagePositionPrice(averagePositionPrice)
-                .averagePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
-                .name(position.getName())
-                .build();
+        final MoneyAmount expectedYield = position.getExpectedYield();
+        return new PortfolioPosition()
+                .setTicker(position.getTicker())
+                .setBalance(balance)
+                .setBlocked(position.getBlocked())
+                .setExpectedYield(expectedYield)
+                .setCount(lotsCount)
+                .setAveragePositionPrice(new MoneyAmount(expectedYield.getCurrency(), averagePositionPrice))
+                .setAveragePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
+                .setName(position.getName());
     }
 
     private void updateBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
@@ -318,17 +316,15 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
-        return PortfolioPosition.builder()
-                .ticker(position.getTicker())
-                .balance(position.getBalance())
-                .blocked(position.getBlocked())
-                .currency(position.getCurrency())
-                .expectedYield(position.getExpectedYield())
-                .count(count)
-                .averagePositionPrice(position.getAveragePositionPrice())
-                .averagePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
-                .name(position.getName())
-                .build();
+        return new PortfolioPosition()
+                .setTicker(position.getTicker())
+                .setBalance(position.getBalance())
+                .setBlocked(position.getBlocked())
+                .setExpectedYield(position.getExpectedYield())
+                .setCount(count)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setAveragePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
+                .setName(position.getName());
     }
 
     private void addOperation(

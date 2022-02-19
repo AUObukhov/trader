@@ -468,7 +468,7 @@ class FakeTinkoffServiceUnitTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(30, portfolioPosition.getCount());
-        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice().getValue());
         AssertUtils.assertEquals(939820, service.getCurrentBalance(brokerAccountId, currency));
     }
 
@@ -555,7 +555,7 @@ class FakeTinkoffServiceUnitTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(30, portfolioPosition.getCount());
-        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice().getValue());
         AssertUtils.assertEquals(939820, service.getCurrentBalance(brokerAccountId, currency));
     }
 
@@ -623,7 +623,7 @@ class FakeTinkoffServiceUnitTest {
         final PortfolioPosition portfolioPosition = positions.iterator().next();
         Assertions.assertEquals(ticker, portfolioPosition.getTicker());
         Assertions.assertEquals(20, portfolioPosition.getCount());
-        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice());
+        AssertUtils.assertEquals(2000, portfolioPosition.getAveragePositionPrice().getValue());
         AssertUtils.assertEquals(969730, service.getCurrentBalance(brokerAccountId, currency));
     }
 

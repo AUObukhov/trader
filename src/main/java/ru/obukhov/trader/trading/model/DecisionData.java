@@ -27,7 +27,7 @@ public class DecisionData {
     }
 
     public BigDecimal getAveragePositionPrice() {
-        return position.getAveragePositionPrice();
+        return position.getAveragePositionPrice().getValue();
     }
 
     public BigDecimal getCurrentPrice() {

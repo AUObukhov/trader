@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.ResourceUtils;
+import ru.obukhov.trader.test.utils.TestData;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,27 +28,23 @@ class PortfolioControllerWebTest extends ControllerWebTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPositions(@Nullable final String brokerAccountId) throws Exception {
-        final PortfolioPosition position1 = PortfolioPosition.builder()
-                .ticker("ticker1")
-                .balance(BigDecimal.valueOf(10000))
-                .currency(Currency.RUB)
-                .expectedYield(BigDecimal.valueOf(1000))
-                .count(5)
-                .averagePositionPrice(BigDecimal.valueOf(2000))
-                .averagePositionPriceNoNkd(BigDecimal.valueOf(2000))
-                .name("name1")
-                .build();
+        final PortfolioPosition position1 = new PortfolioPosition()
+                .setTicker("ticker1")
+                .setBalance(BigDecimal.valueOf(10000))
+                .setExpectedYield(TestData.createMoneyAmount(Currency.RUB, 1000))
+                .setCount(5)
+                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.RUB, 2000))
+                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 2000))
+                .setName("name1");
 
-        final PortfolioPosition position2 = PortfolioPosition.builder()
-                .ticker("ticker2")
-                .balance(BigDecimal.valueOf(20000))
-                .currency(Currency.USD)
-                .expectedYield(BigDecimal.valueOf(2000))
-                .count(5)
-                .averagePositionPrice(BigDecimal.valueOf(4000))
-                .averagePositionPriceNoNkd(BigDecimal.valueOf(4000))
-                .name("name2")
-                .build();
+        final PortfolioPosition position2 = new PortfolioPosition()
+                .setTicker("ticker2")
+                .setBalance(BigDecimal.valueOf(20000))
+                .setExpectedYield(TestData.createMoneyAmount(Currency.USD, 2000))
+                .setCount(5)
+                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.USD, 4000))
+                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.USD, 4000))
+                .setName("name2");
 
         Mockito.when(portfolioService.getPositions(brokerAccountId)).thenReturn(List.of(position1, position2));
 
