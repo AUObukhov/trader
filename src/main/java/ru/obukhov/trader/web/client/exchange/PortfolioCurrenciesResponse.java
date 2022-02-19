@@ -1,7 +1,10 @@
 package ru.obukhov.trader.web.client.exchange;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.CurrencyPosition;
+
+import java.util.List;
 
 @Data
 public class PortfolioCurrenciesResponse {
@@ -10,6 +13,7 @@ public class PortfolioCurrenciesResponse {
 
     private String status;
 
-    private Currencies payload;
+    @JsonProperty("payload.currencies")
+    private List<CurrencyPosition> currencies;
 
 }

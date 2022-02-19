@@ -54,7 +54,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, PortfolioCurrenciesResponse.class).getPayload().getCurrencies();
+        return executeAndGetBody(request, PortfolioCurrenciesResponse.class).getCurrencies();
     }
 
 }
