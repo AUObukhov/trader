@@ -21,6 +21,8 @@ class ApplicationSandboxClientTest {
 
     @MockBean
     private SandboxClient sandboxClient;
+    @MockBean
+    private TokenValidationStartupListener tokenValidationStartupListener;
 
     @Test
     void sandboxControllerNotInitialized_whenSandboxModeIsOn() {
