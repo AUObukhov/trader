@@ -46,7 +46,9 @@ public abstract class AbstractClient {
             builder.addPathSegment("sandbox");
         }
         builder.addPathSegment(this.getPath());
-
+        if (apiProperties.port() != null) {
+            builder.port(apiProperties.port());
+        }
         return builder.build();
     }
 
