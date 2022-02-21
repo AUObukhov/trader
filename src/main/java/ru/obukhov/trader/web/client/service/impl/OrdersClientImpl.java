@@ -37,7 +37,7 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     @Override
     public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -55,7 +55,7 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
     ) throws IOException {
         final String renderedBody = mapper.writeValueAsString(limitOrder);
 
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -77,7 +77,7 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
             @NotNull final MarketOrderRequest marketOrder
     ) throws IOException {
         final String renderedBody = mapper.writeValueAsString(marketOrder);
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -94,7 +94,7 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     @Override
     public void cancelOrder(@Nullable final String brokerAccountId, @NotNull final String orderId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }

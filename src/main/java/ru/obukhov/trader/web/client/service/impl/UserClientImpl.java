@@ -27,7 +27,7 @@ public class UserClientImpl extends AbstractClient implements UserClient {
 
     @Override
     public List<UserAccount> getAccounts() throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("accounts")
                 .build();
         final Request request = buildRequest(requestUrl);

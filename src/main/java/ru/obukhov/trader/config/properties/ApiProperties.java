@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "ru.tinkoff.invest.openapi")
 @Validated
 public record ApiProperties(
-        @NotNull String host,
-        @NotNull String sandboxHost,
-        @NotNull String streamingUrl,
-        @NotNull Integer streamingParallelism
+        @NotNull String host
 ) {
 }

@@ -37,7 +37,7 @@ public class OperationsClientImpl extends AbstractClient implements OperationsCl
             @NotNull final OffsetDateTime to,
             @Nullable final String figi
     ) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter("brokerAccountId", brokerAccountId);
         }

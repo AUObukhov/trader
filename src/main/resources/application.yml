@@ -1,8 +1,5 @@
 ru.tinkoff.invest.openapi:
-  host: "https://api-invest.tinkoff.ru/openapi/"
-  sandbox-host: "https://api-invest.tinkoff.ru/openapi/sandbox/"
-  streaming-url: "wss://api-invest.tinkoff.ru/openapi/md/v1/md-openapi/ws"
-  streaming-parallelism: 6
+  host: "https://api-invest.tinkoff.ru"
 
 trading:
   sandbox: false

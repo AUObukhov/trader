@@ -42,7 +42,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
     @Override
     public SandboxAccount performRegistration(@NotNull final SandboxRegisterRequest registerRequest) throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("register")
                 .build();
 
@@ -58,7 +58,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
             throws IOException {
         final String renderedBody = mapper.writeValueAsString(balanceRequest);
 
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -79,7 +79,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
             throws IOException {
         final String renderedBody = mapper.writeValueAsString(balanceRequest);
 
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -97,7 +97,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
     @Override
     public void removeAccount(@Nullable final String brokerAccountId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -114,7 +114,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
     @Override
     public void clearAll(@Nullable final String brokerAccountId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }

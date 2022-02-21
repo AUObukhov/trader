@@ -37,7 +37,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public List<MarketInstrument> getMarketStocks() throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("stocks")
                 .build();
         final Request request = buildRequest(requestUrl);
@@ -47,7 +47,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public List<MarketInstrument> getMarketBonds() throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("bonds")
                 .build();
         final Request request = buildRequest(requestUrl);
@@ -57,7 +57,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public List<MarketInstrument> getMarketEtfs() throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("etfs")
                 .build();
         final Request request = buildRequest(requestUrl);
@@ -67,7 +67,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public List<MarketInstrument> getMarketCurrencies() throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("currencies")
                 .build();
         final Request request = buildRequest(requestUrl);
@@ -77,7 +77,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public Orderbook getMarketOrderbook(@NotNull final String figi, final int depth) throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("orderbook")
                 .addQueryParameter("figi", figi)
                 .addQueryParameter("depth", Integer.toString(depth))
@@ -98,7 +98,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
         String renderedInterval = mapper.writeValueAsString(interval);
         renderedInterval = renderedInterval.substring(1, renderedInterval.length() - 1);
 
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("candles")
                 .addQueryParameter("figi", figi)
                 .addQueryParameter("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -112,7 +112,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public List<MarketInstrument> searchMarketInstrumentsByTicker(@NotNull final String ticker) throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("search")
                 .addPathSegment("by-ticker")
                 .addQueryParameter("ticker", ticker)
@@ -124,7 +124,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
 
     @Override
     public SearchMarketInstrument searchMarketInstrumentByFigi(@NotNull final String figi) throws IOException {
-        final HttpUrl requestUrl = finalUrl.newBuilder()
+        final HttpUrl requestUrl = url.newBuilder()
                 .addPathSegment("search")
                 .addPathSegment("by-figi")
                 .addQueryParameter("figi", figi)

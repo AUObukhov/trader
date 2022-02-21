@@ -25,7 +25,7 @@ public abstract class AbstractClient {
     protected static final MediaType JSON_MEDIA_TYPE = MediaType.get("application/json");
 
     protected final String authToken;
-    protected final HttpUrl finalUrl;
+    protected final HttpUrl url;
     protected final OkHttpClient client;
     protected final ObjectMapper mapper;
 
@@ -33,16 +33,21 @@ public abstract class AbstractClient {
 
     protected AbstractClient(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
         this.authToken = "Bearer " + tradingProperties.getToken();
-        this.finalUrl = buildFinalUrl(tradingProperties.isSandbox() ? apiProperties.sandboxHost() : apiProperties.host());
+        this.url = buildUrl(tradingProperties, apiProperties);
         this.client = client;
         this.mapper = createMapper();
     }
 
-    private HttpUrl buildFinalUrl(@NotNull final String url) {
-        return Objects.requireNonNull(HttpUrl.parse(url))
-                .newBuilder()
-                .addPathSegment(this.getPath())
-                .build();
+    private HttpUrl buildUrl(final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+        final HttpUrl httpUrl = HttpUrl.parse(apiProperties.host());
+        final HttpUrl.Builder builder = Objects.requireNonNull(httpUrl).newBuilder();
+        builder.addPathSegment("openapi");
+        if (tradingProperties.isSandbox()) {
+            builder.addPathSegment("sandbox");
+        }
+        builder.addPathSegment(this.getPath());
+
+        return builder.build();
     }
 
     private ObjectMapper createMapper() {

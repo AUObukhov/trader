@@ -33,7 +33,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
 
     @Override
     public List<PortfolioPosition> getPortfolio(@Nullable final String brokerAccountId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
@@ -45,7 +45,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
 
     @Override
     public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
-        HttpUrl.Builder builder = finalUrl.newBuilder();
+        HttpUrl.Builder builder = url.newBuilder();
         if (StringUtils.isNoneEmpty(brokerAccountId)) {
             builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
         }
