@@ -12,6 +12,7 @@ import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationStatus;
@@ -20,6 +21,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
+import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.BalanceConfig;
 
 import java.math.BigDecimal;
@@ -306,5 +308,14 @@ public class TestData {
     }
 
     // endregion
+
+    public static MarketInstrumentListResponse createMarketInstrumentListResponse(List<MarketInstrument> instruments) {
+        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList();
+        marketInstrumentList.setInstruments(instruments);
+
+        final MarketInstrumentListResponse response = new MarketInstrumentListResponse();
+        response.setPayload(marketInstrumentList);
+        return response;
+    }
 
 }

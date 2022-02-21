@@ -1,3 +1,7 @@
+ru.tinkoff.invest.openapi:
+  host: "http://localhost"
+  port: 8081
+
 trading:
   sandbox: false
   token: i identify myself as token
