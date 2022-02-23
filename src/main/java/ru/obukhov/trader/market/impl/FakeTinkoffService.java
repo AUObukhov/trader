@@ -211,7 +211,8 @@ public class FakeTinkoffService implements TinkoffService {
      * @return result of order execution
      */
     @Override
-    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException {
+    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
+            throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
         final int count = instrument.getLot() * orderRequest.getLots();
