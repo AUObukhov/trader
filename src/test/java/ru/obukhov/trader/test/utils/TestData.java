@@ -225,11 +225,11 @@ public class TestData {
     }
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
-        return new MoneyAmount(currency, BigDecimal.valueOf(value));
+        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
-        return new MoneyAmount(currency, BigDecimal.valueOf(value));
+        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
 
     // region MarketInstrument creation
