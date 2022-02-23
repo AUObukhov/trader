@@ -23,6 +23,7 @@ import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.OperationTypeWithCommission;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -279,21 +280,40 @@ class FakeTinkoffServiceUnitTest {
 
         Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
 
+        final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
-        service.nextMinute();
+        final OffsetDateTime operation2DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(200));
-        service.nextMinute();
+        final OffsetDateTime operation3DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         final Interval wholeInterval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> allOperations = service.getOperations(brokerAccountId, wholeInterval, ticker);
 
-        Assertions.assertEquals(3, allOperations.size());
+        final Operation expectedOperation1 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
+                .price(BigDecimal.valueOf(100))
+                .quantity(10)
+                .date(operation1DateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedOperation2 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
+                .price(BigDecimal.valueOf(200))
+                .quantity(10)
+                .date(operation2DateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedOperation3 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
+                .price(BigDecimal.valueOf(300))
+                .quantity(10)
+                .date(operation3DateTime)
+                .operationType(OperationTypeWithCommission.SELL);
+
+        AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
         final Interval localInterval = Interval.of(dateTime.plusMinutes(1), dateTime.plusMinutes(1));
         final List<Operation> localOperations = service.getOperations(brokerAccountId, localInterval, ticker);
-        Assertions.assertEquals(1, localOperations.size());
-        Assertions.assertEquals(dateTime.plusMinutes(1), localOperations.get(0).getDate());
+        AssertUtils.assertListsAreEqual(List.of(expectedOperation2), localOperations);
     }
 
     @ParameterizedTest
@@ -320,21 +340,37 @@ class FakeTinkoffServiceUnitTest {
         Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
         Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
 
+        final OffsetDateTime ticker1OperationDateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
-        service.nextMinute();
+        final OffsetDateTime ticker2Operation1DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
-        service.nextMinute();
+        final OffsetDateTime ticker2Operation2DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> ticker1Operations = service.getOperations(brokerAccountId, interval, ticker1);
-        Assertions.assertEquals(1, ticker1Operations.size());
-        Assertions.assertEquals(dateTime, ticker1Operations.get(0).getDate());
-
         final List<Operation> ticker2Operations = service.getOperations(brokerAccountId, interval, ticker2);
-        Assertions.assertEquals(2, ticker2Operations.size());
-        Assertions.assertEquals(dateTime.plusMinutes(1), ticker2Operations.get(0).getDate());
-        Assertions.assertEquals(dateTime.plusMinutes(2), ticker2Operations.get(1).getDate());
+
+        final Operation expectedTicker1Operation = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
+                .price(BigDecimal.valueOf(100))
+                .quantity(10)
+                .date(ticker1OperationDateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        AssertUtils.assertListsAreEqual(List.of(expectedTicker1Operation), ticker1Operations);
+        final Operation expectedTicker2Operation1 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
+                .price(BigDecimal.valueOf(200))
+                .quantity(10)
+                .date(ticker2Operation1DateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedTicker2Operation2 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
+                .price(BigDecimal.valueOf(300))
+                .quantity(10)
+                .date(ticker2Operation2DateTime)
+                .operationType(OperationTypeWithCommission.SELL);
+        AssertUtils.assertListsAreEqual(List.of(expectedTicker2Operation1, expectedTicker2Operation2), ticker2Operations);
     }
 
     @ParameterizedTest
@@ -361,16 +397,35 @@ class FakeTinkoffServiceUnitTest {
         Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
         Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
 
+        final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
-        service.nextMinute();
+        final OffsetDateTime operation2DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
-        service.nextMinute();
+        final OffsetDateTime operation3DateTime = service.nextMinute();
         placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> operations = service.getOperations(brokerAccountId, interval, null);
 
-        Assertions.assertEquals(3, operations.size());
+        final Operation expectedOperation1 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
+                .price(BigDecimal.valueOf(100))
+                .quantity(10)
+                .date(operation1DateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedOperation2 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
+                .price(BigDecimal.valueOf(200))
+                .quantity(10)
+                .date(operation2DateTime)
+                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedOperation3 = new Operation()
+                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
+                .price(BigDecimal.valueOf(300))
+                .quantity(10)
+                .date(operation3DateTime)
+                .operationType(OperationTypeWithCommission.SELL);
+        AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), operations);
     }
 
     // endregion
@@ -731,7 +786,7 @@ class FakeTinkoffServiceUnitTest {
         final Candle candle = new Candle().setClosePrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
-        MarketOrderRequest orderRequest = new MarketOrderRequest()
+        final MarketOrderRequest orderRequest = new MarketOrderRequest()
                 .lots(lots)
                 .operation(operationType);
         service.placeMarketOrder(brokerAccountId, ticker, orderRequest);
