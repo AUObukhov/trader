@@ -17,7 +17,6 @@ import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Service
@@ -33,11 +32,6 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
     @Override
     public String getPath() {
         return "sandbox";
-    }
-
-    @PostConstruct
-    public void register() throws IOException {
-        performRegistration(new SandboxRegisterRequest());
     }
 
     @Override

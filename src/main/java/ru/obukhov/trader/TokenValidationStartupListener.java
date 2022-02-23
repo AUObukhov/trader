@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import ru.obukhov.trader.market.impl.MarketService;
+import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
@@ -20,12 +22,18 @@ import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 public class TokenValidationStartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
     private final MarketService marketService;
+    @Nullable
+    private final SandboxService sandboxService;
 
     @SneakyThrows
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
         try {
-            marketService.getInstruments(InstrumentType.STOCK);
+            if (sandboxService == null) {
+                marketService.getInstruments(InstrumentType.STOCK);
+            } else {
+                sandboxService.register();
+            }
         } catch (final Exception exception) {
             if (exception.getCause() instanceof WrongTokenException) {
                 throw exception;

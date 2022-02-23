@@ -42,9 +42,6 @@ public abstract class AbstractClient {
         final HttpUrl httpUrl = HttpUrl.parse(apiProperties.host());
         final HttpUrl.Builder builder = Objects.requireNonNull(httpUrl).newBuilder();
         builder.addPathSegment("openapi");
-        if (tradingProperties.isSandbox()) {
-            builder.addPathSegment("sandbox");
-        }
         builder.addPathSegment(this.getPath());
         if (apiProperties.port() != null) {
             builder.port(apiProperties.port());

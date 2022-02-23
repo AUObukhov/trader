@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
 import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
@@ -19,6 +20,10 @@ public class SandboxService {
 
     private final MarketService marketService;
     private final SandboxClient sandboxClient;
+
+    public void register() throws IOException {
+        sandboxClient.performRegistration(new SandboxRegisterRequest());
+    }
 
     /**
      * Sets given value ({@code balance}) of balance of given {@code currency} at given {@code brokerAccountId}.
