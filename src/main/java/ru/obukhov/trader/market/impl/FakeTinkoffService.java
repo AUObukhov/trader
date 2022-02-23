@@ -184,7 +184,7 @@ public class FakeTinkoffService implements TinkoffService {
         }
 
         return operationsStream
-                .sorted(Comparator.comparing(BackTestOperation::getDateTime))
+                .sorted(Comparator.comparing(operation -> operation.getDateTime().toInstant()))
                 .map(operationMapper::map)
                 .toList();
     }
