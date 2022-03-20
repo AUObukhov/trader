@@ -137,7 +137,7 @@ public class MarketService {
     private List<Candle> filterCandles(final List<Candle> candles, final Interval interval) {
         final Candle leftCandle = new Candle().setTime(interval.getFrom());
         final Candle rightCandle = new Candle().setTime(interval.getTo());
-        final Comparator<Candle> comparator = Comparator.comparing(Candle::getTime);
+        final Comparator<Candle> comparator = Comparator.comparing(candle -> candle.getTime().toInstant());
         final int fromIndex = CollectionsUtils.binarySearch(candles, leftCandle, comparator);
         final int toIndex = CollectionsUtils.binarySearch(candles, rightCandle, comparator);
         return candles.subList(fromIndex, toIndex);
