@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Candle {
     @JsonAlias("l")
     protected BigDecimal lowestPrice;
 
+    @JsonFormat(pattern = DateUtils.ISO_OFFSET_DATE_TIME_FORMAT)
     protected OffsetDateTime time;
 
     protected CandleInterval interval;

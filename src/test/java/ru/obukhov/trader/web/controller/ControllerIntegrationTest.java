@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.config.properties.ApiProperties;
@@ -28,6 +31,8 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 @SpringBootTest
 abstract class ControllerIntegrationTest {
 
+    private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
+
     /**
      * To prevent token validation on startup
      */
@@ -37,7 +42,8 @@ abstract class ControllerIntegrationTest {
     private ClientAndServer mockServer;
 
     protected MockServerClient mockServerClient;
-    protected final ObjectMapper objectMapper = new ObjectMapper();
+    protected final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @Autowired
     protected TradingProperties tradingProperties;
@@ -75,6 +81,10 @@ abstract class ControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+    }
+
+    protected ResultMatcher getJsonPathMessageMatcher(final String expectedMessage) {
+        return RESULT_MESSAGE_MATCHER.value(expectedMessage);
     }
 
 }
