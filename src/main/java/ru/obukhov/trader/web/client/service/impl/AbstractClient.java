@@ -33,12 +33,12 @@ public abstract class AbstractClient {
 
     protected AbstractClient(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
         this.authToken = "Bearer " + tradingProperties.getToken();
-        this.url = buildUrl(tradingProperties, apiProperties);
+        this.url = buildUrl(apiProperties);
         this.client = client;
         this.mapper = createMapper();
     }
 
-    private HttpUrl buildUrl(final TradingProperties tradingProperties, final ApiProperties apiProperties) {
+    private HttpUrl buildUrl(final ApiProperties apiProperties) {
         final HttpUrl httpUrl = HttpUrl.parse(apiProperties.host());
         final HttpUrl.Builder builder = Objects.requireNonNull(httpUrl).newBuilder();
         builder.addPathSegment("openapi");
