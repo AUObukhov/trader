@@ -1,9 +1,7 @@
 package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
-import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -40,10 +38,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         final UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
         userAccountsResponse.setPayload(userAccounts);
-        final HttpResponse apiResponse = createHttpResponse(userAccountsResponse);
-
-        mockServerClient.when(apiRequest, Times.once())
-                .respond(apiResponse);
+        mockResponse(apiRequest, userAccountsResponse);
 
         final GetUserAccountsResponse getUserAccountsResponse = new GetUserAccountsResponse(userAccountsList);
         final String expectedResponse = objectMapper.writeValueAsString(getUserAccountsResponse);

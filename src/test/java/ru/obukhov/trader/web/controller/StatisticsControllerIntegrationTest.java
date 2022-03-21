@@ -3,9 +3,7 @@ package ru.obukhov.trader.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -425,18 +423,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     // endregion
 
     private void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
-        final HttpRequest apiInstrumentRequest = HttpRequest.request()
+        final HttpRequest apiRequest = HttpRequest.request()
                 .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
                 .withMethod(HttpMethod.GET.name())
                 .withPath("/openapi/market/search/by-ticker")
                 .withQueryStringParameter("ticker", ticker);
 
         final MarketInstrument instrument = new MarketInstrument().figi(figi);
-        final MarketInstrumentListResponse response = TestData.createMarketInstrumentListResponse(List.of(instrument));
-        final HttpResponse apiResponse = createHttpResponse(response);
-
-        mockServerClient.when(apiInstrumentRequest, Times.once())
-                .respond(apiResponse);
+        final MarketInstrumentListResponse marketInstrumentListResponse = TestData.createMarketInstrumentListResponse(List.of(instrument));
+        mockResponse(apiRequest, marketInstrumentListResponse);
     }
 
     private void mockCandles(
@@ -446,7 +441,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
             final CandleInterval candleInterval,
             final List<Candle> candles
     ) throws JsonProcessingException {
-        final HttpRequest apiCandlesRequest = HttpRequest.request()
+        final HttpRequest apiRequest = HttpRequest.request()
                 .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
                 .withMethod(HttpMethod.GET.name())
                 .withPath("/openapi/market/candles")
@@ -459,10 +454,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final Candles payload = new Candles();
         payload.setCandles(candles);
         candlesResponse.setPayload(payload);
-        final HttpResponse apiCandlesResponse = createHttpResponse(candlesResponse);
-
-        mockServerClient.when(apiCandlesRequest, Times.once())
-                .respond(apiCandlesResponse);
+        mockResponse(apiRequest, candlesResponse);
     }
 
     private void performGetCandlesAndExpect(final MockHttpServletRequestBuilder requestBuilder, final GetCandlesResponse getCandlesResponse)

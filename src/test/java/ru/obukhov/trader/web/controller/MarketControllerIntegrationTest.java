@@ -2,9 +2,7 @@ package ru.obukhov.trader.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
-import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -521,11 +519,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
                 .withMethod(HttpMethod.GET.name())
                 .withPath(path);
 
-        final MarketInstrumentListResponse Response = TestData.createMarketInstrumentListResponse(instruments);
-        final HttpResponse apiResponse = createHttpResponse(Response);
-
-        mockServerClient.when(apiRequest, Times.once())
-                .respond(apiResponse);
+        final MarketInstrumentListResponse response = TestData.createMarketInstrumentListResponse(instruments);
+        mockResponse(apiRequest, response);
     }
 
     private void performGetInstruments(final InstrumentType instrumentType, final List<MarketInstrument> expectedInstruments) throws Exception {

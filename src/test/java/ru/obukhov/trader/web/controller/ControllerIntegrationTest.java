@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
+import org.mockserver.matchers.Times;
+import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.springtest.MockServerTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,9 +65,12 @@ abstract class ControllerIntegrationTest {
         mockServer.stop();
     }
 
-    protected HttpResponse createHttpResponse(Object response) throws JsonProcessingException {
-        return HttpResponse.response()
+    protected void mockResponse(final HttpRequest apiRequest, final Object response) throws JsonProcessingException {
+        final HttpResponse apiResponse = HttpResponse.response()
                 .withBody(objectMapper.writeValueAsString(response));
+
+        mockServerClient.when(apiRequest, Times.once())
+                .respond(apiResponse);
     }
 
     protected int getPort() {
@@ -86,5 +91,6 @@ abstract class ControllerIntegrationTest {
     protected ResultMatcher getJsonPathMessageMatcher(final String expectedMessage) {
         return RESULT_MESSAGE_MATCHER.value(expectedMessage);
     }
+
 
 }

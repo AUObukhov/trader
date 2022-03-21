@@ -4,9 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -57,9 +55,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
         final OrdersResponse ordersResponse = new OrdersResponse();
         ordersResponse.setPayload(orders);
-        final HttpResponse apiResponse = createHttpResponse(ordersResponse);
-        mockServerClient.when(apiRequest, Times.once())
-                .respond(apiResponse);
+        mockResponse(apiRequest, ordersResponse);
 
         final String expectedResponse = objectMapper.writeValueAsString(new GetOrdersResponse(orders));
 

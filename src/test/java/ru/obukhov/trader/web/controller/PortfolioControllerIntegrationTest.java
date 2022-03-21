@@ -4,9 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockserver.matchers.Times;
 import org.mockserver.model.HttpRequest;
-import org.mockserver.model.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -60,9 +58,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         final Portfolio portfolio = new Portfolio();
         portfolio.setPositions(positions);
         portfolioResponse.setPayload(portfolio);
-        final HttpResponse apiResponse = createHttpResponse(portfolioResponse);
-        mockServerClient.when(apiRequest, Times.once())
-                .respond(apiResponse);
+        mockResponse(apiRequest, portfolioResponse);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/positions")
@@ -94,9 +90,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
 
         final PortfolioCurrenciesResponse portfolioResponse = new PortfolioCurrenciesResponse();
         portfolioResponse.setCurrencies(currencies);
-        final HttpResponse apiResponse = createHttpResponse(portfolioResponse);
-        mockServerClient.when(apiRequest, Times.once())
-                .respond(apiResponse);
+        mockResponse(apiRequest, portfolioResponse);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/currencies")
