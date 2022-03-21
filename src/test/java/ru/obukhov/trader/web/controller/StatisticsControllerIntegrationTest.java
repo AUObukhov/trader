@@ -432,8 +432,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .withQueryStringParameter("ticker", ticker);
 
         final MarketInstrument instrument = new MarketInstrument().figi(figi);
-        final MarketInstrumentListResponse Response = TestData.createMarketInstrumentListResponse(List.of(instrument));
-        final HttpResponse apiResponse = createHttpResponse(Response);
+        final MarketInstrumentListResponse response = TestData.createMarketInstrumentListResponse(List.of(instrument));
+        final HttpResponse apiResponse = createHttpResponse(response);
 
         mockServerClient.when(apiInstrumentRequest, Times.once())
                 .respond(apiResponse);
