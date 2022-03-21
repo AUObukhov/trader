@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.market.model.UserAccounts;
+import ru.obukhov.trader.web.client.exchange.UserAccountsResponse;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class UserClientImpl extends AbstractClient implements UserClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, UserAccounts.class).getAccounts();
+        return executeAndGetBody(request, UserAccountsResponse.class).getPayload().getAccounts();
     }
 
 }
