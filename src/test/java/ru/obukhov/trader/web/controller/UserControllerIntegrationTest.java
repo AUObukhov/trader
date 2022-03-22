@@ -2,7 +2,6 @@ package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
 import org.mockserver.model.HttpRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,9 +18,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getAccounts() throws Exception {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/user/accounts");
 
         final UserAccount userAccount1 = new UserAccount();

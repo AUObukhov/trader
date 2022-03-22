@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockserver.model.HttpRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -27,9 +26,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     @ValueSource(strings = "2000124699")
     void getOrders_returnsOrders(@Nullable final String brokerAccountId) throws Exception {
 
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/orders");
 
         final Order order1 = new Order()

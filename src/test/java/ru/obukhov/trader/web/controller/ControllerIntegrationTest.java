@@ -73,29 +73,31 @@ abstract class ControllerIntegrationTest {
         mockServer.stop();
     }
 
-    protected String mockResponse(final HttpRequest apiRequest) {
+    protected HttpRequest createAuthorizedHttpRequest(final HttpMethod httpMethod) {
+        return HttpRequest.request()
+                .withHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tradingProperties.getToken())
+                .withMethod(httpMethod.name());
+    }
+
+    protected String mockResponse(final HttpRequest httpRequest) {
         HttpResponse apiResponse = HttpResponse.response();
 
-        final Expectation[] expectations = mockServerClient.when(apiRequest, Times.once())
+        final Expectation[] expectations = mockServerClient.when(httpRequest, Times.once())
                 .respond(apiResponse);
         return expectations[0].getId();
     }
 
-    protected String mockResponse(final HttpRequest apiRequest, final Object response) throws JsonProcessingException {
+    protected String mockResponse(final HttpRequest httpRequest, final Object response) throws JsonProcessingException {
         final HttpResponse apiResponse = HttpResponse.response()
                 .withBody(objectMapper.writeValueAsString(response));
 
-        final Expectation[] expectations = mockServerClient.when(apiRequest, Times.once())
+        final Expectation[] expectations = mockServerClient.when(httpRequest, Times.once())
                 .respond(apiResponse);
         return expectations[0].getId();
     }
 
     protected int getPort() {
         return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
-    }
-
-    protected String getAuthorizationHeader() {
-        return "Bearer " + tradingProperties.getToken();
     }
 
     protected void performAndVerifyResponse(final MockHttpServletRequestBuilder builder, final String expectedResponse) throws Exception {
@@ -110,9 +112,7 @@ abstract class ControllerIntegrationTest {
     }
 
     protected void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/market/search/by-ticker")
                 .withQueryStringParameter("ticker", ticker);
 

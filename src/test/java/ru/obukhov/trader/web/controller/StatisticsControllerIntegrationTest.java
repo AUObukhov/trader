@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockserver.model.HttpRequest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -429,9 +428,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
             final CandleInterval candleInterval,
             final List<Candle> candles
     ) throws JsonProcessingException {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/market/candles")
                 .withQueryStringParameter("figi", figi)
                 .withQueryStringParameter("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))

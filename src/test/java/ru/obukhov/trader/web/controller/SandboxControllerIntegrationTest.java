@@ -6,7 +6,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockserver.model.HttpRequest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -26,9 +25,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void setCurrencyBalance_callsSetCurrencyBalanceApi(@Nullable final String brokerAccountId) throws Exception {
-        HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.POST.name())
+        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
                 .withPath("/openapi/sandbox/currencies/balance");
         if (brokerAccountId != null) {
             apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
@@ -59,9 +56,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
 
         mockFigiByTicker(ticker, figi);
 
-        HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.POST.name())
+        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
                 .withPath("/openapi/sandbox/positions/balance");
         if (brokerAccountId != null) {
             apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
@@ -86,9 +81,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void clearAll_callsClearAllApi_whenBrokerAccountIdIsNotNull(@Nullable final String brokerAccountId) throws Exception {
-        HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.POST.name())
+        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
                 .withPath("/openapi/sandbox/clear");
         if (brokerAccountId != null) {
             apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);

@@ -3,7 +3,6 @@ package ru.obukhov.trader.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.mockserver.model.HttpRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -514,9 +513,7 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     // endregion
 
     private void mockInstruments(final String path, final List<MarketInstrument> instruments) throws JsonProcessingException {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath(path);
 
         final MarketInstrumentListResponse response = TestData.createMarketInstrumentListResponse(instruments);

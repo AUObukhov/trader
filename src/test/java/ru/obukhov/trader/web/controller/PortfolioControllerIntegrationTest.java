@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockserver.model.HttpRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -29,9 +28,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPositions_returnsPositions(@Nullable final String brokerAccountId) throws Exception {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/portfolio");
 
         final PortfolioPosition position1 = new PortfolioPosition()
@@ -72,9 +69,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getCurrencies_returnsCurrencies(@Nullable final String brokerAccountId) throws Exception {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/portfolio/currencies");
 
         final CurrencyPosition currencyPosition1 = new CurrencyPosition()
