@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -42,7 +43,8 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON);
         mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
 
         mockServerClient.verify(expectationId);
     }
@@ -72,7 +74,8 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
 
         mockServerClient.verify(expectationId);
     }
@@ -95,7 +98,8 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/clear")
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
 
         mockServerClient.verify(expectationId);
     }

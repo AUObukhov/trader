@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -240,7 +241,8 @@ class BotControllerWebTest extends ControllerWebTest {
         schedulingProperties.setEnabled(false);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/enable-scheduling"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
 
         Assertions.assertTrue(schedulingProperties.isEnabled());
     }
@@ -250,7 +252,8 @@ class BotControllerWebTest extends ControllerWebTest {
         schedulingProperties.setEnabled(true);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/bot/disable-scheduling"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
 
         Assertions.assertFalse(schedulingProperties.isEnabled());
     }
