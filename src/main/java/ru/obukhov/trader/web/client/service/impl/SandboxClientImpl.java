@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.model.SandboxAccount;
 import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
+import ru.obukhov.trader.web.client.exchange.SandboxRegisterResponse;
 import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
                 .post(getRequestBody(registerRequest))
                 .build();
 
-        return executeAndGetBody(request, SandboxAccount.class);
+        return executeAndGetBody(request, SandboxRegisterResponse.class).getPayload();
     }
 
     @Override

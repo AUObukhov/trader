@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
+import org.mockserver.mock.Expectation;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.springtest.MockServerTest;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +29,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
+
+import java.util.List;
 
 @MockServerTest
 @AutoConfigureMockMvc
@@ -65,12 +73,21 @@ abstract class ControllerIntegrationTest {
         mockServer.stop();
     }
 
-    protected void mockResponse(final HttpRequest apiRequest, final Object response) throws JsonProcessingException {
+    protected String mockResponse(final HttpRequest apiRequest) {
+        HttpResponse apiResponse = HttpResponse.response();
+
+        final Expectation[] expectations = mockServerClient.when(apiRequest, Times.once())
+                .respond(apiResponse);
+        return expectations[0].getId();
+    }
+
+    protected String mockResponse(final HttpRequest apiRequest, final Object response) throws JsonProcessingException {
         final HttpResponse apiResponse = HttpResponse.response()
                 .withBody(objectMapper.writeValueAsString(response));
 
-        mockServerClient.when(apiRequest, Times.once())
+        final Expectation[] expectations = mockServerClient.when(apiRequest, Times.once())
                 .respond(apiResponse);
+        return expectations[0].getId();
     }
 
     protected int getPort() {
@@ -92,5 +109,16 @@ abstract class ControllerIntegrationTest {
         return RESULT_MESSAGE_MATCHER.value(expectedMessage);
     }
 
+    protected void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
+        final HttpRequest apiRequest = HttpRequest.request()
+                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
+                .withMethod(HttpMethod.GET.name())
+                .withPath("/openapi/market/search/by-ticker")
+                .withQueryStringParameter("ticker", ticker);
+
+        final MarketInstrument instrument = new MarketInstrument().figi(figi);
+        final MarketInstrumentListResponse marketInstrumentListResponse = TestData.createMarketInstrumentListResponse(List.of(instrument));
+        mockResponse(apiRequest, marketInstrumentListResponse);
+    }
 
 }

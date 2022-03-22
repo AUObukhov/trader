@@ -18,12 +18,10 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
-import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
 import java.math.BigDecimal;
@@ -422,17 +420,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     // endregion
 
-    private void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
-        final HttpRequest apiRequest = HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, getAuthorizationHeader())
-                .withMethod(HttpMethod.GET.name())
-                .withPath("/openapi/market/search/by-ticker")
-                .withQueryStringParameter("ticker", ticker);
 
-        final MarketInstrument instrument = new MarketInstrument().figi(figi);
-        final MarketInstrumentListResponse marketInstrumentListResponse = TestData.createMarketInstrumentListResponse(List.of(instrument));
-        mockResponse(apiRequest, marketInstrumentListResponse);
-    }
 
     private void mockCandles(
             final String figi,
