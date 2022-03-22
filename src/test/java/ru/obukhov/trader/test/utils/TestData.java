@@ -103,6 +103,10 @@ public class TestData {
         return new Candle().setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }
 
+    public static Candle createCandleWithOpenPriceAndTime(final double openPrice, final OffsetDateTime time) {
+        return createCandleWithOpenPrice(openPrice).setTime(time);
+    }
+
     public static Candle createCandleWithClosePrice(final double closePrice) {
         return new Candle()
                 .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));

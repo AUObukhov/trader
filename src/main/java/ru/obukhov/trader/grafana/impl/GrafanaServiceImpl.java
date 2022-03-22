@@ -43,15 +43,15 @@ public class GrafanaServiceImpl implements GrafanaService {
      * @return list of single {@link QueryResult} containing data
      */
     @Override
-    public List<QueryResult> getData(GetDataRequest request) throws IOException {
-        Metric metric = getRequiredMetric(request);
+    public List<QueryResult> getData(final GetDataRequest request) throws IOException {
+        final Metric metric = getRequiredMetric(request);
         return switch (metric) {
             case CANDLES -> getCandles(request);
             case EXTENDED_CANDLES -> getExtendedCandles(request);
         };
     }
 
-    private Metric getRequiredMetric(GetDataRequest request) {
+    private Metric getRequiredMetric(final GetDataRequest request) {
         List<Target> targets = request.getTargets();
         Assert.isTrue(targets.size() == 1, "Expected single target");
         return targets.get(0).getMetric();
@@ -62,7 +62,7 @@ public class GrafanaServiceImpl implements GrafanaService {
      *                Must contain single values in targets and keys "ticker" and "candleInterval" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times and open prices
      */
-    private List<QueryResult> getCandles(GetDataRequest request) throws IOException {
+    private List<QueryResult> getCandles(final GetDataRequest request) throws IOException {
         final Map<String, Object> data = getRequiredTargetData(request);
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
         final CandleInterval candleInterval = getRequiredCandleInterval(data);
@@ -77,7 +77,7 @@ public class GrafanaServiceImpl implements GrafanaService {
      *                Must contain single values in targets and keys "ticker" and "candleInterval" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times, open prices and moving average values
      */
-    private List<QueryResult> getExtendedCandles(GetDataRequest request) throws IOException {
+    private List<QueryResult> getExtendedCandles(final GetDataRequest request) throws IOException {
         final Map<String, Object> data = getRequiredTargetData(request);
         final String ticker = MapUtils.getNotBlankString(data, "ticker");
         final Interval interval = request.getInterval();
@@ -91,18 +91,18 @@ public class GrafanaServiceImpl implements GrafanaService {
         );
     }
 
-    private Map<String, Object> getRequiredTargetData(GetDataRequest request) {
+    private Map<String, Object> getRequiredTargetData(final GetDataRequest request) {
         final Map<String, Object> data = (Map<String, Object>) request.getTargets().get(0).getData();
         Assert.isTrue(data != null, "data is mandatory");
         return data;
     }
 
-    private CandleInterval getRequiredCandleInterval(Map<String, Object> data) {
+    private CandleInterval getRequiredCandleInterval(final Map<String, Object> data) {
         final String candleInterval = MapUtils.getRequiredString(data, "candleInterval");
         return CandleInterval.fromValue(candleInterval);
     }
 
-    private MovingAverageType getRequiredMovingAverageType(Map<String, Object> data) {
+    private MovingAverageType getRequiredMovingAverageType(final Map<String, Object> data) {
         final String movingAverageType = MapUtils.getRequiredString(data, "movingAverageType");
         return MovingAverageType.from(movingAverageType);
     }
