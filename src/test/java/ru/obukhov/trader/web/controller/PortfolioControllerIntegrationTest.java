@@ -61,8 +61,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
                 .get("/trader/portfolio/positions")
                 .param("brokerAccountId", brokerAccountId)
                 .contentType(MediaType.APPLICATION_JSON);
-        final String expectedResponse = objectMapper.writeValueAsString(new GetPortfolioPositionsResponse(positions));
-        performAndVerifyResponse(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, new GetPortfolioPositionsResponse(positions));
     }
 
     @ParameterizedTest
@@ -91,8 +90,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
                 .get("/trader/portfolio/currencies")
                 .param("brokerAccountId", brokerAccountId)
                 .contentType(MediaType.APPLICATION_JSON);
-        final String expectedResponse = objectMapper.writeValueAsString(new GetPortfolioCurrenciesResponse(currencies));
-        performAndVerifyResponse(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, new GetPortfolioCurrenciesResponse(currencies));
     }
 
 }

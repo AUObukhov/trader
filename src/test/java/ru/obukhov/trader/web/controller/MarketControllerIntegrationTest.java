@@ -521,15 +521,13 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     private void performGetInstruments(final InstrumentType instrumentType, final List<MarketInstrument> expectedInstruments) throws Exception {
-        final String expectedControllerResponse = objectMapper.writeValueAsString(new GetInstrumentsResponse(expectedInstruments));
-
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/market/instruments")
                 .contentType(MediaType.APPLICATION_JSON);
         if (instrumentType != null) {
             requestBuilder.param("instrumentType", instrumentType.getValue());
         }
 
-        performAndVerifyResponse(requestBuilder, expectedControllerResponse);
+        performAndExpectResponse(requestBuilder, new GetInstrumentsResponse(expectedInstruments));
     }
 
 }

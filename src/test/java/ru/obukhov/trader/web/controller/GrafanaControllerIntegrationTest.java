@@ -47,9 +47,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setInterval(null);
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
-
-        assertBadRequestError("/trader/grafana/query", request, "interval is mandatory");
+        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "interval is mandatory");
     }
 
     @Test
@@ -57,9 +55,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(null);
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
-
-        assertBadRequestError("/trader/grafana/query", request, "targets is mandatory");
+        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
@@ -67,9 +63,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(List.of());
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
-
-        assertBadRequestError("/trader/grafana/query", request, "targets is mandatory");
+        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
@@ -77,9 +71,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setMetric(null);
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
-
-        assertBadRequestError("/trader/grafana/query", request, "target.metric is mandatory");
+        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.metric is mandatory");
     }
 
     @Test
@@ -87,9 +79,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setType(null);
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
-
-        assertBadRequestError("/trader/grafana/query", request, "target.type is mandatory");
+        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.type is mandatory");
     }
 
     @Test
@@ -137,7 +127,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(JSON_CONTENT_MATCHER)
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
     }
 
@@ -211,7 +201,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                         .content(request)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(JSON_CONTENT_MATCHER)
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
     }
 
@@ -262,14 +252,6 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     private List<Object> mapCandleToGrafanaList(final Candle candle) {
         final String time = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candle.getTime());
         return List.of(time, candle.getOpenPrice());
-    }
-
-    private void assertBadRequestError(final String urlTemplate, final String requestString, final String expectedError) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(urlTemplate).content(requestString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher("Invalid request"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors").value(expectedError))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
 }

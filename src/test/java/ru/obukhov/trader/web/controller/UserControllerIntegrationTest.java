@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockserver.model.HttpRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.market.model.BrokerAccountType;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.UserAccounts;
@@ -38,12 +38,10 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         mockResponse(apiRequest, userAccountsResponse);
 
         final GetUserAccountsResponse getUserAccountsResponse = new GetUserAccountsResponse(userAccountsList);
-        final String expectedResponse = objectMapper.writeValueAsString(getUserAccountsResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trader/user/accounts").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/user/accounts")
+                .contentType(MediaType.APPLICATION_JSON);
+        performAndExpectResponse(requestBuilder, getUserAccountsResponse);
     }
 
 }

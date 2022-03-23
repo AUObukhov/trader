@@ -54,13 +54,11 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
         ordersResponse.setPayload(orders);
         mockResponse(apiRequest, ordersResponse);
 
-        final String expectedResponse = objectMapper.writeValueAsString(new GetOrdersResponse(orders));
-
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/orders/get")
                 .param("brokerAccountId", brokerAccountId)
                 .contentType(MediaType.APPLICATION_JSON);
-        performAndVerifyResponse(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, new GetOrdersResponse(orders));
     }
 
 }

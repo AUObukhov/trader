@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockserver.client.MockServerClient;
@@ -24,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
@@ -41,10 +43,12 @@ import java.util.List;
 @SpringBootTest
 abstract class ControllerIntegrationTest {
 
-    private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
+    protected static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
+    protected static final JsonPathResultMatchers ERRORS_MATCHER = MockMvcResultMatchers.jsonPath("$.errors");
+    protected static final ResultMatcher JSON_CONTENT_MATCHER = MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON);
 
     /**
-     * To prevent token validation on startup
+     * To prevent token validation on startup. Otherwise, validation performed before MockServer initialization
      */
     @MockBean
     private TokenValidationStartupListener tokenValidationStartupListener;
@@ -73,6 +77,10 @@ abstract class ControllerIntegrationTest {
         mockServer.stop();
     }
 
+    protected int getPort() {
+        return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
+    }
+
     protected HttpRequest createAuthorizedHttpRequest(final HttpMethod httpMethod) {
         return HttpRequest.request()
                 .withHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tradingProperties.getToken())
@@ -96,21 +104,6 @@ abstract class ControllerIntegrationTest {
         return expectations[0].getId();
     }
 
-    protected int getPort() {
-        return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
-    }
-
-    protected void performAndVerifyResponse(final MockHttpServletRequestBuilder builder, final String expectedResponse) throws Exception {
-        mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
-    }
-
-    protected ResultMatcher getJsonPathMessageMatcher(final String expectedMessage) {
-        return RESULT_MESSAGE_MATCHER.value(expectedMessage);
-    }
-
     protected void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
         final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/market/search/by-ticker")
@@ -119,6 +112,41 @@ abstract class ControllerIntegrationTest {
         final MarketInstrument instrument = new MarketInstrument().figi(figi);
         final MarketInstrumentListResponse marketInstrumentListResponse = TestData.createMarketInstrumentListResponse(List.of(instrument));
         mockResponse(apiRequest, marketInstrumentListResponse);
+    }
+
+    protected void performAndExpectResponse(MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
+    }
+
+    protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
+        final String expectedResponseString = objectMapper.writeValueAsString(expectedResponse);
+        mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(JSON_CONTENT_MATCHER)
+                .andExpect(MockMvcResultMatchers.content().json(expectedResponseString));
+    }
+
+    protected void performAndExpectBadRequestResult(final MockHttpServletRequestBuilder requestBuilder, final String expectedResultMessage)
+            throws Exception {
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(RESULT_MESSAGE_MATCHER.value(expectedResultMessage))
+                .andExpect(JSON_CONTENT_MATCHER);
+    }
+
+    protected void performAndExpectBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
+        final String requestString = objectMapper.writeValueAsString(request);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate)
+                .content(requestString)
+                .contentType(MediaType.APPLICATION_JSON);
+        mockMvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
+                .andExpect(ERRORS_MATCHER.value(expectedError))
+                .andExpect(JSON_CONTENT_MATCHER);
     }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -53,10 +52,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("saveToFile", Boolean.TRUE.toString())
                 .contentType(MediaType.APPLICATION_JSON);
         final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -78,10 +74,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'from' for method parameter type OffsetDateTime is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -103,10 +96,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'to' for method parameter type OffsetDateTime is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -127,10 +117,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'candleInterval' for method parameter type CandleInterval is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -152,10 +139,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'movingAverageType' for method parameter type MovingAverageType is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -176,10 +160,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'smallWindow' for method parameter type Integer is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -200,10 +181,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Required request parameter 'bigWindow' for method parameter type Integer is not present";
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(getJsonPathMessageMatcher(expectedMessage))
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
     }
 
     @Test
@@ -264,7 +242,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("bigWindow", Integer.toString(bigWindow))
                         .contentType(MediaType.APPLICATION_JSON);
 
-        performGetCandlesAndExpect(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, expectedResponse);
     }
 
     @Test
@@ -298,7 +276,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
 
-        performGetCandlesAndExpect(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -338,7 +316,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .when(excelService)
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
 
-        performGetCandlesAndExpect(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -375,7 +353,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
 
-        performGetCandlesAndExpect(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -411,15 +389,13 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
 
-        performGetCandlesAndExpect(requestBuilder, expectedResponse);
+        performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
     }
 
     // endregion
-
-
 
     private void mockCandles(
             final String figi,
@@ -440,15 +416,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         payload.setCandles(candles);
         candlesResponse.setPayload(payload);
         mockResponse(apiRequest, candlesResponse);
-    }
-
-    private void performGetCandlesAndExpect(final MockHttpServletRequestBuilder requestBuilder, final GetCandlesResponse getCandlesResponse)
-            throws Exception {
-        final String expectedResponse = objectMapper.writeValueAsString(getCandlesResponse);
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
     }
 
 }

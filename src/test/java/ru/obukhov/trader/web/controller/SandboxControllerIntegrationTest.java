@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.web.model.exchange.ClearAllRequest;
 import ru.obukhov.trader.web.model.exchange.SetCurrencyBalanceRequest;
@@ -42,9 +40,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/currency-balance")
                 .content(request)
                 .contentType(MediaType.APPLICATION_JSON);
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
+        performAndExpectResponse(requestBuilder);
 
         mockServerClient.verify(expectationId);
     }
@@ -71,11 +67,10 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         setPositionBalanceRequest.setBalance(BigDecimal.valueOf(100000));
         final String request = objectMapper.writeValueAsString(setPositionBalanceRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
-                        .content(request)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON);
+        performAndExpectResponse(requestBuilder);
 
         mockServerClient.verify(expectationId);
     }
@@ -95,11 +90,10 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         clearAllRequest.setBrokerAccountId(brokerAccountId);
         final String request = objectMapper.writeValueAsString(clearAllRequest);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trader/sandbox/clear")
-                        .content(request)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/clear")
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON);
+        performAndExpectResponse(requestBuilder);
 
         mockServerClient.verify(expectationId);
     }
