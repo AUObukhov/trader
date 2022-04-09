@@ -1,10 +1,7 @@
 package ru.obukhov.trader.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-import org.mockserver.model.HttpRequest;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -18,11 +15,9 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleInterval;
-import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -218,36 +213,6 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     // endregion
-
-    private void mockCandles(
-            final String figi,
-            final Interval interval,
-            final CandleInterval candleInterval,
-            final List<Candle> candles
-    ) throws JsonProcessingException {
-        mockCandles(figi, interval.getFrom(), interval.getTo(), candleInterval, candles);
-    }
-
-    private void mockCandles(
-            final String figi,
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final CandleInterval candleInterval,
-            final List<Candle> candles
-    ) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/market/candles")
-                .withQueryStringParameter("figi", figi)
-                .withQueryStringParameter("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .withQueryStringParameter("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .withQueryStringParameter("interval", candleInterval.toString());
-
-        final CandlesResponse candlesResponse = new CandlesResponse();
-        final Candles payload = new Candles();
-        payload.setCandles(candles);
-        candlesResponse.setPayload(payload);
-        mockResponse(apiRequest, candlesResponse);
-    }
 
     private List<Object> mapCandleToGrafanaList(final Candle candle) {
         final String time = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candle.getTime());

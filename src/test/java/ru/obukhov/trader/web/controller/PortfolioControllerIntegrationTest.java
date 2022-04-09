@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockserver.model.HttpRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -28,9 +27,6 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPositions_returnsPositions(@Nullable final String brokerAccountId) throws Exception {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/portfolio");
-
         final PortfolioPosition position1 = new PortfolioPosition()
                 .setTicker("ticker1")
                 .setBalance(BigDecimal.valueOf(10000))
@@ -55,7 +51,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         final Portfolio portfolio = new Portfolio();
         portfolio.setPositions(positions);
         portfolioResponse.setPayload(portfolio);
-        mockResponse(apiRequest, portfolioResponse);
+        mockResponse(HttpMethod.GET, "/openapi/portfolio", portfolioResponse);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/positions")
@@ -68,9 +64,6 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getCurrencies_returnsCurrencies(@Nullable final String brokerAccountId) throws Exception {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/portfolio/currencies");
-
         final CurrencyPosition currencyPosition1 = new CurrencyPosition()
                 .currency(Currency.RUB)
                 .balance(BigDecimal.valueOf(10000))
@@ -84,7 +77,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
 
         final PortfolioCurrenciesResponse portfolioResponse = new PortfolioCurrenciesResponse();
         portfolioResponse.setCurrencies(currencies);
-        mockResponse(apiRequest, portfolioResponse);
+        mockResponse(HttpMethod.GET, "/openapi/portfolio/currencies", portfolioResponse);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/currencies")

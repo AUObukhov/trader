@@ -1,11 +1,8 @@
 package ru.obukhov.trader.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockserver.model.HttpRequest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -15,11 +12,9 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleInterval;
-import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 
 import java.math.BigDecimal;
@@ -396,26 +391,5 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     // endregion
-
-    private void mockCandles(
-            final String figi,
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final CandleInterval candleInterval,
-            final List<Candle> candles
-    ) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/market/candles")
-                .withQueryStringParameter("figi", figi)
-                .withQueryStringParameter("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .withQueryStringParameter("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .withQueryStringParameter("interval", candleInterval.toString());
-
-        final CandlesResponse candlesResponse = new CandlesResponse();
-        final Candles payload = new Candles();
-        payload.setCandles(candles);
-        candlesResponse.setPayload(payload);
-        mockResponse(apiRequest, candlesResponse);
-    }
 
 }

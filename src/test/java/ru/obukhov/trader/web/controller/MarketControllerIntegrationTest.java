@@ -2,7 +2,6 @@ package ru.obukhov.trader.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
-import org.mockserver.model.HttpRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -12,7 +11,6 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.test.utils.TestData;
-import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.exchange.GetInstrumentsResponse;
 
 import java.math.BigDecimal;
@@ -513,11 +511,7 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     // endregion
 
     private void mockInstruments(final String path, final List<MarketInstrument> instruments) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath(path);
-
-        final MarketInstrumentListResponse response = TestData.createMarketInstrumentListResponse(instruments);
-        mockResponse(apiRequest, response);
+        mockResponse(HttpMethod.GET, path, TestData.createMarketInstrumentListResponse(instruments));
     }
 
     private void performGetInstruments(final InstrumentType instrumentType, final List<MarketInstrument> expectedInstruments) throws Exception {

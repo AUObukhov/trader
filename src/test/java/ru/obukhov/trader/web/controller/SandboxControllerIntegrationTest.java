@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockserver.model.HttpRequest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -24,12 +23,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void setCurrencyBalance_callsSetCurrencyBalanceApi(@Nullable final String brokerAccountId) throws Exception {
-        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
-                .withPath("/openapi/sandbox/currencies/balance");
-        if (brokerAccountId != null) {
-            apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
-        }
-        String expectationId = mockResponse(apiRequest);
+        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/currencies/balance");
 
         final SetCurrencyBalanceRequest setCurrencyBalanceRequest = new SetCurrencyBalanceRequest();
         setCurrencyBalanceRequest.setBrokerAccountId(brokerAccountId);
@@ -54,12 +48,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
 
         mockFigiByTicker(ticker, figi);
 
-        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
-                .withPath("/openapi/sandbox/positions/balance");
-        if (brokerAccountId != null) {
-            apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
-        }
-        String expectationId = mockResponse(apiRequest);
+        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/positions/balance");
 
         final SetPositionBalanceRequest setPositionBalanceRequest = new SetPositionBalanceRequest();
         setPositionBalanceRequest.setBrokerAccountId(brokerAccountId);
@@ -79,12 +68,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void clearAll_callsClearAllApi_whenBrokerAccountIdIsNotNull(@Nullable final String brokerAccountId) throws Exception {
-        HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.POST)
-                .withPath("/openapi/sandbox/clear");
-        if (brokerAccountId != null) {
-            apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
-        }
-        String expectationId = mockResponse(apiRequest);
+        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/clear");
 
         final ClearAllRequest clearAllRequest = new ClearAllRequest();
         clearAllRequest.setBrokerAccountId(brokerAccountId);
