@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.model.exchange.ClearAllRequest;
 import ru.obukhov.trader.web.model.exchange.SetCurrencyBalanceRequest;
 import ru.obukhov.trader.web.model.exchange.SetPositionBalanceRequest;
@@ -29,7 +30,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         setCurrencyBalanceRequest.setBrokerAccountId(brokerAccountId);
         setCurrencyBalanceRequest.setCurrency(Currency.USD);
         setCurrencyBalanceRequest.setBalance(BigDecimal.valueOf(10000));
-        final String request = objectMapper.writeValueAsString(setCurrencyBalanceRequest);
+        final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(setCurrencyBalanceRequest);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/currency-balance")
                 .content(request)
@@ -54,7 +55,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         setPositionBalanceRequest.setBrokerAccountId(brokerAccountId);
         setPositionBalanceRequest.setTicker(ticker);
         setPositionBalanceRequest.setBalance(BigDecimal.valueOf(100000));
-        final String request = objectMapper.writeValueAsString(setPositionBalanceRequest);
+        final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(setPositionBalanceRequest);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/position-balance")
                 .content(request)
@@ -72,7 +73,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
 
         final ClearAllRequest clearAllRequest = new ClearAllRequest();
         clearAllRequest.setBrokerAccountId(brokerAccountId);
-        final String request = objectMapper.writeValueAsString(clearAllRequest);
+        final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(clearAllRequest);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/clear")
                 .content(request)

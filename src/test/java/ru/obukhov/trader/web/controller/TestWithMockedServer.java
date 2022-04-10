@@ -1,8 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +28,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.UserAccounts;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.client.exchange.OrdersResponse;
@@ -48,8 +47,6 @@ abstract class TestWithMockedServer {
     private ClientAndServer mockServer;
 
     protected MockServerClient mockServerClient;
-    protected final ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule());
 
     @Autowired
     protected TradingProperties tradingProperties;
@@ -152,7 +149,7 @@ abstract class TestWithMockedServer {
 
     private void mockResponse(final HttpRequest httpRequest, final Object response) throws JsonProcessingException {
         final HttpResponse apiResponse = HttpResponse.response()
-                .withBody(objectMapper.writeValueAsString(response));
+                .withBody(TestUtils.OBJECT_MAPPER.writeValueAsString(response));
 
         mockServerClient.when(httpRequest, Times.once())
                 .respond(apiResponse);

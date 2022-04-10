@@ -1,9 +1,9 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.test.utils.TestUtils;
 
 class MovingAverageTypeUnitTest {
 
@@ -36,10 +36,9 @@ class MovingAverageTypeUnitTest {
 
     @Test
     void testParsingFromJson() throws JsonProcessingException {
-        final ObjectMapper mapper = new ObjectMapper();
         for (final MovingAverageType type : MovingAverageType.values()) {
             final String json = '"' + type.getValue() + '"';
-            final MovingAverageType parsedType = mapper.readValue(json, MovingAverageType.class);
+            final MovingAverageType parsedType = TestUtils.OBJECT_MAPPER.readValue(json, MovingAverageType.class);
 
             Assertions.assertEquals(type, parsedType);
         }

@@ -18,6 +18,7 @@ import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.TestUtils;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -114,9 +115,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                 new Column("open price", ColumnType.NUMBER)
         ));
         queryResult.setRows(candles.stream().map(this::mapCandleToGrafanaList).toList());
-        final String expectedResponse = objectMapper.writeValueAsString(List.of(queryResult));
+        final String expectedResponse = TestUtils.OBJECT_MAPPER.writeValueAsString(List.of(queryResult));
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
+        final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(getDataRequest);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/grafana/query")
                         .content(request)
@@ -188,9 +189,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                 )
         );
         queryResult.setRows(rows);
-        final String expectedResponse = objectMapper.writeValueAsString(List.of(queryResult));
+        final String expectedResponse = TestUtils.OBJECT_MAPPER.writeValueAsString(List.of(queryResult));
 
-        final String request = objectMapper.writeValueAsString(getDataRequest);
+        final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(getDataRequest);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trader/grafana/query")
                         .content(request)

@@ -1,17 +1,15 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.test.utils.TestUtils;
 
 import java.util.stream.Stream;
 
 class CandleIntervalUnitTest {
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @SuppressWarnings("unused")
     static Stream<Arguments> valuesAndCandleIntervals() {
@@ -47,13 +45,13 @@ class CandleIntervalUnitTest {
     @ParameterizedTest
     @MethodSource("valuesAndCandleIntervals")
     void jsonMapping_mapsValue(final String value, final CandleInterval candleInterval) throws JsonProcessingException {
-        Assertions.assertEquals('"' + value + '"', objectMapper.writeValueAsString(candleInterval));
+        Assertions.assertEquals('"' + value + '"', TestUtils.OBJECT_MAPPER.writeValueAsString(candleInterval));
     }
 
     @ParameterizedTest
     @MethodSource("valuesAndCandleIntervals")
     void jsonMapping_createsFromValue(final String value, final CandleInterval candleInterval) throws JsonProcessingException {
-        Assertions.assertEquals(candleInterval, objectMapper.readValue('"' + value + '"', CandleInterval.class));
+        Assertions.assertEquals(candleInterval, TestUtils.OBJECT_MAPPER.readValue('"' + value + '"', CandleInterval.class));
     }
 
 }

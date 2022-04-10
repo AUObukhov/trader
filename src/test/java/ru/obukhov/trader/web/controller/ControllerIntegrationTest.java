@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.test.utils.TestUtils;
 
 @MockServerTest
 @AutoConfigureMockMvc
@@ -62,7 +63,7 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
     }
 
     protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
-        final String expectedResponseString = objectMapper.writeValueAsString(expectedResponse);
+        final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
         mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(JSON_CONTENT_MATCHER)
@@ -78,7 +79,7 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
     }
 
     protected void performAndExpectBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
-        final String requestString = objectMapper.writeValueAsString(request);
+        final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(request);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate)
                 .content(requestString)

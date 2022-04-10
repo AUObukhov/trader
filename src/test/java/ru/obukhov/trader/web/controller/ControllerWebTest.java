@@ -1,6 +1,5 @@
 package ru.obukhov.trader.web.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,8 +21,6 @@ import ru.obukhov.trader.ContextTest;
         args = "--trading.token=i identify myself as token"
 )
 abstract class ControllerWebTest extends ContextTest {
-
-    protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
     private static final JsonPathResultMatchers ERRORS_MATCHER = MockMvcResultMatchers.jsonPath("$.errors");
