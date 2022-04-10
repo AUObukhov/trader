@@ -15,6 +15,7 @@ import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
+import ru.obukhov.trader.test.utils.Mocker;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,7 +39,7 @@ class OrdersServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        Mockito.when(marketService.getFigi(ticker)).thenReturn(figi);
+        Mocker.createAndMockInstrument(marketService, ticker, figi);
         mockOrders(
                 brokerAccountId,
                 createOrder("order0", figi),

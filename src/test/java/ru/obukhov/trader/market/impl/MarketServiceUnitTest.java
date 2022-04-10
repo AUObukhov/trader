@@ -649,53 +649,15 @@ class MarketServiceUnitTest {
     // region getInstrument tests
 
     @Test
-    void getInstrument_returnsNull_whenNoMatchingTicker() throws IOException {
+    void getInstrument_returnsInstrument() throws IOException {
         final String ticker = "ticker";
 
-        final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
-        final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
+        final MarketInstrument instrument = new MarketInstrument().ticker(ticker);
+        Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        final MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
-        final MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
+        final MarketInstrument returnedInstrument = service.getInstrument(ticker);
 
-        final MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
-        final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
-
-        final MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
-        final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
-
-        final MarketInstrument marketInstrument = service.getInstrument(ticker);
-
-        Assertions.assertNull(marketInstrument);
-    }
-
-    @Test
-    void getInstrument_filtersInstruments() throws IOException {
-        final String ticker = "ticker";
-
-        final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
-        final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
-        Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
-
-        final MarketInstrument stock1 = new MarketInstrument().ticker(ticker);
-        final MarketInstrument stock2 = new MarketInstrument().ticker(ticker);
-        Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
-
-        final MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
-        final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
-        Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
-
-        final MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
-        final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
-        Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
-
-        final MarketInstrument marketInstrument = service.getInstrument(ticker);
-
-        Assertions.assertSame(stock1, marketInstrument);
+        Assertions.assertSame(instrument, returnedInstrument);
     }
 
     // endregion

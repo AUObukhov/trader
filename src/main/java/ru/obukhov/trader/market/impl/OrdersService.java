@@ -32,7 +32,7 @@ public class OrdersService {
      * If {@code brokerAccountId} null, works with default broker account
      */
     public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) throws IOException {
-        final String figi = marketService.getFigi(ticker);
+        final String figi = marketService.getInstrument(ticker).getFigi();
         return getOrders(brokerAccountId).stream()
                 .filter(order -> figi.equals(order.getFigi()))
                 .toList();

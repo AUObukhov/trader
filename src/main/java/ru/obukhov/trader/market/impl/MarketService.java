@@ -245,10 +245,7 @@ public class MarketService {
      * @return market instrument with given {@code ticker}, or null if it does not exist
      */
     public MarketInstrument getInstrument(final String ticker) throws IOException {
-        return getAllInstruments().stream()
-                .filter(instrument -> instrument.getTicker().equals(ticker))
-                .findFirst()
-                .orElse(null);
+        return tinkoffService.searchMarketInstrument(ticker);
     }
 
     /**
@@ -277,14 +274,6 @@ public class MarketService {
         result.addAll(tinkoffService.getMarketCurrencies());
 
         return result;
-    }
-
-    /**
-     * @return FIGI of market instrument with given {@code ticker}
-     * @throws NullPointerException if instrument does not exist
-     */
-    public String getFigi(final String ticker) throws IOException {
-        return tinkoffService.searchMarketInstrument(ticker).getFigi();
     }
 
 }

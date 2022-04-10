@@ -43,11 +43,28 @@ public class Mocker {
         return instrument;
     }
 
-    private static MarketInstrument createMarketInstrument(String ticker, int lotSize) {
+    public static MarketInstrument createAndMockInstrument(final MarketService marketService, final String ticker, final String figi)
+            throws IOException {
+        final MarketInstrument instrument = createMarketInstrument(ticker, figi);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        return instrument;
+    }
+
+    private static MarketInstrument createMarketInstrument(final String ticker, final int lotSize) {
         return new MarketInstrument()
                 .figi(StringUtils.EMPTY)
                 .ticker(ticker)
                 .lot(lotSize)
+                .currency(Currency.RUB)
+                .name(StringUtils.EMPTY)
+                .type(InstrumentType.STOCK);
+    }
+
+    private static MarketInstrument createMarketInstrument(final String ticker, final String figi) {
+        return new MarketInstrument()
+                .figi(figi)
+                .ticker(ticker)
+                .lot(1)
                 .currency(Currency.RUB)
                 .name(StringUtils.EMPTY)
                 .type(InstrumentType.STOCK);
