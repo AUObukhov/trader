@@ -30,7 +30,7 @@ public class Candle {
     @JsonAlias("l")
     protected BigDecimal lowestPrice;
 
-    @JsonFormat(pattern = DateUtils.ISO_OFFSET_DATE_TIME_FORMAT)
+    @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
     protected OffsetDateTime time;
 
     protected CandleInterval interval;
