@@ -8,6 +8,7 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.matchers.Times;
 import org.mockserver.mock.Expectation;
+import org.mockserver.model.HttpClassCallback;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.springtest.MockServerTest;
@@ -27,6 +28,7 @@ import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.UserAccounts;
+import ru.obukhov.trader.test.utils.CandlesExpectationResponseCallback;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
@@ -131,6 +133,15 @@ abstract class TestWithMockedServer {
         payload.setCandles(candles);
         candlesResponse.setPayload(payload);
         mockResponse(apiRequest, candlesResponse);
+    }
+
+    protected void mockAllCandles(final String figi, final List<Candle> candles) {
+        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
+                .withPath("/openapi/market/candles")
+                .withQueryStringParameter("figi", figi);
+
+        CandlesExpectationResponseCallback.setCandles(candles);
+        mockServer.when(apiRequest).respond(HttpClassCallback.callback().withCallbackClass(CandlesExpectationResponseCallback.class));
     }
 
     protected String mockResponse(final HttpMethod httpMethod, final String brokerAccountId, final String path) {
