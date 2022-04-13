@@ -31,6 +31,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     // region getCandles tests
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
         final CandleInterval candleInterval = CandleInterval._1MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
@@ -51,6 +53,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval._1MIN;
@@ -73,6 +77,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval._1MIN;
@@ -95,6 +101,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenCandleIntervalIsMissing() throws Exception {
         final String ticker = "ticker";
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
@@ -116,6 +124,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval._1MIN;
@@ -138,6 +148,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval._1MIN;
@@ -159,6 +171,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval._1MIN;
@@ -181,6 +195,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";

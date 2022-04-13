@@ -23,6 +23,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsAllInstruments_whenInstrumentTypeIsNull() throws Exception {
         final MarketInstrument etfInstrument1 = new MarketInstrument()
                 .figi("etfFigi1")
@@ -128,6 +130,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_AllInstrumentsFromCache_whenInstrumentTypeIsNull() throws Exception {
         final MarketInstrument etfInstrument1 = new MarketInstrument()
                 .figi("etfFigi1")
@@ -238,6 +242,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsStocks_whenInstrumentTypeIsStock() throws Exception {
         final InstrumentType instrumentType = InstrumentType.STOCK;
 
@@ -270,6 +276,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsStocksFromCache_whenInstrumentTypeIsStock() throws Exception {
         final InstrumentType instrumentType = InstrumentType.STOCK;
 
@@ -307,6 +315,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsEtfs_whenInstrumentTypeIsEtf() throws Exception {
         final InstrumentType instrumentType = InstrumentType.ETF;
 
@@ -339,6 +349,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsEtfsFromCache_whenInstrumentTypeIsEtf() throws Exception {
         final InstrumentType instrumentType = InstrumentType.ETF;
 
@@ -376,6 +388,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsBonds_whenInstrumentTypeIsBond() throws Exception {
         final InstrumentType instrumentType = InstrumentType.BOND;
 
@@ -408,6 +422,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsBondsFromCache_whenInstrumentTypeIsBond() throws Exception {
         final InstrumentType instrumentType = InstrumentType.BOND;
 
@@ -445,6 +461,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsCurrencies_whenInstrumentTypeIsCurrency() throws Exception {
         final InstrumentType instrumentType = InstrumentType.CURRENCY;
 
@@ -477,6 +495,8 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     @DirtiesContext
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getInstruments_returnsCurrenciesFromCache_whenInstrumentTypeIsCurrency() throws Exception {
         final InstrumentType instrumentType = InstrumentType.CURRENCY;
 

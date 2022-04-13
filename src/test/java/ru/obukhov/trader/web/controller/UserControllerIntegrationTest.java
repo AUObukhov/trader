@@ -13,6 +13,8 @@ import java.util.List;
 class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getAccounts() throws Exception {
         final UserAccount userAccount1 = new UserAccount();
         userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFF_IIS);

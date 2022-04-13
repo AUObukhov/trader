@@ -26,6 +26,8 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getPositions_returnsPositions(@Nullable final String brokerAccountId) throws Exception {
         final PortfolioPosition position1 = new PortfolioPosition()
                 .setTicker("ticker1")
@@ -63,6 +65,8 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getCurrencies_returnsCurrencies(@Nullable final String brokerAccountId) throws Exception {
         final CurrencyPosition currencyPosition1 = new CurrencyPosition()
                 .currency(Currency.RUB)

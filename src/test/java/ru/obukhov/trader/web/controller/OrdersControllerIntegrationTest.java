@@ -21,9 +21,9 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = "2000124699")
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getOrders_returnsOrders(@Nullable final String brokerAccountId) throws Exception {
-
-
 
         final Order order1 = new Order()
                 .orderId("order1")

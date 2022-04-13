@@ -39,6 +39,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     // region getData tests
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenRangeIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setInterval(null);
@@ -47,6 +49,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetsIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(null);
@@ -55,6 +59,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetsIsEmpty() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(List.of());
@@ -63,6 +69,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetMetricIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setMetric(null);
@@ -71,6 +79,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getData_returnsBadRequest_whenTargetTypeIsNull() throws Exception {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setType(null);
