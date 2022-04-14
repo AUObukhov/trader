@@ -22,6 +22,7 @@ import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.web.TestWithMockedServer;
 
 @MockServerTest
 @AutoConfigureMockMvc

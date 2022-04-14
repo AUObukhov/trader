@@ -1,4 +1,4 @@
-package ru.obukhov.trader.web.controller;
+package ru.obukhov.trader.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.ObjectUtils;
@@ -44,7 +44,7 @@ import java.util.List;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
-abstract class TestWithMockedServer {
+public abstract class TestWithMockedServer {
 
     private ClientAndServer mockServer;
 
