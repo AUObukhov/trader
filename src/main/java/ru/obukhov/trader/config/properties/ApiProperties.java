@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @ConfigurationProperties(prefix = "ru.tinkoff.invest.openapi")
 @Validated
 public record ApiProperties(
-        @NotNull String host,
+        @NotNull(message = "host is mandatory") String host,
         @Nullable Integer port
 ) {
 }
