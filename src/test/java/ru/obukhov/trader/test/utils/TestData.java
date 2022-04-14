@@ -374,8 +374,7 @@ public class TestData {
     // endregion
 
     public static MarketInstrumentListResponse createMarketInstrumentListResponse(List<MarketInstrument> instruments) {
-        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList();
-        marketInstrumentList.setInstruments(instruments);
+        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList(BigDecimal.valueOf(instruments.size()), instruments);
 
         final MarketInstrumentListResponse response = new MarketInstrumentListResponse();
         response.setPayload(marketInstrumentList);

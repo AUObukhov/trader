@@ -42,7 +42,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
+        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().instruments();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
+        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().instruments();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
+        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().instruments();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
+        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().instruments();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MarketClientImpl extends AbstractClient implements MarketClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().getInstruments();
+        return executeAndGetBody(request, MarketInstrumentListResponse.class).getPayload().instruments();
     }
 
     @Override
