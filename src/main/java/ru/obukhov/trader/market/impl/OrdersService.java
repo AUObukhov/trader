@@ -73,10 +73,7 @@ public class OrdersService {
             @NotNull final OperationType operationType,
             final BigDecimal price
     ) throws IOException {
-        final LimitOrderRequest orderRequest = new LimitOrderRequest()
-                .lots(lots)
-                .operation(operationType)
-                .price(price);
+        final LimitOrderRequest orderRequest = new LimitOrderRequest(lots, operationType, price);
         return tinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
     }
 

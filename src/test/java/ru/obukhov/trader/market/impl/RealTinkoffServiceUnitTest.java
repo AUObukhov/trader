@@ -292,7 +292,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
-        final LimitOrderRequest orderRequest = new LimitOrderRequest();
+        final LimitOrderRequest orderRequest = new LimitOrderRequest(null, null, null);
 
         final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
         Mockito.when(ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
