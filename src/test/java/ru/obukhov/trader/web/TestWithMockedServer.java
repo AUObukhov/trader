@@ -130,7 +130,7 @@ public abstract class TestWithMockedServer {
 
         final CandlesResponse candlesResponse = new CandlesResponse();
         final Candles payload = new Candles();
-        payload.setCandles(candles);
+        payload.setCandleList(candles);
         candlesResponse.setPayload(payload);
         mockResponse(apiRequest, candlesResponse);
     }

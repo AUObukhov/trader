@@ -34,7 +34,7 @@ public class CandlesExpectationResponseCallback implements ExpectationResponseCa
                 .toList();
 
         final Candles payload = new Candles();
-        payload.setCandles(candles);
+        payload.setCandleList(candles);
         final CandlesResponse candlesResponse = new CandlesResponse();
         candlesResponse.setPayload(payload);
 
