@@ -150,7 +150,8 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -183,10 +184,11 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
@@ -228,10 +230,11 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);

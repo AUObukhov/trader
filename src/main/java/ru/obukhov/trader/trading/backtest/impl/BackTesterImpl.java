@@ -231,7 +231,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private Currency getCurrency(final FakeBot fakeBot, final String ticker) throws IOException {
-        return fakeBot.searchMarketInstrument(ticker).getCurrency();
+        return fakeBot.searchMarketInstrument(ticker).currency();
     }
 
     private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) throws IOException {

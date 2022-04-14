@@ -11,11 +11,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
-import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,7 +40,8 @@ class OrdersServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        Mocker.createAndMockInstrument(marketService, ticker, figi);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, figi);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
         mockOrders(
                 brokerAccountId,
                 createOrder("order0", figi),

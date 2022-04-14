@@ -21,7 +21,7 @@ import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 
 import java.io.IOException;
@@ -54,7 +54,8 @@ class FakeBotUnitTest {
     @Test
     void searchMarketInstrument() throws IOException {
         final String ticker = "ticker";
-        final MarketInstrument expectedInstrument = Mocker.createAndMockInstrument(fakeTinkoffService, ticker, 10);
+        final MarketInstrument expectedInstrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(fakeTinkoffService.searchMarketInstrument(ticker)).thenReturn(expectedInstrument);
 
         final MarketInstrument instrument = fakeBot.searchMarketInstrument(ticker);
 

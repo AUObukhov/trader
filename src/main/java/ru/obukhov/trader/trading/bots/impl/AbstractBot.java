@@ -95,7 +95,7 @@ public abstract class AbstractBot implements Bot {
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
         final MarketInstrument instrument = marketService.getInstrument(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.getCurrency()));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.currency()));
         decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
         decisionData.setInstrument(instrument);

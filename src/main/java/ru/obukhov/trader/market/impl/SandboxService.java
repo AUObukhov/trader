@@ -45,7 +45,7 @@ public class SandboxService {
     public void setPositionBalance(@Nullable final String brokerAccountId, @NotNull final String ticker, @NotNull final BigDecimal balance)
             throws IOException {
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
-                .figi(marketService.getInstrument(ticker).getFigi())
+                .figi(marketService.getInstrument(ticker).figi())
                 .balance(balance);
 
         sandboxClient.setPositionBalance(setPositionBalanceRequest, brokerAccountId);

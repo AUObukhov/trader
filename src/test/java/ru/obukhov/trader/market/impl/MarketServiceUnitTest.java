@@ -652,7 +652,7 @@ class MarketServiceUnitTest {
     void getInstrument_returnsInstrument() throws IOException {
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = new MarketInstrument().ticker(ticker);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker);
         Mockito.when(tinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         final MarketInstrument returnedInstrument = service.getInstrument(ticker);
@@ -666,8 +666,8 @@ class MarketServiceUnitTest {
 
     @Test
     void getInstruments_returnsEtfs_whenTypeIsEtf() throws IOException {
-        final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
-        final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
+        final MarketInstrument etf1 = TestData.createMarketInstrument("etf1");
+        final MarketInstrument etf2 = TestData.createMarketInstrument("etf2");
         Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
         final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.ETF);
@@ -679,8 +679,8 @@ class MarketServiceUnitTest {
 
     @Test
     void getInstruments_returnsStocks_whenTypeIsStock() throws IOException {
-        final MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
-        final MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
+        final MarketInstrument stock1 = TestData.createMarketInstrument("stock1");
+        final MarketInstrument stock2 = TestData.createMarketInstrument("stock2");
         Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
         final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.STOCK);
@@ -692,8 +692,8 @@ class MarketServiceUnitTest {
 
     @Test
     void getInstruments_returnsBonds_whenTypeIsBond() throws IOException {
-        final MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
-        final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
+        final MarketInstrument bond1 = TestData.createMarketInstrument("bond1");
+        final MarketInstrument bond2 = TestData.createMarketInstrument("bond2");
         Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
         final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.BOND);
@@ -705,8 +705,8 @@ class MarketServiceUnitTest {
 
     @Test
     void getInstruments_returnsCurrencies_whenTypeIsCurrency() throws IOException {
-        final MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
-        final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
+        final MarketInstrument currency1 = TestData.createMarketInstrument("currency1");
+        final MarketInstrument currency2 = TestData.createMarketInstrument("currency2");
         Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         final List<MarketInstrument> instruments = service.getInstruments(InstrumentType.CURRENCY);
@@ -718,20 +718,20 @@ class MarketServiceUnitTest {
 
     @Test
     void getInstruments_returnsAllInstruments_whenTypeIsNull() throws IOException {
-        final MarketInstrument etf1 = new MarketInstrument().ticker("etf1");
-        final MarketInstrument etf2 = new MarketInstrument().ticker("etf2");
+        final MarketInstrument etf1 = TestData.createMarketInstrument("etf1");
+        final MarketInstrument etf2 = TestData.createMarketInstrument("etf2");
         Mockito.when(tinkoffService.getMarketEtfs()).thenReturn(List.of(etf1, etf2));
 
-        final MarketInstrument stock1 = new MarketInstrument().ticker("stock1");
-        final MarketInstrument stock2 = new MarketInstrument().ticker("stock2");
+        final MarketInstrument stock1 = TestData.createMarketInstrument("stock1");
+        final MarketInstrument stock2 = TestData.createMarketInstrument("stock2");
         Mockito.when(tinkoffService.getMarketStocks()).thenReturn(List.of(stock1, stock2));
 
-        final MarketInstrument bond1 = new MarketInstrument().ticker("bond1");
-        final MarketInstrument bond2 = new MarketInstrument().ticker("bond2");
+        final MarketInstrument bond1 = TestData.createMarketInstrument("bond1");
+        final MarketInstrument bond2 = TestData.createMarketInstrument("bond2");
         Mockito.when(tinkoffService.getMarketBonds()).thenReturn(List.of(bond1, bond2));
 
-        final MarketInstrument currency1 = new MarketInstrument().ticker("currency1");
-        final MarketInstrument currency2 = new MarketInstrument().ticker("currency2");
+        final MarketInstrument currency1 = TestData.createMarketInstrument("currency1");
+        final MarketInstrument currency2 = TestData.createMarketInstrument("currency2");
         Mockito.when(tinkoffService.getMarketCurrencies()).thenReturn(List.of(currency1, currency2));
 
         final List<MarketInstrument> instruments = service.getInstruments(null);

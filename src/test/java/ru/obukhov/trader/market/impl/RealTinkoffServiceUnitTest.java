@@ -76,8 +76,8 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getMarketStocks_returnsStocks() throws IOException {
-        final MarketInstrument instrument1 = new MarketInstrument();
-        final MarketInstrument instrument2 = new MarketInstrument();
+        final MarketInstrument instrument1 = TestData.createMarketInstrument();
+        final MarketInstrument instrument2 = TestData.createMarketInstrument();
         Mockito.when(marketClient.getMarketStocks()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketStocks();
@@ -89,8 +89,8 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getMarketBonds_returnsBonds() throws IOException {
-        final MarketInstrument instrument1 = new MarketInstrument();
-        final MarketInstrument instrument2 = new MarketInstrument();
+        final MarketInstrument instrument1 = TestData.createMarketInstrument();
+        final MarketInstrument instrument2 = TestData.createMarketInstrument();
         Mockito.when(marketClient.getMarketBonds()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketBonds();
@@ -102,8 +102,8 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getMarketEtfs_returnsEtfs() throws IOException {
-        final MarketInstrument instrument1 = new MarketInstrument();
-        final MarketInstrument instrument2 = new MarketInstrument();
+        final MarketInstrument instrument1 = TestData.createMarketInstrument();
+        final MarketInstrument instrument2 = TestData.createMarketInstrument();
         Mockito.when(marketClient.getMarketEtfs()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketEtfs();
@@ -115,8 +115,8 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getMarketCurrencies_returnsCurrencies() throws IOException {
-        final MarketInstrument instrument1 = new MarketInstrument();
-        final MarketInstrument instrument2 = new MarketInstrument();
+        final MarketInstrument instrument1 = TestData.createMarketInstrument();
+        final MarketInstrument instrument2 = TestData.createMarketInstrument();
         Mockito.when(marketClient.getMarketCurrencies()).thenReturn(List.of(instrument1, instrument2));
 
         final List<MarketInstrument> result = realTinkoffService.getMarketCurrencies();
@@ -134,7 +134,7 @@ class RealTinkoffServiceUnitTest {
         final String figi = "figi";
         final int depth = 10;
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final Orderbook orderbook = new Orderbook();
         Mockito.when(marketClient.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
@@ -149,7 +149,7 @@ class RealTinkoffServiceUnitTest {
         final String figi = "figi";
         final int depth = 10;
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
         Assertions.assertNull(result);
@@ -168,7 +168,7 @@ class RealTinkoffServiceUnitTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval._1MIN;
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
         final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
                 candleInterval,
                 1000,
@@ -204,7 +204,7 @@ class RealTinkoffServiceUnitTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval._1MIN;
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final Candles expectedCandles = new Candles(null, null, List.of());
         Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
@@ -232,8 +232,8 @@ class RealTinkoffServiceUnitTest {
     @Test
     void searchMarketInstrument_returnsFirstInstrument_whenGetsMultipleInstruments() throws IOException {
         final String ticker = "ticker";
-        final MarketInstrument instrument1 = new MarketInstrument().ticker(ticker);
-        final MarketInstrument instrument2 = new MarketInstrument().ticker(ticker);
+        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker);
+        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker);
 
         Mockito.when(marketClient.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of(instrument1, instrument2));
 
@@ -255,7 +255,7 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final Operation operation1 = new Operation();
         final Operation operation2 = new Operation();
@@ -290,7 +290,7 @@ class RealTinkoffServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final LimitOrderRequest orderRequest = new LimitOrderRequest(null, null, null);
 
@@ -308,7 +308,7 @@ class RealTinkoffServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
+        mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
         final MarketOrderRequest orderRequest = new MarketOrderRequest();
 
@@ -424,7 +424,7 @@ class RealTinkoffServiceUnitTest {
     }
 
     private void mockInstrument(MarketInstrument instrument) throws IOException {
-        Mockito.when(marketClient.searchMarketInstrumentsByTicker(instrument.getTicker()))
+        Mockito.when(marketClient.searchMarketInstrumentsByTicker(instrument.ticker()))
                 .thenReturn(List.of(instrument));
     }
 

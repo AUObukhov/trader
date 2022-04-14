@@ -333,13 +333,14 @@ class BackTesterImplUnitTest {
                 .build();
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
-        final MarketInstrument marketInstrument1 = Mocker.createAndMockInstrument(fakeBot1, ticker1, 10);
+        final MarketInstrument marketInstrument1 = TestData.createMarketInstrument(ticker1, 10);
+        Mockito.when(fakeBot1.searchMarketInstrument(ticker1)).thenReturn(marketInstrument1);
 
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
-        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.getCurrency())).thenReturn(currentBalance1);
+        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.currency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.currency())).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
 
         final String brokerAccountId2 = "2000124699";
@@ -363,13 +364,14 @@ class BackTesterImplUnitTest {
                 .build();
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
-        final MarketInstrument marketInstrument2 = Mocker.createAndMockInstrument(fakeBot2, ticker2, 10);
+        final MarketInstrument marketInstrument2 = TestData.createMarketInstrument(ticker2, 10);
+        Mockito.when(fakeBot2.searchMarketInstrument(ticker1)).thenReturn(marketInstrument2);
 
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
-        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.getCurrency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.getCurrency())).thenReturn(currentBalance2);
+        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.currency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.currency())).thenReturn(currentBalance2);
         mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
@@ -389,7 +391,7 @@ class BackTesterImplUnitTest {
                 .addInvestment(
                         Mockito.eq(brokerAccountId1),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(marketInstrument1.getCurrency()),
+                        Mockito.eq(marketInstrument1.currency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
 
@@ -397,7 +399,7 @@ class BackTesterImplUnitTest {
                 .addInvestment(
                         Mockito.eq(brokerAccountId2),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(marketInstrument2.getCurrency()),
+                        Mockito.eq(marketInstrument2.currency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
     }
@@ -1106,11 +1108,12 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
-        final MarketInstrument marketInstrument = Mocker.createAndMockInstrument(fakeBot, ticker, 10);
+        final MarketInstrument marketInstrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(fakeBot.searchMarketInstrument(ticker)).thenReturn(marketInstrument);
         mockBotCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
-        mockInvestments(fakeBot, brokerAccountId, marketInstrument.getCurrency(), interval.getFrom(), balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.getCurrency())).thenReturn(currentBalance);
+        mockInvestments(fakeBot, brokerAccountId, marketInstrument.currency(), interval.getFrom(), balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.currency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
             mockPortfolioPosition(fakeBot, brokerAccountId, ticker, positionLotsCount);
             mockCurrentPrice(fakeBot, ticker, currentPrice);

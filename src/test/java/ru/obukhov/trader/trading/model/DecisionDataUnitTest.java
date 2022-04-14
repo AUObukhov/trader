@@ -3,8 +3,6 @@ package ru.obukhov.trader.trading.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 
@@ -19,12 +17,8 @@ class DecisionDataUnitTest {
     void getPositionLotsCount() {
         final DecisionData decisionData = new DecisionData();
 
-        final PortfolioPosition position = TestData.createPortfolioPosition(30);
-        decisionData.setPosition(position);
-
-        final MarketInstrument instrument = new MarketInstrument();
-        instrument.setLot(5);
-        decisionData.setInstrument(instrument);
+        decisionData.setPosition(TestData.createPortfolioPosition(30));
+        decisionData.setInstrument(TestData.createMarketInstrument(5));
 
         Assertions.assertEquals(6, decisionData.getPositionLotsCount());
 

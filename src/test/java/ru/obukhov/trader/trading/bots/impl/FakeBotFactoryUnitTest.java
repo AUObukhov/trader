@@ -15,7 +15,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
-import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -61,7 +61,8 @@ class FakeBotFactoryUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, 10);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 

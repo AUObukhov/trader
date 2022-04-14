@@ -92,8 +92,7 @@ public abstract class TestWithMockedServer {
     }
 
     protected void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
-        final MarketInstrument instrument = new MarketInstrument().figi(figi);
-        mockInstrumentByTicker(ticker, instrument);
+        mockInstrumentByTicker(ticker, TestData.createMarketInstrument(ticker, figi));
     }
 
     protected void mockInstrumentByTicker(final String ticker, final MarketInstrument instrument) throws JsonProcessingException {

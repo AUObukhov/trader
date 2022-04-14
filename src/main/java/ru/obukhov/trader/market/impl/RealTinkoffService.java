@@ -81,14 +81,14 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
 
     @Override
     public Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).getFigi();
+        final String figi = self.searchMarketInstrument(ticker).figi();
         return marketClient.getMarketOrderbook(figi, depth);
     }
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
     public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).getFigi();
+        final String figi = self.searchMarketInstrument(ticker).figi();
         final List<Candle> candles = marketClient
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval)
                 .candleList();
@@ -110,7 +110,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
 
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).getFigi();
+        final String figi = self.searchMarketInstrument(ticker).figi();
         return operationsClient.getOperations(brokerAccountId, interval.getFrom(), interval.getTo(), figi);
     }
 
@@ -126,14 +126,14 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     @Override
     public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
             throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).getFigi();
+        final String figi = self.searchMarketInstrument(ticker).figi();
         return ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
     public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
             throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).getFigi();
+        final String figi = self.searchMarketInstrument(ticker).figi();
         return ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest);
     }
 

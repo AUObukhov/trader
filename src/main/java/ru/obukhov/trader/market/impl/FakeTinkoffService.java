@@ -215,7 +215,7 @@ public class FakeTinkoffService implements TinkoffService {
             throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final int count = instrument.getLot() * orderRequest.getLots();
+        final int count = instrument.lot() * orderRequest.getLots();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
         final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
@@ -240,7 +240,7 @@ public class FakeTinkoffService implements TinkoffService {
     ) throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
 
-        updateBalance(brokerAccountId, instrument.getCurrency(), totalPrice.negate().subtract(commissionAmount));
+        updateBalance(brokerAccountId, instrument.currency(), totalPrice.negate().subtract(commissionAmount));
 
         final PortfolioPosition existingPosition = fakeContext.getPosition(null, ticker);
         PortfolioPosition position;
@@ -248,9 +248,9 @@ public class FakeTinkoffService implements TinkoffService {
             position = new PortfolioPosition()
                     .setTicker(ticker)
                     .setBalance(totalPrice)
-                    .setExpectedYield(new MoneyAmount(instrument.getCurrency(), BigDecimal.ZERO))
+                    .setExpectedYield(new MoneyAmount(instrument.currency(), BigDecimal.ZERO))
                     .setCount(count)
-                    .setAveragePositionPrice(new MoneyAmount(instrument.getCurrency(), currentPrice))
+                    .setAveragePositionPrice(new MoneyAmount(instrument.currency(), currentPrice))
                     .setName(StringUtils.EMPTY);
         } else {
             position = addValuesToPosition(existingPosition, count, totalPrice);
@@ -307,7 +307,7 @@ public class FakeTinkoffService implements TinkoffService {
 
         final MarketInstrument instrument = searchMarketInstrument(ticker);
 
-        updateBalance(brokerAccountId, instrument.getCurrency(), totalPrice.subtract(commissionAmount));
+        updateBalance(brokerAccountId, instrument.currency(), totalPrice.subtract(commissionAmount));
         if (newLotsCount == 0) {
             fakeContext.removePosition(brokerAccountId, ticker);
         } else {

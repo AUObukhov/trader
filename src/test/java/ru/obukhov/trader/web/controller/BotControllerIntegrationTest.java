@@ -242,10 +242,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        final MarketInstrument instrument = new MarketInstrument()
-                .figi(figi)
-                .lot(1)
-                .currency(Currency.USD);
+        final MarketInstrument instrument = new MarketInstrument(figi, null, null, null, 1, null, Currency.USD, null, null);
         mockInstrumentByTicker(ticker, instrument);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");

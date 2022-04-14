@@ -26,92 +26,100 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getInstruments_returnsAllInstruments_whenInstrumentTypeIsNull() throws Exception {
-        final MarketInstrument etfInstrument1 = new MarketInstrument()
-                .figi("etfFigi1")
-                .ticker("etfTicker1")
-                .isin("etfIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("etfName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument etfInstrument2 = new MarketInstrument()
-                .figi("etfFigi2")
-                .ticker("etfTicker2")
-                .isin("etfIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("etfName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument etfInstrument1 = new MarketInstrument(
+                "etfFigi1",
+                "etfTicker1",
+                "etfIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "etfName1",
+                InstrumentType.ETF
+        );
+        final MarketInstrument etfInstrument2 = new MarketInstrument(
+                "etfFigi2",
+                "etfTicker2",
+                "etfIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "etfName2",
+                InstrumentType.ETF
+        );
         final List<MarketInstrument> etfInstruments = List.of(etfInstrument1, etfInstrument2);
 
-        final MarketInstrument stockInstrument1 = new MarketInstrument()
-                .figi("stockFigi1")
-                .ticker("stockTicker1")
-                .isin("stockIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("stockName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument stockInstrument2 = new MarketInstrument()
-                .figi("stockFigi2")
-                .ticker("stockTicker2")
-                .isin("stockIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("stockName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument stockInstrument1 = new MarketInstrument(
+                "stockFigi1",
+                "stockTicker1",
+                "stockTicker1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "stockName1",
+                InstrumentType.STOCK
+        );
+        final MarketInstrument stockInstrument2 = new MarketInstrument(
+                "stockFigi2",
+                "stockTicker2",
+                "stockTicker2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "stockName2",
+                InstrumentType.STOCK
+        );
         final List<MarketInstrument> stockInstruments = List.of(stockInstrument1, stockInstrument2);
 
-        final MarketInstrument bondInstrument1 = new MarketInstrument()
-                .figi("bondFigi1")
-                .ticker("bondTicker1")
-                .isin("bondIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("bondName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument bondInstrument2 = new MarketInstrument()
-                .figi("bondFigi2")
-                .ticker("bondTicker2")
-                .isin("bondIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("bondName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument bondInstrument1 = new MarketInstrument(
+                "bondFigi1",
+                "bondTicker1",
+                "bondIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "bondName1",
+                InstrumentType.BOND
+        );
+        final MarketInstrument bondInstrument2 = new MarketInstrument(
+                "bondFigi2",
+                "bondTicker2",
+                "bondIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "bondName2",
+                InstrumentType.BOND
+        );
         final List<MarketInstrument> bondInstruments = List.of(bondInstrument1, bondInstrument2);
 
-        final MarketInstrument currencyInstrument1 = new MarketInstrument()
-                .figi("currencyFigi1")
-                .ticker("currencyTicker1")
-                .isin("currencyIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("currencyName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument currencyInstrument2 = new MarketInstrument()
-                .figi("currencyFigi2")
-                .ticker("currencyTicker2")
-                .isin("currencyIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("currencyName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument currencyInstrument1 = new MarketInstrument(
+                "currencyFigi1",
+                "currencyTicker1",
+                "currencyIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "currencyName1",
+                InstrumentType.CURRENCY
+        );
+        final MarketInstrument currencyInstrument2 = new MarketInstrument(
+                "currencyFigi2",
+                "currencyTicker2",
+                "currencyIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "currencyName2",
+                InstrumentType.CURRENCY
+        );
         final List<MarketInstrument> currencyInstruments = List.of(currencyInstrument1, currencyInstrument2);
 
         mockInstruments("/openapi/market/etfs", etfInstruments);
@@ -133,92 +141,100 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getInstruments_AllInstrumentsFromCache_whenInstrumentTypeIsNull() throws Exception {
-        final MarketInstrument etfInstrument1 = new MarketInstrument()
-                .figi("etfFigi1")
-                .ticker("etfTicker1")
-                .isin("etfIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("etfName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument etfInstrument2 = new MarketInstrument()
-                .figi("etfFigi2")
-                .ticker("etfTicker2")
-                .isin("etfIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("etfName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument etfInstrument1 = new MarketInstrument(
+                "etfFigi1",
+                "etfTicker1",
+                "etfIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "etfName1",
+                InstrumentType.ETF
+        );
+        final MarketInstrument etfInstrument2 = new MarketInstrument(
+                "etfFigi2",
+                "etfTicker2",
+                "etfIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "etfName2",
+                InstrumentType.ETF
+        );
         final List<MarketInstrument> etfInstruments = List.of(etfInstrument1, etfInstrument2);
 
-        final MarketInstrument stockInstrument1 = new MarketInstrument()
-                .figi("stockFigi1")
-                .ticker("stockTicker1")
-                .isin("stockIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("stockName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument stockInstrument2 = new MarketInstrument()
-                .figi("stockFigi2")
-                .ticker("stockTicker2")
-                .isin("stockIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("stockName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument stockInstrument1 = new MarketInstrument(
+                "stockFigi1",
+                "stockTicker1",
+                "stockTicker1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "stockName1",
+                InstrumentType.STOCK
+        );
+        final MarketInstrument stockInstrument2 = new MarketInstrument(
+                "stockFigi2",
+                "stockTicker2",
+                "stockTicker2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "stockName2",
+                InstrumentType.STOCK
+        );
         final List<MarketInstrument> stockInstruments = List.of(stockInstrument1, stockInstrument2);
 
-        final MarketInstrument bondInstrument1 = new MarketInstrument()
-                .figi("bondFigi1")
-                .ticker("bondTicker1")
-                .isin("bondIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("bondName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument bondInstrument2 = new MarketInstrument()
-                .figi("bondFigi2")
-                .ticker("bondTicker2")
-                .isin("bondIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("bondName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument bondInstrument1 = new MarketInstrument(
+                "bondFigi1",
+                "bondTicker1",
+                "bondIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "bondName1",
+                InstrumentType.BOND
+        );
+        final MarketInstrument bondInstrument2 = new MarketInstrument(
+                "bondFigi2",
+                "bondTicker2",
+                "bondIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "bondName2",
+                InstrumentType.BOND
+        );
         final List<MarketInstrument> bondInstruments = List.of(bondInstrument1, bondInstrument2);
 
-        final MarketInstrument currencyInstrument1 = new MarketInstrument()
-                .figi("currencyFigi1")
-                .ticker("currencyTicker1")
-                .isin("currencyIsin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("currencyName1")
-                .type(InstrumentType.STOCK);
-        final MarketInstrument currencyInstrument2 = new MarketInstrument()
-                .figi("currencyFigi2")
-                .ticker("currencyTicker2")
-                .isin("currencyIsin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("currencyName2")
-                .type(InstrumentType.STOCK);
+        final MarketInstrument currencyInstrument1 = new MarketInstrument(
+                "currencyFigi1",
+                "currencyTicker1",
+                "currencyIsin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "currencyName1",
+                InstrumentType.CURRENCY
+        );
+        final MarketInstrument currencyInstrument2 = new MarketInstrument(
+                "currencyFigi2",
+                "currencyTicker2",
+                "currencyIsin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "currencyName2",
+                InstrumentType.CURRENCY
+        );
         final List<MarketInstrument> currencyInstruments = List.of(currencyInstrument1, currencyInstrument2);
 
         mockInstruments("/openapi/market/etfs", etfInstruments);
@@ -247,26 +263,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsStocks_whenInstrumentTypeIsStock() throws Exception {
         final InstrumentType instrumentType = InstrumentType.STOCK;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/stocks", instruments);
@@ -281,26 +299,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsStocksFromCache_whenInstrumentTypeIsStock() throws Exception {
         final InstrumentType instrumentType = InstrumentType.STOCK;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/stocks", instruments);
@@ -320,26 +340,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsEtfs_whenInstrumentTypeIsEtf() throws Exception {
         final InstrumentType instrumentType = InstrumentType.ETF;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/etfs", instruments);
@@ -354,26 +376,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsEtfsFromCache_whenInstrumentTypeIsEtf() throws Exception {
         final InstrumentType instrumentType = InstrumentType.ETF;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/etfs", instruments);
@@ -393,26 +417,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsBonds_whenInstrumentTypeIsBond() throws Exception {
         final InstrumentType instrumentType = InstrumentType.BOND;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/bonds", instruments);
@@ -427,26 +453,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsBondsFromCache_whenInstrumentTypeIsBond() throws Exception {
         final InstrumentType instrumentType = InstrumentType.BOND;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/bonds", instruments);
@@ -466,26 +494,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsCurrencies_whenInstrumentTypeIsCurrency() throws Exception {
         final InstrumentType instrumentType = InstrumentType.CURRENCY;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/currencies", instruments);
@@ -500,26 +530,28 @@ class MarketControllerIntegrationTest extends ControllerIntegrationTest {
     void getInstruments_returnsCurrenciesFromCache_whenInstrumentTypeIsCurrency() throws Exception {
         final InstrumentType instrumentType = InstrumentType.CURRENCY;
 
-        final MarketInstrument instrument1 = new MarketInstrument()
-                .figi("figi1")
-                .ticker("ticker1")
-                .isin("isin1")
-                .minPriceIncrement(BigDecimal.valueOf(10))
-                .lot(1)
-                .minQuantity(1)
-                .currency(Currency.RUB)
-                .name("name1")
-                .type(instrumentType);
-        final MarketInstrument instrument2 = new MarketInstrument()
-                .figi("figi2")
-                .ticker("ticker2")
-                .isin("isin2")
-                .minPriceIncrement(BigDecimal.valueOf(20))
-                .lot(2)
-                .minQuantity(2)
-                .currency(Currency.USD)
-                .name("name2")
-                .type(instrumentType);
+        final MarketInstrument instrument1 = new MarketInstrument(
+                "figi1",
+                "ticker1",
+                "isin1",
+                BigDecimal.valueOf(10),
+                1,
+                1,
+                Currency.RUB,
+                "name1",
+                instrumentType
+        );
+        final MarketInstrument instrument2 = new MarketInstrument(
+                "figi2",
+                "ticker2",
+                "isin2",
+                BigDecimal.valueOf(20),
+                2,
+                2,
+                Currency.USD,
+                "name2",
+                instrumentType
+        );
         final List<MarketInstrument> instruments = List.of(instrument1, instrument2);
 
         mockInstruments("/openapi/market/currencies", instruments);

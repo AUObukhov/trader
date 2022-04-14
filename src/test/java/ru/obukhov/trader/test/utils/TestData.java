@@ -11,6 +11,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
@@ -152,7 +153,7 @@ public class TestData {
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setInstrument(new MarketInstrument().lot(lotSize));
+        decisionData.setInstrument(createMarketInstrument(lotSize));
         decisionData.setCommission(commission);
 
         return decisionData;
@@ -233,10 +234,74 @@ public class TestData {
 
     // region MarketInstrument creation
 
-    private static MarketInstrument createMarketInstrument(int lotSize) {
-        final MarketInstrument instrument = new MarketInstrument();
-        instrument.setLot(lotSize);
-        return instrument;
+    public static MarketInstrument createMarketInstrument() {
+        return new MarketInstrument(
+                StringUtils.EMPTY,
+                StringUtils.EMPTY,
+                StringUtils.EMPTY,
+                null,
+                1,
+                null,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.STOCK
+        );
+    }
+
+    public static MarketInstrument createMarketInstrument(final String ticker) {
+        return new MarketInstrument(
+                StringUtils.EMPTY,
+                ticker,
+                StringUtils.EMPTY,
+                null,
+                1,
+                null,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.STOCK
+        );
+    }
+
+    public static MarketInstrument createMarketInstrument(final int lotSize) {
+        return new MarketInstrument(
+                StringUtils.EMPTY,
+                StringUtils.EMPTY,
+                StringUtils.EMPTY,
+                null,
+                lotSize,
+                null,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.STOCK
+        );
+    }
+
+    public static MarketInstrument createMarketInstrument(final String ticker, final int lotSize) {
+        return new MarketInstrument(
+                StringUtils.EMPTY,
+                ticker,
+                StringUtils.EMPTY,
+                null,
+                lotSize,
+                null,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.STOCK
+        );
+    }
+
+    public static MarketInstrument createMarketInstrument(final String ticker, final String figi) {
+        return new MarketInstrument(
+                figi,
+                ticker,
+                StringUtils.EMPTY,
+                null,
+                1,
+                null,
+                Currency.RUB,
+                StringUtils.EMPTY,
+                InstrumentType.STOCK
+        );
     }
 
     // endregion

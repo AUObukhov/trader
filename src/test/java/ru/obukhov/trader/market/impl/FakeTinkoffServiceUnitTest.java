@@ -20,6 +20,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationType;
@@ -27,7 +28,6 @@ import ru.obukhov.trader.market.model.OperationTypeWithCommission;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 
@@ -278,7 +278,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
@@ -337,8 +338,10 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
+        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
+        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
 
         final OffsetDateTime ticker1OperationDateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
@@ -394,8 +397,10 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker1, lotSize);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker2, lotSize);
+        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
+        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
@@ -452,7 +457,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, 10);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         final Executable executable = () -> placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
@@ -481,7 +487,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, 10);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(1000));
 
@@ -513,7 +520,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, 10);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -549,9 +557,12 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker1, 10);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker2, 2);
-        Mocker.createAndMockInstrument(realTinkoffService, ticker3, 1);
+        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, 10);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
+        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, 2);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
+        final MarketInstrument instrument3 = TestData.createMarketInstrument(ticker3, 1);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker3)).thenReturn(instrument3);
 
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(1000));
         placeMarketOrder(brokerAccountId, ticker2, 3, OperationType.BUY, BigDecimal.valueOf(100));
@@ -597,7 +608,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -635,7 +647,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
@@ -667,7 +680,8 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        Mocker.createAndMockInstrument(realTinkoffService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));

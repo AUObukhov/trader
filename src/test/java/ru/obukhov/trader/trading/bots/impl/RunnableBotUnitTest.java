@@ -209,7 +209,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -240,7 +241,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         Mockito.when(portfolioService.getPosition(brokerAccountId, ticker)).thenThrow(new IllegalArgumentException());
 
@@ -268,7 +270,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
@@ -297,7 +300,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -328,7 +332,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -395,7 +400,8 @@ class RunnableBotUnitTest {
 
         final int lotSize = 10;
 
-        Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -493,10 +499,11 @@ class RunnableBotUnitTest {
     }
 
     private void mockData(@Nullable final String brokerAccountId, final String ticker, final int lotSize) throws IOException {
-        final MarketInstrument instrument = Mocker.createAndMockInstrument(marketService, ticker, lotSize);
+        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
+        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);

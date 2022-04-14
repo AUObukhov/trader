@@ -23,7 +23,7 @@ public class DecisionData {
     private double commission;
 
     public Integer getPositionLotsCount() {
-        return position.getCount() / instrument.getLot();
+        return position.getCount() / instrument.lot();
     }
 
     public BigDecimal getAveragePositionPrice() {
@@ -37,7 +37,7 @@ public class DecisionData {
     }
 
     public int getLotSize() {
-        return instrument.getLot();
+        return instrument.lot();
     }
 
 }

@@ -52,7 +52,7 @@ public class FakeBotFactory {
                 tinkoffServices,
                 botConfig.getBrokerAccountId(),
                 currentDateTime,
-                marketInstrument.getCurrency(),
+                marketInstrument.currency(),
                 botConfig.getCommission(),
                 balanceConfig
         );
