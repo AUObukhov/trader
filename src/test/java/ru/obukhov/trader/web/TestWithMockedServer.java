@@ -129,8 +129,7 @@ public abstract class TestWithMockedServer {
                 .withQueryStringParameter("interval", candleInterval.toString());
 
         final CandlesResponse candlesResponse = new CandlesResponse();
-        final Candles payload = new Candles();
-        payload.setCandleList(candles);
+        final Candles payload = new Candles(null, null, candles);
         candlesResponse.setPayload(payload);
         mockResponse(apiRequest, candlesResponse);
     }

@@ -91,7 +91,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
         final String figi = self.searchMarketInstrument(ticker).getFigi();
         final List<Candle> candles = marketClient
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval)
-                .getCandleList();
+                .candleList();
 
         log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
         return candles;

@@ -33,8 +33,7 @@ public class CandlesExpectationResponseCallback implements ExpectationResponseCa
                 .filter(candle -> !candle.getTime().isBefore(from) && candle.getTime().isBefore(to))
                 .toList();
 
-        final Candles payload = new Candles();
-        payload.setCandleList(candles);
+        final Candles payload = new Candles(null, null, candles);
         final CandlesResponse candlesResponse = new CandlesResponse();
         candlesResponse.setPayload(payload);
 

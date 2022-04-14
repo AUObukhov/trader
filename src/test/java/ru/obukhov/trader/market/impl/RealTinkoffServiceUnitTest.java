@@ -185,13 +185,12 @@ class RealTinkoffServiceUnitTest {
                 1000,
                 from.plusMinutes(1)
         );
-        final Candles expectedCandles = new Candles();
-        expectedCandles.setCandleList(List.of(tinkoffCandle1, tinkoffCandle2));
+        final Candles expectedCandles = new Candles(null, null, List.of(tinkoffCandle1, tinkoffCandle2));
         Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
-        Assertions.assertEquals(expectedCandles.getCandleList().size(), candles.size());
+        Assertions.assertEquals(expectedCandles.candleList().size(), candles.size());
         Assertions.assertEquals(tinkoffCandle1, candles.get(0));
         Assertions.assertEquals(tinkoffCandle2, candles.get(1));
     }
@@ -207,8 +206,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(new MarketInstrument().ticker(ticker).figi(figi));
 
-        final Candles expectedCandles = new Candles();
-        expectedCandles.setCandleList(List.of());
+        final Candles expectedCandles = new Candles(null, null, List.of());
         Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
