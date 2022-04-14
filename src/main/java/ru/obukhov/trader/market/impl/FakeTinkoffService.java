@@ -373,12 +373,7 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) {
         return fakeContext.getBalances(null).entrySet().stream()
-                .map(entry -> {
-                    final CurrencyPosition currencyPosition = new CurrencyPosition();
-                    currencyPosition.setCurrency(entry.getKey());
-                    currencyPosition.setBalance(entry.getValue());
-                    return currencyPosition;
-                })
+                .map(entry -> new CurrencyPosition(entry.getKey(), entry.getValue(), null))
                 .toList();
     }
 

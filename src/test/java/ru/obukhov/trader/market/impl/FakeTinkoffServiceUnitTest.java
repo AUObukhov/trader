@@ -706,14 +706,14 @@ class FakeTinkoffServiceUnitTest {
 
         Assertions.assertEquals(Currency.values().length, currencies.size());
         for (final Currency currency : Currency.values()) {
-            if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)) {
+            if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.currency() == currency)) {
                 Assertions.fail("Currency " + currency + " found in getPortfolioCurrencies result");
             }
         }
 
         for (final CurrencyPosition portfolioCurrency : currencies) {
-            AssertUtils.assertEquals(0, portfolioCurrency.getBalance());
-            Assertions.assertNull(portfolioCurrency.getBlocked());
+            AssertUtils.assertEquals(0, portfolioCurrency.balance());
+            Assertions.assertNull(portfolioCurrency.blocked());
         }
     }
 
@@ -738,11 +738,11 @@ class FakeTinkoffServiceUnitTest {
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
         CurrencyPosition portfolioCurrency = currencies.stream()
-                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.getCurrency() == currency)
+                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.currency() == currency)
                 .findFirst()
                 .orElseThrow();
 
-        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), portfolioCurrency.getBalance());
+        AssertUtils.assertEquals(balanceConfig.getInitialBalance(), portfolioCurrency.balance());
     }
 
     @ParameterizedTest
@@ -767,11 +767,11 @@ class FakeTinkoffServiceUnitTest {
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
         CurrencyPosition portfolioCurrency = currencies.stream()
-                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.getCurrency() == currency)
+                .filter(currentPortfolioCurrency -> currentPortfolioCurrency.currency() == currency)
                 .findFirst()
                 .orElseThrow();
 
-        AssertUtils.assertEquals(balance, portfolioCurrency.getBalance());
+        AssertUtils.assertEquals(balance, portfolioCurrency.balance());
     }
 
     // endregion

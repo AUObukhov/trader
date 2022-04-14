@@ -68,14 +68,8 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCurrencies_returnsCurrencies(@Nullable final String brokerAccountId) throws Exception {
-        final CurrencyPosition currencyPosition1 = new CurrencyPosition()
-                .currency(Currency.RUB)
-                .balance(BigDecimal.valueOf(10000))
-                .blocked(BigDecimal.ZERO);
-        final CurrencyPosition currencyPosition2 = new CurrencyPosition()
-                .currency(Currency.EUR)
-                .balance(BigDecimal.valueOf(1000))
-                .blocked(BigDecimal.valueOf(100));
+        final CurrencyPosition currencyPosition1 = TestData.createCurrencyPosition(Currency.RUB, 10000, 0);
+        final CurrencyPosition currencyPosition2 = TestData.createCurrencyPosition(Currency.EUR, 1000, 100);
 
         final List<CurrencyPosition> currencies = List.of(currencyPosition1, currencyPosition2);
 

@@ -194,16 +194,11 @@ public class TestData {
     // region CurrencyPosition creation
 
     public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
-        return new CurrencyPosition()
-                .currency(currency)
-                .balance(DecimalUtils.setDefaultScale(balance));
+        return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), null);
     }
 
     public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance, final long blocked) {
-        return new CurrencyPosition()
-                .currency(currency)
-                .balance(DecimalUtils.setDefaultScale(balance))
-                .blocked(DecimalUtils.setDefaultScale(blocked));
+        return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), DecimalUtils.setDefaultScale(blocked));
     }
 
     // endregion

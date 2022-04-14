@@ -44,16 +44,16 @@ public class PortfolioService {
      */
     public BigDecimal getAvailableBalance(@Nullable final String brokerAccountId, final Currency currency) throws IOException {
         return getCurrencies(brokerAccountId).stream()
-                .filter(portfolioCurrency -> portfolioCurrency.getCurrency() == currency)
+                .filter(portfolioCurrency -> portfolioCurrency.currency() == currency)
                 .findFirst()
                 .map(this::getAvailableBalance)
                 .orElseThrow();
     }
 
     private BigDecimal getAvailableBalance(final CurrencyPosition currency) {
-        return currency.getBlocked() == null
-                ? currency.getBalance()
-                : currency.getBalance().subtract(currency.getBlocked());
+        return currency.blocked() == null
+                ? currency.balance()
+                : currency.balance().subtract(currency.blocked());
     }
 
     /**

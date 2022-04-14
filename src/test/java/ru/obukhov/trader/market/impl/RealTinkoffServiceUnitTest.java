@@ -374,14 +374,8 @@ class RealTinkoffServiceUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
-        final CurrencyPosition currency1 = new CurrencyPosition()
-                .currency(Currency.RUB)
-                .balance(BigDecimal.valueOf(10000))
-                .blocked(BigDecimal.valueOf(1000));
-        final CurrencyPosition currency2 = new CurrencyPosition()
-                .currency(Currency.USD)
-                .balance(BigDecimal.valueOf(1000))
-                .blocked(null);
+        final CurrencyPosition currency1 = TestData.createCurrencyPosition(Currency.RUB, 10000, 1000);
+        final CurrencyPosition currency2 = TestData.createCurrencyPosition(Currency.USD, 1000);
         final List<CurrencyPosition> currencies = List.of(currency1, currency2);
         Mockito.when(portfolioClient.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
