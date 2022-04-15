@@ -227,7 +227,16 @@ public class FakeTinkoffService implements TinkoffService {
         }
 
         addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.operation());
-        return createOrder(orderRequest, totalCommission);
+        return new PlacedMarketOrder(
+                null,
+                orderRequest.operation(),
+                OrderStatus.NEW,
+                null,
+                null,
+                orderRequest.lotsCount(),
+                orderRequest.lotsCount(),
+                totalCommission
+        );
     }
 
     private void buyPosition(
@@ -345,15 +354,6 @@ public class FakeTinkoffService implements TinkoffService {
                 .operationType(operationType)
                 .build();
         fakeContext.addOperation(brokerAccountId, operation);
-    }
-
-    private PlacedMarketOrder createOrder(final MarketOrderRequest orderRequest, final MoneyAmount commission) {
-        return new PlacedMarketOrder()
-                .operation(orderRequest.operation())
-                .status(OrderStatus.NEW)
-                .executedLots(orderRequest.lotsCount())
-                .requestedLots(orderRequest.lotsCount())
-                .commission(commission);
     }
 
     @Override

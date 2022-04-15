@@ -334,7 +334,16 @@ class RealTinkoffServiceUnitTest {
 
         final MarketOrderRequest orderRequest = new MarketOrderRequest(1, OperationType.BUY);
 
-        final PlacedMarketOrder placedOrder = new PlacedMarketOrder();
+        final PlacedMarketOrder placedOrder = new PlacedMarketOrder(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
         Mockito.when(ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest))
                 .thenReturn(placedOrder);
 
