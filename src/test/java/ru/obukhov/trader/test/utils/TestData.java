@@ -145,7 +145,7 @@ public class TestData {
             final double currentPrice
     ) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setPosition(createPortfolioPosition(averagePositionPrice, positionLotsCount));
+        decisionData.setPosition(createPortfolioPosition(positionLotsCount, averagePositionPrice));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setInstrument(createMarketInstrument(lotSize));
 
@@ -167,31 +167,92 @@ public class TestData {
 
     // region PortfolioPosition creation
 
+    public static PortfolioPosition createPortfolioPosition() {
+        return new PortfolioPosition(
+                null,
+                BigDecimal.ZERO,
+                null,
+                createMoneyAmount(Currency.RUB, 0),
+                null,
+                null,
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
     public static PortfolioPosition createPortfolioPosition(final String ticker) {
-        return createPortfolioPosition(ticker, 1);
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final double averagePositionPrice, final int lotsCount) {
-        return new PortfolioPosition()
-                .setBalance(BigDecimal.ZERO)
-                .setAveragePositionPrice(createMoneyAmount(Currency.USD, averagePositionPrice))
-                .setCount(lotsCount)
-                .setName(StringUtils.EMPTY);
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
-        return new PortfolioPosition()
-                .setTicker(ticker)
-                .setBalance(BigDecimal.ZERO)
-                .setCount(lotsCount)
-                .setName(StringUtils.EMPTY);
+        return new PortfolioPosition(
+                ticker,
+                BigDecimal.ZERO,
+                null,
+                createMoneyAmount(Currency.RUB, 0),
+                null,
+                null,
+                null,
+                StringUtils.EMPTY
+        );
     }
 
     public static PortfolioPosition createPortfolioPosition(final int lotsCount) {
-        return new PortfolioPosition()
-                .setBalance(BigDecimal.ZERO)
-                .setCount(lotsCount)
-                .setName(StringUtils.EMPTY);
+        return new PortfolioPosition(
+                null,
+                BigDecimal.ZERO,
+                null,
+                createMoneyAmount(Currency.RUB, 0),
+                lotsCount,
+                null,
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
+    public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
+        return new PortfolioPosition(
+                ticker,
+                BigDecimal.ZERO,
+                null,
+                createMoneyAmount(Currency.RUB, 0),
+                lotsCount,
+                null,
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
+    public static PortfolioPosition createPortfolioPosition(final int lotsCount, final double averagePositionPrice) {
+        return new PortfolioPosition(
+                null,
+                BigDecimal.ZERO,
+                null,
+                createMoneyAmount(Currency.RUB, 0),
+                lotsCount,
+                createMoneyAmount(Currency.RUB, averagePositionPrice),
+                null,
+                StringUtils.EMPTY
+        );
+    }
+
+    public static PortfolioPosition createPortfolioPosition(
+            final String ticker,
+            final double balance,
+            final double blocked,
+            final Currency currency,
+            final double expectedYield,
+            final int count,
+            final double averagePositionPrice,
+            final double averagePositionPriceNoNkd,
+            final String name
+    ) {
+        return new PortfolioPosition(
+                ticker,
+                DecimalUtils.setDefaultScale(balance),
+                DecimalUtils.setDefaultScale(blocked),
+                TestData.createMoneyAmount(currency, expectedYield),
+                count,
+                TestData.createMoneyAmount(currency, averagePositionPrice),
+                TestData.createMoneyAmount(currency, averagePositionPriceNoNkd),
+                name
+        );
     }
 
     // endregion

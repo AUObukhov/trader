@@ -18,7 +18,6 @@ import ru.obukhov.trader.web.client.exchange.PortfolioResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
@@ -29,23 +28,29 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getPositions_returnsPositions(@Nullable final String brokerAccountId) throws Exception {
-        final PortfolioPosition position1 = new PortfolioPosition()
-                .setTicker("ticker1")
-                .setBalance(BigDecimal.valueOf(10000))
-                .setExpectedYield(TestData.createMoneyAmount(Currency.RUB, 1000))
-                .setCount(5)
-                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.RUB, 2000))
-                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.RUB, 2000))
-                .setName("name1");
+        final PortfolioPosition position1 = TestData.createPortfolioPosition(
+                "ticker1",
+                10000,
+                0,
+                Currency.RUB,
+                1000,
+                5,
+                2000,
+                0,
+                "name1"
+        );
 
-        final PortfolioPosition position2 = new PortfolioPosition()
-                .setTicker("ticker2")
-                .setBalance(BigDecimal.valueOf(20000))
-                .setExpectedYield(TestData.createMoneyAmount(Currency.USD, 2000))
-                .setCount(5)
-                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.USD, 4000))
-                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.USD, 4000))
-                .setName("name2");
+        final PortfolioPosition position2 = TestData.createPortfolioPosition(
+                "ticker2",
+                20000,
+                100,
+                Currency.USD,
+                2000,
+                5,
+                4000,
+                10,
+                "name2"
+        );
 
         final List<PortfolioPosition> positions = List.of(position1, position2);
 

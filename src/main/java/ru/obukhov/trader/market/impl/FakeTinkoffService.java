@@ -254,13 +254,16 @@ public class FakeTinkoffService implements TinkoffService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(null, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            position = new PortfolioPosition()
-                    .setTicker(ticker)
-                    .setBalance(totalPrice)
-                    .setExpectedYield(new MoneyAmount(instrument.currency(), BigDecimal.ZERO))
-                    .setCount(count)
-                    .setAveragePositionPrice(new MoneyAmount(instrument.currency(), currentPrice))
-                    .setName(StringUtils.EMPTY);
+            position = new PortfolioPosition(
+                    ticker,
+                    totalPrice,
+                    BigDecimal.ZERO,
+                    new MoneyAmount(instrument.currency(), BigDecimal.ZERO),
+                    count,
+                    new MoneyAmount(instrument.currency(), currentPrice),
+                    null,
+                    StringUtils.EMPTY
+            );
         } else {
             position = addValuesToPosition(existingPosition, count, totalPrice);
         }
@@ -269,8 +272,8 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int count, final BigDecimal totalPrice) {
-        final BigDecimal newBalance = existingPosition.getBalance().add(totalPrice);
-        final int newLotsCount = existingPosition.getCount() + count;
+        final BigDecimal newBalance = existingPosition.balance().add(totalPrice);
+        final int newLotsCount = existingPosition.count() + count;
         final BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
         return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
     }
@@ -281,16 +284,17 @@ public class FakeTinkoffService implements TinkoffService {
             final int lotsCount,
             final BigDecimal averagePositionPrice
     ) {
-        final MoneyAmount expectedYield = position.getExpectedYield();
-        return new PortfolioPosition()
-                .setTicker(position.getTicker())
-                .setBalance(balance)
-                .setBlocked(position.getBlocked())
-                .setExpectedYield(expectedYield)
-                .setCount(lotsCount)
-                .setAveragePositionPrice(new MoneyAmount(expectedYield.currency(), averagePositionPrice))
-                .setAveragePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
-                .setName(position.getName());
+        final MoneyAmount expectedYield = position.expectedYield();
+        return new PortfolioPosition(
+                position.ticker(),
+                balance,
+                position.blocked(),
+                expectedYield,
+                lotsCount,
+                new MoneyAmount(expectedYield.currency(), averagePositionPrice),
+                position.averagePositionPriceNoNkd(),
+                position.name()
+        );
     }
 
     private void updateBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
@@ -308,9 +312,9 @@ public class FakeTinkoffService implements TinkoffService {
             final BigDecimal commissionAmount
     ) throws IOException {
         final PortfolioPosition existingPosition = fakeContext.getPosition(brokerAccountId, ticker);
-        final int newLotsCount = existingPosition.getCount() - count;
+        final int newLotsCount = existingPosition.count() - count;
         if (newLotsCount < 0) {
-            final String message = "count " + count + " can't be greater than existing position lotsCount count " + existingPosition.getCount();
+            final String message = "count " + count + " can't be greater than existing position lotsCount count " + existingPosition.count();
             throw new IllegalArgumentException(message);
         }
 
@@ -326,15 +330,16 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
-        return new PortfolioPosition()
-                .setTicker(position.getTicker())
-                .setBalance(position.getBalance())
-                .setBlocked(position.getBlocked())
-                .setExpectedYield(position.getExpectedYield())
-                .setCount(count)
-                .setAveragePositionPrice(position.getAveragePositionPrice())
-                .setAveragePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
-                .setName(position.getName());
+        return new PortfolioPosition(
+                position.ticker(),
+                position.balance(),
+                position.blocked(),
+                position.expectedYield(),
+                count,
+                position.averagePositionPrice(),
+                position.averagePositionPriceNoNkd(),
+                position.name()
+        );
     }
 
     private void addOperation(

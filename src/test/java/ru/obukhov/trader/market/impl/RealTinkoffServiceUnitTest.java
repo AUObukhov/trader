@@ -40,7 +40,6 @@ import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Collection;
@@ -371,25 +370,30 @@ class RealTinkoffServiceUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) throws IOException {
-        final PortfolioPosition tinkoffPosition1 = new PortfolioPosition()
-                .setTicker("ticker1")
-                .setBalance(BigDecimal.valueOf(1000))
-                .setBlocked(null)
-                .setExpectedYield(TestData.createMoneyAmount(Currency.USD, 100))
-                .setCount(10)
-                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.USD, 110))
-                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.USD, 110))
-                .setName("name1");
+        final PortfolioPosition tinkoffPosition1 = TestData.createPortfolioPosition(
+                "ticker1",
+                1000,
+                0,
+                Currency.RUB,
+                100,
+                10,
+                110,
+                100,
+                "name1"
+        );
 
-        final PortfolioPosition tinkoffPosition2 = new PortfolioPosition()
-                .setTicker("ticker2")
-                .setBalance(BigDecimal.valueOf(2000))
-                .setBlocked(BigDecimal.valueOf(100))
-                .setExpectedYield(TestData.createMoneyAmount(Currency.USD, 200))
-                .setCount(5)
-                .setAveragePositionPrice(TestData.createMoneyAmount(Currency.USD, 440))
-                .setAveragePositionPriceNoNkd(TestData.createMoneyAmount(Currency.USD, 440))
-                .setName("name2");
+        final PortfolioPosition tinkoffPosition2 = TestData.createPortfolioPosition(
+                "ticker2",
+                2000,
+                100,
+                Currency.USD,
+                200,
+                5,
+                440,
+                400,
+                "name2"
+        );
+
         final List<PortfolioPosition> portfolioPositions = List.of(tinkoffPosition1, tinkoffPosition2);
         Mockito.when(portfolioClient.getPortfolio(brokerAccountId)).thenReturn(portfolioPositions);
 

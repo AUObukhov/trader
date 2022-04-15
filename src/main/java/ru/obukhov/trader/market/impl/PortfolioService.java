@@ -31,7 +31,7 @@ public class PortfolioService {
     public PortfolioPosition getPosition(@Nullable final String brokerAccountId, final String ticker) throws IOException {
         final List<PortfolioPosition> allPositions = getPositions(brokerAccountId);
         return allPositions.stream()
-                .filter(position -> ticker.equals(position.getTicker()))
+                .filter(position -> ticker.equals(position.ticker()))
                 .findFirst()
                 .orElse(null);
     }

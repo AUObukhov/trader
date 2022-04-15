@@ -244,8 +244,8 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) throws IOException {
-        final String ticker = portfolioPosition.getTicker();
-        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.getCount());
+        final String ticker = portfolioPosition.ticker();
+        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.count());
     }
 
     private Balances getBalances(

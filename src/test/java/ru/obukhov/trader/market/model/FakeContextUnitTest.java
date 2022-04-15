@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.model;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 
 import java.math.BigDecimal;
@@ -265,7 +265,7 @@ class FakeContextUnitTest {
         fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
 
         final String ticker = "ticker";
-        PortfolioPosition position = createPosition();
+        PortfolioPosition position = TestData.createPortfolioPosition();
 
         fakeContext.addPosition(brokerAccountId, ticker, position);
         PortfolioPosition readPosition = fakeContext.getPosition(brokerAccountId, ticker);
@@ -285,26 +285,11 @@ class FakeContextUnitTest {
         fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
 
         final String ticker = "ticker";
-        PortfolioPosition position = createPosition();
+        PortfolioPosition position = TestData.createPortfolioPosition();
 
         fakeContext.addPosition(brokerAccountId, ticker, position);
         fakeContext.removePosition(brokerAccountId, ticker);
         Assertions.assertTrue(fakeContext.getPositions(brokerAccountId).isEmpty());
-    }
-
-    @NotNull
-    private PortfolioPosition createPosition() {
-        return new PortfolioPosition();
-//                null,
-//                BigDecimal.ZERO,
-//                null,
-//                Currency.RUB,
-//                null,
-//                0,
-//                null,
-//                null,
-//                StringUtils.EMPTY
-//        );
     }
 
 }

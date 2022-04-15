@@ -51,7 +51,7 @@ class PortfolioServiceUnitTest {
 
         final PortfolioPosition position = service.getPosition(brokerAccountId, ticker2);
 
-        Assertions.assertEquals(ticker2, position.getTicker());
+        Assertions.assertEquals(ticker2, position.ticker());
     }
 
     @ParameterizedTest
