@@ -40,7 +40,7 @@ public class PortfolioClientImpl extends AbstractClient implements PortfolioClie
         final HttpUrl requestUrl = builder.build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, PortfolioResponse.class).getPayload().getPositions();
+        return executeAndGetBody(request, PortfolioResponse.class).getPayload().positions();
     }
 
     @Override

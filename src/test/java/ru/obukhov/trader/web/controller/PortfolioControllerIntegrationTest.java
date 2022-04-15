@@ -50,9 +50,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         final List<PortfolioPosition> positions = List.of(position1, position2);
 
         final PortfolioResponse portfolioResponse = new PortfolioResponse();
-        final Portfolio portfolio = new Portfolio();
-        portfolio.setPositions(positions);
-        portfolioResponse.setPayload(portfolio);
+        portfolioResponse.setPayload(new Portfolio(positions));
         mockResponse(HttpMethod.GET, "/openapi/portfolio", portfolioResponse);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
