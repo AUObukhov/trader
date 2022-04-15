@@ -74,9 +74,8 @@ public abstract class TestWithMockedServer {
         final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/user/accounts");
 
+        final UserAccounts payload = new UserAccounts(userAccounts);
         final UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
-        final UserAccounts payload = new UserAccounts();
-        payload.setAccounts(userAccounts);
         userAccountsResponse.setPayload(payload);
 
         mockResponse(apiRequest, userAccountsResponse);

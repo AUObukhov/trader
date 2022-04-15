@@ -425,15 +425,10 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getUserAccounts() throws IOException {
-        final UserAccount userAccount1 = new UserAccount();
-        userAccount1.setBrokerAccountType(BrokerAccountType.TINKOFF_IIS);
-        userAccount1.setBrokerAccountId("2008941383");
-
-        final UserAccount userAccount2 = new UserAccount();
-        userAccount2.setBrokerAccountType(BrokerAccountType.TINKOFF);
-        userAccount2.setBrokerAccountId("2000124699");
-
-        final List<UserAccount> userAccounts = List.of(userAccount1, userAccount2);
+        final List<UserAccount> userAccounts = List.of(
+                new UserAccount(BrokerAccountType.TINKOFF_IIS, "2008941383"),
+                new UserAccount(BrokerAccountType.TINKOFF, "2000124699")
+        );
 
         Mockito.when(userClient.getAccounts()).thenReturn(userAccounts);
 

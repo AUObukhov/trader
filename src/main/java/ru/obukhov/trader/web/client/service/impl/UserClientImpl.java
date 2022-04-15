@@ -32,7 +32,7 @@ public class UserClientImpl extends AbstractClient implements UserClient {
                 .build();
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, UserAccountsResponse.class).getPayload().getAccounts();
+        return executeAndGetBody(request, UserAccountsResponse.class).getPayload().accounts();
     }
 
 }
