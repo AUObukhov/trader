@@ -297,11 +297,9 @@ public class BackTesterImpl implements BackTester {
     }
 
     private List<BackTestOperation> getOperations(final List<Operation> operations, final String ticker) {
-        final List<BackTestOperation> backTestOperations = operations.stream()
-                .map(operationMapper::map)
+        return operations.stream()
+                .map(operation -> operationMapper.map(ticker, operation))
                 .toList();
-        backTestOperations.forEach(operation -> operation.setTicker(ticker));
-        return backTestOperations;
     }
 
     private void saveBackTestResultsSafe(final List<BackTestResult> backTestResults) {

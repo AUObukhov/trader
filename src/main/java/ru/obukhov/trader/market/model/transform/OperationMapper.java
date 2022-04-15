@@ -11,9 +11,10 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 @Mapper(uses = OperationTypeMapper.class)
 public interface OperationMapper {
 
-    @Mapping(target = "dateTime", source = "date")
-    @Mapping(target = "commission", source = "commission.value")
-    BackTestOperation map(final Operation source);
+    @Mapping(target = "dateTime", source = "operation.date")
+    @Mapping(target = "commission", source = "operation.commission.value")
+    @Mapping(target = "ticker", source = "ticker")
+    BackTestOperation map(final String ticker, final Operation operation);
 
     @Mapping(target = "date", source = "dateTime")
     @Mapping(target = "commission.value", source = "commission")

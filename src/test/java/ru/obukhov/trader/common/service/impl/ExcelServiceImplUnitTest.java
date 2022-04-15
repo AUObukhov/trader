@@ -364,11 +364,11 @@ class ExcelServiceImplUnitTest {
         for (final BackTestOperation operation : result.getOperations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
-                    operation.getDateTime(),
-                    operation.getOperationType().name(),
-                    operation.getPrice(),
-                    operation.getQuantity(),
-                    operation.getCommission()
+                    operation.dateTime(),
+                    operation.operationType().name(),
+                    operation.price(),
+                    operation.quantity(),
+                    operation.commission()
             );
         }
     }
@@ -475,38 +475,38 @@ class ExcelServiceImplUnitTest {
     }
 
     private List<BackTestOperation> createBackTestOperations(String ticker) {
-        BackTestOperation operation1 = BackTestOperation.builder()
-                .ticker(ticker)
-                .dateTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
-                .operationType(OperationType.BUY)
-                .price(BigDecimal.valueOf(150))
-                .quantity(1)
-                .commission(BigDecimal.valueOf(0.45))
-                .build();
-        BackTestOperation operation2 = BackTestOperation.builder()
-                .ticker(ticker)
-                .dateTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
-                .operationType(OperationType.SELL)
-                .price(BigDecimal.valueOf(180))
-                .quantity(1)
-                .commission(BigDecimal.valueOf(0.54))
-                .build();
-        BackTestOperation operation3 = BackTestOperation.builder()
-                .ticker(ticker)
-                .dateTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
-                .operationType(OperationType.BUY)
-                .price(BigDecimal.valueOf(160))
-                .quantity(3)
-                .commission(BigDecimal.valueOf(0.48))
-                .build();
-        BackTestOperation operation4 = BackTestOperation.builder()
-                .ticker(ticker)
-                .dateTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
-                .operationType(OperationType.BUY)
-                .price(BigDecimal.valueOf(120))
-                .quantity(2)
-                .commission(BigDecimal.valueOf(0.36))
-                .build();
+        BackTestOperation operation1 = new BackTestOperation(
+                ticker,
+                DateTimeTestData.createDateTime(2020, 10, 1, 10),
+                OperationType.BUY,
+                BigDecimal.valueOf(150),
+                1,
+                BigDecimal.valueOf(0.45)
+        );
+        BackTestOperation operation2 = new BackTestOperation(
+                ticker,
+                DateTimeTestData.createDateTime(2020, 10, 5, 10, 11),
+                OperationType.SELL,
+                BigDecimal.valueOf(180),
+                1,
+                BigDecimal.valueOf(0.54)
+        );
+        BackTestOperation operation3 = new BackTestOperation(
+                ticker,
+                DateTimeTestData.createDateTime(2020, 10, 10, 10, 50),
+                OperationType.BUY,
+                BigDecimal.valueOf(160),
+                3,
+                BigDecimal.valueOf(0.48)
+        );
+        BackTestOperation operation4 = new BackTestOperation(
+                ticker,
+                DateTimeTestData.createDateTime(2020, 11, 1, 10),
+                OperationType.BUY,
+                BigDecimal.valueOf(120),
+                2,
+                BigDecimal.valueOf(0.36)
+        );
 
         return List.of(operation1, operation2, operation3, operation4);
     }

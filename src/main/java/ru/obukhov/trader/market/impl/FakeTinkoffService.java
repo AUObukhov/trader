@@ -178,13 +178,13 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker) {
         Stream<BackTestOperation> operationsStream = fakeContext.getOperations(brokerAccountId).stream()
-                .filter(operation -> interval.contains(operation.getDateTime()));
+                .filter(operation -> interval.contains(operation.dateTime()));
         if (ticker != null) {
-            operationsStream = operationsStream.filter(operation -> ticker.equals(operation.getTicker()));
+            operationsStream = operationsStream.filter(operation -> ticker.equals(operation.ticker()));
         }
 
         return operationsStream
-                .sorted(Comparator.comparing(operation -> operation.getDateTime().toInstant()))
+                .sorted(Comparator.comparing(operation -> operation.dateTime().toInstant()))
                 .map(operationMapper::map)
                 .toList();
     }
@@ -346,18 +346,19 @@ public class FakeTinkoffService implements TinkoffService {
             @Nullable final String brokerAccountId,
             final String ticker,
             final BigDecimal price,
-            final int count,
+            final int quantity,
             final BigDecimal commissionAmount,
             final OperationType operationType
     ) {
-        final BackTestOperation operation = BackTestOperation.builder()
-                .ticker(ticker)
-                .price(price)
-                .quantity(count)
-                .commission(commissionAmount)
-                .dateTime(fakeContext.getCurrentDateTime())
-                .operationType(operationType)
-                .build();
+        final BackTestOperation operation = new BackTestOperation(
+                ticker,
+                fakeContext.getCurrentDateTime(),
+                operationType,
+                price,
+                quantity,
+                commissionAmount
+        );
+
         fakeContext.addOperation(brokerAccountId, operation);
     }
 

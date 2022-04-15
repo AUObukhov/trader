@@ -284,11 +284,11 @@ public class ExcelServiceImpl implements ExcelService {
             for (final BackTestOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(
-                        operation.getDateTime(),
-                        operation.getOperationType().name(),
-                        operation.getPrice(),
-                        operation.getQuantity(),
-                        operation.getCommission()
+                        operation.dateTime(),
+                        operation.operationType().name(),
+                        operation.price(),
+                        operation.quantity(),
+                        operation.commission()
                 );
             }
         }
@@ -356,7 +356,7 @@ public class ExcelServiceImpl implements ExcelService {
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
         for (final BackTestOperation operation : operations) {
-            final OffsetDateTime operationDateTime = operation.getDateTime();
+            final OffsetDateTime operationDateTime = operation.dateTime();
             final Candle keyCandle = new Candle();
             keyCandle.setTime(operationDateTime);
             int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime));
@@ -423,11 +423,11 @@ public class ExcelServiceImpl implements ExcelService {
         for (int i = 0; i < operations.size(); i++) {
             final BackTestOperation operation = operations.get(i);
             final int index = operationsIndices.get(i);
-            if (operation.getOperationType() == OperationType.BUY) {
-                buyOperationsPrices[index] = operation.getPrice();
+            if (operation.operationType() == OperationType.BUY) {
+                buyOperationsPrices[index] = operation.price();
                 buyOperationsExist = true;
             } else {
-                sellOperationsPrices[index] = operation.getPrice();
+                sellOperationsPrices[index] = operation.price();
                 sellOperationsExist = true;
             }
         }

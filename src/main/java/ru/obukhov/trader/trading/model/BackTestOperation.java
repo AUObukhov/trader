@@ -1,30 +1,17 @@
 package ru.obukhov.trader.trading.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import ru.obukhov.trader.market.model.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-@Data
-@Builder
-@AllArgsConstructor
-public class BackTestOperation {
-
-    @JsonIgnore
-    private String ticker;
-
-    private OffsetDateTime dateTime;
-
-    private OperationType operationType;
-
-    private BigDecimal price;
-
-    private Integer quantity;
-
-    private BigDecimal commission;
-
+public record BackTestOperation(
+        @JsonIgnore String ticker,
+        OffsetDateTime dateTime,
+        OperationType operationType,
+        BigDecimal price,
+        Integer quantity,
+        BigDecimal commission
+) {
 }

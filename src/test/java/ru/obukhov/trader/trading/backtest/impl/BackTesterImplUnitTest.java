@@ -603,12 +603,12 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(1, resultOperations.size());
 
         final BackTestOperation backTestOperation = resultOperations.get(0);
-        Assertions.assertEquals(expectedTicker, backTestOperation.getTicker());
-        Assertions.assertEquals(expectedOperationDateTime, backTestOperation.getDateTime());
-        Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
-        AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.getPrice());
-        Assertions.assertEquals(expectedOperationQuantity, backTestOperation.getQuantity());
-        AssertUtils.assertEquals(expectedOperationCommission, backTestOperation.getCommission());
+        Assertions.assertEquals(expectedTicker, backTestOperation.ticker());
+        Assertions.assertEquals(expectedOperationDateTime, backTestOperation.dateTime());
+        Assertions.assertEquals(expectedOperationType, backTestOperation.operationType());
+        AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.price());
+        Assertions.assertEquals(expectedOperationQuantity, backTestOperation.quantity());
+        AssertUtils.assertEquals(expectedOperationCommission, backTestOperation.commission());
     }
 
     @Test

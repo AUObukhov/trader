@@ -26,32 +26,33 @@ class OperationMapperUnitTest {
                 1
         );
 
-        final BackTestOperation target = operationMapper.map(source);
+        final BackTestOperation target = operationMapper.map(null, source);
 
-        Assertions.assertEquals(source.date(), target.getDateTime());
-        Assertions.assertEquals(OperationType.BUY, target.getOperationType());
-        Assertions.assertEquals(source.price(), target.getPrice());
-        Assertions.assertEquals(source.quantity(), target.getQuantity());
-        Assertions.assertEquals(source.commission().value(), target.getCommission());
+        Assertions.assertEquals(source.date(), target.dateTime());
+        Assertions.assertEquals(OperationType.BUY, target.operationType());
+        Assertions.assertEquals(source.price(), target.price());
+        Assertions.assertEquals(source.quantity(), target.quantity());
+        Assertions.assertEquals(source.commission().value(), target.commission());
     }
 
     @Test
     void mapsBackTestOperationToOperation() {
-        final BackTestOperation source = BackTestOperation.builder()
-                .dateTime(OffsetDateTime.now())
-                .operationType(OperationType.BUY)
-                .price(BigDecimal.TEN)
-                .quantity(2)
-                .commission(BigDecimal.ONE)
-                .build();
+        final BackTestOperation source = new BackTestOperation(
+                null,
+                OffsetDateTime.now(),
+                OperationType.BUY,
+                BigDecimal.TEN,
+                2,
+                BigDecimal.ONE
+        );
 
         final Operation target = operationMapper.map(source);
 
-        Assertions.assertEquals(source.getDateTime(), target.date());
+        Assertions.assertEquals(source.dateTime(), target.date());
         Assertions.assertEquals(OperationTypeWithCommission.BUY, target.operationType());
-        Assertions.assertEquals(source.getPrice(), target.price());
-        Assertions.assertEquals(source.getQuantity(), target.quantity());
-        Assertions.assertEquals(source.getCommission(), target.commission().value());
+        Assertions.assertEquals(source.price(), target.price());
+        Assertions.assertEquals(source.quantity(), target.quantity());
+        Assertions.assertEquals(source.commission(), target.commission().value());
     }
 
 }
