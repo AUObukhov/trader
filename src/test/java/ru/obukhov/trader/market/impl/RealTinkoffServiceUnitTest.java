@@ -307,7 +307,16 @@ class RealTinkoffServiceUnitTest {
 
         final LimitOrderRequest orderRequest = new LimitOrderRequest(null, null, null);
 
-        final PlacedLimitOrder placedOrder = new PlacedLimitOrder();
+        final PlacedLimitOrder placedOrder = new PlacedLimitOrder(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
         Mockito.when(ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
         final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
 
