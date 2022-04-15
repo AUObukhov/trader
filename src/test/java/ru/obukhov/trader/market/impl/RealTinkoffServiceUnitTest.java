@@ -137,7 +137,19 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
-        final Orderbook orderbook = new Orderbook();
+        final Orderbook orderbook = new Orderbook(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
         Mockito.when(marketClient.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
 
         final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
