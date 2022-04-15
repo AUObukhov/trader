@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public enum CandleInterval {
+
     _1MIN("1min"),
     _2MIN("2min"),
     _3MIN("3min"),

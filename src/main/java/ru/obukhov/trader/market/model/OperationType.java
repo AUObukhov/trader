@@ -1,35 +1,33 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@RequiredArgsConstructor
 public enum OperationType {
+
     BUY("Buy"),
     SELL("Sell");
 
-    private String value;
+    private static final Map<String, OperationType> LOOKUP = Stream.of(OperationType.values())
+            .collect(Collectors.toMap(OperationType::getValue, operationType -> operationType));
 
-    OperationType(String value) {
-        this.value = value;
-    }
-
+    @Getter
     @JsonValue
-    public String getValue() {
-        return value;
-    }
+    private final String value;
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
-    @JsonCreator
     public static OperationType fromValue(String text) {
-        for (OperationType b : OperationType.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
+        return LOOKUP.get(text);
     }
+
 }

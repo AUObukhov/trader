@@ -32,14 +32,14 @@ class CandleIntervalUnitTest {
 
     @ParameterizedTest
     @MethodSource("valuesAndCandleIntervals")
-    void toString_returnsValue(final String expectedValue, final CandleInterval candleResolution) {
-        Assertions.assertEquals(expectedValue, candleResolution.toString());
+    void toString_returnsValue(final String expectedValue, final CandleInterval candleInterval) {
+        Assertions.assertEquals(expectedValue, candleInterval.toString());
     }
 
     @ParameterizedTest
     @MethodSource("valuesAndCandleIntervals")
-    void fromValue_returnProperEnum(final String value, final CandleInterval expectedCandleResolution) {
-        Assertions.assertEquals(expectedCandleResolution, CandleInterval.fromValue(value));
+    void fromValue_returnProperEnum(final String value, final CandleInterval expectedCandleInterval) {
+        Assertions.assertEquals(expectedCandleInterval, CandleInterval.fromValue(value));
     }
 
     @ParameterizedTest

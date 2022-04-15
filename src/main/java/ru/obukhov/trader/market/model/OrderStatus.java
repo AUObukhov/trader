@@ -1,9 +1,16 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@RequiredArgsConstructor
 public enum OrderStatus {
+
     NEW("New"),
     PARTIALLYFILL("PartiallyFill"),
     FILL("Fill"),
@@ -14,29 +21,20 @@ public enum OrderStatus {
     PENDINGREPLACE("PendingReplace"),
     PENDINGNEW("PendingNew");
 
-    private String value;
+    private static final Map<String, OrderStatus> LOOKUP = Stream.of(OrderStatus.values())
+            .collect(Collectors.toMap(OrderStatus::getValue, orderStatus -> orderStatus));
 
-    OrderStatus(String value) {
-        this.value = value;
-    }
-
+    @Getter
     @JsonValue
-    public String getValue() {
-        return value;
-    }
+    private final String value;
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
-    @JsonCreator
     public static OrderStatus fromValue(String text) {
-        for (OrderStatus b : OrderStatus.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
+        return LOOKUP.get(text);
     }
+
 }

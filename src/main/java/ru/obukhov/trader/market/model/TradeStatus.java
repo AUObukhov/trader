@@ -1,35 +1,33 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@RequiredArgsConstructor
 public enum TradeStatus {
+
     NORMALTRADING("NormalTrading"),
     NOTAVAILABLEFORTRADING("NotAvailableForTrading");
 
-    private String value;
+    private static final Map<String, TradeStatus> LOOKUP = Stream.of(TradeStatus.values())
+            .collect(Collectors.toMap(TradeStatus::getValue, tradeStatus -> tradeStatus));
 
-    TradeStatus(String value) {
-        this.value = value;
-    }
-
+    @Getter
     @JsonValue
-    public String getValue() {
-        return value;
-    }
+    private final String value;
 
     @Override
     public String toString() {
-        return String.valueOf(value);
+        return value;
     }
 
-    @JsonCreator
     public static TradeStatus fromValue(String text) {
-        for (TradeStatus b : TradeStatus.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
+        return LOOKUP.get(text);
     }
+
 }
