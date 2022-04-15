@@ -51,7 +51,7 @@ public class OperationsClientImpl extends AbstractClient implements OperationsCl
 
         final Request request = buildRequest(requestUrl);
 
-        return executeAndGetBody(request, Operations.class).getOperations();
+        return executeAndGetBody(request, Operations.class).operations();
     }
 
 }
