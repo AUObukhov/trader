@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
@@ -282,33 +283,36 @@ class FakeTinkoffServiceUnitTest {
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(100));
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 100);
         final OffsetDateTime operation2DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(200));
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 200);
         final OffsetDateTime operation3DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, BigDecimal.valueOf(300));
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, 300);
 
         final Interval wholeInterval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> allOperations = service.getOperations(brokerAccountId, wholeInterval, ticker);
 
-        final Operation expectedOperation1 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
-                .price(BigDecimal.valueOf(100))
-                .quantity(10)
-                .date(operation1DateTime)
-                .operationType(OperationTypeWithCommission.BUY);
-        final Operation expectedOperation2 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
-                .price(BigDecimal.valueOf(200))
-                .quantity(10)
-                .date(operation2DateTime)
-                .operationType(OperationTypeWithCommission.BUY);
-        final Operation expectedOperation3 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
-                .price(BigDecimal.valueOf(300))
-                .quantity(10)
-                .date(operation3DateTime)
-                .operationType(OperationTypeWithCommission.SELL);
+        final Operation expectedOperation1 = TestData.createOperation(
+                operation1DateTime,
+                OperationTypeWithCommission.BUY,
+                100,
+                10,
+                3
+        );
+        final Operation expectedOperation2 = TestData.createOperation(
+                operation2DateTime,
+                OperationTypeWithCommission.BUY,
+                200,
+                10,
+                6
+        );
+        final Operation expectedOperation3 = TestData.createOperation(
+                operation3DateTime,
+                OperationTypeWithCommission.SELL,
+                300,
+                10,
+                9
+        );
 
         AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
@@ -344,35 +348,38 @@ class FakeTinkoffServiceUnitTest {
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
 
         final OffsetDateTime ticker1OperationDateTime = service.getCurrentDateTime();
-        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
+        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, 100);
         final OffsetDateTime ticker2Operation1DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
+        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, 200);
         final OffsetDateTime ticker2Operation2DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
+        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, 300);
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> ticker1Operations = service.getOperations(brokerAccountId, interval, ticker1);
         final List<Operation> ticker2Operations = service.getOperations(brokerAccountId, interval, ticker2);
 
-        final Operation expectedTicker1Operation = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
-                .price(BigDecimal.valueOf(100))
-                .quantity(10)
-                .date(ticker1OperationDateTime)
-                .operationType(OperationTypeWithCommission.BUY);
+        final Operation expectedTicker1Operation = TestData.createOperation(
+                ticker1OperationDateTime,
+                OperationTypeWithCommission.BUY,
+                100,
+                10,
+                3
+        );
         AssertUtils.assertListsAreEqual(List.of(expectedTicker1Operation), ticker1Operations);
-        final Operation expectedTicker2Operation1 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
-                .price(BigDecimal.valueOf(200))
-                .quantity(10)
-                .date(ticker2Operation1DateTime)
-                .operationType(OperationTypeWithCommission.BUY);
-        final Operation expectedTicker2Operation2 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
-                .price(BigDecimal.valueOf(300))
-                .quantity(10)
-                .date(ticker2Operation2DateTime)
-                .operationType(OperationTypeWithCommission.SELL);
+        final Operation expectedTicker2Operation1 = TestData.createOperation(
+                ticker2Operation1DateTime,
+                OperationTypeWithCommission.BUY,
+                200,
+                10,
+                6
+        );
+        final Operation expectedTicker2Operation2 = TestData.createOperation(
+                ticker2Operation2DateTime,
+                OperationTypeWithCommission.SELL,
+                300,
+                10,
+                9
+        );
         AssertUtils.assertListsAreEqual(List.of(expectedTicker2Operation1, expectedTicker2Operation2), ticker2Operations);
     }
 
@@ -403,33 +410,36 @@ class FakeTinkoffServiceUnitTest {
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
-        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(100));
+        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, 100);
         final OffsetDateTime operation2DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, BigDecimal.valueOf(200));
+        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.BUY, 200);
         final OffsetDateTime operation3DateTime = service.nextMinute();
-        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, BigDecimal.valueOf(300));
+        placeMarketOrder(brokerAccountId, ticker2, 1, OperationType.SELL, 300);
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> operations = service.getOperations(brokerAccountId, interval, null);
 
-        final Operation expectedOperation1 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 3))
-                .price(BigDecimal.valueOf(100))
-                .quantity(10)
-                .date(operation1DateTime)
-                .operationType(OperationTypeWithCommission.BUY);
-        final Operation expectedOperation2 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 6))
-                .price(BigDecimal.valueOf(200))
-                .quantity(10)
-                .date(operation2DateTime)
-                .operationType(OperationTypeWithCommission.BUY);
-        final Operation expectedOperation3 = new Operation()
-                .commission(TestData.createMoneyAmount(Currency.RUB, 9))
-                .price(BigDecimal.valueOf(300))
-                .quantity(10)
-                .date(operation3DateTime)
-                .operationType(OperationTypeWithCommission.SELL);
+        final Operation expectedOperation1 = TestData.createOperation(
+                operation1DateTime,
+                OperationTypeWithCommission.BUY,
+                100,
+                10,
+                3
+        );
+        final Operation expectedOperation2 = TestData.createOperation(
+                operation2DateTime,
+                OperationTypeWithCommission.BUY,
+                200,
+                10,
+                6
+        );
+        final Operation expectedOperation3 = TestData.createOperation(
+                operation3DateTime,
+                OperationTypeWithCommission.SELL,
+                300,
+                10,
+                9
+        );
         AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), operations);
     }
 
@@ -460,7 +470,7 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        final Executable executable = () -> placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(500));
+        final Executable executable = () -> placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, 500);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions(brokerAccountId).isEmpty());
@@ -490,7 +500,7 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(1000));
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 1000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertEquals(1, positions.size());
@@ -523,8 +533,8 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
+        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, 1000);
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 4000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertEquals(1, positions.size());
@@ -564,9 +574,9 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument3 = TestData.createMarketInstrument(ticker3, 1);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker3)).thenReturn(instrument3);
 
-        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, BigDecimal.valueOf(1000));
-        placeMarketOrder(brokerAccountId, ticker2, 3, OperationType.BUY, BigDecimal.valueOf(100));
-        placeMarketOrder(brokerAccountId, ticker3, 1, OperationType.BUY, BigDecimal.valueOf(500));
+        placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.BUY, 1000);
+        placeMarketOrder(brokerAccountId, ticker2, 3, OperationType.BUY, 100);
+        placeMarketOrder(brokerAccountId, ticker3, 1, OperationType.BUY, 500);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertEquals(3, positions.size());
@@ -611,9 +621,9 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
-        final Executable sellExecutable = () -> placeMarketOrder(brokerAccountId, ticker, 4, OperationType.SELL, BigDecimal.valueOf(3000));
+        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, 1000);
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 4000);
+        final Executable sellExecutable = () -> placeMarketOrder(brokerAccountId, ticker, 4, OperationType.SELL, 3000);
         final String expectedMessage = "lotsCount 4 can't be greater than existing position lots count 3";
         Assertions.assertThrows(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
@@ -650,9 +660,9 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
-        placeMarketOrder(brokerAccountId, ticker, 3, OperationType.SELL, BigDecimal.valueOf(3000));
+        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, 1000);
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 4000);
+        placeMarketOrder(brokerAccountId, ticker, 3, OperationType.SELL, 3000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertTrue(positions.isEmpty());
@@ -683,9 +693,9 @@ class FakeTinkoffServiceUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
         Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
 
-        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, BigDecimal.valueOf(1000));
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, BigDecimal.valueOf(4000));
-        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, BigDecimal.valueOf(3000));
+        placeMarketOrder(brokerAccountId, ticker, 2, OperationType.BUY, 1000);
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.BUY, 4000);
+        placeMarketOrder(brokerAccountId, ticker, 1, OperationType.SELL, 3000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(brokerAccountId);
         Assertions.assertEquals(1, positions.size());
@@ -795,9 +805,9 @@ class FakeTinkoffServiceUnitTest {
             final String ticker,
             final int lots,
             final OperationType operationType,
-            final BigDecimal price
+            final double price
     ) throws IOException {
-        final Candle candle = new Candle().setClosePrice(price);
+        final Candle candle = new Candle().setClosePrice(DecimalUtils.setDefaultScale(price));
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
         final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);

@@ -133,9 +133,9 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsTrue_whenOperationInProgressExists() {
-        final Operation operation1 = new Operation().status(OperationStatus.DONE);
-        final Operation operation2 = new Operation().status(OperationStatus.PROGRESS);
-        final Operation operation3 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = TestData.createOperation(OperationStatus.DONE);
+        final Operation operation2 = TestData.createOperation(OperationStatus.PROGRESS);
+        final Operation operation3 = TestData.createOperation(OperationStatus.DECLINE);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
@@ -145,8 +145,8 @@ class AbstractTradingStrategyUnitTest {
 
     @Test
     void existsOperationInProgress_returnsFalse_whenOperationInProgressDoesNotExists() {
-        final Operation operation1 = new Operation().status(OperationStatus.DONE);
-        final Operation operation2 = new Operation().status(OperationStatus.DECLINE);
+        final Operation operation1 = TestData.createOperation(OperationStatus.DONE);
+        final Operation operation2 = TestData.createOperation(OperationStatus.DECLINE);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2));

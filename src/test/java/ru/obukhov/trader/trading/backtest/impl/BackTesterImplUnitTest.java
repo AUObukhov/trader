@@ -502,15 +502,14 @@ class BackTesterImplUnitTest {
 
         final OffsetDateTime operationDateTime1 = from.plusMinutes(2);
         final OperationTypeWithCommission operationType1 = OperationTypeWithCommission.BUY;
-        final BigDecimal operationPrice1 = BigDecimal.valueOf(100);
+        final double operationPrice1 = 100;
         final int operationQuantity1 = 2;
-        final BigDecimal operationCommission1 = BigDecimal.valueOf(commission1);
-        final Operation operation1 = TestData.createTinkoffOperation(
+        final Operation operation1 = TestData.createOperation(
                 operationDateTime1,
                 operationType1,
                 operationPrice1,
                 operationQuantity1,
-                operationCommission1
+                commission1
         );
 
         final String ticker2 = "ticker2";
@@ -522,15 +521,14 @@ class BackTesterImplUnitTest {
 
         final OffsetDateTime operationDateTime2 = from.plusMinutes(3);
         final OperationTypeWithCommission operationType2 = OperationTypeWithCommission.SELL;
-        final BigDecimal operationPrice2 = BigDecimal.valueOf(1000);
+        final double operationPrice2 = 1000;
         final int operationQuantity2 = 4;
-        final BigDecimal operationCommission2 = BigDecimal.valueOf(commission2);
-        final Operation operation2 = TestData.createTinkoffOperation(
+        final Operation operation2 = TestData.createOperation(
                 operationDateTime2,
                 operationType2,
                 operationPrice2,
                 operationQuantity2,
-                operationCommission2
+                commission2
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
@@ -576,7 +574,7 @@ class BackTesterImplUnitTest {
                 operationMapper.map(operationType1),
                 operationPrice1,
                 operationQuantity1,
-                operationCommission1
+                commission1
         );
 
         assertOperation(
@@ -586,7 +584,7 @@ class BackTesterImplUnitTest {
                 operationMapper.map(operationType2),
                 operationPrice2,
                 operationQuantity2,
-                operationCommission2
+                commission2
         );
     }
 
@@ -595,9 +593,9 @@ class BackTesterImplUnitTest {
             final String expectedTicker,
             final OffsetDateTime expectedOperationDateTime,
             final OperationType expectedOperationType,
-            final BigDecimal expectedOperationPrice,
+            final double expectedOperationPrice,
             final int expectedOperationQuantity,
-            final BigDecimal expectedOperationCommission
+            final double expectedOperationCommission
     ) {
         Assertions.assertNull(backTestResult.getError());
 
@@ -762,12 +760,12 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.001;
-        final Operation operation = TestData.createTinkoffOperation(
+        final Operation operation = TestData.createOperation(
                 from.plusMinutes(2),
                 OperationTypeWithCommission.BUY,
-                BigDecimal.valueOf(100),
+                100,
                 2,
-                BigDecimal.valueOf(commission1)
+                commission1
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
@@ -826,12 +824,12 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.001;
-        final Operation operation = TestData.createTinkoffOperation(
+        final Operation operation = TestData.createOperation(
                 from.plusMinutes(2),
                 OperationTypeWithCommission.BUY,
-                BigDecimal.valueOf(100),
+                100,
                 2,
-                BigDecimal.valueOf(commission1)
+                commission1
         );
 
         final BotConfig botConfig1 = arrangeBackTest(
@@ -890,12 +888,12 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
-        final Operation operation = TestData.createTinkoffOperation(
+        final Operation operation = TestData.createOperation(
                 from.plusMinutes(2),
                 OperationTypeWithCommission.BUY,
-                BigDecimal.valueOf(100),
+                100,
                 2,
-                BigDecimal.valueOf(commission1)
+                commission1
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 null,
@@ -1037,12 +1035,12 @@ class BackTesterImplUnitTest {
         final BigDecimal currentBalance = BigDecimal.ZERO;
 
         final double commission1 = 0.003;
-        final Operation operation = TestData.createTinkoffOperation(
+        final Operation operation = TestData.createOperation(
                 from.plusMinutes(2),
                 OperationTypeWithCommission.BUY,
-                BigDecimal.valueOf(100),
+                100,
                 2,
-                BigDecimal.valueOf(commission1)
+                commission1
         );
         final BotConfig botConfig1 = arrangeBackTest(
                 null,

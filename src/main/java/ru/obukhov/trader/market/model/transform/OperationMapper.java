@@ -18,6 +18,8 @@ public interface OperationMapper {
     @Mapping(target = "date", source = "dateTime")
     @Mapping(target = "commission.value", source = "commission")
     @Mapping(target = "commission.currency", constant = "RUB")
+    @Mapping(target = "quantity", source = "quantity")
+    @Mapping(target = "quantityExecuted", source = "quantity")
     Operation map(final BackTestOperation source);
 
 }

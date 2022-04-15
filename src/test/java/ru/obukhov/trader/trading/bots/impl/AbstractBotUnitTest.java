@@ -195,7 +195,7 @@ class AbstractBotUnitTest {
         Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
                 .thenReturn(position);
 
-        final List<Operation> operations = List.of(new Operation());
+        final List<Operation> operations = List.of(TestData.createOperation());
         Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
@@ -241,7 +241,7 @@ class AbstractBotUnitTest {
         Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
                 .thenReturn(position);
 
-        final List<Operation> operations = List.of(new Operation());
+        final List<Operation> operations = List.of(TestData.createOperation());
         Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 

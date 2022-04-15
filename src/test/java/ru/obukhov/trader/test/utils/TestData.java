@@ -204,25 +204,72 @@ public class TestData {
 
     // endregion
 
-    public static Operation createTinkoffOperation(
+    // region Operation
+
+    public static Operation createOperation(
             final OffsetDateTime operationDateTime,
             final OperationTypeWithCommission operationType,
-            final BigDecimal operationPrice,
+            final double operationPrice,
             final int operationQuantity,
-            final BigDecimal commissionValue
+            final double commissionValue
     ) {
-        return new Operation()
-                .id(StringUtils.EMPTY)
-                .status(OperationStatus.DONE)
-                .commission(new MoneyAmount(Currency.RUB, commissionValue))
-                .currency(Currency.RUB)
-                .payment(BigDecimal.ZERO)
-                .price(operationPrice)
-                .quantity(operationQuantity)
-                .quantityExecuted(operationQuantity)
-                .date(operationDateTime)
-                .operationType(operationType);
+        return new Operation(
+                null,
+                null,
+                null,
+                createMoneyAmount(Currency.RUB, commissionValue),
+                null,
+                null,
+                DecimalUtils.setDefaultScale(operationPrice),
+                operationQuantity,
+                operationQuantity,
+                null,
+                null,
+                null,
+                operationDateTime,
+                operationType
+        );
     }
+
+    public static Operation createOperation(final OperationStatus operationStatus) {
+        return new Operation(
+                null,
+                operationStatus,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static Operation createOperation() {
+        return new Operation(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    // endregion
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
         return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));

@@ -258,8 +258,8 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
-        final Operation operation1 = new Operation();
-        final Operation operation2 = new Operation();
+        final Operation operation1 = TestData.createOperation();
+        final Operation operation2 = TestData.createOperation();
         final List<Operation> operations = List.of(operation1, operation2);
         Mockito.when(operationsClient.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
 

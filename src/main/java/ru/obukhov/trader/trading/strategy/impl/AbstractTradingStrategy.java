@@ -114,7 +114,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     }
 
     protected static boolean existsOperationInProgress(final DecisionData data) {
-        return data.getLastOperations().stream().anyMatch(operation -> operation.getStatus() == OperationStatus.PROGRESS);
+        return data.getLastOperations().stream().anyMatch(operation -> operation.status() == OperationStatus.PROGRESS);
     }
 
 }
