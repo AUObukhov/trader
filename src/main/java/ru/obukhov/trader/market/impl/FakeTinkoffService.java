@@ -215,7 +215,7 @@ public class FakeTinkoffService implements TinkoffService {
             throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final int count = instrument.lot() * orderRequest.lots();
+        final int count = instrument.lot() * orderRequest.lotsCount();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
         final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
@@ -301,7 +301,7 @@ public class FakeTinkoffService implements TinkoffService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(brokerAccountId, ticker);
         final int newLotsCount = existingPosition.getCount() - count;
         if (newLotsCount < 0) {
-            final String message = "count " + count + " can't be greater than existing position lots count " + existingPosition.getCount();
+            final String message = "count " + count + " can't be greater than existing position lotsCount count " + existingPosition.getCount();
             throw new IllegalArgumentException(message);
         }
 
@@ -351,8 +351,8 @@ public class FakeTinkoffService implements TinkoffService {
         return new PlacedMarketOrder()
                 .operation(orderRequest.operation())
                 .status(OrderStatus.NEW)
-                .executedLots(orderRequest.lots())
-                .requestedLots(orderRequest.lots())
+                .executedLots(orderRequest.lotsCount())
+                .requestedLots(orderRequest.lotsCount())
                 .commission(commission);
     }
 
