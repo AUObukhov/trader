@@ -339,9 +339,9 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.balances().finalTotalSavings());
         AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.balances().finalBalance());
         AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.balances().weightedAverageInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.profits().getAbsolute());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.profits().getRelative());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.profits().getRelativeAnnual());
+        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.profits().absolute());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.profits().relative());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.profits().relativeAnnual());
     }
 
     private void assertPositions(BackTestResult result, Iterator<Row> rowIterator) {

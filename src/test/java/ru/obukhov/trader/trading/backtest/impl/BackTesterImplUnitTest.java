@@ -169,9 +169,9 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(0, backTestResult.balances().finalTotalSavings());
         AssertUtils.assertEquals(0, backTestResult.balances().finalBalance());
         AssertUtils.assertEquals(balanceConfig.getInitialBalance(), backTestResult.balances().weightedAverageInvestment());
-        AssertUtils.assertEquals(0, backTestResult.profits().getAbsolute());
-        AssertUtils.assertEquals(0.0, backTestResult.profits().getRelative());
-        AssertUtils.assertEquals(0.0, backTestResult.profits().getRelativeAnnual());
+        AssertUtils.assertEquals(0, backTestResult.profits().absolute());
+        AssertUtils.assertEquals(0.0, backTestResult.profits().relative());
+        AssertUtils.assertEquals(0.0, backTestResult.profits().relativeAnnual());
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
@@ -293,9 +293,9 @@ class BackTesterImplUnitTest {
         AssertUtils.assertEquals(initialInvestment, backTestResult.balances().weightedAverageInvestment());
 
         final BigDecimal expectedAbsoluteProfit2 = DecimalUtils.subtract(currentBalance, initialInvestment).add(positionsPrice2);
-        AssertUtils.assertEquals(expectedAbsoluteProfit2, backTestResult.profits().getAbsolute());
-        AssertUtils.assertEquals(expectedRelativeProfit, backTestResult.profits().getRelative());
-        AssertUtils.assertEquals(expectedAnnualProfit, backTestResult.profits().getRelativeAnnual());
+        AssertUtils.assertEquals(expectedAbsoluteProfit2, backTestResult.profits().absolute());
+        AssertUtils.assertEquals(expectedRelativeProfit, backTestResult.profits().relative());
+        AssertUtils.assertEquals(expectedAnnualProfit, backTestResult.profits().relativeAnnual());
     }
 
     @Test
@@ -939,8 +939,8 @@ class BackTesterImplUnitTest {
 
         AssertUtils.assertEquals(0, backTestResult.balances().totalInvestment());
         AssertUtils.assertEquals(0, backTestResult.balances().weightedAverageInvestment());
-        AssertUtils.assertEquals(0, backTestResult.profits().getRelative());
-        AssertUtils.assertEquals(0, backTestResult.profits().getRelativeAnnual());
+        AssertUtils.assertEquals(0, backTestResult.profits().relative());
+        AssertUtils.assertEquals(0, backTestResult.profits().relativeAnnual());
     }
 
     @Test
