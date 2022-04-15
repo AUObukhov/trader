@@ -215,18 +215,18 @@ public class FakeTinkoffService implements TinkoffService {
             throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final int count = instrument.lot() * orderRequest.getLots();
+        final int count = instrument.lot() * orderRequest.lots();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
         final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
 
-        if (orderRequest.getOperation() == OperationType.BUY) {
+        if (orderRequest.operation() == OperationType.BUY) {
             buyPosition(brokerAccountId, ticker, currentPrice, count, totalPrice, totalCommissionAmount);
         } else {
             sellPosition(brokerAccountId, ticker, count, totalPrice, totalCommissionAmount);
         }
 
-        addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.getOperation());
+        addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.operation());
         return createOrder(orderRequest, totalCommission);
     }
 
@@ -349,10 +349,10 @@ public class FakeTinkoffService implements TinkoffService {
 
     private PlacedMarketOrder createOrder(final MarketOrderRequest orderRequest, final MoneyAmount commission) {
         return new PlacedMarketOrder()
-                .operation(orderRequest.getOperation())
+                .operation(orderRequest.operation())
                 .status(OrderStatus.NEW)
-                .executedLots(orderRequest.getLots())
-                .requestedLots(orderRequest.getLots())
+                .executedLots(orderRequest.lots())
+                .requestedLots(orderRequest.lots())
                 .commission(commission);
     }
 

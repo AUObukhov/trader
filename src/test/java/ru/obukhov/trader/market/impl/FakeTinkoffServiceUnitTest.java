@@ -800,9 +800,7 @@ class FakeTinkoffServiceUnitTest {
         final Candle candle = new Candle().setClosePrice(price);
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
-        final MarketOrderRequest orderRequest = new MarketOrderRequest()
-                .lots(lots)
-                .operation(operationType);
+        final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);
         service.placeMarketOrder(brokerAccountId, ticker, orderRequest);
     }
 

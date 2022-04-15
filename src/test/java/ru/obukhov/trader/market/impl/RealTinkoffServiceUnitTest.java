@@ -24,6 +24,7 @@ import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Operation;
+import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
@@ -310,7 +311,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
-        final MarketOrderRequest orderRequest = new MarketOrderRequest();
+        final MarketOrderRequest orderRequest = new MarketOrderRequest(1, OperationType.BUY);
 
         final PlacedMarketOrder placedOrder = new PlacedMarketOrder();
         Mockito.when(ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest))

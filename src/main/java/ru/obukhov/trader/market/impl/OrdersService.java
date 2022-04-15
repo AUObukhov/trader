@@ -56,9 +56,7 @@ public class OrdersService {
             final int lots,
             @NotNull final OperationType operationType
     ) throws IOException {
-        final MarketOrderRequest orderRequest = new MarketOrderRequest()
-                .lots(lots)
-                .operation(operationType);
+        final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);
         return tinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
     }
 
