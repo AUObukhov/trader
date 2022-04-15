@@ -272,14 +272,16 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(300)
         );
         final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval._1MIN);
-        final BackTestResult backTestResult1 = BackTestResult.builder()
-                .botConfig(botConfig1)
-                .interval(interval)
-                .balances(balances1)
-                .profits(new Profits(DecimalUtils.setDefaultScale(61.215440), 0.061215, 1.033125))
-                .operations(List.of(operation))
-                .candles(List.of(candle))
-                .build();
+        final BackTestResult backTestResult1 = new BackTestResult(
+                botConfig1,
+                interval,
+                balances1,
+                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.061215, 1.033125),
+                Collections.emptyList(),
+                List.of(operation),
+                List.of(candle),
+                null
+        );
 
         final Balances balances2 = new Balances(
                 initialBalance,
@@ -289,13 +291,16 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000)
         );
         final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), 10);
-        final BackTestResult backTestResult2 = BackTestResult.builder()
-                .botConfig(botConfig2)
-                .interval(interval)
-                .balances(balances2)
-                .profits(new Profits(DecimalUtils.setDefaultScale(0), 0.0, 0.0))
-                .positions(List.of(backTestPosition2))
-                .build();
+        final BackTestResult backTestResult2 = new BackTestResult(
+                botConfig2,
+                interval,
+                balances2,
+                new Profits(DecimalUtils.setDefaultScale(0), 0.0, 0.0),
+                List.of(backTestPosition2),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                null
+        );
 
         final List<BackTestResult> backTestResults = List.of(backTestResult1, backTestResult2);
 

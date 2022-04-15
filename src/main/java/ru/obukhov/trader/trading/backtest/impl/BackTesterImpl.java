@@ -105,7 +105,7 @@ public class BackTesterImpl implements BackTester {
                 .toList();
         return backTestFutures.stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(result -> ((BackTestResult) result).getBalances().getFinalTotalSavings()).reversed())
+                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().getFinalTotalSavings()).reversed())
                 .toList();
     }
 
@@ -200,15 +200,16 @@ public class BackTesterImpl implements BackTester {
         final Profits profits = getProfits(balances, interval);
         final List<Operation> operations = fakeBot.getOperations(brokerAccountId, interval, ticker);
 
-        return BackTestResult.builder()
-                .botConfig(botConfig)
-                .interval(interval)
-                .balances(balances)
-                .profits(profits)
-                .positions(positions)
-                .operations(getOperations(operations, ticker))
-                .candles(candles)
-                .build();
+        return new BackTestResult(
+                botConfig,
+                interval,
+                balances,
+                profits,
+                positions,
+                getOperations(operations, ticker),
+                candles,
+                null
+        );
     }
 
     private BackTestResult createFailedBackTestResult(
@@ -218,16 +219,16 @@ public class BackTesterImpl implements BackTester {
             final String message
     ) {
         final Balances balances = new Balances(initialInvestment, initialInvestment, initialInvestment, BigDecimal.ZERO, BigDecimal.ZERO);
-        return BackTestResult.builder()
-                .botConfig(botConfig)
-                .interval(interval)
-                .balances(balances)
-                .profits(Profits.ZEROS)
-                .positions(Collections.emptyList())
-                .operations(Collections.emptyList())
-                .candles(Collections.emptyList())
-                .error(message)
-                .build();
+        return new BackTestResult(
+                botConfig,
+                interval,
+                balances,
+                Profits.ZEROS,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                message
+        );
     }
 
     private Currency getCurrency(final FakeBot fakeBot, final String ticker) throws IOException {

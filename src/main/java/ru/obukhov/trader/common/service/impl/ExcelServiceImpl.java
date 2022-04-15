@@ -115,20 +115,20 @@ public class ExcelServiceImpl implements ExcelService {
     private void createSheet(final ExtendedWorkbook workbook, final BackTestResult result) {
         final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet();
 
-        putBotConfig(sheet, result.getBotConfig());
+        putBotConfig(sheet, result.botConfig());
         sheet.addRow();
 
         putCommonStatistics(sheet, result);
         sheet.addRow();
 
-        putPositions(sheet, result.getPositions());
+        putPositions(sheet, result.positions());
         sheet.addRow();
 
-        putOperations(sheet, result.getOperations());
+        putOperations(sheet, result.operations());
 
         sheet.autoSizeColumns();
 
-        putChartWithOperations(sheet, result.getCandles(), result.getOperations());
+        putChartWithOperations(sheet, result.candles(), result.operations());
     }
 
     private void createSheet(final ExtendedWorkbook workbook, final String ticker, final Interval interval, final GetCandlesResponse response) {
@@ -173,19 +173,19 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
-        putBrokerAccountId(sheet, result.getBotConfig().getBrokerAccountId());
-        putTicker(sheet, result.getBotConfig().getTicker());
-        putInterval(sheet, result.getInterval());
-        putInitialInvestment(sheet, result.getBalances().getInitialInvestment());
-        putTotalInvestment(sheet, result.getBalances().getTotalInvestment());
-        putFinalTotalSavings(sheet, result.getBalances().getFinalTotalSavings());
-        putFinalBalance(sheet, result.getBalances().getFinalBalance());
+        putBrokerAccountId(sheet, result.botConfig().getBrokerAccountId());
+        putTicker(sheet, result.botConfig().getTicker());
+        putInterval(sheet, result.interval());
+        putInitialInvestment(sheet, result.balances().getInitialInvestment());
+        putTotalInvestment(sheet, result.balances().getTotalInvestment());
+        putFinalTotalSavings(sheet, result.balances().getFinalTotalSavings());
+        putFinalBalance(sheet, result.balances().getFinalBalance());
 
-        putWeightedAverageInvestment(sheet, result.getBalances().getWeightedAverageInvestment());
-        putAbsoluteProfit(sheet, result.getProfits().getAbsolute());
-        putRelativeProfit(sheet, result.getProfits().getRelative());
-        putRelativeYearProfit(sheet, result.getProfits().getRelativeAnnual());
-        putError(sheet, result.getError());
+        putWeightedAverageInvestment(sheet, result.balances().getWeightedAverageInvestment());
+        putAbsoluteProfit(sheet, result.profits().getAbsolute());
+        putRelativeProfit(sheet, result.profits().getRelative());
+        putRelativeYearProfit(sheet, result.profits().getRelativeAnnual());
+        putError(sheet, result.error());
     }
 
     private void putBrokerAccountId(final ExtendedSheet sheet, final String brokerAccountId) {

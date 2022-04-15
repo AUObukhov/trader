@@ -109,7 +109,7 @@ class ExcelServiceImplUnitTest {
             Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
             final Iterator<Row> rowIterator = sheet.iterator();
-            assertBotConfig(result.getBotConfig(), rowIterator);
+            assertBotConfig(result.botConfig(), rowIterator);
             assertCommonStatistics(ticker, result, rowIterator);
             assertPositions(result, rowIterator);
             assertOperations(result, rowIterator);
@@ -144,7 +144,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertBotConfig(result.getBotConfig(), rowIterator);
+        assertBotConfig(result.botConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -162,8 +162,7 @@ class ExcelServiceImplUnitTest {
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
-        final BackTestResult result = createBackTestResult(botConfig);
-        result.setError(StringUtils.EMPTY);
+        final BackTestResult result = createBackTestResult(botConfig, StringUtils.EMPTY);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -179,7 +178,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertBotConfig(result.getBotConfig(), rowIterator);
+        assertBotConfig(result.botConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -198,8 +197,7 @@ class ExcelServiceImplUnitTest {
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
-        final BackTestResult result = createBackTestResult(botConfig);
-        result.setError(error);
+        final BackTestResult result = createBackTestResult(botConfig, error);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -215,9 +213,9 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertBotConfig(result.getBotConfig(), rowIterator);
+        assertBotConfig(result.botConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
-        AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.getError());
+        AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.error());
 
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -236,8 +234,8 @@ class ExcelServiceImplUnitTest {
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
-        final BackTestResult result = createBackTestResult(botConfig);
-        result.setCandles(null);
+        final List<Candle> candles = null;
+        final BackTestResult result = createBackTestResult(botConfig, candles);
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -253,7 +251,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertBotConfig(result.getBotConfig(), rowIterator);
+        assertBotConfig(result.botConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -272,8 +270,7 @@ class ExcelServiceImplUnitTest {
                 .strategyType(StrategyType.CROSS)
                 .strategyParams(Map.of("minimumProfit", 0.01))
                 .build();
-        final BackTestResult result = createBackTestResult(botConfig);
-        result.setCandles(Collections.emptyList());
+        final BackTestResult result = createBackTestResult(botConfig, Collections.emptyList());
 
         excelService.saveBackTestResults(List.of(result));
 
@@ -289,7 +286,7 @@ class ExcelServiceImplUnitTest {
         Assertions.assertEquals(expectedRowCount, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        assertBotConfig(result.getBotConfig(), rowIterator);
+        assertBotConfig(result.botConfig(), rowIterator);
         assertCommonStatistics(ticker, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
@@ -334,24 +331,24 @@ class ExcelServiceImplUnitTest {
     private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
-        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.getBotConfig().getBrokerAccountId());
+        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().getBrokerAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
-        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.getInterval().toPrettyString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.getBalances().getInitialInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.getBalances().getTotalInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.getBalances().getFinalTotalSavings());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.getBalances().getFinalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.getBalances().getWeightedAverageInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.getProfits().getAbsolute());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.getProfits().getRelative());
-        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.getProfits().getRelativeAnnual());
+        AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.interval().toPrettyString());
+        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().getInitialInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.balances().getTotalInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.balances().getFinalTotalSavings());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.balances().getFinalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.balances().getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.profits().getAbsolute());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.profits().getRelative());
+        AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.profits().getRelativeAnnual());
     }
 
     private void assertPositions(BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
-        for (final BackTestPosition position : result.getPositions()) {
+        for (final BackTestPosition position : result.positions()) {
             AssertUtils.assertRowValues(rowIterator.next(), position.price(), position.quantity());
         }
     }
@@ -361,7 +358,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
         AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
 
-        for (final BackTestOperation operation : result.getOperations()) {
+        for (final BackTestOperation operation : result.operations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     operation.dateTime(),
@@ -442,7 +439,7 @@ class ExcelServiceImplUnitTest {
         excelService.saveCandles(ticker, interval, response);
     }
 
-    private BackTestResult createBackTestResult(BotConfig botConfig) {
+    private BackTestResult createBackTestResult(final BotConfig botConfig, final String error) {
         final Balances balances = new Balances(
                 BigDecimal.valueOf(700),
                 BigDecimal.valueOf(800),
@@ -450,15 +447,56 @@ class ExcelServiceImplUnitTest {
                 BigDecimal.valueOf(200),
                 BigDecimal.valueOf(1000)
         );
-        return BackTestResult.builder()
-                .botConfig(botConfig)
-                .interval(createInterval())
-                .balances(balances)
-                .profits(new Profits(BigDecimal.valueOf(300), 0.25, 6.0))
-                .positions(createPositions(botConfig.getTicker()))
-                .operations(createBackTestOperations(botConfig.getTicker()))
-                .candles(createCandles())
-                .build();
+        return new BackTestResult(
+                botConfig,
+                createInterval(),
+                balances,
+                new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
+                createPositions(botConfig.getTicker()),
+                createBackTestOperations(botConfig.getTicker()),
+                createCandles(),
+                error
+        );
+    }
+
+    private BackTestResult createBackTestResult(final BotConfig botConfig, final List<Candle> candles) {
+        final Balances balances = new Balances(
+                BigDecimal.valueOf(700),
+                BigDecimal.valueOf(800),
+                BigDecimal.valueOf(750),
+                BigDecimal.valueOf(200),
+                BigDecimal.valueOf(1000)
+        );
+        return new BackTestResult(
+                botConfig,
+                createInterval(),
+                balances,
+                new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
+                createPositions(botConfig.getTicker()),
+                createBackTestOperations(botConfig.getTicker()),
+                candles,
+                null
+        );
+    }
+
+    private BackTestResult createBackTestResult(final BotConfig botConfig) {
+        final Balances balances = new Balances(
+                BigDecimal.valueOf(700),
+                BigDecimal.valueOf(800),
+                BigDecimal.valueOf(750),
+                BigDecimal.valueOf(200),
+                BigDecimal.valueOf(1000)
+        );
+        return new BackTestResult(
+                botConfig,
+                createInterval(),
+                balances,
+                new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
+                createPositions(botConfig.getTicker()),
+                createBackTestOperations(botConfig.getTicker()),
+                createCandles(),
+                null
+        );
     }
 
     private Interval createInterval() {
@@ -537,10 +575,10 @@ class ExcelServiceImplUnitTest {
 
     private int getExpectedRowCount(BackTestResult result) {
         return MINIMUM_ROWS_COUNT +
-                result.getBotConfig().getStrategyParams().size() +
-                result.getPositions().size() +
-                result.getOperations().size() +
-                (StringUtils.isEmpty(result.getError()) ? 0 : 1);
+                result.botConfig().getStrategyParams().size() +
+                result.positions().size() +
+                result.operations().size() +
+                (StringUtils.isEmpty(result.error()) ? 0 : 1);
     }
 
     private void assertChartCreated(ExtendedSheet sheet) {
