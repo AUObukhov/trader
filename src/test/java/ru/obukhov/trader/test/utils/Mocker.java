@@ -18,7 +18,7 @@ import java.util.List;
 public class Mocker {
 
     public static void mockEmptyOrder(final OrdersService ordersService, final String ticker) throws IOException {
-        final Order order = new Order();
+        final Order order = TestData.createOrder();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
 

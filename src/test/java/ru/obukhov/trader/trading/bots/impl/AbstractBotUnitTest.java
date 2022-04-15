@@ -63,7 +63,7 @@ class AbstractBotUnitTest {
     void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
 
-        final List<Order> orders = List.of(new Order());
+        final List<Order> orders = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
         final BotConfig botConfig = BotConfig.builder()

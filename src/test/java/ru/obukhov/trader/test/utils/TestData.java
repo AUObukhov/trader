@@ -17,7 +17,11 @@ import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationStatus;
+import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.OperationTypeWithCommission;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.OrderStatus;
+import ru.obukhov.trader.market.model.OrderType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -427,5 +431,17 @@ public class TestData {
         response.setPayload(marketInstrumentList);
         return response;
     }
+
+    // region Order creation
+
+    public Order createOrder(String id, String figi) {
+        return new Order(id, figi, OperationType.BUY, OrderStatus.FILL, 1, 1, OrderType.MARKET, BigDecimal.TEN);
+    }
+
+    public static Order createOrder() {
+        return new Order(null, null, null, null, null, null, null, null);
+    }
+
+    // endregion
 
 }

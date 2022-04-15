@@ -7,13 +7,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
@@ -25,25 +25,27 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getOrders_returnsOrders(@Nullable final String brokerAccountId) throws Exception {
 
-        final Order order1 = new Order()
-                .orderId("order1")
-                .figi("figi1")
-                .operation(OperationType.BUY)
-                .status(OrderStatus.FILL)
-                .requestedLots(10)
-                .executedLots(5)
-                .type(OrderType.LIMIT)
-                .price(BigDecimal.valueOf(100));
+        final Order order1 = new Order(
+                "order1",
+                "figi1",
+                OperationType.BUY,
+                OrderStatus.FILL,
+                10,
+                5,
+                OrderType.LIMIT,
+                DecimalUtils.setDefaultScale(100)
+        );
 
-        final Order order2 = new Order()
-                .orderId("order2")
-                .figi("figi2")
-                .operation(OperationType.SELL)
-                .status(OrderStatus.NEW)
-                .requestedLots(1)
-                .executedLots(0)
-                .type(OrderType.MARKET)
-                .price(BigDecimal.valueOf(1000));
+        final Order order2 = new Order(
+                "order2",
+                "figi2",
+                OperationType.SELL,
+                OrderStatus.NEW,
+                1,
+                0,
+                OrderType.MARKET,
+                DecimalUtils.setDefaultScale(1000)
+        );
         final List<Order> orders = List.of(order1, order2);
 
         mockOrders(orders);

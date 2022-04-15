@@ -108,7 +108,7 @@ class RunnableBotUnitTest {
 
         mockBotConfig(null, ticker);
 
-        final List<Order> orders1 = List.of(new Order());
+        final List<Order> orders1 = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
 
         createRunnableBot().run();

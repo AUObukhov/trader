@@ -276,7 +276,7 @@ class RealTinkoffServiceUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getOrders(@Nullable final String brokerAccountId) throws IOException {
-        final List<Order> orders = List.of(new Order(), new Order());
+        final List<Order> orders = List.of(TestData.createOrder(), TestData.createOrder());
         Mockito.when(ordersClient.getOrders(brokerAccountId)).thenReturn(orders);
 
         final List<Order> result = realTinkoffService.getOrders(brokerAccountId);

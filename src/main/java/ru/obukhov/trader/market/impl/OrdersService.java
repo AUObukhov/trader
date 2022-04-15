@@ -34,7 +34,7 @@ public class OrdersService {
     public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) throws IOException {
         final String figi = marketService.getInstrument(ticker).figi();
         return getOrders(brokerAccountId).stream()
-                .filter(order -> figi.equals(order.getFigi()))
+                .filter(order -> figi.equals(order.figi()))
                 .toList();
     }
 
