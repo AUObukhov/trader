@@ -334,11 +334,11 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().getBrokerAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.interval().toPrettyString());
-        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().getInitialInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.balances().getTotalInvestment());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.balances().getFinalTotalSavings());
-        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.balances().getFinalBalance());
-        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.balances().getWeightedAverageInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().initialInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.balances().totalInvestment());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый общий баланс", result.balances().finalTotalSavings());
+        AssertUtils.assertRowValues(rowIterator.next(), "Итоговый валютный баланс", result.balances().finalBalance());
+        AssertUtils.assertRowValues(rowIterator.next(), "Средневзвешенные вложения", result.balances().weightedAverageInvestment());
         AssertUtils.assertRowValues(rowIterator.next(), "Абсолютный доход", result.profits().getAbsolute());
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный доход", result.profits().getRelative());
         AssertUtils.assertRowValues(rowIterator.next(), "Относительный годовой доход", result.profits().getRelativeAnnual());

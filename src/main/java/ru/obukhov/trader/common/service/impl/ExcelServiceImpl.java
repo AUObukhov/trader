@@ -176,12 +176,12 @@ public class ExcelServiceImpl implements ExcelService {
         putBrokerAccountId(sheet, result.botConfig().getBrokerAccountId());
         putTicker(sheet, result.botConfig().getTicker());
         putInterval(sheet, result.interval());
-        putInitialInvestment(sheet, result.balances().getInitialInvestment());
-        putTotalInvestment(sheet, result.balances().getTotalInvestment());
-        putFinalTotalSavings(sheet, result.balances().getFinalTotalSavings());
-        putFinalBalance(sheet, result.balances().getFinalBalance());
+        putInitialInvestment(sheet, result.balances().initialInvestment());
+        putTotalInvestment(sheet, result.balances().totalInvestment());
+        putFinalTotalSavings(sheet, result.balances().finalTotalSavings());
+        putFinalBalance(sheet, result.balances().finalBalance());
 
-        putWeightedAverageInvestment(sheet, result.balances().getWeightedAverageInvestment());
+        putWeightedAverageInvestment(sheet, result.balances().weightedAverageInvestment());
         putAbsoluteProfit(sheet, result.profits().getAbsolute());
         putRelativeProfit(sheet, result.profits().getRelative());
         putRelativeYearProfit(sheet, result.profits().getRelativeAnnual());

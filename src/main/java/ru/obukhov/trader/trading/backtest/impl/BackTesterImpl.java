@@ -105,7 +105,7 @@ public class BackTesterImpl implements BackTester {
                 .toList();
         return backTestFutures.stream()
                 .map(CompletableFuture::join)
-                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().getFinalTotalSavings()).reversed())
+                .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().finalTotalSavings()).reversed())
                 .toList();
     }
 
@@ -291,8 +291,8 @@ public class BackTesterImpl implements BackTester {
     }
 
     private Profits getProfits(final Balances balances, final Interval interval) {
-        final BigDecimal absolute = balances.getFinalTotalSavings().subtract(balances.getTotalInvestment());
-        final double relative = FinUtils.getRelativeProfit(balances.getWeightedAverageInvestment(), absolute);
+        final BigDecimal absolute = balances.finalTotalSavings().subtract(balances.totalInvestment());
+        final double relative = FinUtils.getRelativeProfit(balances.weightedAverageInvestment(), absolute);
         final double relativeAnnual = FinUtils.getAverageAnnualReturn(interval.toDays(), relative);
         return new Profits(absolute, relative, relativeAnnual);
     }
