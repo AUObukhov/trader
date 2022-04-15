@@ -267,7 +267,7 @@ public class ExcelServiceImpl implements ExcelService {
             headersRow.createCells("Цена", "Количество");
             for (final BackTestPosition position : positions) {
                 final ExtendedRow row = sheet.addRow();
-                row.createCells(position.getPrice(), position.getQuantity());
+                row.createCells(position.price(), position.quantity());
             }
         }
     }

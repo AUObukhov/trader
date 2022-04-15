@@ -270,7 +270,7 @@ public class BackTesterImpl implements BackTester {
 
     private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<BackTestPosition> positions) {
         return positions.stream()
-                .map(position -> DecimalUtils.multiply(position.getPrice(), position.getQuantity()))
+                .map(position -> DecimalUtils.multiply(position.price(), position.quantity()))
                 .reduce(currentBalance, BigDecimal::add);
     }
 

@@ -476,9 +476,9 @@ class BackTesterImplUnitTest {
         final List<BackTestPosition> positions = backTestResult.getPositions();
         Assertions.assertEquals(1, positions.size());
         final BackTestPosition backTestPosition = positions.get(0);
-        Assertions.assertEquals(ticker, backTestPosition.getTicker());
-        AssertUtils.assertEquals(currentPrice, backTestPosition.getPrice());
-        Assertions.assertEquals(positionLotsCount, backTestPosition.getQuantity());
+        Assertions.assertEquals(ticker, backTestPosition.ticker());
+        AssertUtils.assertEquals(currentPrice, backTestPosition.price());
+        Assertions.assertEquals(positionLotsCount, backTestPosition.quantity());
     }
 
     @Test

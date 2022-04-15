@@ -352,7 +352,7 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
         for (final BackTestPosition position : result.getPositions()) {
-            AssertUtils.assertRowValues(rowIterator.next(), position.getPrice(), position.getQuantity());
+            AssertUtils.assertRowValues(rowIterator.next(), position.price(), position.quantity());
         }
     }
 
