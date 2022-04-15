@@ -33,7 +33,7 @@ class OperationMapperUnitTest {
         Assertions.assertEquals(OperationType.BUY, target.getOperationType());
         Assertions.assertEquals(source.getPrice(), target.getPrice());
         Assertions.assertEquals(source.getQuantity(), target.getQuantity());
-        Assertions.assertEquals(source.getCommission().getValue(), target.getCommission());
+        Assertions.assertEquals(source.getCommission().value(), target.getCommission());
     }
 
     @Test
@@ -52,7 +52,7 @@ class OperationMapperUnitTest {
         Assertions.assertEquals(OperationTypeWithCommission.BUY, target.getOperationType());
         Assertions.assertEquals(source.getPrice(), target.getPrice());
         Assertions.assertEquals(source.getQuantity(), target.getQuantity());
-        Assertions.assertEquals(source.getCommission(), target.getCommission().getValue());
+        Assertions.assertEquals(source.getCommission(), target.getCommission().value());
     }
 
 }

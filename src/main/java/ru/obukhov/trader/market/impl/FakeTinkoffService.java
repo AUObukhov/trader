@@ -279,7 +279,7 @@ public class FakeTinkoffService implements TinkoffService {
                 .setBlocked(position.getBlocked())
                 .setExpectedYield(expectedYield)
                 .setCount(lotsCount)
-                .setAveragePositionPrice(new MoneyAmount(expectedYield.getCurrency(), averagePositionPrice))
+                .setAveragePositionPrice(new MoneyAmount(expectedYield.currency(), averagePositionPrice))
                 .setAveragePositionPriceNoNkd(position.getAveragePositionPriceNoNkd())
                 .setName(position.getName());
     }
