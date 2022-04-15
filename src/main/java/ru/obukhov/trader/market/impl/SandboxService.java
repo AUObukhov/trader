@@ -31,9 +31,7 @@ public class SandboxService {
      */
     public void setCurrencyBalance(@Nullable final String brokerAccountId, @NotNull final Currency currency, @NotNull final BigDecimal balance)
             throws IOException {
-        final SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest()
-                .currency(currency)
-                .balance(balance);
+        final SandboxSetCurrencyBalanceRequest setCurrencyBalanceRequest = new SandboxSetCurrencyBalanceRequest(currency, balance);
 
         sandboxClient.setCurrencyBalance(setCurrencyBalanceRequest, brokerAccountId);
     }
@@ -44,9 +42,8 @@ public class SandboxService {
      */
     public void setPositionBalance(@Nullable final String brokerAccountId, @NotNull final String ticker, @NotNull final BigDecimal balance)
             throws IOException {
-        final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest()
-                .figi(marketService.getInstrument(ticker).figi())
-                .balance(balance);
+        final String figi = marketService.getInstrument(ticker).figi();
+        final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest(figi, balance);
 
         sandboxClient.setPositionBalance(setPositionBalanceRequest, brokerAccountId);
     }
