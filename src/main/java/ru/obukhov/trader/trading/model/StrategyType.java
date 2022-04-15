@@ -21,7 +21,7 @@ public enum StrategyType {
     @JsonValue
     private final String value;
 
-    public static StrategyType from(String value) {
+    public static StrategyType fromValue(String value) {
         return LOOKUP.get(value);
     }
 
