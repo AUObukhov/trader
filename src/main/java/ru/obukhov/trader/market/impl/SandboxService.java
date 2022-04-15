@@ -22,7 +22,7 @@ public class SandboxService {
     private final SandboxClient sandboxClient;
 
     public void register() throws IOException {
-        sandboxClient.performRegistration(new SandboxRegisterRequest());
+        sandboxClient.performRegistration(new SandboxRegisterRequest(null));
     }
 
     /**
