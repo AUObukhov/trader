@@ -1,11 +1,11 @@
 package ru.obukhov.trader.web.client.service.interfaces;
 
 import org.jetbrains.annotations.NotNull;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.SearchMarketInstrument;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;

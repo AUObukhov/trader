@@ -8,7 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.InstrumentType;
@@ -28,6 +27,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -52,7 +52,7 @@ public class TestData {
             final double highestPrice,
             final double lowestPrice
     ) {
-        return createTinkoffCandle(CandleInterval.DAY, openPrice, closePrice, highestPrice, lowestPrice);
+        return createTinkoffCandle(CandleInterval.CANDLE_INTERVAL_DAY, openPrice, closePrice, highestPrice, lowestPrice);
     }
 
     public static Candle createTinkoffCandle(

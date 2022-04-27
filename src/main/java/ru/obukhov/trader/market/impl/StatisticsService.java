@@ -6,9 +6,9 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;

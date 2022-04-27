@@ -22,7 +22,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
@@ -35,6 +34,7 @@ import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.client.exchange.OrdersResponse;
 import ru.obukhov.trader.web.client.exchange.UserAccountsResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;

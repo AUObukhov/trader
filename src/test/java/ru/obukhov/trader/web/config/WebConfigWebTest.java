@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.support.GenericConversionService;
 import ru.obukhov.trader.ContextTest;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 @SpringBootTest(args = "--trading.token=i identify myself as token")
 class WebConfigWebTest extends ContextTest {
@@ -19,7 +19,7 @@ class WebConfigWebTest extends ContextTest {
     @Test
     void testCandleIntervalConversion() {
         for (CandleInterval candleInterval : CandleInterval.values()) {
-            CandleInterval convertedValue = conversionService.convert(candleInterval.getValue(), CandleInterval.class);
+            CandleInterval convertedValue = conversionService.convert(candleInterval.name(), CandleInterval.class);
             Assertions.assertEquals(candleInterval, convertedValue);
         }
     }

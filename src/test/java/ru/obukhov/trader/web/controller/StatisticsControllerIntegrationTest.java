@@ -11,11 +11,11 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -34,7 +34,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
         final int bigWindow = 50;
@@ -42,7 +42,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("from", "2021-03-25T10:00:00+03:00")
                 .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.getValue())
+                .param("candleInterval", candleInterval.name())
                 .param("movingAverageType", movingAverageType.getValue())
                 .param("smallWindow", Integer.toString(smallWindow))
                 .param("bigWindow", Integer.toString(bigWindow))
@@ -57,7 +57,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
         final int bigWindow = 50;
@@ -65,7 +65,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("ticker", ticker)
                 .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.getValue())
+                .param("candleInterval", candleInterval.name())
                 .param("movingAverageType", movingAverageType.getValue())
                 .param("smallWindow", Integer.toString(smallWindow))
                 .param("bigWindow", Integer.toString(bigWindow))
@@ -81,7 +81,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
         final int bigWindow = 50;
@@ -89,7 +89,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
                 .param("ticker", ticker)
                 .param("from", "2021-03-25T10:00:00+03:00")
-                .param("candleInterval", candleInterval.getValue())
+                .param("candleInterval", candleInterval.name())
                 .param("movingAverageType", movingAverageType.getValue())
                 .param("smallWindow", Integer.toString(smallWindow))
                 .param("bigWindow", Integer.toString(bigWindow))
@@ -128,7 +128,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final int smallWindow = 50;
         final int bigWindow = 50;
 
@@ -137,7 +137,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("ticker", ticker)
                         .param("from", "2021-03-25T10:00:00+03:00")
                         .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
                         .param("saveToFile", Boolean.TRUE.toString())
@@ -152,7 +152,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int bigWindow = 50;
 
@@ -160,7 +160,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .param("from", "2021-03-25T10:00:00+03:00")
                 .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.getValue())
+                .param("candleInterval", candleInterval.name())
                 .param("movingAverageType", movingAverageType.getValue())
                 .param("bigWindow", Integer.toString(bigWindow))
                 .param("saveToFile", Boolean.TRUE.toString())
@@ -175,7 +175,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
 
@@ -183,7 +183,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .param("from", "2021-03-25T10:00:00+03:00")
                 .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.getValue())
+                .param("candleInterval", candleInterval.name())
                 .param("movingAverageType", movingAverageType.getValue())
                 .param("smallWindow", Integer.toString(smallWindow))
                 .param("saveToFile", Boolean.TRUE.toString())
@@ -200,7 +200,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
         final int bigWindow = 2;
@@ -247,7 +247,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("ticker", ticker)
                         .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("movingAverageType", movingAverageType.getValue())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
@@ -261,7 +261,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
         final int bigWindow = 2;
@@ -278,7 +278,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("ticker", ticker)
                         .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("movingAverageType", movingAverageType.getValue())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
@@ -298,7 +298,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
         final int bigWindow = 2;
@@ -315,7 +315,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("ticker", ticker)
                         .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("movingAverageType", movingAverageType.getValue())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
@@ -338,7 +338,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
         final int bigWindow = 2;
@@ -355,7 +355,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("ticker", ticker)
                         .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("movingAverageType", movingAverageType.getValue())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
@@ -375,7 +375,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final String ticker = "ticker";
         final String figi = "figi";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
         final int bigWindow = 2;
@@ -393,7 +393,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
                         .param("movingAverageType", movingAverageType.getValue())
-                        .param("candleInterval", candleInterval.getValue())
+                        .param("candleInterval", candleInterval.name())
                         .param("smallWindow", Integer.toString(smallWindow))
                         .param("bigWindow", Integer.toString(bigWindow))
                         .contentType(MediaType.APPLICATION_JSON);

@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.BrokerAccountType;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
@@ -38,6 +37,7 @@ import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -178,7 +178,7 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
         final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
@@ -214,7 +214,7 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
 

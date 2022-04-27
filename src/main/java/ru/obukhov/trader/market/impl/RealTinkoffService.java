@@ -11,7 +11,6 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -28,6 +27,7 @@ import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;

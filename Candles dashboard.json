@@ -137,8 +137,8 @@
         "allValue": null,
         "current": {
           "selected": true,
-          "text": "1min",
-          "value": "1min"
+          "text": "CANDLE_INTERVAL_1_MIN",
+          "value": "CANDLE_INTERVAL_1_MIN"
         },
         "description": null,
         "error": null,
@@ -150,8 +150,8 @@
         "options": [
           {
             "selected": true,
-            "text": "1min",
-            "value": "1min"
+            "text": "CANDLE_INTERVAL_1_MIN",
+            "value": "CANDLE_INTERVAL_1_MIN"
           },
           {
             "selected": false,
@@ -165,8 +165,8 @@
           },
           {
             "selected": false,
-            "text": "5min",
-            "value": "5min"
+            "text": "CANDLE_INTERVAL_5_MIN",
+            "value": "CANDLE_INTERVAL_5_MIN"
           },
           {
             "selected": false,
@@ -204,7 +204,7 @@
             "value": "month"
           }
         ],
-        "query": "1min,2min,3min,5min,10min,15min,30min,hour,day,week,month",
+        "query": "CANDLE_INTERVAL_1_MIN,CANDLE_INTERVAL_5_MIN,CANDLE_INTERVAL_15_MIN,CANDLE_INTERVAL_HOUR,CANDLE_INTERVAL_DAY",
         "queryValue": "",
         "skipUrlSync": false,
         "type": "custom"

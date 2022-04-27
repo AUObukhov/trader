@@ -23,11 +23,11 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -86,13 +86,13 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -102,14 +102,14 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", StringUtils.EMPTY, "candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("ticker", StringUtils.EMPTY, "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", StringUtils.EMPTY,
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -119,14 +119,14 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", "     ", "candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("ticker", "     ", "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "     ",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -154,7 +154,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "window1", 2,
                                 "window2", 5
                         ),
@@ -165,7 +165,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window2", 5
                         ),
@@ -176,7 +176,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2
                         ),
@@ -201,8 +201,8 @@ class GrafanaServiceImplUnitTest {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
-        final Map<String, Object> data = Map.of("ticker", "ticker", "candleInterval", candleInterval.getValue());
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final Map<String, Object> data = Map.of("ticker", "ticker", "candleInterval", candleInterval.name());
         final Target target = new Target().setMetric(Metric.CANDLES).setData(data);
         request.setTargets(List.of(target));
 
@@ -247,14 +247,14 @@ class GrafanaServiceImplUnitTest {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final Integer window1 = 2;
         final Integer window2 = 5;
 
         final Map<String, Object> data = Map.of(
                 "ticker", ticker,
-                "candleInterval", candleInterval.getValue(),
+                "candleInterval", candleInterval.name(),
                 "movingAverageType", movingAverageType.getValue(),
                 "window1", window1,
                 "window2", window2

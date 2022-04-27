@@ -10,12 +10,12 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ class StatisticsServiceUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
-        final CandleInterval min = CandleInterval._1MIN;
+        final CandleInterval min = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
 
@@ -93,7 +93,7 @@ class StatisticsServiceUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
 

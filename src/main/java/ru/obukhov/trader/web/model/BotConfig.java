@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class BotConfig {
     private final String ticker;
 
     @NotNull(message = "candleInterval is mandatory")
-    @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "1min")
+    @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "CANDLE_INTERVAL_1_MIN")
     private final CandleInterval candleInterval;
 
     @NotNull(message = "commission is mandatory")

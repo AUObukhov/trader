@@ -10,9 +10,9 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -169,7 +169,7 @@ public class MarketService {
         final ListIterator<Interval> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             final Interval interval = listIterator.previous();
-            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval._1MIN);
+            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
             if (!candles.isEmpty()) {
                 return CollectionUtils.lastElement(candles);
             }

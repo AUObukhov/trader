@@ -26,7 +26,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
@@ -34,6 +33,7 @@ import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -154,7 +154,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putCandleInterval(final ExtendedSheet sheet, final CandleInterval candleInterval) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Размер свечи", candleInterval.getValue());
+        row.createCells("Размер свечи", candleInterval.name());
     }
 
     private void putStrategyType(final ExtendedSheet sheet, final StrategyType strategyType) {

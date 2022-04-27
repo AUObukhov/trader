@@ -17,7 +17,6 @@ import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.OperationType;
@@ -32,6 +31,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -69,7 +69,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -91,7 +91,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -110,7 +110,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
@@ -133,7 +133,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
 
         final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
@@ -164,7 +164,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .build();
 
@@ -211,7 +211,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .build();
 
@@ -257,7 +257,7 @@ class AbstractBotUnitTest {
         final BotConfig botConfig = BotConfig.builder()
                 .brokerAccountId(brokerAccountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .build();
 

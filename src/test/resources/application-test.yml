@@ -21,7 +21,7 @@ scheduled-bot:
   bot-configs:
     - broker-account-id: "2000124699"
       ticker: FXIT
-      candle-interval: 5min
+      candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
       strategy-type: "cross"
       strategy-params:
@@ -34,7 +34,7 @@ scheduled-bot:
         greedy: true
     - broker-account-id: "2000124698"
       ticker: FXIT
-      candle-interval: 5min
+      candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
       strategy-type: "conservative"
       strategy-params:

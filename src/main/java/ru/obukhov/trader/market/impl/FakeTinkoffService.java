@@ -12,7 +12,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.FakeContext;
@@ -32,6 +31,7 @@ import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;

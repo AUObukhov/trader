@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
 
@@ -27,11 +27,11 @@ class CandleUnitTest {
     void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
         final Candle leftCandle = new Candle()
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 1))
-                .setInterval(CandleInterval.DAY);
+                .setInterval(CandleInterval.CANDLE_INTERVAL_DAY);
 
         final Candle rightCandle = new Candle()
                 .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2))
-                .setInterval(CandleInterval.HOUR);
+                .setInterval(CandleInterval.CANDLE_INTERVAL_HOUR);
 
         final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "Candle intervals must be equal");

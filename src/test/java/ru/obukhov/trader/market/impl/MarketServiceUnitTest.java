@@ -13,7 +13,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -21,6 +20,7 @@ import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.DateTestUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -47,7 +47,7 @@ class MarketServiceUnitTest {
     void getCandles_skipsCandlesByDays_whenFromIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -77,7 +77,7 @@ class MarketServiceUnitTest {
     void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -107,7 +107,7 @@ class MarketServiceUnitTest {
     void getCandles_filterCandlesByYears() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -138,7 +138,7 @@ class MarketServiceUnitTest {
     void getCandles_skipsCandlesByYears_whenFromIsReached() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval.MONTH;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -170,7 +170,7 @@ class MarketServiceUnitTest {
     void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval.MONTH;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -202,7 +202,7 @@ class MarketServiceUnitTest {
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() throws IOException {
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final CandleInterval candleInterval = CandleInterval.MONTH;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
@@ -249,7 +249,7 @@ class MarketServiceUnitTest {
         final String ticker = "ticker";
         final OffsetDateTime from = DateTestUtils.getLastWorkDay(now).minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
 
-        new CandleMocker(tinkoffService, ticker, CandleInterval._1MIN)
+        new CandleMocker(tinkoffService, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(10, from)
                 .mock();
 
@@ -266,7 +266,7 @@ class MarketServiceUnitTest {
         final OffsetDateTime earliestDayToSearch = OffsetDateTime.now().minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit());
         final int openPrice = 10;
 
-        new CandleMocker(tinkoffService, ticker, CandleInterval._1MIN)
+        new CandleMocker(tinkoffService, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(openPrice, earliestDayToSearch)
                 .mock();
 
@@ -297,7 +297,7 @@ class MarketServiceUnitTest {
         final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
 
-        new CandleMocker(tinkoffService, ticker, CandleInterval._1MIN)
+        new CandleMocker(tinkoffService, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(10, candlesFrom)
                 .mock();
 
@@ -314,7 +314,7 @@ class MarketServiceUnitTest {
         final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
         final int openPrice = 10;
 
-        new CandleMocker(tinkoffService, ticker, CandleInterval._1MIN)
+        new CandleMocker(tinkoffService, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(openPrice, candlesFrom)
                 .mock();
 
@@ -336,7 +336,7 @@ class MarketServiceUnitTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval._1MIN);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -345,7 +345,7 @@ class MarketServiceUnitTest {
     void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -373,7 +373,7 @@ class MarketServiceUnitTest {
     void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -402,7 +402,7 @@ class MarketServiceUnitTest {
     void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -426,7 +426,7 @@ class MarketServiceUnitTest {
     void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 1, 1))
@@ -453,7 +453,7 @@ class MarketServiceUnitTest {
     void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
@@ -486,7 +486,7 @@ class MarketServiceUnitTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.DAY);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -495,7 +495,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -522,7 +522,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -550,7 +550,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() throws IOException {
         final String ticker = "ticker";
         final int limit = 10;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2019, 9, 8))
@@ -578,7 +578,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 8))
@@ -600,7 +600,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 1))
@@ -625,7 +625,7 @@ class MarketServiceUnitTest {
     void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
         final String ticker = "ticker";
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval.DAY;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         new CandleMocker(tinkoffService, ticker, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 12))

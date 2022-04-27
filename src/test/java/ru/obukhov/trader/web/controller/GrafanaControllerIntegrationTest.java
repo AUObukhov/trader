@@ -14,11 +14,11 @@ import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -98,7 +98,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<Candle> candles = List.of(
                 TestData.createCandleWithOpenPriceAndTime(100, from),
@@ -147,7 +147,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<Candle> candles = List.of(
                 TestData.createCandleWithOpenPriceAndTime(100, from),

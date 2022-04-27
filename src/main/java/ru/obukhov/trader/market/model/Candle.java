@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

@@ -21,7 +21,6 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
@@ -37,6 +36,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -130,7 +130,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -175,7 +175,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -202,7 +202,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN);
+        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -234,7 +234,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN);
+        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -263,7 +263,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -293,7 +293,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -325,7 +325,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -393,7 +393,7 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -425,7 +425,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
         final int lotSize = 10;
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         mockData(brokerAccountId, ticker, lotSize);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5);
@@ -452,7 +452,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
         final int lotSize = 10;
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         mockData(brokerAccountId, ticker, lotSize);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5);

@@ -15,7 +15,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Operation;
@@ -36,6 +35,7 @@ import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -132,7 +132,7 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId = "2000124699";
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission = 0.003;
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = BotConfig.builder()
@@ -956,7 +956,7 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId1 = null;
         final String ticker1 = "ticker1";
-        final CandleInterval candleInterval1 = CandleInterval._1MIN;
+        final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission1 = 0.003;
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
@@ -977,7 +977,7 @@ class BackTesterImplUnitTest {
 
         final String brokerAccountId2 = "2000124699";
         final String ticker2 = "ticker2";
-        final CandleInterval candleInterval2 = CandleInterval._1MIN;
+        final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission2 = 0.001;
         final StrategyType strategyType2 = StrategyType.CROSS;
 

@@ -13,7 +13,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -31,6 +30,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.obukhov.trader.web.model.exchange.BackTestResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -60,7 +60,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -82,7 +82,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -154,7 +154,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -176,7 +176,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 null,
                 Map.of("minimumProfit", 0.01)
@@ -194,7 +194,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         // building request
 
@@ -271,7 +271,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 1,
                 DecimalUtils.setDefaultScale(300)
         );
-        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval._1MIN);
+        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval.CANDLE_INTERVAL_1_MIN);
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
                 interval,
