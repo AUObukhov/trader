@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -41,7 +41,7 @@ public abstract class AbstractBot implements Bot {
 
     protected final MarketService marketService;
     protected final MarketOperationsService operationsService;
-    protected final OrdersService ordersService;
+    protected final MarketOrdersService ordersService;
     protected final PortfolioService portfolioService;
     protected final TinkoffService tinkoffService;
 

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class OrdersServiceUnitTest {
+class MarketOrdersServiceUnitTest {
 
     @Mock
     private TinkoffService tinkoffService;
@@ -27,7 +27,7 @@ class OrdersServiceUnitTest {
     private MarketService marketService;
 
     @InjectMocks
-    private OrdersService service;
+    private MarketOrdersService service;
 
     @ParameterizedTest
     @NullSource

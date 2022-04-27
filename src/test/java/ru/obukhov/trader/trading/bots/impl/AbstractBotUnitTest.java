@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -46,7 +46,7 @@ class AbstractBotUnitTest {
     @Mock
     private MarketOperationsService operationsService;
     @Mock
-    private OrdersService ordersService;
+    private MarketOrdersService ordersService;
     @Mock
     private PortfolioService portfolioService;
     @Mock
@@ -286,7 +286,7 @@ class AbstractBotUnitTest {
         public TestBot(
                 final MarketService marketService,
                 final MarketOperationsService operationsService,
-                final OrdersService ordersService,
+                final MarketOrdersService ordersService,
                 final PortfolioService portfolioService,
                 final TinkoffService tinkoffService,
                 final TradingStrategy strategy

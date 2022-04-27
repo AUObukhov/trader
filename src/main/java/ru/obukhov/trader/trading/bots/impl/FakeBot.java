@@ -5,8 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
@@ -27,7 +27,7 @@ public class FakeBot extends AbstractBot implements Bot {
     public FakeBot(
             final MarketService marketService,
             final MarketOperationsService operationsService,
-            final OrdersService ordersService,
+            final MarketOrdersService ordersService,
             final PortfolioService portfolioService,
             final FakeTinkoffService fakeTinkoffService,
             final TradingStrategy strategy

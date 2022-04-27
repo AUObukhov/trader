@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * Service to control customer orders at market
  */
-public class OrdersService {
+public class MarketOrdersService {
 
     private final TinkoffService tinkoffService;
     private final MarketService marketService;
 
-    public OrdersService(final TinkoffService tinkoffService, final MarketService marketService) {
+    public MarketOrdersService(final TinkoffService tinkoffService, final MarketService marketService) {
         this.tinkoffService = tinkoffService;
         this.marketService = marketService;
     }

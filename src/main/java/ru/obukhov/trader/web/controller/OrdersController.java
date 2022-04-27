@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.trader.market.impl.OrdersService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 
@@ -22,9 +22,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class OrdersController {
 
-    private final OrdersService ordersService;
+    private final MarketOrdersService ordersService;
 
-    public OrdersController(final OrdersService ordersService) {
+    public OrdersController(final MarketOrdersService ordersService) {
         this.ordersService = ordersService;
     }
 
