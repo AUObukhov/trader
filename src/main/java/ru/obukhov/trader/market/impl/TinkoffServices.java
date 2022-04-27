@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public record TinkoffServices(MarketService marketService,
-                              OperationsService operationsService,
+                              MarketOperationsService operationsService,
                               OrdersService ordersService,
                               PortfolioService portfolioService,
                               RealTinkoffService realTinkoffService) {

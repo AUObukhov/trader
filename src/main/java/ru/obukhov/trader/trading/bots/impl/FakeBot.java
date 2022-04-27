@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
@@ -26,7 +26,7 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public FakeBot(
             final MarketService marketService,
-            final OperationsService operationsService,
+            final MarketOperationsService operationsService,
             final OrdersService ordersService,
             final PortfolioService portfolioService,
             final FakeTinkoffService fakeTinkoffService,

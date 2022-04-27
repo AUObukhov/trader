@@ -12,8 +12,8 @@ import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
@@ -64,8 +64,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public OperationsService realOperationsService(final TinkoffService realTinkoffService) {
-        return new OperationsService(realTinkoffService);
+    public MarketOperationsService realOperationsService(final TinkoffService realTinkoffService) {
+        return new MarketOperationsService(realTinkoffService);
     }
 
     @Bean

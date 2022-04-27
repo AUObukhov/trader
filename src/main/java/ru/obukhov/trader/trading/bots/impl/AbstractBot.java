@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
 import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
@@ -40,7 +40,7 @@ public abstract class AbstractBot implements Bot {
     private static final int LAST_CANDLES_COUNT = 1000;
 
     protected final MarketService marketService;
-    protected final OperationsService operationsService;
+    protected final MarketOperationsService operationsService;
     protected final OrdersService ordersService;
     protected final PortfolioService portfolioService;
     protected final TinkoffService tinkoffService;

@@ -12,11 +12,11 @@ import java.util.List;
 /**
  * Service to get info about customer operations at market
  */
-public class OperationsService {
+public class MarketOperationsService {
 
     private final TinkoffService tinkoffService;
 
-    public OperationsService(final TinkoffService tinkoffService) {
+    public MarketOperationsService(final TinkoffService tinkoffService) {
         this.tinkoffService = tinkoffService;
     }
 
