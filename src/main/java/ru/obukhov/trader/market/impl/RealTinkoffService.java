@@ -28,6 +28,9 @@ import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -46,6 +49,12 @@ import java.util.List;
 public class RealTinkoffService implements TinkoffService, ApplicationContextAware {
 
     private RealTinkoffService self;
+
+    private final InstrumentsService instrumentsService;
+    private final MarketDataService marketDataService;
+    private final ru.tinkoff.piapi.core.OperationsService operationsService;
+    private final ru.tinkoff.piapi.core.OrdersService ordersService;
+    private final UsersService usersService;
 
     private final MarketClient marketClient;
     private final OperationsClient operationsClient;

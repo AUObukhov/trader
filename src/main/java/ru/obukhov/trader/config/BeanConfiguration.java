@@ -12,6 +12,7 @@ import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
@@ -29,6 +30,10 @@ import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
+import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.InvestApi;
+import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -42,14 +47,52 @@ import java.util.List;
 public class BeanConfiguration {
 
     @Bean
+    public InvestApi investApi(final TradingProperties tradingProperties) {
+        return InvestApi.create(tradingProperties.getToken());
+    }
+
+    @Bean
+    public InstrumentsService instrumentsService(final InvestApi investApi) {
+        return investApi.getInstrumentsService();
+    }
+
+    @Bean
+    public MarketDataService marketDataService(final InvestApi investApi) {
+        return investApi.getMarketDataService();
+    }
+
+    @Bean
+    public ru.tinkoff.piapi.core.OperationsService operationsService(final InvestApi investApi) {
+        return investApi.getOperationsService();
+    }
+
+    @Bean
+    public ru.tinkoff.piapi.core.OrdersService ordersService(final InvestApi investApi) {
+        return investApi.getOrdersService();
+    }
+
+    @Bean
+    public UsersService usersService(final InvestApi investApi) {
+        return investApi.getUserService();
+    }
+
+    @Bean
     public TinkoffService realTinkoffService(
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final ru.tinkoff.piapi.core.OperationsService operationsService,
+            final ru.tinkoff.piapi.core.OrdersService ordersService,
+            final UsersService usersService,
             final MarketClient marketClient,
             final OperationsClient operationsClient,
             final OrdersClient ordersClient,
             final PortfolioClient portfolioClient,
             final UserClient userClient
     ) {
-        return new RealTinkoffService(marketClient, operationsClient, ordersClient, portfolioClient, userClient);
+        return new RealTinkoffService(
+                instrumentsService, marketDataService, operationsService, ordersService, usersService,
+                marketClient, operationsClient, ordersClient, portfolioClient, userClient
+        );
     }
 
     @Bean
