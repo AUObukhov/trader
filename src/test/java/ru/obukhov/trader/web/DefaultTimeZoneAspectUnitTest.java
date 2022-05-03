@@ -28,19 +28,19 @@ class DefaultTimeZoneAspectUnitTest {
                 Arguments.of(null, null, null, null),
                 Arguments.of(
                         null,
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         null,
                         DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),
                 Arguments.of(
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         null,
                         DateTimeTestData.createDateTime(2020, 10, 5, 13),
                         null
                 ),
                 Arguments.of(
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         DateTimeTestData.createDateTime(2020, 10, 5, 13),
                         DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),

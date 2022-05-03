@@ -16,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 @UtilityClass
 public class DateTimeTestData {
 
+    // region OffsetDateTime creation
+
     /**
      * @return OffsetDateTime with by params and UTC zone
      */
@@ -67,7 +69,23 @@ public class DateTimeTestData {
     }
 
     /**
-     * @return OffsetDateTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and UTC zone
+     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds
+     */
+    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final ZoneOffset offset) {
+        return OffsetDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, offset);
+    }
+
+    /**
+     * @return OffsetDateTime with by params, 0 minutes, 0 seconds, 0 nanoseconds
+     */
+    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final int hour, final ZoneOffset offset) {
+        return OffsetDateTime.of(year, month, dayOfMonth, hour, 0, 0, 0, offset);
+    }
+
+    // endregion
+
+    /**
+     * @return OffsetTime with by params, 0 year, 1 month, 1 day of month, 0 nanoseconds and UTC zone
      */
     public static OffsetTime createTime(final int hour, final int minute, final int second) {
         return OffsetTime.of(hour, minute, second, 0, DateUtils.DEFAULT_OFFSET);

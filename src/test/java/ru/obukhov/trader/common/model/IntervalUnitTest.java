@@ -33,8 +33,8 @@ class IntervalUnitTest {
 
     @Test
     void of_throwsIllegalArgumentException_whenOffsetsAreDifferent() {
-        final OffsetDateTime from = OffsetDateTime.of(2020, 10, 5, 0, 0, 0, 0, ZoneOffset.ofHours(1));
-        final OffsetDateTime to = OffsetDateTime.of(2020, 10, 10, 0, 0, 0, 0, ZoneOffset.ofHours(2));
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, ZoneOffset.ofHours(1));
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 10, ZoneOffset.ofHours(2));
 
         final Executable executable = () -> Interval.of(from, to);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
@@ -678,19 +678,19 @@ class IntervalUnitTest {
                 Arguments.of(null, null, null, null),
                 Arguments.of(
                         null,
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         null,
                         DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),
                 Arguments.of(
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         null,
                         DateTimeTestData.createDateTime(2020, 10, 5, 13),
                         null
                 ),
                 Arguments.of(
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
-                        OffsetDateTime.of(2020, 10, 5, 10, 0, 0, 0, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, ZoneOffset.UTC),
                         DateTimeTestData.createDateTime(2020, 10, 5, 13),
                         DateTimeTestData.createDateTime(2020, 10, 5, 13)
                 ),

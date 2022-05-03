@@ -40,21 +40,13 @@ class DateUtilsUnitTest {
 
     @Test
     void getIntervalWithDefaultOffsets_changesOffsets_whenOffsetsAreNotDefault() {
-        final OffsetDateTime from = OffsetDateTime.of(2021, 1, 1, 10, 0, 0, 0, ZoneOffset.UTC);
-        final OffsetDateTime to = OffsetDateTime.of(2021, 1, 2, 11, 0, 0, 0, ZoneOffset.UTC);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10, ZoneOffset.UTC);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2, 11, ZoneOffset.UTC);
 
         final Interval result = DateUtils.getIntervalWithDefaultOffsets(from, to);
 
-        final OffsetDateTime expectedFrom = OffsetDateTime.of(
-                2021, 1, 1,
-                13, 0, 0, 0,
-                DateUtils.DEFAULT_OFFSET
-        );
-        final OffsetDateTime expectedTo = OffsetDateTime.of(
-                2021, 1, 2,
-                14, 0, 0, 0,
-                DateUtils.DEFAULT_OFFSET
-        );
+        final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2021, 1, 1, 13, DateUtils.DEFAULT_OFFSET);
+        final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2021, 1, 2, 14, DateUtils.DEFAULT_OFFSET);
         Assertions.assertEquals(expectedFrom, result.getFrom());
         Assertions.assertEquals(expectedTo, result.getTo());
     }
@@ -340,19 +332,11 @@ class DateUtilsUnitTest {
 
     @Test
     void setDefaultOffsetSameInstant() {
-        final OffsetDateTime dateTime = OffsetDateTime.of(
-                2021, 1, 5,
-                10, 0, 0, 0,
-                ZoneOffset.UTC
-        );
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 5, 10, ZoneOffset.UTC);
 
         final OffsetDateTime result = DateUtils.setDefaultOffsetSameInstant(dateTime);
 
-        final OffsetDateTime expected = OffsetDateTime.of(
-                2021, 1, 5,
-                13, 0, 0, 0,
-                DateUtils.DEFAULT_OFFSET
-        );
+        final OffsetDateTime expected = DateTimeTestData.createDateTime(2021, 1, 5, 13, DateUtils.DEFAULT_OFFSET);
 
         Assertions.assertEquals(expected, result);
     }
