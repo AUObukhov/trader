@@ -12,7 +12,7 @@ public class DecimalUtils {
     /**
      * Scale for operations with money
      */
-    public static final int DEFAULT_SCALE = 6;
+    public static final int DEFAULT_SCALE = 9;
 
     /**
      * Some complex operations, such as weighted average, loose accuracy due to rounding of each intermediate result.

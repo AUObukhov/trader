@@ -19,7 +19,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forSubtract() {
         return Stream.of(
                 Arguments.of(100.1, 1.5, 98.6),
-                Arguments.of(100.0000055, 1.5, 98.500006)
+                Arguments.of(100.0000000055, 1.5, 98.500000006)
         );
     }
 
@@ -39,7 +39,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forMultiplyByDouble() {
         return Stream.of(
                 Arguments.of(100.1, 1.5, 150.15),
-                Arguments.of(100.0000055, 5.9, 590.000032)
+                Arguments.of(100.0000055, 5.9, 590.000032450)
         );
     }
 
@@ -55,7 +55,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forMultiplyByInt() {
         return Stream.of(
                 Arguments.of(100.1, 2, 200.2),
-                Arguments.of(100.0000015, 3, 300.000005)
+                Arguments.of(100.0000000015, 3, 300.000000005)
         );
     }
 
@@ -75,21 +75,21 @@ class DecimalUtilsUnitTest {
     void divideBigDecimalByInteger() {
         final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
 
-        AssertUtils.assertEquals(33.333333, result);
+        AssertUtils.assertEquals(33.333333333, result);
     }
 
     @Test
     void divideLongByBigDecimal() {
         final BigDecimal result = DecimalUtils.divide(100, BigDecimal.valueOf(3));
 
-        AssertUtils.assertEquals(33.333333, result);
+        AssertUtils.assertEquals(33.333333333, result);
     }
 
     @Test
     void divide() {
         final double dividend = 100.0000055;
         final double divisor = 0.0099;
-        final double expectedResult = 10101.010657;
+        final double expectedResult = 10101.010656566;
 
         final BigDecimal divideBigDecimalByDoubleResult = DecimalUtils.divide(BigDecimal.valueOf(dividend), divisor);
         final BigDecimal divideDoubleByDoubleResult = DecimalUtils.divide(dividend, divisor);
@@ -129,8 +129,8 @@ class DecimalUtilsUnitTest {
             "10, 5, 7.5",
             "-10, 10, 0",
             "10, 10, 10",
-            "1.234567, 2.345678, 1.790123",
-            "1.234567, 9.87654321, 5.555555"
+            "1.234567, 2.345678, 1.790122500",
+            "1.234567, 9.87654321, 5.555555105"
     })
     void getAverage(BigDecimal value1, BigDecimal value2, BigDecimal expectedAverage) {
         final BigDecimal average = DecimalUtils.getAverage(value1, value2);
@@ -171,7 +171,7 @@ class DecimalUtilsUnitTest {
     void getFractionDifference() {
         final BigDecimal result = DecimalUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
 
-        AssertUtils.assertEquals(0.003009, result);
+        AssertUtils.assertEquals(0.003009027, result);
     }
 
     // region setDefaultScale with BigDecimal tests
@@ -212,8 +212,8 @@ class DecimalUtilsUnitTest {
     @ParameterizedTest
     @CsvSource({
             "10.01, 10.01",
-            "10.0000001, 10",
-            "10.0000005, 10.000001"
+            "10.0000000001, 10",
+            "10.0000000005, 10.000000001"
     })
     void setDefaultScale_withDouble(Double number, double expectedValue) {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);

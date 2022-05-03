@@ -276,7 +276,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 botConfig1,
                 interval,
                 balances1,
-                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.061215, 1.033125),
+                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.06121544, 1.033135028),
                 Collections.emptyList(),
                 List.of(operation),
                 List.of(candle),

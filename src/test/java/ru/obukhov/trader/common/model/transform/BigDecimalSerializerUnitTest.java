@@ -39,10 +39,10 @@ class BigDecimalSerializerUnitTest {
     @ParameterizedTest
     @CsvSource({
             ",",
-            "100, 100.000000",
-            "100.123456, 100.123456",
-            "100.1234564, 100.123456",
-            "100.1234567, 100.123457",
+            "100, 100.000000000",
+            "100.111123456, 100.111123456",
+            "100.1111234564, 100.111123456",
+            "100.1111234567, 100.111123457",
     })
     void serialize(BigDecimal value, BigDecimal expectedPassedValue) throws IOException {
         serializer.serialize(value, generator, null);

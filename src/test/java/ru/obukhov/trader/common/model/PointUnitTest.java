@@ -16,8 +16,8 @@ class PointUnitTest {
     static Stream<Arguments> getData_forOf_withBigDecimal() {
         return Stream.of(
                 Arguments.of(null, null, null),
-                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123123), BigDecimal.valueOf(10.123123)),
-                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123125), BigDecimal.valueOf(10.123125))
+                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123123123), BigDecimal.valueOf(10.123123123)),
+                Arguments.of(OffsetDateTime.now(), BigDecimal.valueOf(10.123123125), BigDecimal.valueOf(10.123123125))
         );
     }
 
@@ -35,8 +35,8 @@ class PointUnitTest {
         return Stream.of(
                 Arguments.of(null, null, null),
                 Arguments.of(OffsetDateTime.now(), 10.12, DecimalUtils.setDefaultScale(10.12)),
-                Arguments.of(OffsetDateTime.now(), 10.123123, BigDecimal.valueOf(10.123123)),
-                Arguments.of(OffsetDateTime.now(), 10.123125, BigDecimal.valueOf(10.123125))
+                Arguments.of(OffsetDateTime.now(), 10.123123123, BigDecimal.valueOf(10.123123123)),
+                Arguments.of(OffsetDateTime.now(), 10.123123125, BigDecimal.valueOf(10.123123125))
         );
     }
 

@@ -27,7 +27,7 @@ class MathUtilsUnitTest {
         return Stream.of(
                 Arguments.of(List.of(), 0.0),
                 Arguments.of(List.of(1000.0), 1000.0),
-                Arguments.of(List.of(100.0, 200.0, 1000.0), 433.333333)
+                Arguments.of(List.of(100.0, 200.0, 1000.0), 433.333333333)
         );
     }
 
@@ -65,7 +65,7 @@ class MathUtilsUnitTest {
     void getAverage_withVarArgs_returnsAverage_whenMultipleNumbersInCollection() {
         final BigDecimal average = MathUtils.getAverage(BigDecimal.valueOf(100), BigDecimal.valueOf(200), BigDecimal.valueOf(1000));
 
-        AssertUtils.assertEquals(433.333333, average);
+        AssertUtils.assertEquals(433.333333333, average);
     }
 
     // endregion
@@ -116,7 +116,7 @@ class MathUtilsUnitTest {
 
         final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
 
-        AssertUtils.assertEquals(17666.666667, weightedAverage);
+        AssertUtils.assertEquals(17666.666666667, weightedAverage);
     }
 
     // endregion

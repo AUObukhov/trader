@@ -256,14 +256,14 @@ class BackTesterImplUnitTest {
                 backTestResults.get(0), botConfigs.get(1), // expected sorting of results by profit
                 interval, initialInvestment,
                 finalPrice2, finalPositionLotsCount2, finalBalance2,
-                0.012, 77.015733
+                0.012, 77.015732771
         );
 
         assertCommonStatistics(
                 backTestResults.get(1), botConfigs.get(0),
                 interval, initialInvestment,
                 finalPrice1, finalPositionLotsCount1, finalBalance1,
-                0.0032, 2.212129
+                0.0032, 2.212128816
         );
     }
 

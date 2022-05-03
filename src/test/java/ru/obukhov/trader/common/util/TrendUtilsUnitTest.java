@@ -312,11 +312,11 @@ class TrendUtilsUnitTest {
         Assertions.assertEquals(2, restraintLines.size());
         final List<Point> expectedRestraintLine1 = List.of(
                 Point.of(times.get(0), 10.000000),
-                Point.of(times.get(1), 10.333333),
-                Point.of(times.get(2), 10.666667),
+                Point.of(times.get(1), 10.333333333),
+                Point.of(times.get(2), 10.666666667),
                 Point.of(times.get(3), 11.000000),
-                Point.of(times.get(4), 11.333333),
-                Point.of(times.get(5), 11.666667),
+                Point.of(times.get(4), 11.333333333),
+                Point.of(times.get(5), 11.666666667),
                 Point.of(times.get(6), 12.000000)
         );
         AssertUtils.assertListsAreEqual(expectedRestraintLine1, restraintLines.get(0));
