@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
+import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
@@ -15,6 +16,11 @@ import java.util.concurrent.TimeUnit;
  */
 @UtilityClass
 public class DateTimeTestData {
+
+    private static final long SECONDS_MIN_VALUE = -62135596800L;
+    private static final long SECONDS_MAX_VALUE = 253402300799L;
+    private static final int NANOS_MIN_VALUE = 0;
+    private static final int NANOS_MAX_VALUE = 999_999_999;
 
     // region OffsetDateTime creation
 
@@ -116,6 +122,20 @@ public class DateTimeTestData {
         final ZoneOffset defaultOffset = OffsetDateTime.now().getOffset();
         final int totalSeconds = defaultOffset.getTotalSeconds() + (int) TimeUnit.HOURS.toSeconds(1L);
         return ZoneOffset.ofTotalSeconds(totalSeconds);
+    }
+
+    public static Timestamp createTimestamp(long seconds, int nanos) {
+        if (seconds < SECONDS_MIN_VALUE || seconds > SECONDS_MAX_VALUE) {
+            throw new IllegalArgumentException(
+                    "seconds must be from 0001-01-01T00:00:00Z (" + SECONDS_MIN_VALUE +
+                            ") to 9999-12-31T23:59:59Z (" + SECONDS_MAX_VALUE + ") inclusive"
+            );
+        }
+        if (nanos < NANOS_MIN_VALUE || nanos > NANOS_MAX_VALUE) {
+            throw new IllegalArgumentException("nanos must be from " + NANOS_MIN_VALUE + " to " + NANOS_MAX_VALUE + " inclusive");
+        }
+
+        return Timestamp.newBuilder().setSeconds(seconds).setNanos(nanos).build();
     }
 
 }
