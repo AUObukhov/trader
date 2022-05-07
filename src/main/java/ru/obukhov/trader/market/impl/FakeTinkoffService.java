@@ -19,8 +19,6 @@ import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.MoneyAmount;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.Orderbook;
@@ -32,6 +30,8 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -215,12 +215,12 @@ public class FakeTinkoffService implements TinkoffService {
             throws IOException {
         final MarketInstrument instrument = searchMarketInstrument(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final int count = instrument.lot() * orderRequest.lotsCount();
+        final long count = instrument.lot() * orderRequest.lotsCount();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
         final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
 
-        if (orderRequest.operation() == OperationType.BUY) {
+        if (orderRequest.operation() == OperationType.OPERATION_TYPE_BUY) {
             buyPosition(brokerAccountId, ticker, currentPrice, count, totalPrice, totalCommissionAmount);
         } else {
             sellPosition(brokerAccountId, ticker, count, totalPrice, totalCommissionAmount);
@@ -243,7 +243,7 @@ public class FakeTinkoffService implements TinkoffService {
             @Nullable final String brokerAccountId,
             final String ticker,
             final BigDecimal currentPrice,
-            final int count,
+            final long count,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) throws IOException {
@@ -271,9 +271,9 @@ public class FakeTinkoffService implements TinkoffService {
         fakeContext.addPosition(brokerAccountId, ticker, position);
     }
 
-    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int count, final BigDecimal totalPrice) {
+    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final long count, final BigDecimal totalPrice) {
         final BigDecimal newBalance = existingPosition.balance().add(totalPrice);
-        final int newLotsCount = existingPosition.count() + count;
+        final long newLotsCount = existingPosition.count() + count;
         final BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
         return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
     }
@@ -281,7 +281,7 @@ public class FakeTinkoffService implements TinkoffService {
     private PortfolioPosition clonePositionWithNewValues(
             final PortfolioPosition position,
             final BigDecimal balance,
-            final int lotsCount,
+            final long lotsCount,
             final BigDecimal averagePositionPrice
     ) {
         final MoneyAmount expectedYield = position.expectedYield();
@@ -307,12 +307,12 @@ public class FakeTinkoffService implements TinkoffService {
     private void sellPosition(
             @Nullable final String brokerAccountId,
             final String ticker,
-            final int count,
+            final long count,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) throws IOException {
         final PortfolioPosition existingPosition = fakeContext.getPosition(brokerAccountId, ticker);
-        final int newLotsCount = existingPosition.count() - count;
+        final long newLotsCount = existingPosition.count() - count;
         if (newLotsCount < 0) {
             final String message = "count " + count + " can't be greater than existing position lotsCount count " + existingPosition.count();
             throw new IllegalArgumentException(message);
@@ -329,7 +329,7 @@ public class FakeTinkoffService implements TinkoffService {
         }
     }
 
-    private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
+    private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final long count) {
         return new PortfolioPosition(
                 position.ticker(),
                 position.balance(),
@@ -346,18 +346,11 @@ public class FakeTinkoffService implements TinkoffService {
             @Nullable final String brokerAccountId,
             final String ticker,
             final BigDecimal price,
-            final int quantity,
+            final Long quantity,
             final BigDecimal commissionAmount,
             final OperationType operationType
     ) {
-        final BackTestOperation operation = new BackTestOperation(
-                ticker,
-                fakeContext.getCurrentDateTime(),
-                operationType,
-                price,
-                quantity,
-                commissionAmount
-        );
+        final BackTestOperation operation = new BackTestOperation(ticker, fakeContext.getCurrentDateTime(), operationType, price, quantity);
 
         fakeContext.addOperation(brokerAccountId, operation);
     }

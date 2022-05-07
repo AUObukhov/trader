@@ -15,7 +15,6 @@ import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
@@ -23,13 +22,15 @@ import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
-import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
+import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.io.IOException;
@@ -52,12 +53,11 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
 
     private final InstrumentsService instrumentsService;
     private final MarketDataService marketDataService;
-    private final ru.tinkoff.piapi.core.OperationsService operationsService;
-    private final ru.tinkoff.piapi.core.OrdersService ordersService;
+    private final OperationsService operationsService;
+    private final OrdersService ordersService;
     private final UsersService usersService;
 
     private final MarketClient marketClient;
-    private final OperationsClient operationsClient;
     private final OrdersClient ordersClient;
     private final PortfolioClient portfolioClient;
     private final UserClient userClient;
@@ -120,7 +120,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.searchMarketInstrument(ticker).figi();
-        return operationsClient.getOperations(brokerAccountId, interval.getFrom(), interval.getTo(), figi);
+        return operationsService.getAllOperationsSync(brokerAccountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 
     // endregion

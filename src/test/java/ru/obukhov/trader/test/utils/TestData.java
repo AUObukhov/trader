@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
@@ -14,20 +15,21 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationStatus;
-import ru.obukhov.trader.market.model.OperationType;
-import ru.obukhov.trader.market.model.OperationTypeWithCommission;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationState;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -42,6 +44,8 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestData {
 
+    public static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    public static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     // region Tinkoff Candle creation
@@ -193,7 +197,7 @@ public class TestData {
         );
     }
 
-    public static PortfolioPosition createPortfolioPosition(final int lotsCount) {
+    public static PortfolioPosition createPortfolioPosition(final long lotsCount) {
         return new PortfolioPosition(
                 null,
                 BigDecimal.ZERO,
@@ -206,7 +210,7 @@ public class TestData {
         );
     }
 
-    public static PortfolioPosition createPortfolioPosition(final String ticker, final int lotsCount) {
+    public static PortfolioPosition createPortfolioPosition(final String ticker, final long lotsCount) {
         return new PortfolioPosition(
                 ticker,
                 BigDecimal.ZERO,
@@ -219,7 +223,7 @@ public class TestData {
         );
     }
 
-    public static PortfolioPosition createPortfolioPosition(final int lotsCount, final double averagePositionPrice) {
+    public static PortfolioPosition createPortfolioPosition(final long lotsCount, final double averagePositionPrice) {
         return new PortfolioPosition(
                 null,
                 BigDecimal.ZERO,
@@ -238,7 +242,7 @@ public class TestData {
             final double blocked,
             final Currency currency,
             final double expectedYield,
-            final int count,
+            final long count,
             final double averagePositionPrice,
             final double averagePositionPriceNoNkd,
             final String name
@@ -273,65 +277,27 @@ public class TestData {
 
     public static Operation createOperation(
             final OffsetDateTime operationDateTime,
-            final OperationTypeWithCommission operationType,
+            final OperationType operationType,
             final double operationPrice,
-            final int operationQuantity,
-            final double commissionValue
+            final long operationQuantity
     ) {
-        return new Operation(
-                null,
-                null,
-                null,
-                createMoneyAmount(Currency.RUB, commissionValue),
-                null,
-                null,
-                DecimalUtils.setDefaultScale(operationPrice),
-                operationQuantity,
-                operationQuantity,
-                null,
-                null,
-                null,
-                operationDateTime,
-                operationType
-        );
+        return Operation.newBuilder()
+                .setDate(DATE_TIME_MAPPER.map(operationDateTime))
+                .setOperationType(operationType)
+                .setPrice(MONEY_VALUE_MAPPER.map(operationPrice))
+                .setQuantity(operationQuantity)
+                .build();
     }
 
-    public static Operation createOperation(final OperationStatus operationStatus) {
-        return new Operation(
-                null,
-                operationStatus,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
+    public static Operation createOperation(final OperationState state) {
+        return Operation.newBuilder()
+                .setState(state)
+                .build();
     }
 
     public static Operation createOperation() {
-        return new Operation(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
+        return Operation.newBuilder()
+                .build();
     }
 
     // endregion
@@ -496,7 +462,7 @@ public class TestData {
     // region Order creation
 
     public Order createOrder(String id, String figi) {
-        return new Order(id, figi, OperationType.BUY, OrderStatus.FILL, 1, 1, OrderType.MARKET, BigDecimal.TEN);
+        return new Order(id, figi, OperationType.OPERATION_TYPE_BUY, OrderStatus.FILL, 1, 1, OrderType.MARKET, BigDecimal.TEN);
     }
 
     public static Order createOrder() {

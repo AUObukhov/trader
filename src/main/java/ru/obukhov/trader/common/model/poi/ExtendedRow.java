@@ -142,6 +142,8 @@ public class ExtendedRow implements Row {
             return createCell(column, doubleValue);
         } else if (value instanceof Integer integerValue) {
             return createCell(column, integerValue);
+        } else if (value instanceof Long longValue) {
+            return createCell(column, longValue);
         } else if (value instanceof LocalDateTime localDateTimeValue) {
             return createCell(column, localDateTimeValue);
         } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
@@ -205,6 +207,18 @@ public class ExtendedRow implements Row {
      * @return created cell
      */
     public ExtendedCell createCell(final int column, final Integer value) {
+        final Double doubleValue = value == null ? null : value.doubleValue();
+        return createCell(column, doubleValue);
+    }
+
+    /**
+     * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(final int column, final Long value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
     }

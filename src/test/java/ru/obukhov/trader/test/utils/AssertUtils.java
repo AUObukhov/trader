@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
+import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.BooleanUtils;
@@ -28,6 +29,9 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -50,6 +54,8 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
+    private static final MoneyValueMapper MONEY_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     // region assertEquals
@@ -84,6 +90,38 @@ public class AssertUtils {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, expected)) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final MoneyValue expected, final BigDecimal actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.map(expected))) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final BigDecimal expected, final MoneyValue actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.map(actual))) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final OffsetDateTime expected, @Nullable final Timestamp actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -236,6 +274,8 @@ public class AssertUtils {
                     assertCellValue(cell, doubleValue);
                 } else if (value instanceof Integer integerValue) {
                     assertCellValue(cell, integerValue);
+                } else if (value instanceof Long longValue) {
+                    assertCellValue(cell, longValue);
                 } else if (value instanceof LocalDateTime localDateTimeValue) {
                     assetCellValue(cell, localDateTimeValue);
                 } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
@@ -270,6 +310,11 @@ public class AssertUtils {
     }
 
     public static void assertCellValue(final Cell cell, final Integer value) {
+        final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+        AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
+    }
+
+    public static void assertCellValue(final Cell cell, final Long value) {
         final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }

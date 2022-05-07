@@ -5,8 +5,8 @@ import lombok.experimental.Accessors;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.tinkoff.piapi.contract.v1.Operation;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,7 +22,7 @@ public class DecisionData {
     private MarketInstrument instrument;
     private double commission;
 
-    public Integer getPositionLotsCount() {
+    public long getPositionLotsCount() {
         return position.count() / instrument.lot();
     }
 

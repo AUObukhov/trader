@@ -13,6 +13,53 @@ import java.util.stream.Stream;
 
 class DecimalUtilsUnitTest {
 
+    // region createBigDecimal tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCreateBigDecimal() {
+        return Stream.of(
+                Arguments.of(0, 0, 0),
+                Arguments.of(0, 120_000_000, 0.12),
+                Arguments.of(14, 0, 14.0),
+                Arguments.of(13, 160_000_000, 13.16),
+                Arguments.of(7, 10_000, 7.00001),
+                Arguments.of(15, 666_666_666, 15.666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateBigDecimal")
+    void createBigDecimal(final long units, final int nanos, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.createBigDecimal(units, nanos);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
+    // region getNano tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetNano() {
+        return Stream.of(
+                Arguments.of(0, 0),
+                Arguments.of(0.12, 120_000_000),
+                Arguments.of(14.0, 0),
+                Arguments.of(13.000_000_001, 1),
+                Arguments.of(13.666_666_666, 666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetNano")
+    void getNano(final double bigDecimal, final int expectedNanos) {
+        final int nanos = DecimalUtils.getNano(BigDecimal.valueOf(bigDecimal));
+
+        Assertions.assertEquals(expectedNanos, nanos);
+    }
+
+    // endregion
+
     // region subtract tests
 
     @SuppressWarnings("unused")
@@ -140,8 +187,8 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
-    void getIntegerQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
-        final int result = DecimalUtils.getIntegerQuotient(dividend, divisor);
+    void getLongQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
+        final long result = DecimalUtils.getLongQuotient(dividend, divisor);
 
         Assertions.assertEquals(expectedQuotient, result);
     }

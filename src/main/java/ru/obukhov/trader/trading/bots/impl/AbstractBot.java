@@ -12,8 +12,6 @@ import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
@@ -23,6 +21,8 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -114,7 +114,9 @@ public abstract class AbstractBot implements Bot {
             return;
         }
 
-        final OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
+        final OperationType operation = decision.getAction() == DecisionAction.BUY
+                ? OperationType.OPERATION_TYPE_BUY
+                : OperationType.OPERATION_TYPE_SELL;
         final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), operation);
         log.info("Placed order:\n{}", order);
     }

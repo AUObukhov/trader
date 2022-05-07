@@ -1,6 +1,7 @@
 package ru.obukhov.trader.common.util;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
@@ -20,6 +21,26 @@ public class DecimalUtils {
      * Must be significantly larger than {@link DecimalUtils#DEFAULT_SCALE}
      */
     private static final int HIGH_SCALE = 15;
+
+    /**
+     * @param units part of number before decimal point
+     * @param nano  part of number after decimal point
+     * @return BigDecimal result
+     */
+    public static BigDecimal createBigDecimal(final long units, final int nano) {
+        return units == 0 && nano == 0
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(units).add(BigDecimal.valueOf(nano, DecimalUtils.DEFAULT_SCALE));
+    }
+
+    /**
+     * @return part of given {@code bigDecimal} after decimal point
+     */
+    public static int getNano(@NotNull final BigDecimal bigDecimal) {
+        return bigDecimal.remainder(BigDecimal.ONE)
+                .multiply(BigDecimal.valueOf(Math.pow(10, DEFAULT_SCALE)))
+                .intValue();
+    }
 
     /**
      * @return minuend - subtrahend
@@ -116,8 +137,8 @@ public class DecimalUtils {
     /**
      * @return integer quotient of division of {@code dividend} by {@code divisor}
      */
-    public static int getIntegerQuotient(final BigDecimal dividend, final BigDecimal divisor) {
-        return dividend.divide(divisor, RoundingMode.DOWN).intValue();
+    public static long getLongQuotient(final BigDecimal dividend, final BigDecimal divisor) {
+        return dividend.divide(divisor, RoundingMode.DOWN).longValue();
     }
 
     /**

@@ -20,7 +20,7 @@ public class ConservativeStrategy extends AbstractTradingStrategy {
     @Override
     public Decision decide(@NotNull final DecisionData data, @NotNull final StrategyCache strategyCache) {
         Decision decision;
-        if (existsOperationInProgress(data)) {
+        if (existsOperationStateIsUnspecified(data)) {
             decision = new Decision(DecisionAction.WAIT, null, strategyCache);
             log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {

@@ -8,11 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.OrderType;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
         final Order order1 = new Order(
                 "order1",
                 "figi1",
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 OrderStatus.FILL,
                 10,
                 5,
@@ -39,7 +39,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
         final Order order2 = new Order(
                 "order2",
                 "figi2",
-                OperationType.SELL,
+                OperationType.OPERATION_TYPE_SELL,
                 OrderStatus.NEW,
                 1,
                 0,

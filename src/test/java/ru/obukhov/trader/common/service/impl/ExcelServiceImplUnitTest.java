@@ -21,7 +21,6 @@ import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
@@ -34,6 +33,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -356,7 +356,7 @@ class ExcelServiceImplUnitTest {
     private void assertOperations(BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
-        AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+        AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество");
 
         for (final BackTestOperation operation : result.operations()) {
             AssertUtils.assertRowValues(
@@ -364,8 +364,7 @@ class ExcelServiceImplUnitTest {
                     operation.dateTime(),
                     operation.operationType().name(),
                     operation.price(),
-                    operation.quantity(),
-                    operation.commission()
+                    operation.quantity()
             );
         }
     }
@@ -516,34 +515,30 @@ class ExcelServiceImplUnitTest {
         BackTestOperation operation1 = new BackTestOperation(
                 ticker,
                 DateTimeTestData.createDateTime(2020, 10, 1, 10),
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(150),
-                1,
-                BigDecimal.valueOf(0.45)
+                1L
         );
         BackTestOperation operation2 = new BackTestOperation(
                 ticker,
                 DateTimeTestData.createDateTime(2020, 10, 5, 10, 11),
-                OperationType.SELL,
+                OperationType.OPERATION_TYPE_SELL,
                 BigDecimal.valueOf(180),
-                1,
-                BigDecimal.valueOf(0.54)
+                1L
         );
         BackTestOperation operation3 = new BackTestOperation(
                 ticker,
                 DateTimeTestData.createDateTime(2020, 10, 10, 10, 50),
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(160),
-                3,
-                BigDecimal.valueOf(0.48)
+                3L
         );
         BackTestOperation operation4 = new BackTestOperation(
                 ticker,
                 DateTimeTestData.createDateTime(2020, 11, 1, 10),
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(120),
-                2,
-                BigDecimal.valueOf(0.36)
+                2L
         );
 
         return List.of(operation1, operation2, operation3, operation4);

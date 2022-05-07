@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestData;
@@ -31,6 +30,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -266,10 +266,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestOperation operation = new BackTestOperation(
                 ticker,
                 from,
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10000),
-                1,
-                DecimalUtils.setDefaultScale(300)
+                1L
         );
         final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval.CANDLE_INTERVAL_1_MIN);
         final BackTestResult backTestResult1 = new BackTestResult(

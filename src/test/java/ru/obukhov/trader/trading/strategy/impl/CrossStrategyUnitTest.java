@@ -10,14 +10,14 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationStatus;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationState;
 
 import java.util.List;
 
@@ -41,9 +41,9 @@ class CrossStrategyUnitTest {
         );
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
-        final Operation operation1 = TestData.createOperation(OperationStatus.DONE);
-        final Operation operation2 = TestData.createOperation(OperationStatus.PROGRESS);
-        final Operation operation3 = TestData.createOperation(OperationStatus.DECLINE);
+        final Operation operation1 = TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation2 = TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
+        final Operation operation3 = TestData.createOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));

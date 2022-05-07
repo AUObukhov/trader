@@ -18,8 +18,6 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -32,6 +30,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -204,7 +204,7 @@ class AbstractBotUnitTest {
 
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
@@ -220,7 +220,7 @@ class AbstractBotUnitTest {
         AssertUtils.assertListsAreEqual(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_BUY);
     }
 
     @ParameterizedTest
@@ -250,7 +250,7 @@ class AbstractBotUnitTest {
 
         Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
-        final Decision decision = new Decision(DecisionAction.SELL, 5);
+        final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
@@ -266,7 +266,7 @@ class AbstractBotUnitTest {
         AssertUtils.assertListsAreEqual(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_SELL);
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {

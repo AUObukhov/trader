@@ -12,7 +12,7 @@ public record PortfolioPosition(
         @NotNull @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal balance,
         @Nullable @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal blocked,
         @NotNull MoneyAmount expectedYield,
-        @Nullable Integer count, // Count of securities, not lots
+        @Nullable Long count, // Count of securities, not lots
         @Nullable MoneyAmount averagePositionPrice,
         @Nullable MoneyAmount averagePositionPriceNoNkd, // useful for bonds only
         @NotNull String name

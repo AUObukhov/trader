@@ -22,8 +22,6 @@ import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
@@ -33,11 +31,13 @@ import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
-import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.core.OperationsService;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -52,13 +52,13 @@ class RealTinkoffServiceUnitTest {
     @Mock
     private MarketClient marketClient;
     @Mock
-    private OperationsClient operationsClient;
-    @Mock
     private OrdersClient ordersClient;
     @Mock
     private PortfolioClient portfolioClient;
     @Mock
     private UserClient userClient;
+    @Mock
+    private OperationsService operationsService;
 
     @Mock
     private ApplicationContext applicationContext;
@@ -272,7 +272,7 @@ class RealTinkoffServiceUnitTest {
         final Operation operation1 = TestData.createOperation();
         final Operation operation2 = TestData.createOperation();
         final List<Operation> operations = List.of(operation1, operation2);
-        Mockito.when(operationsClient.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
+        Mockito.when(operationsService.getAllOperationsSync(brokerAccountId, from.toInstant(), to.toInstant(), figi)).thenReturn(operations);
 
         final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
 
@@ -331,7 +331,7 @@ class RealTinkoffServiceUnitTest {
 
         mockInstrument(TestData.createMarketInstrument(ticker, figi));
 
-        final MarketOrderRequest orderRequest = new MarketOrderRequest(1, OperationType.BUY);
+        final MarketOrderRequest orderRequest = new MarketOrderRequest(1L, OperationType.OPERATION_TYPE_BUY);
 
         final PlacedMarketOrder placedOrder = new PlacedMarketOrder(
                 null,

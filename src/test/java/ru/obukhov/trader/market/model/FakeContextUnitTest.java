@@ -244,8 +244,8 @@ class FakeContextUnitTest {
                 DateTimeTestData.createDateTime(2021, 1, 1, 10),
                 null,
                 null,
-                null,
-                null);
+                null
+        );
         fakeContext.addOperation(brokerAccountId, operation);
 
         final Set<BackTestOperation> operations = fakeContext.getOperations(brokerAccountId);

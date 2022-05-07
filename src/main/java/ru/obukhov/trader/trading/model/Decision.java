@@ -12,7 +12,7 @@ public class Decision {
 
     private final DecisionAction action;
 
-    private final Integer lots;
+    private final Long lots;
 
     private final StrategyCache strategyCache;
 
@@ -20,7 +20,7 @@ public class Decision {
         this(action, null, null);
     }
 
-    public Decision(@NotNull DecisionAction action, @Nullable Integer lots) {
+    public Decision(@NotNull DecisionAction action, @Nullable Long lots) {
         this(action, lots, null);
     }
 

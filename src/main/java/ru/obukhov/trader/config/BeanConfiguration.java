@@ -25,7 +25,6 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
-import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
@@ -33,6 +32,8 @@ import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
+import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.Duration;
@@ -80,18 +81,17 @@ public class BeanConfiguration {
     public TinkoffService realTinkoffService(
             final InstrumentsService instrumentsService,
             final MarketDataService marketDataService,
-            final ru.tinkoff.piapi.core.OperationsService operationsService,
-            final ru.tinkoff.piapi.core.OrdersService ordersService,
+            final OperationsService operationsService,
+            final OrdersService ordersService,
             final UsersService usersService,
             final MarketClient marketClient,
-            final OperationsClient operationsClient,
             final OrdersClient ordersClient,
             final PortfolioClient portfolioClient,
             final UserClient userClient
     ) {
         return new RealTinkoffService(
                 instrumentsService, marketDataService, operationsService, ordersService, usersService,
-                marketClient, operationsClient, ordersClient, portfolioClient, userClient
+                marketClient, ordersClient, portfolioClient, userClient
         );
     }
 

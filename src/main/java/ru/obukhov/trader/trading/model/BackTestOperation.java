@@ -1,7 +1,7 @@
 package ru.obukhov.trader.trading.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.obukhov.trader.market.model.OperationType;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -11,7 +11,6 @@ public record BackTestOperation(
         OffsetDateTime dateTime,
         OperationType operationType,
         BigDecimal price,
-        Integer quantity,
-        BigDecimal commission
+        Long quantity
 ) {
 }

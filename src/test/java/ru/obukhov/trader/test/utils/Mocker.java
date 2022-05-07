@@ -6,9 +6,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
+import ru.tinkoff.piapi.contract.v1.Operation;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;

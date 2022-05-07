@@ -23,8 +23,6 @@ import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -37,6 +35,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -335,11 +335,11 @@ class RunnableBotUnitTest {
         final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
         Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
 
-        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(decision);
 
-        Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
+        Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_BUY))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -428,14 +428,14 @@ class RunnableBotUnitTest {
         mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         mockData(brokerAccountId, ticker, lotSize);
 
-        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_BUY);
     }
 
     @ParameterizedTest
@@ -455,14 +455,14 @@ class RunnableBotUnitTest {
         mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         mockData(brokerAccountId, ticker, lotSize);
 
-        final Decision decision = new Decision(DecisionAction.SELL, 5);
+        final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_SELL);
     }
 
     private RunnableBot createRunnableBot() {

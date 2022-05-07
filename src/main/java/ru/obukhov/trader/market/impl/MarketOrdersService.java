@@ -5,10 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -53,7 +53,7 @@ public class MarketOrdersService {
     public PlacedMarketOrder placeMarketOrder(
             @Nullable final String brokerAccountId,
             @NotNull final String ticker,
-            final int lots,
+            final long lots,
             @NotNull final OperationType operationType
     ) throws IOException {
         final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);
