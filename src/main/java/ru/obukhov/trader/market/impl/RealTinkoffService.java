@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -21,10 +22,10 @@ import ru.obukhov.trader.market.model.PlacedLimitOrder;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
+import ru.obukhov.trader.market.model.transform.AccountMapper;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
-import ru.obukhov.trader.web.client.service.interfaces.UserClient;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -49,6 +50,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RealTinkoffService implements TinkoffService, ApplicationContextAware {
 
+    private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
+
     private RealTinkoffService self;
 
     private final InstrumentsService instrumentsService;
@@ -60,7 +63,6 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     private final MarketClient marketClient;
     private final OrdersClient ordersClient;
     private final PortfolioClient portfolioClient;
-    private final UserClient userClient;
 
     // region MarketContext
 
@@ -170,8 +172,10 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region UserContext
 
     @Override
-    public List<UserAccount> getAccounts() throws IOException {
-        return userClient.getAccounts();
+    public List<UserAccount> getAccounts() {
+        return usersService.getAccountsSync().stream()
+                .map(ACCOUNT_MAPPER::map)
+                .toList();
     }
 
     // endregion

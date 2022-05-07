@@ -53,7 +53,7 @@ public interface TinkoffService {
 
     List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException;
 
-    List<UserAccount> getAccounts() throws IOException;
+    List<UserAccount> getAccounts();
 
     OffsetDateTime getCurrentDateTime();
 

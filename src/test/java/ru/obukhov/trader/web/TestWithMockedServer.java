@@ -25,15 +25,12 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.market.model.UserAccounts;
 import ru.obukhov.trader.test.utils.CandlesExpectationResponseCallback;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.client.exchange.OrdersResponse;
-import ru.obukhov.trader.web.client.exchange.UserAccountsResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
@@ -68,17 +65,6 @@ public abstract class TestWithMockedServer {
 
     protected int getPort() {
         return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
-    }
-
-    protected void mockUserAccounts(final List<UserAccount> userAccounts) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/user/accounts");
-
-        final UserAccounts payload = new UserAccounts(userAccounts);
-        final UserAccountsResponse userAccountsResponse = new UserAccountsResponse();
-        userAccountsResponse.setPayload(payload);
-
-        mockResponse(apiRequest, userAccountsResponse);
     }
 
     protected void mockOrders(final List<Order> orders) throws JsonProcessingException {

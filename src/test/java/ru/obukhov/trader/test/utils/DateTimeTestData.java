@@ -138,4 +138,8 @@ public class DateTimeTestData {
         return Timestamp.newBuilder().setSeconds(seconds).setNanos(nanos).build();
     }
 
+    public static Timestamp createTimestamp(long seconds) {
+        return createTimestamp(seconds, 0);
+    }
+
 }

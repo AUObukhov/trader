@@ -1,15 +1,13 @@
 package ru.obukhov.trader.web.client.exchange;
 
 import lombok.Data;
-import ru.obukhov.trader.market.model.UserAccounts;
+import ru.tinkoff.piapi.contract.v1.Account;
+
+import java.util.List;
 
 @Data
 public class UserAccountsResponse {
 
-    private String trackingId;
-
-    private String status;
-
-    private UserAccounts payload;
+    private List<Account> accounts;
 
 }
