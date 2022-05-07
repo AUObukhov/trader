@@ -226,7 +226,7 @@ public class FakeTinkoffService implements TinkoffService {
             sellPosition(brokerAccountId, ticker, count, totalPrice, totalCommissionAmount);
         }
 
-        addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.operation());
+        addOperation(brokerAccountId, ticker, currentPrice, count, orderRequest.operation());
         return new PlacedMarketOrder(
                 null,
                 orderRequest.operation(),
@@ -347,7 +347,6 @@ public class FakeTinkoffService implements TinkoffService {
             final String ticker,
             final BigDecimal price,
             final Long quantity,
-            final BigDecimal commissionAmount,
             final OperationType operationType
     ) {
         final BackTestOperation operation = new BackTestOperation(ticker, fakeContext.getCurrentDateTime(), operationType, price, quantity);
