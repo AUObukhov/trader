@@ -9,7 +9,7 @@ public record MarketInstrument(
         BigDecimal minPriceIncrement,
         Integer lot,
         Integer minQuantity,
-        Currency currency,
+        String currency,
         String name,
         InstrumentType type
 ) {

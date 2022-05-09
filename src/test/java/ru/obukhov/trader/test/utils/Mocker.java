@@ -8,7 +8,10 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
+import ru.tinkoff.piapi.contract.v1.Asset;
+import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -44,6 +47,17 @@ public class Mocker {
         final MockedStatic<Runtime> runtimeStaticMock = Mockito.mockStatic(Runtime.class, Mockito.CALLS_REAL_METHODS);
         runtimeStaticMock.when(Runtime::getRuntime).thenReturn(runtime);
         return runtimeStaticMock;
+    }
+
+    public static void mockFigiByTicker(final InstrumentsService instrumentsService, final String figi, final String ticker) {
+        final AssetInstrument assetInstrument = AssetInstrument.newBuilder()
+                .setFigi(figi)
+                .setTicker(ticker)
+                .build();
+        final Asset asset = Asset.newBuilder()
+                .addInstruments(assetInstrument)
+                .build();
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset));
     }
 
 }

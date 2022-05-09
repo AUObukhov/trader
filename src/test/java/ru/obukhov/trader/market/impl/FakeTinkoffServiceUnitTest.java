@@ -21,7 +21,6 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -30,6 +29,7 @@ import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,6 +46,8 @@ class FakeTinkoffServiceUnitTest {
 
     @Mock
     private MarketService marketService;
+    @Mock
+    private MarketInstrumentsService marketInstrumentsService;
     @Mock
     private RealTinkoffService realTinkoffService;
     @InjectMocks
@@ -138,7 +140,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -164,7 +166,7 @@ class FakeTinkoffServiceUnitTest {
 
     private void constructor_initsBalance(final String brokerAccountId, final BalanceConfig balanceConfig, final double expectedBalance) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 1);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
 
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
@@ -196,7 +198,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -219,7 +221,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -242,7 +244,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -270,7 +272,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.RUB,
+                Currency.RUB.name(),
                 0.003,
                 balanceConfig
         );
@@ -278,8 +280,7 @@ class FakeTinkoffServiceUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), lotSize);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 100);
@@ -314,7 +315,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.RUB,
+                Currency.RUB.name(),
                 0.003,
                 balanceConfig
         );
@@ -323,10 +324,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
-        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
+        mockShare(ticker1, Currency.RUB.name(), lotSize);
+        mockShare(ticker2, Currency.RUB.name(), lotSize);
 
         final OffsetDateTime ticker1OperationDateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 100);
@@ -358,7 +357,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.RUB,
+                Currency.RUB.name(),
                 0.003,
                 balanceConfig
         );
@@ -367,10 +366,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
-        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
+        mockShare(ticker1, Currency.RUB.name(), lotSize);
+        mockShare(ticker2, Currency.RUB.name(), lotSize);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 100);
@@ -412,7 +409,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
         service = new FakeTinkoffService(
@@ -427,8 +424,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), 10);
 
         final Executable executable = () -> placeMarketOrder(brokerAccountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 500);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
@@ -442,7 +438,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_buy_createsNewPosition_whenNoPositions(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service = new FakeTinkoffService(
@@ -457,8 +453,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), 10);
 
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 1000);
 
@@ -475,7 +470,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service = new FakeTinkoffService(
@@ -490,8 +485,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, 10);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), 10);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
@@ -510,7 +504,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_buy_createsMultiplePositions_whenDifferentTickersAreBought(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
 
         service = new FakeTinkoffService(
@@ -527,12 +521,9 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
 
-        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker1, 10);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker1)).thenReturn(instrument1);
-        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker2, 2);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker2)).thenReturn(instrument2);
-        final MarketInstrument instrument3 = TestData.createMarketInstrument(ticker3, 1);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker3)).thenReturn(instrument3);
+        mockShare(ticker1, Currency.RUB.name(), 10);
+        mockShare(ticker2, Currency.RUB.name(), 2);
+        mockShare(ticker3, Currency.RUB.name(), 1);
 
         placeMarketOrder(brokerAccountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 1000);
         placeMarketOrder(brokerAccountId, ticker2, 3, OperationType.OPERATION_TYPE_BUY, 100);
@@ -562,7 +553,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
@@ -578,8 +569,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), lotSize);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
@@ -601,7 +591,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_sell_removesPosition_whenAllLotsAreSold(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
@@ -617,8 +607,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), lotSize);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
@@ -634,7 +623,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void placeMarketOrder_sell_reducesLotsCount(@Nullable final String brokerAccountId) throws IOException {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final int lotSize = 10;
 
@@ -650,8 +639,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(realTinkoffService.searchMarketInstrument(ticker)).thenReturn(instrument);
+        mockShare(ticker, Currency.RUB.name(), lotSize);
 
         placeMarketOrder(brokerAccountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
         placeMarketOrder(brokerAccountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
@@ -681,19 +669,15 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
 
         final List<CurrencyPosition> currencies = service.getPortfolioCurrencies(brokerAccountId);
 
-        Assertions.assertEquals(Currency.values().length, currencies.size());
-        for (final Currency currency : Currency.values()) {
-            if (currencies.stream().noneMatch(portfolioCurrency -> portfolioCurrency.currency() == currency)) {
-                Assertions.fail("Currency " + currency + " found in getPortfolioCurrencies result");
-            }
-        }
+        Assertions.assertEquals(1, currencies.size());
+        Assertions.assertEquals(Currency.USD.name(), currencies.get(0).currency());
 
         for (final CurrencyPosition portfolioCurrency : currencies) {
             AssertUtils.assertEquals(0, portfolioCurrency.balance());
@@ -706,7 +690,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getPortfolioCurrencies_returnsCurrencyWithBalance_whenBalanceInitialized(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000.0);
 
         service = new FakeTinkoffService(
@@ -734,7 +718,7 @@ class FakeTinkoffServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getPortfolioCurrencies_returnsCurrencyWithBalance_afterAddInvestment(@Nullable final String brokerAccountId) {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(1000);
 
         service = new FakeTinkoffService(
@@ -742,7 +726,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 brokerAccountId,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -785,7 +769,7 @@ class FakeTinkoffServiceUnitTest {
                 tinkoffServices,
                 null,
                 dateTime,
-                Currency.USD,
+                Currency.USD.name(),
                 0.003,
                 TestData.createBalanceConfig(0.0)
         );
@@ -796,6 +780,15 @@ class FakeTinkoffServiceUnitTest {
         final BigDecimal currentPrice = service.getCurrentPrice(ticker);
 
         AssertUtils.assertEquals(price, currentPrice);
+    }
+
+    private void mockShare(String ticker, String currency, int lotSize) {
+        final Share share = Share.newBuilder()
+                .setTicker(ticker)
+                .setCurrency(currency)
+                .setLot(lotSize)
+                .build();
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
     }
 
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ class DecisionDataUnitTest {
         final DecisionData decisionData = new DecisionData();
 
         decisionData.setPosition(TestData.createPortfolioPosition(30));
-        decisionData.setInstrument(TestData.createMarketInstrument(5));
+        decisionData.setShare(Share.newBuilder().setLot(5).build());
 
         Assertions.assertEquals(6, decisionData.getPositionLotsCount());
 

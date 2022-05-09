@@ -76,10 +76,6 @@ public abstract class TestWithMockedServer {
         mockResponse(apiRequest, ordersResponse);
     }
 
-    protected void mockFigiByTicker(final String ticker, final String figi) throws JsonProcessingException {
-        mockInstrumentByTicker(ticker, TestData.createMarketInstrument(ticker, figi));
-    }
-
     protected void mockInstrumentByTicker(final String ticker, final MarketInstrument instrument) throws JsonProcessingException {
         final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
                 .withPath("/openapi/market/search/by-ticker")

@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.TestData;
 
@@ -36,8 +35,7 @@ class MarketOrdersServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, figi);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        Mockito.when(tinkoffService.getFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
                 brokerAccountId,
                 TestData.createOrder("order0", figi),

@@ -8,7 +8,7 @@ public record SearchMarketInstrument(
         String isin,
         BigDecimal minPriceIncrement,
         Integer lot,
-        Currency currency,
+        String currency,
         String name,
         InstrumentType type
 ) {

@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -207,7 +208,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final Candle candle1 = TestData.createCandle(
                 12000,
@@ -268,7 +269,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final List<Candle> candles = Collections.emptyList();
         mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
@@ -305,7 +306,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final List<Candle> candles = Collections.emptyList();
         mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
@@ -345,7 +346,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final List<Candle> candles = Collections.emptyList();
         mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
@@ -382,7 +383,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final List<Candle> candles = Collections.emptyList();
         mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);

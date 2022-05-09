@@ -5,7 +5,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
@@ -15,6 +14,7 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -25,19 +25,15 @@ import java.util.List;
  */
 public interface TinkoffService {
 
-    List<MarketInstrument> getMarketStocks() throws IOException;
+    String getFigiByTicker(String ticker);
 
-    List<MarketInstrument> getMarketBonds() throws IOException;
+    String getTickerByFigi(String figi);
 
-    List<MarketInstrument> getMarketEtfs() throws IOException;
-
-    List<MarketInstrument> getMarketCurrencies() throws IOException;
+    List<Share> getAllShares();
 
     Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException;
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
-
-    MarketInstrument searchMarketInstrument(final String ticker) throws IOException;
 
     List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
 

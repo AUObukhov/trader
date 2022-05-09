@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Class, containing in memory data about back tested portfolio and current market dateTime
@@ -36,7 +35,7 @@ public class FakeContext {
     public FakeContext(
             final OffsetDateTime currentDateTime,
             @Nullable final String brokerAccountId,
-            final Currency currency,
+            final String currency,
             final BigDecimal initialBalance
     ) {
         this(currentDateTime);
@@ -47,7 +46,7 @@ public class FakeContext {
     /**
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current dateTime
      */
-    public void addInvestment(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal amount) {
+    public void addInvestment(@Nullable final String brokerAccountId, final String currency, final BigDecimal amount) {
         computeIfAbsentBalance(brokerAccountId, currency).addInvestment(currentDateTime, amount);
     }
 
@@ -57,25 +56,27 @@ public class FakeContext {
     public void addInvestment(
             @Nullable final String brokerAccountId,
             final OffsetDateTime dateTime,
-            final Currency currency,
+            final String currency,
             final BigDecimal amount
     ) {
         computeIfAbsentBalance(brokerAccountId, currency).addInvestment(dateTime, amount);
     }
 
-    public BigDecimal getBalance(@Nullable final String brokerAccountId, final Currency currency) {
+    public BigDecimal getBalance(@Nullable final String brokerAccountId, final String currency) {
         return computeIfAbsentBalance(brokerAccountId, currency).getCurrentAmount();
     }
 
-    public Map<Currency, BigDecimal> getBalances(@Nullable final String brokerAccountId) {
-        return Stream.of(Currency.values()).collect(Collectors.toMap(currency -> currency, currency -> getBalance(brokerAccountId, currency)));
+    public Map<String, BigDecimal> getBalances(@Nullable final String brokerAccountId) {
+        return computeIfAbsentPortfolio(brokerAccountId).getBalances()
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getCurrentAmount()));
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final String currency) {
         return computeIfAbsentBalance(brokerAccountId, currency).getInvestments();
     }
 
-    public void setCurrentBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal amount) {
+    public void setCurrentBalance(@Nullable final String brokerAccountId, final String currency, final BigDecimal amount) {
         computeIfAbsentBalance(brokerAccountId, currency).setCurrentAmount(amount);
     }
 
@@ -103,7 +104,7 @@ public class FakeContext {
         return new ArrayList<>(computeIfAbsentPortfolio(brokerAccountId).getTickersToPositions().values());
     }
 
-    private FakeBalance computeIfAbsentBalance(@Nullable final String brokerAccountId, final Currency currency) {
+    private FakeBalance computeIfAbsentBalance(@Nullable final String brokerAccountId, final String currency) {
         return computeIfAbsentPortfolio(brokerAccountId).getBalances().computeIfAbsent(currency, currencyKey -> new FakeBalance());
     }
 

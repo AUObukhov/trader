@@ -14,8 +14,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -33,6 +31,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -329,14 +328,14 @@ class BackTesterImplUnitTest {
                 .build();
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
-        final MarketInstrument marketInstrument1 = TestData.createMarketInstrument(ticker1, 10);
-        Mockito.when(fakeBot1.searchMarketInstrument(ticker1)).thenReturn(marketInstrument1);
+        final Share share1 = Share.newBuilder().setTicker(ticker1).setLot(10).build();
+        Mockito.when(fakeBot1.getShare(ticker1)).thenReturn(share1);
 
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
-        mockInvestments(fakeBot1, brokerAccountId1, marketInstrument1.currency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, marketInstrument1.currency())).thenReturn(currentBalance1);
+        mockInvestments(fakeBot1, brokerAccountId1, share1.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, share1.getCurrency())).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
 
         final String brokerAccountId2 = "2000124699";
@@ -360,14 +359,14 @@ class BackTesterImplUnitTest {
                 .build();
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
-        final MarketInstrument marketInstrument2 = TestData.createMarketInstrument(ticker2, 10);
-        Mockito.when(fakeBot2.searchMarketInstrument(ticker1)).thenReturn(marketInstrument2);
+        final Share share2 = Share.newBuilder().setTicker(ticker2).setLot(10).build();
+        Mockito.when(fakeBot2.getShare(ticker2)).thenReturn(share2);
 
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
-        mockInvestments(fakeBot2, brokerAccountId2, marketInstrument2.currency(), from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, marketInstrument2.currency())).thenReturn(currentBalance2);
+        mockInvestments(fakeBot2, brokerAccountId2, share2.getCurrency(), from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, share2.getCurrency())).thenReturn(currentBalance2);
         mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
@@ -387,7 +386,7 @@ class BackTesterImplUnitTest {
                 .addInvestment(
                         Mockito.eq(brokerAccountId1),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(marketInstrument1.currency()),
+                        Mockito.eq(share1.getCurrency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
 
@@ -395,7 +394,7 @@ class BackTesterImplUnitTest {
                 .addInvestment(
                         Mockito.eq(brokerAccountId2),
                         Mockito.any(OffsetDateTime.class),
-                        Mockito.eq(marketInstrument2.currency()),
+                        Mockito.eq(share2.getCurrency()),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
                 );
     }
@@ -1048,12 +1047,12 @@ class BackTesterImplUnitTest {
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 
-        final MarketInstrument marketInstrument = TestData.createMarketInstrument(ticker, 10);
-        Mockito.when(fakeBot.searchMarketInstrument(ticker)).thenReturn(marketInstrument);
+        final Share share = Share.newBuilder().setTicker(ticker).setLot(10).build();
+        Mockito.when(fakeBot.getShare(ticker)).thenReturn(share);
         mockBotCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
-        mockInvestments(fakeBot, brokerAccountId, marketInstrument.currency(), interval.getFrom(), balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, marketInstrument.currency())).thenReturn(currentBalance);
+        mockInvestments(fakeBot, brokerAccountId, share.getCurrency(), interval.getFrom(), balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, share.getCurrency())).thenReturn(currentBalance);
         if (positionLotsCount != null) {
             mockPortfolioPosition(fakeBot, brokerAccountId, ticker, positionLotsCount);
             mockCurrentPrice(fakeBot, ticker, currentPrice);
@@ -1104,7 +1103,7 @@ class BackTesterImplUnitTest {
     private void mockInvestments(
             final FakeBot fakeBot,
             final String brokerAccountId,
-            final Currency currency,
+            final String currency,
             final OffsetDateTime dateTime,
             final BigDecimal initialInvestment
     ) {

@@ -11,7 +11,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(Currency.RUB.name());
         request.setBalance(BigDecimal.TEN);
 
         AssertUtils.assertNoViolations(request);
@@ -29,7 +29,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationFails_whenBalanceIsNull() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(Currency.RUB.name());
         request.setBalance(null);
 
         AssertUtils.assertViolation(request, "balance is mandatory");

@@ -73,5 +73,5 @@ query.throttle:
   default-limit: 120
 
 spring.cache:
-  cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
+  cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker
   scaffeine.spec: maximumSize=3000,expireAfterAccess=3h

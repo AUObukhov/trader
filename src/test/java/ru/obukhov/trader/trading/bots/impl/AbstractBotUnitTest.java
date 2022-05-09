@@ -11,13 +11,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -32,6 +32,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -43,6 +44,8 @@ class AbstractBotUnitTest {
 
     @Mock
     private MarketService marketService;
+    @Mock
+    private MarketInstrumentsService marketInstrumentsService;
     @Mock
     private MarketOperationsService operationsService;
     @Mock
@@ -150,8 +153,11 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = Share.newBuilder()
+                .setTicker(ticker)
+                .setLot(lotSize)
+                .build();
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -184,11 +190,14 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = Share.newBuilder()
+                .setTicker(ticker)
+                .setLot(lotSize)
+                .build();
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, share.getCurrency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
@@ -230,11 +239,14 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = Share.newBuilder()
+                .setTicker(ticker)
+                .setLot(lotSize)
+                .build();
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, share.getCurrency()))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
@@ -285,13 +297,23 @@ class AbstractBotUnitTest {
     private static class TestBot extends AbstractBot {
         public TestBot(
                 final MarketService marketService,
+                final MarketInstrumentsService marketInstrumentsService,
                 final MarketOperationsService operationsService,
                 final MarketOrdersService ordersService,
                 final PortfolioService portfolioService,
                 final TinkoffService tinkoffService,
                 final TradingStrategy strategy
         ) {
-            super(marketService, operationsService, ordersService, portfolioService, tinkoffService, strategy, new TestStrategyCache());
+            super(
+                    marketService,
+                    marketInstrumentsService,
+                    operationsService,
+                    ordersService,
+                    portfolioService,
+                    tinkoffService,
+                    strategy,
+                    new TestStrategyCache()
+            );
         }
     }
 

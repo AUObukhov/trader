@@ -12,17 +12,17 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,6 +38,8 @@ class FakeBotUnitTest {
     @Mock
     private MarketService marketService;
     @Mock
+    private MarketInstrumentsService marketInstrumentsService;
+    @Mock
     private MarketOperationsService operationsService;
     @Mock
     private MarketOrdersService ordersService;
@@ -52,14 +54,17 @@ class FakeBotUnitTest {
     private FakeBot fakeBot;
 
     @Test
-    void searchMarketInstrument() throws IOException {
+    void getShare() {
         final String ticker = "ticker";
-        final MarketInstrument expectedInstrument = TestData.createMarketInstrument(ticker, 10);
-        Mockito.when(fakeTinkoffService.searchMarketInstrument(ticker)).thenReturn(expectedInstrument);
+        final Share expectedShare = Share.newBuilder()
+                .setTicker(ticker)
+                .setLot(10)
+                .build();
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(expectedShare);
 
-        final MarketInstrument instrument = fakeBot.searchMarketInstrument(ticker);
+        final Share share = fakeBot.getShare(ticker);
 
-        Assertions.assertEquals(expectedInstrument, instrument);
+        Assertions.assertEquals(expectedShare, share);
     }
 
     @Test
@@ -86,7 +91,7 @@ class FakeBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getInvestments(final String brokerAccountId) {
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
         Mockito.when(fakeTinkoffService.getInvestments(brokerAccountId, currency)).thenReturn(expectedInvestments);
@@ -100,7 +105,7 @@ class FakeBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getCurrentBalance(final String brokerAccountId) {
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal expectedBalance = BigDecimal.TEN;
         Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, currency)).thenReturn(expectedBalance);
 

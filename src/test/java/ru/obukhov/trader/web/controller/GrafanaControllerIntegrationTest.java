@@ -16,6 +16,7 @@ import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -93,7 +94,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -142,7 +143,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        mockFigiByTicker(ticker, figi);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
@@ -11,7 +12,6 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
@@ -23,6 +23,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -40,6 +41,7 @@ public abstract class AbstractBot implements Bot {
     private static final int LAST_CANDLES_COUNT = 1000;
 
     protected final MarketService marketService;
+    protected final MarketInstrumentsService marketInstrumentsService;
     protected final MarketOperationsService operationsService;
     protected final MarketOrdersService ordersService;
     protected final PortfolioService portfolioService;
@@ -50,6 +52,7 @@ public abstract class AbstractBot implements Bot {
 
     protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
         this.marketService = tinkoffServices.marketService();
+        this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
         this.operationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
         this.portfolioService = tinkoffServices.portfolioService();
@@ -93,12 +96,12 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
-        final MarketInstrument instrument = marketService.getInstrument(ticker);
+        final Share share = marketInstrumentsService.getShare(ticker);
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.currency()));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), share.getCurrency()));
         decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
-        decisionData.setInstrument(instrument);
+        decisionData.setShare(share);
         decisionData.setCommission(botConfig.getCommission());
     }
 

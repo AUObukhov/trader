@@ -20,11 +20,9 @@ import java.util.List;
 public class MarketOrdersService {
 
     private final TinkoffService tinkoffService;
-    private final MarketService marketService;
 
-    public MarketOrdersService(final TinkoffService tinkoffService, final MarketService marketService) {
+    public MarketOrdersService(final TinkoffService tinkoffService) {
         this.tinkoffService = tinkoffService;
-        this.marketService = marketService;
     }
 
     /**
@@ -32,7 +30,7 @@ public class MarketOrdersService {
      * If {@code brokerAccountId} null, works with default broker account
      */
     public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) throws IOException {
-        final String figi = marketService.getInstrument(ticker).figi();
+        final String figi = tinkoffService.getFigiByTicker(ticker);
         return getOrders(brokerAccountId).stream()
                 .filter(order -> figi.equals(order.figi()))
                 .toList();

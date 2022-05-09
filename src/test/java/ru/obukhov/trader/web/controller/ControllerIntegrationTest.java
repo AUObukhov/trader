@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.controller;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.mockito.Mockito;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.springtest.MockServerTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.TestWithMockedServer;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.InstrumentsService;
+
+import java.util.List;
 
 @MockServerTest
 @AutoConfigureMockMvc
@@ -33,6 +38,9 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
     protected static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
     protected static final JsonPathResultMatchers ERRORS_MATCHER = MockMvcResultMatchers.jsonPath("$.errors");
     protected static final ResultMatcher JSON_CONTENT_MATCHER = MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON);
+
+    @MockBean
+    protected InstrumentsService instrumentsService;
 
     /**
      * To prevent token validation on startup. Otherwise, validation performed before MockServer initialization
@@ -90,6 +98,15 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
                 .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
                 .andExpect(ERRORS_MATCHER.value(expectedError))
                 .andExpect(JSON_CONTENT_MATCHER);
+    }
+
+    protected void mockShare(final String figi, final String ticker, final int lotSize) {
+        final Share share = Share.newBuilder()
+                .setFigi(figi)
+                .setTicker(ticker)
+                .setLot(lotSize)
+                .build();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
     }
 
 }

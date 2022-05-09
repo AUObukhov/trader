@@ -8,13 +8,11 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Orderbook;
@@ -26,8 +24,10 @@ import ru.obukhov.trader.market.model.transform.AccountMapper;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
 import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
+import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -64,42 +64,50 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     private final OrdersClient ordersClient;
     private final PortfolioClient portfolioClient;
 
+    @Override
+    @Cacheable(value = "figiByTicker", sync = true)
+    public String getFigiByTicker(final String ticker) {
+        return instrumentsService.getAssetsSync().stream()
+                .flatMap(asset -> asset.getInstrumentsList().stream())
+                .filter(assetInstrument -> assetInstrument.getTicker().equals(ticker))
+                .findFirst()
+                .map(AssetInstrument::getFigi)
+                .orElse(null);
+    }
+
+    @Override
+    @Cacheable(value = "tickerByFigi", sync = true)
+    public String getTickerByFigi(final String figi) {
+        return instrumentsService.getAssetsSync().stream()
+                .flatMap(asset -> asset.getInstrumentsList().stream())
+                .filter(assetInstrument -> assetInstrument.getFigi().equals(figi))
+                .findFirst()
+                .map(AssetInstrument::getTicker)
+                .orElse(null);
+    }
+
+    // region InstrumentsService
+
+    @Override
+    @Cacheable(value = "allShares", sync = true)
+    public List<Share> getAllShares() {
+        return instrumentsService.getAllSharesSync();
+    }
+
+    // endregion
+
     // region MarketContext
 
     @Override
-    @Cacheable(value = "marketStocks", sync = true)
-    public List<MarketInstrument> getMarketStocks() throws IOException {
-        return marketClient.getMarketStocks();
-    }
-
-    @Override
-    @Cacheable(value = "marketBonds", sync = true)
-    public List<MarketInstrument> getMarketBonds() throws IOException {
-        return marketClient.getMarketBonds();
-    }
-
-    @Override
-    @Cacheable(value = "marketEtfs", sync = true)
-    public List<MarketInstrument> getMarketEtfs() throws IOException {
-        return marketClient.getMarketEtfs();
-    }
-
-    @Override
-    @Cacheable(value = "marketCurrencies", sync = true)
-    public List<MarketInstrument> getMarketCurrencies() throws IOException {
-        return marketClient.getMarketCurrencies();
-    }
-
-    @Override
     public Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).figi();
+        final String figi = self.getFigiByTicker(ticker);
         return marketClient.getMarketOrderbook(figi, depth);
     }
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)
     public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).figi();
+        final String figi = self.getFigiByTicker(ticker);
         final List<Candle> candles = marketClient
                 .getMarketCandles(figi, interval.getFrom(), interval.getTo(), candleInterval)
                 .candleList();
@@ -108,20 +116,13 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
         return candles;
     }
 
-    @Override
-    @Cacheable(value = "marketInstrument", sync = true)
-    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
-        final List<MarketInstrument> instruments = marketClient.searchMarketInstrumentsByTicker(ticker);
-        return CollectionUtils.firstElement(instruments);
-    }
-
     // endregion
 
-    // region OperationsContext
+    // region OperationsService
 
     @Override
     public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).figi();
+        final String figi = self.getFigiByTicker(ticker);
         return operationsService.getAllOperationsSync(brokerAccountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 
@@ -137,14 +138,14 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     @Override
     public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
             throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).figi();
+        final String figi = self.getFigiByTicker(ticker);
         return ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest);
     }
 
     @Override
     public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
             throws IOException {
-        final String figi = self.searchMarketInstrument(ticker).figi();
+        final String figi = self.getFigiByTicker(ticker);
         return ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest);
     }
 

@@ -11,9 +11,8 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.SandboxService;
-import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ import java.util.concurrent.CompletionException;
 class TokenValidationStartupListenerContextTest {
 
     @Mock
-    private MarketService marketService;
+    private UserService userService;
     @Mock
     private SandboxService sandboxService;
 
@@ -32,13 +31,13 @@ class TokenValidationStartupListenerContextTest {
             .withInitializer(new ConfigDataApplicationContextInitializer());
 
     @Test
-    void test_throwsException_whenTokenIsWrong_whenSandboxServiceIsNull() throws IOException {
+    void test_throwsException_whenTokenIsWrong_whenSandboxServiceIsNull() {
         final WrongTokenException wrongTokenException = new WrongTokenException();
         final String message = "ru.tinkoff.invest.openapi.exceptions.WrongTokenException: Попытка использовать неверный токен";
         final CompletionException completionException = new CompletionException(message, wrongTokenException);
-        Mockito.when(marketService.getInstruments(InstrumentType.STOCK)).thenThrow(completionException);
+        Mockito.when(userService.getAccounts()).thenThrow(completionException);
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
                     Assertions.assertThrows(CompletionException.class, () -> publishApplicationStartedEvent(context), message);
@@ -53,7 +52,7 @@ class TokenValidationStartupListenerContextTest {
         final CompletionException completionException = new CompletionException(message, wrongTokenException);
         Mockito.doThrow(completionException).when(sandboxService).register();
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(SandboxService.class, () -> sandboxService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
@@ -63,10 +62,10 @@ class TokenValidationStartupListenerContextTest {
     }
 
     @Test
-    void test_skipsUnknownExceptions_whenSandboxServiceIsNull() throws IOException {
-        Mockito.when(marketService.getInstruments(InstrumentType.STOCK)).thenThrow(new RuntimeException());
+    void test_skipsUnknownExceptions_whenSandboxServiceIsNull() {
+        Mockito.when(userService.getAccounts()).thenThrow(new RuntimeException());
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
                     Assertions.assertDoesNotThrow(() -> publishApplicationStartedEvent(context));
@@ -78,7 +77,7 @@ class TokenValidationStartupListenerContextTest {
     void test_skipsUnknownExceptions_whenSandboxServiceIsNotNull() throws IOException {
         Mockito.doThrow(new RuntimeException()).when(sandboxService).register();
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(SandboxService.class, () -> sandboxService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
@@ -90,7 +89,7 @@ class TokenValidationStartupListenerContextTest {
     @Test
     void test_callsGetInstruments_whenSandboxServiceIsNull() {
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
                     publishApplicationStartedEvent(context);
@@ -101,7 +100,7 @@ class TokenValidationStartupListenerContextTest {
     @Test
     void test_registersSandbox_whenSandboxServiceIsNotNull() {
         contextRunner
-                .withBean(MarketService.class, () -> marketService)
+                .withBean(UserService.class, () -> userService)
                 .withBean(SandboxService.class, () -> sandboxService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> {
@@ -117,12 +116,12 @@ class TokenValidationStartupListenerContextTest {
     }
 
     private void verifyCheckByMarket() throws IOException {
-        Mockito.verify(marketService, Mockito.times(1)).getInstruments(InstrumentType.STOCK);
+        Mockito.verify(userService, Mockito.times(1)).getAccounts();
         Mockito.verify(sandboxService, Mockito.never()).register();
     }
 
     private void verifyCheckBySandbox() throws IOException {
-        Mockito.verify(marketService, Mockito.never()).getInstruments(InstrumentType.STOCK);
+        Mockito.verify(userService, Mockito.never()).getAccounts();
         Mockito.verify(sandboxService, Mockito.times(1)).register();
     }
 

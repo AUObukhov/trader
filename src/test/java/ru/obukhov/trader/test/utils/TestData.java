@@ -11,7 +11,6 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
@@ -30,6 +29,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -151,7 +151,7 @@ public class TestData {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(positionLotsCount, averagePositionPrice));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
-        decisionData.setInstrument(createMarketInstrument(lotSize));
+        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
 
         return decisionData;
     }
@@ -161,7 +161,7 @@ public class TestData {
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setInstrument(createMarketInstrument(lotSize));
+        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
         decisionData.setCommission(commission);
 
         return decisionData;
@@ -176,7 +176,7 @@ public class TestData {
                 null,
                 BigDecimal.ZERO,
                 null,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoneyAmount(Currency.RUB.name(), 0),
                 null,
                 null,
                 null,
@@ -189,7 +189,7 @@ public class TestData {
                 ticker,
                 BigDecimal.ZERO,
                 null,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoneyAmount(Currency.RUB.name(), 0),
                 null,
                 null,
                 null,
@@ -202,7 +202,7 @@ public class TestData {
                 null,
                 BigDecimal.ZERO,
                 null,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoneyAmount(Currency.RUB.name(), 0),
                 lotsCount,
                 null,
                 null,
@@ -215,7 +215,7 @@ public class TestData {
                 ticker,
                 BigDecimal.ZERO,
                 null,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoneyAmount(Currency.RUB.name(), 0),
                 lotsCount,
                 null,
                 null,
@@ -228,9 +228,9 @@ public class TestData {
                 null,
                 BigDecimal.ZERO,
                 null,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoneyAmount(Currency.RUB.name(), 0),
                 lotsCount,
-                createMoneyAmount(Currency.RUB, averagePositionPrice),
+                createMoneyAmount(Currency.RUB.name(), averagePositionPrice),
                 null,
                 StringUtils.EMPTY
         );
@@ -240,7 +240,7 @@ public class TestData {
             final String ticker,
             final double balance,
             final double blocked,
-            final Currency currency,
+            final String currency,
             final double expectedYield,
             final long count,
             final double averagePositionPrice,
@@ -263,11 +263,11 @@ public class TestData {
 
     // region CurrencyPosition creation
 
-    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance) {
+    public static CurrencyPosition createCurrencyPosition(final String currency, final long balance) {
         return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), null);
     }
 
-    public static CurrencyPosition createCurrencyPosition(final Currency currency, final long balance, final long blocked) {
+    public static CurrencyPosition createCurrencyPosition(final String currency, final long balance, final long blocked) {
         return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), DecimalUtils.setDefaultScale(blocked));
     }
 
@@ -302,87 +302,13 @@ public class TestData {
 
     // endregion
 
-    public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
+    public static MoneyAmount createMoneyAmount(final String currency, final double value) {
         return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
+    public static MoneyAmount createMoneyAmount(final String currency, final long value) {
         return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
-
-    // region MarketInstrument creation
-
-    public static MarketInstrument createMarketInstrument() {
-        return new MarketInstrument(
-                StringUtils.EMPTY,
-                StringUtils.EMPTY,
-                StringUtils.EMPTY,
-                null,
-                1,
-                null,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.STOCK
-        );
-    }
-
-    public static MarketInstrument createMarketInstrument(final String ticker) {
-        return new MarketInstrument(
-                StringUtils.EMPTY,
-                ticker,
-                StringUtils.EMPTY,
-                null,
-                1,
-                null,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.STOCK
-        );
-    }
-
-    public static MarketInstrument createMarketInstrument(final int lotSize) {
-        return new MarketInstrument(
-                StringUtils.EMPTY,
-                StringUtils.EMPTY,
-                StringUtils.EMPTY,
-                null,
-                lotSize,
-                null,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.STOCK
-        );
-    }
-
-    public static MarketInstrument createMarketInstrument(final String ticker, final int lotSize) {
-        return new MarketInstrument(
-                StringUtils.EMPTY,
-                ticker,
-                StringUtils.EMPTY,
-                null,
-                lotSize,
-                null,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.STOCK
-        );
-    }
-
-    public static MarketInstrument createMarketInstrument(final String ticker, final String figi) {
-        return new MarketInstrument(
-                figi,
-                ticker,
-                StringUtils.EMPTY,
-                null,
-                1,
-                null,
-                Currency.RUB,
-                StringUtils.EMPTY,
-                InstrumentType.STOCK
-        );
-    }
-
-    // endregion
 
     // region BigDecimals list creation
 

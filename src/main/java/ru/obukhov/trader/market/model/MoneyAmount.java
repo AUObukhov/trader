@@ -7,7 +7,7 @@ import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
 import java.math.BigDecimal;
 
 public record MoneyAmount(
-        @NotNull Currency currency,
+        @NotNull String currency,
         @NotNull @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal value
 ) {
 }

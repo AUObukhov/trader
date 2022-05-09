@@ -13,10 +13,9 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
@@ -190,8 +189,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -242,8 +241,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        final MarketInstrument instrument = new MarketInstrument(figi, null, null, null, 1, null, Currency.USD, null, null);
-        mockInstrumentByTicker(ticker, instrument);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        mockShare(figi, ticker, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] array = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);

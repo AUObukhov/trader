@@ -4,16 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
-import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,13 +26,23 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public FakeBot(
             final MarketService marketService,
+            final MarketInstrumentsService marketInstrumentsService,
             final MarketOperationsService operationsService,
             final MarketOrdersService ordersService,
             final PortfolioService portfolioService,
             final FakeTinkoffService fakeTinkoffService,
             final TradingStrategy strategy
     ) {
-        super(marketService, operationsService, ordersService, portfolioService, fakeTinkoffService, strategy, strategy.initCache());
+        super(
+                marketService,
+                marketInstrumentsService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                fakeTinkoffService,
+                strategy,
+                strategy.initCache()
+        );
     }
 
     public FakeTinkoffService getFakeTinkoffService() {
@@ -41,8 +51,8 @@ public class FakeBot extends AbstractBot implements Bot {
 
     // region FakeTinkoffService proxy
 
-    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
-        return tinkoffService.searchMarketInstrument(ticker);
+    public Share getShare(final String ticker) {
+        return marketInstrumentsService.getShare(ticker);
     }
 
     public OffsetDateTime getCurrentDateTime() {
@@ -62,15 +72,15 @@ public class FakeBot extends AbstractBot implements Bot {
         return getFakeTinkoffService().nextMinute();
     }
 
-    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
+    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
         getFakeTinkoffService().addInvestment(brokerAccountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final String currency) {
         return getFakeTinkoffService().getInvestments(brokerAccountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
+    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final String currency) {
         return getFakeTinkoffService().getCurrentBalance(brokerAccountId, currency);
     }
 

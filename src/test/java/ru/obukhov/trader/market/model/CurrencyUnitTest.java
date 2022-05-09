@@ -28,18 +28,6 @@ class CurrencyUnitTest {
 
     @ParameterizedTest
     @MethodSource("valuesAndCurrencies")
-    void toString_returnsValue(final String expectedValue, final Currency currency) {
-        Assertions.assertEquals(expectedValue, currency.toString());
-    }
-
-    @ParameterizedTest
-    @MethodSource("valuesAndCurrencies")
-    void fromValue_returnProperEnum(final String value, final Currency expectedCurrency) {
-        Assertions.assertEquals(expectedCurrency, Currency.fromValue(value));
-    }
-
-    @ParameterizedTest
-    @MethodSource("valuesAndCurrencies")
     void jsonMapping_mapsValue(final String value, final Currency currency) throws JsonProcessingException {
         Assertions.assertEquals('"' + value + '"', TestUtils.OBJECT_MAPPER.writeValueAsString(currency));
     }

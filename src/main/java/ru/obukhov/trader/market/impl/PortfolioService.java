@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 
@@ -40,9 +39,8 @@ public class PortfolioService {
      * @return available balance of given {@code currency} at given {@code brokerAccountId}.
      * If {@code brokerAccountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
-     *                                Currencies currently available: {@link Currency.EUR}, {@link Currency.USD}, {@link Currency.RUB}
      */
-    public BigDecimal getAvailableBalance(@Nullable final String brokerAccountId, final Currency currency) throws IOException {
+    public BigDecimal getAvailableBalance(@Nullable final String brokerAccountId, final String currency) throws IOException {
         return getCurrencies(brokerAccountId).stream()
                 .filter(portfolioCurrency -> portfolioCurrency.currency() == currency)
                 .findFirst()

@@ -86,13 +86,13 @@ class PortfolioServiceUnitTest {
         final long rubBlocked = 100;
 
         final List<CurrencyPosition> currencies = List.of(
-                TestData.createCurrencyPosition(Currency.USD, 100),
-                TestData.createCurrencyPosition(Currency.RUB, rubBalance, rubBlocked),
-                TestData.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD.name(), 100),
+                TestData.createCurrencyPosition(Currency.RUB.name(), rubBalance, rubBlocked),
+                TestData.createCurrencyPosition(Currency.EUR.name(), 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB.name());
 
         AssertUtils.assertEquals(rubBalance - rubBlocked, balance);
     }
@@ -104,13 +104,13 @@ class PortfolioServiceUnitTest {
         final long rubBalance = 1000;
 
         final List<CurrencyPosition> currencies = List.of(
-                TestData.createCurrencyPosition(Currency.USD, 100),
-                TestData.createCurrencyPosition(Currency.RUB, rubBalance),
-                TestData.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD.name(), 100),
+                TestData.createCurrencyPosition(Currency.RUB.name(), rubBalance),
+                TestData.createCurrencyPosition(Currency.EUR.name(), 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB.name());
 
         AssertUtils.assertEquals(rubBalance, balance);
     }
@@ -120,12 +120,12 @@ class PortfolioServiceUnitTest {
     @ValueSource(strings = "2000124699")
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency(@Nullable final String brokerAccountId) throws IOException {
         final List<CurrencyPosition> currencies = List.of(
-                TestData.createCurrencyPosition(Currency.USD, 100),
-                TestData.createCurrencyPosition(Currency.EUR, 10)
+                TestData.createCurrencyPosition(Currency.USD.name(), 100),
+                TestData.createCurrencyPosition(Currency.EUR.name(), 10)
         );
         Mockito.when(tinkoffService.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
 
-        final Executable executable = () -> service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final Executable executable = () -> service.getAvailableBalance(brokerAccountId, Currency.RUB.name());
         Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
     }
 

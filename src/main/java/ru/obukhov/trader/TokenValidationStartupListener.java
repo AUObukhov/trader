@@ -8,9 +8,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.SandboxService;
-import ru.obukhov.trader.market.model.InstrumentType;
+import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
 /**
@@ -21,7 +20,7 @@ import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 @AllArgsConstructor
 public class TokenValidationStartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
-    private final MarketService marketService;
+    private final UserService userService;
     @Nullable
     private final SandboxService sandboxService;
 
@@ -30,7 +29,7 @@ public class TokenValidationStartupListener implements ApplicationListener<Appli
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
         try {
             if (sandboxService == null) {
-                marketService.getInstruments(InstrumentType.STOCK);
+                userService.getAccounts();
             } else {
                 sandboxService.register();
             }

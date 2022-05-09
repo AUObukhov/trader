@@ -37,7 +37,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void constructor_withInitialBalance_initializesCurrentDateTime(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, balance);
@@ -61,7 +61,7 @@ class FakeContextUnitTest {
     @MethodSource("getData_forConstructor_withInitialBalance_initializesBalance")
     void constructor_withInitialBalance_initializesBalance(@Nullable final String brokerAccountId, final int balance) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
 
         final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, DecimalUtils.setDefaultScale(balance));
 
@@ -78,7 +78,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withoutDateTime_changesInvestmentsAndCurrentBalance(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment1 = BigDecimal.valueOf(20);
         final BigDecimal investment2 = BigDecimal.valueOf(50);
@@ -108,7 +108,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment = BigDecimal.valueOf(-20);
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
@@ -131,7 +131,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment = BigDecimal.ZERO;
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
@@ -158,7 +158,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withDateTime_changesInvestmentsAndCurrentBalance(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment1 = BigDecimal.valueOf(20);
         final BigDecimal investment2 = BigDecimal.valueOf(50);
@@ -186,7 +186,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsNegative(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment = BigDecimal.valueOf(-20);
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
@@ -209,7 +209,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsZero(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
         final BigDecimal investment = BigDecimal.ZERO;
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
@@ -234,7 +234,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addOperation_addsOperation_and_getOperationsReturnsOperations(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
@@ -258,7 +258,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void addPosition_addsPosition_and_getPosition_returnsPosition(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
@@ -278,7 +278,7 @@ class FakeContextUnitTest {
     @ValueSource(strings = "2000124699")
     void removePosition_removesPosition(@Nullable final String brokerAccountId) {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB.name();
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);

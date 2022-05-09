@@ -13,6 +13,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
@@ -99,9 +100,14 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public MarketInstrumentsService marketInstrumentsService(final TinkoffService realTinkoffService) {
+        return new MarketInstrumentsService(realTinkoffService);
+    }
+
+    @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(final MarketService realMarketService, final SandboxClient sandboxClient) {
-        return new SandboxService(realMarketService, sandboxClient);
+    public SandboxService sandboxService(final MarketInstrumentsService marketInstrumentsService, final SandboxClient sandboxClient) {
+        return new SandboxService(marketInstrumentsService, sandboxClient);
     }
 
     @Bean
@@ -111,7 +117,7 @@ public class BeanConfiguration {
 
     @Bean
     public MarketOrdersService realOrdersService(final TinkoffService realTinkoffService, final MarketService realMarketService) {
-        return new MarketOrdersService(realTinkoffService, realMarketService);
+        return new MarketOrdersService(realTinkoffService);
     }
 
     @Bean
