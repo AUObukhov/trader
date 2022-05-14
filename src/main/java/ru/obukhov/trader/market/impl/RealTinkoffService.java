@@ -78,12 +78,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     @Override
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
-        return instrumentsService.getAssetsSync().stream()
-                .flatMap(asset -> asset.getInstrumentsList().stream())
-                .filter(assetInstrument -> assetInstrument.getFigi().equals(figi))
-                .findFirst()
-                .map(AssetInstrument::getTicker)
-                .orElse(null);
+        return instrumentsService.getInstrumentByFigiSync(figi).getTicker();
     }
 
     // region InstrumentsService
