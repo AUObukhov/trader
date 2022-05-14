@@ -106,8 +106,8 @@ public class BeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(final MarketInstrumentsService marketInstrumentsService, final SandboxClient sandboxClient) {
-        return new SandboxService(marketInstrumentsService, sandboxClient);
+    public SandboxService sandboxService(final TinkoffService realTinkoffService, final SandboxClient sandboxClient) {
+        return new SandboxService(realTinkoffService, sandboxClient);
     }
 
     @Bean

@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.SandboxRegisterRequest;
 import ru.obukhov.trader.market.model.SandboxSetCurrencyBalanceRequest;
 import ru.obukhov.trader.market.model.SandboxSetPositionBalanceRequest;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SandboxService {
 
-    private final MarketInstrumentsService marketInstrumentsService;
+    private final TinkoffService tinkoffService;
     private final SandboxClient sandboxClient;
 
     public void register() throws IOException {
@@ -41,7 +42,7 @@ public class SandboxService {
      */
     public void setPositionBalance(@Nullable final String brokerAccountId, @NotNull final String ticker, @NotNull final BigDecimal balance)
             throws IOException {
-        final String figi = marketInstrumentsService.getShare(ticker).getFigi();
+        final String figi = tinkoffService.getFigiByTicker(ticker);
         final SandboxSetPositionBalanceRequest setPositionBalanceRequest = new SandboxSetPositionBalanceRequest(figi, balance);
 
         sandboxClient.setPositionBalance(setPositionBalanceRequest, brokerAccountId);
