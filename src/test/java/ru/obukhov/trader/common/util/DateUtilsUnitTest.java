@@ -1046,7 +1046,7 @@ class DateUtilsUnitTest {
 
         final List<OffsetDateTime> hits = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
 
-        AssertUtils.assertListsAreEqual(expectedHits, hits);
+        AssertUtils.assertEquals(expectedHits, hits);
     }
 
     // endregion

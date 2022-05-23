@@ -125,7 +125,7 @@ class FakeBotUnitTest {
 
         final List<Operation> operations = fakeBot.getOperations(brokerAccountId, interval, ticker);
 
-        AssertUtils.assertListsAreEqual(expectedOperations, operations);
+        AssertUtils.assertEquals(expectedOperations, operations);
     }
 
     @ParameterizedTest
@@ -137,7 +137,7 @@ class FakeBotUnitTest {
 
         final List<PortfolioPosition> positions = fakeBot.getPortfolioPositions(brokerAccountId);
 
-        AssertUtils.assertListsAreEqual(expectedPositions, positions);
+        AssertUtils.assertEquals(expectedPositions, positions);
     }
 
     @Test

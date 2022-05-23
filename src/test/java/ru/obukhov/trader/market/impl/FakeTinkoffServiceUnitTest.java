@@ -296,11 +296,11 @@ class FakeTinkoffServiceUnitTest {
         final Operation expectedOperation2 = TestData.createOperation(operation2DateTime, OperationType.OPERATION_TYPE_BUY, 200, 10);
         final Operation expectedOperation3 = TestData.createOperation(operation3DateTime, OperationType.OPERATION_TYPE_SELL, 300, 10);
 
-        AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
+        AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
         final Interval localInterval = Interval.of(dateTime.plusMinutes(1), dateTime.plusMinutes(1));
         final List<Operation> localOperations = service.getOperations(brokerAccountId, localInterval, ticker);
-        AssertUtils.assertListsAreEqual(List.of(expectedOperation2), localOperations);
+        AssertUtils.assertEquals(List.of(expectedOperation2), localOperations);
     }
 
     @ParameterizedTest
@@ -339,10 +339,10 @@ class FakeTinkoffServiceUnitTest {
         final List<Operation> ticker2Operations = service.getOperations(brokerAccountId, interval, ticker2);
 
         final Operation expectedTicker1Operation = TestData.createOperation(ticker1OperationDateTime, OperationType.OPERATION_TYPE_BUY, 100, 10);
-        AssertUtils.assertListsAreEqual(List.of(expectedTicker1Operation), ticker1Operations);
+        AssertUtils.assertEquals(List.of(expectedTicker1Operation), ticker1Operations);
         final Operation expectedTicker2Operation1 = TestData.createOperation(ticker2Operation1DateTime, OperationType.OPERATION_TYPE_BUY, 200, 10);
         final Operation expectedTicker2Operation2 = TestData.createOperation(ticker2Operation2DateTime, OperationType.OPERATION_TYPE_SELL, 300, 10);
-        AssertUtils.assertListsAreEqual(List.of(expectedTicker2Operation1, expectedTicker2Operation2), ticker2Operations);
+        AssertUtils.assertEquals(List.of(expectedTicker2Operation1, expectedTicker2Operation2), ticker2Operations);
     }
 
     @ParameterizedTest
@@ -397,7 +397,7 @@ class FakeTinkoffServiceUnitTest {
                 300,
                 10
         );
-        AssertUtils.assertListsAreEqual(List.of(expectedOperation1, expectedOperation2, expectedOperation3), operations);
+        AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), operations);
     }
 
     // endregion

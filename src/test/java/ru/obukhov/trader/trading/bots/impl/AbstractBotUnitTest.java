@@ -226,7 +226,7 @@ class AbstractBotUnitTest {
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
-        AssertUtils.assertListsAreEqual(currentCandles, candles);
+        AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_BUY);
@@ -275,7 +275,7 @@ class AbstractBotUnitTest {
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
-        AssertUtils.assertListsAreEqual(currentCandles, candles);
+        AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
                 .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_SELL);

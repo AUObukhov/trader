@@ -157,17 +157,22 @@ public class AssertUtils {
 
     // region list assertions
 
-    public static void assertListsAreEqual(final List<?> expected, final List<?> actual) {
+    public static void assertEquals(final List<?> expected, final List<?> actual) {
         assertListSize(expected, actual);
 
         final StringBuilder messageBuilder = new StringBuilder();
         for (int i = 0; i < expected.size(); i++) {
             final Object expectedValue = expected.get(i);
             final Object actualValue = actual.get(i);
-            if (expectedValue instanceof List expectedValueList && actualValue instanceof List actualValueList) {
-                assertListsAreEqual(expectedValueList, actualValueList);
+            if (expectedValue instanceof List expectedList && actualValue instanceof List actualList) {
+                assertEquals(expectedList, actualList);
+            } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof BigDecimal actualBigDecimal) {
+                if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
             } else if (!Objects.equals(expectedValue, actualValue)) {
-                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
+                messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                         .append(System.lineSeparator());
             }
         }
@@ -178,23 +183,8 @@ public class AssertUtils {
         }
     }
 
-    public static void assertBigDecimalListsAreEqual(final List<BigDecimal> expected, final List<BigDecimal> actual) {
-        assertListSize(expected, actual);
-
-        final StringBuilder messageBuilder = new StringBuilder();
-        for (int i = 0; i < expected.size(); i++) {
-            final BigDecimal expectedValue = expected.get(i);
-            final BigDecimal actualValue = actual.get(i);
-            if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
-                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
-                        .append(System.lineSeparator());
-            }
-        }
-
-        final String message = messageBuilder.toString();
-        if (!message.isEmpty()) {
-            Assertions.fail(message);
-        }
+    private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {
+        return String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, index, actualValue);
     }
 
     private static void assertListSize(final List<?> expected, final List<?> actual) {

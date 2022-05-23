@@ -127,7 +127,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
@@ -238,7 +238,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");

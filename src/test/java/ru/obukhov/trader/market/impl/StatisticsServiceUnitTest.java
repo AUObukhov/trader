@@ -76,9 +76,9 @@ class StatisticsServiceUnitTest {
 
         // assert
 
-        AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(shortAverages, response.getAverages1());
-        AssertUtils.assertListsAreEqual(longAverages, response.getAverages2());
+        AssertUtils.assertEquals(candles, response.getCandles());
+        AssertUtils.assertEquals(shortAverages, response.getAverages1());
+        AssertUtils.assertEquals(longAverages, response.getAverages2());
     }
 
     @Test
@@ -128,9 +128,9 @@ class StatisticsServiceUnitTest {
 
         // assert
 
-        AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(shortAverages, response.getAverages1());
-        AssertUtils.assertListsAreEqual(longAverages, response.getAverages2());
+        AssertUtils.assertEquals(candles, response.getCandles());
+        AssertUtils.assertEquals(shortAverages, response.getAverages1());
+        AssertUtils.assertEquals(longAverages, response.getAverages2());
     }
 
     private void mockAverages(Integer window, List<BigDecimal> averages) {

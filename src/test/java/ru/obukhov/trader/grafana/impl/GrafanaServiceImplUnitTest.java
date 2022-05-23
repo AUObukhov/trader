@@ -229,14 +229,14 @@ class GrafanaServiceImplUnitTest {
                 new Column("time", ColumnType.TIME),
                 new Column("open price", ColumnType.NUMBER)
         );
-        AssertUtils.assertListsAreEqual(expectedColumns, result.getColumns());
+        AssertUtils.assertEquals(expectedColumns, result.getColumns());
 
 
         final List<List<Object>> expectedRows = new ArrayList<>(5);
         for (Candle candle : candles) {
             expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }
-        AssertUtils.assertListsAreEqual(expectedRows, result.getRows());
+        AssertUtils.assertEquals(expectedRows, result.getRows());
     }
 
     @Test
@@ -301,14 +301,14 @@ class GrafanaServiceImplUnitTest {
                 new Column("SMA(" + window1 + ")", ColumnType.NUMBER),
                 new Column("SMA(" + window2 + ")", ColumnType.NUMBER)
         );
-        AssertUtils.assertListsAreEqual(expectedColumns, result.getColumns());
+        AssertUtils.assertEquals(expectedColumns, result.getColumns());
 
         final List<List<Object>> expectedRows = new ArrayList<>(5);
         for (int i = 0; i < candles.size(); i++) {
             Candle candle = candles.get(i);
             expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice(), averages1.get(i), averages2.get(i)));
         }
-        AssertUtils.assertListsAreEqual(expectedRows, result.getRows());
+        AssertUtils.assertEquals(expectedRows, result.getRows());
     }
 
     // endregion
