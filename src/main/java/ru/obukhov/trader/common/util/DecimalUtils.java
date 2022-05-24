@@ -43,6 +43,13 @@ public class DecimalUtils {
     }
 
     /**
+     * @return addend1 + addend2
+     */
+    public static BigDecimal add(final BigDecimal addend1, final long addend2) {
+        return setDefaultScale(addend1.add(BigDecimal.valueOf(addend2)));
+    }
+
+    /**
      * @return minuend - subtrahend
      */
     public static BigDecimal subtract(final BigDecimal minuend, final double subtrahend) {

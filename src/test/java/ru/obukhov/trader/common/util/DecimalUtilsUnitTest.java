@@ -60,6 +60,26 @@ class DecimalUtilsUnitTest {
 
     // endregion
 
+    // region add tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forAdd() {
+        return Stream.of(
+                Arguments.of(100.1, 5, 105.1),
+                Arguments.of(100.0000000055, 7, 107.000000006)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forAdd")
+    void subtract(final double addend1, final long addend2, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.add(BigDecimal.valueOf(addend1), addend2);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
     // region subtract tests
 
     @SuppressWarnings("unused")
