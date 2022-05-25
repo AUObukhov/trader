@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.interfaces;
 
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
@@ -35,19 +34,19 @@ public interface TinkoffService {
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 
-    List<Operation> getOperations(final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
+    List<Operation> getOperations(final String accountId, final Interval interval, final String ticker) throws IOException;
 
-    List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException;
+    List<Order> getOrders(final String accountId) throws IOException;
 
-    PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) throws IOException;
+    PlacedLimitOrder placeLimitOrder(final String accountId, final String ticker, final LimitOrderRequest orderRequest) throws IOException;
 
-    PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException;
+    PlacedMarketOrder placeMarketOrder(final String accountId, final String ticker, final MarketOrderRequest orderRequest) throws IOException;
 
-    void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException;
+    void cancelOrder(final String accountId, final String orderId) throws IOException;
 
-    List<PortfolioPosition> getPortfolioPositions(final String brokerAccountId);
+    List<PortfolioPosition> getPortfolioPositions(final String accountId);
 
-    WithdrawLimits getWithdrawLimits(final String brokerAccountId);
+    WithdrawLimits getWithdrawLimits(final String accountId);
 
     List<UserAccount> getAccounts();
 

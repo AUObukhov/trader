@@ -6,7 +6,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -24,7 +23,7 @@ import java.util.List;
 @Service
 public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
-    private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
+    private static final String PARAM_BROKER_ACCOUNT_ID = "accountId";
 
     protected OrdersClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
         super(client, tradingProperties, apiProperties);
@@ -36,10 +35,10 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
     }
 
     @Override
-    public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
+    public List<Order> getOrders(final String accountId) throws IOException {
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder.build();
         final Request request = buildRequest(requestUrl);
@@ -49,15 +48,15 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     @Override
     public PlacedLimitOrder placeLimitOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String figi,
             @NotNull final LimitOrderRequest limitOrder
     ) throws IOException {
         final String renderedBody = mapper.writeValueAsString(limitOrder);
 
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("limit-order")
@@ -72,14 +71,14 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
 
     @Override
     public PlacedMarketOrder placeMarketOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String figi,
             @NotNull final MarketOrderRequest marketOrder
     ) throws IOException {
         final String renderedBody = mapper.writeValueAsString(marketOrder);
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("market-order")
@@ -93,10 +92,10 @@ public class OrdersClientImpl extends AbstractClient implements OrdersClient {
     }
 
     @Override
-    public void cancelOrder(@Nullable final String brokerAccountId, @NotNull final String orderId) throws IOException {
+    public void cancelOrder(final String accountId, @NotNull final String orderId) throws IOException {
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("cancel")

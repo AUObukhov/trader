@@ -60,7 +60,7 @@ public class FakeBotFactory {
         return new FakeTinkoffService(
                 marketProperties,
                 tinkoffServices,
-                botConfig.getBrokerAccountId(),
+                botConfig.getAccountId(),
                 currentDateTime,
                 Currency.valueOf(share.getCurrency()),
                 botConfig.getCommission(),

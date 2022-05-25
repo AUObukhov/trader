@@ -36,7 +36,7 @@ class PortfolioServiceUnitTest {
 
     @Test
     void getPosition_returnsPositionByTicker_whenItExists() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
 
         final String ticker1 = "ticker1";
@@ -48,16 +48,16 @@ class PortfolioServiceUnitTest {
                 TestData.createPortfolioPosition(ticker2),
                 TestData.createPortfolioPosition(ticker3)
         );
-        Mockito.when(tinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions(accountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getSecurity(brokerAccountId, ticker2);
+        final PortfolioPosition position = service.getSecurity(accountId, ticker2);
 
         Assertions.assertEquals(ticker2, position.ticker());
     }
 
     @Test
     void getPosition_returnsNull_whenNoPositionWithTicker() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
@@ -68,9 +68,9 @@ class PortfolioServiceUnitTest {
                 TestData.createPortfolioPosition(ticker2),
                 TestData.createPortfolioPosition(ticker3)
         );
-        Mockito.when(tinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(positions);
+        Mockito.when(tinkoffService.getPortfolioPositions(accountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getSecurity(brokerAccountId, "ticker");
+        final PortfolioPosition position = service.getSecurity(accountId, "ticker");
 
         Assertions.assertNull(position);
     }
@@ -82,7 +82,7 @@ class PortfolioServiceUnitTest {
     @Test
     void getAvailableBalances_withBlockedValues() {
         // arrange
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -109,11 +109,11 @@ class PortfolioServiceUnitTest {
         final List<MoneyValue> blockedGuarantee = List.of(blockedGuarantee1, blockedGuarantee2);
 
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
         // action
 
-        final List<Money> balances = service.getAvailableBalances(brokerAccountId);
+        final List<Money> balances = service.getAvailableBalances(accountId);
 
         // assert
 
@@ -127,7 +127,7 @@ class PortfolioServiceUnitTest {
     @Test
     void getAvailableBalances_withoutBlockedValues() {
         // arrange
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -143,11 +143,11 @@ class PortfolioServiceUnitTest {
         final List<MoneyValue> blockedGuarantee = Collections.emptyList();
 
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
         // action
 
-        final List<Money> balances = service.getAvailableBalances(brokerAccountId);
+        final List<Money> balances = service.getAvailableBalances(accountId);
 
         // assert
 
@@ -164,7 +164,7 @@ class PortfolioServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalance_whenNoBlocked() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final long rubBalance = 1000;
 
@@ -174,16 +174,16 @@ class PortfolioServiceUnitTest {
                 TestData.createMoneyValue(10, Currency.EUR)
         );
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance, balance);
     }
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final long rubBalance = 1000;
         final long rubBlocked = 100;
@@ -195,16 +195,16 @@ class PortfolioServiceUnitTest {
         );
         final List<MoneyValue> blocked = List.of(TestData.createMoneyValue(rubBlocked, Currency.RUB));
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance - rubBlocked, balance);
     }
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlockedMinusBlockedGuarantee_whenCurrencyExists() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final long rubBalance = 1000;
         final long rubBlocked = 100;
@@ -218,25 +218,25 @@ class PortfolioServiceUnitTest {
         final List<MoneyValue> blocked = List.of(TestData.createMoneyValue(rubBlocked, Currency.RUB));
         final List<MoneyValue> blockedGuarantee = List.of(TestData.createMoneyValue(rubGuaranteeBlocked, Currency.RUB));
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance - rubBlocked - rubGuaranteeBlocked, balance);
     }
 
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final List<MoneyValue> moneys = List.of(
                 TestData.createMoneyValue(100, Currency.USD),
                 TestData.createMoneyValue(10, Currency.EUR)
         );
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
-        Mockito.when(tinkoffService.getWithdrawLimits(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final Executable executable = () -> service.getAvailableBalance(brokerAccountId, Currency.RUB);
+        final Executable executable = () -> service.getAvailableBalance(accountId, Currency.RUB);
         Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
     }
 

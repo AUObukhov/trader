@@ -1,9 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
-import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -20,14 +17,13 @@ import java.math.BigDecimal;
 @SpringBootTest("--trading.sandbox=true")
 class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void setCurrencyBalance_callsSetCurrencyBalanceApi(@Nullable final String brokerAccountId) throws Exception {
-        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/currencies/balance");
+    @Test
+    void setCurrencyBalance_callsSetCurrencyBalanceApi() throws Exception {
+        final String accountId = "2000124699";
+        final String expectationId = mockResponse(HttpMethod.POST, accountId, "/openapi/sandbox/currencies/balance");
 
         final SetCurrencyBalanceRequest setCurrencyBalanceRequest = new SetCurrencyBalanceRequest();
-        setCurrencyBalanceRequest.setBrokerAccountId(brokerAccountId);
+        setCurrencyBalanceRequest.setAccountId(accountId);
         setCurrencyBalanceRequest.setCurrency(Currency.USD);
         setCurrencyBalanceRequest.setBalance(BigDecimal.valueOf(10000));
         final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(setCurrencyBalanceRequest);
@@ -40,19 +36,18 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         mockServerClient.verify(expectationId);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void setPositionBalance_callsSetPositionBalanceApi(@Nullable final String brokerAccountId) throws Exception {
+    @Test
+    void setPositionBalance_callsSetPositionBalanceApi() throws Exception {
+        final String accountId = "2000124699";
         final String figi = "figi";
         final String ticker = "ticker";
 
         mockShare(figi, ticker, Currency.RUB, 1);
 
-        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/positions/balance");
+        final String expectationId = mockResponse(HttpMethod.POST, accountId, "/openapi/sandbox/positions/balance");
 
         final SetPositionBalanceRequest setPositionBalanceRequest = new SetPositionBalanceRequest();
-        setPositionBalanceRequest.setBrokerAccountId(brokerAccountId);
+        setPositionBalanceRequest.setAccountId(accountId);
         setPositionBalanceRequest.setTicker(ticker);
         setPositionBalanceRequest.setBalance(BigDecimal.valueOf(100000));
         final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(setPositionBalanceRequest);
@@ -65,14 +60,13 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         mockServerClient.verify(expectationId);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void clearAll_callsClearAllApi_whenBrokerAccountIdIsNotNull(@Nullable final String brokerAccountId) throws Exception {
-        final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/clear");
+    @Test
+    void clearAll_callsClearAllApi_whenBrokerAccountIdIsNotNull() throws Exception {
+        final String accountId = "2000124699";
+        final String expectationId = mockResponse(HttpMethod.POST, accountId, "/openapi/sandbox/clear");
 
         final ClearAllRequest clearAllRequest = new ClearAllRequest();
-        clearAllRequest.setBrokerAccountId(brokerAccountId);
+        clearAllRequest.setAccountId(accountId);
         final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(clearAllRequest);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/trader/sandbox/clear")

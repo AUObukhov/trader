@@ -1,9 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
-import org.jetbrains.annotations.Nullable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,12 +15,11 @@ import java.util.List;
 
 class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
+    @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
-    void getOrders_returnsOrders(@Nullable final String brokerAccountId) throws Exception {
+    void getOrders_returnsOrders() throws Exception {
+        final String accountId = "2000124699";
 
         final Order order1 = new Order(
                 "order1",
@@ -52,7 +48,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/orders/get")
-                .param("brokerAccountId", brokerAccountId)
+                .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
         performAndExpectResponse(requestBuilder, new GetOrdersResponse(orders));
     }

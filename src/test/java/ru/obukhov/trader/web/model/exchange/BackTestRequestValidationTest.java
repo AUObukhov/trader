@@ -88,7 +88,7 @@ class BackTestRequestValidationTest {
     private BackTestRequest createValidBackTestRequest() throws ParseException {
         final BackTestRequest request = new BackTestRequest();
 
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final String ticker = "ticker";
 
         BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
@@ -97,7 +97,7 @@ class BackTestRequestValidationTest {
         request.setFrom(OffsetDateTime.now());
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)

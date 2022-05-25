@@ -13,11 +13,11 @@ public interface SandboxClient {
 
     SandboxAccount performRegistration(@NotNull SandboxRegisterRequest registerRequest) throws IOException;
 
-    void setCurrencyBalance(@NotNull SandboxSetCurrencyBalanceRequest balanceRequest, @Nullable String brokerAccountId) throws IOException;
+    void setCurrencyBalance(@NotNull SandboxSetCurrencyBalanceRequest balanceRequest, @Nullable String accountId) throws IOException;
 
-    void setPositionBalance(@NotNull SandboxSetPositionBalanceRequest balanceRequest, @Nullable String brokerAccountId) throws IOException;
+    void setPositionBalance(@NotNull SandboxSetPositionBalanceRequest balanceRequest, @Nullable String accountId) throws IOException;
 
-    void removeAccount(@Nullable String brokerAccountId) throws IOException;
+    void removeAccount(@Nullable String accountId) throws IOException;
 
-    void clearAll(@Nullable String brokerAccountId) throws IOException;
+    void clearAll(@Nullable String accountId) throws IOException;
 }

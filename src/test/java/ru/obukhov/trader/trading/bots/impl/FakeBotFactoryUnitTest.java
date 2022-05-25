@@ -50,7 +50,7 @@ class FakeBotFactoryUnitTest {
     void createBot_returnsNotNull() {
         final String ticker = "ticker";
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId("2000124699")
+                .accountId("2000124699")
                 .ticker(ticker)
                 .commission(0.003)
                 .build();

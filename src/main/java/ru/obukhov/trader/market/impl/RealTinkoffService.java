@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -116,9 +115,9 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region OperationsService
 
     @Override
-    public List<Operation> getOperations(final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
+    public List<Operation> getOperations(final String accountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.getFigiByTicker(ticker);
-        return operationsService.getAllOperationsSync(brokerAccountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
+        return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 
     // endregion
@@ -126,27 +125,27 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region OrdersContext
 
     @Override
-    public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
-        return ordersClient.getOrders(brokerAccountId);
+    public List<Order> getOrders(final String accountId) throws IOException {
+        return ordersClient.getOrders(accountId);
     }
 
     @Override
-    public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest)
+    public PlacedLimitOrder placeLimitOrder(final String accountId, final String ticker, final LimitOrderRequest orderRequest)
             throws IOException {
         final String figi = self.getFigiByTicker(ticker);
-        return ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest);
+        return ordersClient.placeLimitOrder(accountId, figi, orderRequest);
     }
 
     @Override
-    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
+    public PlacedMarketOrder placeMarketOrder(final String accountId, final String ticker, final MarketOrderRequest orderRequest)
             throws IOException {
         final String figi = self.getFigiByTicker(ticker);
-        return ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest);
+        return ordersClient.placeMarketOrder(accountId, figi, orderRequest);
     }
 
     @Override
-    public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException {
-        ordersClient.cancelOrder(brokerAccountId, orderId);
+    public void cancelOrder(final String accountId, final String orderId) throws IOException {
+        ordersClient.cancelOrder(accountId, orderId);
     }
 
     // endregion
@@ -154,8 +153,8 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region PortfolioContext
 
     @Override
-    public List<PortfolioPosition> getPortfolioPositions(final String brokerAccountId) {
-        return operationsService.getPortfolioSync(brokerAccountId).getPositions().stream()
+    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
+        return operationsService.getPortfolioSync(accountId).getPositions().stream()
                 .map(position -> {
                     final String ticker = instrumentsService.getInstrumentByFigiSync(position.getFigi()).getTicker();
                     return POSITION_MAPPER.map(ticker, position);
@@ -164,8 +163,8 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     }
 
     @Override
-    public WithdrawLimits getWithdrawLimits(final String brokerAccountId) {
-        return operationsService.getWithdrawLimitsSync(brokerAccountId);
+    public WithdrawLimits getWithdrawLimits(final String accountId) {
+        return operationsService.getWithdrawLimitsSync(accountId);
     }
 
     // endregion

@@ -1,11 +1,8 @@
 package ru.obukhov.trader.market.impl;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,16 +25,16 @@ class MarketOrdersServiceUnitTest {
     @InjectMocks
     private MarketOrdersService service;
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOrders_filtersOrdersByFigi(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void getOrders_filtersOrdersByFigi() throws IOException {
+        final String accountId = "2000124699";
+
         final String ticker = "ticker";
         final String figi = "figi";
 
         Mockito.when(tinkoffService.getFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
-                brokerAccountId,
+                accountId,
                 TestData.createOrder("order0", figi),
                 TestData.createOrder("order1", figi),
                 TestData.createOrder("order2", "figi3"),
@@ -45,7 +42,7 @@ class MarketOrdersServiceUnitTest {
                 TestData.createOrder("order4", figi)
         );
 
-        final List<Order> orders = service.getOrders(brokerAccountId, ticker);
+        final List<Order> orders = service.getOrders(accountId, ticker);
 
         Assertions.assertEquals(3, orders.size());
         Assertions.assertEquals("order0", orders.get(0).orderId());
@@ -53,8 +50,8 @@ class MarketOrdersServiceUnitTest {
         Assertions.assertEquals("order4", orders.get(2).orderId());
     }
 
-    private void mockOrders(@Nullable final String brokerAccountId, final Order... orders) throws IOException {
-        Mockito.when(tinkoffService.getOrders(brokerAccountId)).thenReturn(List.of(orders));
+    private void mockOrders(final String accountId, final Order... orders) throws IOException {
+        Mockito.when(tinkoffService.getOrders(accountId)).thenReturn(List.of(orders));
     }
 
 }

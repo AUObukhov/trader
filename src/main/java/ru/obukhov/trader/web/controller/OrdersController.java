@@ -36,9 +36,9 @@ public class OrdersController {
     })
     public GetOrdersResponse getOrders(
             @RequestParam(required = false)
-            @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
+            @ApiParam(name = "accountId. When null then default account used", example = "2008941383") final String accountId
     ) throws IOException {
-        final List<Order> orders = ordersService.getOrders(brokerAccountId);
+        final List<Order> orders = ordersService.getOrders(accountId);
 
         return new GetOrdersResponse(orders);
     }

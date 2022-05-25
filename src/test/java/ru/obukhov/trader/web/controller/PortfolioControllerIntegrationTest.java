@@ -33,7 +33,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getPositions() throws Exception {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final String ticker1 = "ticker1";
         final String figi1 = "figi1";
@@ -101,11 +101,11 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final Portfolio portfolio = TestData.createPortfolio(tinkoffPosition1, tinkoffPosition2, tinkoffPosition3);
 
-        Mockito.when(operationsService.getPortfolioSync(brokerAccountId)).thenReturn(portfolio);
+        Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/positions")
-                .param("brokerAccountId", brokerAccountId)
+                .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
         final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
@@ -149,7 +149,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withBlockedValues() throws Exception {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -176,11 +176,11 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         final List<MoneyValue> blockedGuarantee = List.of(blockedGuarantee1, blockedGuarantee2);
 
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
-        Mockito.when(operationsService.getWithdrawLimitsSync(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(operationsService.getWithdrawLimitsSync(accountId)).thenReturn(withdrawLimits);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/balances")
-                .param("brokerAccountId", brokerAccountId)
+                .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
         final Money money1 = TestData.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
@@ -194,7 +194,7 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withoutBlockedValues() throws Exception {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -210,11 +210,11 @@ class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
         final List<MoneyValue> blockedGuarantee = Collections.emptyList();
 
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
-        Mockito.when(operationsService.getWithdrawLimitsSync(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(operationsService.getWithdrawLimitsSync(accountId)).thenReturn(withdrawLimits);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/portfolio/balances")
-                .param("brokerAccountId", brokerAccountId)
+                .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
         final Money money1 = TestData.createMoney(currency1, value1);

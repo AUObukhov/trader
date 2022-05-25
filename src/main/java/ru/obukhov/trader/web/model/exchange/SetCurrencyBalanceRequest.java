@@ -13,7 +13,7 @@ public class SetCurrencyBalanceRequest {
 
     @Nullable
     @ApiModelProperty(example = "2000124699", position = 3)
-    private String brokerAccountId;
+    private String accountId;
 
     @NotNull(message = "currency is mandatory")
     @ApiModelProperty(example = "USD", required = true, position = 1)

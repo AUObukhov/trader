@@ -175,7 +175,7 @@ class BotConfigUnitTest {
 
         final String string = config.toString();
 
-        final String expectedStart = "[brokerAccountId=2000124699, ticker=ticker, candleInterval=CANDLE_INTERVAL_1_MIN, commission=0.003, strategyType=cross, " +
+        final String expectedStart = "[accountId=2000124699, ticker=ticker, candleInterval=CANDLE_INTERVAL_1_MIN, commission=0.003, strategyType=cross, " +
                 "strategyParams={";
         Assertions.assertTrue(string.startsWith(expectedStart));
         Assertions.assertTrue(string.contains("minimumProfit=0.01"));

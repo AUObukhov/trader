@@ -1,7 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.Nullable;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
@@ -34,12 +33,12 @@ public class Mocker {
 
     public static void mockTinkoffOperations(
             final FakeBot fakeBot,
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final Interval interval,
             final Operation... operations
     ) throws IOException {
-        Mockito.when(fakeBot.getOperations(brokerAccountId, interval, ticker))
+        Mockito.when(fakeBot.getOperations(accountId, interval, ticker))
                 .thenReturn(List.of(operations));
     }
 

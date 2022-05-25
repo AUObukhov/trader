@@ -126,13 +126,13 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission = 0.003;
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(candleInterval)
                 .commission(commission)
@@ -171,9 +171,9 @@ class BackTesterImplUnitTest {
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%.3f, strategyType=%s, " +
+                "^Back test for '\\[accountId=%s, ticker=%s, candleInterval=%s, commission=%.3f, strategyType=%s, " +
                         "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId, ticker, candleInterval, commission, strategyType, exceptionMessage
+                accountId, ticker, candleInterval, commission, strategyType, exceptionMessage
         );
         AssertUtils.assertMatchesRegex(backTestResult.error(), expectedErrorPattern);
     }
@@ -308,7 +308,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
-        final String brokerAccountId1 = null;
+        final String accountId1 = null;
         final String ticker1 = "ticker1";
         final Currency currency1 = Currency.RUB;
         final Double commission1 = 0.003;
@@ -324,7 +324,7 @@ class BackTesterImplUnitTest {
         final int positionLotsCount1 = 2;
 
         final BotConfig botConfig1 = BotConfig.builder()
-                .brokerAccountId(brokerAccountId1)
+                .accountId(accountId1)
                 .ticker(ticker1)
                 .commission(commission1)
                 .build();
@@ -337,11 +337,11 @@ class BackTesterImplUnitTest {
         mockCurrentPrice(fakeBot1, ticker1, 500);
         mockNextMinute(fakeBot1, from);
 
-        mockInvestments(fakeBot1, brokerAccountId1, currency1, from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot1.getCurrentBalance(brokerAccountId1, currency1)).thenReturn(currentBalance1);
-        mockPortfolioPosition(fakeBot1, brokerAccountId1, ticker1, positionLotsCount1);
+        mockInvestments(fakeBot1, accountId1, currency1, from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
+        mockPortfolioPosition(fakeBot1, accountId1, ticker1, positionLotsCount1);
 
-        final String brokerAccountId2 = "2000124699";
+        final String accountId2 = "2000124699";
         final String ticker2 = "ticker1";
         final Currency currency2 = Currency.USD;
         final Double commission2 = 0.001;
@@ -357,7 +357,7 @@ class BackTesterImplUnitTest {
         final int positionLotsCount2 = 2;
 
         final BotConfig botConfig2 = BotConfig.builder()
-                .brokerAccountId(brokerAccountId2)
+                .accountId(accountId2)
                 .ticker(ticker2)
                 .commission(commission2)
                 .build();
@@ -369,9 +369,9 @@ class BackTesterImplUnitTest {
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
         mockNextMinute(fakeBot2, from);
-        mockInvestments(fakeBot2, brokerAccountId2, currency2, from, balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot2.getCurrentBalance(brokerAccountId2, currency2)).thenReturn(currentBalance2);
-        mockPortfolioPosition(fakeBot2, brokerAccountId2, ticker2, positionLotsCount2);
+        mockInvestments(fakeBot2, accountId2, currency2, from, balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot2.getCurrentBalance(accountId2, currency2)).thenReturn(currentBalance2);
+        mockPortfolioPosition(fakeBot2, accountId2, ticker2, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
 
@@ -388,7 +388,7 @@ class BackTesterImplUnitTest {
 
         Mockito.verify(fakeBot1, Mockito.times(24))
                 .addInvestment(
-                        Mockito.eq(brokerAccountId1),
+                        Mockito.eq(accountId1),
                         Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency1),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
@@ -396,7 +396,7 @@ class BackTesterImplUnitTest {
 
         Mockito.verify(fakeBot2, Mockito.times(24))
                 .addInvestment(
-                        Mockito.eq(brokerAccountId2),
+                        Mockito.eq(accountId2),
                         Mockito.any(OffsetDateTime.class),
                         Mockito.eq(currency2),
                         ArgumentMatchers.argThat(BigDecimalMatcher.of(balanceIncrement))
@@ -905,14 +905,14 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
-        final String brokerAccountId1 = null;
+        final String accountId1 = null;
         final String ticker1 = "ticker1";
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission1 = 0.003;
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
         final BotConfig botConfig1 = BotConfig.builder()
-                .brokerAccountId(brokerAccountId1)
+                .accountId(accountId1)
                 .ticker(ticker1)
                 .candleInterval(candleInterval1)
                 .commission(commission1)
@@ -926,14 +926,14 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
-        final String brokerAccountId2 = "2000124699";
+        final String accountId2 = "2000124699";
         final String ticker2 = "ticker2";
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission2 = 0.001;
         final StrategyType strategyType2 = StrategyType.CROSS;
 
         final BotConfig botConfig2 = BotConfig.builder()
-                .brokerAccountId(brokerAccountId2)
+                .accountId(accountId2)
                 .ticker(ticker2)
                 .candleInterval(candleInterval2)
                 .commission(commission2)
@@ -958,16 +958,16 @@ class BackTesterImplUnitTest {
         Assertions.assertEquals(2, backTestResults.size());
 
         final String expectedErrorPattern1 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                "^Back test for '\\[accountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId1, ticker1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
+                accountId1, ticker1, candleInterval1, commission1, strategyType1, mockedExceptionMessage1
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(0).error(), expectedErrorPattern1);
 
         final String expectedErrorPattern2 = String.format(
-                "^Back test for '\\[brokerAccountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
+                "^Back test for '\\[accountId=%s, ticker=%s, candleInterval=%s, commission=%s, strategyType=%s, strategyParams=\\{\\}\\]' " +
                         "failed within 00:00:00.\\d\\d\\d with error: %s$",
-                brokerAccountId2, ticker2, candleInterval2, commission2, strategyType2, mockedExceptionMessage2
+                accountId2, ticker2, candleInterval2, commission2, strategyType2, mockedExceptionMessage2
         );
         AssertUtils.assertMatchesRegex(backTestResults.get(1).error(), expectedErrorPattern2);
     }
@@ -1032,7 +1032,7 @@ class BackTesterImplUnitTest {
     }
 
     private BotConfig arrangeBackTest(
-            final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final double commission,
             final BalanceConfig balanceConfig,
@@ -1044,7 +1044,7 @@ class BackTesterImplUnitTest {
             final Operation operation
     ) throws IOException {
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .commission(commission)
                 .build();
@@ -1058,14 +1058,14 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot.getShare(ticker)).thenReturn(share);
         mockBotCandles(botConfig, fakeBot, prices);
         mockNextMinute(fakeBot, interval.getFrom());
-        mockInvestments(fakeBot, brokerAccountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
-        Mockito.when(fakeBot.getCurrentBalance(brokerAccountId, currency)).thenReturn(currentBalance);
+        mockInvestments(fakeBot, accountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
+        Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
         if (quantityLots != null) {
-            mockPortfolioPosition(fakeBot, brokerAccountId, ticker, lotSize * quantityLots, quantityLots);
+            mockPortfolioPosition(fakeBot, accountId, ticker, lotSize * quantityLots, quantityLots);
             mockCurrentPrice(fakeBot, ticker, currentPrice);
         }
         if (operation != null) {
-            Mocker.mockTinkoffOperations(fakeBot, brokerAccountId, ticker, interval, operation);
+            Mocker.mockTinkoffOperations(fakeBot, accountId, ticker, interval, operation);
         }
 
         return botConfig;
@@ -1109,35 +1109,35 @@ class BackTesterImplUnitTest {
 
     private void mockInvestments(
             final FakeBot fakeBot,
-            final String brokerAccountId,
+            final String accountId,
             final Currency currency,
             final OffsetDateTime dateTime,
             final BigDecimal initialInvestment
     ) {
         final SortedMap<OffsetDateTime, BigDecimal> investments = new TreeMap<>();
         investments.put(dateTime, initialInvestment);
-        Mockito.when(fakeBot.getInvestments(brokerAccountId, currency)).thenReturn(investments);
+        Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }
 
     private void mockPortfolioPosition(
             final FakeBot fakeBot,
-            final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final int quantityLots
     ) throws IOException {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, quantityLots);
-        Mockito.when(fakeBot.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
+        Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
     }
 
     private void mockPortfolioPosition(
             final FakeBot fakeBot,
-            final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final int quantity,
             final int quantityLots
     ) throws IOException {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, quantity, quantityLots);
-        Mockito.when(fakeBot.getPortfolioPositions(brokerAccountId)).thenReturn(List.of(portfolioPosition));
+        Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
     }
 
 }

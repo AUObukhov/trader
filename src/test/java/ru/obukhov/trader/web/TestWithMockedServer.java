@@ -123,8 +123,8 @@ public abstract class TestWithMockedServer {
         mockServer.when(apiRequest).respond(HttpClassCallback.callback().withCallbackClass(CandlesExpectationResponseCallback.class));
     }
 
-    protected String mockResponse(final HttpMethod httpMethod, final String brokerAccountId, final String path) {
-        HttpRequest apiRequest = createAuthorizedHttpRequest(httpMethod, brokerAccountId)
+    protected String mockResponse(final HttpMethod httpMethod, final String accountId, final String path) {
+        HttpRequest apiRequest = createAuthorizedHttpRequest(httpMethod, accountId)
                 .withPath(path);
 
         return mockResponse(apiRequest);
@@ -153,10 +153,10 @@ public abstract class TestWithMockedServer {
         return expectations[0].getId();
     }
 
-    private HttpRequest createAuthorizedHttpRequest(final HttpMethod httpMethod, final String brokerAccountId) {
+    private HttpRequest createAuthorizedHttpRequest(final HttpMethod httpMethod, final String accountId) {
         HttpRequest apiRequest = createAuthorizedHttpRequest(httpMethod);
-        if (brokerAccountId != null) {
-            apiRequest = apiRequest.withQueryStringParameter("brokerAccountId", brokerAccountId);
+        if (accountId != null) {
+            apiRequest = apiRequest.withQueryStringParameter("accountId", accountId);
         }
         return apiRequest;
     }

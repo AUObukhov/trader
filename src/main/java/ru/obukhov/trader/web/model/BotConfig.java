@@ -20,7 +20,7 @@ public class BotConfig {
 
     @Nullable
     @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
-    private final String brokerAccountId;
+    private final String accountId;
 
     @NotNull(message = "ticker is mandatory")
     @ApiModelProperty(value = "Ticker", position = 2, example = "FXIT")
@@ -48,14 +48,14 @@ public class BotConfig {
     private final Map<String, Object> strategyParams;
 
     public BotConfig(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final CandleInterval candleInterval,
             final Double commission,
             final StrategyType strategyType,
             final Map<String, Object> strategyParams
     ) {
-        this.brokerAccountId = brokerAccountId;
+        this.accountId = accountId;
         this.ticker = ticker;
         this.candleInterval = candleInterval;
         this.commission = commission;
@@ -66,7 +66,7 @@ public class BotConfig {
     @Override
     public String toString() {
         return "[" +
-                "brokerAccountId=" + brokerAccountId +
+                "accountId=" + accountId +
                 ", ticker=" + ticker +
                 ", candleInterval=" + candleInterval +
                 ", commission=" + commission +

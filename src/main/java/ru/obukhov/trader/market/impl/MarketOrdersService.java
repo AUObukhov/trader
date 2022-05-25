@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
@@ -26,59 +25,59 @@ public class MarketOrdersService {
     }
 
     /**
-     * @return returns list of active orders with given {@code ticker} at given {@code brokerAccountId}.
-     * If {@code brokerAccountId} null, works with default broker account
+     * @return returns list of active orders with given {@code ticker} at given {@code accountId}.
+     * If {@code accountId} null, works with default broker account
      */
-    public List<Order> getOrders(@Nullable final String brokerAccountId, final String ticker) throws IOException {
+    public List<Order> getOrders(final String accountId, final String ticker) throws IOException {
         final String figi = tinkoffService.getFigiByTicker(ticker);
-        return getOrders(brokerAccountId).stream()
+        return getOrders(accountId).stream()
                 .filter(order -> figi.equals(order.figi()))
                 .toList();
     }
 
     /**
-     * @return returns list of active orders at given {@code brokerAccountId}
-     * If {@code brokerAccountId} null, works with default broker account
+     * @return returns list of active orders at given {@code accountId}
+     * If {@code accountId} null, works with default broker account
      */
-    public List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException {
-        return tinkoffService.getOrders(brokerAccountId);
+    public List<Order> getOrders(final String accountId) throws IOException {
+        return tinkoffService.getOrders(accountId);
     }
 
     /**
      * @return places new order with market price and given params.
-     * If {@code brokerAccountId} null, works with default broker account
+     * If {@code accountId} null, works with default broker account
      */
     public PlacedMarketOrder placeMarketOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String ticker,
             final long lots,
             @NotNull final OperationType operationType
     ) throws IOException {
         final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);
-        return tinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
+        return tinkoffService.placeMarketOrder(accountId, ticker, orderRequest);
     }
 
     /**
      * @return places new order with given {@code price} and given params.
-     * If {@code brokerAccountId} null, works with default broker account
+     * If {@code accountId} null, works with default broker account
      */
     public PlacedLimitOrder placeLimitOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String ticker,
             final int lots,
             @NotNull final OperationType operationType,
             final BigDecimal price
     ) throws IOException {
         final LimitOrderRequest orderRequest = new LimitOrderRequest(lots, operationType, price);
-        return tinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
+        return tinkoffService.placeLimitOrder(accountId, ticker, orderRequest);
     }
 
     /**
-     * cancels order with given {@code orderId} at given {@code brokerAccountId}.
-     * If {@code brokerAccountId} null, works with default broker account
+     * cancels order with given {@code orderId} at given {@code accountId}.
+     * If {@code accountId} null, works with default broker account
      */
-    public void cancelOrder(@Nullable final String brokerAccountId, @NotNull String orderId) throws IOException {
-        tinkoffService.cancelOrder(brokerAccountId, orderId);
+    public void cancelOrder(final String accountId, @NotNull String orderId) throws IOException {
+        tinkoffService.cancelOrder(accountId, orderId);
     }
 
 }

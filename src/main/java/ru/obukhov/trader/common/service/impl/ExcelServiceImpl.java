@@ -173,7 +173,7 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
-        putBrokerAccountId(sheet, result.botConfig().getBrokerAccountId());
+        putAccountId(sheet, result.botConfig().getAccountId());
         putTicker(sheet, result.botConfig().getTicker());
         putInterval(sheet, result.interval());
         putInitialInvestment(sheet, result.balances().initialInvestment());
@@ -188,9 +188,9 @@ public class ExcelServiceImpl implements ExcelService {
         putError(sheet, result.error());
     }
 
-    private void putBrokerAccountId(final ExtendedSheet sheet, final String brokerAccountId) {
+    private void putAccountId(final ExtendedSheet sheet, final String accountId) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Счёт", brokerAccountId);
+        row.createCells("Счёт", accountId);
     }
 
     private void putTicker(final ExtendedSheet sheet, final String ticker) {

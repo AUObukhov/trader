@@ -1,11 +1,8 @@
 package ru.obukhov.trader.trading.bots.impl;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -61,17 +58,16 @@ class AbstractBotUnitTest {
     @InjectMocks
     private TestBot bot;
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
 
         final List<Order> orders = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
@@ -84,16 +80,16 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenThereAreUncompletedOrders(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() throws IOException {
+        final String accountId = "2000124699";
+
         final String ticker = "ticker";
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
@@ -105,14 +101,13 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
@@ -124,10 +119,9 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
@@ -135,7 +129,7 @@ class AbstractBotUnitTest {
         mockCandles(ticker, List.of(candle));
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .build();
@@ -147,10 +141,9 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_doesNoOrder_whenDecisionIsWait(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_doesNoOrder_whenDecisionIsWait() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final int lotSize = 10;
 
@@ -166,7 +159,7 @@ class AbstractBotUnitTest {
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
@@ -181,10 +174,9 @@ class AbstractBotUnitTest {
         verifyNoOrdersMade();
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final Currency currency = Currency.USD;
         final int lotSize = 10;
@@ -193,15 +185,15 @@ class AbstractBotUnitTest {
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, currency))
+        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -214,7 +206,7 @@ class AbstractBotUnitTest {
                 .thenReturn(decision);
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
@@ -225,13 +217,12 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
+                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final Currency currency = Currency.USD;
         final int lotSize = 10;
@@ -240,15 +231,15 @@ class AbstractBotUnitTest {
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, currency))
+        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -261,7 +252,7 @@ class AbstractBotUnitTest {
                 .thenReturn(decision);
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
@@ -272,7 +263,7 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
+                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {

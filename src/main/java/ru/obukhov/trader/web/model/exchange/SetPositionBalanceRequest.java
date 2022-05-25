@@ -21,5 +21,5 @@ public class SetPositionBalanceRequest {
 
     @Nullable
     @ApiModelProperty(example = "2000124699", position = 3)
-    private String brokerAccountId;
+    private String accountId;
 }

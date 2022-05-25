@@ -331,7 +331,7 @@ class ExcelServiceImplUnitTest {
     private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
-        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().getBrokerAccountId());
+        AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().getAccountId());
         AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.interval().toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().initialInvestment());

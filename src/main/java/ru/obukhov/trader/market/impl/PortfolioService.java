@@ -22,16 +22,16 @@ public class PortfolioService {
 
     private final TinkoffService tinkoffService;
 
-    public List<PortfolioPosition> getPositions(final String brokerAccountId) {
-        return tinkoffService.getPortfolioPositions(brokerAccountId);
+    public List<PortfolioPosition> getPositions(final String accountId) {
+        return tinkoffService.getPortfolioPositions(accountId);
     }
 
     /**
-     * @return position with given {@code ticker} at given {@code brokerAccountId} or null, if such position does not exist.
-     * If {@code brokerAccountId} null, works with default broker account
+     * @return position with given {@code ticker} at given {@code accountId} or null, if such position does not exist.
+     * If {@code accountId} null, works with default broker account
      */
-    public PortfolioPosition getSecurity(final String brokerAccountId, final String ticker) {
-        final List<PortfolioPosition> allPositions = getPositions(brokerAccountId);
+    public PortfolioPosition getSecurity(final String accountId, final String ticker) {
+        final List<PortfolioPosition> allPositions = getPositions(accountId);
         return allPositions.stream()
                 .filter(position -> ticker.equals(position.ticker()))
                 .findFirst()
@@ -39,12 +39,12 @@ public class PortfolioService {
     }
 
     /**
-     * @return available balance of given {@code currency} at given {@code brokerAccountId}.
-     * If {@code brokerAccountId} null, works with default broker account
+     * @return available balance of given {@code currency} at given {@code accountId}.
+     * If {@code accountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
      */
-    public BigDecimal getAvailableBalance(final String brokerAccountId, final ru.obukhov.trader.market.model.Currency currency) {
-        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(brokerAccountId);
+    public BigDecimal getAvailableBalance(final String accountId, final ru.obukhov.trader.market.model.Currency currency) {
+        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(accountId);
         final BigDecimal totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
         final BigDecimal blockedBalance = DataStructsHelper.getBalance(withdrawLimits.getBlocked(), currency);
         final BigDecimal blockedGuaranteeBalance = DataStructsHelper.getBalance(withdrawLimits.getBlockedGuarantee(), currency);
@@ -52,10 +52,10 @@ public class PortfolioService {
     }
 
     /**
-     * @return list of currencies balances at given {@code brokerAccountId}.
+     * @return list of currencies balances at given {@code accountId}.
      */
-    public List<Money> getAvailableBalances(final String brokerAccountId) {
-        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(brokerAccountId);
+    public List<Money> getAvailableBalances(final String accountId) {
+        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(accountId);
         final Map<Currency, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());
         final Map<Currency, BigDecimal> blockedGuarantee = getBalanceMap(withdrawLimits.getBlockedGuarantee());
         return withdrawLimits.getMoney().stream()

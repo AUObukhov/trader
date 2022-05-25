@@ -6,7 +6,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.ApiProperties;
@@ -24,7 +23,7 @@ import java.io.IOException;
 @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
 public class SandboxClientImpl extends AbstractClient implements SandboxClient {
 
-    private static final String PARAM_BROKER_ACCOUNT_ID = "brokerAccountId";
+    private static final String PARAM_BROKER_ACCOUNT_ID = "accountId";
 
     protected SandboxClientImpl(final OkHttpClient client, final TradingProperties tradingProperties, final ApiProperties apiProperties) {
         super(client, tradingProperties, apiProperties);
@@ -49,13 +48,13 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
     }
 
     @Override
-    public void setCurrencyBalance(@NotNull final SandboxSetCurrencyBalanceRequest balanceRequest, @Nullable final String brokerAccountId)
+    public void setCurrencyBalance(@NotNull final SandboxSetCurrencyBalanceRequest balanceRequest, final String accountId)
             throws IOException {
         final String renderedBody = mapper.writeValueAsString(balanceRequest);
 
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("currencies")
@@ -70,13 +69,13 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
     }
 
     @Override
-    public void setPositionBalance(@NotNull final SandboxSetPositionBalanceRequest balanceRequest, @Nullable final String brokerAccountId)
+    public void setPositionBalance(@NotNull final SandboxSetPositionBalanceRequest balanceRequest, final String accountId)
             throws IOException {
         final String renderedBody = mapper.writeValueAsString(balanceRequest);
 
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("positions")
@@ -91,10 +90,10 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
     }
 
     @Override
-    public void removeAccount(@Nullable final String brokerAccountId) throws IOException {
+    public void removeAccount(final String accountId) throws IOException {
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("remove")
@@ -108,10 +107,10 @@ public class SandboxClientImpl extends AbstractClient implements SandboxClient {
     }
 
     @Override
-    public void clearAll(@Nullable final String brokerAccountId) throws IOException {
+    public void clearAll(final String accountId) throws IOException {
         HttpUrl.Builder builder = url.newBuilder();
-        if (StringUtils.isNoneEmpty(brokerAccountId)) {
-            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, brokerAccountId);
+        if (StringUtils.isNoneEmpty(accountId)) {
+            builder.addQueryParameter(PARAM_BROKER_ACCOUNT_ID, accountId);
         }
         final HttpUrl requestUrl = builder
                 .addPathSegment("clear")

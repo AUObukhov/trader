@@ -21,12 +21,12 @@ public class MarketOperationsService {
     }
 
     /**
-     * @return list of operations with given {@code ticker} at given {@code brokerAccountId} made in given {@code interval}.
-     * If {@code brokerAccountId} null, works with default broker account
+     * @return list of operations with given {@code ticker} at given {@code accountId} made in given {@code interval}.
+     * If {@code accountId} null, works with default broker account
      */
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, @NotNull final Interval interval, @Nullable final String ticker)
+    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker)
             throws IOException {
-        return tinkoffService.getOperations(brokerAccountId, interval, ticker);
+        return tinkoffService.getOperations(accountId, interval, ticker);
     }
 
 }

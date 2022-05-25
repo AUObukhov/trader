@@ -3,9 +3,6 @@ package ru.obukhov.trader.trading.bots.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -87,55 +84,51 @@ class FakeBotUnitTest {
         Assertions.assertEquals(expectedNextMinute, nextMinute);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getInvestments(final String brokerAccountId) {
+    @Test
+    void getInvestments() {
+        final String accountId = "2000124699";
         final Currency currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
-        Mockito.when(fakeTinkoffService.getInvestments(brokerAccountId, currency)).thenReturn(expectedInvestments);
+        Mockito.when(fakeTinkoffService.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
 
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         AssertUtils.assertMapsAreEqual(expectedInvestments, investments);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getCurrentBalance(final String brokerAccountId) {
+    @Test
+    void getCurrentBalance() {
+        final String accountId = "2000124699";
         final Currency currency = Currency.RUB;
         final BigDecimal expectedBalance = BigDecimal.TEN;
-        Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, currency)).thenReturn(expectedBalance);
+        Mockito.when(fakeTinkoffService.getCurrentBalance(accountId, currency)).thenReturn(expectedBalance);
 
-        final BigDecimal balance = fakeBot.getCurrentBalance(brokerAccountId, currency);
+        final BigDecimal balance = fakeBot.getCurrentBalance(accountId, currency);
 
         AssertUtils.assertEquals(expectedBalance, balance);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOperations(final String brokerAccountId) throws IOException {
+    @Test
+    void getOperations() throws IOException {
+        final String accountId = "2000124699";
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String ticker = "ticker";
         final List<Operation> expectedOperations = new ArrayList<>();
-        Mockito.when(fakeTinkoffService.getOperations(brokerAccountId, interval, ticker)).thenReturn(expectedOperations);
+        Mockito.when(fakeTinkoffService.getOperations(accountId, interval, ticker)).thenReturn(expectedOperations);
 
-        final List<Operation> operations = fakeBot.getOperations(brokerAccountId, interval, ticker);
+        final List<Operation> operations = fakeBot.getOperations(accountId, interval, ticker);
 
         AssertUtils.assertEquals(expectedOperations, operations);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getPortfolioPositions(final String brokerAccountId) throws IOException {
+    @Test
+    void getPortfolioPositions() {
+        final String accountId = "2000124699";
         final List<PortfolioPosition> expectedPositions = new ArrayList<>();
-        Mockito.when(fakeTinkoffService.getPortfolioPositions(brokerAccountId)).thenReturn(expectedPositions);
+        Mockito.when(fakeTinkoffService.getPortfolioPositions(accountId)).thenReturn(expectedPositions);
 
-        final List<PortfolioPosition> positions = fakeBot.getPortfolioPositions(brokerAccountId);
+        final List<PortfolioPosition> positions = fakeBot.getPortfolioPositions(accountId);
 
         AssertUtils.assertEquals(expectedPositions, positions);
     }

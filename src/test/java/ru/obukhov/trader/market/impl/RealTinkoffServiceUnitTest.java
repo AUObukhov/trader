@@ -1,14 +1,10 @@
 package ru.obukhov.trader.market.impl;
 
 import com.google.protobuf.Timestamp;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -200,10 +196,9 @@ class RealTinkoffServiceUnitTest {
 
     // region OperationsContext methods tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOperations_returnsOperations(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void getOperations_returnsOperations() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -214,9 +209,9 @@ class RealTinkoffServiceUnitTest {
         final Operation operation1 = TestData.createOperation();
         final Operation operation2 = TestData.createOperation();
         final List<Operation> operations = List.of(operation1, operation2);
-        Mockito.when(operationsService.getAllOperationsSync(brokerAccountId, from.toInstant(), to.toInstant(), figi)).thenReturn(operations);
+        Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi)).thenReturn(operations);
 
-        final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
+        final List<Operation> result = realTinkoffService.getOperations(accountId, Interval.of(from, to), ticker);
 
         Assertions.assertSame(operations, result);
     }
@@ -225,22 +220,21 @@ class RealTinkoffServiceUnitTest {
 
     // region OrdersContext methods tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOrders(@Nullable final String brokerAccountId) throws IOException {
-        final List<Order> orders = List.of(TestData.createOrder(), TestData.createOrder());
-        Mockito.when(ordersClient.getOrders(brokerAccountId)).thenReturn(orders);
+    @Test
+    void getOrders() throws IOException {
+        final String accountId = "2000124699";
 
-        final List<Order> result = realTinkoffService.getOrders(brokerAccountId);
+        final List<Order> orders = List.of(TestData.createOrder(), TestData.createOrder());
+        Mockito.when(ordersClient.getOrders(accountId)).thenReturn(orders);
+
+        final List<Order> result = realTinkoffService.getOrders(accountId);
 
         Assertions.assertSame(orders, result);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void placeLimitOrder(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void placeLimitOrder() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
 
@@ -258,16 +252,15 @@ class RealTinkoffServiceUnitTest {
                 null,
                 null
         );
-        Mockito.when(ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
-        final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
+        Mockito.when(ordersClient.placeLimitOrder(accountId, figi, orderRequest)).thenReturn(placedOrder);
+        final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(accountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void placeMarketOrder(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void placeMarketOrder() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
 
@@ -285,23 +278,22 @@ class RealTinkoffServiceUnitTest {
                 null,
                 null
         );
-        Mockito.when(ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest))
+        Mockito.when(ordersClient.placeMarketOrder(accountId, figi, orderRequest))
                 .thenReturn(placedOrder);
 
-        final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
+        final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(accountId, ticker, orderRequest);
 
         Assertions.assertSame(placedOrder, result);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void cancelOrder(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void cancelOrder() throws IOException {
+        final String accountId = "2000124699";
         final String orderId = "orderId";
 
-        realTinkoffService.cancelOrder(brokerAccountId, orderId);
+        realTinkoffService.cancelOrder(accountId, orderId);
 
-        Mockito.verify(ordersClient, Mockito.times(1)).cancelOrder(brokerAccountId, orderId);
+        Mockito.verify(ordersClient, Mockito.times(1)).cancelOrder(accountId, orderId);
     }
 
     // endregion
@@ -310,7 +302,7 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getPortfolioPositions_returnsAndMapsPositions() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final String figi1 = "figi1";
         final String ticker1 = "ticker1";
@@ -358,9 +350,9 @@ class RealTinkoffServiceUnitTest {
         );
 
         final Portfolio portfolio = TestData.createPortfolio(tinkoffPortfolioPosition1, tinkoffPortfolioPosition2);
-        Mockito.when(operationsService.getPortfolioSync(brokerAccountId)).thenReturn(portfolio);
+        Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 
-        final List<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(brokerAccountId);
+        final List<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(accountId);
 
         final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
                 ticker1,
@@ -390,7 +382,7 @@ class RealTinkoffServiceUnitTest {
 
     @Test
     void getPortfolioCurrencies() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
         final List<MoneyValue> moneys = List.of(
                 TestData.createMoneyValue(10000, Currency.RUB),
@@ -398,9 +390,9 @@ class RealTinkoffServiceUnitTest {
         );
         final List<MoneyValue> blocked = List.of(TestData.createMoneyValue(1000, Currency.RUB));
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked);
-        Mockito.when(operationsService.getWithdrawLimitsSync(brokerAccountId)).thenReturn(withdrawLimits);
+        Mockito.when(operationsService.getWithdrawLimitsSync(accountId)).thenReturn(withdrawLimits);
 
-        final WithdrawLimits result = realTinkoffService.getWithdrawLimits(brokerAccountId);
+        final WithdrawLimits result = realTinkoffService.getWithdrawLimits(accountId);
 
         Assertions.assertSame(withdrawLimits, result);
     }

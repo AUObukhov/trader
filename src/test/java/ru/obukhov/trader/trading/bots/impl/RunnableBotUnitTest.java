@@ -182,7 +182,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() throws IOException {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -192,7 +192,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -200,7 +200,7 @@ class RunnableBotUnitTest {
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
+        Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -210,7 +210,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetPositionThrowsException() throws IOException {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -220,7 +220,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -228,7 +228,7 @@ class RunnableBotUnitTest {
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker)).thenThrow(new IllegalArgumentException());
+        Mockito.when(portfolioService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
@@ -292,7 +292,7 @@ class RunnableBotUnitTest {
     @Test
     @SuppressWarnings("java:S2699")
     void run_catchesException_whenPlaceMarketOrderThrowsException() throws IOException {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -302,7 +302,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
@@ -314,7 +314,7 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(decision);
 
-        Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY))
+        Mockito.when(ordersService.placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -383,7 +383,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() throws IOException {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -394,8 +394,8 @@ class RunnableBotUnitTest {
         final String ticker = "ticker";
         final Currency currency = Currency.RUB;
         final int lotSize = 10;
-        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        mockData(brokerAccountId, ticker, currency, lotSize);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
+        mockData(accountId, ticker, currency, lotSize);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -404,12 +404,12 @@ class RunnableBotUnitTest {
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
+                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
     }
 
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() throws IOException {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -418,8 +418,8 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        mockBotConfig(brokerAccountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        mockData(brokerAccountId, ticker, Currency.RUB, 10);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
+        mockData(accountId, ticker, Currency.RUB, 10);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -428,7 +428,7 @@ class RunnableBotUnitTest {
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
+                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
     }
 
     private RunnableBot createRunnableBot() {
@@ -436,19 +436,19 @@ class RunnableBotUnitTest {
     }
 
     private void mockBotConfig(
-            final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final CandleInterval candleInterval,
             final double commission
     ) {
-        Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
+        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
         Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
         Mockito.when(botConfig.getCommission()).thenReturn(commission);
     }
 
-    private void mockBotConfig(final String brokerAccountId, final String ticker, final CandleInterval candleInterval) {
-        Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
+    private void mockBotConfig(final String accountId, final String ticker, final CandleInterval candleInterval) {
+        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
         Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
     }
@@ -458,21 +458,21 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
     }
 
-    private void mockData(final String brokerAccountId, final String ticker, final Currency currency, final int lotSize)
+    private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize)
             throws IOException {
         final Share share = TestData.createShare(ticker, currency, lotSize);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, currency))
+        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());

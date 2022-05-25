@@ -13,20 +13,20 @@ import java.util.List;
 
 public interface OrdersClient {
 
-    List<Order> getOrders(@Nullable String brokerAccountId) throws IOException;
+    List<Order> getOrders(@Nullable String accountId) throws IOException;
 
     PlacedLimitOrder placeLimitOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String figi,
             @NotNull final LimitOrderRequest limitOrder
     ) throws IOException;
 
     PlacedMarketOrder placeMarketOrder(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             @NotNull final String figi,
             @NotNull final MarketOrderRequest marketOrder
     ) throws IOException;
 
-    void cancelOrder(@Nullable final String brokerAccountId, @NotNull final String orderId) throws IOException;
+    void cancelOrder(final String accountId, @NotNull final String orderId) throws IOException;
 
 }

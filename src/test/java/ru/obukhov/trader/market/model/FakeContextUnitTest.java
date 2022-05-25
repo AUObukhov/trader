@@ -1,13 +1,10 @@
 package ru.obukhov.trader.market.model;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
@@ -32,15 +29,15 @@ class FakeContextUnitTest {
 
     // region constructor with initialBalance tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void constructor_withInitialBalance_initializesCurrentDateTime(@Nullable final String brokerAccountId) {
+    @Test
+    void constructor_withInitialBalance_initializesCurrentDateTime() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
 
-        final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, balance);
+        final FakeContext fakeContext = new FakeContext(currentDateTime, accountId, currency, balance);
 
         Assertions.assertEquals(currentDateTime, fakeContext.getCurrentDateTime());
     }
@@ -48,35 +45,34 @@ class FakeContextUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConstructor_withInitialBalance_initializesBalance() {
         return Stream.of(
-                Arguments.of(null, 100),
                 Arguments.of("2000124699", 100),
-                Arguments.of(null, -100),
                 Arguments.of("2000124699", -100),
-                Arguments.of(null, 0),
                 Arguments.of("2000124699", 0)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forConstructor_withInitialBalance_initializesBalance")
-    void constructor_withInitialBalance_initializesBalance(@Nullable final String brokerAccountId, final int balance) {
+    void constructor_withInitialBalance_initializesBalance(final int balance) {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
 
-        final FakeContext fakeContext = new FakeContext(currentDateTime, brokerAccountId, currency, DecimalUtils.setDefaultScale(balance));
+        final FakeContext fakeContext = new FakeContext(currentDateTime, accountId, currency, DecimalUtils.setDefaultScale(balance));
 
-        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
-        AssertUtils.assertEquals(balance, fakeContext.getBalance(brokerAccountId, currency));
+        Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
+        AssertUtils.assertEquals(balance, fakeContext.getBalance(accountId, currency));
     }
 
     // endregion
 
     // region addInvestment without dateTime tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withoutDateTime_changesInvestmentsAndCurrentBalance(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withoutDateTime_changesInvestmentsAndCurrentBalance() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -87,26 +83,26 @@ class FakeContextUnitTest {
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         fakeContext.setCurrentDateTime(investment1DateTime);
-        fakeContext.addInvestment(brokerAccountId, currency, investment1);
+        fakeContext.addInvestment(accountId, currency, investment1);
 
         fakeContext.setCurrentDateTime(investment2DateTime);
-        fakeContext.addInvestment(brokerAccountId, currency, investment2);
-        fakeContext.addInvestment(brokerAccountId, currency, investment3);
+        fakeContext.addInvestment(accountId, currency, investment2);
+        fakeContext.addInvestment(accountId, currency, investment3);
 
-        Assertions.assertEquals(2, fakeContext.getInvestments(brokerAccountId, currency).size());
-        AssertUtils.assertEquals(20, fakeContext.getInvestments(brokerAccountId, currency).get(investment1DateTime));
-        AssertUtils.assertEquals(80, fakeContext.getInvestments(brokerAccountId, currency).get(investment2DateTime));
+        Assertions.assertEquals(2, fakeContext.getInvestments(accountId, currency).size());
+        AssertUtils.assertEquals(20, fakeContext.getInvestments(accountId, currency).get(investment1DateTime));
+        AssertUtils.assertEquals(80, fakeContext.getInvestments(accountId, currency).get(investment2DateTime));
 
-        AssertUtils.assertEquals(200, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(200, fakeContext.getBalance(accountId, currency));
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -114,22 +110,22 @@ class FakeContextUnitTest {
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        fakeContext.addInvestment(brokerAccountId, currency, investment);
+        fakeContext.addInvestment(accountId, currency, investment);
 
-        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
-        Assertions.assertEquals(investment, fakeContext.getInvestments(brokerAccountId, currency).get(investmentDateTime));
+        Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(80, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(80, fakeContext.getBalance(accountId, currency));
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -137,26 +133,26 @@ class FakeContextUnitTest {
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        fakeContext.addInvestment(brokerAccountId, currency, investment);
+        fakeContext.addInvestment(accountId, currency, investment);
 
-        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
-        Assertions.assertEquals(investment, fakeContext.getInvestments(brokerAccountId, currency).get(investmentDateTime));
+        Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(balance, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(balance, fakeContext.getBalance(accountId, currency));
     }
 
     // endregion
 
     // region addInvestment with dateTime tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withDateTime_changesInvestmentsAndCurrentBalance(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withDateTime_changesInvestmentsAndCurrentBalance() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -167,24 +163,24 @@ class FakeContextUnitTest {
         final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
-        fakeContext.addInvestment(brokerAccountId, investment1DateTime, currency, investment1);
+        fakeContext.addInvestment(accountId, investment1DateTime, currency, investment1);
 
-        fakeContext.addInvestment(brokerAccountId, investment2DateTime, currency, investment2);
-        fakeContext.addInvestment(brokerAccountId, investment2DateTime, currency, investment3);
+        fakeContext.addInvestment(accountId, investment2DateTime, currency, investment2);
+        fakeContext.addInvestment(accountId, investment2DateTime, currency, investment3);
 
-        Assertions.assertEquals(2, fakeContext.getInvestments(brokerAccountId, currency).size());
-        AssertUtils.assertEquals(20, fakeContext.getInvestments(brokerAccountId, currency).get(investment1DateTime));
-        AssertUtils.assertEquals(80, fakeContext.getInvestments(brokerAccountId, currency).get(investment2DateTime));
+        Assertions.assertEquals(2, fakeContext.getInvestments(accountId, currency).size());
+        AssertUtils.assertEquals(20, fakeContext.getInvestments(accountId, currency).get(investment1DateTime));
+        AssertUtils.assertEquals(80, fakeContext.getInvestments(accountId, currency).get(investment2DateTime));
 
-        AssertUtils.assertEquals(200, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(200, fakeContext.getBalance(accountId, currency));
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsNegative(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsNegative() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -192,22 +188,22 @@ class FakeContextUnitTest {
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        fakeContext.addInvestment(brokerAccountId, investmentDateTime, currency, investment);
+        fakeContext.addInvestment(accountId, investmentDateTime, currency, investment);
 
-        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
-        Assertions.assertEquals(investment, fakeContext.getInvestments(brokerAccountId, currency).get(investmentDateTime));
+        Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(80, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(80, fakeContext.getBalance(accountId, currency));
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsZero(@Nullable final String brokerAccountId) {
+    @Test
+    void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsZero() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -215,30 +211,30 @@ class FakeContextUnitTest {
         final OffsetDateTime investmentDateTime = currentDateTime.plusHours(1);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         fakeContext.setCurrentDateTime(investmentDateTime);
 
-        fakeContext.addInvestment(brokerAccountId, investmentDateTime, currency, investment);
+        fakeContext.addInvestment(accountId, investmentDateTime, currency, investment);
 
-        Assertions.assertEquals(1, fakeContext.getInvestments(brokerAccountId, currency).size());
-        Assertions.assertEquals(investment, fakeContext.getInvestments(brokerAccountId, currency).get(investmentDateTime));
+        Assertions.assertEquals(1, fakeContext.getInvestments(accountId, currency).size());
+        Assertions.assertEquals(investment, fakeContext.getInvestments(accountId, currency).get(investmentDateTime));
 
-        AssertUtils.assertEquals(balance, fakeContext.getBalance(brokerAccountId, currency));
+        AssertUtils.assertEquals(balance, fakeContext.getBalance(accountId, currency));
     }
 
     // endregion
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addOperation_addsOperation_and_getOperationsReturnsOperations(@Nullable final String brokerAccountId) {
+    @Test
+    void addOperation_addsOperation_and_getOperationsReturnsOperations() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         final BackTestOperation operation = new BackTestOperation(null,
                 DateTimeTestData.createDateTime(2021, 1, 1, 10),
@@ -246,50 +242,50 @@ class FakeContextUnitTest {
                 null,
                 null
         );
-        fakeContext.addOperation(brokerAccountId, operation);
+        fakeContext.addOperation(accountId, operation);
 
-        final Set<BackTestOperation> operations = fakeContext.getOperations(brokerAccountId);
+        final Set<BackTestOperation> operations = fakeContext.getOperations(accountId);
         Assertions.assertEquals(1, operations.size());
         Assertions.assertSame(operation, operations.iterator().next());
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void addPosition_addsPosition_and_getPosition_returnsPosition(@Nullable final String brokerAccountId) {
+    @Test
+    void addPosition_addsPosition_and_getPosition_returnsPosition() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         final String ticker = "ticker";
         PortfolioPosition position = TestData.createPortfolioPosition();
 
-        fakeContext.addPosition(brokerAccountId, ticker, position);
-        PortfolioPosition readPosition = fakeContext.getPosition(brokerAccountId, ticker);
+        fakeContext.addPosition(accountId, ticker, position);
+        PortfolioPosition readPosition = fakeContext.getPosition(accountId, ticker);
 
         Assertions.assertSame(position, readPosition);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void removePosition_removesPosition(@Nullable final String brokerAccountId) {
+    @Test
+    void removePosition_removesPosition() {
+        final String accountId = "2000124699";
+
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
         final BigDecimal balance = BigDecimal.valueOf(100);
 
         final FakeContext fakeContext = new FakeContext(currentDateTime);
-        fakeContext.setCurrentBalance(brokerAccountId, currency, balance);
+        fakeContext.setCurrentBalance(accountId, currency, balance);
 
         final String ticker = "ticker";
         PortfolioPosition position = TestData.createPortfolioPosition();
 
-        fakeContext.addPosition(brokerAccountId, ticker, position);
-        fakeContext.removePosition(brokerAccountId, ticker);
-        Assertions.assertTrue(fakeContext.getPositions(brokerAccountId).isEmpty());
+        fakeContext.addPosition(accountId, ticker, position);
+        fakeContext.removePosition(accountId, ticker);
+        Assertions.assertTrue(fakeContext.getPositions(accountId).isEmpty());
     }
 
 }

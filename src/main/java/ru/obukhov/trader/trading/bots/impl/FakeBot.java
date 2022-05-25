@@ -60,29 +60,29 @@ public class FakeBot extends AbstractBot implements Bot {
         return tinkoffService.getCurrentDateTime();
     }
 
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker)
+    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker)
             throws IOException {
-        return tinkoffService.getOperations(brokerAccountId, interval, ticker);
+        return tinkoffService.getOperations(accountId, interval, ticker);
     }
 
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
-        return tinkoffService.getPortfolioPositions(brokerAccountId);
+    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
+        return tinkoffService.getPortfolioPositions(accountId);
     }
 
     public OffsetDateTime nextMinute() {
         return getFakeTinkoffService().nextMinute();
     }
 
-    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
-        getFakeTinkoffService().addInvestment(brokerAccountId, dateTime, currency, increment);
+    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
+        getFakeTinkoffService().addInvestment(accountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
-        return getFakeTinkoffService().getInvestments(brokerAccountId, currency);
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
+        return getFakeTinkoffService().getInvestments(accountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
-        return getFakeTinkoffService().getCurrentBalance(brokerAccountId, currency);
+    public BigDecimal getCurrentBalance(final String accountId, final Currency currency) {
+        return getFakeTinkoffService().getCurrentBalance(accountId, currency);
     }
 
     public BigDecimal getCurrentPrice(final String ticker) throws IOException {

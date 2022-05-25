@@ -37,9 +37,9 @@ public class PortfolioController {
     })
     public GetPortfolioPositionsResponse getPositions(
             @RequestParam
-            @ApiParam(example = "2008941383") final String brokerAccountId
+            @ApiParam(example = "2008941383") final String accountId
     ) {
-        final List<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
+        final List<PortfolioPosition> positions = portfolioService.getPositions(accountId);
 
         return new GetPortfolioPositionsResponse(positions);
     }
@@ -52,9 +52,9 @@ public class PortfolioController {
     })
     public GetAvailableBalancesResponse getAvailableBalances(
             @RequestParam
-            @ApiParam(example = "2008941383") final String brokerAccountId
+            @ApiParam(example = "2008941383") final String accountId
     ) {
-        final List<Money> moneys = portfolioService.getAvailableBalances(brokerAccountId);
+        final List<Money> moneys = portfolioService.getAvailableBalances(accountId);
 
         return new GetAvailableBalancesResponse(moneys);
     }

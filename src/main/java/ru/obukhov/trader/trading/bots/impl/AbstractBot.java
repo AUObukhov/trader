@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
@@ -87,7 +86,7 @@ public abstract class AbstractBot implements Bot {
             } else {
                 fillDecisionData(botConfig, decisionData, ticker);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(botConfig.getBrokerAccountId(), ticker, decision);
+                performOperation(botConfig.getAccountId(), ticker, decision);
             }
             return currentCandles;
         } else {
@@ -100,20 +99,20 @@ public abstract class AbstractBot implements Bot {
         final Share share = marketInstrumentsService.getShare(ticker);
         final Currency currency = Currency.valueOf(share.getCurrency());
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), currency));
-        decisionData.setPosition(portfolioService.getSecurity(botConfig.getBrokerAccountId(), ticker));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getAccountId(), currency));
+        decisionData.setPosition(portfolioService.getSecurity(botConfig.getAccountId(), ticker));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.getAccountId(), ticker));
         decisionData.setShare(share);
         decisionData.setCommission(botConfig.getCommission());
     }
 
-    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker) throws IOException {
+    private List<Operation> getLastWeekOperations(final String accountId, final String ticker) throws IOException {
         final OffsetDateTime now = tinkoffService.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
-        return operationsService.getOperations(brokerAccountId, interval, ticker);
+        return operationsService.getOperations(accountId, interval, ticker);
     }
 
-    private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) throws IOException {
+    private void performOperation(final String accountId, final String ticker, final Decision decision) throws IOException {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
@@ -122,7 +121,7 @@ public abstract class AbstractBot implements Bot {
         final OperationType operation = decision.getAction() == DecisionAction.BUY
                 ? OperationType.OPERATION_TYPE_BUY
                 : OperationType.OPERATION_TYPE_SELL;
-        final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), operation);
+        final PlacedMarketOrder order = ordersService.placeMarketOrder(accountId, ticker, decision.getQuantityLots(), operation);
         log.info("Placed order:\n{}", order);
     }
 
