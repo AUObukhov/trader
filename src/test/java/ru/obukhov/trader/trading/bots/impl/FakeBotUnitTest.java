@@ -91,7 +91,7 @@ class FakeBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getInvestments(final String brokerAccountId) {
-        final String currency = Currency.RUB.name();
+        final Currency currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
         Mockito.when(fakeTinkoffService.getInvestments(brokerAccountId, currency)).thenReturn(expectedInvestments);
@@ -105,7 +105,7 @@ class FakeBotUnitTest {
     @NullSource
     @ValueSource(strings = "2000124699")
     void getCurrentBalance(final String brokerAccountId) {
-        final String currency = Currency.RUB.name();
+        final Currency currency = Currency.RUB;
         final BigDecimal expectedBalance = BigDecimal.TEN;
         Mockito.when(fakeTinkoffService.getCurrentBalance(brokerAccountId, currency)).thenReturn(expectedBalance);
 

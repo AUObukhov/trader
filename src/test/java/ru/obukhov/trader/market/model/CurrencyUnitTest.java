@@ -38,4 +38,10 @@ class CurrencyUnitTest {
         Assertions.assertEquals(currency, TestUtils.OBJECT_MAPPER.readValue('"' + value + '"', Currency.class));
     }
 
+    @ParameterizedTest
+    @MethodSource("valuesAndCurrencies")
+    void getJavaCurrency(final String value, final Currency currency) {
+        Assertions.assertEquals(value, currency.getJavaCurrency().getCurrencyCode());
+    }
+
 }

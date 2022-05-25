@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
@@ -51,7 +52,7 @@ class CrossStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
     }
 
     @Test
@@ -75,7 +76,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertNull(decision.getQuantityLots());
         }
     }
 
@@ -98,7 +99,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-            Assertions.assertEquals(9, decision.getLots());
+            AssertUtils.assertEquals(9, decision.getQuantityLots());
         }
     }
 
@@ -121,7 +122,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertNull(decision.getQuantityLots());
         }
     }
 
@@ -145,7 +146,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.SELL, decision.getAction());
-            Assertions.assertEquals(10, decision.getLots());
+            AssertUtils.assertEquals(10, decision.getQuantityLots());
         }
     }
 
@@ -169,7 +170,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertNull(decision.getQuantityLots());
         }
     }
 
@@ -193,7 +194,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-            Assertions.assertEquals(4, decision.getLots());
+            AssertUtils.assertEquals(4, decision.getQuantityLots());
         }
     }
 
@@ -217,7 +218,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertNull(decision.getQuantityLots());
         }
     }
 
@@ -241,7 +242,7 @@ class CrossStrategyUnitTest {
             final Decision decision = strategy.decide(data, strategy.initCache());
 
             Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-            Assertions.assertNull(decision.getLots());
+            Assertions.assertNull(decision.getQuantityLots());
         }
     }
 

@@ -142,13 +142,6 @@ public class DecimalUtils {
     }
 
     /**
-     * @return integer quotient of division of {@code dividend} by {@code divisor}
-     */
-    public static long getLongQuotient(final BigDecimal dividend, final BigDecimal divisor) {
-        return dividend.divide(divisor, RoundingMode.DOWN).longValue();
-    }
-
-    /**
      * @return {@code number} * {@code fraction}
      */
     public static BigDecimal getFraction(final BigDecimal number, final double fraction) {

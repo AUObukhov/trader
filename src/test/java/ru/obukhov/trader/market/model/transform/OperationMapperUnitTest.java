@@ -25,7 +25,7 @@ class OperationMapperUnitTest {
         AssertUtils.assertEquals(source.getDate(), target.dateTime());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.operationType());
         AssertUtils.assertEquals(source.getPrice(), target.price());
-        Assertions.assertEquals(source.getQuantity(), target.quantity());
+        AssertUtils.assertEquals(source.getQuantity(), target.quantity());
     }
 
     @Test
@@ -37,7 +37,7 @@ class OperationMapperUnitTest {
         AssertUtils.assertEquals(source.dateTime(), target.getDate());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.getOperationType());
         AssertUtils.assertEquals(source.price(), target.getPrice());
-        Assertions.assertEquals(source.quantity(), target.getQuantity());
+        AssertUtils.assertEquals(source.quantity(), BigDecimal.valueOf(target.getQuantity()));
     }
 
 }

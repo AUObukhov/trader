@@ -29,9 +29,11 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.core.models.Money;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -126,6 +128,21 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(final PortfolioPosition portfolioPosition1, final PortfolioPosition portfolioPosition2) {
+        Assertions.assertEquals(portfolioPosition1.ticker(), portfolioPosition2.ticker());
+        Assertions.assertEquals(portfolioPosition1.instrumentType(), portfolioPosition2.instrumentType());
+        assertEquals(portfolioPosition1.quantity(), portfolioPosition2.quantity());
+        Assertions.assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
+        assertEquals(portfolioPosition1.expectedYield(), portfolioPosition2.expectedYield());
+        Assertions.assertEquals(portfolioPosition1.currentPrice(), portfolioPosition2.currentPrice());
+        assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
+    }
+
+    public static void assertEquals(final Money money1, final Money money2) {
+        Assertions.assertEquals(money1.getCurrency(), money2.getCurrency());
+        assertEquals(money1.getValue(), money2.getValue());
+    }
+
     public static void assertEquals(final byte[] expected, final byte[] actual) {
         Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < actual.length; i++) {
@@ -171,6 +188,11 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                             .append(System.lineSeparator());
                 }
+            } else if (expectedValue instanceof Money expectedMoney && actualValue instanceof Money actualMoney) {
+                if (!equals(expectedMoney, actualMoney)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
             } else if (!Objects.equals(expectedValue, actualValue)) {
                 messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                         .append(System.lineSeparator());
@@ -183,15 +205,20 @@ public class AssertUtils {
         }
     }
 
-    private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {
-        return String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, index, actualValue);
-    }
-
     private static void assertListSize(final List<?> expected, final List<?> actual) {
         if (expected.size() != actual.size()) {
             final String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
             Assertions.fail(message);
         }
+    }
+
+    public static boolean equals(final Money money1, final Money money2) {
+        return money1.getCurrency().equals(money2.getCurrency())
+                && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
+    }
+
+    private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {
+        return String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, index, actualValue);
     }
 
     // endregion

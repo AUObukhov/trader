@@ -205,14 +205,6 @@ class DecimalUtilsUnitTest {
         AssertUtils.assertEquals(expectedAverage, average);
     }
 
-    @ParameterizedTest
-    @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
-    void getLongQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
-        final long result = DecimalUtils.getLongQuotient(dividend, divisor);
-
-        Assertions.assertEquals(expectedQuotient, result);
-    }
-
     @Test
     void getFraction() {
         final BigDecimal result = DecimalUtils.getFraction(BigDecimal.valueOf(765), 0.003);
@@ -286,7 +278,7 @@ class DecimalUtilsUnitTest {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(expectedValue), result);
+        AssertUtils.assertEquals(expectedValue, result);
     }
 
     // endregion

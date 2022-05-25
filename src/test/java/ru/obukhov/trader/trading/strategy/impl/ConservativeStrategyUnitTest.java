@@ -2,6 +2,7 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -34,7 +35,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
     }
 
     @Test
@@ -44,7 +45,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
     }
 
     @Test
@@ -54,7 +55,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-        Assertions.assertEquals(4, decision.getLots());
+        AssertUtils.assertEquals(4, decision.getQuantityLots());
     }
 
     // endregion

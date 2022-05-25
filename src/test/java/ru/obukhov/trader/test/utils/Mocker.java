@@ -10,6 +10,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
+import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
@@ -60,4 +61,8 @@ public class Mocker {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset));
     }
 
+    public static void mockTickerByFigi(final InstrumentsService instrumentsService, final String ticker, final String figi) {
+        final Instrument instrument = Instrument.newBuilder().setTicker(ticker).build();
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
+    }
 }

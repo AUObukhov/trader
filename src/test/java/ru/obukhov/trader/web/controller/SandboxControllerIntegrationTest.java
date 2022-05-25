@@ -28,7 +28,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
 
         final SetCurrencyBalanceRequest setCurrencyBalanceRequest = new SetCurrencyBalanceRequest();
         setCurrencyBalanceRequest.setBrokerAccountId(brokerAccountId);
-        setCurrencyBalanceRequest.setCurrency(Currency.USD.name());
+        setCurrencyBalanceRequest.setCurrency(Currency.USD);
         setCurrencyBalanceRequest.setBalance(BigDecimal.valueOf(10000));
         final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(setCurrencyBalanceRequest);
 
@@ -47,7 +47,7 @@ class SandboxControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = "figi";
         final String ticker = "ticker";
 
-        mockShare(figi, ticker, 1);
+        mockShare(figi, ticker, Currency.RUB, 1);
 
         final String expectationId = mockResponse(HttpMethod.POST, brokerAccountId, "/openapi/sandbox/positions/balance");
 

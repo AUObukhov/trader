@@ -12,6 +12,7 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
@@ -97,9 +98,10 @@ public abstract class AbstractBot implements Bot {
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
         final Share share = marketInstrumentsService.getShare(ticker);
+        final Currency currency = Currency.valueOf(share.getCurrency());
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), share.getCurrency()));
-        decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), currency));
+        decisionData.setPosition(portfolioService.getSecurity(botConfig.getBrokerAccountId(), ticker));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
         decisionData.setShare(share);
         decisionData.setCommission(botConfig.getCommission());
@@ -120,7 +122,7 @@ public abstract class AbstractBot implements Bot {
         final OperationType operation = decision.getAction() == DecisionAction.BUY
                 ? OperationType.OPERATION_TYPE_BUY
                 : OperationType.OPERATION_TYPE_SELL;
-        final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), operation);
+        final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), operation);
         log.info("Placed order:\n{}", order);
     }
 

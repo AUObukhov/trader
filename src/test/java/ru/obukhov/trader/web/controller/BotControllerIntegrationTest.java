@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -242,7 +243,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        mockShare(figi, ticker, 1);
+        mockShare(figi, ticker, Currency.RUB, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] array = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
@@ -288,7 +289,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000),
                 DecimalUtils.setDefaultScale(1000)
         );
-        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), 10);
+        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), BigDecimal.TEN);
         final BackTestResult backTestResult2 = new BackTestResult(
                 botConfig2,
                 interval,

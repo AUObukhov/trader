@@ -9,6 +9,7 @@ import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -64,7 +65,7 @@ public class FakeBot extends AbstractBot implements Bot {
         return tinkoffService.getOperations(brokerAccountId, interval, ticker);
     }
 
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
+    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
         return tinkoffService.getPortfolioPositions(brokerAccountId);
     }
 
@@ -72,15 +73,15 @@ public class FakeBot extends AbstractBot implements Bot {
         return getFakeTinkoffService().nextMinute();
     }
 
-    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
+    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
         getFakeTinkoffService().addInvestment(brokerAccountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final String currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
         return getFakeTinkoffService().getInvestments(brokerAccountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final String currency) {
+    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
         return getFakeTinkoffService().getCurrentBalance(brokerAccountId, currency);
     }
 

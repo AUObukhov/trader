@@ -9,6 +9,7 @@ import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -61,7 +62,7 @@ public class FakeBotFactory {
                 tinkoffServices,
                 botConfig.getBrokerAccountId(),
                 currentDateTime,
-                share.getCurrency(),
+                Currency.valueOf(share.getCurrency()),
                 botConfig.getCommission(),
                 balanceConfig
         );

@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.PortfolioService;
-import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.web.model.exchange.GetPortfolioCurrenciesResponse;
+import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
+import ru.tinkoff.piapi.core.models.Money;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -31,33 +30,33 @@ public class PortfolioController {
     }
 
     @GetMapping("/positions")
-    @ApiOperation("Get positions of portfolio at broker account")
+    @ApiOperation("Get positions of portfolio")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public GetPortfolioPositionsResponse getPositions(
-            @RequestParam(required = false)
-            @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
-    ) throws IOException {
+            @RequestParam
+            @ApiParam(example = "2008941383") final String brokerAccountId
+    ) {
         final List<PortfolioPosition> positions = portfolioService.getPositions(brokerAccountId);
 
         return new GetPortfolioPositionsResponse(positions);
     }
 
-    @GetMapping("/currencies")
-    @ApiOperation("Get currencies of portfolio at default broker account")
+    @GetMapping("/balances")
+    @ApiOperation("Get balances of portfolio")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetPortfolioCurrenciesResponse getCurrencies(
-            @RequestParam(required = false)
-            @ApiParam(name = "brokerAccountId. When null then default account used", example = "2008941383") final String brokerAccountId
-    ) throws IOException {
-        final List<CurrencyPosition> currencies = portfolioService.getCurrencies(brokerAccountId);
+    public GetAvailableBalancesResponse getAvailableBalances(
+            @RequestParam
+            @ApiParam(example = "2008941383") final String brokerAccountId
+    ) {
+        final List<Money> moneys = portfolioService.getAvailableBalances(brokerAccountId);
 
-        return new GetPortfolioCurrenciesResponse(currencies);
+        return new GetAvailableBalancesResponse(moneys);
     }
 
 }

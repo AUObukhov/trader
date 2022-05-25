@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.model;
 
 public enum Currency {
-
     RUB,
     USD,
     EUR,
@@ -10,6 +9,12 @@ public enum Currency {
     CHF,
     JPY,
     CNY,
-    TRY
+    TRY;
 
+    /**
+     * @return corresponding instance of {@link java.util.Currency}
+     */
+    public java.util.Currency getJavaCurrency() {
+        return java.util.Currency.getInstance(name());
+    }
 }

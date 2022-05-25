@@ -506,8 +506,8 @@ class ExcelServiceImplUnitTest {
 
     private List<BackTestPosition> createPositions(String ticker) {
         return List.of(
-                new BackTestPosition(ticker, BigDecimal.valueOf(200), 3),
-                new BackTestPosition(ticker, BigDecimal.valueOf(100), 2)
+                new BackTestPosition(ticker, BigDecimal.valueOf(200), BigDecimal.valueOf(3)),
+                new BackTestPosition(ticker, BigDecimal.valueOf(100), BigDecimal.valueOf(2))
         );
     }
 

@@ -12,7 +12,7 @@ public class Decision {
 
     private final DecisionAction action;
 
-    private final Long lots;
+    private final Long quantityLots;
 
     private final StrategyCache strategyCache;
 
@@ -20,15 +20,15 @@ public class Decision {
         this(action, null, null);
     }
 
-    public Decision(@NotNull DecisionAction action, @Nullable Long lots) {
-        this(action, lots, null);
+    public Decision(@NotNull DecisionAction action, @Nullable Long quantityLots) {
+        this(action, quantityLots, null);
     }
 
     public String toPrettyString() {
         return switch (action) {
             case WAIT -> "Wait";
-            case BUY -> "Buy " + lots + " lots";
-            case SELL -> "Sell " + lots + " lots";
+            case BUY -> "Buy " + quantityLots + " lots";
+            case SELL -> "Sell " + quantityLots + " lots";
         };
     }
 

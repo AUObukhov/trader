@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
@@ -15,6 +14,7 @@ import ru.obukhov.trader.market.model.UserAccount;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -35,7 +35,7 @@ public interface TinkoffService {
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 
-    List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
+    List<Operation> getOperations(final String brokerAccountId, final Interval interval, final String ticker) throws IOException;
 
     List<Order> getOrders(@Nullable final String brokerAccountId) throws IOException;
 
@@ -45,9 +45,9 @@ public interface TinkoffService {
 
     void cancelOrder(@Nullable final String brokerAccountId, final String orderId) throws IOException;
 
-    List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException;
+    List<PortfolioPosition> getPortfolioPositions(final String brokerAccountId);
 
-    List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException;
+    WithdrawLimits getWithdrawLimits(final String brokerAccountId);
 
     List<UserAccount> getAccounts();
 

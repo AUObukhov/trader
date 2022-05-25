@@ -2,14 +2,14 @@ package ru.obukhov.trader.web.model.exchange;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.obukhov.trader.market.model.CurrencyPosition;
+import ru.tinkoff.piapi.core.models.Money;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class GetPortfolioCurrenciesResponse {
+public class GetAvailableBalancesResponse {
 
-    private List<CurrencyPosition> currencies;
+    private List<Money> moneys;
 
 }

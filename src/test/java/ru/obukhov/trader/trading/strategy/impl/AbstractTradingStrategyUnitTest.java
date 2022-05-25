@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -73,7 +74,7 @@ class AbstractTradingStrategyUnitTest {
         final Decision decision = strategy.getBuyOrWaitDecision(data, strategyCache);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
-        Assertions.assertEquals(expectedLots, decision.getLots());
+        Assertions.assertEquals(expectedLots, decision.getQuantityLots());
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
@@ -91,17 +92,17 @@ class AbstractTradingStrategyUnitTest {
         final Decision decision = strategy.getSellOrWaitDecision(decisionData, minimumProfit, strategyCache);
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forGetSellOrWaitDecision() {
         return Stream.of(
-                Arguments.of(0.1f, 1000.0, 10, 1, 1100.0, DecisionAction.WAIT, null),
-                Arguments.of(0.1f, 1000.0, 10, 3, 900.0, DecisionAction.WAIT, null),
-                Arguments.of(0.1f, 100.0, 10, 2, 1000.0, DecisionAction.SELL, 5L),
-                Arguments.of(-1.0f, 100.0, 10, 2, 1000.0, DecisionAction.WAIT, null)
+                Arguments.of(0.1f, 1000.0, 10, 1, 1100.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 1000.0, 10, 3, 900.0, DecisionAction.WAIT),
+                Arguments.of(0.1f, 100.0, 10, 2, 1000.0, DecisionAction.SELL),
+                Arguments.of(-1.0f, 100.0, 10, 2, 1000.0, DecisionAction.WAIT)
         );
     }
 
@@ -110,20 +111,23 @@ class AbstractTradingStrategyUnitTest {
     void getSellOrWaitDecision(
             final float minimumProfit,
             final double averagePositionPrice,
-            final int positionLotsCount,
+            final int quantityLots,
             final int lotSize,
             final double currentPrice,
-            final DecisionAction expectedAction,
-            @Nullable final Long expectedLots
+            final DecisionAction expectedAction
     ) {
         final AbstractTradingStrategy strategy = new TestStrategy("testStrategy", null);
-        final DecisionData data = TestData.createDecisionData(averagePositionPrice, positionLotsCount, lotSize, currentPrice);
+        final DecisionData data = TestData.createDecisionData(averagePositionPrice, quantityLots, lotSize, currentPrice);
         final StrategyCache strategyCache = new TestStrategyCache();
 
         final Decision decision = strategy.getSellOrWaitDecision(data, minimumProfit, strategyCache);
 
         Assertions.assertEquals(expectedAction, decision.getAction());
-        Assertions.assertEquals(expectedLots, decision.getLots());
+        if (expectedAction == DecisionAction.WAIT) {
+            Assertions.assertNull(decision.getQuantityLots());
+        } else {
+            AssertUtils.assertEquals(quantityLots, decision.getQuantityLots());
+        }
         Assertions.assertSame(strategyCache, decision.getStrategyCache());
     }
 

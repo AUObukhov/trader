@@ -18,6 +18,7 @@ import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -153,10 +154,7 @@ class AbstractBotUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        final Share share = Share.newBuilder()
-                .setTicker(ticker)
-                .setLot(lotSize)
-                .build();
+        final Share share = TestData.createShare(ticker, Currency.RUB, lotSize);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
@@ -188,20 +186,18 @@ class AbstractBotUnitTest {
     @ValueSource(strings = "2000124699")
     void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
+        final Currency currency = Currency.USD;
         final int lotSize = 10;
 
-        final Share share = Share.newBuilder()
-                .setTicker(ticker)
-                .setLot(lotSize)
-                .build();
+        final Share share = TestData.createShare(ticker, currency, lotSize);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, share.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
@@ -229,7 +225,7 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_BUY);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
     }
 
     @ParameterizedTest
@@ -237,20 +233,18 @@ class AbstractBotUnitTest {
     @ValueSource(strings = "2000124699")
     void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) throws IOException {
         final String ticker = "ticker";
+        final Currency currency = Currency.USD;
         final int lotSize = 10;
 
-        final Share share = Share.newBuilder()
-                .setTicker(ticker)
-                .setLot(lotSize)
-                .build();
+        final Share share = TestData.createShare(ticker, currency, lotSize);
         Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, share.getCurrency()))
+        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(brokerAccountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
@@ -278,7 +272,7 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.OPERATION_TYPE_SELL);
+                .placeMarketOrder(brokerAccountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {

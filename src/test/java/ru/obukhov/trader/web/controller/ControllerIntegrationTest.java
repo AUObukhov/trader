@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.TestWithMockedServer;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -100,10 +101,11 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
                 .andExpect(JSON_CONTENT_MATCHER);
     }
 
-    protected void mockShare(final String figi, final String ticker, final int lotSize) {
+    protected void mockShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
         final Share share = Share.newBuilder()
                 .setFigi(figi)
                 .setTicker(ticker)
+                .setCurrency(currency.name())
                 .setLot(lotSize)
                 .build();
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));

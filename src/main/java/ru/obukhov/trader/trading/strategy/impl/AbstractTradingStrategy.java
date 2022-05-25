@@ -12,6 +12,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Abstract strategy with some common methods
@@ -56,7 +57,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
     private long getAvailableLots(final DecisionData data) {
         final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
         final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, data.getCommission());
-        return DecimalUtils.getLongQuotient(data.getBalance(), currentLotPriceWithCommission);
+        return data.getBalance().divide(currentLotPriceWithCommission, RoundingMode.DOWN).longValue();
     }
 
     /**
@@ -75,7 +76,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             } else {
-                decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
+                decision = new Decision(DecisionAction.SELL, data.getQuantityLots(), strategyCache);
                 log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             }
         }

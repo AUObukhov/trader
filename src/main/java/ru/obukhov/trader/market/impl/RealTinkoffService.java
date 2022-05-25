@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContextAware;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.LimitOrderRequest;
 import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
@@ -21,9 +20,9 @@ import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.AccountMapper;
+import ru.obukhov.trader.market.model.transform.PositionMapper;
 import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
 import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
-import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -33,6 +32,7 @@ import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
+import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -51,6 +51,7 @@ import java.util.List;
 public class RealTinkoffService implements TinkoffService, ApplicationContextAware {
 
     private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
+    private static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
 
     private RealTinkoffService self;
 
@@ -62,7 +63,6 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
 
     private final MarketClient marketClient;
     private final OrdersClient ordersClient;
-    private final PortfolioClient portfolioClient;
 
     @Override
     @Cacheable(value = "figiByTicker", sync = true)
@@ -116,7 +116,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region OperationsService
 
     @Override
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
+    public List<Operation> getOperations(final String brokerAccountId, final Interval interval, final String ticker) throws IOException {
         final String figi = self.getFigiByTicker(ticker);
         return operationsService.getAllOperationsSync(brokerAccountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
@@ -154,13 +154,18 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // region PortfolioContext
 
     @Override
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
-        return portfolioClient.getPortfolio(brokerAccountId);
+    public List<PortfolioPosition> getPortfolioPositions(final String brokerAccountId) {
+        return operationsService.getPortfolioSync(brokerAccountId).getPositions().stream()
+                .map(position -> {
+                    final String ticker = instrumentsService.getInstrumentByFigiSync(position.getFigi()).getTicker();
+                    return POSITION_MAPPER.map(ticker, position);
+                })
+                .toList();
     }
 
     @Override
-    public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
-        return portfolioClient.getPortfolioCurrencies(brokerAccountId);
+    public WithdrawLimits getWithdrawLimits(final String brokerAccountId) {
+        return operationsService.getWithdrawLimitsSync(brokerAccountId);
     }
 
     // endregion

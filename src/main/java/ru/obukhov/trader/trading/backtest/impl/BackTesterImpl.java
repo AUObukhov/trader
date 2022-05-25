@@ -10,12 +10,12 @@ import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
@@ -169,7 +169,7 @@ public class BackTesterImpl implements BackTester {
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
             final OffsetDateTime to
-    ) throws IOException {
+    ) {
         if (balanceConfig.getBalanceIncrement() == null) {
             fakeBot.nextMinute();
         } else {
@@ -177,7 +177,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final String currency = getCurrency(fakeBot, ticker);
+            final Currency currency = getCurrency(fakeBot, ticker);
             for (OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(brokerAccountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
@@ -229,8 +229,8 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private String getCurrency(final FakeBot fakeBot, final String ticker) {
-        return fakeBot.getShare(ticker).getCurrency();
+    private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
+        return Currency.valueOf(fakeBot.getShare(ticker).getCurrency());
     }
 
     private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) throws IOException {
@@ -244,7 +244,7 @@ public class BackTesterImpl implements BackTester {
 
     private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) throws IOException {
         final String ticker = portfolioPosition.ticker();
-        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.count());
+        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.quantity());
     }
 
     private Balances getBalances(
@@ -254,7 +254,7 @@ public class BackTesterImpl implements BackTester {
             final List<BackTestPosition> positions,
             final String ticker
     ) {
-        final String currency = getCurrency(fakeBot, ticker);
+        final Currency currency = getCurrency(fakeBot, ticker);
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
@@ -269,7 +269,7 @@ public class BackTesterImpl implements BackTester {
 
     private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<BackTestPosition> positions) {
         return positions.stream()
-                .map(position -> DecimalUtils.multiply(position.price(), position.quantity()))
+                .map(BackTestPosition::getTotalPrice)
                 .reduce(currentBalance, BigDecimal::add);
     }
 

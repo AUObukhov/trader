@@ -22,8 +22,8 @@ public class DecisionData {
     private Share share;
     private double commission;
 
-    public long getPositionLotsCount() {
-        return position.count() / share.getLot();
+    public Long getQuantityLots() {
+        return position.quantityLots().longValueExact();
     }
 
     public BigDecimal getAveragePositionPrice() {

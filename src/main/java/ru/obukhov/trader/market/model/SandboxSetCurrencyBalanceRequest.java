@@ -2,5 +2,5 @@ package ru.obukhov.trader.market.model;
 
 import java.math.BigDecimal;
 
-public record SandboxSetCurrencyBalanceRequest(String currency, BigDecimal balance) {
+public record SandboxSetCurrencyBalanceRequest(Currency currency, BigDecimal balance) {
 }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class FakePortfolio {
     private final String brokerAccountId;
 
     @NotNull
-    private final Map<String, FakeBalance> balances = new HashMap<>();
+    private final EnumMap<Currency, FakeBalance> balances = new EnumMap<>(Currency.class);
 
     @NotNull
     private final Map<String, PortfolioPosition> tickersToPositions = new HashMap<>();
