@@ -1,7 +1,5 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import ru.obukhov.trader.common.model.transform.BigDecimalSerializer;
 import ru.obukhov.trader.common.util.DecimalUtils;
 
 import javax.validation.constraints.NotNull;
@@ -13,11 +11,11 @@ import java.math.BigDecimal;
 public record PortfolioPosition(
         @NotNull String ticker,
         @NotNull InstrumentType instrumentType,
-        @NotNull @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal quantity,
+        @NotNull BigDecimal quantity,
         @NotNull MoneyAmount averagePositionPrice,
-        @NotNull @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal expectedYield,
+        @NotNull BigDecimal expectedYield,
         @NotNull MoneyAmount currentPrice,
-        @NotNull @JsonSerialize(using = BigDecimalSerializer.class) BigDecimal quantityLots
+        @NotNull BigDecimal quantityLots
 ) {
 
     public String getCurrency() {
