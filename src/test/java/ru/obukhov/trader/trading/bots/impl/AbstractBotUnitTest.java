@@ -29,7 +29,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
@@ -77,7 +78,7 @@ class AbstractBotUnitTest {
         Assertions.assertTrue(candles.isEmpty());
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -98,7 +99,7 @@ class AbstractBotUnitTest {
 
         Assertions.assertNotNull(candles);
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -116,7 +117,7 @@ class AbstractBotUnitTest {
 
         Assertions.assertNotNull(candles);
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -138,7 +139,7 @@ class AbstractBotUnitTest {
 
         Assertions.assertNotNull(candles);
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -171,7 +172,7 @@ class AbstractBotUnitTest {
 
         Mockito.verify(strategy, Mockito.times(1))
                 .decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class));
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -217,7 +218,15 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_BUY,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
     @Test
@@ -263,17 +272,20 @@ class AbstractBotUnitTest {
         AssertUtils.assertEquals(currentCandles, candles);
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_SELL,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
-    }
-
-    private void verifyNoOrdersMade() throws IOException {
-        Mockito.verify(ordersService, Mockito.never())
-                .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
     private static final class TestStrategyCache implements StrategyCache {

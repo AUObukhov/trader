@@ -1,11 +1,17 @@
 package ru.obukhov.trader.market.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
@@ -232,6 +238,109 @@ class DataStructsHelperUnitTest {
         final List<Money> moneys = List.of(money1, money2);
 
         Assertions.assertThrows(NoSuchElementException.class, () -> DataStructsHelper.getBalance(moneys, Currency.RUB));
+    }
+
+    // endregion
+
+    // region createPostOrderResponse tests
+
+    @Test
+    void createPostOrderResponse_whenOrderIdIsNull() {
+        final Currency currency = Currency.EUR;
+        final double totalPrice = 1000;
+        final double totalCommissionAmount = 5;
+        final double currentPrice = 100;
+        final long quantityLots = 10;
+        final String figi = "figi";
+        final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
+        final OrderType type = OrderType.ORDER_TYPE_MARKET;
+
+        final PostOrderResponse response = DataStructsHelper.createPostOrderResponse(
+                currency.name(),
+                BigDecimal.valueOf(totalPrice),
+                BigDecimal.valueOf(totalCommissionAmount),
+                BigDecimal.valueOf(currentPrice),
+                quantityLots,
+                figi,
+                direction,
+                type,
+                null
+        );
+
+        Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());
+
+        Assertions.assertEquals(quantityLots, response.getLotsRequested());
+        Assertions.assertEquals(quantityLots, response.getLotsExecuted());
+
+        final MoneyValue expectedOrderPrice = TestData.createMoneyValue(totalPrice + totalCommissionAmount, currency);
+        Assertions.assertEquals(expectedOrderPrice, response.getInitialOrderPrice());
+        Assertions.assertEquals(expectedOrderPrice, response.getExecutedOrderPrice());
+
+        final MoneyValue expectedTotalOrderAmount = TestData.createMoneyValue(totalPrice, currency);
+        Assertions.assertEquals(expectedTotalOrderAmount, response.getTotalOrderAmount());
+
+        final MoneyValue expectedCommission = TestData.createMoneyValue(totalCommissionAmount, currency);
+        Assertions.assertEquals(expectedCommission, response.getInitialCommission());
+        Assertions.assertEquals(expectedCommission, response.getExecutedCommission());
+
+        Assertions.assertEquals(figi, response.getFigi());
+        Assertions.assertEquals(direction, response.getDirection());
+
+        final MoneyValue expectedInitialSecurityPrice = TestData.createMoneyValue(currentPrice, currency);
+        Assertions.assertEquals(expectedInitialSecurityPrice, response.getInitialSecurityPrice());
+
+        Assertions.assertEquals(type, response.getOrderType());
+        Assertions.assertEquals(StringUtils.EMPTY, response.getOrderId());
+    }
+
+    @Test
+    void createPostOrderResponse_whenOrderIdIsNotNull() {
+        final Currency currency = Currency.EUR;
+        final double totalPrice = 1000;
+        final double totalCommissionAmount = 5;
+        final double currentPrice = 100;
+        final long quantityLots = 10;
+        final String figi = "figi";
+        final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
+        final OrderType type = OrderType.ORDER_TYPE_MARKET;
+        final String orderId = "orderId";
+
+        final PostOrderResponse response = DataStructsHelper.createPostOrderResponse(
+                currency.name(),
+                BigDecimal.valueOf(totalPrice),
+                BigDecimal.valueOf(totalCommissionAmount),
+                BigDecimal.valueOf(currentPrice),
+                quantityLots,
+                figi,
+                direction,
+                type,
+                orderId
+        );
+
+        Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());
+
+        Assertions.assertEquals(quantityLots, response.getLotsRequested());
+        Assertions.assertEquals(quantityLots, response.getLotsExecuted());
+
+        final MoneyValue expectedOrderPrice = TestData.createMoneyValue(totalPrice + totalCommissionAmount, currency);
+        Assertions.assertEquals(expectedOrderPrice, response.getInitialOrderPrice());
+        Assertions.assertEquals(expectedOrderPrice, response.getExecutedOrderPrice());
+
+        final MoneyValue expectedTotalOrderAmount = TestData.createMoneyValue(totalPrice, currency);
+        Assertions.assertEquals(expectedTotalOrderAmount, response.getTotalOrderAmount());
+
+        final MoneyValue expectedCommission = TestData.createMoneyValue(totalCommissionAmount, currency);
+        Assertions.assertEquals(expectedCommission, response.getInitialCommission());
+        Assertions.assertEquals(expectedCommission, response.getExecutedCommission());
+
+        Assertions.assertEquals(figi, response.getFigi());
+        Assertions.assertEquals(direction, response.getDirection());
+
+        final MoneyValue expectedInitialSecurityPrice = TestData.createMoneyValue(currentPrice, currency);
+        Assertions.assertEquals(expectedInitialSecurityPrice, response.getInitialSecurityPrice());
+
+        Assertions.assertEquals(type, response.getOrderType());
+        Assertions.assertEquals(orderId, response.getOrderId());
     }
 
     // endregion

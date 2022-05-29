@@ -3,6 +3,7 @@ package ru.obukhov.trader.common.util;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -40,6 +41,16 @@ public class DecimalUtils {
         return bigDecimal.remainder(BigDecimal.ONE)
                 .multiply(BigDecimal.valueOf(Math.pow(10, DEFAULT_SCALE)))
                 .intValue();
+    }
+
+    /**
+     * @return Quotation equals to given {@code bigDecimal}
+     */
+    public static Quotation toQuotation(@NotNull final BigDecimal bigDecimal) {
+        return Quotation.newBuilder()
+                .setUnits(bigDecimal.longValue())
+                .setNano(getNano(bigDecimal))
+                .build();
     }
 
     /**

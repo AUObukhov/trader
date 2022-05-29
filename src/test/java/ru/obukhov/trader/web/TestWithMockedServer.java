@@ -23,14 +23,9 @@ import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Candles;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.CandlesExpectationResponseCallback;
 import ru.obukhov.trader.test.utils.TestUtils;
-import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
-import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
-import ru.obukhov.trader.web.client.exchange.OrdersResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
@@ -65,24 +60,6 @@ public abstract class TestWithMockedServer {
 
     protected int getPort() {
         return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
-    }
-
-    protected void mockOrders(final List<Order> orders) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/orders");
-
-        final OrdersResponse ordersResponse = new OrdersResponse();
-        ordersResponse.setPayload(orders);
-        mockResponse(apiRequest, ordersResponse);
-    }
-
-    protected void mockInstrumentByTicker(final String ticker, final MarketInstrument instrument) throws JsonProcessingException {
-        final HttpRequest apiRequest = createAuthorizedHttpRequest(HttpMethod.GET)
-                .withPath("/openapi/market/search/by-ticker")
-                .withQueryStringParameter("ticker", ticker);
-
-        final MarketInstrumentListResponse marketInstrumentListResponse = TestData.createMarketInstrumentListResponse(List.of(instrument));
-        mockResponse(apiRequest, marketInstrumentListResponse);
     }
 
     protected void mockCandles(

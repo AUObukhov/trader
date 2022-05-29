@@ -13,7 +13,6 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -22,7 +21,9 @@ import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
@@ -118,11 +119,19 @@ public abstract class AbstractBot implements Bot {
             return;
         }
 
-        final OperationType operation = decision.getAction() == DecisionAction.BUY
-                ? OperationType.OPERATION_TYPE_BUY
-                : OperationType.OPERATION_TYPE_SELL;
-        final PlacedMarketOrder order = ordersService.placeMarketOrder(accountId, ticker, decision.getQuantityLots(), operation);
-        log.info("Placed order:\n{}", order);
+        final OrderDirection direction = decision.getAction() == DecisionAction.BUY
+                ? OrderDirection.ORDER_DIRECTION_BUY
+                : OrderDirection.ORDER_DIRECTION_SELL;
+        final PostOrderResponse postOrderResponse = ordersService.postOrder(
+                accountId,
+                ticker,
+                decision.getQuantityLots(),
+                null,
+                direction,
+                OrderType.ORDER_TYPE_MARKET,
+                null
+        );
+        log.info("Placed order:\n{}", postOrderResponse);
     }
 
 }

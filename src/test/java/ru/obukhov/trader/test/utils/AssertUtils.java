@@ -29,6 +29,7 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
@@ -193,6 +194,11 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                             .append(System.lineSeparator());
                 }
+            } else if (expectedValue instanceof Order expectedOrder && actualValue instanceof Order actualOrder) {
+                if (!equals(expectedOrder, actualOrder)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
             } else if (!Objects.equals(expectedValue, actualValue)) {
                 messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                         .append(System.lineSeparator());
@@ -215,6 +221,23 @@ public class AssertUtils {
     public static boolean equals(final Money money1, final Money money2) {
         return money1.getCurrency().equals(money2.getCurrency())
                 && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
+    }
+
+    public static boolean equals(final Order order1, final Order order2) {
+        return Objects.equals(order1.orderId(), order2.orderId())
+                && Objects.equals(order1.executionReportStatus(), order2.executionReportStatus())
+                && Objects.equals(order1.quantityLots(), order2.quantityLots())
+                && DecimalUtils.numbersEqual(order1.initialOrderPrice(), order2.initialOrderPrice())
+                && DecimalUtils.numbersEqual(order1.totalOrderAmount(), order2.totalOrderAmount())
+                && DecimalUtils.numbersEqual(order1.averagePositionPrice(), order2.averagePositionPrice())
+                && DecimalUtils.numbersEqual(order1.commission(), order2.commission())
+                && Objects.equals(order1.figi(), order2.figi())
+                && Objects.equals(order1.direction(), order2.direction())
+                && DecimalUtils.numbersEqual(order1.initialSecurityPrice(), order2.initialSecurityPrice())
+                && DecimalUtils.numbersEqual(order1.serviceCommission(), order2.serviceCommission())
+                && Objects.equals(order1.currency(), order2.currency())
+                && Objects.equals(order1.type(), order2.type())
+                && Objects.equals(order1.dateTime(), order2.dateTime());
     }
 
     private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {

@@ -32,7 +32,8 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
@@ -74,7 +75,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -88,7 +89,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -104,14 +105,14 @@ class RunnableBotUnitTest {
 
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
 
-        final List<Order> orders1 = List.of(TestData.createOrder());
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
+        final List<Order> orders = List.of(TestData.createOrder());
+        Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
         createRunnableBot().run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -132,7 +133,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -154,7 +155,7 @@ class RunnableBotUnitTest {
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -177,7 +178,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -205,7 +206,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -232,7 +233,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -259,7 +260,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -286,7 +287,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -314,8 +315,15 @@ class RunnableBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(decision);
 
-        Mockito.when(ordersService.placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(ordersService.postOrder(
+                accountId,
+                ticker,
+                decision.getQuantityLots(),
+                null,
+                OrderDirection.ORDER_DIRECTION_BUY,
+                OrderType.ORDER_TYPE_MARKET,
+                null
+        )).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
     }
@@ -336,7 +344,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -352,7 +360,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -378,7 +386,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
@@ -404,7 +412,15 @@ class RunnableBotUnitTest {
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_BUY);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_BUY,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
     @Test
@@ -428,7 +444,15 @@ class RunnableBotUnitTest {
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(accountId, ticker, decision.getQuantityLots(), OperationType.OPERATION_TYPE_SELL);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_SELL,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
     private RunnableBot createRunnableBot() {
@@ -482,11 +506,6 @@ class RunnableBotUnitTest {
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
-    }
-
-    private void verifyNoOrdersMade() throws IOException {
-        Mockito.verify(ordersService, Mockito.never())
-                .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
 }

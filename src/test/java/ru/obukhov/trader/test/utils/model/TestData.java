@@ -15,8 +15,6 @@ import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.OrderStatus;
-import ru.obukhov.trader.market.model.OrderType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
@@ -31,7 +29,13 @@ import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
+import ru.tinkoff.piapi.contract.v1.OrderStage;
+import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Money;
@@ -428,14 +432,130 @@ public class TestData {
         return response;
     }
 
-    // region Order creation
+    // region OrderState creation
 
-    public Order createOrder(String id, String figi) {
-        return new Order(id, figi, OperationType.OPERATION_TYPE_BUY, OrderStatus.FILL, 1, 1, OrderType.MARKET, BigDecimal.TEN);
+    public static OrderState createOrderState() {
+        return OrderState.newBuilder().build();
     }
 
+    public OrderState createOrderState(final String id, final String figi) {
+        return OrderState.newBuilder().setOrderId(id).setFigi(figi).build();
+    }
+
+    public static OrderState createOrderState(
+            final Currency currency,
+            final String orderId,
+            final OrderExecutionReportStatus executionReportStatus,
+            final int lotsRequested,
+            final int lotsExecuted,
+            final double initialOrderPrice,
+            final double totalOrderAmount,
+            final double averagePositionPrice,
+            final double initialCommission,
+            final double executedCommission,
+            final String figi,
+            final OrderDirection orderDirection,
+            final double initialSecurityPrice,
+            final List<OrderStage> stages,
+            final double serviceCommission,
+            final ru.tinkoff.piapi.contract.v1.OrderType orderType,
+            final OffsetDateTime orderDate
+    ) {
+        return OrderState.newBuilder()
+                .setOrderId(orderId)
+                .setExecutionReportStatus(executionReportStatus)
+                .setLotsRequested(lotsRequested)
+                .setLotsExecuted(lotsExecuted)
+                .setInitialOrderPrice(TestData.createMoneyValue(initialOrderPrice, currency))
+                .setTotalOrderAmount(TestData.createMoneyValue(totalOrderAmount, currency))
+                .setAveragePositionPrice(TestData.createMoneyValue(averagePositionPrice, currency))
+                .setInitialCommission(TestData.createMoneyValue(initialCommission, currency))
+                .setExecutedCommission(TestData.createMoneyValue(executedCommission, currency))
+                .setFigi(figi)
+                .setDirection(orderDirection)
+                .setInitialSecurityPrice(TestData.createMoneyValue(initialSecurityPrice, currency))
+                .addAllStages(stages)
+                .setServiceCommission(TestData.createMoneyValue(serviceCommission, currency))
+                .setCurrency(currency.name())
+                .setOrderType(orderType)
+                .setOrderDate(DATE_TIME_MAPPER.map(orderDate))
+                .build();
+    }
+
+    // endregion
+
+    // region Order creation
+
     public static Order createOrder() {
-        return new Order(null, null, null, null, null, null, null, null);
+        return new Order(
+                null,
+                null,
+                0,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static Order createOrder(final String id, final String figi) {
+        return new Order(
+                id,
+                null,
+                0,
+                null,
+                null,
+                null,
+                null,
+                figi,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    public static Order createOrder(
+            final Currency currency,
+            final String orderId,
+            final OrderExecutionReportStatus executionReportStatus,
+            final int lotsExecuted,
+            final double initialOrderPrice,
+            final double totalOrderAmount,
+            final double averagePositionPrice,
+            final double executedCommission,
+            final String figi,
+            final OrderDirection orderDirection,
+            final double initialSecurityPrice,
+            final double serviceCommission,
+            final ru.tinkoff.piapi.contract.v1.OrderType orderType,
+            final OffsetDateTime orderDate
+    ) {
+        return new Order(
+                orderId,
+                executionReportStatus,
+                lotsExecuted,
+                BigDecimal.valueOf(initialOrderPrice),
+                BigDecimal.valueOf(totalOrderAmount),
+                BigDecimal.valueOf(averagePositionPrice),
+                BigDecimal.valueOf(executedCommission),
+                figi,
+                orderDirection,
+                BigDecimal.valueOf(initialSecurityPrice),
+                BigDecimal.valueOf(serviceCommission),
+                currency,
+                orderType,
+                orderDate
+        );
     }
 
     // endregion
@@ -454,8 +574,8 @@ public class TestData {
 
     // region MoneyValue creation
 
-    public static MoneyValue createMoneyValue(final long units, final Currency currency) {
-        return MoneyValue.newBuilder().setUnits(units).setCurrency(currency.name()).build();
+    public static MoneyValue createMoneyValue(final double value, final Currency currency) {
+        return DataStructsHelper.createMoneyValue(currency, BigDecimal.valueOf(value));
     }
 
     public static MoneyValue createMoneyValue(final Currency currency) {
@@ -486,6 +606,38 @@ public class TestData {
                 .setCurrency(currency.name())
                 .setLot(lotSize)
                 .build();
+    }
+
+    public static OrderStage createOrderStage(final Currency currency, final double price, final long quantity, final String tradeId) {
+        return OrderStage.newBuilder()
+                .setPrice(createMoneyValue(price, currency))
+                .setQuantity(quantity)
+                .setTradeId(tradeId)
+                .build();
+    }
+
+    public static PostOrderResponse createPostOrderResponse(
+            final Currency currency,
+            final double totalPrice,
+            final double totalCommissionAmount,
+            final double currentPrice,
+            final String orderId,
+            final long quantityLots,
+            final String figi,
+            final OrderDirection direction,
+            final OrderType type
+    ) {
+        return DataStructsHelper.createPostOrderResponse(
+                currency.name(),
+                BigDecimal.valueOf(totalPrice),
+                BigDecimal.valueOf(totalCommissionAmount),
+                BigDecimal.valueOf(currentPrice),
+                quantityLots,
+                figi,
+                direction,
+                type,
+                orderId
+        );
     }
 
 }

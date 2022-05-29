@@ -13,7 +13,6 @@ import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +36,7 @@ public class OrdersController {
     public GetOrdersResponse getOrders(
             @RequestParam(required = false)
             @ApiParam(name = "accountId. When null then default account used", example = "2008941383") final String accountId
-    ) throws IOException {
+    ) {
         final List<Order> orders = ordersService.getOrders(accountId);
 
         return new GetOrdersResponse(orders);

@@ -4,6 +4,10 @@ import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.WithdrawLimitsResponse;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -79,6 +83,40 @@ public class DataStructsHelper {
                 .findFirst()
                 .map(Money::getValue)
                 .orElseThrow();
+    }
+
+    public static PostOrderResponse createPostOrderResponse(
+            final String currency,
+            final BigDecimal totalPrice,
+            final BigDecimal totalCommissionAmount,
+            final BigDecimal currentPrice,
+            final long quantityLots,
+            final String figi,
+            final OrderDirection direction,
+            final OrderType type,
+            final String orderId
+    ) {
+        final MoneyValue orderPrice = DataStructsHelper.createMoneyValue(currency, totalPrice.add(totalCommissionAmount));
+        final MoneyValue totalOrderAmount = DataStructsHelper.createMoneyValue(currency, totalPrice);
+        final MoneyValue totalCommission = DataStructsHelper.createMoneyValue(Currency.valueOf(currency), totalCommissionAmount);
+        final MoneyValue initialSecurityPrice = DataStructsHelper.createMoneyValue(currency, currentPrice);
+        final PostOrderResponse.Builder builder = PostOrderResponse.newBuilder()
+                .setExecutionReportStatus(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL)
+                .setLotsRequested(quantityLots)
+                .setLotsExecuted(quantityLots)
+                .setInitialOrderPrice(orderPrice)
+                .setExecutedOrderPrice(orderPrice)
+                .setTotalOrderAmount(totalOrderAmount)
+                .setInitialCommission(totalCommission)
+                .setExecutedCommission(totalCommission)
+                .setFigi(figi)
+                .setDirection(direction)
+                .setInitialSecurityPrice(initialSecurityPrice)
+                .setOrderType(type);
+        if (orderId != null) {
+            builder.setOrderId(orderId);
+        }
+        return builder.build();
     }
 
 }

@@ -17,7 +17,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -26,6 +25,8 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -233,11 +234,11 @@ class FakeTinkoffServiceUnitTest {
         mockShare(ticker, Currency.RUB, lotSize);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 100);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
         final OffsetDateTime operation2DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 200);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 200);
         final OffsetDateTime operation3DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_SELL, 300);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_SELL, 300);
 
         final Interval wholeInterval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> allOperations = service.getOperations(accountId, wholeInterval, ticker);
@@ -277,11 +278,11 @@ class FakeTinkoffServiceUnitTest {
         mockShare(ticker2, Currency.RUB, lotSize);
 
         final OffsetDateTime ticker1OperationDateTime = service.getCurrentDateTime();
-        placeMarketOrder(accountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 100);
+        postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
         final OffsetDateTime ticker2Operation1DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker2, 1, OperationType.OPERATION_TYPE_BUY, 200);
+        postOrder(accountId, ticker2, 1, OrderDirection.ORDER_DIRECTION_BUY, 200);
         final OffsetDateTime ticker2Operation2DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker2, 1, OperationType.OPERATION_TYPE_SELL, 300);
+        postOrder(accountId, ticker2, 1, OrderDirection.ORDER_DIRECTION_SELL, 300);
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> ticker1Operations = service.getOperations(accountId, interval, ticker1);
@@ -318,11 +319,11 @@ class FakeTinkoffServiceUnitTest {
         mockShare(ticker2, Currency.RUB, lotSize);
 
         final OffsetDateTime operation1DateTime = service.getCurrentDateTime();
-        placeMarketOrder(accountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 100);
+        postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
         final OffsetDateTime operation2DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker2, 1, OperationType.OPERATION_TYPE_BUY, 200);
+        postOrder(accountId, ticker2, 1, OrderDirection.ORDER_DIRECTION_BUY, 200);
         final OffsetDateTime operation3DateTime = service.nextMinute();
-        placeMarketOrder(accountId, ticker2, 1, OperationType.OPERATION_TYPE_SELL, 300);
+        postOrder(accountId, ticker2, 1, OrderDirection.ORDER_DIRECTION_SELL, 300);
 
         final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
         final List<Operation> operations = service.getOperations(accountId, interval, null);
@@ -373,7 +374,7 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, 10);
 
-        final Executable executable = () -> placeMarketOrder(accountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 500);
+        final Executable executable = () -> postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 500);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Assertions.assertTrue(service.getPortfolioPositions(accountId).isEmpty());
@@ -401,7 +402,7 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, 10);
 
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 1000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 1000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(accountId);
         Assertions.assertEquals(1, positions.size());
@@ -432,8 +433,8 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, 10);
 
-        placeMarketOrder(accountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
+        postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(accountId);
         Assertions.assertEquals(1, positions.size());
@@ -469,9 +470,9 @@ class FakeTinkoffServiceUnitTest {
         mockShare(ticker2, Currency.RUB, 2);
         mockShare(ticker3, Currency.RUB, 1);
 
-        placeMarketOrder(accountId, ticker1, 1, OperationType.OPERATION_TYPE_BUY, 1000);
-        placeMarketOrder(accountId, ticker2, 3, OperationType.OPERATION_TYPE_BUY, 100);
-        placeMarketOrder(accountId, ticker3, 1, OperationType.OPERATION_TYPE_BUY, 500);
+        postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 1000);
+        postOrder(accountId, ticker2, 3, OrderDirection.ORDER_DIRECTION_BUY, 100);
+        postOrder(accountId, ticker3, 1, OrderDirection.ORDER_DIRECTION_BUY, 500);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(accountId);
         Assertions.assertEquals(3, positions.size());
@@ -514,9 +515,9 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, lotSize);
 
-        placeMarketOrder(accountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
-        final Executable sellExecutable = () -> placeMarketOrder(accountId, ticker, 4, OperationType.OPERATION_TYPE_SELL, 3000);
+        postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
+        final Executable sellExecutable = () -> postOrder(accountId, ticker, 4, OrderDirection.ORDER_DIRECTION_SELL, 3000);
         final String expectedMessage = "lotsCount 4 can't be greater than existing position lots count 3";
         Assertions.assertThrows(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
@@ -551,9 +552,9 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, lotSize);
 
-        placeMarketOrder(accountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
-        placeMarketOrder(accountId, ticker, 3, OperationType.OPERATION_TYPE_SELL, 3000);
+        postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
+        postOrder(accountId, ticker, 3, OrderDirection.ORDER_DIRECTION_SELL, 3000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(accountId);
         Assertions.assertTrue(positions.isEmpty());
@@ -582,9 +583,9 @@ class FakeTinkoffServiceUnitTest {
 
         mockShare(ticker, Currency.RUB, lotSize);
 
-        placeMarketOrder(accountId, ticker, 2, OperationType.OPERATION_TYPE_BUY, 1000);
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_BUY, 4000);
-        placeMarketOrder(accountId, ticker, 1, OperationType.OPERATION_TYPE_SELL, 3000);
+        postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
+        postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_SELL, 3000);
 
         final Collection<PortfolioPosition> positions = service.getPortfolioPositions(accountId);
         Assertions.assertEquals(1, positions.size());
@@ -701,18 +702,17 @@ class FakeTinkoffServiceUnitTest {
 
     // endregion
 
-    private void placeMarketOrder(
+    private void postOrder(
             final String accountId,
             final String ticker,
-            final int lotsCount,
-            final OperationType operationType,
+            final int quantityLots,
+            final OrderDirection direction,
             final double price
     ) throws IOException {
         final Candle candle = new Candle().setClosePrice(DecimalUtils.setDefaultScale(price));
         Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
-        final MarketOrderRequest orderRequest = new MarketOrderRequest((long) lotsCount, operationType);
-        service.placeMarketOrder(accountId, ticker, orderRequest);
+        service.postOrder(accountId, ticker, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }
 
     @Test

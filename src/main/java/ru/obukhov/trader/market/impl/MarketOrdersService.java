@@ -2,12 +2,10 @@ package ru.obukhov.trader.market.impl;
 
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PlacedLimitOrder;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
-import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,44 +37,27 @@ public class MarketOrdersService {
      * @return returns list of active orders at given {@code accountId}
      * If {@code accountId} null, works with default broker account
      */
-    public List<Order> getOrders(final String accountId) throws IOException {
+    public List<Order> getOrders(final String accountId) {
         return tinkoffService.getOrders(accountId);
     }
 
-    /**
-     * @return places new order with market price and given params.
-     * If {@code accountId} null, works with default broker account
-     */
-    public PlacedMarketOrder placeMarketOrder(
+    public PostOrderResponse postOrder(
             final String accountId,
-            @NotNull final String ticker,
-            final long lots,
-            @NotNull final OperationType operationType
+            final String ticker,
+            final long quantity,
+            final BigDecimal price,
+            final OrderDirection direction,
+            final OrderType type,
+            final String orderId
     ) throws IOException {
-        final MarketOrderRequest orderRequest = new MarketOrderRequest(lots, operationType);
-        return tinkoffService.placeMarketOrder(accountId, ticker, orderRequest);
-    }
-
-    /**
-     * @return places new order with given {@code price} and given params.
-     * If {@code accountId} null, works with default broker account
-     */
-    public PlacedLimitOrder placeLimitOrder(
-            final String accountId,
-            @NotNull final String ticker,
-            final int lots,
-            @NotNull final OperationType operationType,
-            final BigDecimal price
-    ) throws IOException {
-        final LimitOrderRequest orderRequest = new LimitOrderRequest(lots, operationType, price);
-        return tinkoffService.placeLimitOrder(accountId, ticker, orderRequest);
+        return tinkoffService.postOrder(accountId, ticker, quantity, price, direction, type, orderId);
     }
 
     /**
      * cancels order with given {@code orderId} at given {@code accountId}.
      * If {@code accountId} null, works with default broker account
      */
-    public void cancelOrder(final String accountId, @NotNull String orderId) throws IOException {
+    public void cancelOrder(final String accountId, @NotNull String orderId) {
         tinkoffService.cancelOrder(accountId, orderId);
     }
 

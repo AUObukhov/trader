@@ -14,14 +14,9 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketOrderRequest;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.OrderStatus;
 import ru.obukhov.trader.market.model.Orderbook;
-import ru.obukhov.trader.market.model.PlacedLimitOrder;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
@@ -32,6 +27,9 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
@@ -192,45 +190,43 @@ public class FakeTinkoffService implements TinkoffService {
         return Collections.emptyList();
     }
 
-    @Override
-    public PlacedLimitOrder placeLimitOrder(final String accountId, final String ticker, final LimitOrderRequest orderRequest) {
-        throw new UnsupportedOperationException("Only market orders supported in back test");
-    }
-
     /**
      * Performs market order with fake portfolio
-     *
-     * @param ticker       ticker of executed order
-     * @param orderRequest model of executed order
-     * @return result of order execution
      */
     @Override
-    public PlacedMarketOrder placeMarketOrder(final String accountId, final String ticker, final MarketOrderRequest orderRequest)
-            throws IOException {
+    public PostOrderResponse postOrder(
+            final String accountId,
+            final String ticker,
+            final long quantityLots,
+            final BigDecimal price,
+            final OrderDirection direction,
+            final OrderType type,
+            final String orderId
+    ) throws IOException {
         final Share share = marketInstrumentsService.getShare(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final Long quantity = orderRequest.lotsCount() * share.getLot();
+        final Long quantity = quantityLots * share.getLot();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
-        final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB.name(), totalCommissionAmount);
 
-        if (orderRequest.operation() == OperationType.OPERATION_TYPE_BUY) {
-            buyPosition(accountId, ticker, currentPrice, quantity, orderRequest.lotsCount(), totalPrice, totalCommissionAmount);
+        if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
+            buyPosition(accountId, ticker, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
+            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
             sellPosition(accountId, ticker, quantity, totalPrice, totalCommissionAmount);
+            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
-        addOperation(accountId, ticker, currentPrice, quantity, orderRequest.operation());
-        BigDecimal requestedLots = BigDecimal.valueOf(orderRequest.lotsCount());
-        return new PlacedMarketOrder(
-                null,
-                orderRequest.operation(),
-                OrderStatus.NEW,
-                null,
-                null,
-                requestedLots,
-                requestedLots,
-                totalCommission
+        return DataStructsHelper.createPostOrderResponse(
+                share.getCurrency(),
+                totalPrice,
+                totalCommissionAmount,
+                currentPrice,
+                quantityLots,
+                share.getFigi(),
+                direction,
+                type,
+                orderId
         );
     }
 
@@ -316,7 +312,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     @Override
     public void cancelOrder(final String accountId, final String orderId) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Back test does not support cancelling of orders");
     }
 
     // endregion

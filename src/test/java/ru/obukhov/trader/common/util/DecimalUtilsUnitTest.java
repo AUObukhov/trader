@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
@@ -52,10 +53,34 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forGetNano")
-    void getNano(final double bigDecimal, final int expectedNanos) {
-        final int nanos = DecimalUtils.getNano(BigDecimal.valueOf(bigDecimal));
+    void getNano(final double value, final int expectedNanos) {
+        final int nanos = DecimalUtils.getNano(BigDecimal.valueOf(value));
 
         Assertions.assertEquals(expectedNanos, nanos);
+    }
+
+    // endregion
+
+    // region add tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToQuotation() {
+        return Stream.of(
+                Arguments.of(0, 0, 0),
+                Arguments.of(0.12, 0, 120_000_000),
+                Arguments.of(14.0, 14, 0),
+                Arguments.of(13.000_000_001, 13, 1),
+                Arguments.of(10.666_666_666, 10, 666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToQuotation")
+    void toQuotation(final double value, final int expectedUnits, final int expectedNano) {
+        final Quotation quotation = DecimalUtils.toQuotation(BigDecimal.valueOf(value));
+
+        Assertions.assertEquals(expectedUnits, quotation.getUnits());
+        Assertions.assertEquals(expectedNano, quotation.getNano());
     }
 
     // endregion

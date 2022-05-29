@@ -12,6 +12,8 @@ import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.io.IOException;
@@ -21,7 +23,7 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
-    public static void mockEmptyOrder(final MarketOrdersService ordersService, final String ticker) throws IOException {
+    public static void mockEmptyOrder(final MarketOrdersService ordersService, final String ticker) {
         final Order order = TestData.createOrder();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
@@ -64,5 +66,18 @@ public class Mocker {
     public static void mockTickerByFigi(final InstrumentsService instrumentsService, final String ticker, final String figi) {
         final Instrument instrument = Instrument.newBuilder().setTicker(ticker).build();
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
+    }
+
+    public static void verifyNoOrdersMade(final MarketOrdersService ordersService) throws IOException {
+        Mockito.verify(ordersService, Mockito.never())
+                .postOrder(
+                        Mockito.anyString(),
+                        Mockito.anyString(),
+                        Mockito.anyLong(),
+                        Mockito.isNull(),
+                        Mockito.any(OrderDirection.class),
+                        Mockito.any(OrderType.class),
+                        Mockito.isNull()
+                );
     }
 }
