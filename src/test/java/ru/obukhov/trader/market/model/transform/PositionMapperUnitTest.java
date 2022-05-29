@@ -6,7 +6,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.core.models.Position;
 
 class PositionMapperUnitTest {

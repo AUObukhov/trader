@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.web.model.exchange.GetUserAccountsResponse;
 import ru.tinkoff.piapi.contract.v1.AccessLevel;
 import ru.tinkoff.piapi.contract.v1.Account;

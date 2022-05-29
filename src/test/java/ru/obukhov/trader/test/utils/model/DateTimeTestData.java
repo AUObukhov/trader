@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils;
+package ru.obukhov.trader.test.utils.model;
 
 import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;

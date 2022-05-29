@@ -2,7 +2,7 @@ package ru.obukhov.trader.config.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.time.Duration;
 import java.time.OffsetTime;

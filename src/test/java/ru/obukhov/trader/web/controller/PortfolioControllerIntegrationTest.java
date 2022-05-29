@@ -11,7 +11,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;

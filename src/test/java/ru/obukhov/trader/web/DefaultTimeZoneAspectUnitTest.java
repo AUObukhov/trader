@@ -12,7 +12,7 @@ import org.springframework.aop.ProxyMethodInvocation;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;

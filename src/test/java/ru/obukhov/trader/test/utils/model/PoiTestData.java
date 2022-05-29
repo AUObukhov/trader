@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils;
+package ru.obukhov.trader.test.utils.model;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

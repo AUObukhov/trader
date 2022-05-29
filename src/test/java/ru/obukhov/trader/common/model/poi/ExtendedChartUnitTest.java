@@ -5,7 +5,7 @@ import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.test.utils.PoiTestData;
+import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 class ExtendedChartUnitTest {
 

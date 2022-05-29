@@ -1,4 +1,4 @@
-package ru.obukhov.trader.common.model.transform;
+package ru.obukhov.trader.test.utils.model.transform;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

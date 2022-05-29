@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;

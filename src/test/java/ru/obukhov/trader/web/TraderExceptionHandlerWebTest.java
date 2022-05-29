@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.Application;
 import ru.obukhov.trader.ContextTest;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;

@@ -6,9 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.mockserver.mock.action.ExpectationResponseCallback;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
-import ru.obukhov.trader.common.model.transform.CronExpressionSerializer;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Candles;
+import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
 import ru.obukhov.trader.web.client.exchange.CandlesResponse;
 
 import java.time.OffsetDateTime;
