@@ -17,7 +17,6 @@ import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -95,48 +94,6 @@ class RealTinkoffServiceUnitTest {
         Assertions.assertSame(share1, result.get(0));
         Assertions.assertSame(share2, result.get(1));
     }
-
-    // region getMarketOrderbook tests
-
-    @Test
-    void getMarketOrderbook_returnsOrderbook() throws IOException {
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final int depth = 10;
-
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        final Orderbook orderbook = new Orderbook(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Mockito.when(marketClient.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
-
-        final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
-        Assertions.assertSame(orderbook, result);
-    }
-
-    @Test
-    void getMarketOrderbook_returnsNull_whenGetsNoOrderbook() throws IOException {
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final int depth = 10;
-
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-
-        final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
-        Assertions.assertNull(result);
-    }
-
-    // endregion
 
     // region getMarketCandles tests
 

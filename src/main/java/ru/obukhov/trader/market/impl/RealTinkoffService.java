@@ -12,7 +12,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.AccountMapper;
@@ -93,12 +92,6 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     // endregion
 
     // region MarketContext
-
-    @Override
-    public Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException {
-        final String figi = self.getFigiByTicker(ticker);
-        return marketClient.getMarketOrderbook(figi, depth);
-    }
 
     @Override
     @Cacheable(value = "marketCandles", sync = true)

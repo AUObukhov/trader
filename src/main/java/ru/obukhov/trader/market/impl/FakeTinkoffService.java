@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
@@ -144,11 +143,6 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public List<Share> getAllShares() {
         return realTinkoffService.getAllShares();
-    }
-
-    @Override
-    public Orderbook getMarketOrderbook(final String ticker, final int depth) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

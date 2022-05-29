@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.interfaces;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Orderbook;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -29,8 +28,6 @@ public interface TinkoffService {
     String getTickerByFigi(String figi);
 
     List<Share> getAllShares();
-
-    Orderbook getMarketOrderbook(final String ticker, final int depth) throws IOException;
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 
