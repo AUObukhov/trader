@@ -100,10 +100,9 @@ public class BackTesterImpl implements BackTester {
 
         final Interval finiteInterval = interval.limitByNowIfNull(now);
 
-        final List<CompletableFuture<BackTestResult>> backTestFutures = botConfigs.stream()
+        return botConfigs.stream()
                 .map(botConfig -> startBackTest(botConfig, balanceConfig, finiteInterval))
-                .toList();
-        return backTestFutures.stream()
+                .toList().stream()
                 .map(CompletableFuture::join)
                 .sorted(Comparator.comparing(result -> ((BackTestResult) result).balances().finalTotalSavings()).reversed())
                 .toList();
