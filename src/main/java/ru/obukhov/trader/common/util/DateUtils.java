@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
@@ -348,6 +349,16 @@ public class DateUtils {
         }
 
         return hits;
+    }
+
+    /**
+     * @return true if given {@code timestamp} is in interval {@code [from; to)}
+     */
+    public static boolean timestampIsInInterval(final Timestamp timestamp, final Instant from, final Instant to) {
+        Assert.isTrue(from.isBefore(to), "From must be before to");
+
+        final Instant time = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
+        return !time.isBefore(from) && time.isBefore(to);
     }
 
 }

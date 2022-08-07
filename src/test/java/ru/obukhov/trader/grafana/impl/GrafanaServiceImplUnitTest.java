@@ -268,16 +268,16 @@ class GrafanaServiceImplUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(80, 15, 20, 5, from, candleInterval),
-                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1), candleInterval),
-                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2), candleInterval),
-                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3), candleInterval),
-                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4), candleInterval),
-                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5), candleInterval),
-                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6), candleInterval),
-                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7), candleInterval),
-                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8), candleInterval),
-                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9), candleInterval)
+                TestData.createCandle(80, 15, 20, 5, from),
+                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1)),
+                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2)),
+                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3)),
+                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4)),
+                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5)),
+                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6)),
+                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7)),
+                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8)),
+                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9))
         );
         final List<BigDecimal> averages1 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);

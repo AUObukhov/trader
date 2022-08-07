@@ -24,7 +24,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
@@ -58,42 +58,59 @@ public class TestData {
     public static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
-    // region Tinkoff Candle creation
+    // region HistoricCandle creation
 
-    public static Candle createTinkoffCandle(
-            final double openPrice,
-            final double closePrice,
-            final double highestPrice,
-            final double lowestPrice
-    ) {
-        return createTinkoffCandle(CandleInterval.CANDLE_INTERVAL_DAY, openPrice, closePrice, highestPrice, lowestPrice);
-    }
+//    public static Candle createTinkoffCandle(
+//            final double openPrice,
+//            final double closePrice,
+//            final double highestPrice,
+//            final double lowestPrice
+//    ) {
+//        return createTinkoffCandle(openPrice, closePrice, highestPrice, lowestPrice, OffsetDateTime.now());
+//    }
 
-    public static Candle createTinkoffCandle(
-            final CandleInterval interval,
-            final double openPrice,
-            final double closePrice,
-            final double highestPrice,
-            final double lowestPrice
-    ) {
-        return createTinkoffCandle(interval, openPrice, closePrice, highestPrice, lowestPrice, OffsetDateTime.now());
-    }
+//    public static Candle createTinkoffCandle(
+//            final double openPrice,
+//            final double closePrice,
+//            final double highestPrice,
+//            final double lowestPrice,
+//            final OffsetDateTime time
+//    ) {
+//        return new Candle()
+//                .setOpenPrice(DecimalUtils.setDefaultScale(openPrice))
+//                .setClosePrice(DecimalUtils.setDefaultScale(closePrice))
+//                .setHighestPrice(DecimalUtils.setDefaultScale(highestPrice))
+//                .setLowestPrice(DecimalUtils.setDefaultScale(lowestPrice))
+//                .setTime(time);
+//    }
 
-    public static Candle createTinkoffCandle(
-            final CandleInterval interval,
+    public static HistoricCandle createHistoricCandle(
             final double openPrice,
             final double closePrice,
             final double highestPrice,
             final double lowestPrice,
+            final OffsetDateTime time,
+            final boolean isComplete
+    ) {
+        return HistoricCandle.newBuilder()
+                .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
+                .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
+                .setHigh(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(highestPrice)))
+                .setLow(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(lowestPrice)))
+                .setTime(DATE_TIME_MAPPER.map(time))
+                .setIsComplete(isComplete)
+                .build();
+    }
+
+    public static HistoricCandle createHistoricCandle(
+            final double openPrice,
             final OffsetDateTime time
     ) {
-        return new Candle()
-                .setInterval(interval)
-                .setOpenPrice(DecimalUtils.setDefaultScale(openPrice))
-                .setClosePrice(DecimalUtils.setDefaultScale(closePrice))
-                .setHighestPrice(DecimalUtils.setDefaultScale(highestPrice))
-                .setLowestPrice(DecimalUtils.setDefaultScale(lowestPrice))
-                .setTime(time);
+        return HistoricCandle.newBuilder()
+                .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
+                .setTime(DATE_TIME_MAPPER.map(time))
+                .setIsComplete(true)
+                .build();
     }
 
     // endregion
@@ -105,16 +122,14 @@ public class TestData {
             final double closePrice,
             final double highestPrice,
             final double lowestPrice,
-            final OffsetDateTime time,
-            final CandleInterval interval
+            final OffsetDateTime time
     ) {
         return new Candle(
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(highestPrice)),
                 DecimalUtils.setDefaultScale(BigDecimal.valueOf(lowestPrice)),
-                time,
-                interval
+                time
         );
     }
 

@@ -13,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
@@ -24,12 +23,12 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
 import ru.tinkoff.piapi.contract.v1.AccessLevel;
 import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.AccountStatus;
 import ru.tinkoff.piapi.contract.v1.AccountType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -40,6 +39,7 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
@@ -51,22 +51,22 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RealTinkoffServiceUnitTest {
 
     @Mock
-    private
-    InstrumentsService instrumentsService;
+    private InstrumentsService instrumentsService;
     @Mock
-    private MarketClient marketClient;
+    private MarketDataService marketDataService;
+    @Mock
+    private OperationsService operationsService;
     @Mock
     private OrdersService ordersService;
     @Mock
     private UsersService usersService;
-    @Mock
-    private OperationsService operationsService;
 
     @Mock
     private ApplicationContext applicationContext;
@@ -98,7 +98,7 @@ class RealTinkoffServiceUnitTest {
     // region getMarketCandles tests
 
     @Test
-    void getMarketCandles_returnsMappedCandles() throws IOException {
+    void getMarketCandles_returnsMappedCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -107,34 +107,41 @@ class RealTinkoffServiceUnitTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
-                candleInterval,
-                1000,
-                1500,
-                2000,
-                500,
-                from.plusMinutes(1)
-        );
-        final Candle tinkoffCandle2 = TestData.createTinkoffCandle(
-                candleInterval,
-                1500,
-                2000,
-                2500,
-                1000,
-                from.plusMinutes(1)
-        );
-        final Candles expectedCandles = new Candles(figi, null, List.of(tinkoffCandle1, tinkoffCandle2));
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
+        final int openPrice1 = 1000;
+        final int closePrice1 = 1500;
+        final int highestPrice1 = 2000;
+        final int lowestPrice1 = 500;
+        final OffsetDateTime time1 = from.plusMinutes(1);
+        final HistoricCandle historicCandle1 = TestData.createHistoricCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1, true);
+
+        final int openPrice2 = 1500;
+        final int closePrice2 = 2000;
+        final int highestPrice2 = 2500;
+        final int lowestPrice2 = 1000;
+        final OffsetDateTime time2 = from.plusMinutes(2);
+        final HistoricCandle historicCandle2 = TestData.createHistoricCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2, true);
+
+        final int openPrice3 = 2000;
+        final int closePrice3 = 2500;
+        final int highestPrice3 = 3000;
+        final int lowestPrice3 = 500;
+        final OffsetDateTime time3 = from.plusMinutes(3);
+        final HistoricCandle historicCandle3 = TestData.createHistoricCandle(openPrice3, closePrice3, highestPrice3, lowestPrice3, time3, false);
+
+        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
+                .thenReturn(List.of(historicCandle1, historicCandle2, historicCandle3));
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
-        Assertions.assertEquals(expectedCandles.candleList().size(), candles.size());
-        Assertions.assertEquals(tinkoffCandle1, candles.get(0));
-        Assertions.assertEquals(tinkoffCandle2, candles.get(1));
+        Assertions.assertEquals(2, candles.size());
+        final Candle expectedCandle1 = TestData.createCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1);
+        final Candle expectedCandle2 = TestData.createCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2);
+        Assertions.assertEquals(expectedCandle1, candles.get(0));
+        Assertions.assertEquals(expectedCandle2, candles.get(1));
     }
 
     @Test
-    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() throws IOException {
+    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -144,8 +151,8 @@ class RealTinkoffServiceUnitTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final Candles expectedCandles = new Candles(null, null, List.of());
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
+        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
+                .thenReturn(Collections.emptyList());
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 

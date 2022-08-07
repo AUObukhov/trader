@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -13,13 +14,15 @@ import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -28,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
+
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     @Test
     void get_returnsOk() throws Exception {
@@ -101,12 +107,12 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        final List<Candle> candles = List.of(
-                TestData.createCandleWithOpenPriceAndTime(100, from),
-                TestData.createCandleWithOpenPriceAndTime(101, from.plusMinutes(1)),
-                TestData.createCandleWithOpenPriceAndTime(102, from.plusMinutes(2))
+        final List<HistoricCandle> historicCandles = List.of(
+                TestData.createHistoricCandle(100, from),
+                TestData.createHistoricCandle(101, from.plusMinutes(1)),
+                TestData.createHistoricCandle(102, from.plusMinutes(2))
         );
-        mockCandles(figi, interval.extendToDay(), candleInterval, candles);
+        mockHistoricCandles(figi, historicCandles);
 
         final GetDataRequest getDataRequest = new GetDataRequest();
         getDataRequest.setInterval(interval);
@@ -125,7 +131,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                 new Column("time", ColumnType.TIME),
                 new Column("open price", ColumnType.NUMBER)
         ));
-        queryResult.setRows(candles.stream().map(this::mapCandleToGrafanaList).toList());
+        queryResult.setRows(historicCandles.stream().map(this::mapCandleToGrafanaList).toList());
         final String expectedResponse = TestUtils.OBJECT_MAPPER.writeValueAsString(List.of(queryResult));
 
         final String request = TestUtils.OBJECT_MAPPER.writeValueAsString(getDataRequest);
@@ -150,12 +156,12 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        final List<Candle> candles = List.of(
-                TestData.createCandleWithOpenPriceAndTime(100, from),
-                TestData.createCandleWithOpenPriceAndTime(101, from.plusMinutes(1)),
-                TestData.createCandleWithOpenPriceAndTime(102, from.plusMinutes(2))
+        final List<HistoricCandle> historicCandles = List.of(
+                TestData.createHistoricCandle(100, from),
+                TestData.createHistoricCandle(101, from.plusMinutes(1)),
+                TestData.createHistoricCandle(102, from.plusMinutes(2))
         );
-        mockCandles(figi, interval.extendToDay(), candleInterval, candles);
+        mockHistoricCandles(figi, historicCandles);
 
         final GetDataRequest getDataRequest = new GetDataRequest();
         getDataRequest.setInterval(interval);
@@ -181,21 +187,21 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         ));
         final List<List<Object>> rows = List.of(
                 List.of(
-                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candles.get(0).getTime()),
-                        candles.get(0).getOpenPrice(),
-                        candles.get(0).getOpenPrice(),
-                        candles.get(0).getOpenPrice()
+                        getTimeString(historicCandles.get(0)),
+                        getOpenPrice(historicCandles.get(0)),
+                        getOpenPrice(historicCandles.get(0)),
+                        getOpenPrice(historicCandles.get(0))
                 ),
                 List.of(
-                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candles.get(1).getTime()),
-                        candles.get(1).getOpenPrice(),
-                        candles.get(1).getOpenPrice(),
+                        getTimeString(historicCandles.get(1)),
+                        getOpenPrice(historicCandles.get(1)),
+                        getOpenPrice(historicCandles.get(1)),
                         BigDecimal.valueOf(100.5)
                 ),
                 List.of(
-                        DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candles.get(2).getTime()),
-                        candles.get(2).getOpenPrice(),
-                        candles.get(2).getOpenPrice(),
+                        getTimeString(historicCandles.get(2)),
+                        getOpenPrice(historicCandles.get(2)),
+                        getOpenPrice(historicCandles.get(2)),
                         BigDecimal.valueOf(101.5)
                 )
         );
@@ -226,9 +232,16 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     // endregion
 
-    private List<Object> mapCandleToGrafanaList(final Candle candle) {
-        final String time = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(candle.getTime());
-        return List.of(time, candle.getOpenPrice());
+    private List<Object> mapCandleToGrafanaList(final HistoricCandle candle) {
+        return List.of(getTimeString(candle), getOpenPrice(candle));
+    }
+
+    private String getTimeString(final HistoricCandle candle) {
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(DATE_TIME_MAPPER.map(candle.getTime()));
+    }
+
+    private BigDecimal getOpenPrice(final HistoricCandle candle) {
+        return QUOTATION_MAPPER.map(candle.getOpen());
     }
 
 }

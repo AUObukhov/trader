@@ -7,7 +7,6 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.OffsetDateTime;
 
@@ -21,20 +20,6 @@ class CandleUnitTest {
 
         final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "leftCandle can't be after rightCandle");
-    }
-
-    @Test
-    void createAverage_throwsIllegalArgumentException_whenIntervalsAreNotEqual() {
-        final Candle leftCandle = new Candle()
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 1))
-                .setInterval(CandleInterval.CANDLE_INTERVAL_DAY);
-
-        final Candle rightCandle = new Candle()
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2))
-                .setInterval(CandleInterval.CANDLE_INTERVAL_HOUR);
-
-        final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "Candle intervals must be equal");
     }
 
     @Test

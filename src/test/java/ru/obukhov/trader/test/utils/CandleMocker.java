@@ -57,7 +57,6 @@ public class CandleMocker {
         final Candle candle = new Candle();
         candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
         candle.setTime(time);
-        candle.setInterval(candleInterval);
         return candle;
     }
 

@@ -20,14 +20,19 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.TokenValidationStartupListener;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.ApiProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.web.TestWithMockedServer;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
 
+import java.time.Instant;
 import java.util.List;
 
 @MockServerTest
@@ -42,6 +47,8 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
 
     @MockBean
     protected InstrumentsService instrumentsService;
+    @MockBean
+    protected MarketDataService marketDataService;
 
     /**
      * To prevent token validation on startup. Otherwise, validation performed before MockServer initialization
@@ -109,6 +116,18 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
                 .setLot(lotSize)
                 .build();
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
+    }
+
+    protected void mockHistoricCandles(final String figi, final List<HistoricCandle> historicCandles) {
+        Mockito.when(marketDataService.getCandlesSync(
+                Mockito.eq(figi),
+                Mockito.any(Instant.class),
+                Mockito.any(Instant.class),
+                Mockito.eq(CandleInterval.CANDLE_INTERVAL_1_MIN)
+        )).thenAnswer(args -> historicCandles.stream()
+                .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), args.getArgument(1), args.getArgument(2)))
+                .toList()
+        );
     }
 
 }

@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -15,6 +16,7 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
@@ -30,6 +32,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
@@ -40,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 class BotControllerIntegrationTest extends ControllerIntegrationTest {
+
+    private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     @Autowired
     private SchedulingProperties schedulingProperties;
@@ -246,9 +251,12 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         mockShare(figi, ticker, Currency.RUB, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
-        final Candle[] array = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
-        final List<Candle> candles = Arrays.asList(array);
-        mockAllCandles(figi, candles);
+        final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
+        final List<HistoricCandle> historicCandles = Arrays.stream(candles)
+                .map(candle -> CANDLE_MAPPER.map(candle, true))
+                .toList();
+
+        mockHistoricCandles(figi, historicCandles);
 
         // building expected response
 
@@ -270,7 +278,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(10000),
                 1L
         );
-        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval.CANDLE_INTERVAL_1_MIN);
+        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from);
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
                 interval,
