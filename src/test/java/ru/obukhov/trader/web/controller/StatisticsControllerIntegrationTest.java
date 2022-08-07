@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -277,9 +276,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final List<Candle> candles = Collections.emptyList();
-        mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
-
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
@@ -292,7 +288,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
+        final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
         performAndExpectResponse(requestBuilder, expectedResponse);
 
@@ -314,9 +310,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final List<Candle> candles = Collections.emptyList();
-        mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
-
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
@@ -329,7 +322,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("saveToFile", Boolean.TRUE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
+        final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         Mockito.doThrow(new RuntimeException())
                 .when(excelService)
                 .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
@@ -354,9 +347,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final List<Candle> candles = Collections.emptyList();
-        mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
-
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
@@ -369,7 +359,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("saveToFile", Boolean.FALSE.toString())
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
+        final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
         performAndExpectResponse(requestBuilder, expectedResponse);
 
@@ -391,9 +381,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final List<Candle> candles = Collections.emptyList();
-        mockCandles(figi, DateUtils.atStartOfDay(from), DateUtils.atEndOfDay(to), candleInterval, candles);
-
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
                         .param("ticker", ticker)
@@ -405,7 +392,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                         .param("bigWindow", Integer.toString(bigWindow))
                         .contentType(MediaType.APPLICATION_JSON);
 
-        final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, Collections.emptyList(), Collections.emptyList());
+        final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
         performAndExpectResponse(requestBuilder, expectedResponse);
 
