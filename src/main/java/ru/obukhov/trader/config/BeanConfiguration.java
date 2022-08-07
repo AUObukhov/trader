@@ -2,7 +2,6 @@ package ru.obukhov.trader.config;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,13 +18,11 @@ import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -93,12 +90,6 @@ public class BeanConfiguration {
     @Bean
     public MarketInstrumentsService marketInstrumentsService(final TinkoffService realTinkoffService) {
         return new MarketInstrumentsService(realTinkoffService);
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(final TinkoffService realTinkoffService, final SandboxClient sandboxClient) {
-        return new SandboxService(realTinkoffService, sandboxClient);
     }
 
     @Bean

@@ -1,9 +1,6 @@
 ru.tinkoff.invest.openapi:
   host: "https://api-invest.tinkoff.ru"
 
-trading:
-  sandbox: false
-
 market:
   work-schedule:
     start-time: 07:00:00+03:00
@@ -37,9 +34,6 @@ back-test:
 query.throttle:
   interval: 60000
   limits:
-    - segments:
-        - sandbox
-      limit: 120
     - segments:
         - portfolio
       limit: 120

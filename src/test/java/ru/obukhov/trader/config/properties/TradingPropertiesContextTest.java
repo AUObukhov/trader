@@ -25,7 +25,6 @@ class TradingPropertiesContextTest {
                     final TradingProperties tradingProperties = context.getBean(TradingProperties.class);
 
                     Assertions.assertEquals("i identify myself as token", tradingProperties.getToken());
-                    Assertions.assertFalse(tradingProperties.isSandbox());
                 });
     }
 

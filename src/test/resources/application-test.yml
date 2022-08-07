@@ -3,7 +3,6 @@ ru.tinkoff.invest.openapi:
   port: 8081
 
 trading:
-  sandbox: false
   token: i identify myself as token
 
 market:

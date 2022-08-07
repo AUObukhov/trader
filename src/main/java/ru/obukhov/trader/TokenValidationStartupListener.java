@@ -6,9 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 
@@ -21,18 +19,12 @@ import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
 public class TokenValidationStartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
     private final UserService userService;
-    @Nullable
-    private final SandboxService sandboxService;
 
     @SneakyThrows
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
         try {
-            if (sandboxService == null) {
-                userService.getAccounts();
-            } else {
-                sandboxService.register();
-            }
+            userService.getAccounts();
         } catch (final Exception exception) {
             if (exception.getCause() instanceof WrongTokenException) {
                 throw exception;

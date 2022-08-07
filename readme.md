@@ -26,12 +26,6 @@ at
 --trading.token=<token>
 ```
 
-- For enabling sandbox mode need to set command-line argument as "trading.sandbox" to true, for example:
-
-```
---trading.sandbox=true
-```
-
 ## Documentation
 
 Swagger UI available at host:port/swagger-ui/index.html#/
