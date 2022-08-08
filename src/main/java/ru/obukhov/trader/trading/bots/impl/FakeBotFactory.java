@@ -62,7 +62,7 @@ public class FakeBotFactory {
                 tinkoffServices,
                 botConfig.getAccountId(),
                 currentDateTime,
-                Currency.valueOf(share.getCurrency()),
+                Currency.valueOfIgnoreCase(share.getCurrency()),
                 botConfig.getCommission(),
                 balanceConfig
         );

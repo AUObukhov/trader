@@ -575,7 +575,7 @@ public class TestData {
     public static Share createShare(final String ticker, final Currency currency, final int lotSize) {
         return Share.newBuilder()
                 .setTicker(ticker)
-                .setCurrency(currency.name())
+                .setCurrency(currency.name().toLowerCase())
                 .setLot(lotSize)
                 .build();
     }

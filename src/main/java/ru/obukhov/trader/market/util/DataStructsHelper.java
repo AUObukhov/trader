@@ -98,7 +98,7 @@ public class DataStructsHelper {
     ) {
         final MoneyValue orderPrice = DataStructsHelper.createMoneyValue(currency, totalPrice.add(totalCommissionAmount));
         final MoneyValue totalOrderAmount = DataStructsHelper.createMoneyValue(currency, totalPrice);
-        final MoneyValue totalCommission = DataStructsHelper.createMoneyValue(Currency.valueOf(currency), totalCommissionAmount);
+        final MoneyValue totalCommission = DataStructsHelper.createMoneyValue(Currency.valueOfIgnoreCase(currency), totalCommissionAmount);
         final MoneyValue initialSecurityPrice = DataStructsHelper.createMoneyValue(currency, currentPrice);
         final PostOrderResponse.Builder builder = PostOrderResponse.newBuilder()
                 .setExecutionReportStatus(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL)

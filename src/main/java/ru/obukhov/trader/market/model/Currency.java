@@ -17,4 +17,8 @@ public enum Currency {
     public java.util.Currency getJavaCurrency() {
         return java.util.Currency.getInstance(name());
     }
+
+    public static Currency valueOfIgnoreCase(final String name) {
+        return Currency.valueOf(name.toUpperCase());
+    }
 }

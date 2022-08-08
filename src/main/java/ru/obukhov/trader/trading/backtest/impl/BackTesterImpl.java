@@ -229,7 +229,7 @@ public class BackTesterImpl implements BackTester {
     }
 
     private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
-        return Currency.valueOf(fakeBot.getShare(ticker).getCurrency());
+        return Currency.valueOfIgnoreCase(fakeBot.getShare(ticker).getCurrency());
     }
 
     private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) throws IOException {

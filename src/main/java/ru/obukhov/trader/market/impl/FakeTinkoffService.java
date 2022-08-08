@@ -257,7 +257,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     private void updateBalance(final String accountId, final String currency, final BigDecimal increment) {
-        final Currency enumCurrency = Currency.valueOf(currency);
+        final Currency enumCurrency = Currency.valueOfIgnoreCase(currency);
 
         final BigDecimal newBalance = fakeContext.getBalance(null, enumCurrency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");

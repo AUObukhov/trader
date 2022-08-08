@@ -98,7 +98,7 @@ public abstract class AbstractBot implements Bot {
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
         final Share share = marketInstrumentsService.getShare(ticker);
-        final Currency currency = Currency.valueOf(share.getCurrency());
+        final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
         decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getAccountId(), currency));
         decisionData.setPosition(portfolioService.getSecurity(botConfig.getAccountId(), ticker));

@@ -44,4 +44,11 @@ class CurrencyUnitTest {
         Assertions.assertEquals(value, currency.getJavaCurrency().getCurrencyCode());
     }
 
+    @ParameterizedTest
+    @MethodSource("valuesAndCurrencies")
+    void valueOfIgnoreCase(final String value, final Currency currency) {
+        Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value.toLowerCase()));
+        Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value));
+    }
+
 }
