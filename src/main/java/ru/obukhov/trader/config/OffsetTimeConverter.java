@@ -1,4 +1,4 @@
-package ru.obukhov.trader.test.utils.model.transform;
+package ru.obukhov.trader.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
