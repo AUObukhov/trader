@@ -146,7 +146,7 @@ public class FakeTinkoffService implements TinkoffService {
     }
 
     @Override
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
         return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
     }
 
