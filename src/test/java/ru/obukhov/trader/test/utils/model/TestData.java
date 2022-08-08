@@ -11,8 +11,6 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.MarketInstrumentList;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -22,7 +20,6 @@ import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
-import ru.obukhov.trader.web.client.exchange.MarketInstrumentListResponse;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -59,30 +56,6 @@ public class TestData {
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     // region HistoricCandle creation
-
-//    public static Candle createTinkoffCandle(
-//            final double openPrice,
-//            final double closePrice,
-//            final double highestPrice,
-//            final double lowestPrice
-//    ) {
-//        return createTinkoffCandle(openPrice, closePrice, highestPrice, lowestPrice, OffsetDateTime.now());
-//    }
-
-//    public static Candle createTinkoffCandle(
-//            final double openPrice,
-//            final double closePrice,
-//            final double highestPrice,
-//            final double lowestPrice,
-//            final OffsetDateTime time
-//    ) {
-//        return new Candle()
-//                .setOpenPrice(DecimalUtils.setDefaultScale(openPrice))
-//                .setClosePrice(DecimalUtils.setDefaultScale(closePrice))
-//                .setHighestPrice(DecimalUtils.setDefaultScale(highestPrice))
-//                .setLowestPrice(DecimalUtils.setDefaultScale(lowestPrice))
-//                .setTime(time);
-//    }
 
     public static HistoricCandle createHistoricCandle(
             final double openPrice,
@@ -439,23 +412,7 @@ public class TestData {
 
     // endregion
 
-    public static MarketInstrumentListResponse createMarketInstrumentListResponse(List<MarketInstrument> instruments) {
-        final MarketInstrumentList marketInstrumentList = new MarketInstrumentList(BigDecimal.valueOf(instruments.size()), instruments);
-
-        final MarketInstrumentListResponse response = new MarketInstrumentListResponse();
-        response.setPayload(marketInstrumentList);
-        return response;
-    }
-
     // region OrderState creation
-
-    public static OrderState createOrderState() {
-        return OrderState.newBuilder().build();
-    }
-
-    public OrderState createOrderState(final String id, final String figi) {
-        return OrderState.newBuilder().setOrderId(id).setFigi(figi).build();
-    }
 
     public static OrderState createOrderState(
             final Currency currency,
