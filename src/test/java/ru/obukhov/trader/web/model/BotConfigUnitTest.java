@@ -21,12 +21,14 @@ class BotConfigUnitTest {
         return Stream.of(
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -36,12 +38,31 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000164699")
+                                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        false
+                ),
+                Arguments.of(
+                        BotConfig.builder()
+                                .accountId("2000124699")
+                                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
+                                .commission(0.0)
+                                .strategyType(StrategyType.CONSERVATIVE)
+                                .strategyParams(Map.of("param1", 1, "param2", 2))
+                                .build(),
+                        BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_5_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -51,12 +72,14 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.1)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.2)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -66,12 +89,14 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CROSS)
@@ -81,12 +106,14 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -96,12 +123,14 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -111,12 +140,14 @@ class BotConfigUnitTest {
                 ),
                 Arguments.of(
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
                                 .strategyParams(Map.of("param1", 1, "param2", 2))
                                 .build(),
                         BotConfig.builder()
+                                .accountId("2000124699")
                                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                                 .commission(0.0)
                                 .strategyType(StrategyType.CONSERVATIVE)
@@ -140,12 +171,14 @@ class BotConfigUnitTest {
     @Test
     void testHashCode() {
         BotConfig config1 = BotConfig.builder()
+                .accountId("2000124699")
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.0)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .strategyParams(Map.of("param1", 1, "param2", 2))
                 .build();
         BotConfig config2 = BotConfig.builder()
+                .accountId("2000124699")
                 .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.0)
                 .strategyType(StrategyType.CONSERVATIVE)

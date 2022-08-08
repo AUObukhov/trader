@@ -195,6 +195,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
+        final String accountId = "2000124699";
         final String figi = "figi";
         final String ticker = "ticker";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
@@ -212,13 +213,14 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final Map<String, Object> strategyParams1 = Map.of("minimumProfit", 0.01);
 
-        final BotConfig botConfig1 = BotConfig.builder()
-                .ticker(ticker)
-                .candleInterval(candleInterval)
-                .commission(0.001)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .strategyParams(strategyParams1)
-                .build();
+        final BotConfig botConfig1 = new BotConfig(
+                accountId,
+                ticker,
+                candleInterval,
+                0.001,
+                StrategyType.CONSERVATIVE,
+                strategyParams1
+        );
 
         final Map<String, Object> strategyParams2 = Map.of(
                 "minimumProfit", 0.01,
@@ -229,14 +231,14 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 "indexCoefficient", 0.3,
                 "greedy", false
         );
-        final BotConfig botConfig2 = BotConfig.builder()
-                .ticker(ticker)
-                .candleInterval(candleInterval)
-                .commission(0.002)
-                .strategyType(StrategyType.CROSS)
-                .strategyParams(strategyParams2)
-                .build();
-
+        final BotConfig botConfig2 = new BotConfig(
+                accountId,
+                ticker,
+                candleInterval,
+                0.002,
+                StrategyType.CROSS,
+                strategyParams2
+        );
         request.setBotConfigs(List.of(botConfig1, botConfig2));
 
         final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(request);

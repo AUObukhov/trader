@@ -115,7 +115,6 @@ class FakeTinkoffServiceUnitTest {
     @ParameterizedTest
     @MethodSource(value = "getData_forConstructor_initsBalance")
     void constructor_initsBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
-        constructor_initsBalance(null, balanceConfig, expectedBalance);
         constructor_initsBalance("2000124699", balanceConfig, expectedBalance);
     }
 
@@ -724,7 +723,7 @@ class FakeTinkoffServiceUnitTest {
         service = new FakeTinkoffService(
                 MARKET_PROPERTIES,
                 tinkoffServices,
-                null,
+                "2000124699",
                 dateTime,
                 Currency.USD,
                 0.003,

@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -18,7 +17,7 @@ import java.util.Map;
 @Builder
 public class BotConfig {
 
-    @Nullable
+    @NotNull(message = "accountId is mandatory")
     @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
     private final String accountId;
 

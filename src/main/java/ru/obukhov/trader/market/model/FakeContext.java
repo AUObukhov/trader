@@ -108,22 +108,15 @@ public class FakeContext {
     }
 
     private FakePortfolio computeIfAbsentPortfolio(final String accountId) {
-        if (accountId == null) {
-            if (portfolios.isEmpty()) {
-                portfolios.add(new FakePortfolio(null));
-            }
-            return portfolios.get(0);
+        final Optional<FakePortfolio> desiredPortfolio = portfolios.stream()
+                .filter(portfolio -> accountId.equals(portfolio.getAccountId()))
+                .findFirst();
+        if (desiredPortfolio.isPresent()) {
+            return desiredPortfolio.get();
         } else {
-            final Optional<FakePortfolio> desiredPortfolio = portfolios.stream()
-                    .filter(portfolio -> accountId.equals(portfolio.getAccountId()))
-                    .findFirst();
-            if (desiredPortfolio.isPresent()) {
-                return desiredPortfolio.get();
-            } else {
-                final FakePortfolio portfolio = new FakePortfolio(accountId);
-                portfolios.add(portfolio);
-                return portfolio;
-            }
+            final FakePortfolio portfolio = new FakePortfolio(accountId);
+            portfolios.add(portfolio);
+            return portfolio;
         }
     }
 

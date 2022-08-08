@@ -18,7 +18,7 @@ scheduling:
 
 scheduled-bot:
   bot-configs:
-    - broker-account-id: "2000124699"
+    - account-id: "2000124699"
       ticker: FXIT
       candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
@@ -31,7 +31,7 @@ scheduled-bot:
         bigWindow: 200
         indexCoefficient: 0.5
         greedy: true
-    - broker-account-id: "2000124698"
+    - account-id: "2000124698"
       ticker: FXIT
       candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003

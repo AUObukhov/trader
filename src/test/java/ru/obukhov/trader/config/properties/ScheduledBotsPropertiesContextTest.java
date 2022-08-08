@@ -76,8 +76,21 @@ class ScheduledBotsPropertiesContextTest {
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
+    void beanCreationFails_whenAccountIdIsNull() {
+        contextRunner
+                .withPropertyValues("scheduled-bot.bot-configs[0].ticker:FXCN")
+                .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
+                .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
+                .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
+                .run(AssertUtils.createBindValidationExceptionAssertConsumer("accountId is mandatory"));
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenTickerIsNull() {
         contextRunner
+                .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
@@ -89,6 +102,7 @@ class ScheduledBotsPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenCandleIntervalIsNull() {
         contextRunner
+                .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
                 .withPropertyValues("scheduled-bot.bot-configs[0].ticker:FXCN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
@@ -100,6 +114,7 @@ class ScheduledBotsPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenCommissionIsNull() {
         contextRunner
+                .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
                 .withPropertyValues("scheduled-bot.bot-configs[0].ticker:FXCN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].strategy-type:cross")
@@ -111,6 +126,7 @@ class ScheduledBotsPropertiesContextTest {
         // Sonar warning "Tests should include assertions"
     void beanCreationFails_whenStrategyTypeIsNull() {
         contextRunner
+                .withPropertyValues("scheduled-bot.bot-configs[0].accountId:2000124699")
                 .withPropertyValues("scheduled-bot.bot-configs[0].ticker:FXCN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].candle-interval:CANDLE_INTERVAL_1_MIN")
                 .withPropertyValues("scheduled-bot.bot-configs[0].commission:0")
