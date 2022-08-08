@@ -1,9 +1,9 @@
 package ru.obukhov.trader.web.controller;
 
 import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -14,7 +14,6 @@ import ru.tinkoff.piapi.contract.v1.AccessLevel;
 import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.AccountStatus;
 import ru.tinkoff.piapi.contract.v1.AccountType;
-import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -22,8 +21,10 @@ import java.util.List;
 
 class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
-    @MockBean
-    private UsersService usersService;
+    @BeforeEach
+    void init() {
+        Mockito.reset(usersService);
+    }
 
     @Test
     @SuppressWarnings("java:S2699")

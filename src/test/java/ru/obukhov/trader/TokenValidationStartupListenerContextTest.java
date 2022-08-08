@@ -12,9 +12,6 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
 import ru.obukhov.trader.market.impl.UserService;
-import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
-
-import java.util.concurrent.CompletionException;
 
 @ExtendWith(MockitoExtension.class)
 class TokenValidationStartupListenerContextTest {
@@ -27,25 +24,15 @@ class TokenValidationStartupListenerContextTest {
             .withInitializer(new ConfigDataApplicationContextInitializer());
 
     @Test
-    void test_throwsException_whenTokenIsWrong() {
-        final WrongTokenException wrongTokenException = new WrongTokenException();
-        final String message = "ru.tinkoff.invest.openapi.exceptions.WrongTokenException: Попытка использовать неверный токен";
-        final CompletionException completionException = new CompletionException(message, wrongTokenException);
-        Mockito.when(userService.getAccounts()).thenThrow(completionException);
+    void test_throwsException_whenApiCallThrowsException() {
+        final String message = "some exception";
+        final RuntimeException exception = new RuntimeException(message);
+        Mockito.when(userService.getAccounts()).thenThrow(exception);
         contextRunner
                 .withBean(UserService.class, () -> userService)
                 .withBean(TokenValidationStartupListener.class)
-                .run(context -> Assertions.assertThrows(CompletionException.class, () -> publishApplicationStartedEvent(context), message)
+                .run(context -> Assertions.assertThrows(RuntimeException.class, () -> publishApplicationStartedEvent(context), message)
                 );
-    }
-
-    @Test
-    void test_skipsUnknownExceptions() {
-        Mockito.when(userService.getAccounts()).thenThrow(new RuntimeException());
-        contextRunner
-                .withBean(UserService.class, () -> userService)
-                .withBean(TokenValidationStartupListener.class)
-                .run(context -> Assertions.assertDoesNotThrow(() -> publishApplicationStartedEvent(context)));
     }
 
     private void publishApplicationStartedEvent(ConfigurableApplicationContext context) {

@@ -1,5 +1,6 @@
 package ru.obukhov.trader.web.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +22,10 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 
 @AutoConfigureMockMvc
@@ -38,9 +41,16 @@ abstract class ControllerIntegrationTest {
     protected InstrumentsService instrumentsService;
     @MockBean
     protected MarketDataService marketDataService;
+    @MockBean
+    protected UsersService usersService;
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @BeforeEach
+    void init() {
+        Mockito.when(usersService.getAccountsSync()).thenReturn(Collections.emptyList());
+    }
 
     protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
         final String expectedResponseString = TestUtils.OBJECT_MAPPER.writeValueAsString(expectedResponse);
