@@ -4,9 +4,9 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,11 +19,11 @@ public class DecisionData {
     private PortfolioPosition position;
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
-    private MarketInstrument instrument;
+    private Share share;
     private double commission;
 
-    public Integer getPositionLotsCount() {
-        return position.count() / instrument.lot();
+    public Long getQuantityLots() {
+        return position.quantityLots().longValueExact();
     }
 
     public BigDecimal getAveragePositionPrice() {
@@ -37,7 +37,7 @@ public class DecisionData {
     }
 
     public int getLotSize() {
-        return instrument.lot();
+        return share.getLot();
     }
 
 }

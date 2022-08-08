@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
+import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.BooleanUtils;
@@ -28,6 +29,12 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
+import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.core.models.Money;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -50,6 +57,8 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
+    private static final MoneyValueMapper MONEY_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     // region assertEquals
@@ -88,6 +97,53 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(@Nullable final MoneyValue expected, final BigDecimal actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.map(expected))) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final BigDecimal expected, final MoneyValue actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.map(actual))) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(@Nullable final OffsetDateTime expected, @Nullable final Timestamp actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
+    public static void assertEquals(final PortfolioPosition portfolioPosition1, final PortfolioPosition portfolioPosition2) {
+        Assertions.assertEquals(portfolioPosition1.ticker(), portfolioPosition2.ticker());
+        Assertions.assertEquals(portfolioPosition1.instrumentType(), portfolioPosition2.instrumentType());
+        assertEquals(portfolioPosition1.quantity(), portfolioPosition2.quantity());
+        Assertions.assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
+        assertEquals(portfolioPosition1.expectedYield(), portfolioPosition2.expectedYield());
+        Assertions.assertEquals(portfolioPosition1.currentPrice(), portfolioPosition2.currentPrice());
+        assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
+    }
+
+    public static void assertEquals(final Money money1, final Money money2) {
+        Assertions.assertEquals(money1.getCurrency(), money2.getCurrency());
+        assertEquals(money1.getValue(), money2.getValue());
+    }
+
     public static void assertEquals(final byte[] expected, final byte[] actual) {
         Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < actual.length; i++) {
@@ -119,36 +175,32 @@ public class AssertUtils {
 
     // region list assertions
 
-    public static void assertListsAreEqual(final List<?> expected, final List<?> actual) {
+    public static void assertEquals(final List<?> expected, final List<?> actual) {
         assertListSize(expected, actual);
 
         final StringBuilder messageBuilder = new StringBuilder();
         for (int i = 0; i < expected.size(); i++) {
             final Object expectedValue = expected.get(i);
             final Object actualValue = actual.get(i);
-            if (expectedValue instanceof List expectedValueList && actualValue instanceof List actualValueList) {
-                assertListsAreEqual(expectedValueList, actualValueList);
+            if (expectedValue instanceof List expectedList && actualValue instanceof List actualList) {
+                assertEquals(expectedList, actualList);
+            } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof BigDecimal actualBigDecimal) {
+                if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
+            } else if (expectedValue instanceof Money expectedMoney && actualValue instanceof Money actualMoney) {
+                if (!equals(expectedMoney, actualMoney)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
+            } else if (expectedValue instanceof Order expectedOrder && actualValue instanceof Order actualOrder) {
+                if (!equals(expectedOrder, actualOrder)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                            .append(System.lineSeparator());
+                }
             } else if (!Objects.equals(expectedValue, actualValue)) {
-                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
-                        .append(System.lineSeparator());
-            }
-        }
-
-        final String message = messageBuilder.toString();
-        if (!message.isEmpty()) {
-            Assertions.fail(message);
-        }
-    }
-
-    public static void assertBigDecimalListsAreEqual(final List<BigDecimal> expected, final List<BigDecimal> actual) {
-        assertListSize(expected, actual);
-
-        final StringBuilder messageBuilder = new StringBuilder();
-        for (int i = 0; i < expected.size(); i++) {
-            final BigDecimal expectedValue = expected.get(i);
-            final BigDecimal actualValue = actual.get(i);
-            if (!DecimalUtils.numbersEqual(expectedValue, actualValue)) {
-                messageBuilder.append(String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, i, actualValue))
+                messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
                         .append(System.lineSeparator());
             }
         }
@@ -164,6 +216,32 @@ public class AssertUtils {
             final String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
             Assertions.fail(message);
         }
+    }
+
+    public static boolean equals(final Money money1, final Money money2) {
+        return money1.getCurrency().equals(money2.getCurrency())
+                && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
+    }
+
+    public static boolean equals(final Order order1, final Order order2) {
+        return Objects.equals(order1.orderId(), order2.orderId())
+                && Objects.equals(order1.executionReportStatus(), order2.executionReportStatus())
+                && Objects.equals(order1.quantityLots(), order2.quantityLots())
+                && DecimalUtils.numbersEqual(order1.initialOrderPrice(), order2.initialOrderPrice())
+                && DecimalUtils.numbersEqual(order1.totalOrderAmount(), order2.totalOrderAmount())
+                && DecimalUtils.numbersEqual(order1.averagePositionPrice(), order2.averagePositionPrice())
+                && DecimalUtils.numbersEqual(order1.commission(), order2.commission())
+                && Objects.equals(order1.figi(), order2.figi())
+                && Objects.equals(order1.direction(), order2.direction())
+                && DecimalUtils.numbersEqual(order1.initialSecurityPrice(), order2.initialSecurityPrice())
+                && DecimalUtils.numbersEqual(order1.serviceCommission(), order2.serviceCommission())
+                && Objects.equals(order1.currency(), order2.currency())
+                && Objects.equals(order1.type(), order2.type())
+                && Objects.equals(order1.dateTime(), order2.dateTime());
+    }
+
+    private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {
+        return String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, index, actualValue);
     }
 
     // endregion
@@ -236,6 +314,8 @@ public class AssertUtils {
                     assertCellValue(cell, doubleValue);
                 } else if (value instanceof Integer integerValue) {
                     assertCellValue(cell, integerValue);
+                } else if (value instanceof Long longValue) {
+                    assertCellValue(cell, longValue);
                 } else if (value instanceof LocalDateTime localDateTimeValue) {
                     assetCellValue(cell, localDateTimeValue);
                 } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
@@ -270,6 +350,11 @@ public class AssertUtils {
     }
 
     public static void assertCellValue(final Cell cell, final Integer value) {
+        final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
+        AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
+    }
+
+    public static void assertCellValue(final Cell cell, final Long value) {
         final double expectedValue = value == null ? NumberUtils.DOUBLE_ZERO : value.doubleValue();
         AssertUtils.assertEquals(expectedValue, cell.getNumericCellValue());
     }

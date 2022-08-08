@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.model.Point;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.Crossover;
 
 import java.math.BigDecimal;
@@ -110,7 +110,7 @@ class TrendUtilsUnitTest {
 
         final List<Integer> extremes = TrendUtils.getLocalExtremes(bigDecimalValues, comparator);
 
-        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+        AssertUtils.assertEquals(expectedExtremes, extremes);
     }
 
     // endregion
@@ -131,7 +131,7 @@ class TrendUtilsUnitTest {
                 Point.of(times.get(2), values.get(2))
         );
 
-        AssertUtils.assertListsAreEqual(expectedLocalExtremes, localExtremes);
+        AssertUtils.assertEquals(expectedLocalExtremes, localExtremes);
     }
 
     // endregion
@@ -226,7 +226,7 @@ class TrendUtilsUnitTest {
 
         final List<Integer> extremes = TrendUtils.getSortedLocalExtremes(bigDecimalValues, comparator);
 
-        AssertUtils.assertListsAreEqual(expectedExtremes, extremes);
+        AssertUtils.assertEquals(expectedExtremes, extremes);
     }
 
     // endregion
@@ -312,14 +312,14 @@ class TrendUtilsUnitTest {
         Assertions.assertEquals(2, restraintLines.size());
         final List<Point> expectedRestraintLine1 = List.of(
                 Point.of(times.get(0), 10.000000),
-                Point.of(times.get(1), 10.333333),
-                Point.of(times.get(2), 10.666667),
+                Point.of(times.get(1), 10.333333333),
+                Point.of(times.get(2), 10.666666667),
                 Point.of(times.get(3), 11.000000),
-                Point.of(times.get(4), 11.333333),
-                Point.of(times.get(5), 11.666667),
+                Point.of(times.get(4), 11.333333333),
+                Point.of(times.get(5), 11.666666667),
                 Point.of(times.get(6), 12.000000)
         );
-        AssertUtils.assertListsAreEqual(expectedRestraintLine1, restraintLines.get(0));
+        AssertUtils.assertEquals(expectedRestraintLine1, restraintLines.get(0));
 
         final List<Point> expectedRestraintLine2 = List.of(
                 Point.of(times.get(3), 11.0),
@@ -330,7 +330,7 @@ class TrendUtilsUnitTest {
                 Point.of(times.get(8), 12.0),
                 Point.of(times.get(9), 12.2)
         );
-        AssertUtils.assertListsAreEqual(expectedRestraintLine2, restraintLines.get(1));
+        AssertUtils.assertEquals(expectedRestraintLine2, restraintLines.get(1));
     }
 
     // endregion
@@ -392,7 +392,7 @@ class TrendUtilsUnitTest {
     void getCrossovers(final List<BigDecimal> values1, final List<BigDecimal> values2, final List<Integer> expectedCrossovers) {
         final List<Integer> crossovers = TrendUtils.getCrossovers(values1, values2);
 
-        AssertUtils.assertListsAreEqual(expectedCrossovers, crossovers);
+        AssertUtils.assertEquals(expectedCrossovers, crossovers);
     }
 
     @Test

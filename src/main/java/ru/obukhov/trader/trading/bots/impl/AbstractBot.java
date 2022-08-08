@@ -2,20 +2,17 @@ package ru.obukhov.trader.trading.bots.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
@@ -23,6 +20,11 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -40,8 +42,9 @@ public abstract class AbstractBot implements Bot {
     private static final int LAST_CANDLES_COUNT = 1000;
 
     protected final MarketService marketService;
-    protected final OperationsService operationsService;
-    protected final OrdersService ordersService;
+    protected final MarketInstrumentsService marketInstrumentsService;
+    protected final MarketOperationsService operationsService;
+    protected final MarketOrdersService ordersService;
     protected final PortfolioService portfolioService;
     protected final TinkoffService tinkoffService;
 
@@ -50,6 +53,7 @@ public abstract class AbstractBot implements Bot {
 
     protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
         this.marketService = tinkoffServices.marketService();
+        this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
         this.operationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
         this.portfolioService = tinkoffServices.portfolioService();
@@ -83,7 +87,7 @@ public abstract class AbstractBot implements Bot {
             } else {
                 fillDecisionData(botConfig, decisionData, ticker);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(botConfig.getBrokerAccountId(), ticker, decision);
+                performOperation(botConfig.getAccountId(), ticker, decision);
             }
             return currentCandles;
         } else {
@@ -93,30 +97,41 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
-        final MarketInstrument instrument = marketService.getInstrument(ticker);
+        final Share share = marketInstrumentsService.getShare(ticker);
+        final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getBrokerAccountId(), instrument.currency()));
-        decisionData.setPosition(portfolioService.getPosition(botConfig.getBrokerAccountId(), ticker));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.getBrokerAccountId(), ticker));
-        decisionData.setInstrument(instrument);
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getAccountId(), currency));
+        decisionData.setPosition(portfolioService.getSecurity(botConfig.getAccountId(), ticker));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.getAccountId(), ticker));
+        decisionData.setShare(share);
         decisionData.setCommission(botConfig.getCommission());
     }
 
-    private List<Operation> getLastWeekOperations(@Nullable final String brokerAccountId, final String ticker) throws IOException {
+    private List<Operation> getLastWeekOperations(final String accountId, final String ticker) throws IOException {
         final OffsetDateTime now = tinkoffService.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
-        return operationsService.getOperations(brokerAccountId, interval, ticker);
+        return operationsService.getOperations(accountId, interval, ticker);
     }
 
-    private void performOperation(@Nullable final String brokerAccountId, final String ticker, final Decision decision) throws IOException {
+    private void performOperation(final String accountId, final String ticker, final Decision decision) throws IOException {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
         }
 
-        final OperationType operation = decision.getAction() == DecisionAction.BUY ? OperationType.BUY : OperationType.SELL;
-        final PlacedMarketOrder order = ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), operation);
-        log.info("Placed order:\n{}", order);
+        final OrderDirection direction = decision.getAction() == DecisionAction.BUY
+                ? OrderDirection.ORDER_DIRECTION_BUY
+                : OrderDirection.ORDER_DIRECTION_SELL;
+        final PostOrderResponse postOrderResponse = ordersService.postOrder(
+                accountId,
+                ticker,
+                decision.getQuantityLots(),
+                null,
+                direction,
+                OrderType.ORDER_TYPE_MARKET,
+                null
+        );
+        log.info("Placed order:\n{}", postOrderResponse);
     }
 
 }

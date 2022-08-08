@@ -1,64 +1,72 @@
 package ru.obukhov.trader.market.impl;
 
-import org.jetbrains.annotations.Nullable;
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.model.BrokerAccountType;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
-import ru.obukhov.trader.market.model.Candles;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.CurrencyPosition;
-import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.MarketOrderRequest;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
+import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Orderbook;
-import ru.obukhov.trader.market.model.PlacedLimitOrder;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestData;
-import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
-import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
-import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
-import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
-import ru.obukhov.trader.web.client.service.interfaces.UserClient;
+import ru.obukhov.trader.market.util.DataStructsHelper;
+import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
+import ru.tinkoff.piapi.contract.v1.AccessLevel;
+import ru.tinkoff.piapi.contract.v1.Account;
+import ru.tinkoff.piapi.contract.v1.AccountStatus;
+import ru.tinkoff.piapi.contract.v1.AccountType;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
+import ru.tinkoff.piapi.contract.v1.OrderStage;
+import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
+import ru.tinkoff.piapi.core.OrdersService;
+import ru.tinkoff.piapi.core.UsersService;
+import ru.tinkoff.piapi.core.models.Portfolio;
+import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.Iterator;
+import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class RealTinkoffServiceUnitTest {
 
     @Mock
-    private MarketClient marketClient;
+    private InstrumentsService instrumentsService;
     @Mock
-    private OperationsClient operationsClient;
+    private MarketDataService marketDataService;
     @Mock
-    private OrdersClient ordersClient;
+    private OperationsService operationsService;
     @Mock
-    private PortfolioClient portfolioClient;
+    private OrdersService ordersService;
     @Mock
-    private UserClient userClient;
+    private UsersService usersService;
 
     @Mock
     private ApplicationContext applicationContext;
@@ -75,151 +83,76 @@ class RealTinkoffServiceUnitTest {
     // region MarketContext methods tests
 
     @Test
-    void getMarketStocks_returnsStocks() throws IOException {
-        final MarketInstrument instrument1 = TestData.createMarketInstrument();
-        final MarketInstrument instrument2 = TestData.createMarketInstrument();
-        Mockito.when(marketClient.getMarketStocks()).thenReturn(List.of(instrument1, instrument2));
+    void getAllShares_returnsShares() {
+        final Share share1 = Share.newBuilder().build();
+        final Share share2 = Share.newBuilder().build();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share1, share2));
 
-        final List<MarketInstrument> result = realTinkoffService.getMarketStocks();
-
-        Assertions.assertEquals(2, result.size());
-        Assertions.assertSame(instrument1, result.get(0));
-        Assertions.assertSame(instrument2, result.get(1));
-    }
-
-    @Test
-    void getMarketBonds_returnsBonds() throws IOException {
-        final MarketInstrument instrument1 = TestData.createMarketInstrument();
-        final MarketInstrument instrument2 = TestData.createMarketInstrument();
-        Mockito.when(marketClient.getMarketBonds()).thenReturn(List.of(instrument1, instrument2));
-
-        final List<MarketInstrument> result = realTinkoffService.getMarketBonds();
+        final List<Share> result = realTinkoffService.getAllShares();
 
         Assertions.assertEquals(2, result.size());
-        Assertions.assertSame(instrument1, result.get(0));
-        Assertions.assertSame(instrument2, result.get(1));
+        Assertions.assertSame(share1, result.get(0));
+        Assertions.assertSame(share2, result.get(1));
     }
-
-    @Test
-    void getMarketEtfs_returnsEtfs() throws IOException {
-        final MarketInstrument instrument1 = TestData.createMarketInstrument();
-        final MarketInstrument instrument2 = TestData.createMarketInstrument();
-        Mockito.when(marketClient.getMarketEtfs()).thenReturn(List.of(instrument1, instrument2));
-
-        final List<MarketInstrument> result = realTinkoffService.getMarketEtfs();
-
-        Assertions.assertEquals(2, result.size());
-        Assertions.assertSame(instrument1, result.get(0));
-        Assertions.assertSame(instrument2, result.get(1));
-    }
-
-    @Test
-    void getMarketCurrencies_returnsCurrencies() throws IOException {
-        final MarketInstrument instrument1 = TestData.createMarketInstrument();
-        final MarketInstrument instrument2 = TestData.createMarketInstrument();
-        Mockito.when(marketClient.getMarketCurrencies()).thenReturn(List.of(instrument1, instrument2));
-
-        final List<MarketInstrument> result = realTinkoffService.getMarketCurrencies();
-
-        Assertions.assertEquals(2, result.size());
-        Assertions.assertSame(instrument1, result.get(0));
-        Assertions.assertSame(instrument2, result.get(1));
-    }
-
-    // region getMarketOrderbook tests
-
-    @Test
-    void getMarketOrderbook_returnsOrderbook() throws IOException {
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final int depth = 10;
-
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
-
-        final Orderbook orderbook = new Orderbook(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Mockito.when(marketClient.getMarketOrderbook(figi, depth)).thenReturn(orderbook);
-
-        final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
-        Assertions.assertSame(orderbook, result);
-    }
-
-    @Test
-    void getMarketOrderbook_returnsNull_whenGetsNoOrderbook() throws IOException {
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final int depth = 10;
-
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
-
-        final Orderbook result = realTinkoffService.getMarketOrderbook(ticker, depth);
-        Assertions.assertNull(result);
-    }
-
-    // endregion
 
     // region getMarketCandles tests
 
     @Test
-    void getMarketCandles_returnsMappedCandles() throws IOException {
+    void getMarketCandles_returnsMappedCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
-        final Candle tinkoffCandle1 = TestData.createTinkoffCandle(
-                candleInterval,
-                1000,
-                1500,
-                2000,
-                500,
-                from.plusMinutes(1)
-        );
-        final Candle tinkoffCandle2 = TestData.createTinkoffCandle(
-                candleInterval,
-                1500,
-                2000,
-                2500,
-                1000,
-                from.plusMinutes(1)
-        );
-        final Candles expectedCandles = new Candles(null, null, List.of(tinkoffCandle1, tinkoffCandle2));
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        final int openPrice1 = 1000;
+        final int closePrice1 = 1500;
+        final int highestPrice1 = 2000;
+        final int lowestPrice1 = 500;
+        final OffsetDateTime time1 = from.plusMinutes(1);
+        final HistoricCandle historicCandle1 = TestData.createHistoricCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1, true);
+
+        final int openPrice2 = 1500;
+        final int closePrice2 = 2000;
+        final int highestPrice2 = 2500;
+        final int lowestPrice2 = 1000;
+        final OffsetDateTime time2 = from.plusMinutes(2);
+        final HistoricCandle historicCandle2 = TestData.createHistoricCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2, true);
+
+        final int openPrice3 = 2000;
+        final int closePrice3 = 2500;
+        final int highestPrice3 = 3000;
+        final int lowestPrice3 = 500;
+        final OffsetDateTime time3 = from.plusMinutes(3);
+        final HistoricCandle historicCandle3 = TestData.createHistoricCandle(openPrice3, closePrice3, highestPrice3, lowestPrice3, time3, false);
+
+        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
+                .thenReturn(List.of(historicCandle1, historicCandle2, historicCandle3));
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
-        Assertions.assertEquals(expectedCandles.candleList().size(), candles.size());
-        Assertions.assertEquals(tinkoffCandle1, candles.get(0));
-        Assertions.assertEquals(tinkoffCandle2, candles.get(1));
+        Assertions.assertEquals(2, candles.size());
+        final Candle expectedCandle1 = TestData.createCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1);
+        final Candle expectedCandle2 = TestData.createCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2);
+        Assertions.assertEquals(expectedCandle1, candles.get(0));
+        Assertions.assertEquals(expectedCandle2, candles.get(1));
     }
 
     @Test
-    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() throws IOException {
+    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final Candles expectedCandles = new Candles(null, null, List.of());
-        Mockito.when(marketClient.getMarketCandles(figi, from, to, candleInterval)).thenReturn(expectedCandles);
+        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
+                .thenReturn(Collections.emptyList());
 
         final List<Candle> candles = realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
 
@@ -228,53 +161,24 @@ class RealTinkoffServiceUnitTest {
 
     // endregion
 
-    // region searchMarketInstrument tests
-
-    @Test
-    void searchMarketInstrument_returnsNull_whenGetsNoInstruments() throws IOException {
-        final String ticker = "ticker";
-
-        Mockito.when(marketClient.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of());
-
-        final MarketInstrument result = realTinkoffService.searchMarketInstrument(ticker);
-
-        Assertions.assertNull(result);
-    }
-
-    @Test
-    void searchMarketInstrument_returnsFirstInstrument_whenGetsMultipleInstruments() throws IOException {
-        final String ticker = "ticker";
-        final MarketInstrument instrument1 = TestData.createMarketInstrument(ticker);
-        final MarketInstrument instrument2 = TestData.createMarketInstrument(ticker);
-
-        Mockito.when(marketClient.searchMarketInstrumentsByTicker(ticker)).thenReturn(List.of(instrument1, instrument2));
-
-        final MarketInstrument result = realTinkoffService.searchMarketInstrument(ticker);
-
-        Assertions.assertSame(instrument1, result);
-    }
-
-    // endregion
-
     // region OperationsContext methods tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOperations_returnsOperations(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void getOperations_returnsOperations() throws IOException {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
 
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
         final Operation operation1 = TestData.createOperation();
         final Operation operation2 = TestData.createOperation();
         final List<Operation> operations = List.of(operation1, operation2);
-        Mockito.when(operationsClient.getOperations(brokerAccountId, from, to, figi)).thenReturn(operations);
+        Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi)).thenReturn(operations);
 
-        final List<Operation> result = realTinkoffService.getOperations(brokerAccountId, Interval.of(from, to), ticker);
+        final List<Operation> result = realTinkoffService.getOperations(accountId, Interval.of(from, to), ticker);
 
         Assertions.assertSame(operations, result);
     }
@@ -283,140 +187,283 @@ class RealTinkoffServiceUnitTest {
 
     // region OrdersContext methods tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getOrders(@Nullable final String brokerAccountId) throws IOException {
-        final List<Order> orders = List.of(TestData.createOrder(), TestData.createOrder());
-        Mockito.when(ordersClient.getOrders(brokerAccountId)).thenReturn(orders);
+    @Test
+    void getOrders() {
 
-        final List<Order> result = realTinkoffService.getOrders(brokerAccountId);
+        // arrange
 
-        Assertions.assertSame(orders, result);
+        final String accountId = "2000124699";
+
+        // todo realistic data (copy from OrderMapperTest)
+        final Currency currency1 = Currency.EUR;
+        final String orderId1 = "orderId1";
+        final OrderExecutionReportStatus executionReportStatus1 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
+        final int lotsRequested1 = 1;
+        final int lotsExecuted1 = 2;
+        final double initialOrderPrice1 = 3;
+        final double totalOrderAmount1 = 4;
+        final double averagePositionPrice1 = 5;
+        final double initialCommission1 = 6;
+        final double executedCommission1 = 7;
+        final String figi1 = "figi1";
+        final OrderDirection orderDirection1 = OrderDirection.ORDER_DIRECTION_BUY;
+        final double initialSecurityPrice1 = 8;
+        final List<OrderStage> stages1 = List.of(
+                TestData.createOrderStage(currency1, 9, 10, "tradeId1"),
+                TestData.createOrderStage(currency1, 11, 12, "tradeId1")
+        );
+        final double serviceCommission1 = 13;
+        final ru.tinkoff.piapi.contract.v1.OrderType orderType1 = OrderType.ORDER_TYPE_MARKET;
+        final OffsetDateTime orderDate1 = OffsetDateTime.now();
+
+        final OrderState orderState1 = TestData.createOrderState(
+                currency1,
+                orderId1,
+                executionReportStatus1,
+                lotsRequested1,
+                lotsExecuted1,
+                initialOrderPrice1,
+                totalOrderAmount1,
+                averagePositionPrice1,
+                initialCommission1,
+                executedCommission1,
+                figi1,
+                orderDirection1,
+                initialSecurityPrice1,
+                stages1,
+                serviceCommission1,
+                orderType1,
+                orderDate1
+        );
+
+        final Currency currency2 = Currency.USD;
+        final String orderId2 = "orderId2";
+        final OrderExecutionReportStatus executionReportStatus2 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_NEW;
+        final int lotsRequested2 = 14;
+        final int lotsExecuted2 = 15;
+        final double initialOrderPrice2 = 16;
+        final double totalOrderAmount2 = 17;
+        final double averagePositionPrice2 = 18;
+        final double initialCommission2 = 19;
+        final double executedCommission2 = 20;
+        final String figi2 = "figi2";
+        final OrderDirection orderDirection2 = OrderDirection.ORDER_DIRECTION_SELL;
+        final double initialSecurityPrice2 = 21;
+        final List<OrderStage> stages2 = List.of(
+                TestData.createOrderStage(currency2, 22, 23, "tradeId2"),
+                TestData.createOrderStage(currency2, 24, 25, "tradeId2")
+        );
+        final double serviceCommission2 = 26;
+        final ru.tinkoff.piapi.contract.v1.OrderType orderType2 = OrderType.ORDER_TYPE_LIMIT;
+        final OffsetDateTime orderDate2 = OffsetDateTime.now();
+
+        final OrderState orderState2 = TestData.createOrderState(
+                currency2,
+                orderId2,
+                executionReportStatus2,
+                lotsRequested2,
+                lotsExecuted2,
+                initialOrderPrice2,
+                totalOrderAmount2,
+                averagePositionPrice2,
+                initialCommission2,
+                executedCommission2,
+                figi2,
+                orderDirection2,
+                initialSecurityPrice2,
+                stages2,
+                serviceCommission2,
+                orderType2,
+                orderDate2
+        );
+
+        final List<OrderState> orderStates = List.of(orderState1, orderState2);
+        Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(orderStates);
+
+        // action
+
+        final List<Order> result = realTinkoffService.getOrders(accountId);
+
+        // assert
+
+        final Order order1 = TestData.createOrder(
+                currency1,
+                orderId1,
+                executionReportStatus1,
+                lotsExecuted1,
+                initialOrderPrice1,
+                totalOrderAmount1,
+                averagePositionPrice1,
+                executedCommission1,
+                figi1,
+                orderDirection1,
+                initialSecurityPrice1,
+                serviceCommission1,
+                orderType1,
+                orderDate1
+        );
+        final Order order2 = TestData.createOrder(
+                currency2,
+                orderId2,
+                executionReportStatus2,
+                lotsExecuted2,
+                initialOrderPrice2,
+                totalOrderAmount2,
+                averagePositionPrice2,
+                executedCommission2,
+                figi2,
+                orderDirection2,
+                initialSecurityPrice2,
+                serviceCommission2,
+                orderType2,
+                orderDate2
+        );
+        final List<Order> expectedResult = List.of(order1, order2);
+
+        AssertUtils.assertEquals(expectedResult, result);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void placeLimitOrder(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void postOrder() {
+        final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
-
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
-
-        final LimitOrderRequest orderRequest = new LimitOrderRequest(null, null, null);
-
-        final PlacedLimitOrder placedOrder = new PlacedLimitOrder(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Mockito.when(ordersClient.placeLimitOrder(brokerAccountId, figi, orderRequest)).thenReturn(placedOrder);
-        final PlacedLimitOrder result = realTinkoffService.placeLimitOrder(brokerAccountId, ticker, orderRequest);
-
-        Assertions.assertSame(placedOrder, result);
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void placeMarketOrder(@Nullable final String brokerAccountId) throws IOException {
-        final String ticker = "ticker";
-        final String figi = "figi";
-
-        mockInstrument(TestData.createMarketInstrument(ticker, figi));
-
-        final MarketOrderRequest orderRequest = new MarketOrderRequest(1, OperationType.BUY);
-
-        final PlacedMarketOrder placedOrder = new PlacedMarketOrder(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Mockito.when(ordersClient.placeMarketOrder(brokerAccountId, figi, orderRequest))
-                .thenReturn(placedOrder);
-
-        final PlacedMarketOrder result = realTinkoffService.placeMarketOrder(brokerAccountId, ticker, orderRequest);
-
-        Assertions.assertSame(placedOrder, result);
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void cancelOrder(@Nullable final String brokerAccountId) throws IOException {
+        final long quantityLots = 10;
+        final BigDecimal price = BigDecimal.valueOf(200);
+        final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
+        final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
 
-        realTinkoffService.cancelOrder(brokerAccountId, orderId);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        Mockito.verify(ordersClient, Mockito.times(1)).cancelOrder(brokerAccountId, orderId);
+        PostOrderResponse response = TestData.createPostOrderResponse(
+                Currency.USD,
+                2000,
+                10,
+                20,
+                orderId,
+                quantityLots,
+                figi,
+                direction,
+                type
+        );
+        Mockito.when(ordersService.postOrderSync(figi, quantityLots, DecimalUtils.toQuotation(price), direction, accountId, type, orderId))
+                .thenReturn(response);
+
+        final PostOrderResponse result = realTinkoffService.postOrder(accountId, ticker, quantityLots, price, direction, type, orderId);
+
+        Assertions.assertSame(response, result);
+    }
+
+    @Test
+    void cancelOrder() {
+        final String accountId = "2000124699";
+        final String orderId = "orderId";
+
+        realTinkoffService.cancelOrder(accountId, orderId);
+
+        Mockito.verify(ordersService, Mockito.times(1)).cancelOrderSync(accountId, orderId);
     }
 
     // endregion
 
     // region PortfolioContext methods tests
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getPortfolioPositions_returnsAndMapsPositions(@Nullable final String brokerAccountId) throws IOException {
-        final PortfolioPosition tinkoffPosition1 = TestData.createPortfolioPosition(
-                "ticker1",
-                1000,
-                0,
-                Currency.RUB,
-                100,
-                10,
-                110,
-                100,
-                "name1"
+    @Test
+    void getPortfolioPositions_returnsAndMapsPositions() {
+        final String accountId = "2000124699";
+
+        final String figi1 = "figi1";
+        final String ticker1 = "ticker1";
+        final InstrumentType instrumentType1 = InstrumentType.STOCK;
+        final int quantity1 = 1000;
+        final int averagePositionPrice1 = 110;
+        final int expectedYield1 = 10000;
+        final int currentPrice1 = 120;
+        final int quantityLots1 = 10;
+        final Currency currency1 = Currency.RUB;
+
+        final String figi2 = "figi2";
+        final String ticker2 = "ticker2";
+        final InstrumentType instrumentType2 = InstrumentType.ETF;
+        final int quantity2 = 2000;
+        final int averagePositionPrice2 = 440;
+        final int expectedYield2 = -10000;
+        final int currentPrice2 = 430;
+        final int quantityLots2 = 5;
+        final Currency currency2 = Currency.USD;
+
+        Mocker.mockTickerByFigi(instrumentsService, ticker1, figi1);
+        Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);
+
+        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPortfolioPosition1 = TestData.createTinkoffPortfolioPosition(
+                figi1,
+                instrumentType1,
+                quantity1,
+                averagePositionPrice1,
+                expectedYield1,
+                currentPrice1,
+                quantityLots1,
+                currency1
         );
 
-        final PortfolioPosition tinkoffPosition2 = TestData.createPortfolioPosition(
-                "ticker2",
-                2000,
-                100,
-                Currency.USD,
-                200,
-                5,
-                440,
-                400,
-                "name2"
+        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPortfolioPosition2 = TestData.createTinkoffPortfolioPosition(
+                figi2,
+                instrumentType2,
+                quantity2,
+                averagePositionPrice2,
+                expectedYield2,
+                currentPrice2,
+                quantityLots2,
+                currency2
         );
 
-        final List<PortfolioPosition> portfolioPositions = List.of(tinkoffPosition1, tinkoffPosition2);
-        Mockito.when(portfolioClient.getPortfolio(brokerAccountId)).thenReturn(portfolioPositions);
+        final Portfolio portfolio = TestData.createPortfolio(tinkoffPortfolioPosition1, tinkoffPortfolioPosition2);
+        Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 
-        final Collection<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(brokerAccountId);
+        final List<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(accountId);
 
-        Assertions.assertEquals(portfolioPositions.size(), result.size());
-        Iterator<PortfolioPosition> resultIterator = result.iterator();
-        Assertions.assertEquals(tinkoffPosition1, resultIterator.next());
-        Assertions.assertEquals(tinkoffPosition2, resultIterator.next());
+        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
+                ticker1,
+                instrumentType1,
+                quantity1,
+                averagePositionPrice1,
+                expectedYield1,
+                currentPrice1,
+                quantityLots1,
+                currency1
+        );
+        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
+                ticker2,
+                instrumentType2,
+                quantity2,
+                averagePositionPrice2,
+                expectedYield2,
+                currentPrice2,
+                quantityLots2,
+                currency2
+        );
+
+        Assertions.assertEquals(2, result.size());
+        AssertUtils.assertEquals(expectedPosition1, result.get(0));
+        AssertUtils.assertEquals(expectedPosition2, result.get(1));
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    void getPortfolioCurrencies(@Nullable final String brokerAccountId) throws IOException {
-        final CurrencyPosition currency1 = TestData.createCurrencyPosition(Currency.RUB, 10000, 1000);
-        final CurrencyPosition currency2 = TestData.createCurrencyPosition(Currency.USD, 1000);
-        final List<CurrencyPosition> currencies = List.of(currency1, currency2);
-        Mockito.when(portfolioClient.getPortfolioCurrencies(brokerAccountId)).thenReturn(currencies);
+    @Test
+    void getPortfolioCurrencies() {
+        final String accountId = "2000124699";
 
-        final List<CurrencyPosition> result = realTinkoffService.getPortfolioCurrencies(brokerAccountId);
+        final List<MoneyValue> moneys = List.of(
+                TestData.createMoneyValue(10000, Currency.RUB),
+                TestData.createMoneyValue(1000, Currency.USD)
+        );
+        final List<MoneyValue> blocked = List.of(TestData.createMoneyValue(1000, Currency.RUB));
+        final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked);
+        Mockito.when(operationsService.getWithdrawLimitsSync(accountId)).thenReturn(withdrawLimits);
 
-        Assertions.assertSame(currencies, result);
+        final WithdrawLimits result = realTinkoffService.getWithdrawLimits(accountId);
+
+        Assertions.assertSame(withdrawLimits, result);
     }
 
     // endregion
@@ -424,17 +471,59 @@ class RealTinkoffServiceUnitTest {
     // region UserContext methods tests
 
     @Test
-    void getUserAccounts() throws IOException {
-        final List<UserAccount> userAccounts = List.of(
-                new UserAccount(BrokerAccountType.TINKOFF_IIS, "2008941383"),
-                new UserAccount(BrokerAccountType.TINKOFF, "2000124699")
-        );
+    void getUserAccounts() {
+        final String id1 = "2008941383";
+        final AccountType accountType1 = AccountType.ACCOUNT_TYPE_TINKOFF_IIS;
+        final String name1 = "ИИС";
+        final AccountStatus accountStatus1 = AccountStatus.ACCOUNT_STATUS_OPEN;
+        final Timestamp openedDate1 = DateTimeTestData.createTimestamp(1562889600);
+        final OffsetDateTime openedDateTime1 = DateTimeTestData.createDateTime(2019, 7, 12, 3, ZoneOffset.ofHours(3));
+        final Timestamp closedDate1 = DateTimeTestData.createTimestamp(-10800);
+        final OffsetDateTime closedDateTime1 = DateTimeTestData.createDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
+        final AccessLevel accessLevel1 = AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS;
 
-        Mockito.when(userClient.getAccounts()).thenReturn(userAccounts);
+        Account account1 = Account.newBuilder()
+                .setId(id1)
+                .setType(accountType1)
+                .setName(name1)
+                .setStatus(accountStatus1)
+                .setOpenedDate(openedDate1)
+                .setClosedDate(closedDate1)
+                .setAccessLevel(accessLevel1)
+                .build();
+
+        final String id2 = "2000124699";
+        final AccountType accountType2 = AccountType.ACCOUNT_TYPE_TINKOFF;
+        final String name2 = "Брокерский счёт";
+        final AccountStatus accountStatus2 = AccountStatus.ACCOUNT_STATUS_OPEN;
+        final Timestamp openedDate2 = DateTimeTestData.createTimestamp(1527206400);
+        final OffsetDateTime openedDateTime2 = DateTimeTestData.createDateTime(2018, 5, 25, 3, ZoneOffset.ofHours(3));
+        final Timestamp closedDate2 = DateTimeTestData.createTimestamp(-10800);
+        final OffsetDateTime closedDateTime2 = DateTimeTestData.createDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
+        final AccessLevel accessLevel2 = AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS;
+
+        Account account2 = Account.newBuilder()
+                .setId(id2)
+                .setType(accountType2)
+                .setName(name2)
+                .setStatus(accountStatus2)
+                .setOpenedDate(openedDate2)
+                .setClosedDate(closedDate2)
+                .setAccessLevel(accessLevel2)
+                .build();
+
+        Mockito.when(usersService.getAccountsSync())
+                .thenReturn(List.of(account1, account2));
+
+        final UserAccount userAccount1 = new UserAccount(id1, accountType1, name1, accountStatus1, openedDateTime1, closedDateTime1, accessLevel1);
+        final UserAccount userAccount2 = new UserAccount(id2, accountType2, name2, accountStatus2, openedDateTime2, closedDateTime2, accessLevel2);
+        final List<UserAccount> expectedUserAccounts = List.of(userAccount1, userAccount2);
+
+        Mockito.when(usersService.getAccountsSync()).thenReturn(List.of(account1, account2));
 
         final List<UserAccount> result = realTinkoffService.getAccounts();
 
-        Assertions.assertSame(userAccounts, result);
+        Assertions.assertEquals(expectedUserAccounts, result);
     }
 
     // endregion
@@ -451,11 +540,6 @@ class RealTinkoffServiceUnitTest {
 
         final int maxDelay = 5;
         Assertions.assertTrue(delay < maxDelay);
-    }
-
-    private void mockInstrument(MarketInstrument instrument) throws IOException {
-        Mockito.when(marketClient.searchMarketInstrumentsByTicker(instrument.ticker()))
-                .thenReturn(List.of(instrument));
     }
 
 }

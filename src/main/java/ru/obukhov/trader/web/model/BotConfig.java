@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import javax.validation.constraints.NotNull;
 import java.util.Map;
@@ -20,14 +20,14 @@ public class BotConfig {
 
     @Nullable
     @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
-    private final String brokerAccountId;
+    private final String accountId;
 
     @NotNull(message = "ticker is mandatory")
     @ApiModelProperty(value = "Ticker", position = 2, example = "FXIT")
     private final String ticker;
 
     @NotNull(message = "candleInterval is mandatory")
-    @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "1min")
+    @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "CANDLE_INTERVAL_1_MIN")
     private final CandleInterval candleInterval;
 
     @NotNull(message = "commission is mandatory")
@@ -48,14 +48,14 @@ public class BotConfig {
     private final Map<String, Object> strategyParams;
 
     public BotConfig(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final CandleInterval candleInterval,
             final Double commission,
             final StrategyType strategyType,
             final Map<String, Object> strategyParams
     ) {
-        this.brokerAccountId = brokerAccountId;
+        this.accountId = accountId;
         this.ticker = ticker;
         this.candleInterval = candleInterval;
         this.commission = commission;
@@ -66,7 +66,7 @@ public class BotConfig {
     @Override
     public String toString() {
         return "[" +
-                "brokerAccountId=" + brokerAccountId +
+                "accountId=" + accountId +
                 ", ticker=" + ticker +
                 ", candleInterval=" + candleInterval +
                 ", commission=" + commission +

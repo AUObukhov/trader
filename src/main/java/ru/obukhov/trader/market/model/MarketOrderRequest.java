@@ -1,4 +1,6 @@
 package ru.obukhov.trader.market.model;
 
-public record MarketOrderRequest(Integer lotsCount, OperationType operation) {
+import ru.tinkoff.piapi.contract.v1.OperationType;
+
+public record MarketOrderRequest(Long lotsCount, OperationType operation) {
 }

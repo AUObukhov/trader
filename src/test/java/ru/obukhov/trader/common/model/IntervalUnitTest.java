@@ -9,8 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.MockedStatic;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;

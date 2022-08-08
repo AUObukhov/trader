@@ -10,9 +10,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
-import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.market.model.MarketInstrument;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
@@ -169,7 +167,7 @@ public class MarketService {
         final ListIterator<Interval> listIterator = intervals.listIterator(intervals.size());
         while (listIterator.hasPrevious()) {
             final Interval interval = listIterator.previous();
-            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval._1MIN);
+            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
             if (!candles.isEmpty()) {
                 return CollectionUtils.lastElement(candles);
             }
@@ -239,41 +237,6 @@ public class MarketService {
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);
-    }
-
-    /**
-     * @return market instrument with given {@code ticker}, or null if it does not exist
-     */
-    public MarketInstrument getInstrument(final String ticker) throws IOException {
-        return tinkoffService.searchMarketInstrument(ticker);
-    }
-
-    /**
-     * @return list of available instruments of given {@code type} or all instruments if {@code type} is null
-     * @throws IllegalArgumentException when {@code type} is not
-     *                                  {@code ETF}, {@code STOCK}, {@code BOND}, or {@code CURRENCY}
-     */
-    public List<MarketInstrument> getInstruments(final InstrumentType type) throws IOException {
-        if (type == null) {
-            return getAllInstruments();
-        }
-
-        return switch (type) {
-            case ETF -> tinkoffService.getMarketEtfs();
-            case STOCK -> tinkoffService.getMarketStocks();
-            case BOND -> tinkoffService.getMarketBonds();
-            case CURRENCY -> tinkoffService.getMarketCurrencies();
-        };
-    }
-
-    private List<MarketInstrument> getAllInstruments() throws IOException {
-        List<MarketInstrument> result = new ArrayList<>();
-        result.addAll(tinkoffService.getMarketEtfs());
-        result.addAll(tinkoffService.getMarketStocks());
-        result.addAll(tinkoffService.getMarketBonds());
-        result.addAll(tinkoffService.getMarketCurrencies());
-
-        return result;
     }
 
 }

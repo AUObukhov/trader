@@ -2,7 +2,6 @@ package ru.obukhov.trader.config;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,23 +11,24 @@ import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
-import ru.obukhov.trader.market.impl.SandboxService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.web.client.service.interfaces.MarketClient;
-import ru.obukhov.trader.web.client.service.interfaces.OperationsClient;
-import ru.obukhov.trader.web.client.service.interfaces.OrdersClient;
-import ru.obukhov.trader.web.client.service.interfaces.PortfolioClient;
-import ru.obukhov.trader.web.client.service.interfaces.SandboxClient;
-import ru.obukhov.trader.web.client.service.interfaces.UserClient;
+import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.InvestApi;
+import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.OperationsService;
+import ru.tinkoff.piapi.core.OrdersService;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -42,14 +42,44 @@ import java.util.List;
 public class BeanConfiguration {
 
     @Bean
+    public InvestApi investApi(final TradingProperties tradingProperties) {
+        return InvestApi.create(tradingProperties.getToken());
+    }
+
+    @Bean
+    public InstrumentsService instrumentsService(final InvestApi investApi) {
+        return investApi.getInstrumentsService();
+    }
+
+    @Bean
+    public MarketDataService marketDataService(final InvestApi investApi) {
+        return investApi.getMarketDataService();
+    }
+
+    @Bean
+    public ru.tinkoff.piapi.core.OperationsService operationsService(final InvestApi investApi) {
+        return investApi.getOperationsService();
+    }
+
+    @Bean
+    public ru.tinkoff.piapi.core.OrdersService ordersService(final InvestApi investApi) {
+        return investApi.getOrdersService();
+    }
+
+    @Bean
+    public UsersService usersService(final InvestApi investApi) {
+        return investApi.getUserService();
+    }
+
+    @Bean
     public TinkoffService realTinkoffService(
-            final MarketClient marketClient,
-            final OperationsClient operationsClient,
-            final OrdersClient ordersClient,
-            final PortfolioClient portfolioClient,
-            final UserClient userClient
+            final InstrumentsService instrumentsService,
+            final MarketDataService marketDataService,
+            final OperationsService operationsService,
+            final OrdersService ordersService,
+            final UsersService usersService
     ) {
-        return new RealTinkoffService(marketClient, operationsClient, ordersClient, portfolioClient, userClient);
+        return new RealTinkoffService(instrumentsService, marketDataService, operationsService, ordersService, usersService);
     }
 
     @Bean
@@ -58,19 +88,18 @@ public class BeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "trading.sandbox", havingValue = "true")
-    public SandboxService sandboxService(final MarketService realMarketService, final SandboxClient sandboxClient) {
-        return new SandboxService(realMarketService, sandboxClient);
+    public MarketInstrumentsService marketInstrumentsService(final TinkoffService realTinkoffService) {
+        return new MarketInstrumentsService(realTinkoffService);
     }
 
     @Bean
-    public OperationsService realOperationsService(final TinkoffService realTinkoffService) {
-        return new OperationsService(realTinkoffService);
+    public MarketOperationsService realOperationsService(final TinkoffService realTinkoffService) {
+        return new MarketOperationsService(realTinkoffService);
     }
 
     @Bean
-    public OrdersService realOrdersService(final TinkoffService realTinkoffService, final MarketService realMarketService) {
-        return new OrdersService(realTinkoffService, realMarketService);
+    public MarketOrdersService realOrdersService(final TinkoffService realTinkoffService, final MarketService realMarketService) {
+        return new MarketOrdersService(realTinkoffService);
     }
 
     @Bean

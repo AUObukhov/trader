@@ -1,9 +1,9 @@
 package ru.obukhov.trader.web.model;
 
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 class BotConfigValidationTest {
 
@@ -11,7 +11,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .build();
@@ -21,7 +21,7 @@ class BotConfigValidationTest {
     @Test
     void validationFails_whenTickerIsNull() {
         final BotConfig botConfig = BotConfig.builder()
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .build();
@@ -44,7 +44,7 @@ class BotConfigValidationTest {
     void validationFails_whenCommissionIsNull() {
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .build();
 
@@ -55,7 +55,7 @@ class BotConfigValidationTest {
     void validationFails_whenStrategyTypeIsNull() {
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .build();
         AssertUtils.assertViolation(botConfig, "strategyType is mandatory");

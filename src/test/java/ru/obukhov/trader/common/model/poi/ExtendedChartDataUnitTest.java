@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.PoiTestData;
+import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 import java.awt.Color;
 import java.util.List;

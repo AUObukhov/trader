@@ -1,9 +1,6 @@
 ru.tinkoff.invest.openapi:
   host: "https://api-invest.tinkoff.ru"
 
-trading:
-  sandbox: false
-
 market:
   work-schedule:
     start-time: 07:00:00+03:00
@@ -19,7 +16,7 @@ scheduled-bot:
   bot-configs:
     - broker-account-id: "2000124699"
       ticker: SBER
-      candle-interval: 1min
+      candle-interval: CANDLE_INTERVAL_1_MIN
       commission: 0.003
       strategy-type: "cross"
       strategy-params:
@@ -34,44 +31,6 @@ scheduled-bot:
 back-test:
   thread-count: 4
 
-query.throttle:
-  interval: 60000
-  limits:
-    - segments:
-        - sandbox
-      limit: 120
-    - segments:
-        - portfolio
-      limit: 120
-    - segments:
-        - market
-      limit: 120
-    - segments:
-        - orders
-      limit: 100
-    - segments:
-        - orders
-        - limit-order
-      limit: 50
-    - segments:
-        - orders
-        - market-order
-      limit: 50
-    - segments:
-        - orders
-        - cancel
-      limit: 50
-    - segments:
-        - operations
-      limit: 120
-    - segments:
-        - md-openapi
-        - ws
-      limit: 1
-  retry-interval: 5000
-  attempts-count: 30
-  default-limit: 120
-
 spring.cache:
-  cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
+  cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker
   scaffeine.spec: maximumSize=3000,expireAfterAccess=3h

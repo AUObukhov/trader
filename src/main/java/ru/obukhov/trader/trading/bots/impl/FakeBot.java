@@ -4,16 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -26,13 +27,23 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public FakeBot(
             final MarketService marketService,
-            final OperationsService operationsService,
-            final OrdersService ordersService,
+            final MarketInstrumentsService marketInstrumentsService,
+            final MarketOperationsService operationsService,
+            final MarketOrdersService ordersService,
             final PortfolioService portfolioService,
             final FakeTinkoffService fakeTinkoffService,
             final TradingStrategy strategy
     ) {
-        super(marketService, operationsService, ordersService, portfolioService, fakeTinkoffService, strategy, strategy.initCache());
+        super(
+                marketService,
+                marketInstrumentsService,
+                operationsService,
+                ordersService,
+                portfolioService,
+                fakeTinkoffService,
+                strategy,
+                strategy.initCache()
+        );
     }
 
     public FakeTinkoffService getFakeTinkoffService() {
@@ -41,37 +52,37 @@ public class FakeBot extends AbstractBot implements Bot {
 
     // region FakeTinkoffService proxy
 
-    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
-        return tinkoffService.searchMarketInstrument(ticker);
+    public Share getShare(final String ticker) {
+        return marketInstrumentsService.getShare(ticker);
     }
 
     public OffsetDateTime getCurrentDateTime() {
         return tinkoffService.getCurrentDateTime();
     }
 
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker)
+    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker)
             throws IOException {
-        return tinkoffService.getOperations(brokerAccountId, interval, ticker);
+        return tinkoffService.getOperations(accountId, interval, ticker);
     }
 
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) throws IOException {
-        return tinkoffService.getPortfolioPositions(brokerAccountId);
+    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
+        return tinkoffService.getPortfolioPositions(accountId);
     }
 
     public OffsetDateTime nextMinute() {
         return getFakeTinkoffService().nextMinute();
     }
 
-    public void addInvestment(final String brokerAccountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
-        getFakeTinkoffService().addInvestment(brokerAccountId, dateTime, currency, increment);
+    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
+        getFakeTinkoffService().addInvestment(accountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
-        return getFakeTinkoffService().getInvestments(brokerAccountId, currency);
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
+        return getFakeTinkoffService().getInvestments(accountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
-        return getFakeTinkoffService().getCurrentBalance(brokerAccountId, currency);
+    public BigDecimal getCurrentBalance(final String accountId, final Currency currency) {
+        return getFakeTinkoffService().getCurrentBalance(accountId, currency);
     }
 
     public BigDecimal getCurrentPrice(final String ticker) throws IOException {

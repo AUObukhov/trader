@@ -1,7 +1,9 @@
 package ru.obukhov.trader.common.util;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,7 +14,7 @@ public class DecimalUtils {
     /**
      * Scale for operations with money
      */
-    public static final int DEFAULT_SCALE = 6;
+    public static final int DEFAULT_SCALE = 9;
 
     /**
      * Some complex operations, such as weighted average, loose accuracy due to rounding of each intermediate result.
@@ -20,6 +22,43 @@ public class DecimalUtils {
      * Must be significantly larger than {@link DecimalUtils#DEFAULT_SCALE}
      */
     private static final int HIGH_SCALE = 15;
+
+    /**
+     * @param units part of number before decimal point
+     * @param nano  part of number after decimal point
+     * @return BigDecimal result
+     */
+    public static BigDecimal createBigDecimal(final long units, final int nano) {
+        return units == 0 && nano == 0
+                ? BigDecimal.ZERO
+                : BigDecimal.valueOf(units).add(BigDecimal.valueOf(nano, DecimalUtils.DEFAULT_SCALE));
+    }
+
+    /**
+     * @return part of given {@code bigDecimal} after decimal point
+     */
+    public static int getNano(@NotNull final BigDecimal bigDecimal) {
+        return bigDecimal.remainder(BigDecimal.ONE)
+                .multiply(BigDecimal.valueOf(Math.pow(10, DEFAULT_SCALE)))
+                .intValue();
+    }
+
+    /**
+     * @return Quotation equals to given {@code bigDecimal}
+     */
+    public static Quotation toQuotation(@NotNull final BigDecimal bigDecimal) {
+        return Quotation.newBuilder()
+                .setUnits(bigDecimal.longValue())
+                .setNano(getNano(bigDecimal))
+                .build();
+    }
+
+    /**
+     * @return addend1 + addend2
+     */
+    public static BigDecimal add(final BigDecimal addend1, final long addend2) {
+        return setDefaultScale(addend1.add(BigDecimal.valueOf(addend2)));
+    }
 
     /**
      * @return minuend - subtrahend
@@ -111,13 +150,6 @@ public class DecimalUtils {
      */
     public static BigDecimal getAverage(final BigDecimal value1, final BigDecimal value2) {
         return divide(value1.add(value2), 2);
-    }
-
-    /**
-     * @return integer quotient of division of {@code dividend} by {@code divisor}
-     */
-    public static int getIntegerQuotient(final BigDecimal dividend, final BigDecimal divisor) {
-        return dividend.divide(divisor, RoundingMode.DOWN).intValue();
     }
 
     /**

@@ -16,9 +16,9 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -99,7 +99,7 @@ public class GrafanaServiceImpl implements GrafanaService {
 
     private CandleInterval getRequiredCandleInterval(final Map<String, Object> data) {
         final String candleInterval = MapUtils.getRequiredString(data, "candleInterval");
-        return CandleInterval.fromValue(candleInterval);
+        return CandleInterval.valueOf(candleInterval);
     }
 
     private MovingAverageType getRequiredMovingAverageType(final Map<String, Object> data) {

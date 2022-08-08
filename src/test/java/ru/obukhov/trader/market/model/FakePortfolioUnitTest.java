@@ -7,11 +7,11 @@ class FakePortfolioUnitTest {
 
     @Test
     void constructor_initsFields() {
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
 
-        final FakePortfolio portfolio = new FakePortfolio(brokerAccountId);
+        final FakePortfolio portfolio = new FakePortfolio(accountId);
 
-        Assertions.assertEquals(brokerAccountId, portfolio.getBrokerAccountId());
+        Assertions.assertEquals(accountId, portfolio.getAccountId());
         Assertions.assertNotNull(portfolio.getBalances());
         Assertions.assertNotNull(portfolio.getTickersToPositions());
         Assertions.assertNotNull(portfolio.getOperations());

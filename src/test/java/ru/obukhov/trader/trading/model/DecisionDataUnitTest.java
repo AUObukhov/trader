@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,13 +14,12 @@ import java.util.List;
 class DecisionDataUnitTest {
 
     @Test
-    void getPositionLotsCount() {
-        final DecisionData decisionData = new DecisionData();
+    void getQuantityLots() {
+        final int quantityLots = 30;
 
-        decisionData.setPosition(TestData.createPortfolioPosition(30));
-        decisionData.setInstrument(TestData.createMarketInstrument(5));
+        final DecisionData decisionData = new DecisionData().setPosition(TestData.createPortfolioPosition(quantityLots));
 
-        Assertions.assertEquals(6, decisionData.getPositionLotsCount());
+        AssertUtils.assertEquals(quantityLots, decisionData.getQuantityLots());
 
     }
 

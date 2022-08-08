@@ -18,7 +18,7 @@ import java.util.Set;
 public class FakePortfolio {
 
     @Nullable
-    private final String brokerAccountId;
+    private final String accountId;
 
     @NotNull
     private final EnumMap<Currency, FakeBalance> balances = new EnumMap<>(Currency.class);

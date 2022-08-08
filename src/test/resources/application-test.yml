@@ -3,7 +3,6 @@ ru.tinkoff.invest.openapi:
   port: 8081
 
 trading:
-  sandbox: false
   token: i identify myself as token
 
 market:
@@ -21,7 +20,7 @@ scheduled-bot:
   bot-configs:
     - broker-account-id: "2000124699"
       ticker: FXIT
-      candle-interval: 5min
+      candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
       strategy-type: "cross"
       strategy-params:
@@ -34,31 +33,14 @@ scheduled-bot:
         greedy: true
     - broker-account-id: "2000124698"
       ticker: FXIT
-      candle-interval: 5min
+      candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
       strategy-type: "conservative"
       strategy-params:
         minimumProfit: 0.1
 
-query.throttle:
-  interval: 60000
-  limits:
-    - segments:
-        - market
-      limit: 120
-    - segments:
-        - orders
-      limit: 100
-    - segments:
-        - orders
-        - limit-order
-      limit: 50
-  retry-interval: 5000
-  attempts-count: 30
-  default-limit: 120
-
 spring.cache:
-  cache-names: marketStocks, marketBonds, marketEtfs, marketCurrencies, marketCandles, marketInstrument
+  cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
 
 report:

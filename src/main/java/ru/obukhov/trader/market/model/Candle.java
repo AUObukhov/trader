@@ -1,6 +1,5 @@
 package ru.obukhov.trader.market.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,29 +17,19 @@ import java.time.OffsetDateTime;
 @Accessors(chain = true)
 public class Candle {
 
-    @JsonAlias("o")
     protected BigDecimal openPrice;
-
-    @JsonAlias("c")
     protected BigDecimal closePrice;
-
-    @JsonAlias("h")
     protected BigDecimal highestPrice;
-
-    @JsonAlias("l")
     protected BigDecimal lowestPrice;
 
     @JsonFormat(pattern = DateUtils.OFFSET_DATE_TIME_FORMAT)
     protected OffsetDateTime time;
-
-    protected CandleInterval interval;
 
     /**
      * @return candle, interpolated between given {@code leftCandle} and {@code rightCandle}
      */
     public static Candle createAverage(final Candle leftCandle, final Candle rightCandle) {
         Assert.isTrue(!leftCandle.getTime().isAfter(rightCandle.getTime()), "leftCandle can't be after rightCandle");
-        Assert.isTrue(leftCandle.getInterval() == rightCandle.getInterval(), "Candle intervals must be equal");
 
         final BigDecimal openPrice = leftCandle.getOpenPrice();
         final BigDecimal closePrice = rightCandle.getClosePrice();
@@ -48,7 +37,7 @@ public class Candle {
         final BigDecimal lowestPrice = openPrice.min(closePrice);
         final OffsetDateTime time = DateUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
 
-        return new Candle(openPrice, closePrice, highestPrice, lowestPrice, time, leftCandle.getInterval());
+        return new Candle(openPrice, closePrice, highestPrice, lowestPrice, time);
     }
 
 }

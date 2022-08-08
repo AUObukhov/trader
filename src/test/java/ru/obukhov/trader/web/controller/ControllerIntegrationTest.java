@@ -1,15 +1,11 @@
 package ru.obukhov.trader.web.controller;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.mockserver.model.HttpRequest;
-import org.mockserver.springtest.MockServerTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,49 +14,42 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.obukhov.trader.TokenValidationStartupListener;
-import ru.obukhov.trader.config.properties.ApiProperties;
-import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.TestUtils;
-import ru.obukhov.trader.web.TestWithMockedServer;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
+import ru.tinkoff.piapi.core.UsersService;
 
-@MockServerTest
+import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
-abstract class ControllerIntegrationTest extends TestWithMockedServer {
+abstract class ControllerIntegrationTest {
 
     protected static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
     protected static final JsonPathResultMatchers ERRORS_MATCHER = MockMvcResultMatchers.jsonPath("$.errors");
     protected static final ResultMatcher JSON_CONTENT_MATCHER = MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON);
 
-    /**
-     * To prevent token validation on startup. Otherwise, validation performed before MockServer initialization
-     */
     @MockBean
-    private TokenValidationStartupListener tokenValidationStartupListener;
+    protected InstrumentsService instrumentsService;
+    @MockBean
+    protected MarketDataService marketDataService;
+    @MockBean
+    protected UsersService usersService;
 
-    @Autowired
-    protected TradingProperties tradingProperties;
-    @Autowired
-    protected ApiProperties apiProperties;
     @Autowired
     protected MockMvc mockMvc;
 
-    protected int getPort() {
-        return ObjectUtils.defaultIfNull(apiProperties.port(), 8081);
-    }
-
-    protected HttpRequest createAuthorizedHttpRequest(final HttpMethod httpMethod) {
-        return HttpRequest.request()
-                .withHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tradingProperties.getToken())
-                .withMethod(httpMethod.name());
-    }
-
-    protected void performAndExpectResponse(MockHttpServletRequestBuilder requestBuilder) throws Exception {
-        mockMvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(StringUtils.EMPTY));
+    @BeforeEach
+    void init() {
+        Mockito.when(usersService.getAccountsSync()).thenReturn(Collections.emptyList());
     }
 
     protected void performAndExpectResponse(final MockHttpServletRequestBuilder builder, final Object expectedResponse) throws Exception {
@@ -90,6 +79,28 @@ abstract class ControllerIntegrationTest extends TestWithMockedServer {
                 .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
                 .andExpect(ERRORS_MATCHER.value(expectedError))
                 .andExpect(JSON_CONTENT_MATCHER);
+    }
+
+    protected void mockShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
+        final Share share = Share.newBuilder()
+                .setFigi(figi)
+                .setTicker(ticker)
+                .setCurrency(currency.name())
+                .setLot(lotSize)
+                .build();
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
+    }
+
+    protected void mockHistoricCandles(final String figi, final List<HistoricCandle> historicCandles) {
+        Mockito.when(marketDataService.getCandlesSync(
+                Mockito.eq(figi),
+                Mockito.any(Instant.class),
+                Mockito.any(Instant.class),
+                Mockito.eq(CandleInterval.CANDLE_INTERVAL_1_MIN)
+        )).thenAnswer(args -> historicCandles.stream()
+                .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), args.getArgument(1), args.getArgument(2)))
+                .toList()
+        );
     }
 
 }

@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import ru.obukhov.trader.common.model.transform.CronExpressionSerializer;
+import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
 
 import java.text.SimpleDateFormat;
 

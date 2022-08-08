@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -93,10 +93,10 @@ class SimpleMovingAveragerUnitTest {
                         ),
                         4,
                         List.of(
-                                9912.00, 9905.00, 9895.333333, 9895.75, 9892.00,
-                                9892.00, 9894.25, 9894.000000, 9891.75, 9889.25,
-                                9888.25, 9883.75, 9883.500000, 9881.00, 9880.25,
-                                9881.50, 9879.25, 9875.000000, 9871.00, 9865.75
+                                9912.00, 9905.00, 9895.333333333, 9895.75, 9892.00,
+                                9892.00, 9894.25, 9894.000000000, 9891.75, 9889.25,
+                                9888.25, 9883.75, 9883.500000000, 9881.00, 9880.25,
+                                9881.50, 9879.25, 9875.000000000, 9871.00, 9865.75
                         )
                 )
         );
@@ -110,7 +110,7 @@ class SimpleMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
@@ -273,10 +273,10 @@ class SimpleMovingAveragerUnitTest {
                         4,
                         2,
                         List.of(
-                                9912.000000, 9908.50, 9904.111111, 9902.020833, 9897.020833,
-                                9893.770833, 9893.50, 9893.062500, 9893.000000, 9892.312500,
-                                9890.812500, 9888.25, 9886.187500, 9884.125000, 9882.125000,
-                                9881.562500, 9880.50, 9879.000000, 9876.687500, 9872.750000
+                                9912.000000000, 9908.50, 9904.111111111, 9902.020833333, 9897.020833333,
+                                9893.770833333, 9893.50, 9893.062500000, 9893.000000000, 9892.312500000,
+                                9890.812500000, 9888.25, 9886.187500000, 9884.125000000, 9882.125000000,
+                                9881.562500000, 9880.50, 9879.000000000, 9876.687500000, 9872.750000000
                         )
                 ),
                 Arguments.of(
@@ -289,10 +289,10 @@ class SimpleMovingAveragerUnitTest {
                         4,
                         3,
                         List.of(
-                                9912.00000, 9910.25000, 9908.203704, 9906.657986, 9902.913194,
-                                9899.230902, 9896.578124, 9894.338541, 9893.333333, 9892.968750,
-                                9892.296875, 9891.093750, 9889.390625, 9887.343750, 9885.171875,
-                                9883.500000, 9882.078125, 9880.796875, 9879.437500, 9877.234375
+                                9912.000000000, 9910.250000000, 9908.203703704, 9906.657986111, 9902.913194444,
+                                9899.230902777, 9896.578124999, 9894.338541666, 9893.333333333, 9892.968750000,
+                                9892.296875000, 9891.093750000, 9889.390625000, 9887.343750000, 9885.171875000,
+                                9883.500000000, 9882.078125000, 9880.796875000, 9879.437500000, 9877.234375000
                         )
                 )
         );
@@ -306,7 +306,7 @@ class SimpleMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, 1);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");
@@ -321,7 +321,7 @@ class SimpleMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(DecimalUtils.DEFAULT_SCALE >= average.scale(), "expected default scale for all averages");

@@ -2,11 +2,11 @@ package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -75,7 +75,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = BotConfig.builder()
                 .ticker("ticker")
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .build();
         request.setBotConfigs(List.of(botConfig));
@@ -88,7 +88,7 @@ class BackTestRequestValidationTest {
     private BackTestRequest createValidBackTestRequest() throws ParseException {
         final BackTestRequest request = new BackTestRequest();
 
-        final String brokerAccountId = "2000124699";
+        final String accountId = "2000124699";
         final String ticker = "ticker";
 
         BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
@@ -97,9 +97,9 @@ class BackTestRequestValidationTest {
         request.setFrom(OffsetDateTime.now());
 
         final BotConfig botConfig = BotConfig.builder()
-                .brokerAccountId(brokerAccountId)
+                .accountId(accountId)
                 .ticker(ticker)
-                .candleInterval(CandleInterval._1MIN)
+                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .commission(0.003)
                 .strategyType(StrategyType.CONSERVATIVE)
                 .build();

@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -80,10 +80,10 @@ class ExponentialMovingAveragerUnitTest {
                         ),
                         4,
                         List.of(
-                                9912.000000, 9906.400000, 9894.240000, 9895.344000, 9896.006400,
-                                9896.803840, 9892.082304, 9893.649382, 9891.389629, 9890.033777,
-                                9886.420266, 9883.052160, 9884.631296, 9881.978778, 9880.387267,
-                                9881.432360, 9880.059416, 9872.435650, 9868.261390, 9865.756834
+                                9912.000000000, 9906.400000000, 9894.240000000, 9895.344000000, 9896.006400000,
+                                9896.803840000, 9892.082304000, 9893.649382400, 9891.389629440, 9890.033777664,
+                                9886.420266598, 9883.052159959, 9884.631295975, 9881.978777585, 9880.387266551,
+                                9881.432359931, 9880.059415959, 9872.435649575, 9868.261389745, 9865.756833847
                         )
                 )
         );
@@ -97,7 +97,7 @@ class ExponentialMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(
@@ -170,8 +170,8 @@ class ExponentialMovingAveragerUnitTest {
                         4,
                         2,
                         List.of(
-                                1000.00000, 1160.00000, 1512.00000, 2036.800000, 2699.84000,
-                                3466.56000, 4307.92960, 5201.55392, 6131.010048, 7084.652647
+                                1000.00000, 1160.00000, 1512.00000, 2036.800000, 2699.8400000,
+                                3466.56000, 4307.92960, 5201.55392, 6131.010048, 7084.6526464
                         )
                 ),
                 Arguments.of(
@@ -182,8 +182,8 @@ class ExponentialMovingAveragerUnitTest {
                         4,
                         3,
                         List.of(
-                                1000.000, 1064.00000, 1243.200000, 1560.640000, 2016.320000,
-                                2596.416, 3281.02144, 4049.234432, 4881.944678, 5763.027866
+                                1000.000, 1064.00000, 1243.200000, 1560.6400000, 2016.3200000,
+                                2596.416, 3281.02144, 4049.234432, 4881.9446784, 5763.0278656
                         )
                 ),
                 Arguments.of(
@@ -196,10 +196,10 @@ class ExponentialMovingAveragerUnitTest {
                         4,
                         2,
                         List.of(
-                                9912.000000, 9909.760000, 9903.552000, 9900.268800, 9898.563840,
-                                9897.859840, 9895.548826, 9894.789049, 9893.429281, 9892.071080,
-                                9889.810754, 9887.107316, 9886.116908, 9884.461656, 9882.831901,
-                                9882.272085, 9881.387017, 9877.806470, 9873.988438, 9870.695797
+                                9912.000000000, 9909.760000000, 9903.552000000, 9900.268800000, 9898.563840000,
+                                9897.859840000, 9895.548825600, 9894.789048320, 9893.429280768, 9892.071079527,
+                                9889.810754355, 9887.107316597, 9886.116908348, 9884.461656043, 9882.831900246,
+                                9882.272084120, 9881.387016856, 9877.806469944, 9873.988437864, 9870.695796257
                         )
                 ),
                 Arguments.of(
@@ -212,10 +212,10 @@ class ExponentialMovingAveragerUnitTest {
                         4,
                         3,
                         List.of(
-                                9912.000000, 9911.104000, 9908.083200, 9904.957440, 9902.400000,
-                                9900.583936, 9898.569892, 9897.057555, 9895.606245, 9894.192179,
-                                9892.439609, 9890.306691, 9888.630778, 9886.963129, 9885.310637,
-                                9884.095216, 9883.011937, 9880.929750, 9878.153225, 9875.170254
+                                9912.000000000, 9911.104000000, 9908.083200000, 9904.957440000, 9902.400000000,
+                                9900.583936000, 9898.569891840, 9897.057554432, 9895.606244966, 9894.192178791,
+                                9892.439609017, 9890.306692049, 9888.630778568, 9886.963129558, 9885.310637833,
+                                9884.095216348, 9883.011936551, 9880.929749909, 9878.153225091, 9875.170253558
                         )
                 )
         );
@@ -235,7 +235,7 @@ class ExponentialMovingAveragerUnitTest {
         final List<BigDecimal> movingAverages = averager.getAverages(bigDecimalValues, window, order);
 
         final List<BigDecimal> bigDecimalExpectedValues = TestData.createBigDecimalsList(expectedValues);
-        AssertUtils.assertBigDecimalListsAreEqual(bigDecimalExpectedValues, movingAverages);
+        AssertUtils.assertEquals(bigDecimalExpectedValues, movingAverages);
 
         for (final BigDecimal average : movingAverages) {
             Assertions.assertTrue(

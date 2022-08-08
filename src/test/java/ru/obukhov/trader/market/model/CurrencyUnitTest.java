@@ -28,18 +28,6 @@ class CurrencyUnitTest {
 
     @ParameterizedTest
     @MethodSource("valuesAndCurrencies")
-    void toString_returnsValue(final String expectedValue, final Currency currency) {
-        Assertions.assertEquals(expectedValue, currency.toString());
-    }
-
-    @ParameterizedTest
-    @MethodSource("valuesAndCurrencies")
-    void fromValue_returnProperEnum(final String value, final Currency expectedCurrency) {
-        Assertions.assertEquals(expectedCurrency, Currency.fromValue(value));
-    }
-
-    @ParameterizedTest
-    @MethodSource("valuesAndCurrencies")
     void jsonMapping_mapsValue(final String value, final Currency currency) throws JsonProcessingException {
         Assertions.assertEquals('"' + value + '"', TestUtils.OBJECT_MAPPER.writeValueAsString(currency));
     }
@@ -48,6 +36,19 @@ class CurrencyUnitTest {
     @MethodSource("valuesAndCurrencies")
     void jsonMapping_createsFromValue(final String value, final Currency currency) throws JsonProcessingException {
         Assertions.assertEquals(currency, TestUtils.OBJECT_MAPPER.readValue('"' + value + '"', Currency.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("valuesAndCurrencies")
+    void getJavaCurrency(final String value, final Currency currency) {
+        Assertions.assertEquals(value, currency.getJavaCurrency().getCurrencyCode());
+    }
+
+    @ParameterizedTest
+    @MethodSource("valuesAndCurrencies")
+    void valueOfIgnoreCase(final String value, final Currency currency) {
+        Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value.toLowerCase()));
+        Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value));
     }
 
 }

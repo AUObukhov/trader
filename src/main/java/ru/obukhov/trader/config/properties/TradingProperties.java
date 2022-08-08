@@ -15,8 +15,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class TradingProperties {
 
-    private final boolean sandbox;
-
     @NotBlank(message = "token is mandatory")
     private final String token;
 

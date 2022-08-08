@@ -3,15 +3,16 @@ package ru.obukhov.trader.trading.strategy.impl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.OperationStatus;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
+import ru.tinkoff.piapi.contract.v1.OperationState;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Abstract strategy with some common methods
@@ -33,7 +34,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
      */
     protected Decision getBuyOrWaitDecision(final DecisionData data, final StrategyCache strategyCache) {
         Decision decision;
-        final int availableLots = getAvailableLots(data);
+        final long availableLots = getAvailableLots(data);
         if (availableLots > 0) {
             decision = new Decision(DecisionAction.BUY, availableLots, strategyCache);
             log.debug(
@@ -53,10 +54,10 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return decision;
     }
 
-    private int getAvailableLots(final DecisionData data) {
+    private long getAvailableLots(final DecisionData data) {
         final BigDecimal currentLotPrice = DecimalUtils.multiply(data.getCurrentPrice(), data.getLotSize());
         final BigDecimal currentLotPriceWithCommission = DecimalUtils.addFraction(currentLotPrice, data.getCommission());
-        return DecimalUtils.getIntegerQuotient(data.getBalance(), currentLotPriceWithCommission);
+        return data.getBalance().divide(currentLotPriceWithCommission, RoundingMode.DOWN).longValue();
     }
 
     /**
@@ -75,7 +76,7 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
                 decision = new Decision(DecisionAction.WAIT, null, strategyCache);
                 log.debug("Potential profit {} is lower than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             } else {
-                decision = new Decision(DecisionAction.SELL, data.getPositionLotsCount(), strategyCache);
+                decision = new Decision(DecisionAction.SELL, data.getQuantityLots(), strategyCache);
                 log.debug("Potential profit {} is greater than minimum profit {}. Decision is {}", profit, minimumProfit, decision.toPrettyString());
             }
         }
@@ -113,8 +114,8 @@ public abstract class AbstractTradingStrategy implements TradingStrategy {
         return profit;
     }
 
-    protected static boolean existsOperationInProgress(final DecisionData data) {
-        return data.getLastOperations().stream().anyMatch(operation -> operation.status() == OperationStatus.PROGRESS);
+    protected static boolean existsOperationStateIsUnspecified(final DecisionData data) {
+        return data.getLastOperations().stream().anyMatch(operation -> operation.getState() == OperationState.OPERATION_STATE_UNSPECIFIED);
     }
 
 }

@@ -43,7 +43,7 @@ public class RunnableBot extends AbstractBot implements Runnable {
 
         try {
             processBotConfig(botConfig, null);
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             log.error("Failed to process botConfig {}", botConfig, exception);
         }
     }

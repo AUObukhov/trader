@@ -9,6 +9,6 @@ public class ClearAllRequest {
 
     @Nullable
     @ApiModelProperty(example = "2000124699")
-    private String brokerAccountId;
+    private String accountId;
 
 }

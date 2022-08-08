@@ -1,12 +1,13 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.obukhov.trader.market.model.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
@@ -149,9 +150,7 @@ public class DateUtils {
      * @return {@link ChronoUnit#DAYS} when {@code candleInterval) is less than day, or else {@link ChronoUnit#YEARS}
      */
     public static ChronoUnit getPeriodByCandleInterval(final CandleInterval candleInterval) {
-        return candleInterval == CandleInterval.DAY
-                || candleInterval == CandleInterval.WEEK
-                || candleInterval == CandleInterval.MONTH
+        return candleInterval == CandleInterval.CANDLE_INTERVAL_DAY
                 ? ChronoUnit.YEARS
                 : ChronoUnit.DAYS;
     }
@@ -350,6 +349,16 @@ public class DateUtils {
         }
 
         return hits;
+    }
+
+    /**
+     * @return true if given {@code timestamp} is in interval {@code [from; to)}
+     */
+    public static boolean timestampIsInInterval(final Timestamp timestamp, final Instant from, final Instant to) {
+        Assert.isTrue(from.isBefore(to), "From must be before to");
+
+        final Instant time = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
+        return !time.isBefore(from) && time.isBefore(to);
     }
 
 }

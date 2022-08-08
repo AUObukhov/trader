@@ -1,20 +1,24 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.obukhov.trader.market.model.CandleInterval;
+import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
@@ -27,6 +31,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 class DateUtilsUnitTest {
+
+    private final DateTimeMapper dateTimeMapper = Mappers.getMapper(DateTimeMapper.class);
 
     // region getIntervalWithDefaultOffsets tests
 
@@ -345,14 +351,14 @@ class DateUtilsUnitTest {
 
     @Test
     void getPeriodUnitByCandleInterval_returnsDays_whenIntervalIsHour() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.HOUR);
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.CANDLE_INTERVAL_HOUR);
 
         Assertions.assertEquals(ChronoUnit.DAYS, unit);
     }
 
     @Test
     void getPeriodUnitByCandleInterval_returnsYears_whenIntervalIsDay() {
-        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.DAY);
+        final TemporalUnit unit = DateUtils.getPeriodByCandleInterval(CandleInterval.CANDLE_INTERVAL_DAY);
 
         Assertions.assertEquals(ChronoUnit.YEARS, unit);
     }
@@ -1046,9 +1052,86 @@ class DateUtilsUnitTest {
 
         final List<OffsetDateTime> hits = DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
 
-        AssertUtils.assertListsAreEqual(expectedHits, hits);
+        AssertUtils.assertEquals(expectedHits, hits);
     }
 
     // endregion
 
+    // region timestampIsInInterval tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forTimestampIsInInterval_throwIllegalArgumentException() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 15),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forTimestampIsInInterval_throwIllegalArgumentException")
+    void timestampIsInInterval_throwIllegalArgumentException(final OffsetDateTime from, final OffsetDateTime to) {
+        final Timestamp timestamp = dateTimeMapper.map(from);
+        final Instant fromInstant = from.toInstant();
+        final Instant toInstant = to.toInstant();
+
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> DateUtils.timestampIsInInterval(timestamp, fromInstant, toInstant),
+                "From must be before to"
+        );
+    }
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forTimestampIsInInterval() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 12),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 11),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 15),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 13),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 14),
+                        false
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forTimestampIsInInterval")
+    void timestampIsInInterval(final OffsetDateTime dateTime, final OffsetDateTime from, final OffsetDateTime to, final boolean expectedResult) {
+        final Timestamp timestamp = dateTimeMapper.map(dateTime);
+
+        final boolean result = DateUtils.timestampIsInInterval(timestamp, from.toInstant(), to.toInstant());
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    // endregion
 }

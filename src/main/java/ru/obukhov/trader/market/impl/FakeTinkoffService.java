@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -12,26 +11,26 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.FakeContext;
-import ru.obukhov.trader.market.model.LimitOrderRequest;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.MarketOrderRequest;
+import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.OrderStatus;
-import ru.obukhov.trader.market.model.Orderbook;
-import ru.obukhov.trader.market.model.PlacedLimitOrder;
-import ru.obukhov.trader.market.model.PlacedMarketOrder;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
+import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -51,6 +50,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     private final MarketProperties marketProperties;
     private final MarketService marketService;
+    private final MarketInstrumentsService marketInstrumentsService;
     private final RealTinkoffService realTinkoffService;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
@@ -62,7 +62,7 @@ public class FakeTinkoffService implements TinkoffService {
      * Initializes current dateTime and one currency.
      * current dateTime is initialized by nearest work time to given {@code currentDateTime}
      *
-     * @param brokerAccountId account id
+     * @param accountId       account id
      * @param currentDateTime start dateTime for search dateTime to set as current
      * @param currency        currency which balance is initialized not by zero.
      * @param balanceConfig   balance config.
@@ -71,7 +71,7 @@ public class FakeTinkoffService implements TinkoffService {
     public FakeTinkoffService(
             final MarketProperties marketProperties,
             final TinkoffServices tinkoffServices,
-            final String brokerAccountId,
+            final String accountId,
             final OffsetDateTime currentDateTime,
             final Currency currency,
             final double commission,
@@ -79,13 +79,14 @@ public class FakeTinkoffService implements TinkoffService {
     ) {
         this.marketProperties = marketProperties;
         this.marketService = tinkoffServices.marketService();
+        this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
         this.realTinkoffService = tinkoffServices.realTinkoffService();
-        this.fakeContext = createFakeContext(brokerAccountId, currentDateTime, currency, balanceConfig);
+        this.fakeContext = createFakeContext(accountId, currentDateTime, currency, balanceConfig);
         this.commission = commission;
     }
 
     private FakeContext createFakeContext(
-            final String brokerAccountId,
+            final String accountId,
             final OffsetDateTime currentDateTime,
             final Currency currency,
             final BalanceConfig balanceConfig
@@ -93,7 +94,7 @@ public class FakeTinkoffService implements TinkoffService {
         final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
 
-        return new FakeContext(ceilingWorkTime, brokerAccountId, currency, initialBalance);
+        return new FakeContext(ceilingWorkTime, accountId, currency, initialBalance);
     }
 
     private BigDecimal getInitialBalance(OffsetDateTime currentDateTime, final OffsetDateTime ceilingWorkTime, BalanceConfig balanceConfig) {
@@ -127,41 +128,26 @@ public class FakeTinkoffService implements TinkoffService {
         return nextWorkMinute;
     }
 
+    @Override
+    public String getFigiByTicker(final String ticker) {
+        return realTinkoffService.getFigiByTicker(ticker);
+    }
+
+    @Override
+    public String getTickerByFigi(final String figi) {
+        return realTinkoffService.getTickerByFigi(figi);
+    }
+
     // region MarketContext proxy
 
     @Override
-    public List<MarketInstrument> getMarketStocks() throws IOException {
-        return realTinkoffService.getMarketStocks();
+    public List<Share> getAllShares() {
+        return realTinkoffService.getAllShares();
     }
 
     @Override
-    public List<MarketInstrument> getMarketBonds() throws IOException {
-        return realTinkoffService.getMarketBonds();
-    }
-
-    @Override
-    public List<MarketInstrument> getMarketEtfs() throws IOException {
-        return realTinkoffService.getMarketEtfs();
-    }
-
-    @Override
-    public List<MarketInstrument> getMarketCurrencies() throws IOException {
-        return realTinkoffService.getMarketCurrencies();
-    }
-
-    @Override
-    public Orderbook getMarketOrderbook(final String ticker, final int depth) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
+    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
         return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
-    }
-
-    @Override
-    public MarketInstrument searchMarketInstrument(final String ticker) throws IOException {
-        return realTinkoffService.searchMarketInstrument(ticker);
     }
 
     // endregion
@@ -176,8 +162,8 @@ public class FakeTinkoffService implements TinkoffService {
      * @return found operations in natural order of their dateTime
      */
     @Override
-    public List<Operation> getOperations(@Nullable final String brokerAccountId, final Interval interval, @Nullable final String ticker) {
-        Stream<BackTestOperation> operationsStream = fakeContext.getOperations(brokerAccountId).stream()
+    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
+        Stream<BackTestOperation> operationsStream = fakeContext.getOperations(accountId).stream()
                 .filter(operation -> interval.contains(operation.dateTime()));
         if (ticker != null) {
             operationsStream = operationsStream.filter(operation -> ticker.equals(operation.ticker()));
@@ -194,177 +180,133 @@ public class FakeTinkoffService implements TinkoffService {
     // region OrdersContext proxy
 
     @Override
-    public List<Order> getOrders(@Nullable final String brokerAccountId) {
+    public List<Order> getOrders(final String accountId) {
         return Collections.emptyList();
-    }
-
-    @Override
-    public PlacedLimitOrder placeLimitOrder(@Nullable final String brokerAccountId, final String ticker, final LimitOrderRequest orderRequest) {
-        throw new UnsupportedOperationException("Only market orders supported in back test");
     }
 
     /**
      * Performs market order with fake portfolio
-     *
-     * @param ticker       ticker of executed order
-     * @param orderRequest model of executed order
-     * @return result of order execution
      */
     @Override
-    public PlacedMarketOrder placeMarketOrder(@Nullable final String brokerAccountId, final String ticker, final MarketOrderRequest orderRequest)
-            throws IOException {
-        final MarketInstrument instrument = searchMarketInstrument(ticker);
+    public PostOrderResponse postOrder(
+            final String accountId,
+            final String ticker,
+            final long quantityLots,
+            final BigDecimal price,
+            final OrderDirection direction,
+            final OrderType type,
+            final String orderId
+    ) throws IOException {
+        final Share share = marketInstrumentsService.getShare(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final int count = instrument.lot() * orderRequest.lotsCount();
-        final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, count);
+        final Long quantity = quantityLots * share.getLot();
+        final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
-        final MoneyAmount totalCommission = new MoneyAmount(Currency.RUB, totalCommissionAmount);
 
-        if (orderRequest.operation() == OperationType.BUY) {
-            buyPosition(brokerAccountId, ticker, currentPrice, count, totalPrice, totalCommissionAmount);
+        if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
+            buyPosition(accountId, ticker, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
+            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
-            sellPosition(brokerAccountId, ticker, count, totalPrice, totalCommissionAmount);
+            sellPosition(accountId, ticker, quantity, totalPrice, totalCommissionAmount);
+            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
-        addOperation(brokerAccountId, ticker, currentPrice, count, totalCommissionAmount, orderRequest.operation());
-        return new PlacedMarketOrder(
-                null,
-                orderRequest.operation(),
-                OrderStatus.NEW,
-                null,
-                null,
-                orderRequest.lotsCount(),
-                orderRequest.lotsCount(),
-                totalCommission
+        return DataStructsHelper.createPostOrderResponse(
+                share.getCurrency(),
+                totalPrice,
+                totalCommissionAmount,
+                currentPrice,
+                quantityLots,
+                share.getFigi(),
+                direction,
+                type,
+                orderId
         );
     }
 
     private void buyPosition(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final BigDecimal currentPrice,
-            final int count,
+            final Long quantity,
+            final Long quantityLots,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
-    ) throws IOException {
-        final MarketInstrument instrument = searchMarketInstrument(ticker);
+    ) {
+        final Share share = marketInstrumentsService.getShare(ticker);
 
-        updateBalance(brokerAccountId, instrument.currency(), totalPrice.negate().subtract(commissionAmount));
+        updateBalance(accountId, share.getCurrency(), totalPrice.negate().subtract(commissionAmount));
 
-        final PortfolioPosition existingPosition = fakeContext.getPosition(null, ticker);
+        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
             position = new PortfolioPosition(
                     ticker,
-                    totalPrice,
+                    InstrumentType.STOCK,
+                    BigDecimal.valueOf(quantity),
+                    new MoneyAmount(share.getCurrency(), currentPrice),
                     BigDecimal.ZERO,
-                    new MoneyAmount(instrument.currency(), BigDecimal.ZERO),
-                    count,
-                    new MoneyAmount(instrument.currency(), currentPrice),
-                    null,
-                    StringUtils.EMPTY
+                    new MoneyAmount(share.getCurrency(), currentPrice),
+                    BigDecimal.valueOf(quantityLots)
             );
         } else {
-            position = addValuesToPosition(existingPosition, count, totalPrice);
+            position = existingPosition.addQuantities(quantity, quantityLots, totalPrice);
         }
 
-        fakeContext.addPosition(brokerAccountId, ticker, position);
+        fakeContext.addPosition(accountId, ticker, position);
     }
 
-    private PortfolioPosition addValuesToPosition(final PortfolioPosition existingPosition, final int count, final BigDecimal totalPrice) {
-        final BigDecimal newBalance = existingPosition.balance().add(totalPrice);
-        final int newLotsCount = existingPosition.count() + count;
-        final BigDecimal newAveragePrice = DecimalUtils.divide(newBalance, newLotsCount);
-        return clonePositionWithNewValues(existingPosition, newBalance, newLotsCount, newAveragePrice);
-    }
+    private void updateBalance(final String accountId, final String currency, final BigDecimal increment) {
+        final Currency enumCurrency = Currency.valueOfIgnoreCase(currency);
 
-    private PortfolioPosition clonePositionWithNewValues(
-            final PortfolioPosition position,
-            final BigDecimal balance,
-            final int lotsCount,
-            final BigDecimal averagePositionPrice
-    ) {
-        final MoneyAmount expectedYield = position.expectedYield();
-        return new PortfolioPosition(
-                position.ticker(),
-                balance,
-                position.blocked(),
-                expectedYield,
-                lotsCount,
-                new MoneyAmount(expectedYield.currency(), averagePositionPrice),
-                position.averagePositionPriceNoNkd(),
-                position.name()
-        );
-    }
-
-    private void updateBalance(@Nullable final String brokerAccountId, final Currency currency, final BigDecimal increment) {
-        final BigDecimal newBalance = fakeContext.getBalance(null, currency).add(increment);
+        final BigDecimal newBalance = fakeContext.getBalance(null, enumCurrency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        fakeContext.setCurrentBalance(brokerAccountId, currency, newBalance);
+        fakeContext.setCurrentBalance(accountId, enumCurrency, newBalance);
     }
 
     private void sellPosition(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
-            final int count,
+            final Long quantity,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
-    ) throws IOException {
-        final PortfolioPosition existingPosition = fakeContext.getPosition(brokerAccountId, ticker);
-        final int newLotsCount = existingPosition.count() - count;
-        if (newLotsCount < 0) {
-            final String message = "count " + count + " can't be greater than existing position lotsCount count " + existingPosition.count();
+    ) {
+        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
+        final BigDecimal newQuantity = DecimalUtils.subtract(existingPosition.quantity(), quantity);
+        final int compareToZero = newQuantity.compareTo(BigDecimal.ZERO);
+        if (compareToZero < 0) {
+            final String message = "quantity " + quantity + " can't be greater than existing position's quantity " + existingPosition.quantity();
             throw new IllegalArgumentException(message);
         }
 
-        final MarketInstrument instrument = searchMarketInstrument(ticker);
+        final Share share = marketInstrumentsService.getShare(ticker);
 
-        updateBalance(brokerAccountId, instrument.currency(), totalPrice.subtract(commissionAmount));
-        if (newLotsCount == 0) {
-            fakeContext.removePosition(brokerAccountId, ticker);
+        updateBalance(accountId, share.getCurrency(), totalPrice.subtract(commissionAmount));
+        if (compareToZero == 0) {
+            fakeContext.removePosition(accountId, ticker);
         } else {
-            PortfolioPosition newPosition = clonePositionWithNewLotsCount(existingPosition, newLotsCount);
-            fakeContext.addPosition(brokerAccountId, ticker, newPosition);
+            final BigDecimal newQuantityLots = newQuantity.multiply(BigDecimal.valueOf(share.getLot()));
+            final PortfolioPosition newPosition = existingPosition.cloneWithNewQuantity(newQuantity, newQuantityLots);
+            fakeContext.addPosition(accountId, ticker, newPosition);
         }
     }
 
-    private PortfolioPosition clonePositionWithNewLotsCount(final PortfolioPosition position, final int count) {
-        return new PortfolioPosition(
-                position.ticker(),
-                position.balance(),
-                position.blocked(),
-                position.expectedYield(),
-                count,
-                position.averagePositionPrice(),
-                position.averagePositionPriceNoNkd(),
-                position.name()
-        );
-    }
-
     private void addOperation(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final BigDecimal price,
-            final int quantity,
-            final BigDecimal commissionAmount,
+            final Long quantity,
             final OperationType operationType
     ) {
-        final BackTestOperation operation = new BackTestOperation(
-                ticker,
-                fakeContext.getCurrentDateTime(),
-                operationType,
-                price,
-                quantity,
-                commissionAmount
-        );
+        final BackTestOperation operation = new BackTestOperation(ticker, fakeContext.getCurrentDateTime(), operationType, price, quantity);
 
-        fakeContext.addOperation(brokerAccountId, operation);
+        fakeContext.addOperation(accountId, operation);
     }
 
     @Override
-    public void cancelOrder(@Nullable final String brokerAccountId, final String orderId) {
-        throw new UnsupportedOperationException();
+    public void cancelOrder(final String accountId, final String orderId) {
+        throw new UnsupportedOperationException("Back test does not support cancelling of orders");
     }
 
     // endregion
@@ -372,15 +314,16 @@ public class FakeTinkoffService implements TinkoffService {
     // region PortfolioContext proxy
 
     @Override
-    public List<PortfolioPosition> getPortfolioPositions(@Nullable final String brokerAccountId) {
-        return fakeContext.getPositions(brokerAccountId);
+    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
+        return fakeContext.getPositions(accountId);
     }
 
     @Override
-    public List<CurrencyPosition> getPortfolioCurrencies(@Nullable final String brokerAccountId) {
-        return fakeContext.getBalances(null).entrySet().stream()
-                .map(entry -> new CurrencyPosition(entry.getKey(), entry.getValue(), null))
+    public WithdrawLimits getWithdrawLimits(final String accountId) {
+        final List<MoneyValue> money = fakeContext.getBalances(accountId).entrySet().stream()
+                .map(entry -> DataStructsHelper.createMoneyValue(entry.getKey(), entry.getValue()))
                 .toList();
+        return DataStructsHelper.createWithdrawLimits(money);
     }
 
     // endregion
@@ -388,7 +331,7 @@ public class FakeTinkoffService implements TinkoffService {
     // region UserContext proxy
 
     @Override
-    public List<UserAccount> getAccounts() throws IOException {
+    public List<UserAccount> getAccounts() {
         return realTinkoffService.getAccounts();
     }
 
@@ -401,21 +344,21 @@ public class FakeTinkoffService implements TinkoffService {
         return fakeContext.getCurrentDateTime();
     }
 
-    public BigDecimal getCurrentBalance(@Nullable final String brokerAccountId, final Currency currency) {
-        return fakeContext.getBalance(brokerAccountId, currency);
+    public BigDecimal getCurrentBalance(final String accountId, final Currency currency) {
+        return fakeContext.getBalance(accountId, currency);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(@Nullable final String brokerAccountId, final Currency currency) {
-        return fakeContext.getInvestments(brokerAccountId, currency);
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
+        return fakeContext.getInvestments(accountId, currency);
     }
 
     public void addInvestment(
-            final String brokerAccountId,
+            final String accountId,
             final OffsetDateTime dateTime,
             final Currency currency,
             final BigDecimal increment
     ) {
-        fakeContext.addInvestment(brokerAccountId, dateTime, currency, increment);
+        fakeContext.addInvestment(accountId, dateTime, currency, increment);
     }
 
     /**

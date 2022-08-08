@@ -23,11 +23,11 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -86,13 +86,13 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -102,14 +102,14 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", StringUtils.EMPTY, "candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("ticker", StringUtils.EMPTY, "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", StringUtils.EMPTY,
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -119,14 +119,14 @@ class GrafanaServiceImplUnitTest {
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", "     ", "candleInterval", CandleInterval._1MIN.getValue()),
+                        Map.of("ticker", "     ", "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
                         "\"ticker\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "     ",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -154,7 +154,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "window1", 2,
                                 "window2", 5
                         ),
@@ -165,7 +165,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window2", 5
                         ),
@@ -176,7 +176,7 @@ class GrafanaServiceImplUnitTest {
                         Metric.EXTENDED_CANDLES,
                         Map.of(
                                 "ticker", "ticker",
-                                "candleInterval", CandleInterval._1MIN.getValue(),
+                                "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2
                         ),
@@ -201,8 +201,8 @@ class GrafanaServiceImplUnitTest {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
-        final Map<String, Object> data = Map.of("ticker", "ticker", "candleInterval", candleInterval.getValue());
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
+        final Map<String, Object> data = Map.of("ticker", "ticker", "candleInterval", candleInterval.name());
         final Target target = new Target().setMetric(Metric.CANDLES).setData(data);
         request.setTargets(List.of(target));
 
@@ -229,14 +229,14 @@ class GrafanaServiceImplUnitTest {
                 new Column("time", ColumnType.TIME),
                 new Column("open price", ColumnType.NUMBER)
         );
-        AssertUtils.assertListsAreEqual(expectedColumns, result.getColumns());
+        AssertUtils.assertEquals(expectedColumns, result.getColumns());
 
 
         final List<List<Object>> expectedRows = new ArrayList<>(5);
         for (Candle candle : candles) {
             expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }
-        AssertUtils.assertListsAreEqual(expectedRows, result.getRows());
+        AssertUtils.assertEquals(expectedRows, result.getRows());
     }
 
     @Test
@@ -247,14 +247,14 @@ class GrafanaServiceImplUnitTest {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final Integer window1 = 2;
         final Integer window2 = 5;
 
         final Map<String, Object> data = Map.of(
                 "ticker", ticker,
-                "candleInterval", candleInterval.getValue(),
+                "candleInterval", candleInterval.name(),
                 "movingAverageType", movingAverageType.getValue(),
                 "window1", window1,
                 "window2", window2
@@ -268,16 +268,16 @@ class GrafanaServiceImplUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(80, 15, 20, 5, from, candleInterval),
-                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1), candleInterval),
-                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2), candleInterval),
-                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3), candleInterval),
-                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4), candleInterval),
-                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5), candleInterval),
-                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6), candleInterval),
-                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7), candleInterval),
-                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8), candleInterval),
-                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9), candleInterval)
+                TestData.createCandle(80, 15, 20, 5, from),
+                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1)),
+                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2)),
+                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3)),
+                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4)),
+                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5)),
+                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6)),
+                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7)),
+                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8)),
+                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9))
         );
         final List<BigDecimal> averages1 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
@@ -301,14 +301,14 @@ class GrafanaServiceImplUnitTest {
                 new Column("SMA(" + window1 + ")", ColumnType.NUMBER),
                 new Column("SMA(" + window2 + ")", ColumnType.NUMBER)
         );
-        AssertUtils.assertListsAreEqual(expectedColumns, result.getColumns());
+        AssertUtils.assertEquals(expectedColumns, result.getColumns());
 
         final List<List<Object>> expectedRows = new ArrayList<>(5);
         for (int i = 0; i < candles.size(); i++) {
             Candle candle = candles.get(i);
             expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice(), averages1.get(i), averages2.get(i)));
         }
-        AssertUtils.assertListsAreEqual(expectedRows, result.getRows());
+        AssertUtils.assertEquals(expectedRows, result.getRows());
     }
 
     // endregion

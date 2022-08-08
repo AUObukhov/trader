@@ -2,6 +2,7 @@ package ru.obukhov.trader.common.model.transform;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.config.OffsetTimeConverter;
 
 import java.time.OffsetTime;
 import java.time.ZoneOffset;

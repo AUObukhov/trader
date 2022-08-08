@@ -2,12 +2,13 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationStatus;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OperationState;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ class ConservativeStrategyUnitTest {
     // region decide tests
 
     @Test
-    void decide_returnsWait_whenExistsOperationInProgress() {
-        final Operation operation1 = TestData.createOperation(OperationStatus.DONE);
-        final Operation operation2 = TestData.createOperation(OperationStatus.PROGRESS);
-        final Operation operation3 = TestData.createOperation(OperationStatus.DECLINE);
+    void decide_returnsWait_whenExistsOperationStateInUnspecified() {
+        final Operation operation1 = TestData.createOperation(OperationState.OPERATION_STATE_EXECUTED);
+        final Operation operation2 = TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED);
+        final Operation operation3 = TestData.createOperation(OperationState.OPERATION_STATE_CANCELED);
 
         final DecisionData data = new DecisionData();
         data.setLastOperations(List.of(operation1, operation2, operation3));
@@ -34,7 +35,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
     }
 
     @Test
@@ -44,7 +45,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.WAIT, decision.getAction());
-        Assertions.assertNull(decision.getLots());
+        Assertions.assertNull(decision.getQuantityLots());
     }
 
     @Test
@@ -54,7 +55,7 @@ class ConservativeStrategyUnitTest {
         final Decision decision = strategy.decide(data, strategy.initCache());
 
         Assertions.assertEquals(DecisionAction.BUY, decision.getAction());
-        Assertions.assertEquals(4, decision.getLots());
+        AssertUtils.assertEquals(4, decision.getQuantityLots());
     }
 
     // endregion

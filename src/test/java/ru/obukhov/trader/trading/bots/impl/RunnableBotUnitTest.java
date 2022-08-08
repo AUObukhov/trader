@@ -1,11 +1,7 @@
 package ru.obukhov.trader.trading.bots.impl;
 
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -14,29 +10,31 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.market.impl.MarketInstrumentsService;
+import ru.obukhov.trader.market.impl.MarketOperationsService;
+import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.OperationsService;
-import ru.obukhov.trader.market.impl.OrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
-import ru.obukhov.trader.market.model.Operation;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.strategy.interfaces.StrategyCache;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -50,9 +48,11 @@ class RunnableBotUnitTest {
     @Mock
     private MarketService marketService;
     @Mock
-    private OperationsService operationsService;
+    private MarketInstrumentsService marketInstrumentsService;
     @Mock
-    private OrdersService ordersService;
+    private MarketOperationsService operationsService;
+    @Mock
+    private MarketOrdersService ordersService;
     @Mock
     private PortfolioService portfolioService;
     @Mock
@@ -70,17 +70,15 @@ class RunnableBotUnitTest {
     private TinkoffServices tinkoffServices;
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNothing_whenDisabled() throws IOException {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(false);
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNothing_whenNotWorkTime() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -91,11 +89,10 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNothing_whenThereAreOrders() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -106,20 +103,19 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker);
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
 
-        final List<Order> orders1 = List.of(TestData.createOrder());
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders1);
+        final List<Order> orders = List.of(TestData.createOrder());
+        Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
         createRunnableBot().run();
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenGetLastCandlesThrowsException() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -130,18 +126,17 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN);
+        mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNothing_whenGetOrdersThrowsException() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -152,7 +147,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker);
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
 
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
@@ -160,11 +155,10 @@ class RunnableBotUnitTest {
 
         Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenGetInstrumentThrowsException() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -175,24 +169,21 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN);
+        mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        Mockito.when(marketService.getInstrument(ticker)).thenThrow(new IllegalArgumentException());
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    @SuppressWarnings("unused")
-    void run_doesNoOrder_whenGetAvailableBalanceThrowsException(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() throws IOException {
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -202,29 +193,25 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
-
-        Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(brokerAccountId), Mockito.any(Currency.class)))
+        Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    @SuppressWarnings("unused")
-    void run_doesNoOrder_whenGetPositionThrowsException(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void run_doesNoOrder_whenGetPositionThrowsException() throws IOException {
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -234,25 +221,22 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
-
-        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker)).thenThrow(new IllegalArgumentException());
+        Mockito.when(portfolioService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenGetOperationsThrowsException() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -263,26 +247,23 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
-
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenDecideThrowsException() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -293,29 +274,26 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
-
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    @SuppressWarnings({"unused", "java:S2699"})
-    void run_catchesException_whenPlaceMarketOrderThrowsException(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    @SuppressWarnings("java:S2699")
+    void run_catchesException_whenPlaceMarketOrderThrowsException() throws IOException {
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -325,28 +303,32 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
-
-        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(decision);
 
-        Mockito.when(ordersService.placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY))
-                .thenThrow(new IllegalArgumentException());
+        Mockito.when(ordersService.postOrder(
+                accountId,
+                ticker,
+                decision.getQuantityLots(),
+                null,
+                OrderDirection.ORDER_DIRECTION_BUY,
+                OrderType.ORDER_TYPE_MARKET,
+                null
+        )).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenThereAreOrders() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -356,17 +338,16 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        mockBotConfig(null, ticker);
+        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenCurrentCandlesIsEmpty() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -379,11 +360,10 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
     @Test
-    @SuppressWarnings("unused")
     void run_doesNoOrder_whenDecisionIsWait() throws IOException {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -393,29 +373,25 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        mockBotConfig(null, ticker, CandleInterval._1MIN, 0.0);
+        mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final int lotSize = 10;
-
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
         createRunnableBot().run();
 
-        verifyNoOrdersMade();
+        Mocker.verifyNoOrdersMade(ordersService);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    @SuppressWarnings("unused")
-    void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() throws IOException {
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -424,25 +400,32 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
+        final Currency currency = Currency.RUB;
         final int lotSize = 10;
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
-        mockData(brokerAccountId, ticker, lotSize);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
+        mockData(accountId, ticker, currency, lotSize);
 
-        final Decision decision = new Decision(DecisionAction.BUY, 5);
+        final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.BUY);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_BUY,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "2000124699")
-    @SuppressWarnings("unused")
-    void run_andPlacesSellOrder_whenDecisionIsSell(@Nullable final String brokerAccountId) throws IOException {
+    @Test
+    void run_andPlacesSellOrder_whenDecisionIsSell() throws IOException {
+        final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -451,18 +434,25 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        final int lotSize = 10;
-        mockBotConfig(brokerAccountId, ticker, CandleInterval._1MIN, 0.0);
-        mockData(brokerAccountId, ticker, lotSize);
+        mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
+        mockData(accountId, ticker, Currency.RUB, 10);
 
-        final Decision decision = new Decision(DecisionAction.SELL, 5);
+        final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
         createRunnableBot().run();
 
         Mockito.verify(ordersService, Mockito.times(1))
-                .placeMarketOrder(brokerAccountId, ticker, decision.getLots(), OperationType.SELL);
+                .postOrder(
+                        accountId,
+                        ticker,
+                        decision.getQuantityLots(),
+                        null,
+                        OrderDirection.ORDER_DIRECTION_SELL,
+                        OrderType.ORDER_TYPE_MARKET,
+                        null
+                );
     }
 
     private RunnableBot createRunnableBot() {
@@ -470,62 +460,52 @@ class RunnableBotUnitTest {
     }
 
     private void mockBotConfig(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final CandleInterval candleInterval,
             final double commission
     ) {
-        if (brokerAccountId != null) {
-            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
-        }
+        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
         Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
         Mockito.when(botConfig.getCommission()).thenReturn(commission);
     }
 
-    private void mockBotConfig(@Nullable final String brokerAccountId, final String ticker, final CandleInterval candleInterval) {
-        if (brokerAccountId != null) {
-            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
-        }
+    private void mockBotConfig(final String accountId, final String ticker, final CandleInterval candleInterval) {
+        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
         Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
     }
 
-    private void mockBotConfig(@Nullable final String brokerAccountId, final String ticker) {
-        if (brokerAccountId != null) {
-            Mockito.when(botConfig.getBrokerAccountId()).thenReturn(brokerAccountId);
-        }
+    private void mockBotConfig(final String ticker, final CandleInterval candleInterval) {
         Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
     }
 
-    private void mockData(@Nullable final String brokerAccountId, final String ticker, final int lotSize) throws IOException {
-        final MarketInstrument instrument = TestData.createMarketInstrument(ticker, lotSize);
-        Mockito.when(marketService.getInstrument(ticker)).thenReturn(instrument);
+    private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize)
+            throws IOException {
+        final Share share = TestData.createShare(ticker, currency, lotSize);
+        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(brokerAccountId, instrument.currency()))
+        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getPosition(brokerAccountId, ticker))
+        Mockito.when(portfolioService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(brokerAccountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
     }
 
-    private void mockCandles(final String ticker, List<Candle> candles) throws IOException {
+    private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
         Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
-    }
-
-    private void verifyNoOrdersMade() throws IOException {
-        Mockito.verify(ordersService, Mockito.never())
-                .placeMarketOrder(Mockito.anyString(), Mockito.any(), Mockito.anyInt(), Mockito.any());
     }
 
 }

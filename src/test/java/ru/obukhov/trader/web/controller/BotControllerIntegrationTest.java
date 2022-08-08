@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -13,15 +14,14 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.MarketInstrument;
 import ru.obukhov.trader.market.model.MovingAverageType;
-import ru.obukhov.trader.market.model.OperationType;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
+import ru.obukhov.trader.market.model.transform.CandleMapper;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
-import ru.obukhov.trader.test.utils.TestData;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -31,6 +31,9 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.obukhov.trader.web.model.exchange.BackTestResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -40,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 class BotControllerIntegrationTest extends ControllerIntegrationTest {
+
+    private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     @Autowired
     private SchedulingProperties schedulingProperties;
@@ -60,7 +65,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -82,7 +87,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -154,7 +159,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
@@ -176,7 +181,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 "ticker",
-                CandleInterval._1MIN,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 null,
                 Map.of("minimumProfit", 0.01)
@@ -190,11 +195,11 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         // building request
 
@@ -242,13 +247,16 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        final MarketInstrument instrument = new MarketInstrument(figi, null, null, null, 1, null, Currency.USD, null, null);
-        mockInstrumentByTicker(ticker, instrument);
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        mockShare(figi, ticker, Currency.RUB, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
-        final Candle[] array = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
-        final List<Candle> candles = Arrays.asList(array);
-        mockAllCandles(figi, candles);
+        final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
+        final List<HistoricCandle> historicCandles = Arrays.stream(candles)
+                .map(candle -> CANDLE_MAPPER.map(candle, true))
+                .toList();
+
+        mockHistoricCandles(figi, historicCandles);
 
         // building expected response
 
@@ -266,17 +274,16 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final BackTestOperation operation = new BackTestOperation(
                 ticker,
                 from,
-                OperationType.BUY,
+                OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10000),
-                1,
-                DecimalUtils.setDefaultScale(300)
+                1L
         );
-        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from, CandleInterval._1MIN);
+        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from);
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
                 interval,
                 balances1,
-                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.061215, 1.033125),
+                new Profits(DecimalUtils.setDefaultScale(61.215440), 0.06121544, 1.033135028),
                 Collections.emptyList(),
                 List.of(operation),
                 List.of(candle),
@@ -290,7 +297,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000),
                 DecimalUtils.setDefaultScale(1000)
         );
-        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), 10);
+        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), BigDecimal.TEN);
         final BackTestResult backTestResult2 = new BackTestResult(
                 botConfig2,
                 interval,

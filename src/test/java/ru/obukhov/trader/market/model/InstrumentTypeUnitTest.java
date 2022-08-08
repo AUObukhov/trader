@@ -16,7 +16,6 @@ class InstrumentTypeUnitTest {
         return Stream.of(
                 Arguments.of("Stock", InstrumentType.STOCK),
                 Arguments.of("Currency", InstrumentType.CURRENCY),
-                Arguments.of("Bond", InstrumentType.BOND),
                 Arguments.of("Etf", InstrumentType.ETF)
         );
     }

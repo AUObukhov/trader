@@ -1,46 +1,27 @@
 package ru.obukhov.trader;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.SandboxService;
-import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.web.client.exceptions.WrongTokenException;
+import ru.obukhov.trader.market.impl.UserService;
 
 /**
- * Class for failing application on startup if token is invalid
+ * Class for failing application on startup if token is invalid.
+ * Tinkoff is hiding unauthorized error now, so application is failed in case of any exception
  */
 @Slf4j
 @Component
 @AllArgsConstructor
 public class TokenValidationStartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
-    private final MarketService marketService;
-    @Nullable
-    private final SandboxService sandboxService;
+    private final UserService userService;
 
-    @SneakyThrows
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
-        try {
-            if (sandboxService == null) {
-                marketService.getInstruments(InstrumentType.STOCK);
-            } else {
-                sandboxService.register();
-            }
-        } catch (final Exception exception) {
-            if (exception.getCause() instanceof WrongTokenException) {
-                throw exception;
-            } else {
-                log.error("Failed to call Tinkoff API after startup", exception);
-            }
-        }
+        userService.getAccounts();
     }
 
 }

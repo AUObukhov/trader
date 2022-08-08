@@ -13,7 +13,6 @@ public enum InstrumentType {
 
     STOCK("Stock"),
     CURRENCY("Currency"),
-    BOND("Bond"),
     ETF("Etf");
 
     private static final Map<String, InstrumentType> LOOKUP = Stream.of(InstrumentType.values())

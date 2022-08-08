@@ -7,11 +7,103 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 class DecimalUtilsUnitTest {
+
+    // region createBigDecimal tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCreateBigDecimal() {
+        return Stream.of(
+                Arguments.of(0, 0, 0),
+                Arguments.of(0, 120_000_000, 0.12),
+                Arguments.of(14, 0, 14.0),
+                Arguments.of(13, 160_000_000, 13.16),
+                Arguments.of(7, 10_000, 7.00001),
+                Arguments.of(15, 666_666_666, 15.666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateBigDecimal")
+    void createBigDecimal(final long units, final int nanos, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.createBigDecimal(units, nanos);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
+    // region getNano tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forGetNano() {
+        return Stream.of(
+                Arguments.of(0, 0),
+                Arguments.of(0.12, 120_000_000),
+                Arguments.of(14.0, 0),
+                Arguments.of(13.000_000_001, 1),
+                Arguments.of(13.666_666_666, 666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forGetNano")
+    void getNano(final double value, final int expectedNanos) {
+        final int nanos = DecimalUtils.getNano(BigDecimal.valueOf(value));
+
+        Assertions.assertEquals(expectedNanos, nanos);
+    }
+
+    // endregion
+
+    // region add tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToQuotation() {
+        return Stream.of(
+                Arguments.of(0, 0, 0),
+                Arguments.of(0.12, 0, 120_000_000),
+                Arguments.of(14.0, 14, 0),
+                Arguments.of(13.000_000_001, 13, 1),
+                Arguments.of(10.666_666_666, 10, 666_666_666)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToQuotation")
+    void toQuotation(final double value, final int expectedUnits, final int expectedNano) {
+        final Quotation quotation = DecimalUtils.toQuotation(BigDecimal.valueOf(value));
+
+        Assertions.assertEquals(expectedUnits, quotation.getUnits());
+        Assertions.assertEquals(expectedNano, quotation.getNano());
+    }
+
+    // endregion
+
+    // region add tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forAdd() {
+        return Stream.of(
+                Arguments.of(100.1, 5, 105.1),
+                Arguments.of(100.0000000055, 7, 107.000000006)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forAdd")
+    void subtract(final double addend1, final long addend2, final double expectedResult) {
+        final BigDecimal result = DecimalUtils.add(BigDecimal.valueOf(addend1), addend2);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    // endregion
 
     // region subtract tests
 
@@ -19,7 +111,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forSubtract() {
         return Stream.of(
                 Arguments.of(100.1, 1.5, 98.6),
-                Arguments.of(100.0000055, 1.5, 98.500006)
+                Arguments.of(100.0000000055, 1.5, 98.500000006)
         );
     }
 
@@ -39,7 +131,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forMultiplyByDouble() {
         return Stream.of(
                 Arguments.of(100.1, 1.5, 150.15),
-                Arguments.of(100.0000055, 5.9, 590.000032)
+                Arguments.of(100.0000055, 5.9, 590.000032450)
         );
     }
 
@@ -55,7 +147,7 @@ class DecimalUtilsUnitTest {
     static Stream<Arguments> getData_forMultiplyByInt() {
         return Stream.of(
                 Arguments.of(100.1, 2, 200.2),
-                Arguments.of(100.0000015, 3, 300.000005)
+                Arguments.of(100.0000000015, 3, 300.000000005)
         );
     }
 
@@ -75,21 +167,21 @@ class DecimalUtilsUnitTest {
     void divideBigDecimalByInteger() {
         final BigDecimal result = DecimalUtils.divide(BigDecimal.valueOf(100), 3);
 
-        AssertUtils.assertEquals(33.333333, result);
+        AssertUtils.assertEquals(33.333333333, result);
     }
 
     @Test
     void divideLongByBigDecimal() {
         final BigDecimal result = DecimalUtils.divide(100, BigDecimal.valueOf(3));
 
-        AssertUtils.assertEquals(33.333333, result);
+        AssertUtils.assertEquals(33.333333333, result);
     }
 
     @Test
     void divide() {
         final double dividend = 100.0000055;
         final double divisor = 0.0099;
-        final double expectedResult = 10101.010657;
+        final double expectedResult = 10101.010656566;
 
         final BigDecimal divideBigDecimalByDoubleResult = DecimalUtils.divide(BigDecimal.valueOf(dividend), divisor);
         final BigDecimal divideDoubleByDoubleResult = DecimalUtils.divide(dividend, divisor);
@@ -129,21 +221,13 @@ class DecimalUtilsUnitTest {
             "10, 5, 7.5",
             "-10, 10, 0",
             "10, 10, 10",
-            "1.234567, 2.345678, 1.790123",
-            "1.234567, 9.87654321, 5.555555"
+            "1.234567, 2.345678, 1.790122500",
+            "1.234567, 9.87654321, 5.555555105"
     })
     void getAverage(BigDecimal value1, BigDecimal value2, BigDecimal expectedAverage) {
         final BigDecimal average = DecimalUtils.getAverage(value1, value2);
 
         AssertUtils.assertEquals(expectedAverage, average);
-    }
-
-    @ParameterizedTest
-    @CsvSource({"7.8,2.6,3", "7.9, 2.6, 3", "10.3, 2.6, 3"})
-    void getIntegerQuotient(BigDecimal dividend, BigDecimal divisor, int expectedQuotient) {
-        final int result = DecimalUtils.getIntegerQuotient(dividend, divisor);
-
-        Assertions.assertEquals(expectedQuotient, result);
     }
 
     @Test
@@ -171,7 +255,7 @@ class DecimalUtilsUnitTest {
     void getFractionDifference() {
         final BigDecimal result = DecimalUtils.getFractionDifference(BigDecimal.valueOf(765), BigDecimal.valueOf(762.705));
 
-        AssertUtils.assertEquals(0.003009, result);
+        AssertUtils.assertEquals(0.003009027, result);
     }
 
     // region setDefaultScale with BigDecimal tests
@@ -212,14 +296,14 @@ class DecimalUtilsUnitTest {
     @ParameterizedTest
     @CsvSource({
             "10.01, 10.01",
-            "10.0000001, 10",
-            "10.0000005, 10.000001"
+            "10.0000000001, 10",
+            "10.0000000005, 10.000000001"
     })
     void setDefaultScale_withDouble(Double number, double expectedValue) {
         final BigDecimal result = DecimalUtils.setDefaultScale(number);
 
         Assertions.assertEquals(DecimalUtils.DEFAULT_SCALE, result.scale());
-        AssertUtils.assertEquals(BigDecimal.valueOf(expectedValue), result);
+        AssertUtils.assertEquals(expectedValue, result);
     }
 
     // endregion

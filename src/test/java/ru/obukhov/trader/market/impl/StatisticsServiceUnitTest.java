@@ -10,12 +10,12 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.DateTimeTestData;
-import ru.obukhov.trader.test.utils.TestData;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ class StatisticsServiceUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
-        final CandleInterval min = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
 
@@ -55,12 +55,12 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(10, 15, 20, 5, time, min),
-                TestData.createCandle(15, 20, 25, 10, time.plusMinutes(1), min),
-                TestData.createCandle(20, 17, 24, 15, time.plusMinutes(2), min)
+                TestData.createCandle(10, 15, 20, 5, time),
+                TestData.createCandle(15, 20, 25, 10, time.plusMinutes(1)),
+                TestData.createCandle(20, 17, 24, 15, time.plusMinutes(2))
         );
 
-        Mockito.when(marketService.getCandles(ticker, interval, min)).thenReturn(candles);
+        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
@@ -72,13 +72,13 @@ class StatisticsServiceUnitTest {
 
         // act
 
-        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, min, movingAverageType, smallWindow, bigWindow);
+        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
 
         // assert
 
-        AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(shortAverages, response.getAverages1());
-        AssertUtils.assertListsAreEqual(longAverages, response.getAverages2());
+        AssertUtils.assertEquals(candles, response.getCandles());
+        AssertUtils.assertEquals(shortAverages, response.getAverages1());
+        AssertUtils.assertEquals(longAverages, response.getAverages2());
     }
 
     @Test
@@ -93,7 +93,7 @@ class StatisticsServiceUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final OffsetDateTime time = DateTimeTestData.createDateTime(2020, 1, 1, 10);
-        final CandleInterval candleInterval = CandleInterval._1MIN;
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
 
@@ -101,16 +101,16 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(80, 15, 20, 5, time, candleInterval),
-                TestData.createCandle(1000, 20, 25, 10, time.plusMinutes(1), candleInterval),
-                TestData.createCandle(70, 17, 24, 15, time.plusMinutes(2), candleInterval),
-                TestData.createCandle(40, 18, 22, 14, time.plusMinutes(3), candleInterval),
-                TestData.createCandle(50, 18, 22, 14, time.plusMinutes(4), candleInterval),
-                TestData.createCandle(10, 18, 22, 14, time.plusMinutes(5), candleInterval),
-                TestData.createCandle(90, 18, 22, 14, time.plusMinutes(6), candleInterval),
-                TestData.createCandle(1000, 18, 22, 14, time.plusMinutes(7), candleInterval),
-                TestData.createCandle(60, 18, 22, 14, time.plusMinutes(8), candleInterval),
-                TestData.createCandle(30, 18, 22, 14, time.plusMinutes(9), candleInterval)
+                TestData.createCandle(80, 15, 20, 5, time),
+                TestData.createCandle(1000, 20, 25, 10, time.plusMinutes(1)),
+                TestData.createCandle(70, 17, 24, 15, time.plusMinutes(2)),
+                TestData.createCandle(40, 18, 22, 14, time.plusMinutes(3)),
+                TestData.createCandle(50, 18, 22, 14, time.plusMinutes(4)),
+                TestData.createCandle(10, 18, 22, 14, time.plusMinutes(5)),
+                TestData.createCandle(90, 18, 22, 14, time.plusMinutes(6)),
+                TestData.createCandle(1000, 18, 22, 14, time.plusMinutes(7)),
+                TestData.createCandle(60, 18, 22, 14, time.plusMinutes(8)),
+                TestData.createCandle(30, 18, 22, 14, time.plusMinutes(9))
         );
         Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
@@ -128,9 +128,9 @@ class StatisticsServiceUnitTest {
 
         // assert
 
-        AssertUtils.assertListsAreEqual(candles, response.getCandles());
-        AssertUtils.assertListsAreEqual(shortAverages, response.getAverages1());
-        AssertUtils.assertListsAreEqual(longAverages, response.getAverages2());
+        AssertUtils.assertEquals(candles, response.getCandles());
+        AssertUtils.assertEquals(shortAverages, response.getAverages1());
+        AssertUtils.assertEquals(longAverages, response.getAverages2());
     }
 
     private void mockAverages(Integer window, List<BigDecimal> averages) {

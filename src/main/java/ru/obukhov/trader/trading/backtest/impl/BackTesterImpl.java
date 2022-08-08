@@ -2,7 +2,6 @@ package ru.obukhov.trader.trading.backtest.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -10,14 +9,12 @@ import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.Operation;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
@@ -30,6 +27,7 @@ import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.Operation;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -151,7 +149,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(botConfig.getBrokerAccountId(), botConfig.getTicker(), balanceConfig, fakeBot, interval.getTo());
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.getAccountId(), botConfig.getTicker(), balanceConfig, fakeBot, interval.getTo());
         } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
@@ -165,12 +163,12 @@ public class BackTesterImpl implements BackTester {
     }
 
     private void moveToNextMinuteAndApplyBalanceIncrement(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final String ticker,
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
             final OffsetDateTime to
-    ) throws IOException {
+    ) {
         if (balanceConfig.getBalanceIncrement() == null) {
             fakeBot.nextMinute();
         } else {
@@ -180,7 +178,7 @@ public class BackTesterImpl implements BackTester {
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
             final Currency currency = getCurrency(fakeBot, ticker);
             for (OffsetDateTime investmentTime : investmentsTimes) {
-                fakeBot.addInvestment(brokerAccountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
+                fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
         }
     }
@@ -191,13 +189,13 @@ public class BackTesterImpl implements BackTester {
             final List<Candle> candles,
             final FakeBot fakeBot
     ) throws IOException {
-        final String brokerAccountId = botConfig.getBrokerAccountId();
+        final String accountId = botConfig.getAccountId();
         final String ticker = botConfig.getTicker();
 
-        final List<BackTestPosition> positions = getPositions(brokerAccountId, fakeBot);
-        final Balances balances = getBalances(brokerAccountId, interval, fakeBot, positions, ticker);
+        final List<BackTestPosition> positions = getPositions(accountId, fakeBot);
+        final Balances balances = getBalances(accountId, interval, fakeBot, positions, ticker);
         final Profits profits = getProfits(balances, interval);
-        final List<Operation> operations = fakeBot.getOperations(brokerAccountId, interval, ticker);
+        final List<Operation> operations = fakeBot.getOperations(accountId, interval, ticker);
 
         return new BackTestResult(
                 botConfig,
@@ -230,12 +228,12 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private Currency getCurrency(final FakeBot fakeBot, final String ticker) throws IOException {
-        return fakeBot.searchMarketInstrument(ticker).currency();
+    private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
+        return Currency.valueOfIgnoreCase(fakeBot.getShare(ticker).getCurrency());
     }
 
-    private List<BackTestPosition> getPositions(final String brokerAccountId, final FakeBot fakeBot) throws IOException {
-        List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(brokerAccountId);
+    private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) throws IOException {
+        List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
         List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
         for (PortfolioPosition portfolioPosition : portfolioPositions) {
             backTestPositions.add(createBackTestPosition(portfolioPosition, fakeBot));
@@ -245,21 +243,21 @@ public class BackTesterImpl implements BackTester {
 
     private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) throws IOException {
         final String ticker = portfolioPosition.ticker();
-        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.count());
+        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.quantity());
     }
 
     private Balances getBalances(
-            @Nullable final String brokerAccountId,
+            final String accountId,
             final Interval interval,
             final FakeBot fakeBot,
             final List<BackTestPosition> positions,
             final String ticker
-    ) throws IOException {
+    ) {
         final Currency currency = getCurrency(fakeBot, ticker);
-        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(brokerAccountId, currency);
+        final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
-        final BigDecimal finalBalance = fakeBot.getCurrentBalance(brokerAccountId, currency);
+        final BigDecimal finalBalance = fakeBot.getCurrentBalance(accountId, currency);
         final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
 
         final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -270,7 +268,7 @@ public class BackTesterImpl implements BackTester {
 
     private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<BackTestPosition> positions) {
         return positions.stream()
-                .map(position -> DecimalUtils.multiply(position.price(), position.quantity()))
+                .map(BackTestPosition::getTotalPrice)
                 .reduce(currentBalance, BigDecimal::add);
     }
 

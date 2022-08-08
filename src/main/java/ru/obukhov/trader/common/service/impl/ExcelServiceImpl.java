@@ -26,14 +26,14 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.CandleInterval;
-import ru.obukhov.trader.market.model.OperationType;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -154,7 +154,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putCandleInterval(final ExtendedSheet sheet, final CandleInterval candleInterval) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Размер свечи", candleInterval.getValue());
+        row.createCells("Размер свечи", candleInterval.name());
     }
 
     private void putStrategyType(final ExtendedSheet sheet, final StrategyType strategyType) {
@@ -173,7 +173,7 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
-        putBrokerAccountId(sheet, result.botConfig().getBrokerAccountId());
+        putAccountId(sheet, result.botConfig().getAccountId());
         putTicker(sheet, result.botConfig().getTicker());
         putInterval(sheet, result.interval());
         putInitialInvestment(sheet, result.balances().initialInvestment());
@@ -188,9 +188,9 @@ public class ExcelServiceImpl implements ExcelService {
         putError(sheet, result.error());
     }
 
-    private void putBrokerAccountId(final ExtendedSheet sheet, final String brokerAccountId) {
+    private void putAccountId(final ExtendedSheet sheet, final String accountId) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Счёт", brokerAccountId);
+        row.createCells("Счёт", accountId);
     }
 
     private void putTicker(final ExtendedSheet sheet, final String ticker) {
@@ -280,15 +280,14 @@ public class ExcelServiceImpl implements ExcelService {
         } else {
             labelRow.createUnitedCell("Операции", 6);
             final ExtendedRow headersRow = sheet.addRow();
-            headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество", "Комиссия");
+            headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество");
             for (final BackTestOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(
                         operation.dateTime(),
                         operation.operationType().name(),
                         operation.price(),
-                        operation.quantity(),
-                        operation.commission()
+                        operation.quantity()
                 );
             }
         }
@@ -423,7 +422,7 @@ public class ExcelServiceImpl implements ExcelService {
         for (int i = 0; i < operations.size(); i++) {
             final BackTestOperation operation = operations.get(i);
             final int index = operationsIndices.get(i);
-            if (operation.operationType() == OperationType.BUY) {
+            if (operation.operationType() == OperationType.OPERATION_TYPE_BUY) {
                 buyOperationsPrices[index] = operation.price();
                 buyOperationsExist = true;
             } else {

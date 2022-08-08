@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import ru.obukhov.trader.test.utils.PoiTestData;
+import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 class ExtendedCellUnitTest {
 
