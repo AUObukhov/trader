@@ -39,23 +39,6 @@ scheduled-bot:
       strategy-params:
         minimumProfit: 0.1
 
-query.throttle:
-  interval: 60000
-  limits:
-    - segments:
-        - market
-      limit: 120
-    - segments:
-        - orders
-      limit: 100
-    - segments:
-        - orders
-        - limit-order
-      limit: 50
-  retry-interval: 5000
-  attempts-count: 30
-  default-limit: 120
-
 spring.cache:
   cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
