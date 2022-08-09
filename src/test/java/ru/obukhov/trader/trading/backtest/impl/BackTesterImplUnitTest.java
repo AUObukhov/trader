@@ -1087,12 +1087,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }
 
-    private void mockPortfolioPosition(
-            final FakeBot fakeBot,
-            final String accountId,
-            final String ticker,
-            final int quantityLots
-    ) throws IOException {
+    private void mockPortfolioPosition(final FakeBot fakeBot, final String accountId, final String ticker, final int quantityLots) {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, quantityLots);
         Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
     }
@@ -1103,7 +1098,7 @@ class BackTesterImplUnitTest {
             final String ticker,
             final int quantity,
             final int quantityLots
-    ) throws IOException {
+    ) {
         final PortfolioPosition portfolioPosition = TestData.createPortfolioPosition(ticker, quantity, quantityLots);
         Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
     }
