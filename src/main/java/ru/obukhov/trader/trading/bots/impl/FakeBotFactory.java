@@ -52,18 +52,18 @@ public class FakeBotFactory {
             final OffsetDateTime currentDateTime
     ) {
 
-        final Share share = tinkoffServices.marketInstrumentsService().getShare(botConfig.getTicker());
+        final Share share = tinkoffServices.marketInstrumentsService().getShare(botConfig.ticker());
         if (share == null) {
-            throw new IllegalArgumentException("Not found share for ticker '" + botConfig.getTicker() + "'");
+            throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
         }
 
         return new FakeTinkoffService(
                 marketProperties,
                 tinkoffServices,
-                botConfig.getAccountId(),
+                botConfig.accountId(),
                 currentDateTime,
                 Currency.valueOfIgnoreCase(share.getCurrency()),
-                botConfig.getCommission(),
+                botConfig.commission(),
                 balanceConfig
         );
     }

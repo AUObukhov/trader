@@ -67,11 +67,14 @@ class AbstractBotUnitTest {
         final List<Order> orders = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                null,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -89,11 +92,14 @@ class AbstractBotUnitTest {
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                null,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -107,11 +113,14 @@ class AbstractBotUnitTest {
         final String accountId = "2000124699";
         final String ticker = "ticker";
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                null,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -129,11 +138,14 @@ class AbstractBotUnitTest {
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                null,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, previousStartTime);
 
@@ -159,12 +171,14 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -206,12 +220,14 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 
@@ -260,12 +276,14 @@ class AbstractBotUnitTest {
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
                 .thenReturn(decision);
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                null,
+                null
+        );
 
         final List<Candle> candles = bot.processBotConfig(botConfig, null);
 

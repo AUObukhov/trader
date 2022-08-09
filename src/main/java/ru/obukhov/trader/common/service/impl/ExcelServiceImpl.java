@@ -147,9 +147,9 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Конфигурация", 2);
 
-        putCandleInterval(sheet, botConfig.getCandleInterval());
-        putStrategyType(sheet, botConfig.getStrategyType());
-        putStrategyParams(sheet, botConfig.getStrategyParams());
+        putCandleInterval(sheet, botConfig.candleInterval());
+        putStrategyType(sheet, botConfig.strategyType());
+        putStrategyParams(sheet, botConfig.strategyParams());
     }
 
     private void putCandleInterval(final ExtendedSheet sheet, final CandleInterval candleInterval) {
@@ -173,8 +173,8 @@ public class ExcelServiceImpl implements ExcelService {
         final ExtendedRow labelRow = sheet.addRow();
         labelRow.createUnitedCell("Общая статистика", 2);
 
-        putAccountId(sheet, result.botConfig().getAccountId());
-        putTicker(sheet, result.botConfig().getTicker());
+        putAccountId(sheet, result.botConfig().accountId());
+        putTicker(sheet, result.botConfig().ticker());
         putInterval(sheet, result.interval());
         putInitialInvestment(sheet, result.balances().initialInvestment());
         putTotalInvestment(sheet, result.balances().totalInvestment());

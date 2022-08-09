@@ -60,12 +60,14 @@ class BackTestRequestValidationTest {
     @Test
     void validationFails_whenCandleAccountIdIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        final BotConfig botConfig = BotConfig.builder()
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                null,
+                "ticker",
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                StrategyType.CONSERVATIVE,
+                null
+        );
         request.setBotConfigs(List.of(botConfig));
 
         AssertUtils.assertViolation(request, "accountId is mandatory");
@@ -74,26 +76,46 @@ class BackTestRequestValidationTest {
     @Test
     void validationFails_whenCandleIntervalIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                "2000124699",
+                "ticker",
+                null,
+                0.003,
+                StrategyType.CONSERVATIVE,
+                null
+        );
         request.setBotConfigs(List.of(botConfig));
 
         AssertUtils.assertViolation(request, "candleInterval is mandatory");
     }
 
     @Test
+    void validationFails_whenCommissionIsNull() throws ParseException {
+        final BackTestRequest request = createValidBackTestRequest();
+        final BotConfig botConfig = new BotConfig(
+                "2000124699",
+                "ticker",
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                null,
+                StrategyType.CONSERVATIVE,
+                null
+        );
+        request.setBotConfigs(List.of(botConfig));
+
+        AssertUtils.assertViolation(request, "commission is mandatory");
+    }
+
+    @Test
     void validationFails_whenStrategyTypeIsNull() throws ParseException {
         final BackTestRequest request = createValidBackTestRequest();
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                "2000124699",
+                "ticker",
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                null,
+                null
+        );
         request.setBotConfigs(List.of(botConfig));
 
         AssertUtils.assertViolation(request, "strategyType is mandatory");
@@ -112,13 +134,14 @@ class BackTestRequestValidationTest {
 
         request.setFrom(OffsetDateTime.now());
 
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId(accountId)
-                .ticker(ticker)
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                "2000124699",
+                "ticker",
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                StrategyType.CONSERVATIVE,
+                null
+        );
         request.setBotConfigs(List.of(botConfig));
 
         return request;

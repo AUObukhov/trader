@@ -84,10 +84,8 @@ class TradingStrategyFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateStrategy_givesStrategyProperName")
     void createStrategy_givesStrategyProperName(final StrategyType strategyType, final Map<String, Object> strategyParams, final String expectedName) {
-        final BotConfig botConfig = BotConfig.builder()
-                .strategyType(strategyType)
-                .strategyParams(strategyParams)
-                .build();
+        final BotConfig botConfig = new BotConfig(null, null, null, null, strategyType, strategyParams);
+
         TradingStrategy strategy = factory.createStrategy(botConfig);
 
         Assertions.assertEquals(expectedName, strategy.getName());
@@ -287,11 +285,7 @@ class TradingStrategyFactoryUnitTest {
             final Map<String, Object> strategyParams,
             final String expectedMessage
     ) {
-        final BotConfig botConfig = BotConfig.builder()
-                .strategyType(StrategyType.CROSS)
-                .strategyParams(strategyParams)
-                .build();
-
+        final BotConfig botConfig = new BotConfig(null, null, null, null, StrategyType.CROSS, strategyParams);
         final Executable executable = () -> factory.createStrategy(botConfig);
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -307,10 +301,7 @@ class TradingStrategyFactoryUnitTest {
                 "smallWindow", 3,
                 "bigWindow", 6
         );
-        final BotConfig botConfig = BotConfig.builder()
-                .strategyType(StrategyType.CROSS)
-                .strategyParams(strategyParams)
-                .build();
+        final BotConfig botConfig = new BotConfig(null, null, null, null, StrategyType.CROSS, strategyParams);
 
         final String averagerName = MovingAverageType.SIMPLE.getAveragerName();
         Mockito.when(applicationContext.getBean(averagerName, MovingAverager.class))
@@ -325,11 +316,14 @@ class TradingStrategyFactoryUnitTest {
 
     @Test
     void createStrategy_throwsIllegalArgumentException_whenCross_andParamsAreEmpty() {
-        final BotConfig botConfig = BotConfig.builder()
-                .strategyType(StrategyType.CROSS)
-                .strategyParams(Collections.emptyMap())
-                .build();
-
+        final BotConfig botConfig = new BotConfig(
+                null,
+                null,
+                null,
+                null,
+                StrategyType.CROSS,
+                Collections.emptyMap()
+        );
         final Executable executable = () -> factory.createStrategy(botConfig);
         final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, executable);
 

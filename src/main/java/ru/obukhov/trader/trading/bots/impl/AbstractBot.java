@@ -74,10 +74,10 @@ public abstract class AbstractBot implements Bot {
     public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) throws IOException {
         final DecisionData decisionData = new DecisionData();
 
-        final String ticker = botConfig.getTicker();
+        final String ticker = botConfig.ticker();
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.getCandleInterval());
+            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.candleInterval());
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {
@@ -87,7 +87,7 @@ public abstract class AbstractBot implements Bot {
             } else {
                 fillDecisionData(botConfig, decisionData, ticker);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(botConfig.getAccountId(), ticker, decision);
+                performOperation(botConfig.accountId(), ticker, decision);
             }
             return currentCandles;
         } else {
@@ -100,11 +100,11 @@ public abstract class AbstractBot implements Bot {
         final Share share = marketInstrumentsService.getShare(ticker);
         final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.getAccountId(), currency));
-        decisionData.setPosition(portfolioService.getSecurity(botConfig.getAccountId(), ticker));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.getAccountId(), ticker));
+        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.accountId(), currency));
+        decisionData.setPosition(portfolioService.getSecurity(botConfig.accountId(), ticker));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), ticker));
         decisionData.setShare(share);
-        decisionData.setCommission(botConfig.getCommission());
+        decisionData.setCommission(botConfig.commission());
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String ticker) throws IOException {

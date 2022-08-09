@@ -103,7 +103,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
         final List<Order> orders = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
@@ -147,7 +147,7 @@ class RunnableBotUnitTest {
 
         final String ticker = "ticker";
 
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
         Mockito.when(ordersService.getOrders(ticker)).thenThrow(new IllegalArgumentException());
 
@@ -338,7 +338,7 @@ class RunnableBotUnitTest {
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
         final String ticker = "ticker";
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
@@ -465,21 +465,21 @@ class RunnableBotUnitTest {
             final CandleInterval candleInterval,
             final double commission
     ) {
-        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
-        Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
-        Mockito.when(botConfig.getCommission()).thenReturn(commission);
+        Mockito.when(botConfig.accountId()).thenReturn(accountId);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
+        Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
+        Mockito.when(botConfig.commission()).thenReturn(commission);
     }
 
     private void mockBotConfig(final String accountId, final String ticker, final CandleInterval candleInterval) {
-        Mockito.when(botConfig.getAccountId()).thenReturn(accountId);
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
-        Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
+        Mockito.when(botConfig.accountId()).thenReturn(accountId);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
+        Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
     private void mockBotConfig(final String ticker, final CandleInterval candleInterval) {
-        Mockito.when(botConfig.getTicker()).thenReturn(ticker);
-        Mockito.when(botConfig.getCandleInterval()).thenReturn(candleInterval);
+        Mockito.when(botConfig.ticker()).thenReturn(ticker);
+        Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
     private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize)

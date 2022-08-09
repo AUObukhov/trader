@@ -32,9 +32,9 @@ class ScheduledBotsPropertiesContextTest {
                     Assertions.assertEquals(2, botConfigs.size());
 
                     final BotConfig botConfig1 = botConfigs.get(0);
-                    Assertions.assertEquals("FXIT", botConfig1.getTicker());
-                    Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig1.getCandleInterval());
-                    Assertions.assertEquals(StrategyType.CROSS, botConfig1.getStrategyType());
+                    Assertions.assertEquals("FXIT", botConfig1.ticker());
+                    Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig1.candleInterval());
+                    Assertions.assertEquals(StrategyType.CROSS, botConfig1.strategyType());
 
                     final Map<String, Object> expectedStrategyParams1 = Map.of(
                             "minimumProfit", 0.1,
@@ -45,15 +45,15 @@ class ScheduledBotsPropertiesContextTest {
                             "indexCoefficient", 0.5,
                             "greedy", true
                     );
-                    AssertUtils.assertEquals(expectedStrategyParams1, botConfig1.getStrategyParams());
+                    AssertUtils.assertEquals(expectedStrategyParams1, botConfig1.strategyParams());
 
                     final BotConfig botConfig2 = botConfigs.get(1);
-                    Assertions.assertEquals("FXIT", botConfig2.getTicker());
-                    Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig2.getCandleInterval());
-                    Assertions.assertEquals(StrategyType.CONSERVATIVE, botConfig2.getStrategyType());
+                    Assertions.assertEquals("FXIT", botConfig2.ticker());
+                    Assertions.assertEquals(CandleInterval.CANDLE_INTERVAL_5_MIN, botConfig2.candleInterval());
+                    Assertions.assertEquals(StrategyType.CONSERVATIVE, botConfig2.strategyType());
 
                     final Map<String, Object> expectedStrategyParams2 = Map.of("minimumProfit", 0.1);
-                    AssertUtils.assertEquals(expectedStrategyParams2, botConfig2.getStrategyParams());
+                    AssertUtils.assertEquals(expectedStrategyParams2, botConfig2.strategyParams());
                 });
     }
 

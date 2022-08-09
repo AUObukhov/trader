@@ -149,7 +149,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(botConfig.getAccountId(), botConfig.getTicker(), balanceConfig, fakeBot, interval.getTo());
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.ticker(), balanceConfig, fakeBot, interval.getTo());
         } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
@@ -189,8 +189,8 @@ public class BackTesterImpl implements BackTester {
             final List<Candle> candles,
             final FakeBot fakeBot
     ) throws IOException {
-        final String accountId = botConfig.getAccountId();
-        final String ticker = botConfig.getTicker();
+        final String accountId = botConfig.accountId();
+        final String ticker = botConfig.ticker();
 
         final List<BackTestPosition> positions = getPositions(accountId, fakeBot);
         final Balances balances = getBalances(accountId, interval, fakeBot, positions, ticker);

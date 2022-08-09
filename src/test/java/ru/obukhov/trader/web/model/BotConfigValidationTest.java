@@ -1,80 +1,103 @@
 package ru.obukhov.trader.web.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Stream;
 
 class BotConfigValidationTest {
 
     @Test
     void validationSucceeds_whenEverythingIsValid() {
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
+        final BotConfig botConfig = new BotConfig(
+                "2000124699",
+                "ticker",
+                CandleInterval.CANDLE_INTERVAL_1_MIN,
+                0.003,
+                StrategyType.CONSERVATIVE,
+                Collections.emptyMap()
+        );
         AssertUtils.assertNoViolations(botConfig);
     }
 
-    @Test
-    void validationFails_whenAccountIdIsNull() {
-        final BotConfig botConfig = BotConfig.builder()
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
-        AssertUtils.assertViolation(botConfig, "accountId is mandatory");
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forViolation() {
+        return Stream.of(
+                Arguments.of(
+                        null,
+                        "ticker",
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        0.003,
+                        StrategyType.CONSERVATIVE,
+                        Collections.emptyMap(),
+                        "accountId is mandatory"
+                ),
+                Arguments.of(
+                        "2000124699",
+                        null,
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        0.003,
+                        StrategyType.CONSERVATIVE,
+                        Collections.emptyMap(),
+                        "ticker is mandatory"
+                ),
+                Arguments.of(
+                        "2000124699",
+                        "ticker",
+                        null,
+                        0.003,
+                        StrategyType.CONSERVATIVE,
+                        Collections.emptyMap(),
+                        "candleInterval is mandatory"
+                ),
+                Arguments.of(
+                        "2000124699",
+                        "ticker",
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        null,
+                        StrategyType.CONSERVATIVE,
+                        Collections.emptyMap(),
+                        "commission is mandatory"
+                ),
+                Arguments.of(
+                        "2000124699",
+                        "ticker",
+                        CandleInterval.CANDLE_INTERVAL_1_MIN,
+                        0.003,
+                        null,
+                        Collections.emptyMap(),
+                        "strategyType is mandatory"
+                )
+        );
     }
 
-    @Test
-    void validationFails_whenTickerIsNull() {
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
-
-        AssertUtils.assertViolation(botConfig, "ticker is mandatory");
-    }
-
-    @Test
-    void validationFails_whenCandleIntervalIsNull() {
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .commission(0.003)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
-
-        AssertUtils.assertViolation(botConfig, "candleInterval is mandatory");
-    }
-
-    @Test
-    void validationFails_whenCommissionIsNull() {
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .strategyType(StrategyType.CONSERVATIVE)
-                .build();
-
-        AssertUtils.assertViolation(botConfig, "commission is mandatory");
-    }
-
-    @Test
-    void validationFails_whenStrategyTypeIsNull() {
-        final BotConfig botConfig = BotConfig.builder()
-                .accountId("2000124699")
-                .ticker("ticker")
-                .candleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .commission(0.003)
-                .build();
-        AssertUtils.assertViolation(botConfig, "strategyType is mandatory");
+    @ParameterizedTest
+    @MethodSource("getData_forViolation")
+    void testViolation(
+            final String accountId,
+            final String ticker,
+            final CandleInterval candleInterval,
+            final Double commission,
+            final StrategyType strategyType,
+            final Map<String, Object> strategyParams,
+            final String expectedViolation
+    ) {
+        final BotConfig botConfig = new BotConfig(
+                accountId,
+                ticker,
+                candleInterval,
+                commission,
+                strategyType,
+                strategyParams
+        );
+        AssertUtils.assertViolation(botConfig, expectedViolation);
     }
 
 }
