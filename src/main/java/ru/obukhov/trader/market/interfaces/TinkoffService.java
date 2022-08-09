@@ -25,8 +25,6 @@ public interface TinkoffService {
 
     String getFigiByTicker(String ticker);
 
-    String getTickerByFigi(String figi);
-
     List<Share> getAllShares();
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;

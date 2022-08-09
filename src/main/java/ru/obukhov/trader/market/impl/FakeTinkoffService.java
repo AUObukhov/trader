@@ -133,11 +133,6 @@ public class FakeTinkoffService implements TinkoffService {
         return realTinkoffService.getFigiByTicker(ticker);
     }
 
-    @Override
-    public String getTickerByFigi(final String figi) {
-        return realTinkoffService.getTickerByFigi(figi);
-    }
-
     // region MarketContext proxy
 
     @Override
