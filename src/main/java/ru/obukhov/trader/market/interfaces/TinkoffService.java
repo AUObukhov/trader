@@ -10,7 +10,6 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
@@ -24,8 +23,6 @@ import java.util.List;
 public interface TinkoffService {
 
     String getFigiByTicker(String ticker);
-
-    List<Share> getAllShares();
 
     List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 

@@ -136,11 +136,6 @@ public class FakeTinkoffService implements TinkoffService {
     // region MarketContext proxy
 
     @Override
-    public List<Share> getAllShares() {
-        return realTinkoffService.getAllShares();
-    }
-
-    @Override
     public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
         return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
     }

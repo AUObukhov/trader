@@ -26,7 +26,6 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -75,16 +74,6 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
                 .map(AssetInstrument::getFigi)
                 .orElse(null);
     }
-
-    // region InstrumentsService
-
-    @Override
-    @Cacheable(value = "allShares", sync = true)
-    public List<Share> getAllShares() {
-        return instrumentsService.getAllSharesSync();
-    }
-
-    // endregion
 
     // region MarketContext
 

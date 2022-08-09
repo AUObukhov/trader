@@ -37,7 +37,6 @@ import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -78,21 +77,6 @@ class RealTinkoffServiceUnitTest {
     private void setUp() {
         Mockito.lenient().when(applicationContext.getBean(RealTinkoffService.class)).thenReturn(realTinkoffService);
         realTinkoffService.setApplicationContext(applicationContext);
-    }
-
-    // region MarketContext methods tests
-
-    @Test
-    void getAllShares_returnsShares() {
-        final Share share1 = Share.newBuilder().build();
-        final Share share2 = Share.newBuilder().build();
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share1, share2));
-
-        final List<Share> result = realTinkoffService.getAllShares();
-
-        Assertions.assertEquals(2, result.size());
-        Assertions.assertSame(share1, result.get(0));
-        Assertions.assertSame(share2, result.get(1));
     }
 
     // region getMarketCandles tests

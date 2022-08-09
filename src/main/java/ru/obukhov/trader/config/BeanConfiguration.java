@@ -88,8 +88,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketInstrumentsService marketInstrumentsService(final TinkoffService realTinkoffService) {
-        return new MarketInstrumentsService(realTinkoffService);
+    public MarketInstrumentsService marketInstrumentsService(final InstrumentsService instrumentsService) {
+        return new MarketInstrumentsService(instrumentsService);
     }
 
     @Bean
