@@ -119,6 +119,25 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public TinkoffServices realTinkoffServices(
+            final MarketService realMarketService,
+            final MarketInstrumentsService marketInstrumentsService,
+            final MarketOperationsService realOperationsService,
+            final MarketOrdersService realOrdersService,
+            final PortfolioService realPortfolioService,
+            final RealTinkoffService realTinkoffService
+    ) {
+        return new TinkoffServices(
+                realMarketService,
+                marketInstrumentsService,
+                realOperationsService,
+                realOrdersService,
+                realPortfolioService,
+                realTinkoffService
+        );
+    }
+
+    @Bean
     public List<RunnableBot> scheduledBots(
             final Environment environment,
             final TinkoffServices tinkoffServices,
@@ -161,6 +180,5 @@ public class BeanConfiguration {
         clientBuilder.interceptors().addAll(interceptors);
         return clientBuilder.build();
     }
-
 
 }
