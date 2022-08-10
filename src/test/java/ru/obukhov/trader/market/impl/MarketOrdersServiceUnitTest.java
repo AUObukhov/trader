@@ -20,7 +20,7 @@ class MarketOrdersServiceUnitTest {
     @Mock
     private TinkoffService tinkoffService;
     @Mock
-    private MarketService marketService;
+    private ExtMarketDataService extMarketDataService;
 
     @InjectMocks
     private MarketOrdersService service;

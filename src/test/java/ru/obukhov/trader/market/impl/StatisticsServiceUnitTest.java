@@ -28,7 +28,7 @@ class StatisticsServiceUnitTest {
     @Mock
     private MovingAverager averager;
     @Mock
-    private MarketService marketService;
+    private ExtMarketDataService extMarketDataService;
     @Mock
     private ApplicationContext applicationContext;
 
@@ -60,7 +60,7 @@ class StatisticsServiceUnitTest {
                 TestData.createCandle(20, 17, 24, 15, time.plusMinutes(2))
         );
 
-        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
@@ -112,7 +112,7 @@ class StatisticsServiceUnitTest {
                 TestData.createCandle(60, 18, 22, 14, time.plusMinutes(8)),
                 TestData.createCandle(30, 18, 22, 14, time.plusMinutes(9))
         );
-        Mockito.when(marketService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 

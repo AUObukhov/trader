@@ -23,7 +23,7 @@ public class StatisticsService {
 
     private static final int ORDER = 1;
 
-    private final MarketService marketService;
+    private final ExtMarketDataService extMarketDataService;
     private final ApplicationContext applicationContext;
 
     /**
@@ -42,7 +42,7 @@ public class StatisticsService {
             final int smallWindow,
             final int bigWindow
     ) throws IOException {
-        final List<Candle> candles = marketService.getCandles(ticker, interval, candleInterval);
+        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();

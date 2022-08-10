@@ -8,10 +8,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -42,7 +42,7 @@ import java.util.List;
 class AbstractBotUnitTest {
 
     @Mock
-    private MarketService marketService;
+    private ExtMarketDataService extMarketDataService;
     @Mock
     private MarketInstrumentsService marketInstrumentsService;
     @Mock
@@ -80,7 +80,7 @@ class AbstractBotUnitTest {
 
         Assertions.assertTrue(candles.isEmpty());
 
-        Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
+        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
         Mocker.verifyNoOrdersMade(ordersService);
     }
 
@@ -302,7 +302,7 @@ class AbstractBotUnitTest {
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
+        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
     }
 
@@ -311,7 +311,7 @@ class AbstractBotUnitTest {
 
     private static class TestBot extends AbstractBot {
         public TestBot(
-                final MarketService marketService,
+                final ExtMarketDataService extMarketDataService,
                 final MarketInstrumentsService marketInstrumentsService,
                 final MarketOperationsService operationsService,
                 final MarketOrdersService ordersService,
@@ -320,7 +320,7 @@ class AbstractBotUnitTest {
                 final TradingStrategy strategy
         ) {
             super(
-                    marketService,
+                    extMarketDataService,
                     marketInstrumentsService,
                     operationsService,
                     ordersService,

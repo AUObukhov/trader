@@ -10,10 +10,10 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
@@ -46,7 +46,7 @@ import java.util.List;
 class RunnableBotUnitTest {
 
     @Mock
-    private MarketService marketService;
+    private ExtMarketDataService extMarketDataService;
     @Mock
     private MarketInstrumentsService marketInstrumentsService;
     @Mock
@@ -110,7 +110,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
+        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
         Mocker.verifyNoOrdersMade(ordersService);
     }
@@ -128,7 +128,7 @@ class RunnableBotUnitTest {
 
         mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
+        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -153,7 +153,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        Mockito.verifyNoMoreInteractions(operationsService, marketService, portfolioService);
+        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
         Mocker.verifyNoOrdersMade(ordersService);
     }
@@ -504,7 +504,7 @@ class RunnableBotUnitTest {
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
-        Mockito.when(marketService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
+        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
     }
 

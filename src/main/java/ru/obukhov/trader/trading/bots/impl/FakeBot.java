@@ -3,11 +3,11 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -26,7 +26,7 @@ import java.util.SortedMap;
 public class FakeBot extends AbstractBot implements Bot {
 
     public FakeBot(
-            final MarketService marketService,
+            final ExtMarketDataService extMarketDataService,
             final MarketInstrumentsService marketInstrumentsService,
             final MarketOperationsService operationsService,
             final MarketOrdersService ordersService,
@@ -35,7 +35,7 @@ public class FakeBot extends AbstractBot implements Bot {
             final TradingStrategy strategy
     ) {
         super(
-                marketService,
+                extMarketDataService,
                 marketInstrumentsService,
                 operationsService,
                 ordersService,

@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 public class FakeTinkoffService implements TinkoffService {
 
     private final MarketProperties marketProperties;
-    private final MarketService marketService;
+    private final ExtMarketDataService extMarketDataService;
     private final MarketInstrumentsService marketInstrumentsService;
     private final RealTinkoffService realTinkoffService;
 
@@ -76,7 +76,7 @@ public class FakeTinkoffService implements TinkoffService {
             final BalanceConfig balanceConfig
     ) {
         this.marketProperties = marketProperties;
-        this.marketService = tinkoffServices.marketService();
+        this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
         this.realTinkoffService = tinkoffServices.realTinkoffService();
         this.fakeContext = createFakeContext(accountId, currentDateTime, currency, balanceConfig);
@@ -344,7 +344,7 @@ public class FakeTinkoffService implements TinkoffService {
      * @return last known price for instrument with given {@code ticker} not after current fake date time
      */
     public BigDecimal getCurrentPrice(final String ticker) throws IOException {
-        return marketService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getClosePrice();
+        return extMarketDataService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getClosePrice();
     }
 
     // endregion

@@ -3,10 +3,10 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -41,7 +41,7 @@ public abstract class AbstractBot implements Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
 
-    protected final MarketService marketService;
+    protected final ExtMarketDataService extMarketDataService;
     protected final MarketInstrumentsService marketInstrumentsService;
     protected final MarketOperationsService operationsService;
     protected final MarketOrdersService ordersService;
@@ -52,7 +52,7 @@ public abstract class AbstractBot implements Bot {
     protected final StrategyCache strategyCache;
 
     protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
-        this.marketService = tinkoffServices.marketService();
+        this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
         this.operationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
@@ -77,7 +77,7 @@ public abstract class AbstractBot implements Bot {
         final String ticker = botConfig.ticker();
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = marketService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.candleInterval());
+            final List<Candle> currentCandles = extMarketDataService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.candleInterval());
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {

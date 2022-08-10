@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class MarketServiceUnitTest {
+class ExtMarketDataServiceUnitTest {
 
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
@@ -43,12 +43,12 @@ class MarketServiceUnitTest {
     @Mock
     private ApplicationContext applicationContext;
 
-    private MarketService service;
+    private ExtMarketDataService service;
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new MarketService(MARKET_PROPERTIES, tinkoffService, marketDataService);
-        Mockito.when(applicationContext.getBean("realMarketService", MarketService.class)).thenReturn(service);
+        this.service = new ExtMarketDataService(MARKET_PROPERTIES, tinkoffService, marketDataService);
+        Mockito.when(applicationContext.getBean("realExtMarketDataService", ExtMarketDataService.class)).thenReturn(service);
         service.setApplicationContext(applicationContext);
     }
 

@@ -15,11 +15,11 @@ import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
+import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
-import ru.obukhov.trader.market.impl.MarketService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
@@ -122,22 +122,22 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketService realMarketService(
+    public ExtMarketDataService realExtMarketDataService(
             final MarketProperties marketProperties,
             final TinkoffService realTinkoffService,
             final MarketDataService marketDataService
     ) {
-        return new MarketService(marketProperties, realTinkoffService, marketDataService);
+        return new ExtMarketDataService(marketProperties, realTinkoffService, marketDataService);
     }
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public MarketService fakeMarketService(
+    public ExtMarketDataService fakeExtMarketDataService(
             final MarketProperties marketProperties,
             final TinkoffService fakeTinkoffService,
             final MarketDataService marketDataService
     ) {
-        return new MarketService(marketProperties, fakeTinkoffService, marketDataService);
+        return new ExtMarketDataService(marketProperties, fakeTinkoffService, marketDataService);
     }
 
     @Bean
@@ -151,7 +151,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketOrdersService realOrdersService(final TinkoffService realTinkoffService, final MarketService realMarketService) {
+    public MarketOrdersService realOrdersService(final TinkoffService realTinkoffService, final ExtMarketDataService realExtMarketDataService) {
         return new MarketOrdersService(realTinkoffService);
     }
 
@@ -161,18 +161,18 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public StatisticsService statisticsService(final MarketService realMarketService, final ApplicationContext applicationContext) {
-        return new StatisticsService(realMarketService, applicationContext);
+    public StatisticsService statisticsService(final ExtMarketDataService realExtMarketDataService, final ApplicationContext applicationContext) {
+        return new StatisticsService(realExtMarketDataService, applicationContext);
     }
 
     @Bean
-    public GrafanaService realGrafanaService(final MarketService realMarketService, final StatisticsService statisticsService) {
-        return new GrafanaService(realMarketService, statisticsService);
+    public GrafanaService realGrafanaService(final ExtMarketDataService realExtMarketDataService, final StatisticsService statisticsService) {
+        return new GrafanaService(realExtMarketDataService, statisticsService);
     }
 
     @Bean
     public TinkoffServices realTinkoffServices(
-            final MarketService realMarketService,
+            final ExtMarketDataService realExtMarketDataService,
             final MarketInstrumentsService marketInstrumentsService,
             final MarketOperationsService realOperationsService,
             final MarketOrdersService realOrdersService,
@@ -180,7 +180,7 @@ public class BeanConfiguration {
             final RealTinkoffService realTinkoffService
     ) {
         return new TinkoffServices(
-                realMarketService,
+                realExtMarketDataService,
                 marketInstrumentsService,
                 realOperationsService,
                 realOrdersService,

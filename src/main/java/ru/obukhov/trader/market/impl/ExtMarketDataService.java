@@ -36,14 +36,14 @@ import java.util.ListIterator;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MarketService implements ApplicationContextAware {
+public class ExtMarketDataService implements ApplicationContextAware {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     private final MarketProperties marketProperties;
     private final TinkoffService tinkoffService;
     private final MarketDataService marketDataService;
-    private MarketService realMarketService;
+    private ExtMarketDataService realExtMarketDataService;
 
     /**
      * Loads candles by conditions period by period.
@@ -115,7 +115,7 @@ public class MarketService implements ApplicationContextAware {
 
     private List<Candle> loadCandles(final String ticker, final OffsetDateTime from, final OffsetDateTime to, final CandleInterval candleInterval) {
         final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, tinkoffService.getCurrentDateTime());
-        return realMarketService.getMarketCandles(ticker, Interval.of(from, innerTo), candleInterval);
+        return realExtMarketDataService.getMarketCandles(ticker, Interval.of(from, innerTo), candleInterval);
     }
 
     /**
@@ -134,7 +134,7 @@ public class MarketService implements ApplicationContextAware {
             final Interval effectiveInterval,
             final CandleInterval candleInterval
     ) {
-        final List<Candle> candles = realMarketService.getMarketCandles(ticker, loadInterval, candleInterval);
+        final List<Candle> candles = realExtMarketDataService.getMarketCandles(ticker, loadInterval, candleInterval);
         return effectiveInterval.equals(loadInterval) ? candles : filterCandles(candles, effectiveInterval);
     }
 
@@ -210,7 +210,7 @@ public class MarketService implements ApplicationContextAware {
         interval = interval.minusDays(1).extendToDay();
 
         do {
-            currentCandles = realMarketService.getMarketCandles(ticker, interval, candleInterval);
+            currentCandles = realExtMarketDataService.getMarketCandles(ticker, interval, candleInterval);
             if (currentCandles.isEmpty()) {
                 consecutiveEmptyDaysCount++;
             } else {
@@ -236,7 +236,7 @@ public class MarketService implements ApplicationContextAware {
         interval = interval.minusYears(1).extendToYear();
 
         do {
-            currentCandles = realMarketService.getMarketCandles(ticker, interval, candleInterval);
+            currentCandles = realExtMarketDataService.getMarketCandles(ticker, interval, candleInterval);
             candles.addAll(currentCandles);
             interval = interval.minusYears(1);
         } while (candles.size() < limit && !currentCandles.isEmpty());
@@ -264,7 +264,7 @@ public class MarketService implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
-        this.realMarketService = applicationContext.getBean("realMarketService", MarketService.class);
+        this.realExtMarketDataService = applicationContext.getBean("realExtMarketDataService", ExtMarketDataService.class);
     }
 
     // endregion

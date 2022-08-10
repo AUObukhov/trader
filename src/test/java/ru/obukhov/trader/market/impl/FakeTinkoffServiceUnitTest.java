@@ -45,7 +45,7 @@ class FakeTinkoffServiceUnitTest {
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
-    private MarketService marketService;
+    private ExtMarketDataService extMarketDataService;
     @Mock
     private MarketInstrumentsService marketInstrumentsService;
     @Mock
@@ -709,7 +709,7 @@ class FakeTinkoffServiceUnitTest {
             final double price
     ) throws IOException {
         final Candle candle = new Candle().setClosePrice(DecimalUtils.setDefaultScale(price));
-        Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
+        Mockito.when(extMarketDataService.getLastCandle(ticker, service.getCurrentDateTime())).thenReturn(candle);
 
         service.postOrder(accountId, ticker, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }
@@ -730,7 +730,7 @@ class FakeTinkoffServiceUnitTest {
                 TestData.createBalanceConfig(0.0)
         );
 
-        Mockito.when(marketService.getLastCandle(ticker, service.getCurrentDateTime()))
+        Mockito.when(extMarketDataService.getLastCandle(ticker, service.getCurrentDateTime()))
                 .thenReturn(new Candle().setClosePrice(price));
 
         final BigDecimal currentPrice = service.getCurrentPrice(ticker);
