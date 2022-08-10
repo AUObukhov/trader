@@ -5,9 +5,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtOperationsService;
+import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketOperationsService;
-import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
@@ -44,8 +44,8 @@ public class FakeBotFactory {
                 marketDataService
         );
 
-        final MarketOperationsService fakeOperationsService = new MarketOperationsService(fakeTinkoffService);
-        final MarketOrdersService fakeOrdersService = new MarketOrdersService(fakeTinkoffService);
+        final ExtOperationsService fakeOperationsService = new ExtOperationsService(fakeTinkoffService);
+        final ExtOrdersService fakeOrdersService = new ExtOrdersService(fakeTinkoffService);
         final PortfolioService fakePortfolioService = new PortfolioService(fakeTinkoffService);
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 

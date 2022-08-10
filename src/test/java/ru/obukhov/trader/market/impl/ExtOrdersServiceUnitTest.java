@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class MarketOrdersServiceUnitTest {
+class ExtOrdersServiceUnitTest {
 
     @Mock
     private TinkoffService tinkoffService;
@@ -23,7 +23,7 @@ class MarketOrdersServiceUnitTest {
     private ExtMarketDataService extMarketDataService;
 
     @InjectMocks
-    private MarketOrdersService service;
+    private ExtOrdersService service;
 
     @Test
     void getOrders_filtersOrdersByFigi() throws IOException {

@@ -3,8 +3,8 @@ package ru.obukhov.trader.market.impl;
 public record TinkoffServices(
         ExtMarketDataService extMarketDataService,
         ExtInstrumentsService extInstrumentsService,
-        MarketOperationsService operationsService,
-        MarketOrdersService ordersService,
+        ExtOperationsService operationsService,
+        ExtOrdersService ordersService,
         PortfolioService portfolioService,
         RealTinkoffService realTinkoffService
 ) {

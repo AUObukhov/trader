@@ -12,8 +12,8 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.MarketOperationsService;
-import ru.obukhov.trader.market.impl.MarketOrdersService;
+import ru.obukhov.trader.market.impl.ExtOperationsService;
+import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
@@ -50,9 +50,9 @@ class RunnableBotUnitTest {
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
-    private MarketOperationsService operationsService;
+    private ExtOperationsService operationsService;
     @Mock
-    private MarketOrdersService ordersService;
+    private ExtOrdersService ordersService;
     @Mock
     private PortfolioService portfolioService;
     @Mock

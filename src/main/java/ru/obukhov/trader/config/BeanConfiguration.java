@@ -17,9 +17,9 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.ExtOperationsService;
+import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketOperationsService;
-import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
@@ -146,13 +146,13 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketOperationsService realOperationsService(final TinkoffService realTinkoffService) {
-        return new MarketOperationsService(realTinkoffService);
+    public ExtOperationsService realExtOperationsService(final TinkoffService realTinkoffService) {
+        return new ExtOperationsService(realTinkoffService);
     }
 
     @Bean
-    public MarketOrdersService realOrdersService(final TinkoffService realTinkoffService, final ExtMarketDataService realExtMarketDataService) {
-        return new MarketOrdersService(realTinkoffService);
+    public ExtOrdersService realExtOrdersService(final TinkoffService realTinkoffService, final ExtMarketDataService realExtMarketDataService) {
+        return new ExtOrdersService(realTinkoffService);
     }
 
     @Bean
@@ -174,16 +174,16 @@ public class BeanConfiguration {
     public TinkoffServices realTinkoffServices(
             final ExtMarketDataService realExtMarketDataService,
             final ExtInstrumentsService extInstrumentsService,
-            final MarketOperationsService realOperationsService,
-            final MarketOrdersService realOrdersService,
+            final ExtOperationsService realExtOperationsService,
+            final ExtOrdersService realExtOrdersService,
             final PortfolioService realPortfolioService,
             final RealTinkoffService realTinkoffService
     ) {
         return new TinkoffServices(
                 realExtMarketDataService,
                 extInstrumentsService,
-                realOperationsService,
-                realOrdersService,
+                realExtOperationsService,
+                realExtOrdersService,
                 realPortfolioService,
                 realTinkoffService
         );

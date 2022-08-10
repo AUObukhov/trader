@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * Service to control customer orders at market
  */
-public class MarketOrdersService {
+public class ExtOrdersService {
 
     private final TinkoffService tinkoffService;
 
-    public MarketOrdersService(final TinkoffService tinkoffService) {
+    public ExtOrdersService(final TinkoffService tinkoffService) {
         this.tinkoffService = tinkoffService;
     }
 

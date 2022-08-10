@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.impl.MarketOrdersService;
+import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
@@ -23,7 +23,7 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
-    public static void mockEmptyOrder(final MarketOrdersService ordersService, final String ticker) {
+    public static void mockEmptyOrder(final ExtOrdersService ordersService, final String ticker) {
         final Order order = TestData.createOrder();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
@@ -68,7 +68,7 @@ public class Mocker {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
     }
 
-    public static void verifyNoOrdersMade(final MarketOrdersService ordersService) throws IOException {
+    public static void verifyNoOrdersMade(final ExtOrdersService ordersService) throws IOException {
         Mockito.verify(ordersService, Mockito.never())
                 .postOrder(
                         Mockito.anyString(),
