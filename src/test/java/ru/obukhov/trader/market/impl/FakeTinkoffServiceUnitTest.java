@@ -47,7 +47,7 @@ class FakeTinkoffServiceUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
-    private MarketInstrumentsService marketInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
     @Mock
     private RealTinkoffService realTinkoffService;
     @InjectMocks
@@ -740,7 +740,7 @@ class FakeTinkoffServiceUnitTest {
 
     private void mockShare(String ticker, Currency currency, int lotSize) {
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
     }
 
 }

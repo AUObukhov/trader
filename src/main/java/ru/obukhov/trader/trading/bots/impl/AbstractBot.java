@@ -3,8 +3,8 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -42,7 +42,7 @@ public abstract class AbstractBot implements Bot {
     private static final int LAST_CANDLES_COUNT = 1000;
 
     protected final ExtMarketDataService extMarketDataService;
-    protected final MarketInstrumentsService marketInstrumentsService;
+    protected final ExtInstrumentsService extInstrumentsService;
     protected final MarketOperationsService operationsService;
     protected final MarketOrdersService ordersService;
     protected final PortfolioService portfolioService;
@@ -53,7 +53,7 @@ public abstract class AbstractBot implements Bot {
 
     protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
         this.extMarketDataService = tinkoffServices.extMarketDataService();
-        this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
+        this.extInstrumentsService = tinkoffServices.extInstrumentsService();
         this.operationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
         this.portfolioService = tinkoffServices.portfolioService();
@@ -97,7 +97,7 @@ public abstract class AbstractBot implements Bot {
     }
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
-        final Share share = marketInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getShare(ticker);
         final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
         decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.accountId(), currency));

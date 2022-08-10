@@ -15,9 +15,9 @@ import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -105,7 +105,7 @@ public class BeanConfiguration {
             final BalanceConfig balanceConfig,
             final OffsetDateTime currentDateTime
     ) {
-        final Share share = tinkoffServices.marketInstrumentsService().getShare(botConfig.ticker());
+        final Share share = tinkoffServices.extInstrumentsService().getShare(botConfig.ticker());
         if (share == null) {
             throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
         }
@@ -141,8 +141,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public MarketInstrumentsService marketInstrumentsService(final InstrumentsService instrumentsService) {
-        return new MarketInstrumentsService(instrumentsService);
+    public ExtInstrumentsService extInstrumentsService(final InstrumentsService instrumentsService) {
+        return new ExtInstrumentsService(instrumentsService);
     }
 
     @Bean
@@ -173,7 +173,7 @@ public class BeanConfiguration {
     @Bean
     public TinkoffServices realTinkoffServices(
             final ExtMarketDataService realExtMarketDataService,
-            final MarketInstrumentsService marketInstrumentsService,
+            final ExtInstrumentsService extInstrumentsService,
             final MarketOperationsService realOperationsService,
             final MarketOrdersService realOrdersService,
             final PortfolioService realPortfolioService,
@@ -181,7 +181,7 @@ public class BeanConfiguration {
     ) {
         return new TinkoffServices(
                 realExtMarketDataService,
-                marketInstrumentsService,
+                extInstrumentsService,
                 realOperationsService,
                 realOrdersService,
                 realPortfolioService,

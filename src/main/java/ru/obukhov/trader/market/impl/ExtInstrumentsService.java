@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
-// todo: rename
 @RequiredArgsConstructor
-public class MarketInstrumentsService {
+public class ExtInstrumentsService {
 
     private final InstrumentsService instrumentsService;
 

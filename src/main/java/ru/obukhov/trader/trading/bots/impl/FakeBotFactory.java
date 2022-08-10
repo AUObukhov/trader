@@ -51,7 +51,7 @@ public class FakeBotFactory {
 
         return new FakeBot(
                 fakeExtMarketDataService,
-                tinkoffServices.marketInstrumentsService(),
+                tinkoffServices.extInstrumentsService(),
                 fakeOperationsService,
                 fakeOrdersService,
                 fakePortfolioService,

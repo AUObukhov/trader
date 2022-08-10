@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -44,7 +44,7 @@ class AbstractBotUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
-    private MarketInstrumentsService marketInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
     @Mock
     private MarketOperationsService operationsService;
     @Mock
@@ -161,7 +161,7 @@ class AbstractBotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, Currency.RUB, lotSize);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -197,7 +197,7 @@ class AbstractBotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
@@ -253,7 +253,7 @@ class AbstractBotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
@@ -312,7 +312,7 @@ class AbstractBotUnitTest {
     private static class TestBot extends AbstractBot {
         public TestBot(
                 final ExtMarketDataService extMarketDataService,
-                final MarketInstrumentsService marketInstrumentsService,
+                final ExtInstrumentsService extInstrumentsService,
                 final MarketOperationsService operationsService,
                 final MarketOrdersService ordersService,
                 final PortfolioService portfolioService,
@@ -321,7 +321,7 @@ class AbstractBotUnitTest {
         ) {
             super(
                     extMarketDataService,
-                    marketInstrumentsService,
+                    extInstrumentsService,
                     operationsService,
                     ordersService,
                     portfolioService,

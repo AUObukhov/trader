@@ -48,7 +48,7 @@ public class FakeTinkoffService implements TinkoffService {
 
     private final MarketProperties marketProperties;
     private final ExtMarketDataService extMarketDataService;
-    private final MarketInstrumentsService marketInstrumentsService;
+    private final ExtInstrumentsService extInstrumentsService;
     private final RealTinkoffService realTinkoffService;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
@@ -77,7 +77,7 @@ public class FakeTinkoffService implements TinkoffService {
     ) {
         this.marketProperties = marketProperties;
         this.extMarketDataService = tinkoffServices.extMarketDataService();
-        this.marketInstrumentsService = tinkoffServices.marketInstrumentsService();
+        this.extInstrumentsService = tinkoffServices.extInstrumentsService();
         this.realTinkoffService = tinkoffServices.realTinkoffService();
         this.fakeContext = createFakeContext(accountId, currentDateTime, currency, balanceConfig);
         this.commission = commission;
@@ -176,7 +176,7 @@ public class FakeTinkoffService implements TinkoffService {
             final OrderType type,
             final String orderId
     ) throws IOException {
-        final Share share = marketInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getShare(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
         final Long quantity = quantityLots * share.getLot();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
@@ -212,7 +212,7 @@ public class FakeTinkoffService implements TinkoffService {
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
-        final Share share = marketInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getShare(ticker);
 
         updateBalance(accountId, share.getCurrency(), totalPrice.negate().subtract(commissionAmount));
 
@@ -259,7 +259,7 @@ public class FakeTinkoffService implements TinkoffService {
             throw new IllegalArgumentException(message);
         }
 
-        final Share share = marketInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getShare(ticker);
 
         updateBalance(accountId, share.getCurrency(), totalPrice.subtract(commissionAmount));
         if (compareToZero == 0) {

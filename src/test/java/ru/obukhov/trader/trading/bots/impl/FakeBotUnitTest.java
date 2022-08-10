@@ -8,9 +8,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -35,7 +35,7 @@ class FakeBotUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
-    private MarketInstrumentsService marketInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
     @Mock
     private MarketOperationsService operationsService;
     @Mock
@@ -57,7 +57,7 @@ class FakeBotUnitTest {
                 .setTicker(ticker)
                 .setLot(10)
                 .build();
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(expectedShare);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(expectedShare);
 
         final Share share = fakeBot.getShare(ticker);
 

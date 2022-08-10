@@ -10,8 +10,8 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -48,7 +48,7 @@ class RunnableBotUnitTest {
     @Mock
     private ExtMarketDataService extMarketDataService;
     @Mock
-    private MarketInstrumentsService marketInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
     @Mock
     private MarketOperationsService operationsService;
     @Mock
@@ -174,7 +174,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenThrow(new IllegalArgumentException());
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
@@ -199,7 +199,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -227,7 +227,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(portfolioService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
@@ -253,7 +253,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
@@ -280,7 +280,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -309,7 +309,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -379,7 +379,7 @@ class RunnableBotUnitTest {
         mockCandles(ticker, List.of(candle1));
 
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -485,7 +485,7 @@ class RunnableBotUnitTest {
     private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize)
             throws IOException {
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(portfolioService.getAvailableBalance(accountId, currency))

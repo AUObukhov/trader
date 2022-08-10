@@ -13,13 +13,13 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class MarketInstrumentsServiceUnitTest {
+class ExtInstrumentsServiceUnitTest {
 
     @Mock
     private InstrumentsService instrumentsService;
 
     @InjectMocks
-    private MarketInstrumentsService marketInstrumentsService;
+    private ExtInstrumentsService extInstrumentsService;
 
     // region MarketContext methods tests
 
@@ -32,7 +32,7 @@ class MarketInstrumentsServiceUnitTest {
 
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share1, share2));
 
-        final Share result = marketInstrumentsService.getShare(ticker2);
+        final Share result = extInstrumentsService.getShare(ticker2);
 
         Assertions.assertSame(share2, result);
     }
@@ -47,7 +47,7 @@ class MarketInstrumentsServiceUnitTest {
 
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share1, share2));
 
-        final Share result = marketInstrumentsService.getShare(ticker3);
+        final Share result = extInstrumentsService.getShare(ticker3);
 
         Assertions.assertNull(result);
     }

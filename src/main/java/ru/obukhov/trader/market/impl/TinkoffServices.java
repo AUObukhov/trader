@@ -2,7 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 public record TinkoffServices(
         ExtMarketDataService extMarketDataService,
-        MarketInstrumentsService marketInstrumentsService,
+        ExtInstrumentsService extInstrumentsService,
         MarketOperationsService operationsService,
         MarketOrdersService ordersService,
         PortfolioService portfolioService,

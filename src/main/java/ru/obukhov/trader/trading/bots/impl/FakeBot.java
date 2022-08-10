@@ -3,9 +3,9 @@ package ru.obukhov.trader.trading.bots.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
 import ru.obukhov.trader.market.impl.PortfolioService;
@@ -27,7 +27,7 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public FakeBot(
             final ExtMarketDataService extMarketDataService,
-            final MarketInstrumentsService marketInstrumentsService,
+            final ExtInstrumentsService extInstrumentsService,
             final MarketOperationsService operationsService,
             final MarketOrdersService ordersService,
             final PortfolioService portfolioService,
@@ -36,7 +36,7 @@ public class FakeBot extends AbstractBot implements Bot {
     ) {
         super(
                 extMarketDataService,
-                marketInstrumentsService,
+                extInstrumentsService,
                 operationsService,
                 ordersService,
                 portfolioService,
@@ -53,7 +53,7 @@ public class FakeBot extends AbstractBot implements Bot {
     // region FakeTinkoffService proxy
 
     public Share getShare(final String ticker) {
-        return marketInstrumentsService.getShare(ticker);
+        return extInstrumentsService.getShare(ticker);
     }
 
     public OffsetDateTime getCurrentDateTime() {
