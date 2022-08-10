@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.trader.grafana.interfaces.GrafanaService;
+import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
 import ru.obukhov.trader.grafana.model.QueryResult;
 

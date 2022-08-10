@@ -1,11 +1,9 @@
-package ru.obukhov.trader.grafana.impl;
+package ru.obukhov.trader.grafana;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.MapUtils;
-import ru.obukhov.trader.grafana.interfaces.GrafanaService;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -26,9 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Service
 @RequiredArgsConstructor
-public class GrafanaServiceImpl implements GrafanaService {
+public class GrafanaService {
 
     private static final List<Column> CANDLES_COLUMNS = List.of(
             new Column("time", ColumnType.TIME),
@@ -42,7 +39,6 @@ public class GrafanaServiceImpl implements GrafanaService {
      * @param request params of data retrieval
      * @return list of single {@link QueryResult} containing data
      */
-    @Override
     public List<QueryResult> getData(final GetDataRequest request) throws IOException {
         final Metric metric = getRequiredMetric(request);
         return switch (metric) {

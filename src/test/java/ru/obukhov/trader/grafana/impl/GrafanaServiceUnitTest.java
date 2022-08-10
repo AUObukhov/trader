@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -38,7 +39,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
-class GrafanaServiceImplUnitTest {
+class GrafanaServiceUnitTest {
 
     @Mock
     private MarketService marketService;
@@ -46,7 +47,7 @@ class GrafanaServiceImplUnitTest {
     private StatisticsService statisticsService;
 
     @InjectMocks
-    private GrafanaServiceImpl service;
+    private GrafanaService service;
 
     // region getData tests
 

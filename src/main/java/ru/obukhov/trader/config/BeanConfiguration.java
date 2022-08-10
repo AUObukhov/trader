@@ -12,6 +12,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
+import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.MarketInstrumentsService;
 import ru.obukhov.trader.market.impl.MarketOperationsService;
 import ru.obukhov.trader.market.impl.MarketOrdersService;
@@ -110,6 +111,11 @@ public class BeanConfiguration {
     @Bean
     public StatisticsService statisticsService(final MarketService realMarketService, final ApplicationContext applicationContext) {
         return new StatisticsService(realMarketService, applicationContext);
+    }
+
+    @Bean
+    public GrafanaService realGrafanaService(final MarketService realMarketService, final StatisticsService statisticsService) {
+        return new GrafanaService(realMarketService, statisticsService);
     }
 
     @Bean
