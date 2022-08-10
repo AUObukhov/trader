@@ -301,7 +301,7 @@ class AbstractBotUnitTest {
                 );
     }
 
-    private void mockCandles(final String ticker, final List<Candle> candles) throws IOException {
+    private void mockCandles(final String ticker, final List<Candle> candles) {
         Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
                 .thenReturn(candles);
     }

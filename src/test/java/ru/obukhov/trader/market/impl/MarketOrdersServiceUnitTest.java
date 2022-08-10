@@ -50,7 +50,7 @@ class MarketOrdersServiceUnitTest {
         Assertions.assertEquals("order4", orders.get(2).orderId());
     }
 
-    private void mockOrders(final String accountId, final Order... orders) throws IOException {
+    private void mockOrders(final String accountId, final Order... orders) {
         Mockito.when(tinkoffService.getOrders(accountId)).thenReturn(List.of(orders));
     }
 
