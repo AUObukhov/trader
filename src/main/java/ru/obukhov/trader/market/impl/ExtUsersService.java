@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * Service to get information about customer accounts
  */
-public class UserService {
+public class ExtUsersService {
 
     private final TinkoffService tinkoffService;
 
-    public UserService(final TinkoffService tinkoffService) {
+    public ExtUsersService(final TinkoffService tinkoffService) {
         this.tinkoffService = tinkoffService;
     }
 

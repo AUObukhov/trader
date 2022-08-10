@@ -11,13 +11,13 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
-import ru.obukhov.trader.market.impl.UserService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 
 @ExtendWith(MockitoExtension.class)
 class TokenValidationStartupListenerContextTest {
 
     @Mock
-    private UserService userService;
+    private ExtUsersService extUsersService;
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withInitializer(applicationContext -> applicationContext.getEnvironment().setActiveProfiles("test"))
@@ -27,9 +27,9 @@ class TokenValidationStartupListenerContextTest {
     void test_throwsException_whenApiCallThrowsException() {
         final String message = "some exception";
         final RuntimeException exception = new RuntimeException(message);
-        Mockito.when(userService.getAccounts()).thenThrow(exception);
+        Mockito.when(extUsersService.getAccounts()).thenThrow(exception);
         contextRunner
-                .withBean(UserService.class, () -> userService)
+                .withBean(ExtUsersService.class, () -> extUsersService)
                 .withBean(TokenValidationStartupListener.class)
                 .run(context -> Assertions.assertThrows(RuntimeException.class, () -> publishApplicationStartedEvent(context), message)
                 );

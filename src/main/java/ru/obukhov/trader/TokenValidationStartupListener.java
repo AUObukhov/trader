@@ -6,7 +6,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import ru.obukhov.trader.market.impl.UserService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 
 /**
  * Class for failing application on startup if token is invalid.
@@ -17,11 +17,11 @@ import ru.obukhov.trader.market.impl.UserService;
 @AllArgsConstructor
 public class TokenValidationStartupListener implements ApplicationListener<ApplicationStartedEvent> {
 
-    private final UserService userService;
+    private final ExtUsersService extUsersService;
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent applicationStartedEvent) {
-        userService.getAccounts();
+        extUsersService.getAccounts();
     }
 
 }

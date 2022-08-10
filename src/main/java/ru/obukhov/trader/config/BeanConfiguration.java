@@ -19,11 +19,11 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
+import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
-import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
@@ -81,8 +81,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public UserService realUserService(final TinkoffService realTinkoffService) {
-        return new UserService(realTinkoffService);
+    public ExtUsersService realExtUsersService(final TinkoffService realTinkoffService) {
+        return new ExtUsersService(realTinkoffService);
     }
 
     @Bean
