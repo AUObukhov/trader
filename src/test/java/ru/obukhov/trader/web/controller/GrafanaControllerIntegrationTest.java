@@ -17,6 +17,7 @@ import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -112,7 +113,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.createHistoricCandle(101, from.plusMinutes(1)),
                 TestData.createHistoricCandle(102, from.plusMinutes(2))
         );
-        mockHistoricCandles(figi, historicCandles);
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandles)
+                .mock();
 
         final GetDataRequest getDataRequest = new GetDataRequest();
         getDataRequest.setInterval(interval);
@@ -161,7 +164,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.createHistoricCandle(101, from.plusMinutes(1)),
                 TestData.createHistoricCandle(102, from.plusMinutes(2))
         );
-        mockHistoricCandles(figi, historicCandles);
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandles)
+                .mock();
 
         final GetDataRequest getDataRequest = new GetDataRequest();
         getDataRequest.setInterval(interval);

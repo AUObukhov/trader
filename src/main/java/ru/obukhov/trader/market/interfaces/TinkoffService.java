@@ -1,11 +1,9 @@
 package ru.obukhov.trader.market.interfaces;
 
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -23,8 +21,6 @@ import java.util.List;
 public interface TinkoffService {
 
     String getFigiByTicker(String ticker);
-
-    List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException;
 
     List<Operation> getOperations(final String accountId, final Interval interval, final String ticker) throws IOException;
 

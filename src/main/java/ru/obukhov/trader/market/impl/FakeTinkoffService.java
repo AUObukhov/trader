@@ -10,7 +10,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.market.model.InstrumentType;
@@ -22,7 +21,6 @@ import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -132,15 +130,6 @@ public class FakeTinkoffService implements TinkoffService {
     public String getFigiByTicker(final String ticker) {
         return realTinkoffService.getFigiByTicker(ticker);
     }
-
-    // region MarketContext proxy
-
-    @Override
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
-        return realTinkoffService.getMarketCandles(ticker, interval, candleInterval);
-    }
-
-    // endregion
 
     // region OperationsContext proxy
 

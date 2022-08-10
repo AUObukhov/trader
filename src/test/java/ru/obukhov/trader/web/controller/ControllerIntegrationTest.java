@@ -14,17 +14,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.TestUtils;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.UsersService;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,18 +85,6 @@ abstract class ControllerIntegrationTest {
                 .setLot(lotSize)
                 .build();
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
-    }
-
-    protected void mockHistoricCandles(final String figi, final List<HistoricCandle> historicCandles) {
-        Mockito.when(marketDataService.getCandlesSync(
-                Mockito.eq(figi),
-                Mockito.any(Instant.class),
-                Mockito.any(Instant.class),
-                Mockito.eq(CandleInterval.CANDLE_INTERVAL_1_MIN)
-        )).thenAnswer(args -> historicCandles.stream()
-                .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), args.getArgument(1), args.getArgument(2)))
-                .toList()
-        );
     }
 
 }

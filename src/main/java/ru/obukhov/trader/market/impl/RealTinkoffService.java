@@ -10,24 +10,19 @@ import org.springframework.context.ApplicationContextAware;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.AccountMapper;
-import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.market.model.transform.OrderMapper;
 import ru.obukhov.trader.market.model.transform.PositionMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.InstrumentsService;
-import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
@@ -35,7 +30,6 @@ import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -54,12 +48,10 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
     private static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
     private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
-    private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     private RealTinkoffService self;
 
     private final InstrumentsService instrumentsService;
-    private final MarketDataService marketDataService;
     private final OperationsService operationsService;
     private final OrdersService ordersService;
     private final UsersService usersService;
@@ -74,26 +66,6 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
                 .map(AssetInstrument::getFigi)
                 .orElse(null);
     }
-
-    // region MarketContext
-
-    @Override
-    @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
-        final String figi = self.getFigiByTicker(ticker);
-        final Instant fromInstant = interval.getFrom().toInstant();
-        final Instant toInstant = interval.getTo().toInstant();
-        final List<Candle> candles = marketDataService.getCandlesSync(figi, fromInstant, toInstant, candleInterval)
-                .stream()
-                .filter(HistoricCandle::getIsComplete)
-                .map(CANDLE_MAPPER::map)
-                .toList();
-
-        log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
-        return candles;
-    }
-
-    // endregion
 
     // region OperationsService
 

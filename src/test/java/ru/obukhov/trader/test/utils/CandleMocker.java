@@ -4,64 +4,66 @@ import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CandleMocker {
-    private final TinkoffService tinkoffService;
-    private final String ticker;
+    private final MarketDataService marketDataService;
+    private final String figi;
     private final CandleInterval candleInterval;
-    private final List<Candle> candles;
+    private final List<HistoricCandle> candles;
 
-    private final Answer<List<Candle>> answer = new Answer<>() {
+    private final Answer<List<HistoricCandle>> answer = new Answer<>() {
         @Override
-        public List<Candle> answer(InvocationOnMock invocation) {
-            final Interval interval = invocation.getArgument(1);
+        public List<HistoricCandle> answer(InvocationOnMock invocation) {
             return candles.stream()
-                    .filter(candle -> interval.contains(candle.getTime()))
+                    .filter(candle -> DateUtils.timestampIsInInterval(candle.getTime(), invocation.getArgument(1), invocation.getArgument(2)))
                     .toList();
         }
     };
 
     public CandleMocker(
-            @NotNull final TinkoffService tinkoffService,
-            @NotNull final String ticker,
+            @NotNull final MarketDataService marketDataService,
+            @NotNull final String figi,
             @NotNull final CandleInterval candleInterval
     ) {
-        this.tinkoffService = tinkoffService;
-        this.ticker = ticker;
+        this.marketDataService = marketDataService;
+        this.figi = figi;
         this.candleInterval = candleInterval;
         this.candles = new ArrayList<>();
     }
 
     public CandleMocker add(@NotNull final Integer openPrice, @NotNull final OffsetDateTime time) {
-        return add(createCandleWithOpenPrice(openPrice, time));
+        this.candles.add(TestData.createHistoricCandle(openPrice, time));
+        return this;
     }
 
-    public CandleMocker add(@NotNull final Candle... candles) {
-        this.candles.addAll(List.of(candles));
+    public CandleMocker add(@NotNull final HistoricCandle... candles) {
+        return add(List.of(candles));
+    }
+
+    public CandleMocker add(@NotNull final List<HistoricCandle> candles) {
+        this.candles.addAll(candles);
 
         return this;
     }
 
-    private Candle createCandleWithOpenPrice(final Integer openPrice, final OffsetDateTime time) {
-        final Candle candle = new Candle();
-        candle.setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
-        candle.setTime(time);
-        return candle;
-    }
-
     public void mock() throws IOException {
-        Mockito.when(tinkoffService.getMarketCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(candleInterval))).then(answer);
+        Mockito.when(marketDataService.getCandlesSync(
+                Mockito.eq(figi),
+                Mockito.any(Instant.class),
+                Mockito.any(Instant.class),
+                Mockito.eq(candleInterval)
+        )).then(answer);
     }
 
 }

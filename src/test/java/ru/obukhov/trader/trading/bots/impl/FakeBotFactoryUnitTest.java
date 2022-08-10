@@ -8,19 +8,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.impl.MarketInstrumentsService;
-import ru.obukhov.trader.market.impl.MarketService;
-import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -33,11 +30,9 @@ class FakeBotFactoryUnitTest {
     @Mock
     private TradingStrategyFactory strategyFactory;
     @Mock
-    private MarketService realMarketService;
+    private ApplicationContext applicationContext;
     @Mock
-    private RealTinkoffService realTinkoffService;
-    @Mock
-    private MarketInstrumentsService marketInstrumentsService;
+    private MarketDataService marketDataService;
 
     @InjectMocks
     private TinkoffServices tinkoffServices;
@@ -46,7 +41,7 @@ class FakeBotFactoryUnitTest {
 
     @BeforeEach
     void setUp() {
-        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, tinkoffServices);
+        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, tinkoffServices, applicationContext, marketDataService);
     }
 
     @Test
@@ -65,8 +60,6 @@ class FakeBotFactoryUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(marketInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 

@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
+import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
@@ -258,7 +259,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .map(candle -> CANDLE_MAPPER.map(candle, true))
                 .toList();
 
-        mockHistoricCandles(figi, historicCandles);
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandles)
+                .mock();
 
         // building expected response
 

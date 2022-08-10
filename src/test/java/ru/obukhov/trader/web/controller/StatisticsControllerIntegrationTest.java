@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
+import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -241,7 +242,9 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 true
         );
         final List<HistoricCandle> historicCandles = List.of(candle1, candle2, candle3);
-        mockHistoricCandles(figi, historicCandles);
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandles)
+                .mock();
 
         final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(12000, 1200, 120);
         final List<BigDecimal> longAverages = TestData.createBigDecimalsList(12000, 6600, 660);
