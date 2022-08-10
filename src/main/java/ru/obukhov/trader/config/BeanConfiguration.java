@@ -21,6 +21,7 @@ import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.impl.UserService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
@@ -70,6 +71,11 @@ public class BeanConfiguration {
     @Bean
     public UsersService usersService(final InvestApi investApi) {
         return investApi.getUserService();
+    }
+
+    @Bean
+    public UserService realUserService(final TinkoffService realTinkoffService) {
+        return new UserService(realTinkoffService);
     }
 
     @Bean
