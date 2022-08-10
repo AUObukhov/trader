@@ -5,7 +5,6 @@ public record TinkoffServices(
         ExtInstrumentsService extInstrumentsService,
         ExtOperationsService operationsService,
         ExtOrdersService ordersService,
-        PortfolioService portfolioService,
         RealTinkoffService realTinkoffService
 ) {
 }

@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @ExtendWith(MockitoExtension.class)
-class PortfolioServiceUnitTest {
+class ExtOperationsServiceUnitTest {
 
     @Mock
     private TinkoffService tinkoffService;
 
     @InjectMocks
-    private PortfolioService service;
+    private ExtOperationsService extOperationsService;
 
     // region getPosition tests
 
@@ -50,7 +50,7 @@ class PortfolioServiceUnitTest {
         );
         Mockito.when(tinkoffService.getPortfolioPositions(accountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getSecurity(accountId, ticker2);
+        final PortfolioPosition position = extOperationsService.getSecurity(accountId, ticker2);
 
         Assertions.assertEquals(ticker2, position.ticker());
     }
@@ -70,7 +70,7 @@ class PortfolioServiceUnitTest {
         );
         Mockito.when(tinkoffService.getPortfolioPositions(accountId)).thenReturn(positions);
 
-        final PortfolioPosition position = service.getSecurity(accountId, "ticker");
+        final PortfolioPosition position = extOperationsService.getSecurity(accountId, "ticker");
 
         Assertions.assertNull(position);
     }
@@ -113,7 +113,7 @@ class PortfolioServiceUnitTest {
 
         // action
 
-        final List<Money> balances = service.getAvailableBalances(accountId);
+        final List<Money> balances = extOperationsService.getAvailableBalances(accountId);
 
         // assert
 
@@ -147,7 +147,7 @@ class PortfolioServiceUnitTest {
 
         // action
 
-        final List<Money> balances = service.getAvailableBalances(accountId);
+        final List<Money> balances = extOperationsService.getAvailableBalances(accountId);
 
         // assert
 
@@ -176,7 +176,7 @@ class PortfolioServiceUnitTest {
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
         Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
+        final BigDecimal balance = extOperationsService.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance, balance);
     }
@@ -197,7 +197,7 @@ class PortfolioServiceUnitTest {
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked);
         Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
+        final BigDecimal balance = extOperationsService.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance - rubBlocked, balance);
     }
@@ -220,7 +220,7 @@ class PortfolioServiceUnitTest {
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked, blockedGuarantee);
         Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final BigDecimal balance = service.getAvailableBalance(accountId, Currency.RUB);
+        final BigDecimal balance = extOperationsService.getAvailableBalance(accountId, Currency.RUB);
 
         AssertUtils.assertEquals(rubBalance - rubBlocked - rubGuaranteeBlocked, balance);
     }
@@ -236,7 +236,7 @@ class PortfolioServiceUnitTest {
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
         Mockito.when(tinkoffService.getWithdrawLimits(accountId)).thenReturn(withdrawLimits);
 
-        final Executable executable = () -> service.getAvailableBalance(accountId, Currency.RUB);
+        final Executable executable = () -> extOperationsService.getAvailableBalance(accountId, Currency.RUB);
         Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
     }
 

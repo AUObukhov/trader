@@ -13,7 +13,6 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -40,8 +39,6 @@ class FakeBotUnitTest {
     private ExtOperationsService operationsService;
     @Mock
     private ExtOrdersService ordersService;
-    @Mock
-    private PortfolioService portfolioService;
     @Mock
     private TradingStrategy strategy;
     @Mock

@@ -20,7 +20,6 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
@@ -156,11 +155,6 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public PortfolioService realPortfolioService(final TinkoffService realTinkoffService) {
-        return new PortfolioService(realTinkoffService);
-    }
-
-    @Bean
     public StatisticsService statisticsService(final ExtMarketDataService realExtMarketDataService, final ApplicationContext applicationContext) {
         return new StatisticsService(realExtMarketDataService, applicationContext);
     }
@@ -176,7 +170,6 @@ public class BeanConfiguration {
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService realExtOperationsService,
             final ExtOrdersService realExtOrdersService,
-            final PortfolioService realPortfolioService,
             final RealTinkoffService realTinkoffService
     ) {
         return new TinkoffServices(
@@ -184,7 +177,6 @@ public class BeanConfiguration {
                 extInstrumentsService,
                 realExtOperationsService,
                 realExtOrdersService,
-                realPortfolioService,
                 realTinkoffService
         );
     }

@@ -8,7 +8,6 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.bots.interfaces.Bot;
@@ -30,7 +29,6 @@ public class FakeBot extends AbstractBot implements Bot {
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService operationsService,
             final ExtOrdersService ordersService,
-            final PortfolioService portfolioService,
             final FakeTinkoffService fakeTinkoffService,
             final TradingStrategy strategy
     ) {
@@ -39,7 +37,6 @@ public class FakeBot extends AbstractBot implements Bot {
                 extInstrumentsService,
                 operationsService,
                 ordersService,
-                portfolioService,
                 fakeTinkoffService,
                 strategy,
                 strategy.initCache()

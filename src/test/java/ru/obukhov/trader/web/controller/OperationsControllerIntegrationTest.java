@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-class PortfolioControllerIntegrationTest extends ControllerIntegrationTest {
+class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
     @MockBean
     private OperationsService operationsService;

@@ -7,7 +7,6 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
@@ -43,9 +42,8 @@ public abstract class AbstractBot implements Bot {
 
     protected final ExtMarketDataService extMarketDataService;
     protected final ExtInstrumentsService extInstrumentsService;
-    protected final ExtOperationsService operationsService;
+    protected final ExtOperationsService extOperationsService;
     protected final ExtOrdersService ordersService;
-    protected final PortfolioService portfolioService;
     protected final TinkoffService tinkoffService;
 
     protected final TradingStrategy strategy;
@@ -54,9 +52,8 @@ public abstract class AbstractBot implements Bot {
     protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
         this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.extInstrumentsService = tinkoffServices.extInstrumentsService();
-        this.operationsService = tinkoffServices.operationsService();
+        this.extOperationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
-        this.portfolioService = tinkoffServices.portfolioService();
         this.tinkoffService = tinkoffServices.realTinkoffService();
         this.strategy = strategy;
         this.strategyCache = strategyCache;
@@ -100,8 +97,8 @@ public abstract class AbstractBot implements Bot {
         final Share share = extInstrumentsService.getShare(ticker);
         final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
-        decisionData.setBalance(portfolioService.getAvailableBalance(botConfig.accountId(), currency));
-        decisionData.setPosition(portfolioService.getSecurity(botConfig.accountId(), ticker));
+        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), currency));
+        decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), ticker));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), ticker));
         decisionData.setShare(share);
         decisionData.setCommission(botConfig.commission());
@@ -110,7 +107,7 @@ public abstract class AbstractBot implements Bot {
     private List<Operation> getLastWeekOperations(final String accountId, final String ticker) throws IOException {
         final OffsetDateTime now = tinkoffService.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
-        return operationsService.getOperations(accountId, interval, ticker);
+        return extOperationsService.getOperations(accountId, interval, ticker);
     }
 
     private void performOperation(final String accountId, final String ticker, final Decision decision) throws IOException {

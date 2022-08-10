@@ -14,7 +14,6 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Candle;
@@ -50,11 +49,9 @@ class RunnableBotUnitTest {
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
-    private ExtOperationsService operationsService;
+    private ExtOperationsService extOperationsService;
     @Mock
     private ExtOrdersService ordersService;
-    @Mock
-    private PortfolioService portfolioService;
     @Mock
     private RealTinkoffService realTinkoffService;
     @Mock
@@ -110,7 +107,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
+        Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
         Mocker.verifyNoOrdersMade(ordersService);
     }
@@ -153,7 +150,7 @@ class RunnableBotUnitTest {
 
         createRunnableBot().run();
 
-        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
+        Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
         Mockito.verify(strategy, Mockito.never()).decide(Mockito.any(), Mockito.any());
         Mocker.verifyNoOrdersMade(ordersService);
     }
@@ -201,7 +198,7 @@ class RunnableBotUnitTest {
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        Mockito.when(portfolioService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
+        Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -229,7 +226,7 @@ class RunnableBotUnitTest {
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        Mockito.when(portfolioService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
+        Mockito.when(extOperationsService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
 
@@ -255,7 +252,7 @@ class RunnableBotUnitTest {
         final Share share = TestData.createShare(ticker, Currency.RUB, 10);
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
-        Mockito.when(operationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -488,15 +485,15 @@ class RunnableBotUnitTest {
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(accountId, ticker))
+        Mockito.when(extOperationsService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());

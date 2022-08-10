@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
-import ru.obukhov.trader.market.impl.PortfolioService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
@@ -46,11 +45,9 @@ class AbstractBotUnitTest {
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
-    private ExtOperationsService operationsService;
+    private ExtOperationsService extOperationsService;
     @Mock
     private ExtOrdersService ordersService;
-    @Mock
-    private PortfolioService portfolioService;
     @Mock
     private TinkoffService tinkoffService;
     @Mock
@@ -80,7 +77,7 @@ class AbstractBotUnitTest {
 
         Assertions.assertTrue(candles.isEmpty());
 
-        Mockito.verifyNoMoreInteractions(operationsService, extMarketDataService, portfolioService);
+        Mockito.verifyNoMoreInteractions(extOperationsService, extMarketDataService, extOperationsService);
         Mocker.verifyNoOrdersMade(ordersService);
     }
 
@@ -200,15 +197,15 @@ class AbstractBotUnitTest {
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(accountId, ticker))
+        Mockito.when(extOperationsService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -256,15 +253,15 @@ class AbstractBotUnitTest {
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(portfolioService.getAvailableBalance(accountId, currency))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
-        Mockito.when(portfolioService.getSecurity(accountId, ticker))
+        Mockito.when(extOperationsService.getSecurity(accountId, ticker))
                 .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(operationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
@@ -315,7 +312,6 @@ class AbstractBotUnitTest {
                 final ExtInstrumentsService extInstrumentsService,
                 final ExtOperationsService operationsService,
                 final ExtOrdersService ordersService,
-                final PortfolioService portfolioService,
                 final TinkoffService tinkoffService,
                 final TradingStrategy strategy
         ) {
@@ -324,7 +320,6 @@ class AbstractBotUnitTest {
                     extInstrumentsService,
                     operationsService,
                     ordersService,
-                    portfolioService,
                     tinkoffService,
                     strategy,
                     new TestStrategyCache()

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.trader.market.impl.PortfolioService;
+import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
@@ -21,12 +21,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/trader/portfolio")
 @SuppressWarnings("unused")
-public class PortfolioController {
+public class OperationsController {
 
-    private final PortfolioService portfolioService;
+    private final ExtOperationsService extOperationsService;
 
-    public PortfolioController(final PortfolioService portfolioService) {
-        this.portfolioService = portfolioService;
+    public OperationsController(final ExtOperationsService extOperationsService) {
+        this.extOperationsService = extOperationsService;
     }
 
     @GetMapping("/positions")
@@ -39,7 +39,7 @@ public class PortfolioController {
             @RequestParam
             @ApiParam(example = "2008941383") final String accountId
     ) {
-        final List<PortfolioPosition> positions = portfolioService.getPositions(accountId);
+        final List<PortfolioPosition> positions = extOperationsService.getPositions(accountId);
 
         return new GetPortfolioPositionsResponse(positions);
     }
@@ -54,7 +54,7 @@ public class PortfolioController {
             @RequestParam
             @ApiParam(example = "2008941383") final String accountId
     ) {
-        final List<Money> moneys = portfolioService.getAvailableBalances(accountId);
+        final List<Money> moneys = extOperationsService.getAvailableBalances(accountId);
 
         return new GetAvailableBalancesResponse(moneys);
     }
