@@ -21,6 +21,7 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
+import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -619,6 +620,13 @@ public class TestData {
                 type,
                 orderId
         );
+    }
+
+    public static AssetInstrument createAssetInstrument(final String figi, final String ticker) {
+        return AssetInstrument.newBuilder()
+                .setFigi(figi)
+                .setTicker(ticker)
+                .build();
     }
 
 }
