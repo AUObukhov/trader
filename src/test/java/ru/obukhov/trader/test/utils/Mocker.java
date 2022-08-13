@@ -4,7 +4,9 @@ import lombok.experimental.UtilityClass;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.impl.FakeBot;
@@ -14,6 +16,7 @@ import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.io.IOException;
@@ -80,4 +83,21 @@ public class Mocker {
                         Mockito.isNull()
                 );
     }
+
+    public static void mockShare(final ExtInstrumentsService extInstrumentsService, final String ticker, final Currency currency, final int lotSize) {
+        final Share share = TestData.createShare(ticker, currency, lotSize);
+        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+    }
+
+    public static void mockShare(
+            final InstrumentsService instrumentsService,
+            final String figi,
+            final String ticker,
+            final Currency currency,
+            final int lotSize
+    ) {
+        final Share share = TestData.createShare(figi, ticker, currency, lotSize);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
+    }
+
 }

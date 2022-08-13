@@ -14,15 +14,12 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.JsonPathResultMatchers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.TestUtils;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.util.Collections;
-import java.util.List;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -75,16 +72,6 @@ abstract class ControllerIntegrationTest {
                 .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
                 .andExpect(ERRORS_MATCHER.value(expectedError))
                 .andExpect(JSON_CONTENT_MATCHER);
-    }
-
-    protected void mockShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
-        final Share share = Share.newBuilder()
-                .setFigi(figi)
-                .setTicker(ticker)
-                .setCurrency(currency.name())
-                .setLot(lotSize)
-                .build();
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
     }
 
 }

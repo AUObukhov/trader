@@ -18,13 +18,13 @@ import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
@@ -44,8 +44,6 @@ class FakeTinkoffServiceUnitTest {
     private ExtMarketDataService extMarketDataService;
     @Mock
     private ExtInstrumentsService extInstrumentsService;
-    @Mock
-    private RealTinkoffService realTinkoffService;
     @InjectMocks
     private TinkoffServices tinkoffServices;
 
@@ -113,7 +111,7 @@ class FakeTinkoffServiceUnitTest {
         final String ticker = "ticker";
         final int lotSize = 10;
 
-        mockShare(ticker, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, lotSize);
 
         final OffsetDateTime operation1DateTime = fakeTinkoffService.getCurrentDateTime();
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
@@ -148,8 +146,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        mockShare(ticker1, Currency.RUB, lotSize);
-        mockShare(ticker2, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker1, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker2, Currency.RUB, lotSize);
 
         final OffsetDateTime ticker1OperationDateTime = fakeTinkoffService.getCurrentDateTime();
         postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
@@ -181,8 +179,8 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final int lotSize = 10;
 
-        mockShare(ticker1, Currency.RUB, lotSize);
-        mockShare(ticker2, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker1, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker2, Currency.RUB, lotSize);
 
         final OffsetDateTime operation1DateTime = fakeTinkoffService.getCurrentDateTime();
         postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 100);
@@ -230,7 +228,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        mockShare(ticker, Currency.RUB, 10);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, 10);
 
         final Executable executable = () -> postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 500);
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
@@ -250,7 +248,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        mockShare(ticker, Currency.RUB, 10);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, 10);
 
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 1000);
 
@@ -273,7 +271,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        mockShare(ticker, Currency.RUB, 10);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, 10);
 
         postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
@@ -300,9 +298,9 @@ class FakeTinkoffServiceUnitTest {
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
 
-        mockShare(ticker1, Currency.RUB, 10);
-        mockShare(ticker2, Currency.RUB, 2);
-        mockShare(ticker3, Currency.RUB, 1);
+        Mocker.mockShare(extInstrumentsService, ticker1, Currency.RUB, 10);
+        Mocker.mockShare(extInstrumentsService, ticker2, Currency.RUB, 2);
+        Mocker.mockShare(extInstrumentsService, ticker3, Currency.RUB, 1);
 
         postOrder(accountId, ticker1, 1, OrderDirection.ORDER_DIRECTION_BUY, 1000);
         postOrder(accountId, ticker2, 3, OrderDirection.ORDER_DIRECTION_BUY, 100);
@@ -339,7 +337,7 @@ class FakeTinkoffServiceUnitTest {
 
         final String ticker = "ticker";
 
-        mockShare(ticker, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, lotSize);
 
         postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
@@ -367,7 +365,7 @@ class FakeTinkoffServiceUnitTest {
 
         fakeTinkoffService = new FakeTinkoffService(MARKET_PROPERTIES, tinkoffServices, fakeContext, 0.003);
 
-        mockShare(ticker, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, lotSize);
 
         postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
@@ -389,7 +387,7 @@ class FakeTinkoffServiceUnitTest {
 
         fakeTinkoffService = new FakeTinkoffService(MARKET_PROPERTIES, tinkoffServices, fakeContext, 0.003);
 
-        mockShare(ticker, Currency.RUB, lotSize);
+        Mocker.mockShare(extInstrumentsService, ticker, Currency.RUB, lotSize);
 
         postOrder(accountId, ticker, 2, OrderDirection.ORDER_DIRECTION_BUY, 1000);
         postOrder(accountId, ticker, 1, OrderDirection.ORDER_DIRECTION_BUY, 4000);
@@ -518,11 +516,6 @@ class FakeTinkoffServiceUnitTest {
         final BigDecimal currentPrice = fakeTinkoffService.getCurrentPrice(ticker);
 
         AssertUtils.assertEquals(price, currentPrice);
-    }
-
-    private void mockShare(String ticker, Currency currency, int lotSize) {
-        final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
     }
 
 }

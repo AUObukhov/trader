@@ -251,7 +251,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        mockShare(figi, ticker, Currency.RUB, 1);
+        Mocker.mockShare(instrumentsService, figi, ticker, Currency.RUB, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);

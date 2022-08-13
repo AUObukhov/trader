@@ -580,6 +580,15 @@ public class TestData {
                 .build();
     }
 
+    public static Share createShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
+        return Share.newBuilder()
+                .setFigi(figi)
+                .setTicker(ticker)
+                .setCurrency(currency.name().toLowerCase())
+                .setLot(lotSize)
+                .build();
+    }
+
     public static OrderStage createOrderStage(final Currency currency, final double price, final long quantity, final String tradeId) {
         return OrderStage.newBuilder()
                 .setPrice(createMoneyValue(price, currency))
