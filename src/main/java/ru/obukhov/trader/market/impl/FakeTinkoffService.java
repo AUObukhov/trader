@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
-import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -19,7 +18,6 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
-import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -54,58 +52,17 @@ public class FakeTinkoffService implements TinkoffService {
     private final FakeContext fakeContext;
     private final double commission;
 
-    /**
-     * Initializes current dateTime and one currency.
-     * current dateTime is initialized by nearest work time to given {@code currentDateTime}
-     *
-     * @param accountId       account id
-     * @param currentDateTime start dateTime for search dateTime to set as current
-     * @param currency        currency which balance is initialized not by zero.
-     * @param balanceConfig   balance config.
-     *                        {@code currency} and {@code balanceConfig.initialBalance} must be both null or both not null.
-     */
     public FakeTinkoffService(
             final MarketProperties marketProperties,
             final TinkoffServices tinkoffServices,
-            final String accountId,
-            final OffsetDateTime currentDateTime,
-            final Currency currency,
-            final double commission,
-            final BalanceConfig balanceConfig
+            final FakeContext fakeContext,
+            final double commission
     ) {
         this.marketProperties = marketProperties;
         this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.extInstrumentsService = tinkoffServices.extInstrumentsService();
-        this.fakeContext = createFakeContext(accountId, currentDateTime, currency, balanceConfig);
+        this.fakeContext = fakeContext;
         this.commission = commission;
-    }
-
-    private FakeContext createFakeContext(
-            final String accountId,
-            final OffsetDateTime currentDateTime,
-            final Currency currency,
-            final BalanceConfig balanceConfig
-    ) {
-        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
-        final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
-
-        return new FakeContext(ceilingWorkTime, accountId, currency, initialBalance);
-    }
-
-    private BigDecimal getInitialBalance(OffsetDateTime currentDateTime, final OffsetDateTime ceilingWorkTime, BalanceConfig balanceConfig) {
-        BigDecimal initialBalance = balanceConfig.getInitialBalance() == null ? BigDecimal.ZERO : balanceConfig.getInitialBalance();
-
-        // adding balance increments which were skipped by moving to ceiling work time above
-        final CronExpression balanceIncrementCron = balanceConfig.getBalanceIncrementCron();
-        if (balanceIncrementCron != null) {
-            final int incrementsCount = DateUtils.getCronHitsBetweenDates(balanceIncrementCron, currentDateTime, ceilingWorkTime)
-                    .size();
-            if (incrementsCount > 0) {
-                final BigDecimal totalBalanceIncrement = DecimalUtils.multiply(balanceConfig.getBalanceIncrement(), incrementsCount);
-                initialBalance = initialBalance.add(totalBalanceIncrement);
-            }
-        }
-        return initialBalance;
     }
 
     /**

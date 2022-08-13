@@ -25,12 +25,9 @@ import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
-import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.obukhov.trader.web.model.BotConfig;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -39,7 +36,6 @@ import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -100,24 +96,10 @@ public class BeanConfiguration {
     public TinkoffService fakeTinkoffService(
             final MarketProperties marketProperties,
             final TinkoffServices tinkoffServices,
-            final BotConfig botConfig,
-            final BalanceConfig balanceConfig,
-            final OffsetDateTime currentDateTime
+            final FakeContext fakeContext,
+            final double commission
     ) {
-        final Share share = tinkoffServices.extInstrumentsService().getShare(botConfig.ticker());
-        if (share == null) {
-            throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
-        }
-
-        return new FakeTinkoffService(
-                marketProperties,
-                tinkoffServices,
-                botConfig.accountId(),
-                currentDateTime,
-                Currency.valueOfIgnoreCase(share.getCurrency()),
-                botConfig.commission(),
-                balanceConfig
-        );
+        return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext, commission);
     }
 
     @Bean
