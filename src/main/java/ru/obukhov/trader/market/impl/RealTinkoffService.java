@@ -2,11 +2,7 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
@@ -16,7 +12,6 @@ import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.AccountMapper;
 import ru.obukhov.trader.market.model.transform.OrderMapper;
 import ru.obukhov.trader.market.model.transform.PositionMapper;
-import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -43,35 +38,23 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class RealTinkoffService implements TinkoffService, ApplicationContextAware {
+public class RealTinkoffService implements TinkoffService {
 
     private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
     private static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
     private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
 
-    private RealTinkoffService self;
-
     private final InstrumentsService instrumentsService;
     private final OperationsService operationsService;
     private final OrdersService ordersService;
     private final UsersService usersService;
-
-    @Override
-    @Cacheable(value = "figiByTicker", sync = true)
-    public String getFigiByTicker(final String ticker) {
-        return instrumentsService.getAssetsSync().stream()
-                .flatMap(asset -> asset.getInstrumentsList().stream())
-                .filter(assetInstrument -> assetInstrument.getTicker().equals(ticker))
-                .findFirst()
-                .map(AssetInstrument::getFigi)
-                .orElse(null);
-    }
+    private final ExtInstrumentsService extInstrumentsService;
 
     // region OperationsService
 
     @Override
     public List<Operation> getOperations(final String accountId, final Interval interval, final String ticker) throws IOException {
-        final String figi = self.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getFigiByTicker(ticker);
         return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 
@@ -94,7 +77,7 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
             final OrderType type,
             final String orderId
     ) {
-        final String figi = self.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getFigiByTicker(ticker);
         final Quotation quotationPrice = DecimalUtils.toQuotation(price);
         return ordersService.postOrderSync(figi, quantityLots, quotationPrice, direction, accountId, type, orderId);
     }
@@ -140,14 +123,5 @@ public class RealTinkoffService implements TinkoffService, ApplicationContextAwa
     public OffsetDateTime getCurrentDateTime() {
         return OffsetDateTime.now();
     }
-
-    // region ApplicationContextAware implementation
-
-    @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
-        this.self = applicationContext.getBean(RealTinkoffService.class);
-    }
-
-    // endregion
 
 }

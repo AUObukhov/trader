@@ -21,6 +21,8 @@ class ExtOrdersServiceUnitTest {
     private TinkoffService tinkoffService;
     @Mock
     private ExtMarketDataService extMarketDataService;
+    @Mock
+    private ExtInstrumentsService extInstrumentsService;
 
     @InjectMocks
     private ExtOrdersService service;
@@ -32,7 +34,7 @@ class ExtOrdersServiceUnitTest {
         final String ticker = "ticker";
         final String figi = "figi";
 
-        Mockito.when(tinkoffService.getFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
                 accountId,
                 TestData.createOrder("order0", figi),

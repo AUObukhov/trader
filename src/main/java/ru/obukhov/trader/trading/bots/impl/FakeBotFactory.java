@@ -40,11 +40,12 @@ public class FakeBotFactory {
                 "fakeExtMarketDataService",
                 marketProperties,
                 fakeTinkoffService,
+                tinkoffServices.extInstrumentsService(),
                 marketDataService
         );
 
         final ExtOperationsService fakeOperationsService = new ExtOperationsService(fakeTinkoffService);
-        final ExtOrdersService fakeOrdersService = new ExtOrdersService(fakeTinkoffService);
+        final ExtOrdersService fakeOrdersService = new ExtOrdersService(fakeTinkoffService, tinkoffServices.extInstrumentsService());
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 
         return new FakeBot(

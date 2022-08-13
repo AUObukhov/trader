@@ -20,8 +20,6 @@ import java.util.List;
  */
 public interface TinkoffService {
 
-    String getFigiByTicker(String ticker);
-
     List<Operation> getOperations(final String accountId, final Interval interval, final String ticker) throws IOException;
 
     List<Order> getOrders(final String accountId);

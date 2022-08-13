@@ -126,11 +126,6 @@ public class FakeTinkoffService implements TinkoffService {
         return nextWorkMinute;
     }
 
-    @Override
-    public String getFigiByTicker(final String ticker) {
-        return realTinkoffService.getFigiByTicker(ticker);
-    }
-
     // region OperationsContext proxy
 
     /**
@@ -343,7 +338,7 @@ public class FakeTinkoffService implements TinkoffService {
     /**
      * @return last known price for instrument with given {@code ticker} not after current fake date time
      */
-    public BigDecimal getCurrentPrice(final String ticker) throws IOException {
+    public BigDecimal getCurrentPrice(final String ticker) {
         return extMarketDataService.getLastCandle(ticker, fakeContext.getCurrentDateTime()).getClosePrice();
     }
 

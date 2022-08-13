@@ -2,14 +2,12 @@ package ru.obukhov.trader.market.impl;
 
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
@@ -59,18 +57,11 @@ class RealTinkoffServiceUnitTest {
     private OrdersService ordersService;
     @Mock
     private UsersService usersService;
-
     @Mock
-    private ApplicationContext applicationContext;
+    private ExtInstrumentsService extInstrumentsService;
 
     @InjectMocks
     private RealTinkoffService realTinkoffService;
-
-    @BeforeEach
-    private void setUp() {
-        Mockito.lenient().when(applicationContext.getBean(RealTinkoffService.class)).thenReturn(realTinkoffService);
-        realTinkoffService.setApplicationContext(applicationContext);
-    }
 
     // region OperationsContext methods tests
 
@@ -82,7 +73,7 @@ class RealTinkoffServiceUnitTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
         final Operation operation1 = TestData.createOperation();
         final Operation operation2 = TestData.createOperation();
@@ -245,7 +236,7 @@ class RealTinkoffServiceUnitTest {
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
         PostOrderResponse response = TestData.createPostOrderResponse(
                 Currency.USD,

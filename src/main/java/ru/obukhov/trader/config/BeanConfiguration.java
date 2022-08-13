@@ -90,9 +90,10 @@ public class BeanConfiguration {
             final InstrumentsService instrumentsService,
             final OperationsService operationsService,
             final OrdersService ordersService,
-            final UsersService usersService
+            final UsersService usersService,
+            final ExtInstrumentsService extInstrumentsService
     ) {
-        return new RealTinkoffService(instrumentsService, operationsService, ordersService, usersService);
+        return new RealTinkoffService(instrumentsService, operationsService, ordersService, usersService, extInstrumentsService);
     }
 
     @Bean
@@ -124,9 +125,10 @@ public class BeanConfiguration {
     public ExtMarketDataService realExtMarketDataService(
             final MarketProperties marketProperties,
             final TinkoffService realTinkoffService,
+            final ExtInstrumentsService extInstrumentsService,
             final MarketDataService marketDataService
     ) {
-        return new ExtMarketDataService(marketProperties, realTinkoffService, marketDataService);
+        return new ExtMarketDataService(marketProperties, realTinkoffService, extInstrumentsService, marketDataService);
     }
 
     @Bean
@@ -134,9 +136,10 @@ public class BeanConfiguration {
     public ExtMarketDataService fakeExtMarketDataService(
             final MarketProperties marketProperties,
             final TinkoffService fakeTinkoffService,
+            final ExtInstrumentsService extInstrumentsService,
             final MarketDataService marketDataService
     ) {
-        return new ExtMarketDataService(marketProperties, fakeTinkoffService, marketDataService);
+        return new ExtMarketDataService(marketProperties, fakeTinkoffService, extInstrumentsService, marketDataService);
     }
 
     @Bean
@@ -150,8 +153,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtOrdersService realExtOrdersService(final TinkoffService realTinkoffService, final ExtMarketDataService realExtMarketDataService) {
-        return new ExtOrdersService(realTinkoffService);
+    public ExtOrdersService realExtOrdersService(
+            final TinkoffService realTinkoffService,
+            final ExtMarketDataService realExtMarketDataService,
+            final ExtInstrumentsService extInstrumentsService
+    ) {
+        return new ExtOrdersService(realTinkoffService, extInstrumentsService);
     }
 
     @Bean
