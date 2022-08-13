@@ -81,8 +81,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtUsersService realExtUsersService(final TinkoffService realTinkoffService) {
-        return new ExtUsersService(realTinkoffService);
+    public ExtUsersService extUsersService(final UsersService usersService) {
+        return new ExtUsersService(usersService);
     }
 
     @Bean
@@ -90,10 +90,9 @@ public class BeanConfiguration {
             final InstrumentsService instrumentsService,
             final OperationsService operationsService,
             final OrdersService ordersService,
-            final UsersService usersService,
             final ExtInstrumentsService extInstrumentsService
     ) {
-        return new RealTinkoffService(instrumentsService, operationsService, ordersService, usersService, extInstrumentsService);
+        return new RealTinkoffService(instrumentsService, operationsService, ordersService, extInstrumentsService);
     }
 
     @Bean

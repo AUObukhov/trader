@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.interfaces;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.UserAccount;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -39,8 +38,6 @@ public interface TinkoffService {
     List<PortfolioPosition> getPortfolioPositions(final String accountId);
 
     WithdrawLimits getWithdrawLimits(final String accountId);
-
-    List<UserAccount> getAccounts();
 
     OffsetDateTime getCurrentDateTime();
 

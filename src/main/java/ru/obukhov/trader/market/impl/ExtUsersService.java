@@ -1,7 +1,9 @@
 package ru.obukhov.trader.market.impl;
 
-import ru.obukhov.trader.market.interfaces.TinkoffService;
+import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.UserAccount;
+import ru.obukhov.trader.market.model.transform.AccountMapper;
+import ru.tinkoff.piapi.core.UsersService;
 
 import java.util.List;
 
@@ -10,17 +12,21 @@ import java.util.List;
  */
 public class ExtUsersService {
 
-    private final TinkoffService tinkoffService;
+    private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
 
-    public ExtUsersService(final TinkoffService tinkoffService) {
-        this.tinkoffService = tinkoffService;
+    private final UsersService usersService;
+
+    public ExtUsersService(final UsersService usersService) {
+        this.usersService = usersService;
     }
 
     /**
      * @return list of current customer accounts. Current customer is defined by token passed to Tinkoff.
      */
     public List<UserAccount> getAccounts() {
-        return tinkoffService.getAccounts();
+        return usersService.getAccountsSync().stream()
+                .map(ACCOUNT_MAPPER::map)
+                .toList();
     }
 
 }

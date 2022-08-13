@@ -8,8 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.market.model.transform.AccountMapper;
 import ru.obukhov.trader.market.model.transform.OrderMapper;
 import ru.obukhov.trader.market.model.transform.PositionMapper;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -20,7 +18,6 @@ import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
-import ru.tinkoff.piapi.core.UsersService;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
@@ -40,14 +37,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RealTinkoffService implements TinkoffService {
 
-    private static final AccountMapper ACCOUNT_MAPPER = Mappers.getMapper(AccountMapper.class);
     private static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
     private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
 
     private final InstrumentsService instrumentsService;
     private final OperationsService operationsService;
     private final OrdersService ordersService;
-    private final UsersService usersService;
     private final ExtInstrumentsService extInstrumentsService;
 
     // region OperationsService
@@ -104,17 +99,6 @@ public class RealTinkoffService implements TinkoffService {
     @Override
     public WithdrawLimits getWithdrawLimits(final String accountId) {
         return operationsService.getWithdrawLimitsSync(accountId);
-    }
-
-    // endregion
-
-    // region UserContext
-
-    @Override
-    public List<UserAccount> getAccounts() {
-        return usersService.getAccountsSync().stream()
-                .map(ACCOUNT_MAPPER::map)
-                .toList();
     }
 
     // endregion

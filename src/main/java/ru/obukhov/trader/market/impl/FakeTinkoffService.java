@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
@@ -49,7 +48,6 @@ public class FakeTinkoffService implements TinkoffService {
     private final MarketProperties marketProperties;
     private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
-    private final RealTinkoffService realTinkoffService;
 
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
@@ -78,7 +76,6 @@ public class FakeTinkoffService implements TinkoffService {
         this.marketProperties = marketProperties;
         this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.extInstrumentsService = tinkoffServices.extInstrumentsService();
-        this.realTinkoffService = tinkoffServices.realTinkoffService();
         this.fakeContext = createFakeContext(accountId, currentDateTime, currency, balanceConfig);
         this.commission = commission;
     }
@@ -298,15 +295,6 @@ public class FakeTinkoffService implements TinkoffService {
                 .map(entry -> DataStructsHelper.createMoneyValue(entry.getKey(), entry.getValue()))
                 .toList();
         return DataStructsHelper.createWithdrawLimits(money);
-    }
-
-    // endregion
-
-    // region UserContext proxy
-
-    @Override
-    public List<UserAccount> getAccounts() {
-        return realTinkoffService.getAccounts();
     }
 
     // endregion
