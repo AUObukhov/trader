@@ -90,7 +90,7 @@ public class RealTinkoffService implements TinkoffService {
     public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
         return operationsService.getPortfolioSync(accountId).getPositions().stream()
                 .map(position -> {
-                    final String ticker = instrumentsService.getInstrumentByFigiSync(position.getFigi()).getTicker();
+                    final String ticker = extInstrumentsService.getTickerByFigi(position.getFigi());
                     return POSITION_MAPPER.map(ticker, position);
                 })
                 .toList();

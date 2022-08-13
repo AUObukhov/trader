@@ -15,7 +15,6 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
@@ -288,8 +287,8 @@ class RealTinkoffServiceUnitTest {
         final int quantityLots2 = 5;
         final Currency currency2 = Currency.USD;
 
-        Mocker.mockTickerByFigi(instrumentsService, ticker1, figi1);
-        Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);
+        Mockito.when(extInstrumentsService.getTickerByFigi(figi1)).thenReturn(ticker1);
+        Mockito.when(extInstrumentsService.getTickerByFigi(figi2)).thenReturn(ticker2);
 
         final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPortfolioPosition1 = TestData.createTinkoffPortfolioPosition(
                 figi1,

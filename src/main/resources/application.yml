@@ -32,5 +32,5 @@ back-test:
   thread-count: 4
 
 spring.cache:
-  cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker
+  cache-names: allShares, marketStocks, marketEtfs, marketCurrencies, marketCandles, marketInstrument, figiByTicker, tickerByFigi
   scaffeine.spec: maximumSize=3000,expireAfterAccess=3h

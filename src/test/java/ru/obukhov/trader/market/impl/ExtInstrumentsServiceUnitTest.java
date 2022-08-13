@@ -109,6 +109,32 @@ class ExtInstrumentsServiceUnitTest {
 
     // endregion
 
+    // region getTickerByFigi tests
+
+    @Test
+    void getTickerByFigi_returnsTicker_whenInstrumentExists() {
+        final String ticker = "ticker";
+        final String figi = "figi";
+
+        Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
+        final String result = extInstrumentsService.getTickerByFigi(figi);
+
+        Assertions.assertEquals(ticker, result);
+    }
+
+    @Test
+    void getTickerByFigi_throwsIllegalArgumentException_whenInstrumentNotExists() {
+        final String figi = "figi";
+
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> extInstrumentsService.getTickerByFigi(figi),
+                "Not found instrument for figi '" + figi + "'"
+        );
+    }
+
+    // endregion
+
     // region getShare tests
 
     @Test
