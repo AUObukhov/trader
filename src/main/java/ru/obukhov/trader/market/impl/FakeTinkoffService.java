@@ -1,10 +1,7 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
-import org.mapstruct.factory.Mappers;
 import org.springframework.util.Assert;
-import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
@@ -15,26 +12,20 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedMap;
-import java.util.stream.Stream;
 
 /**
  * Prices are loaded from real market, but any operations do not affect the real portfolio - all data is stored in
@@ -46,8 +37,6 @@ public class FakeTinkoffService implements TinkoffService {
     private final MarketProperties marketProperties;
     private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
-
-    private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final FakeContext fakeContext;
     private final double commission;
@@ -79,31 +68,6 @@ public class FakeTinkoffService implements TinkoffService {
 
         return nextWorkMinute;
     }
-
-    // region OperationsContext proxy
-
-    /**
-     * Searches operations which satisfy given conditions
-     *
-     * @param interval interval of dateTime of searchable operations, including extreme values
-     * @param ticker   ticker of searchable operations, if operations with any ticker are satisfying
-     * @return found operations in natural order of their dateTime
-     */
-    @Override
-    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
-        Stream<BackTestOperation> operationsStream = fakeContext.getOperations(accountId).stream()
-                .filter(operation -> interval.contains(operation.dateTime()));
-        if (ticker != null) {
-            operationsStream = operationsStream.filter(operation -> ticker.equals(operation.ticker()));
-        }
-
-        return operationsStream
-                .sorted(Comparator.comparing(operation -> operation.dateTime().toInstant()))
-                .map(operationMapper::map)
-                .toList();
-    }
-
-    // endregion
 
     // region OrdersContext proxy
 
@@ -235,23 +199,6 @@ public class FakeTinkoffService implements TinkoffService {
     @Override
     public void cancelOrder(final String accountId, final String orderId) {
         throw new UnsupportedOperationException("Back test does not support cancelling of orders");
-    }
-
-    // endregion
-
-    // region PortfolioContext proxy
-
-    @Override
-    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
-        return fakeContext.getPositions(accountId);
-    }
-
-    @Override
-    public WithdrawLimits getWithdrawLimits(final String accountId) {
-        final List<MoneyValue> money = fakeContext.getBalances(accountId).entrySet().stream()
-                .map(entry -> DataStructsHelper.createMoneyValue(entry.getKey(), entry.getValue()))
-                .toList();
-        return DataStructsHelper.createWithdrawLimits(money);
     }
 
     // endregion

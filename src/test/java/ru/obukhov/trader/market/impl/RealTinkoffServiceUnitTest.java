@@ -7,18 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
@@ -29,10 +22,7 @@ import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
-import ru.tinkoff.piapi.core.models.Portfolio;
-import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -54,30 +44,6 @@ class RealTinkoffServiceUnitTest {
 
     @InjectMocks
     private RealTinkoffService realTinkoffService;
-
-    // region OperationsContext methods tests
-
-    @Test
-    void getOperations_returnsOperations() throws IOException {
-        final String accountId = "2000124699";
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
-
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
-
-        final Operation operation1 = TestData.createOperation();
-        final Operation operation2 = TestData.createOperation();
-        final List<Operation> operations = List.of(operation1, operation2);
-        Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi)).thenReturn(operations);
-
-        final List<Operation> result = realTinkoffService.getOperations(accountId, Interval.of(from, to), ticker);
-
-        Assertions.assertSame(operations, result);
-    }
-
-    // endregion
 
     // region OrdersContext methods tests
 
@@ -257,107 +223,6 @@ class RealTinkoffServiceUnitTest {
         realTinkoffService.cancelOrder(accountId, orderId);
 
         Mockito.verify(ordersService, Mockito.times(1)).cancelOrderSync(accountId, orderId);
-    }
-
-    // endregion
-
-    // region PortfolioContext methods tests
-
-    @Test
-    void getPortfolioPositions_returnsAndMapsPositions() {
-        final String accountId = "2000124699";
-
-        final String figi1 = "figi1";
-        final String ticker1 = "ticker1";
-        final InstrumentType instrumentType1 = InstrumentType.STOCK;
-        final int quantity1 = 1000;
-        final int averagePositionPrice1 = 110;
-        final int expectedYield1 = 10000;
-        final int currentPrice1 = 120;
-        final int quantityLots1 = 10;
-        final Currency currency1 = Currency.RUB;
-
-        final String figi2 = "figi2";
-        final String ticker2 = "ticker2";
-        final InstrumentType instrumentType2 = InstrumentType.ETF;
-        final int quantity2 = 2000;
-        final int averagePositionPrice2 = 440;
-        final int expectedYield2 = -10000;
-        final int currentPrice2 = 430;
-        final int quantityLots2 = 5;
-        final Currency currency2 = Currency.USD;
-
-        Mockito.when(extInstrumentsService.getTickerByFigi(figi1)).thenReturn(ticker1);
-        Mockito.when(extInstrumentsService.getTickerByFigi(figi2)).thenReturn(ticker2);
-
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPortfolioPosition1 = TestData.createTinkoffPortfolioPosition(
-                figi1,
-                instrumentType1,
-                quantity1,
-                averagePositionPrice1,
-                expectedYield1,
-                currentPrice1,
-                quantityLots1,
-                currency1
-        );
-
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPortfolioPosition2 = TestData.createTinkoffPortfolioPosition(
-                figi2,
-                instrumentType2,
-                quantity2,
-                averagePositionPrice2,
-                expectedYield2,
-                currentPrice2,
-                quantityLots2,
-                currency2
-        );
-
-        final Portfolio portfolio = TestData.createPortfolio(tinkoffPortfolioPosition1, tinkoffPortfolioPosition2);
-        Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
-
-        final List<PortfolioPosition> result = realTinkoffService.getPortfolioPositions(accountId);
-
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker1,
-                instrumentType1,
-                quantity1,
-                averagePositionPrice1,
-                expectedYield1,
-                currentPrice1,
-                quantityLots1,
-                currency1
-        );
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker2,
-                instrumentType2,
-                quantity2,
-                averagePositionPrice2,
-                expectedYield2,
-                currentPrice2,
-                quantityLots2,
-                currency2
-        );
-
-        Assertions.assertEquals(2, result.size());
-        AssertUtils.assertEquals(expectedPosition1, result.get(0));
-        AssertUtils.assertEquals(expectedPosition2, result.get(1));
-    }
-
-    @Test
-    void getPortfolioCurrencies() {
-        final String accountId = "2000124699";
-
-        final List<MoneyValue> moneys = List.of(
-                TestData.createMoneyValue(10000, Currency.RUB),
-                TestData.createMoneyValue(1000, Currency.USD)
-        );
-        final List<MoneyValue> blocked = List.of(TestData.createMoneyValue(1000, Currency.RUB));
-        final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys, blocked);
-        Mockito.when(operationsService.getWithdrawLimitsSync(accountId)).thenReturn(withdrawLimits);
-
-        final WithdrawLimits result = realTinkoffService.getWithdrawLimits(accountId);
-
-        Assertions.assertSame(withdrawLimits, result);
     }
 
     // endregion

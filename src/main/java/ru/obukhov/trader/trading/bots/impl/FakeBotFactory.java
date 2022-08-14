@@ -10,6 +10,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtOperationsService;
 import ru.obukhov.trader.market.impl.ExtOrdersService;
+import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Currency;
@@ -51,7 +52,7 @@ public class FakeBotFactory {
                 marketDataService
         );
 
-        final ExtOperationsService fakeOperationsService = new ExtOperationsService(fakeTinkoffService);
+        final ExtOperationsService fakeOperationsService = new FakeExtOperationsService(fakeContext);
         final ExtOrdersService fakeOrdersService = new ExtOrdersService(fakeTinkoffService, tinkoffServices.extInstrumentsService());
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 

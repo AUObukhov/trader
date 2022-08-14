@@ -29,6 +29,7 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
+import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
@@ -45,7 +46,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -173,36 +176,45 @@ public class AssertUtils {
         }
     }
 
-    // region list assertions
+    // region collections assertions
 
-    public static void assertEquals(final List<?> expected, final List<?> actual) {
-        assertListSize(expected, actual);
+    public static void assertEquals(final Collection<?> expected, final Collection<?> actual) {
+        assertCollectionSize(expected, actual);
 
         final StringBuilder messageBuilder = new StringBuilder();
-        for (int i = 0; i < expected.size(); i++) {
-            final Object expectedValue = expected.get(i);
-            final Object actualValue = actual.get(i);
-            if (expectedValue instanceof List expectedList && actualValue instanceof List actualList) {
-                assertEquals(expectedList, actualList);
+        final Iterator<?> expectedIterator = expected.iterator();
+        final Iterator<?> actualIterator = actual.iterator();
+        int index = 0;
+        while (expectedIterator.hasNext()) {
+            final Object expectedValue = expectedIterator.next();
+            final Object actualValue = actualIterator.next();
+            if (expectedValue instanceof Collection expectedCollection && actualValue instanceof Collection actualCollection) {
+                assertEquals(expectedCollection, actualCollection);
             } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof BigDecimal actualBigDecimal) {
                 if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
-                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
             } else if (expectedValue instanceof Money expectedMoney && actualValue instanceof Money actualMoney) {
                 if (!equals(expectedMoney, actualMoney)) {
-                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
             } else if (expectedValue instanceof Order expectedOrder && actualValue instanceof Order actualOrder) {
                 if (!equals(expectedOrder, actualOrder)) {
-                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
+                            .append(System.lineSeparator());
+                }
+            } else if (expectedValue instanceof PortfolioPosition expectedPosition && actualValue instanceof PortfolioPosition actualPosition) {
+                if (!equals(expectedPosition, actualPosition)) {
+                    messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
             } else if (!Objects.equals(expectedValue, actualValue)) {
-                messageBuilder.append(getErrorMessage(expectedValue, actualValue, i))
+                messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                         .append(System.lineSeparator());
             }
+            index++;
         }
 
         final String message = messageBuilder.toString();
@@ -211,9 +223,9 @@ public class AssertUtils {
         }
     }
 
-    private static void assertListSize(final List<?> expected, final List<?> actual) {
+    private static void assertCollectionSize(final Collection<?> expected, final Collection<?> actual) {
         if (expected.size() != actual.size()) {
-            final String message = String.format("expected list of size: <%s> but was: <%s>", expected.size(), actual.size());
+            final String message = String.format("expected collection of size: <%s> but was: <%s>", expected.size(), actual.size());
             Assertions.fail(message);
         }
     }
@@ -238,6 +250,21 @@ public class AssertUtils {
                 && Objects.equals(order1.currency(), order2.currency())
                 && Objects.equals(order1.type(), order2.type())
                 && Objects.equals(order1.dateTime(), order2.dateTime());
+    }
+
+    private static boolean equals(final PortfolioPosition position1, PortfolioPosition position2) {
+        return position1.ticker().equals(position2.ticker())
+                && position1.instrumentType().equals(position2.instrumentType())
+                && DecimalUtils.numbersEqual(position1.quantity(), position2.quantity())
+                && equals(position1.averagePositionPrice(), position2.averagePositionPrice())
+                && DecimalUtils.numbersEqual(position1.expectedYield(), position2.expectedYield())
+                && equals(position1.currentPrice(), position2.currentPrice())
+                && DecimalUtils.numbersEqual(position1.quantityLots(), position2.quantityLots());
+    }
+
+    private static boolean equals(final MoneyAmount moneyAmount1, MoneyAmount moneyAmount2) {
+        return moneyAmount1.currency().equals(moneyAmount2.currency())
+                && DecimalUtils.numbersEqual(moneyAmount1.value(), moneyAmount1.value());
     }
 
     private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {

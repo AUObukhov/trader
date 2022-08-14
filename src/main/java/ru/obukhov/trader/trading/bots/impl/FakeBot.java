@@ -27,7 +27,7 @@ public class FakeBot extends AbstractBot implements Bot {
     public FakeBot(
             final ExtMarketDataService extMarketDataService,
             final ExtInstrumentsService extInstrumentsService,
-            final ExtOperationsService operationsService,
+            final ExtOperationsService extOperationsService,
             final ExtOrdersService ordersService,
             final FakeTinkoffService fakeTinkoffService,
             final TradingStrategy strategy
@@ -35,7 +35,7 @@ public class FakeBot extends AbstractBot implements Bot {
         super(
                 extMarketDataService,
                 extInstrumentsService,
-                operationsService,
+                extOperationsService,
                 ordersService,
                 fakeTinkoffService,
                 strategy,
@@ -59,11 +59,11 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker)
             throws IOException {
-        return tinkoffService.getOperations(accountId, interval, ticker);
+        return extOperationsService.getOperations(accountId, interval, ticker);
     }
 
     public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
-        return tinkoffService.getPortfolioPositions(accountId);
+        return extOperationsService.getPositions(accountId);
     }
 
     public OffsetDateTime nextMinute() {

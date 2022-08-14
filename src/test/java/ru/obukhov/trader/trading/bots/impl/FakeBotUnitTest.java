@@ -36,7 +36,7 @@ class FakeBotUnitTest {
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
-    private ExtOperationsService operationsService;
+    private ExtOperationsService extOperationsService;
     @Mock
     private ExtOrdersService ordersService;
     @Mock
@@ -112,7 +112,7 @@ class FakeBotUnitTest {
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String ticker = "ticker";
         final List<Operation> expectedOperations = new ArrayList<>();
-        Mockito.when(fakeTinkoffService.getOperations(accountId, interval, ticker)).thenReturn(expectedOperations);
+        Mockito.when(extOperationsService.getOperations(accountId, interval, ticker)).thenReturn(expectedOperations);
 
         final List<Operation> operations = fakeBot.getOperations(accountId, interval, ticker);
 
@@ -123,7 +123,7 @@ class FakeBotUnitTest {
     void getPortfolioPositions() {
         final String accountId = "2000124699";
         final List<PortfolioPosition> expectedPositions = new ArrayList<>();
-        Mockito.when(fakeTinkoffService.getPortfolioPositions(accountId)).thenReturn(expectedPositions);
+        Mockito.when(extOperationsService.getPositions(accountId)).thenReturn(expectedPositions);
 
         final List<PortfolioPosition> positions = fakeBot.getPortfolioPositions(accountId);
 

@@ -13,6 +13,7 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -224,6 +225,67 @@ class FakeContextUnitTest {
     }
 
     // endregion
+
+    @Test
+    void getBalances() {
+        final String accountId1 = "2000124699";
+        final String accountId2 = "2000124698";
+
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        final FakeContext fakeContext = new FakeContext(currentDateTime);
+
+        final Currency currency1 = Currency.RUB;
+        final BigDecimal balance1 = BigDecimal.valueOf(100);
+        final BigDecimal investment11 = BigDecimal.valueOf(20);
+        final BigDecimal investment12 = BigDecimal.valueOf(50);
+        final BigDecimal investment13 = BigDecimal.valueOf(30);
+        final OffsetDateTime investment11DateTime = currentDateTime.plusHours(1);
+        final OffsetDateTime investment12DateTime = investment11DateTime.plusHours(1);
+
+        fakeContext.setCurrentBalance(accountId1, currency1, balance1);
+        fakeContext.setCurrentDateTime(investment11DateTime);
+        fakeContext.addInvestment(accountId1, currency1, investment11);
+        fakeContext.setCurrentDateTime(investment12DateTime);
+        fakeContext.addInvestment(accountId1, currency1, investment12);
+        fakeContext.addInvestment(accountId1, currency1, investment13);
+
+        final Currency currency2 = Currency.USD;
+        final BigDecimal balance2 = BigDecimal.valueOf(1000);
+        final BigDecimal investment21 = BigDecimal.valueOf(200);
+        final BigDecimal investment22 = BigDecimal.valueOf(500);
+        final BigDecimal investment23 = BigDecimal.valueOf(300);
+        final OffsetDateTime investment21DateTime = currentDateTime.plusHours(2);
+        final OffsetDateTime investment22DateTime = investment21DateTime.plusHours(1);
+
+        fakeContext.setCurrentBalance(accountId2, currency2, balance2);
+        fakeContext.setCurrentDateTime(investment21DateTime);
+        fakeContext.addInvestment(accountId2, currency2, investment21);
+        fakeContext.setCurrentDateTime(investment22DateTime);
+        fakeContext.addInvestment(accountId2, currency2, investment22);
+        fakeContext.addInvestment(accountId2, currency2, investment23);
+
+        final Currency currency3 = Currency.EUR;
+        final BigDecimal balance3 = BigDecimal.valueOf(2000);
+        final BigDecimal investment31 = BigDecimal.valueOf(400);
+        final BigDecimal investment32 = BigDecimal.valueOf(1000);
+        final BigDecimal investment33 = BigDecimal.valueOf(600);
+        final OffsetDateTime investment31DateTime = currentDateTime.plusHours(2);
+        final OffsetDateTime investment32DateTime = investment31DateTime.plusHours(1);
+
+        fakeContext.setCurrentBalance(accountId2, currency3, balance3);
+        fakeContext.setCurrentDateTime(investment31DateTime);
+        fakeContext.addInvestment(accountId2, currency3, investment31);
+        fakeContext.setCurrentDateTime(investment32DateTime);
+        fakeContext.addInvestment(accountId2, currency3, investment32);
+        fakeContext.addInvestment(accountId2, currency3, investment33);
+
+        final Map<Currency, BigDecimal> balances = fakeContext.getBalances(accountId2);
+
+        Assertions.assertEquals(2, balances.size());
+        Assertions.assertNull(balances.get(currency1));
+        AssertUtils.assertEquals(2000, balances.get(currency2));
+        AssertUtils.assertEquals(4000, balances.get(currency3));
+    }
 
     @Test
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {

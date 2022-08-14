@@ -3,14 +3,12 @@ package ru.obukhov.trader.market.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
@@ -21,31 +19,19 @@ import java.util.stream.Collectors;
 /**
  * Service to get info about customer operations at market
  */
-public class ExtOperationsService {
+public interface ExtOperationsService {
 
-    private final TinkoffService tinkoffService;
+    List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker);
 
-    public ExtOperationsService(final TinkoffService tinkoffService) {
-        this.tinkoffService = tinkoffService;
-    }
+    List<PortfolioPosition> getPositions(final String accountId);
 
-    /**
-     * @return list of operations with given {@code ticker} at given {@code accountId} made in given {@code interval}.
-     */
-    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker)
-            throws IOException {
-        return tinkoffService.getOperations(accountId, interval, ticker);
-    }
-
-    public List<PortfolioPosition> getPositions(final String accountId) {
-        return tinkoffService.getPortfolioPositions(accountId);
-    }
+    WithdrawLimits getWithdrawLimits(String accountId);
 
     /**
      * @return position with given {@code ticker} at given {@code accountId} or null, if such position does not exist.
      * If {@code accountId} null, works with default broker account
      */
-    public PortfolioPosition getSecurity(final String accountId, final String ticker) {
+    default PortfolioPosition getSecurity(final String accountId, final String ticker) {
         final List<PortfolioPosition> allPositions = getPositions(accountId);
         return allPositions.stream()
                 .filter(position -> ticker.equals(position.ticker()))
@@ -58,8 +44,8 @@ public class ExtOperationsService {
      * If {@code accountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
      */
-    public BigDecimal getAvailableBalance(final String accountId, final ru.obukhov.trader.market.model.Currency currency) {
-        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(accountId);
+    default BigDecimal getAvailableBalance(final String accountId, final ru.obukhov.trader.market.model.Currency currency) {
+        final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final BigDecimal totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
         final BigDecimal blockedBalance = DataStructsHelper.getBalance(withdrawLimits.getBlocked(), currency);
         final BigDecimal blockedGuaranteeBalance = DataStructsHelper.getBalance(withdrawLimits.getBlockedGuarantee(), currency);
@@ -69,8 +55,8 @@ public class ExtOperationsService {
     /**
      * @return list of currencies balances at given {@code accountId}.
      */
-    public List<Money> getAvailableBalances(final String accountId) {
-        final WithdrawLimits withdrawLimits = tinkoffService.getWithdrawLimits(accountId);
+    default List<Money> getAvailableBalances(final String accountId) {
+        final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final Map<Currency, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());
         final Map<Currency, BigDecimal> blockedGuarantee = getBalanceMap(withdrawLimits.getBlockedGuarantee());
         return withdrawLimits.getMoney().stream()
