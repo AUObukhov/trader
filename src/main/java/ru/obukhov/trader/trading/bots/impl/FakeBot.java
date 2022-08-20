@@ -15,7 +15,6 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -57,8 +56,7 @@ public class FakeBot extends AbstractBot implements Bot {
         return tinkoffService.getCurrentDateTime();
     }
 
-    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker)
-            throws IOException {
+    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
         return extOperationsService.getOperations(accountId, interval, ticker);
     }
 
@@ -82,7 +80,7 @@ public class FakeBot extends AbstractBot implements Bot {
         return getFakeTinkoffService().getCurrentBalance(accountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String ticker) throws IOException {
+    public BigDecimal getCurrentPrice(final String ticker) {
         return getFakeTinkoffService().getCurrentPrice(ticker);
     }
 

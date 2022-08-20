@@ -93,7 +93,7 @@ public abstract class AbstractBot implements Bot {
         }
     }
 
-    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) throws IOException {
+    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) {
         final Share share = extInstrumentsService.getShare(ticker);
         final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
 
@@ -104,7 +104,7 @@ public abstract class AbstractBot implements Bot {
         decisionData.setCommission(botConfig.commission());
     }
 
-    private List<Operation> getLastWeekOperations(final String accountId, final String ticker) throws IOException {
+    private List<Operation> getLastWeekOperations(final String accountId, final String ticker) {
         final OffsetDateTime now = tinkoffService.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
         return extOperationsService.getOperations(accountId, interval, ticker);
