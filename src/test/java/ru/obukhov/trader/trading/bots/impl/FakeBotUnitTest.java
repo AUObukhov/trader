@@ -20,7 +20,6 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -107,7 +106,7 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getOperations() throws IOException {
+    void getOperations() {
         final String accountId = "2000124699";
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String ticker = "ticker";
@@ -131,7 +130,7 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getCurrentPrice() throws IOException {
+    void getCurrentPrice() {
         final String ticker = "ticker";
         final BigDecimal expectedCurrentPrice = BigDecimal.TEN;
         Mockito.when(fakeTinkoffService.getCurrentPrice(ticker)).thenReturn(expectedCurrentPrice);

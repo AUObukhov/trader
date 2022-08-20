@@ -479,8 +479,7 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
-    private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize)
-            throws IOException {
+    private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize) {
         final Share share = TestData.createShare(ticker, currency, lotSize);
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
 

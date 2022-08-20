@@ -11,7 +11,6 @@ import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
 
-import java.io.IOException;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +27,7 @@ class ExtOrdersServiceUnitTest {
     private ExtOrdersService service;
 
     @Test
-    void getOrders_filtersOrdersByFigi() throws IOException {
+    void getOrders_filtersOrdersByFigi() {
         final String accountId = "2000124699";
 
         final String ticker = "ticker";

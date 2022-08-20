@@ -1039,7 +1039,7 @@ class BackTesterImplUnitTest {
         return botConfig;
     }
 
-    private void mockCurrentPrice(final FakeBot fakeBot, final String ticker, final double currentPrice) throws IOException {
+    private void mockCurrentPrice(final FakeBot fakeBot, final String ticker, final double currentPrice) {
         Mockito.when(fakeBot.getCurrentPrice(ticker))
                 .thenReturn(DecimalUtils.setDefaultScale(currentPrice));
     }
