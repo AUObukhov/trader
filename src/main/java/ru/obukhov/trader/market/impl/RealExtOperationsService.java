@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.PositionMapper;
 import ru.tinkoff.piapi.contract.v1.Operation;

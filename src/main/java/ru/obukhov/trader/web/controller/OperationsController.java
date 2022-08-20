@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.obukhov.trader.market.impl.ExtOperationsService;
+import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;

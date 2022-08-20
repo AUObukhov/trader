@@ -1,4 +1,4 @@
-package ru.obukhov.trader.market.impl;
+package ru.obukhov.trader.market.interfaces;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

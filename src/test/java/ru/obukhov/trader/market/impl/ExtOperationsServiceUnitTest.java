@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
