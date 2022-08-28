@@ -142,7 +142,7 @@ public class FakeTinkoffService implements TinkoffService {
                     BigDecimal.valueOf(quantityLots)
             );
         } else {
-            position = existingPosition.addQuantities(quantity, quantityLots, totalPrice);
+            position = existingPosition.addQuantities(quantity, quantityLots, totalPrice, currentPrice);
         }
 
         fakeContext.addPosition(accountId, ticker, position);

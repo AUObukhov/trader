@@ -55,12 +55,20 @@ class PortfolioPositionUnitTest {
                 Currency.EUR
         );
 
-        final PortfolioPosition newPosition = position.addQuantities(2, 2, BigDecimal.valueOf(30));
+        final PortfolioPosition newPosition = position.addQuantities(
+                2,
+                2,
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(15)
+        );
 
         AssertUtils.assertEquals(5, newPosition.quantity());
         AssertUtils.assertEquals(12, newPosition.averagePositionPrice().value());
-        AssertUtils.assertEquals(40, newPosition.expectedYield());
+        Assertions.assertEquals(Currency.EUR.name(), newPosition.averagePositionPrice().currency());
+        AssertUtils.assertEquals(15, newPosition.expectedYield());
         AssertUtils.assertEquals(5, newPosition.quantityLots());
+        AssertUtils.assertEquals(15, newPosition.currentPrice().value());
+        Assertions.assertEquals(Currency.EUR.name(), newPosition.currentPrice().currency());
         AssertUtils.assertEquals(60, newPosition.getTotalPrice());
     }
 

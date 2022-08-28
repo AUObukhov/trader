@@ -30,29 +30,33 @@ public record PortfolioPosition(
      * @param additionalQuantity     increase of quantity
      * @param additionalQuantityLots increase of quantityLots
      * @param additionalTotalPrice   increase of total price. Affects averagePositionPriceValue and expectedYield
+     * @param newCurrentPrice        new price of position
      * @return new PortfolioPosition with additional quantity
      */
     public PortfolioPosition addQuantities(
             final long additionalQuantity,
             final long additionalQuantityLots,
-            final BigDecimal additionalTotalPrice
+            final BigDecimal additionalTotalPrice,
+            final BigDecimal newCurrentPrice
     ) {
         final BigDecimal newQuantity = DecimalUtils.add(quantity, additionalQuantity);
         final BigDecimal newTotalPrice = getTotalPrice().add(additionalTotalPrice);
         final BigDecimal newAveragePositionPriceValue = DecimalUtils.divide(newTotalPrice, newQuantity);
-        final BigDecimal newExpectedYield = currentPrice.value().multiply(newQuantity).subtract(newTotalPrice);
+        final BigDecimal newExpectedYield = newCurrentPrice.subtract(newAveragePositionPriceValue).multiply(newQuantity);
         final BigDecimal newQuantityLots = DecimalUtils.add(quantityLots, additionalQuantityLots);
-        return clonePositionWithNewValues(newQuantity, newAveragePositionPriceValue, newExpectedYield, newQuantityLots);
+        return cloneWithNewValues(newQuantity, newAveragePositionPriceValue, newExpectedYield, newCurrentPrice, newQuantityLots);
     }
 
-    private PortfolioPosition clonePositionWithNewValues(
+    private PortfolioPosition cloneWithNewValues(
             final BigDecimal quantity,
             final BigDecimal averagePositionPriceValue,
             final BigDecimal newExpectedYield,
+            final BigDecimal newCurrentPriceValue,
             final BigDecimal quantityLots
     ) {
-        final MoneyAmount averagePositionPrice = new MoneyAmount(getCurrency(), averagePositionPriceValue);
-        return new PortfolioPosition(ticker, instrumentType, quantity, averagePositionPrice, newExpectedYield, currentPrice, quantityLots);
+        final MoneyAmount newAveragePositionPrice = new MoneyAmount(getCurrency(), averagePositionPriceValue);
+        final MoneyAmount newCurrentPrice = new MoneyAmount(getCurrency(), newCurrentPriceValue);
+        return new PortfolioPosition(ticker, instrumentType, quantity, newAveragePositionPrice, newExpectedYield, newCurrentPrice, quantityLots);
     }
 
     /**
