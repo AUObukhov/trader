@@ -116,6 +116,14 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(@Nullable final MoneyAmount expected, final MoneyAmount actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || !actual.currency().equalsIgnoreCase(expected.currency())) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
     public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
@@ -136,9 +144,9 @@ public class AssertUtils {
         Assertions.assertEquals(portfolioPosition1.ticker(), portfolioPosition2.ticker());
         Assertions.assertEquals(portfolioPosition1.instrumentType(), portfolioPosition2.instrumentType());
         assertEquals(portfolioPosition1.quantity(), portfolioPosition2.quantity());
-        Assertions.assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
+        assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
         assertEquals(portfolioPosition1.expectedYield(), portfolioPosition2.expectedYield());
-        Assertions.assertEquals(portfolioPosition1.currentPrice(), portfolioPosition2.currentPrice());
+        assertEquals(portfolioPosition1.currentPrice(), portfolioPosition2.currentPrice());
         assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
     }
 

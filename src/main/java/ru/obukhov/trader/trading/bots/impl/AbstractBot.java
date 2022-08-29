@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
@@ -25,7 +25,6 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +67,7 @@ public abstract class AbstractBot implements Bot {
      * @return list of last candles
      */
     @Override
-    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) throws IOException {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
         final String ticker = botConfig.ticker();
@@ -110,7 +109,7 @@ public abstract class AbstractBot implements Bot {
         return extOperationsService.getOperations(accountId, interval, ticker);
     }
 
-    private void performOperation(final String accountId, final String ticker, final Decision decision) throws IOException {
+    private void performOperation(final String accountId, final String ticker, final Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;

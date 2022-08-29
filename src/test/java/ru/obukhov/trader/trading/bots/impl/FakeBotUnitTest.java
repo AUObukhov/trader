@@ -10,8 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -37,7 +37,7 @@ class FakeBotUnitTest {
     @Mock
     private ExtOperationsService extOperationsService;
     @Mock
-    private ExtOrdersService ordersService;
+    private RealExtOrdersService ordersService;
     @Mock
     private TradingStrategy strategy;
     @Mock

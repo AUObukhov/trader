@@ -60,6 +60,27 @@ public record PortfolioPosition(
     }
 
     /**
+     * @return equal position, but with updated quantity, currentPrice and quantityLots
+     */
+    public PortfolioPosition cloneWithNewValues(
+            final BigDecimal quantity,
+            final BigDecimal newExpectedYield,
+            final BigDecimal currentPrice,
+            final BigDecimal quantityLots
+    ) {
+        final MoneyAmount newCurrentPrice = new MoneyAmount(getCurrency(), currentPrice);
+        return new PortfolioPosition(
+                ticker,
+                instrumentType,
+                quantity,
+                averagePositionPrice,
+                newExpectedYield,
+                newCurrentPrice,
+                quantityLots
+        );
+    }
+
+    /**
      * @return equal position, but with updated quantity and quantityLots
      */
     public PortfolioPosition cloneWithNewQuantity(final BigDecimal quantity, final BigDecimal quantityLots) {

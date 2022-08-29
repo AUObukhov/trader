@@ -17,10 +17,10 @@ import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.RealExtOperationsService;
+import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
@@ -83,8 +83,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TinkoffService realTinkoffService(final OrdersService ordersService, final ExtInstrumentsService extInstrumentsService) {
-        return new RealTinkoffService(ordersService, extInstrumentsService);
+    public TinkoffService realTinkoffService() {
+        return new RealTinkoffService();
     }
 
     @Bean
@@ -92,10 +92,9 @@ public class BeanConfiguration {
     public TinkoffService fakeTinkoffService(
             final MarketProperties marketProperties,
             final TinkoffServices tinkoffServices,
-            final FakeContext fakeContext,
-            final double commission
+            final FakeContext fakeContext
     ) {
-        return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext, commission);
+        return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext);
     }
 
     @Bean
@@ -133,12 +132,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtOrdersService realExtOrdersService(
-            final TinkoffService realTinkoffService,
+    public RealExtOrdersService realExtOrdersService(
+            final OrdersService ordersService,
             final ExtMarketDataService realExtMarketDataService,
             final ExtInstrumentsService extInstrumentsService
     ) {
-        return new ExtOrdersService(realTinkoffService, extInstrumentsService);
+        return new RealExtOrdersService(ordersService, extInstrumentsService);
     }
 
     @Bean
@@ -156,7 +155,7 @@ public class BeanConfiguration {
             final ExtMarketDataService realExtMarketDataService,
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService realExtOperationsService,
-            final ExtOrdersService realExtOrdersService,
+            final RealExtOrdersService realExtOrdersService,
             final RealTinkoffService realTinkoffService
     ) {
         return new TinkoffServices(

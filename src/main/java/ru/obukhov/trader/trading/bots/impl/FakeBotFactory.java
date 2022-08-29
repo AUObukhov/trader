@@ -8,8 +8,8 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
+import ru.obukhov.trader.market.impl.FakeExtOrdersService;
 import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
@@ -41,8 +41,7 @@ public class FakeBotFactory {
                 "fakeTinkoffService",
                 marketProperties,
                 tinkoffServices,
-                fakeContext,
-                botConfig.commission()
+                fakeContext
         );
         final ExtMarketDataService fakeExtMarketDataService = (ExtMarketDataService) applicationContext.getBean(
                 "fakeExtMarketDataService",
@@ -53,7 +52,12 @@ public class FakeBotFactory {
         );
 
         final ExtOperationsService fakeOperationsService = new FakeExtOperationsService(fakeContext);
-        final ExtOrdersService fakeOrdersService = new ExtOrdersService(fakeTinkoffService, tinkoffServices.extInstrumentsService());
+        final FakeExtOrdersService fakeOrdersService = new FakeExtOrdersService(
+                fakeContext,
+                tinkoffServices.extInstrumentsService(),
+                tinkoffServices.extMarketDataService(),
+                botConfig.commission()
+        );
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 
         return new FakeBot(

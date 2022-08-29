@@ -101,7 +101,40 @@ class PortfolioPositionUnitTest {
         );
 
         Assertions.assertEquals(expectedPosition, newPosition);
+    }
 
+    @Test
+    void cloneWithNewValues() {
+        final Currency currency = Currency.EUR;
+        final PortfolioPosition position = TestData.createPortfolioPosition(
+                "ticker",
+                InstrumentType.STOCK,
+                30,
+                10,
+                300,
+                20,
+                3,
+                currency
+        );
+
+        final BigDecimal newQuantity = BigDecimal.valueOf(20);
+        final BigDecimal newExpectedYield = BigDecimal.valueOf(400);
+        final BigDecimal newCurrentPrice = BigDecimal.valueOf(30);
+        final BigDecimal newQuantityLots = BigDecimal.valueOf(2);
+
+        final PortfolioPosition newPosition = position.cloneWithNewValues(newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
+
+        final PortfolioPosition expectedPosition = new PortfolioPosition(
+                position.ticker(),
+                position.instrumentType(),
+                newQuantity,
+                position.averagePositionPrice(),
+                newExpectedYield,
+                TestData.createMoneyAmount(currency, newCurrentPrice.doubleValue()),
+                newQuantityLots
+        );
+
+        AssertUtils.assertEquals(expectedPosition, newPosition);
     }
 
 }

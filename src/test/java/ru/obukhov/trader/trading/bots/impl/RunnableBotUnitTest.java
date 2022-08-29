@@ -12,7 +12,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.ExtOrdersService;
+import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
@@ -35,7 +35,6 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -51,7 +50,7 @@ class RunnableBotUnitTest {
     @Mock
     private ExtOperationsService extOperationsService;
     @Mock
-    private ExtOrdersService ordersService;
+    private RealExtOrdersService ordersService;
     @Mock
     private RealTinkoffService realTinkoffService;
     @Mock
@@ -67,7 +66,7 @@ class RunnableBotUnitTest {
     private TinkoffServices tinkoffServices;
 
     @Test
-    void run_doesNothing_whenDisabled() throws IOException {
+    void run_doesNothing_whenDisabled() {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(false);
 
         createRunnableBot().run();
@@ -76,7 +75,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNothing_whenNotWorkTime() throws IOException {
+    void run_doesNothing_whenNotWorkTime() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -90,7 +89,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNothing_whenThereAreOrders() throws IOException {
+    void run_doesNothing_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -113,7 +112,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetLastCandlesThrowsException() throws IOException {
+    void run_doesNoOrder_whenGetLastCandlesThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -134,7 +133,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNothing_whenGetOrdersThrowsException() throws IOException {
+    void run_doesNothing_whenGetOrdersThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -156,7 +155,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetInstrumentThrowsException() throws IOException {
+    void run_doesNoOrder_whenGetInstrumentThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -179,7 +178,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() throws IOException {
+    void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -207,7 +206,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetPositionThrowsException() throws IOException {
+    void run_doesNoOrder_whenGetPositionThrowsException() {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -234,7 +233,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenGetOperationsThrowsException() throws IOException {
+    void run_doesNoOrder_whenGetOperationsThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -261,7 +260,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenDecideThrowsException() throws IOException {
+    void run_doesNoOrder_whenDecideThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -289,7 +288,7 @@ class RunnableBotUnitTest {
 
     @Test
     @SuppressWarnings("java:S2699")
-    void run_catchesException_whenPlaceMarketOrderThrowsException() throws IOException {
+    void run_catchesException_whenPlaceMarketOrderThrowsException() {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -326,7 +325,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenThereAreOrders() throws IOException {
+    void run_doesNoOrder_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -345,7 +344,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenCurrentCandlesIsEmpty() throws IOException {
+    void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -361,7 +360,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_doesNoOrder_whenDecisionIsWait() throws IOException {
+    void run_doesNoOrder_whenDecisionIsWait() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -387,7 +386,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() throws IOException {
+    void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
@@ -421,7 +420,7 @@ class RunnableBotUnitTest {
     }
 
     @Test
-    void run_andPlacesSellOrder_whenDecisionIsSell() throws IOException {
+    void run_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 

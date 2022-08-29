@@ -40,6 +40,7 @@ import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -202,7 +203,7 @@ public class TestData {
                 createMoneyAmount(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
-                BigDecimal.valueOf(quantityLots)
+                createIntegerDecimal(quantityLots)
         );
     }
 
@@ -214,7 +215,7 @@ public class TestData {
                 createMoneyAmount(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
-                BigDecimal.valueOf(quantityLots)
+                createIntegerDecimal(quantityLots)
         );
     }
 
@@ -222,11 +223,11 @@ public class TestData {
         return new PortfolioPosition(
                 ticker,
                 null,
-                BigDecimal.valueOf(quantity),
+                createIntegerDecimal(quantity),
                 createMoneyAmount(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
-                BigDecimal.valueOf(quantityLots)
+                createIntegerDecimal(quantityLots)
         );
     }
 
@@ -238,7 +239,7 @@ public class TestData {
                 createMoneyAmount(Currency.RUB, averagePositionPrice),
                 BigDecimal.ZERO,
                 null,
-                BigDecimal.valueOf(quantityLots)
+                createIntegerDecimal(quantityLots)
         );
     }
 
@@ -248,18 +249,39 @@ public class TestData {
             final double quantity,
             final double averagePositionPrice,
             final double expectedYield,
-            final long currentPrice,
+            final double currentPrice,
             final long quantityLots,
             final Currency currency
     ) {
         return new PortfolioPosition(
                 ticker,
                 instrumentType,
-                DecimalUtils.setDefaultScale(quantity),
+                createIntegerDecimal(quantity),
                 createMoneyAmount(currency, averagePositionPrice),
                 DecimalUtils.setDefaultScale(expectedYield),
                 createMoneyAmount(currency, currentPrice),
-                BigDecimal.valueOf(quantityLots)
+                createIntegerDecimal(quantityLots)
+        );
+    }
+
+    public static PortfolioPosition createPortfolioPosition(
+            final String ticker,
+            final InstrumentType instrumentType,
+            final long quantityLots,
+            final long lotSize,
+            final Currency currency,
+            final double averagePositionPrice,
+            final double expectedYield,
+            final double currentPrice
+    ) {
+        return new PortfolioPosition(
+                ticker,
+                instrumentType,
+                createIntegerDecimal(quantityLots * lotSize),
+                createMoneyAmount(currency, averagePositionPrice),
+                DecimalUtils.setDefaultScale(expectedYield),
+                createMoneyAmount(currency, currentPrice),
+                createIntegerDecimal(quantityLots)
         );
     }
 
@@ -414,6 +436,13 @@ public class TestData {
     // endregion
 
     // region OrderState creation
+
+    public static OrderState createOrderState(final String orderId, final String figi) {
+        return OrderState.newBuilder()
+                .setOrderId(orderId)
+                .setFigi(figi)
+                .build();
+    }
 
     public static OrderState createOrderState(
             final Currency currency,
@@ -627,6 +656,14 @@ public class TestData {
                 .setFigi(figi)
                 .setTicker(ticker)
                 .build();
+    }
+
+    /**
+     * @return BigDecimal equal to given {@code value} with zero scale
+     * @throws ArithmeticException if given {@code value} is not integer
+     */
+    public static BigDecimal createIntegerDecimal(double value) {
+        return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 
 }

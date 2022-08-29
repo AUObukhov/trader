@@ -177,14 +177,12 @@ class FakeBotFactoryUnitTest {
                 Mockito.eq("fakeTinkoffService"),
                 Mockito.any(MarketProperties.class),
                 Mockito.any(TinkoffServices.class),
-                Mockito.any(FakeContext.class),
-                Mockito.anyDouble())
+                Mockito.any(FakeContext.class))
         ).thenAnswer(invocation -> {
             final MarketProperties marketProperties = invocation.getArgument(1);
             final TinkoffServices tinkoffServices = invocation.getArgument(2);
             final FakeContext fakeContext = invocation.getArgument(3);
-            final double commission = invocation.getArgument(4);
-            return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext, commission);
+            return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext);
         });
     }
 
