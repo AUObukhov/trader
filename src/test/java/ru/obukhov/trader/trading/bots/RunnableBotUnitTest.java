@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

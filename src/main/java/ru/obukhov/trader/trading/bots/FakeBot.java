@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,6 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.SortedMap;
 
 @Slf4j
-public class FakeBot extends AbstractBot implements Bot {
+public class FakeBot extends Bot {
 
     public FakeBot(
             final ExtMarketDataService extMarketDataService,

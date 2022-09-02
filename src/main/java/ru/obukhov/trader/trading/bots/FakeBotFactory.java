@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import lombok.RequiredArgsConstructor;
 import org.quartz.CronExpression;

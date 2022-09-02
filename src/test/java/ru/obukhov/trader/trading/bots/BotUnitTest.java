@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-class AbstractBotUnitTest {
+class BotUnitTest {
 
     @Mock
     private ExtMarketDataService extMarketDataService;
@@ -305,7 +305,7 @@ class AbstractBotUnitTest {
     private static final class TestStrategyCache implements StrategyCache {
     }
 
-    private static class TestBot extends AbstractBot {
+    private static class TestBot extends Bot {
         public TestBot(
                 final ExtMarketDataService extMarketDataService,
                 final ExtInstrumentsService extInstrumentsService,

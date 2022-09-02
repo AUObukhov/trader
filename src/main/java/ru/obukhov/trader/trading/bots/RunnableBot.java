@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -9,7 +9,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 
 @Slf4j
-public class RunnableBot extends AbstractBot implements Runnable {
+public class RunnableBot extends Bot implements Runnable {
 
     private final SchedulingProperties schedulingProperties;
     private final BotConfig botConfig;

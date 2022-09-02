@@ -1,4 +1,4 @@
-package ru.obukhov.trader.trading.bots.impl;
+package ru.obukhov.trader.trading.bots;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.trading.bots.interfaces.Bot;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -35,7 +34,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractBot implements Bot {
+public abstract class Bot {
 
     private static final int LAST_CANDLES_COUNT = 1000;
 
@@ -48,7 +47,7 @@ public abstract class AbstractBot implements Bot {
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
 
-    protected AbstractBot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
+    protected Bot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
         this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.extInstrumentsService = tinkoffServices.extInstrumentsService();
         this.extOperationsService = tinkoffServices.operationsService();
@@ -66,7 +65,6 @@ public abstract class AbstractBot implements Bot {
      *                          Used to prevent repeated processing when no new candle
      * @return list of last candles
      */
-    @Override
     public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 

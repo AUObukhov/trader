@@ -9,7 +9,7 @@ import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.trading.bots.impl.FakeBot;
+import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
