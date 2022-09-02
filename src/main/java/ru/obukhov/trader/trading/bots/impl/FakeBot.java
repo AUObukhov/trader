@@ -42,18 +42,8 @@ public class FakeBot extends AbstractBot implements Bot {
         );
     }
 
-    public FakeContext getFakeContext() {
-        return (FakeContext) context;
-    }
-
-    // region FakeContext proxy todo needed?
-
     public Share getShare(final String ticker) {
         return extInstrumentsService.getShare(ticker);
-    }
-
-    public OffsetDateTime getCurrentDateTime() {
-        return context.getCurrentDateTime();
     }
 
     public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
@@ -62,6 +52,12 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
         return extOperationsService.getPositions(accountId);
+    }
+
+    // region FakeContext proxy
+
+    public OffsetDateTime getCurrentDateTime() {
+        return context.getCurrentDateTime();
     }
 
     public OffsetDateTime nextMinute() {
@@ -82,6 +78,10 @@ public class FakeBot extends AbstractBot implements Bot {
 
     public BigDecimal getCurrentPrice(final String ticker) {
         return getFakeContext().getCurrentPrice(ticker);
+    }
+
+    private FakeContext getFakeContext() {
+        return (FakeContext) context;
     }
 
     // endregion
