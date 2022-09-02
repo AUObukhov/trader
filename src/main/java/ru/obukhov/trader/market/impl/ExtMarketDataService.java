@@ -13,7 +13,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -41,7 +41,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     private final MarketProperties marketProperties;
-    private final TinkoffService tinkoffService;
+    private final Context context;
     private final ExtInstrumentsService extInstrumentsService;
     private final MarketDataService marketDataService;
     private ExtMarketDataService realExtMarketDataService;
@@ -53,7 +53,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
      * @return sorted by time list of loaded candles
      */
     public List<Candle> getCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) throws IOException {
-        DateUtils.assertDateTimeNotFuture(interval.getTo(), tinkoffService.getCurrentDateTime(), "to");
+        DateUtils.assertDateTimeNotFuture(interval.getTo(), context.getCurrentDateTime(), "to");
 
         final ChronoUnit period = DateUtils.getPeriodByCandleInterval(candleInterval);
 
@@ -70,7 +70,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
     private List<Candle> getAllCandlesByDays(final String ticker, final Interval interval, final CandleInterval candleInterval) {
         final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), marketProperties.getStartDate());
-        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
+        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), context.getCurrentDateTime());
 
         final List<Interval> subIntervals = Interval.of(innerFrom, innerTo).splitIntoDailyIntervals();
         final ListIterator<Interval> listIterator = subIntervals.listIterator(subIntervals.size());
@@ -94,7 +94,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
     private List<Candle> getAllCandlesByYears(final String ticker, final Interval interval, final CandleInterval candleInterval) {
         final OffsetDateTime innerFrom = DateUtils.roundDownToYear(interval.getFrom());
-        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), tinkoffService.getCurrentDateTime());
+        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), context.getCurrentDateTime());
         OffsetDateTime currentFrom = DateUtils.roundUpToYear(innerTo);
         OffsetDateTime currentTo;
 
@@ -115,7 +115,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     private List<Candle> loadCandles(final String ticker, final OffsetDateTime from, final OffsetDateTime to, final CandleInterval candleInterval) {
-        final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, tinkoffService.getCurrentDateTime());
+        final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, context.getCurrentDateTime());
         return realExtMarketDataService.getMarketCandles(ticker, Interval.of(from, innerTo), candleInterval);
     }
 
@@ -155,7 +155,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
      * @throws IllegalArgumentException if candle not found
      */
     public Candle getLastCandle(final String ticker) {
-        final OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime to = context.getCurrentDateTime();
         return getLastCandle(ticker, to);
     }
 
@@ -200,7 +200,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
      * within {@code trading.consecutive-empty-days-limit} days.
      */
     private List<Candle> getLastCandlesDaily(final String ticker, final int limit, final CandleInterval candleInterval) {
-        final OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime to = context.getCurrentDateTime();
         final OffsetDateTime from = DateUtils.atStartOfDay(to);
         Interval interval = Interval.of(from, to);
 
@@ -227,7 +227,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     private List<Candle> getLastCandlesYearly(String ticker, int limit, CandleInterval candleInterval) {
-        final OffsetDateTime to = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime to = context.getCurrentDateTime();
         final OffsetDateTime from = DateUtils.atStartOfYear(to);
         Interval interval = Interval.of(from, to);
 

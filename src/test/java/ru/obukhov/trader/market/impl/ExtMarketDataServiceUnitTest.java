@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
@@ -35,7 +35,7 @@ class ExtMarketDataServiceUnitTest {
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
-    private TinkoffService tinkoffService;
+    private Context context;
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
@@ -49,7 +49,7 @@ class ExtMarketDataServiceUnitTest {
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new ExtMarketDataService(MARKET_PROPERTIES, tinkoffService, extInstrumentsService, marketDataService);
+        this.service = new ExtMarketDataService(MARKET_PROPERTIES, context, extInstrumentsService, marketDataService);
         Mockito.when(applicationContext.getBean("realExtMarketDataService", ExtMarketDataService.class)).thenReturn(service);
         service.setApplicationContext(applicationContext);
     }
@@ -58,7 +58,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenFromIsReached() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final String ticker = "ticker";
@@ -91,7 +91,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final String ticker = "ticker";
@@ -124,7 +124,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_filterCandlesByYears() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
@@ -158,7 +158,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenFromIsReached() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
@@ -193,7 +193,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
@@ -228,7 +228,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
         final String ticker = "ticker";
@@ -263,7 +263,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final String ticker = "ticker";
 
@@ -275,7 +275,7 @@ class ExtMarketDataServiceUnitTest {
     @Test
     void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
         final OffsetDateTime now = OffsetDateTime.now();
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(now);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(now);
 
         final String ticker = "ticker";
         final String figi = "figi";
@@ -294,7 +294,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final String ticker = "ticker";
         final String figi = "figi";
@@ -377,7 +377,7 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
@@ -402,7 +402,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
+        Mockito.when(context.getCurrentDateTime())
                 .thenReturn(DateTimeTestData.createDateTime(2020, 9, 10, 2));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
@@ -433,7 +433,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
+        Mockito.when(context.getCurrentDateTime())
                 .thenReturn(DateTimeTestData.createDateTime(2020, 9, 10, 2));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
@@ -467,7 +467,7 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10))
                 .plusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -494,7 +494,7 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 11))
                 .plusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit());
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -521,7 +521,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 5))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime())
+        Mockito.when(context.getCurrentDateTime())
                 .thenReturn(DateTimeTestData.createDateTime(2020, 9, 9, 4));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
@@ -542,7 +542,7 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY);
 
@@ -567,7 +567,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -597,7 +597,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -628,7 +628,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2019, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -659,7 +659,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2018, 9, 13))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -684,7 +684,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 12))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 
@@ -711,7 +711,7 @@ class ExtMarketDataServiceUnitTest {
                 .add(5, DateTimeTestData.createDateTime(2020, 9, 17))
                 .mock();
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
 

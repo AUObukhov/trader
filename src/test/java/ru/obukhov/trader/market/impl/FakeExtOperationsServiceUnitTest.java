@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -41,14 +40,11 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = "2000124699";
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final FakeContext fakeContext = new FakeContext(dateTime, accountId, Currency.RUB, BigDecimal.valueOf(1000000.0));
-
         final String ticker = "ticker";
 
-        final OffsetDateTime dateTime1 = dateTime;
-        final OffsetDateTime dateTime2 = dateTime.plusMinutes(1);
-        final OffsetDateTime dateTime3 = dateTime.plusMinutes(2);
+        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
+        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
         final int price1 = 100;
         final int price2 = 200;
@@ -80,11 +76,9 @@ class FakeExtOperationsServiceUnitTest {
                 quantity3
         );
 
-        fakeContext.addOperation(accountId, operation1);
-        fakeContext.addOperation(accountId, operation2);
-        fakeContext.addOperation(accountId, operation3);
+        Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 
-        final Interval wholeInterval = Interval.of(dateTime, dateTime3);
+        final Interval wholeInterval = Interval.of(dateTime1, dateTime3);
         final FakeExtOperationsService extOperationsService = new FakeExtOperationsService(fakeContext);
 
         // action
@@ -99,7 +93,7 @@ class FakeExtOperationsServiceUnitTest {
 
         AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
-        final Interval localInterval = Interval.of(dateTime.plusMinutes(1), dateTime.plusMinutes(1));
+        final Interval localInterval = Interval.of(dateTime1.plusMinutes(1), dateTime1.plusMinutes(1));
         final List<Operation> localOperations = extOperationsService.getOperations(accountId, localInterval, ticker);
         AssertUtils.assertEquals(List.of(expectedOperation2), localOperations);
     }
@@ -109,14 +103,14 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = "2000124699";
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
 
-        final OffsetDateTime dateTime1 = dateTime;
-        final OffsetDateTime dateTime2 = dateTime.plusMinutes(1);
-        final OffsetDateTime dateTime3 = dateTime.plusMinutes(2);
+        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        ;
+        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
+        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
         final int price1 = 100;
         final int price2 = 200;
@@ -150,7 +144,7 @@ class FakeExtOperationsServiceUnitTest {
 
         Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 
-        final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
+        final Interval interval = Interval.of(dateTime1, dateTime1.plusMinutes(2));
 
         // action
 

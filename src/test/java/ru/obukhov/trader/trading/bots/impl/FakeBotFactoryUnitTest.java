@@ -14,10 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -29,6 +28,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.MarketDataService;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -105,7 +105,7 @@ class FakeBotFactoryUnitTest {
 
         mockCurrency(ticker, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
-        mockFakeTinkoffService();
+        mockFakeContext();
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
@@ -139,7 +139,7 @@ class FakeBotFactoryUnitTest {
 
         mockCurrency(ticker, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
-        mockFakeTinkoffService();
+        mockFakeContext();
 
         final FakeBot bot = factory.createBot(botConfig, balanceConfig, currentDateTime);
 
@@ -172,17 +172,23 @@ class FakeBotFactoryUnitTest {
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
     }
 
-    private void mockFakeTinkoffService() {
+    private void mockFakeContext() {
         Mockito.when(applicationContext.getBean(
-                Mockito.eq("fakeTinkoffService"),
+                Mockito.eq("fakeContext"),
                 Mockito.any(MarketProperties.class),
                 Mockito.any(TinkoffServices.class),
-                Mockito.any(FakeContext.class))
-        ).thenAnswer(invocation -> {
+                Mockito.any(OffsetDateTime.class),
+                Mockito.any(String.class),
+                Mockito.any(Currency.class),
+                Mockito.any(BigDecimal.class)
+        )).thenAnswer(invocation -> {
             final MarketProperties marketProperties = invocation.getArgument(1);
             final TinkoffServices tinkoffServices = invocation.getArgument(2);
-            final FakeContext fakeContext = invocation.getArgument(3);
-            return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext);
+            final OffsetDateTime currentDateTime = invocation.getArgument(3);
+            final String accountId = invocation.getArgument(4);
+            final Currency currency = invocation.getArgument(5);
+            final BigDecimal initialBalance = invocation.getArgument(6);
+            return new FakeContext(marketProperties, tinkoffServices, currentDateTime, accountId, currency, initialBalance);
         });
     }
 

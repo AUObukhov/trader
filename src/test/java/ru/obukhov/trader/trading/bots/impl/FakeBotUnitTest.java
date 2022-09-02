@@ -10,7 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
@@ -41,7 +41,7 @@ class FakeBotUnitTest {
     @Mock
     private TradingStrategy strategy;
     @Mock
-    private FakeTinkoffService fakeTinkoffService;
+    private FakeContext fakeContext;
 
     @InjectMocks
     private FakeBot fakeBot;
@@ -63,7 +63,7 @@ class FakeBotUnitTest {
     @Test
     void getCurrentDateTime() {
         final OffsetDateTime expectedCurrentDateTime = OffsetDateTime.now();
-        Mockito.when(fakeTinkoffService.getCurrentDateTime()).thenReturn(expectedCurrentDateTime);
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(expectedCurrentDateTime);
 
         final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
 
@@ -73,7 +73,7 @@ class FakeBotUnitTest {
     @Test
     void nextMinute() {
         final OffsetDateTime expectedNextMinute = OffsetDateTime.now();
-        Mockito.when(fakeTinkoffService.nextMinute()).thenReturn(expectedNextMinute);
+        Mockito.when(fakeContext.nextMinute()).thenReturn(expectedNextMinute);
 
         final OffsetDateTime nextMinute = fakeBot.nextMinute();
 
@@ -86,7 +86,7 @@ class FakeBotUnitTest {
         final Currency currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
-        Mockito.when(fakeTinkoffService.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
+        Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
 
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
@@ -94,11 +94,11 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void getCurrentBalance() {
+    void getBalance() {
         final String accountId = "2000124699";
         final Currency currency = Currency.RUB;
         final BigDecimal expectedBalance = BigDecimal.TEN;
-        Mockito.when(fakeTinkoffService.getCurrentBalance(accountId, currency)).thenReturn(expectedBalance);
+        Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
 
         final BigDecimal balance = fakeBot.getCurrentBalance(accountId, currency);
 
@@ -133,7 +133,7 @@ class FakeBotUnitTest {
     void getCurrentPrice() {
         final String ticker = "ticker";
         final BigDecimal expectedCurrentPrice = BigDecimal.TEN;
-        Mockito.when(fakeTinkoffService.getCurrentPrice(ticker)).thenReturn(expectedCurrentPrice);
+        Mockito.when(fakeContext.getCurrentPrice(ticker)).thenReturn(expectedCurrentPrice);
 
         final BigDecimal currentPrice = fakeBot.getCurrentPrice(ticker);
 

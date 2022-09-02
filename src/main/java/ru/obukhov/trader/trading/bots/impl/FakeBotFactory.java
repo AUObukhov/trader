@@ -8,13 +8,12 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -37,16 +36,10 @@ public class FakeBotFactory {
 
     public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
         final FakeContext fakeContext = createFakeContext(botConfig, balanceConfig, currentDateTime);
-        final FakeTinkoffService fakeTinkoffService = (FakeTinkoffService) applicationContext.getBean(
-                "fakeTinkoffService",
-                marketProperties,
-                tinkoffServices,
-                fakeContext
-        );
         final ExtMarketDataService fakeExtMarketDataService = (ExtMarketDataService) applicationContext.getBean(
                 "fakeExtMarketDataService",
                 marketProperties,
-                fakeTinkoffService,
+                fakeContext,
                 tinkoffServices.extInstrumentsService(),
                 marketDataService
         );
@@ -65,12 +58,16 @@ public class FakeBotFactory {
                 tinkoffServices.extInstrumentsService(),
                 fakeOperationsService,
                 fakeOrdersService,
-                fakeTinkoffService,
+                fakeContext,
                 strategy
         );
     }
 
-    private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+    private FakeContext createFakeContext(
+            final BotConfig botConfig,
+            final BalanceConfig balanceConfig,
+            final OffsetDateTime currentDateTime
+    ) {
         final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
         final Share share = tinkoffServices.extInstrumentsService().getShare(botConfig.ticker());
         if (share == null) {
@@ -80,7 +77,15 @@ public class FakeBotFactory {
 
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
 
-        return new FakeContext(ceilingWorkTime, botConfig.accountId(), currency, initialBalance);
+        return (FakeContext) applicationContext.getBean(
+                "fakeContext",
+                marketProperties,
+                tinkoffServices,
+                ceilingWorkTime,
+                botConfig.accountId(),
+                currency,
+                initialBalance
+        );
     }
 
     private BigDecimal getInitialBalance(

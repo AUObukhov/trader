@@ -9,13 +9,13 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 
 @ExtendWith(MockitoExtension.class)
-class RealTinkoffServiceUnitTest {
+class RealContextUnitTest {
 
     @Test
     void getCurrentDateTime_returnsCurrentDateTime() {
         final OffsetDateTime now = OffsetDateTime.now();
 
-        final OffsetDateTime currentDateTime = new RealTinkoffService().getCurrentDateTime();
+        final OffsetDateTime currentDateTime = new RealContext().getCurrentDateTime();
 
         final long delay = Duration.between(now, currentDateTime).toMillis();
 

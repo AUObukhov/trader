@@ -36,7 +36,7 @@ public class RunnableBot extends AbstractBot implements Runnable {
             return;
         }
 
-        if (!DateUtils.isWorkTime(tinkoffService.getCurrentDateTime(), marketProperties.getWorkSchedule())) {
+        if (!DateUtils.isWorkTime(context.getCurrentDateTime(), marketProperties.getWorkSchedule())) {
             log.debug("Not work time. Do nothing");
             return;
         }

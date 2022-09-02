@@ -1,7 +1,15 @@
-package ru.obukhov.trader.market.model;
+package ru.obukhov.trader.market.impl;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.market.interfaces.Context;
+import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.FakeBalance;
+import ru.obukhov.trader.market.model.FakePortfolio;
+import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 
 import java.math.BigDecimal;
@@ -16,9 +24,13 @@ import java.util.SortedMap;
 import java.util.stream.Collectors;
 
 /**
- * Class, containing in memory data about back tested portfolio and current market dateTime
+ * Prices are loaded from real market, but any operations do not affect the real portfolio - all data is stored in memory.
  */
-public class FakeContext {
+@Slf4j
+public class FakeContext implements Context {
+
+    private final MarketProperties marketProperties;
+    private final ExtMarketDataService extMarketDataService;
 
     @Getter
     @Setter
@@ -26,20 +38,32 @@ public class FakeContext {
 
     private final List<FakePortfolio> portfolios;
 
-    public FakeContext(final OffsetDateTime currentDateTime) {
-        this.currentDateTime = currentDateTime;
-        this.portfolios = new ArrayList<>();
-    }
-
     public FakeContext(
+            final MarketProperties marketProperties,
+            final TinkoffServices tinkoffServices,
             final OffsetDateTime currentDateTime,
             final String accountId,
             final Currency currency,
             final BigDecimal initialBalance
     ) {
-        this(currentDateTime);
+        this.marketProperties = marketProperties;
+        this.extMarketDataService = tinkoffServices.extMarketDataService();
+        this.currentDateTime = currentDateTime;
+        this.portfolios = new ArrayList<>();
 
         addInvestment(accountId, currency, initialBalance);
+    }
+
+    /**
+     * Changes currentDateTime to the nearest work time after it
+     *
+     * @return new value of currentDateTime
+     */
+    public OffsetDateTime nextMinute() {
+        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(currentDateTime, marketProperties.getWorkSchedule());
+        currentDateTime = nextWorkMinute;
+
+        return nextWorkMinute;
     }
 
     /**
@@ -118,6 +142,13 @@ public class FakeContext {
             portfolios.add(portfolio);
             return portfolio;
         }
+    }
+
+    /**
+     * @return last known price for instrument with given {@code ticker} not after current fake date time
+     */
+    public BigDecimal getCurrentPrice(final String ticker) {
+        return extMarketDataService.getLastCandle(ticker, getCurrentDateTime()).getClosePrice();
     }
 
 }

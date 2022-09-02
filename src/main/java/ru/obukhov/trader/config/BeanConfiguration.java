@@ -18,15 +18,15 @@ import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtUsersService;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.FakeContext;
+import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.RealExtOperationsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
-import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
-import ru.obukhov.trader.market.model.FakeContext;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.trading.bots.impl.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -36,7 +36,9 @@ import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
+import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,39 +85,42 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TinkoffService realTinkoffService() {
-        return new RealTinkoffService();
+    public Context realContext() {
+        return new RealContext();
     }
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public TinkoffService fakeTinkoffService(
+    public Context fakeContext(
             final MarketProperties marketProperties,
             final TinkoffServices tinkoffServices,
-            final FakeContext fakeContext
+            final OffsetDateTime currentDateTime,
+            final String accountId,
+            final Currency currency,
+            final BigDecimal initialBalance
     ) {
-        return new FakeTinkoffService(marketProperties, tinkoffServices, fakeContext);
+        return new FakeContext(marketProperties, tinkoffServices, currentDateTime, accountId, currency, initialBalance);
     }
 
     @Bean
     public ExtMarketDataService realExtMarketDataService(
             final MarketProperties marketProperties,
-            final TinkoffService realTinkoffService,
+            final Context realContext,
             final ExtInstrumentsService extInstrumentsService,
             final MarketDataService marketDataService
     ) {
-        return new ExtMarketDataService(marketProperties, realTinkoffService, extInstrumentsService, marketDataService);
+        return new ExtMarketDataService(marketProperties, realContext, extInstrumentsService, marketDataService);
     }
 
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public ExtMarketDataService fakeExtMarketDataService(
             final MarketProperties marketProperties,
-            final TinkoffService fakeTinkoffService,
+            final Context fakeContext,
             final ExtInstrumentsService extInstrumentsService,
             final MarketDataService marketDataService
     ) {
-        return new ExtMarketDataService(marketProperties, fakeTinkoffService, extInstrumentsService, marketDataService);
+        return new ExtMarketDataService(marketProperties, fakeContext, extInstrumentsService, marketDataService);
     }
 
     @Bean
@@ -156,14 +161,14 @@ public class BeanConfiguration {
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService realExtOperationsService,
             final RealExtOrdersService realExtOrdersService,
-            final RealTinkoffService realTinkoffService
+            final RealContext realContext
     ) {
         return new TinkoffServices(
                 realExtMarketDataService,
                 extInstrumentsService,
                 realExtOperationsService,
                 realExtOrdersService,
-                realTinkoffService
+                realContext
         );
     }
 

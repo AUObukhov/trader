@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.FakeTinkoffService;
+import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
@@ -28,7 +28,7 @@ public class FakeBot extends AbstractBot implements Bot {
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService extOperationsService,
             final ExtOrdersService ordersService,
-            final FakeTinkoffService fakeTinkoffService,
+            final FakeContext fakeContext,
             final TradingStrategy strategy
     ) {
         super(
@@ -36,24 +36,24 @@ public class FakeBot extends AbstractBot implements Bot {
                 extInstrumentsService,
                 extOperationsService,
                 ordersService,
-                fakeTinkoffService,
+                fakeContext,
                 strategy,
                 strategy.initCache()
         );
     }
 
-    public FakeTinkoffService getFakeTinkoffService() {
-        return (FakeTinkoffService) tinkoffService;
+    public FakeContext getFakeContext() {
+        return (FakeContext) context;
     }
 
-    // region FakeTinkoffService proxy
+    // region FakeContext proxy todo needed?
 
     public Share getShare(final String ticker) {
         return extInstrumentsService.getShare(ticker);
     }
 
     public OffsetDateTime getCurrentDateTime() {
-        return tinkoffService.getCurrentDateTime();
+        return context.getCurrentDateTime();
     }
 
     public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
@@ -65,23 +65,23 @@ public class FakeBot extends AbstractBot implements Bot {
     }
 
     public OffsetDateTime nextMinute() {
-        return getFakeTinkoffService().nextMinute();
+        return getFakeContext().nextMinute();
     }
 
     public void addInvestment(final String accountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
-        getFakeTinkoffService().addInvestment(accountId, dateTime, currency, increment);
+        getFakeContext().addInvestment(accountId, dateTime, currency, increment);
     }
 
     public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
-        return getFakeTinkoffService().getInvestments(accountId, currency);
+        return getFakeContext().getInvestments(accountId, currency);
     }
 
     public BigDecimal getCurrentBalance(final String accountId, final Currency currency) {
-        return getFakeTinkoffService().getCurrentBalance(accountId, currency);
+        return getFakeContext().getBalance(accountId, currency);
     }
 
     public BigDecimal getCurrentPrice(final String ticker) {
-        return getFakeTinkoffService().getCurrentPrice(ticker);
+        return getFakeContext().getCurrentPrice(ticker);
     }
 
     // endregion

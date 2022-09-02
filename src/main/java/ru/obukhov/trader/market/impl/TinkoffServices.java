@@ -8,6 +8,6 @@ public record TinkoffServices(
         ExtInstrumentsService extInstrumentsService,
         ExtOperationsService operationsService,
         ExtOrdersService ordersService,
-        RealTinkoffService realTinkoffService
+        RealContext realContext
 ) {
 }

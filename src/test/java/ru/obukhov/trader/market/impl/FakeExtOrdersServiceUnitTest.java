@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.FakeContext;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;

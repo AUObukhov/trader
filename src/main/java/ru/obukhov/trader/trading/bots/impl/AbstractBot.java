@@ -6,9 +6,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
@@ -43,7 +43,7 @@ public abstract class AbstractBot implements Bot {
     protected final ExtInstrumentsService extInstrumentsService;
     protected final ExtOperationsService extOperationsService;
     protected final ExtOrdersService ordersService;
-    protected final TinkoffService tinkoffService;
+    protected final Context context;
 
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
@@ -53,7 +53,7 @@ public abstract class AbstractBot implements Bot {
         this.extInstrumentsService = tinkoffServices.extInstrumentsService();
         this.extOperationsService = tinkoffServices.operationsService();
         this.ordersService = tinkoffServices.ordersService();
-        this.tinkoffService = tinkoffServices.realTinkoffService();
+        this.context = tinkoffServices.realContext();
         this.strategy = strategy;
         this.strategyCache = strategyCache;
     }
@@ -104,7 +104,7 @@ public abstract class AbstractBot implements Bot {
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String ticker) {
-        final OffsetDateTime now = tinkoffService.getCurrentDateTime();
+        final OffsetDateTime now = context.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
         return extOperationsService.getOperations(accountId, interval, ticker);
     }

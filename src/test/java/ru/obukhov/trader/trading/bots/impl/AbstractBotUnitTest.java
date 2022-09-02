@@ -11,8 +11,8 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.interfaces.TinkoffService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
@@ -32,7 +32,6 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -49,7 +48,7 @@ class AbstractBotUnitTest {
     @Mock
     private RealExtOrdersService ordersService;
     @Mock
-    private TinkoffService tinkoffService;
+    private Context context;
     @Mock
     private TradingStrategy strategy;
 
@@ -57,7 +56,7 @@ class AbstractBotUnitTest {
     private TestBot bot;
 
     @Test
-    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() throws IOException {
+    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
 
@@ -82,7 +81,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() throws IOException {
+    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
         final String accountId = "2000124699";
 
         final String ticker = "ticker";
@@ -106,7 +105,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() throws IOException {
+    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
 
@@ -127,7 +126,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() throws IOException {
+    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
 
@@ -152,7 +151,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenDecisionIsWait() throws IOException {
+    void processTicker_doesNoOrder_whenDecisionIsWait() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
         final int lotSize = 10;
@@ -163,7 +162,7 @@ class AbstractBotUnitTest {
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -187,7 +186,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() throws IOException {
+    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
         final Currency currency = Currency.USD;
@@ -211,7 +210,7 @@ class AbstractBotUnitTest {
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -243,7 +242,7 @@ class AbstractBotUnitTest {
     }
 
     @Test
-    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() throws IOException {
+    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = "2000124699";
         final String ticker = "ticker";
         final Currency currency = Currency.USD;
@@ -267,7 +266,7 @@ class AbstractBotUnitTest {
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
         mockCandles(ticker, currentCandles);
 
-        Mockito.when(tinkoffService.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
+        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -312,7 +311,7 @@ class AbstractBotUnitTest {
                 final ExtInstrumentsService extInstrumentsService,
                 final ExtOperationsService operationsService,
                 final RealExtOrdersService ordersService,
-                final TinkoffService tinkoffService,
+                final Context context,
                 final TradingStrategy strategy
         ) {
             super(
@@ -320,7 +319,7 @@ class AbstractBotUnitTest {
                     extInstrumentsService,
                     operationsService,
                     ordersService,
-                    tinkoffService,
+                    context,
                     strategy,
                     new TestStrategyCache()
             );

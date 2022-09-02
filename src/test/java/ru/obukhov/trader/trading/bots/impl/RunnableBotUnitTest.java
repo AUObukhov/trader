@@ -12,8 +12,8 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
+import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
-import ru.obukhov.trader.market.impl.RealTinkoffService;
 import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Candle;
@@ -52,7 +52,7 @@ class RunnableBotUnitTest {
     @Mock
     private RealExtOrdersService ordersService;
     @Mock
-    private RealTinkoffService realTinkoffService;
+    private RealContext realContext;
     @Mock
     private TradingStrategy strategy;
     @Mock
@@ -78,7 +78,7 @@ class RunnableBotUnitTest {
     void run_doesNothing_whenNotWorkTime() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().plusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -92,7 +92,7 @@ class RunnableBotUnitTest {
     void run_doesNothing_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -115,7 +115,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetLastCandlesThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -136,7 +136,7 @@ class RunnableBotUnitTest {
     void run_doesNothing_whenGetOrdersThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -158,7 +158,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetInstrumentThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -182,7 +182,7 @@ class RunnableBotUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -210,7 +210,7 @@ class RunnableBotUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -236,7 +236,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenGetOperationsThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -263,7 +263,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenDecideThrowsException() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -292,7 +292,7 @@ class RunnableBotUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -328,7 +328,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenThereAreOrders() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -347,7 +347,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -363,7 +363,7 @@ class RunnableBotUnitTest {
     void run_doesNoOrder_whenDecisionIsWait() {
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -390,7 +390,7 @@ class RunnableBotUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
@@ -424,7 +424,7 @@ class RunnableBotUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realTinkoffService.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
