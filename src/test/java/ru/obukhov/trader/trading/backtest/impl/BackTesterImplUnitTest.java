@@ -34,7 +34,6 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -119,7 +118,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() throws IOException {
+    void test_returnsResultWithEmptyValues_whenBotConfigProcessingThrowsException() {
         // arrange
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
@@ -173,7 +172,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsCommonStatistics() throws IOException {
+    void test_fillsCommonStatistics() {
 
         // arrange
 
@@ -289,7 +288,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_callsAddInvestment() throws IOException {
+    void test_callsAddInvestment() {
 
         // arrange
 
@@ -390,7 +389,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsPositions() throws IOException {
+    void test_fillsPositions() {
 
         // arrange
 
@@ -467,7 +466,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsOperations() throws IOException {
+    void test_fillsOperations() {
 
         // arrange
 
@@ -567,7 +566,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_fillsCandles() throws IOException {
+    void test_fillsCandles() {
 
         // arrange
 
@@ -645,7 +644,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() throws IOException {
+    void test_notFillsCandles_whenCurrentCandlesInDecisionDataIsAlwaysNullOrEmpty() {
 
         // arrange
 
@@ -702,7 +701,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_callsSaveToFile_whenSaveToFilesIsTrue() throws IOException {
+    void test_callsSaveToFile_whenSaveToFilesIsTrue() {
 
         // arrange
 
@@ -760,7 +759,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse() throws IOException {
+    void test_neverCallsSaveToFile_whenSaveToFilesIsFalse() {
 
         // arrange
 
@@ -818,7 +817,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() throws IOException {
+    void test_returnsZeroInvestmentsAndProfits_whenNoInvestments() {
 
         // arrange
 
@@ -945,7 +944,7 @@ class BackTesterImplUnitTest {
     }
 
     @Test
-    void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() throws IOException {
+    void test_catchesSaveToFileException_andFinishesBackTestsSuccessfully() {
 
         // arrange
 
@@ -1014,7 +1013,7 @@ class BackTesterImplUnitTest {
             final Map<OffsetDateTime, Double> prices,
             final double currentPrice,
             final Operation operation
-    ) throws IOException {
+    ) {
         final BotConfig botConfig = new BotConfig(accountId, ticker, null, commission, null, null);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
@@ -1050,7 +1049,7 @@ class BackTesterImplUnitTest {
         return fakeBot;
     }
 
-    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) throws IOException {
+    private void mockBotCandles(final BotConfig botConfig, final FakeBot fakeBot, final Map<OffsetDateTime, Double> prices) {
         Mockito.when(fakeBot.processBotConfig(Mockito.eq(botConfig), Mockito.nullable(OffsetDateTime.class)))
                 .thenAnswer(invocation -> {
                     final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();

@@ -29,7 +29,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public class BackTesterImpl implements BackTester {
         }
     }
 
-    private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) throws IOException {
+    private BackTestResult test(final BotConfig botConfig, final BalanceConfig balanceConfig, final Interval interval) {
         final FakeBot fakeBot = fakeBotFactory.createBot(botConfig, balanceConfig, interval.getFrom());
 
         final List<Candle> historicalCandles = new ArrayList<>();
@@ -188,7 +187,7 @@ public class BackTesterImpl implements BackTester {
             final Interval interval,
             final List<Candle> candles,
             final FakeBot fakeBot
-    ) throws IOException {
+    ) {
         final String accountId = botConfig.accountId();
         final String ticker = botConfig.ticker();
 
@@ -232,7 +231,7 @@ public class BackTesterImpl implements BackTester {
         return Currency.valueOfIgnoreCase(fakeBot.getShare(ticker).getCurrency());
     }
 
-    private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) throws IOException {
+    private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) {
         List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
         List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
         for (PortfolioPosition portfolioPosition : portfolioPositions) {
@@ -241,7 +240,7 @@ public class BackTesterImpl implements BackTester {
         return backTestPositions;
     }
 
-    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) throws IOException {
+    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) {
         final String ticker = portfolioPosition.ticker();
         return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.quantity());
     }
