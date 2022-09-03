@@ -109,9 +109,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                TestData.createHistoricCandle(100, from),
-                TestData.createHistoricCandle(101, from.plusMinutes(1)),
-                TestData.createHistoricCandle(102, from.plusMinutes(2))
+                TestData.createHistoricCandleOpen(100, from),
+                TestData.createHistoricCandleOpen(101, from.plusMinutes(1)),
+                TestData.createHistoricCandleOpen(102, from.plusMinutes(2))
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -160,9 +160,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                TestData.createHistoricCandle(100, from),
-                TestData.createHistoricCandle(101, from.plusMinutes(1)),
-                TestData.createHistoricCandle(102, from.plusMinutes(2))
+                TestData.createHistoricCandleOpen(100, from),
+                TestData.createHistoricCandleOpen(101, from.plusMinutes(1)),
+                TestData.createHistoricCandleOpen(102, from.plusMinutes(2))
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)

@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
@@ -531,8 +530,8 @@ class FakeExtOrdersServiceUnitTest {
             final OffsetDateTime dateTime,
             final double price
     ) {
-        final Candle candle = new Candle().setClosePrice(DecimalUtils.setDefaultScale(price));
-        Mockito.when(extMarketDataService.getLastCandle(ticker, dateTime)).thenReturn(candle);
+        Mockito.when(extMarketDataService.getLastPrice(ticker, dateTime))
+                .thenReturn(DecimalUtils.setDefaultScale(price));
 
         fakeExtOrdersService.postOrder(accountId, ticker, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }

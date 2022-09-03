@@ -21,6 +21,7 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -149,12 +150,12 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     /**
-     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days not after {@code to}
+     * Searches last price by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days not after given {@code to}
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public Candle getLastCandle(final String ticker, final OffsetDateTime to) {
+    public BigDecimal getLastPrice(final String ticker, final OffsetDateTime to) {
         final OffsetDateTime candlesFrom = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit());
 
         List<Interval> intervals = Interval.of(candlesFrom, to).splitIntoDailyIntervals();
@@ -163,8 +164,9 @@ public class ExtMarketDataService implements ApplicationContextAware {
         while (listIterator.hasPrevious()) {
             final Interval interval = listIterator.previous();
             final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-            if (!candles.isEmpty()) {
-                return CollectionUtils.lastElement(candles);
+            final Candle lastCandle = CollectionUtils.lastElement(candles);
+            if (lastCandle != null) {
+                return lastCandle.getClosePrice();
             }
         }
 

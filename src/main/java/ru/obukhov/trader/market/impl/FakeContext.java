@@ -176,7 +176,7 @@ public class FakeContext implements Context {
      * @return last known price for instrument with given {@code ticker} not after current fake date time
      */
     public BigDecimal getCurrentPrice(final String ticker) {
-        return extMarketDataService.getLastCandle(ticker, getCurrentDateTime()).getClosePrice();
+        return extMarketDataService.getLastPrice(ticker, getCurrentDateTime());
     }
 
 }

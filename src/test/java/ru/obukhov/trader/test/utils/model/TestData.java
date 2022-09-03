@@ -77,12 +77,17 @@ public class TestData {
                 .build();
     }
 
-    public static HistoricCandle createHistoricCandle(
-            final double openPrice,
-            final OffsetDateTime time
-    ) {
+    public static HistoricCandle createHistoricCandleOpen(final double openPrice, final OffsetDateTime time) {
         return HistoricCandle.newBuilder()
                 .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
+                .setTime(DATE_TIME_MAPPER.map(time))
+                .setIsComplete(true)
+                .build();
+    }
+
+    public static HistoricCandle createHistoricCandleClosed(final double closePrice, final OffsetDateTime time) {
+        return HistoricCandle.newBuilder()
+                .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
                 .setTime(DATE_TIME_MAPPER.map(time))
                 .setIsComplete(true)
                 .build();

@@ -103,7 +103,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
      */
     private BigDecimal getCurrentPrice(final String ticker) {
         final OffsetDateTime currentDateTime = fakeContext.getCurrentDateTime();
-        return extMarketDataService.getLastCandle(ticker, currentDateTime).getClosePrice();
+        return extMarketDataService.getLastPrice(ticker, currentDateTime);
     }
 
     private void buyPosition(

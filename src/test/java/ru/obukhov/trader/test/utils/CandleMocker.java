@@ -42,8 +42,8 @@ public class CandleMocker {
         this.candles = new ArrayList<>();
     }
 
-    public CandleMocker add(@NotNull final Integer openPrice, @NotNull final OffsetDateTime time) {
-        this.candles.add(TestData.createHistoricCandle(openPrice, time));
+    public CandleMocker add(@NotNull final Integer closePrice, @NotNull final OffsetDateTime time) {
+        this.candles.add(TestData.createHistoricCandleClosed(closePrice, time));
         return this;
     }
 
