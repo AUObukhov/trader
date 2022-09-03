@@ -1,7 +1,5 @@
 package ru.obukhov.trader.config;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +35,6 @@ import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -207,13 +204,6 @@ public class BeanConfiguration {
             trigger.setInitialDelay(schedulingProperties.getDelay());
             taskScheduler.schedule(bot, trigger);
         }
-    }
-
-    @Bean
-    public OkHttpClient okHttpClient(final List<Interceptor> interceptors) {
-        final OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder().pingInterval(Duration.ofSeconds(5));
-        clientBuilder.interceptors().addAll(interceptors);
-        return clientBuilder.build();
     }
 
 }
