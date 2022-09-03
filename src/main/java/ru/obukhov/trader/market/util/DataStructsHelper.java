@@ -38,8 +38,12 @@ public class DataStructsHelper {
 
     // endregion
 
-    public static Money createMoney(final java.util.Currency currency, final BigDecimal value) {
-        return Money.fromResponse(createMoneyValue(currency.getCurrencyCode(), value));
+    public static Money createMoney(final String currency, final BigDecimal value) {
+        return Money.fromResponse(createMoneyValue(currency, value));
+    }
+
+    public static Money createMoney(final Currency currency, final BigDecimal value) {
+        return Money.fromResponse(createMoneyValue(currency, value));
     }
 
     // region createWithdrawLimits
@@ -79,7 +83,7 @@ public class DataStructsHelper {
      */
     public static BigDecimal getBalance(final List<Money> moneys, final Currency currency) {
         return moneys.stream()
-                .filter(money -> money.getCurrency().getCurrencyCode().equals(currency.name()))
+                .filter(money -> money.getCurrency().equals(currency.name()))
                 .findFirst()
                 .map(Money::getValue)
                 .orElseThrow();

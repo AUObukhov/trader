@@ -264,9 +264,9 @@ class FakeExtOperationsServiceUnitTest {
         final List<Money> money = withdrawLimits.getMoney();
         Assertions.assertEquals(2, money.size());
         for (final Money currentMoney : money) {
-            if (currentMoney.getCurrency().equals(Currency.USD.getJavaCurrency())) {
+            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
                 AssertUtils.assertEquals(2000, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.getJavaCurrency())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
                 AssertUtils.assertEquals(4000, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
@@ -275,9 +275,9 @@ class FakeExtOperationsServiceUnitTest {
 
         final List<Money> blocked = withdrawLimits.getBlocked();
         for (final Money currentMoney : blocked) {
-            if (currentMoney.getCurrency().equals(Currency.USD.getJavaCurrency())) {
+            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.getJavaCurrency())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
@@ -286,9 +286,9 @@ class FakeExtOperationsServiceUnitTest {
 
         final List<Money> blockedGuarantee = withdrawLimits.getBlockedGuarantee();
         for (final Money currentMoney : blockedGuarantee) {
-            if (currentMoney.getCurrency().equals(Currency.USD.getJavaCurrency())) {
+            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.getJavaCurrency())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());

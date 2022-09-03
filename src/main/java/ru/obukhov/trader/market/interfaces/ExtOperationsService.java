@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -10,7 +11,6 @@ import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -65,7 +65,7 @@ public interface ExtOperationsService {
     }
 
     private Map<Currency, BigDecimal> getBalanceMap(final List<Money> moneys) {
-        return moneys.stream().collect(Collectors.toMap(Money::getCurrency, Money::getValue));
+        return moneys.stream().collect(Collectors.toMap(money -> Currency.valueOf(money.getCurrency()), Money::getValue));
     }
 
     private Money getAvailableMoney(
@@ -73,7 +73,7 @@ public interface ExtOperationsService {
             final Map<Currency, BigDecimal> blocked,
             final Map<Currency, BigDecimal> blockedGuarantee
     ) {
-        final Currency currency = money.getCurrency();
+        final Currency currency = Currency.valueOf(money.getCurrency());
         final BigDecimal blockedValue = blocked.getOrDefault(currency, BigDecimal.ZERO);
         final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, BigDecimal.ZERO);
         final BigDecimal value = money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);

@@ -208,7 +208,7 @@
         <dependency>
             <groupId>ru.tinkoff.piapi</groupId>
             <artifactId>java-sdk-core</artifactId>
-            <version>1.0-M6</version>
+            <version>1.0.12</version>
         </dependency>
 
     </dependencies>

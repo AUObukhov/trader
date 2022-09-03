@@ -57,12 +57,12 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoney() {
-        final java.util.Currency currency = Currency.EUR.getJavaCurrency();
+        final Currency currency = Currency.EUR;
         final BigDecimal value = BigDecimal.valueOf(123.456);
 
         final Money money = DataStructsHelper.createMoney(currency, value);
 
-        Assertions.assertEquals(currency, money.getCurrency());
+        Assertions.assertEquals(currency.name(), money.getCurrency());
         AssertUtils.assertEquals(value, money.getValue());
     }
 
@@ -90,16 +90,16 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), BigDecimal.ZERO);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), BigDecimal.ZERO);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), BigDecimal.ZERO);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -134,16 +134,16 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), blockedValue1);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), blockedValue2);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, blockedValue1);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, blockedValue2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), BigDecimal.ZERO);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -185,16 +185,16 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), blockedValue1);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), blockedValue2);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, blockedValue1);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, blockedValue2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), blockedGuaranteeValue1);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), blockedGuaranteeValue2);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, blockedGuaranteeValue1);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, blockedGuaranteeValue2);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -210,11 +210,11 @@ class DataStructsHelperUnitTest {
     void getBalance() {
         final Currency currency1 = Currency.EUR;
         final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final Money money1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), value1);
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
         final Currency currency2 = Currency.USD;
         final BigDecimal value2 = BigDecimal.valueOf(78.9);
-        final Money money2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), value2);
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
         final List<Money> moneys = List.of(money1, money2);
 
@@ -229,11 +229,11 @@ class DataStructsHelperUnitTest {
     void getBalance_throwsNoSuchElementException_whenNoCurrency() {
         final Currency currency1 = Currency.EUR;
         final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final Money money1 = DataStructsHelper.createMoney(currency1.getJavaCurrency(), value1);
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
         final Currency currency2 = Currency.USD;
         final BigDecimal value2 = BigDecimal.valueOf(78.9);
-        final Money money2 = DataStructsHelper.createMoney(currency2.getJavaCurrency(), value2);
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
         final List<Money> moneys = List.of(money1, money2);
 

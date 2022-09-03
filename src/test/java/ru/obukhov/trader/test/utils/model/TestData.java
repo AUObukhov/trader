@@ -361,11 +361,7 @@ public class TestData {
     }
 
     public static Money createMoney(final Currency currency, final BigDecimal value) {
-        return DataStructsHelper.createMoney(currency.getJavaCurrency(), value);
-    }
-
-    public static Money createMoney(final Currency currency, final double value) {
-        return createMoney(currency, BigDecimal.valueOf(value));
+        return DataStructsHelper.createMoney(currency, value);
     }
 
     // region BigDecimals list creation
