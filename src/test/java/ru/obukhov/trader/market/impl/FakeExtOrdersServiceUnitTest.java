@@ -91,7 +91,7 @@ class FakeExtOrdersServiceUnitTest {
         Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Mockito.verify(fakeContext, Mockito.never())
-                .setCurrentBalance(Mockito.any(), Mockito.any(), Mockito.any());
+                .setBalance(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -539,7 +539,7 @@ class FakeExtOrdersServiceUnitTest {
 
     private void verifyBalanceSet(final String accountId, final Currency currency, final double balance) {
         Mockito.verify(fakeContext, Mockito.times(1))
-                .setCurrentBalance(Mockito.eq(accountId), Mockito.eq(currency), ArgumentMatchers.argThat(BigDecimalMatcher.of(balance)));
+                .setBalance(Mockito.eq(accountId), Mockito.eq(currency), ArgumentMatchers.argThat(BigDecimalMatcher.of(balance)));
     }
 
     private void verifyPositionAdded(final String accountId, final String ticker, final PortfolioPosition position) {

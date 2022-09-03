@@ -144,7 +144,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
         final BigDecimal newBalance = fakeContext.getBalance(accountId, enumCurrency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        fakeContext.setCurrentBalance(accountId, enumCurrency, newBalance);
+        fakeContext.setBalance(accountId, enumCurrency, newBalance);
     }
 
     private void sellPosition(

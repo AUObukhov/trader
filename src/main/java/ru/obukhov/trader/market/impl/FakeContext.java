@@ -66,6 +66,35 @@ public class FakeContext implements Context {
         return nextWorkMinute;
     }
 
+    // region balance
+
+    /**
+     * sets given {@code amount} as balance of given {@code currency} and at given {@code accountId}
+     */
+    public void setBalance(final String accountId, final Currency currency, final BigDecimal amount) {
+        computeIfAbsentBalance(accountId, currency).setCurrentAmount(amount);
+    }
+
+    /**
+     * @return balance of given {@code currency} and at given {@code accountId}
+     */
+    public BigDecimal getBalance(final String accountId, final Currency currency) {
+        return computeIfAbsentBalance(accountId, currency).getCurrentAmount();
+    }
+
+    /**
+     * @return balances of all currencies at given {@code accountId}
+     */
+    public Map<Currency, BigDecimal> getBalances(final String accountId) {
+        return computeIfAbsentPortfolio(accountId).getBalances()
+                .entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getCurrentAmount()));
+    }
+
+    // endregion
+
+    // region investments
+
     /**
      * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current dateTime
      */
@@ -85,23 +114,16 @@ public class FakeContext implements Context {
         computeIfAbsentBalance(accountId, currency).addInvestment(dateTime, amount);
     }
 
-    public BigDecimal getBalance(final String accountId, final Currency currency) {
-        return computeIfAbsentBalance(accountId, currency).getCurrentAmount();
-    }
-
-    public Map<Currency, BigDecimal> getBalances(final String accountId) {
-        return computeIfAbsentPortfolio(accountId).getBalances()
-                .entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getCurrentAmount()));
-    }
-
+    /**
+     * @return all investments of given {@code currency} and at given {@code accountId} by dateTime in ascending order
+     */
     public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
         return computeIfAbsentBalance(accountId, currency).getInvestments();
     }
 
-    public void setCurrentBalance(final String accountId, final Currency currency, final BigDecimal amount) {
-        computeIfAbsentBalance(accountId, currency).setCurrentAmount(amount);
-    }
+    // endregion
+
+    // region operations
 
     public void addOperation(final String accountId, final BackTestOperation operation) {
         computeIfAbsentPortfolio(accountId).getOperations().add(operation);
@@ -111,12 +133,12 @@ public class FakeContext implements Context {
         return new HashSet<>(computeIfAbsentPortfolio(accountId).getOperations());
     }
 
+    // endregion
+
+    // region positions
+
     public void addPosition(final String accountId, final String ticker, PortfolioPosition position) {
         computeIfAbsentPortfolio(accountId).getTickersToPositions().put(ticker, position);
-    }
-
-    public void removePosition(final String accountId, final String ticker) {
-        computeIfAbsentPortfolio(accountId).getTickersToPositions().remove(ticker);
     }
 
     public PortfolioPosition getPosition(final String accountId, final String ticker) {
@@ -126,6 +148,12 @@ public class FakeContext implements Context {
     public List<PortfolioPosition> getPositions(final String accountId) {
         return new ArrayList<>(computeIfAbsentPortfolio(accountId).getTickersToPositions().values());
     }
+
+    public void removePosition(final String accountId, final String ticker) {
+        computeIfAbsentPortfolio(accountId).getTickersToPositions().remove(ticker);
+    }
+
+    // endregion
 
     private FakeBalance computeIfAbsentBalance(final String accountId, final Currency currency) {
         return computeIfAbsentPortfolio(accountId).getBalances().computeIfAbsent(currency, currencyKey -> new FakeBalance());
