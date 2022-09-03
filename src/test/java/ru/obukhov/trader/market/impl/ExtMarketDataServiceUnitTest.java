@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
-import ru.obukhov.trader.test.utils.DateTestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -263,62 +262,6 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandle_throwsIllegalArgumentException_whenNoCandles() {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final String ticker = "ticker";
-
-        final Executable executable = () -> service.getLastCandle(ticker);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
-        final OffsetDateTime now = OffsetDateTime.now();
-        Mockito.when(context.getCurrentDateTime()).thenReturn(now);
-
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final OffsetDateTime from = DateTestUtils.getLastWorkDay(now).minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
-
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
-
-        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(10, from)
-                .mock();
-
-        final Executable executable = () -> service.getLastCandle(ticker);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final String ticker = "ticker";
-        final String figi = "figi";
-        final OffsetDateTime earliestDayToSearch = OffsetDateTime.now().minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit());
-        final int openPrice = 10;
-
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
-
-        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(openPrice, earliestDayToSearch)
-                .mock();
-
-        final Candle candle = service.getLastCandle(ticker);
-
-        Assertions.assertNotNull(candle);
-        AssertUtils.assertEquals(openPrice, candle.getOpenPrice());
-    }
-
-    // endregion
-
-    // region getLastCandle with to tests
-
-    @Test
-    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandles() {
         final String ticker = "ticker";
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
@@ -328,7 +271,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandleTo_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
+    void getLastCandle_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
@@ -347,7 +290,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandleTo_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
+    void getLastCandle_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));

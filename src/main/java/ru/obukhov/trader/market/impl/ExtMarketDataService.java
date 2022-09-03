@@ -149,19 +149,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     /**
-     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
-     *
-     * @return found candle
-     * @throws IllegalArgumentException if candle not found
-     */
-    public Candle getLastCandle(final String ticker) {
-        final OffsetDateTime to = context.getCurrentDateTime();
-        return getLastCandle(ticker, to);
-    }
-
-    /**
-     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days
-     * not after {@code to}
+     * Searches last candle by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days not after {@code to}
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
