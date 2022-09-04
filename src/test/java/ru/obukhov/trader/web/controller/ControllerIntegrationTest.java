@@ -24,7 +24,7 @@ import java.util.Collections;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
-abstract class ControllerIntegrationTest {
+public abstract class ControllerIntegrationTest {
 
     protected static final JsonPathResultMatchers RESULT_MESSAGE_MATCHER = MockMvcResultMatchers.jsonPath("$.message");
     protected static final JsonPathResultMatchers ERRORS_MATCHER = MockMvcResultMatchers.jsonPath("$.errors");

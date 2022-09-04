@@ -12,7 +12,6 @@ import ru.obukhov.trader.grafana.model.GetDataRequest;
  */
 @Aspect
 @Component
-@SuppressWarnings("unused")
 public class DefaultTimeZoneAspect {
 
     @Before("execution(public * ru.obukhov.trader.web.controller.GrafanaController.getData(..))")
