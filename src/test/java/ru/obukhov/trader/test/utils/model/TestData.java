@@ -30,9 +30,7 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
-import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
-import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Money;
@@ -584,30 +582,6 @@ public class TestData {
                 .setQuantity(quantity)
                 .setTradeId(tradeId)
                 .build();
-    }
-
-    public static PostOrderResponse createPostOrderResponse(
-            final Currency currency,
-            final double totalPrice,
-            final double totalCommissionAmount,
-            final double currentPrice,
-            final String orderId,
-            final long quantityLots,
-            final String figi,
-            final OrderDirection direction,
-            final OrderType type
-    ) {
-        return DataStructsHelper.createPostOrderResponse(
-                currency.name(),
-                BigDecimal.valueOf(totalPrice),
-                BigDecimal.valueOf(totalCommissionAmount),
-                BigDecimal.valueOf(currentPrice),
-                quantityLots,
-                figi,
-                direction,
-                type,
-                orderId
-        );
     }
 
     public static AssetInstrument createAssetInstrument(final String figi, final String ticker) {

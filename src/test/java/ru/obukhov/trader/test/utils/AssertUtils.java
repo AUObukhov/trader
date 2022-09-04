@@ -108,6 +108,14 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(Double expected, MoneyValue actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(MONEY_MAPPER.map(actual), expected)) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
     public static void assertEquals(@Nullable final BigDecimal expected, final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);

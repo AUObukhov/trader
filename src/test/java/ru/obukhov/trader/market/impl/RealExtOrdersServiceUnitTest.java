@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -201,7 +202,12 @@ class RealExtOrdersServiceUnitTest {
         final String accountId = "2000124699";
         final String ticker = "ticker";
         final String figi = "figi";
-        final long quantityLots = 10;
+
+        final Currency currency = Currency.USD;
+        final int totalOrderAmount = 2000;
+        final int totalCommissionAmount = 10;
+        final int initialSecurityPrice = 20;
+        final long quantityLots = 30;
         final BigDecimal price = BigDecimal.valueOf(200);
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
@@ -209,23 +215,35 @@ class RealExtOrdersServiceUnitTest {
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
-        PostOrderResponse response = TestData.createPostOrderResponse(
-                Currency.USD,
-                2000,
-                10,
-                20,
-                orderId,
-                quantityLots,
-                figi,
-                direction,
-                type
-        );
+        final PostOrderResponse response = new PostOrderResponseBuilder()
+                .setCurrency(currency)
+                .setTotalOrderAmount(totalOrderAmount)
+                .setTotalCommissionAmount(totalCommissionAmount)
+                .setInitialSecurityPrice(initialSecurityPrice)
+                .setQuantityLots(quantityLots)
+                .setFigi(figi)
+                .setDirection(direction)
+                .setType(type)
+                .setOrderId(orderId)
+                .build();
+
         Mockito.when(ordersService.postOrderSync(figi, quantityLots, DecimalUtils.toQuotation(price), direction, accountId, type, orderId))
                 .thenReturn(response);
 
         final PostOrderResponse result = realExtOrdersService.postOrder(accountId, ticker, quantityLots, price, direction, type, orderId);
 
-        Assertions.assertSame(response, result);
+        final PostOrderResponse expectedResponse = new PostOrderResponseBuilder()
+                .setCurrency(currency)
+                .setTotalOrderAmount(totalOrderAmount)
+                .setTotalCommissionAmount(totalCommissionAmount)
+                .setInitialSecurityPrice(initialSecurityPrice)
+                .setQuantityLots(quantityLots)
+                .setFigi(figi)
+                .setDirection(direction)
+                .setType(type)
+                .setOrderId(orderId)
+                .build();
+        Assertions.assertEquals(expectedResponse, result);
     }
 
     @Test

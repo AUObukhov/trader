@@ -10,7 +10,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.util.DataStructsHelper;
+import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -80,17 +80,17 @@ public class FakeExtOrdersService implements ExtOrdersService {
             addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
-        return DataStructsHelper.createPostOrderResponse(
-                share.getCurrency(),
-                totalPrice,
-                totalCommissionAmount,
-                currentPrice,
-                quantityLots,
-                share.getFigi(),
-                direction,
-                type,
-                orderId
-        );
+        return new PostOrderResponseBuilder()
+                .setCurrency(share.getCurrency())
+                .setTotalOrderAmount(totalPrice)
+                .setTotalCommissionAmount(totalCommissionAmount)
+                .setInitialSecurityPrice(currentPrice)
+                .setQuantityLots(quantityLots)
+                .setFigi(share.getFigi())
+                .setDirection(direction)
+                .setType(type)
+                .setOrderId(orderId)
+                .build();
     }
 
     @Override
