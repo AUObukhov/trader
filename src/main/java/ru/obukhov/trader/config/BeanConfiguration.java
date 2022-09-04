@@ -90,13 +90,12 @@ public class BeanConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public Context fakeContext(
             final MarketProperties marketProperties,
-            final TinkoffServices tinkoffServices,
             final OffsetDateTime currentDateTime,
             final String accountId,
             final Currency currency,
             final BigDecimal initialBalance
     ) {
-        return new FakeContext(marketProperties, tinkoffServices, currentDateTime, accountId, currency, initialBalance);
+        return new FakeContext(marketProperties, currentDateTime, accountId, currency, initialBalance);
     }
 
     @Bean

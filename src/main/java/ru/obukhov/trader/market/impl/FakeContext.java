@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class FakeContext implements Context {
 
     private final MarketProperties marketProperties;
-    private final ExtMarketDataService extMarketDataService;
 
     @Getter
     @Setter
@@ -40,14 +39,12 @@ public class FakeContext implements Context {
 
     public FakeContext(
             final MarketProperties marketProperties,
-            final TinkoffServices tinkoffServices,
             final OffsetDateTime currentDateTime,
             final String accountId,
             final Currency currency,
             final BigDecimal initialBalance
     ) {
         this.marketProperties = marketProperties;
-        this.extMarketDataService = tinkoffServices.extMarketDataService();
         this.currentDateTime = currentDateTime;
         this.portfolios = new ArrayList<>();
 
@@ -170,13 +167,6 @@ public class FakeContext implements Context {
             portfolios.add(portfolio);
             return portfolio;
         }
-    }
-
-    /**
-     * @return last known price for instrument with given {@code ticker} not after current fake date time
-     */
-    public BigDecimal getCurrentPrice(final String ticker) {
-        return extMarketDataService.getLastPrice(ticker, getCurrentDateTime());
     }
 
 }

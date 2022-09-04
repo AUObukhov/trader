@@ -132,8 +132,12 @@ class FakeBotUnitTest {
     @Test
     void getCurrentPrice() {
         final String ticker = "ticker";
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final BigDecimal expectedCurrentPrice = BigDecimal.TEN;
-        Mockito.when(fakeContext.getCurrentPrice(ticker)).thenReturn(expectedCurrentPrice);
+
+        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
+
+        Mockito.when(extMarketDataService.getLastPrice(ticker, currentDateTime)).thenReturn(expectedCurrentPrice);
 
         final BigDecimal currentPrice = fakeBot.getCurrentPrice(ticker);
 

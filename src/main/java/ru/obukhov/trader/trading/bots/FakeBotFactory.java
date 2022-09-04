@@ -80,7 +80,6 @@ public class FakeBotFactory {
         return (FakeContext) applicationContext.getBean(
                 "fakeContext",
                 marketProperties,
-                tinkoffServices,
                 ceilingWorkTime,
                 botConfig.accountId(),
                 currency,

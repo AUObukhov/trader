@@ -76,7 +76,7 @@ public class FakeBot extends Bot {
     }
 
     public BigDecimal getCurrentPrice(final String ticker) {
-        return getFakeContext().getCurrentPrice(ticker);
+        return extMarketDataService.getLastPrice(ticker, context.getCurrentDateTime());
     }
 
     private FakeContext getFakeContext() {

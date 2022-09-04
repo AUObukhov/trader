@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
@@ -29,9 +28,6 @@ import java.util.stream.Stream;
 class FakeContextUnitTest {
 
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
-
-    @InjectMocks
-    private TinkoffServices tinkoffServices;
 
     // region constructor tests
 
@@ -467,7 +463,7 @@ class FakeContextUnitTest {
             final Currency currency,
             final BigDecimal balance
     ) {
-        return new FakeContext(MARKET_PROPERTIES, tinkoffServices, currentDateTime, accountId, currency, balance);
+        return new FakeContext(MARKET_PROPERTIES, currentDateTime, accountId, currency, balance);
     }
 
 }
