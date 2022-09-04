@@ -15,9 +15,9 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.FakeContext;
-import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -36,8 +36,8 @@ import java.util.stream.Stream;
 @ExtendWith(MockitoExtension.class)
 class FakeBotFactoryUnitTest {
 
-    private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
-
+    @Mock
+    private MarketProperties marketProperties;
     @Mock
     private TradingStrategyFactory strategyFactory;
     @Mock
@@ -48,13 +48,11 @@ class FakeBotFactoryUnitTest {
     private ExtInstrumentsService extInstrumentsService;
 
     @InjectMocks
-    private TinkoffServices tinkoffServices;
-
     private FakeBotFactory factory;
 
     @BeforeEach
     void setUp() {
-        factory = new FakeBotFactory(MARKET_PROPERTIES, strategyFactory, tinkoffServices, applicationContext, marketDataService);
+        Mocker.mockWorkSchedule(marketProperties);
     }
 
     @SuppressWarnings("unused")

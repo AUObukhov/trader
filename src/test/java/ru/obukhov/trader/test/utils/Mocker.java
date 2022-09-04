@@ -4,10 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.config.model.WorkSchedule;
+import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Asset;
@@ -19,7 +22,9 @@ import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.List;
 
 @UtilityClass
@@ -97,6 +102,12 @@ public class Mocker {
     ) {
         final Share share = TestData.createShare(figi, ticker, currency, lotSize);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
+    }
+
+    public static void mockWorkSchedule(final MarketProperties marketProperties) {
+        final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
+        final WorkSchedule workSchedule = new WorkSchedule(workStartTime, Duration.ofHours(9));
+        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
     }
 
 }

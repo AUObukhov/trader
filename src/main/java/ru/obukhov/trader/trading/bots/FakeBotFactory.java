@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
-import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
@@ -30,7 +30,7 @@ public class FakeBotFactory {
 
     private final MarketProperties marketProperties;
     private final TradingStrategyFactory strategyFactory;
-    private final TinkoffServices tinkoffServices;
+    private final ExtInstrumentsService extInstrumentsService;
     private final ApplicationContext applicationContext;
     private final MarketDataService marketDataService;
 
@@ -40,22 +40,22 @@ public class FakeBotFactory {
                 "fakeExtMarketDataService",
                 marketProperties,
                 fakeContext,
-                tinkoffServices.extInstrumentsService(),
+                extInstrumentsService,
                 marketDataService
         );
 
         final ExtOperationsService fakeOperationsService = new FakeExtOperationsService(fakeContext);
         final FakeExtOrdersService fakeOrdersService = new FakeExtOrdersService(
                 fakeContext,
-                tinkoffServices.extInstrumentsService(),
-                tinkoffServices.extMarketDataService(),
+                extInstrumentsService,
+                fakeExtMarketDataService,
                 botConfig.commission()
         );
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 
         return new FakeBot(
                 fakeExtMarketDataService,
-                tinkoffServices.extInstrumentsService(),
+                extInstrumentsService,
                 fakeOperationsService,
                 fakeOrdersService,
                 fakeContext,
@@ -69,7 +69,7 @@ public class FakeBotFactory {
             final OffsetDateTime currentDateTime
     ) {
         final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
-        final Share share = tinkoffServices.extInstrumentsService().getShare(botConfig.ticker());
+        final Share share = extInstrumentsService.getShare(botConfig.ticker());
         if (share == null) {
             throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
         }
