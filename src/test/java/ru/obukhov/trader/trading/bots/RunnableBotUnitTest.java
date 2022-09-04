@@ -124,7 +124,12 @@ class RunnableBotUnitTest {
 
         mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
-        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
+        Mockito.when(extMarketDataService.getLastCandles(
+                        Mockito.eq(ticker),
+                        Mockito.anyInt(),
+                        Mockito.eq(CandleInterval.CANDLE_INTERVAL_1_MIN),
+                        Mockito.eq(currentDateTime))
+                )
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -499,8 +504,12 @@ class RunnableBotUnitTest {
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) {
-        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
-                .thenReturn(candles);
+        Mockito.when(extMarketDataService.getLastCandles(
+                Mockito.eq(ticker),
+                Mockito.anyInt(),
+                Mockito.any(CandleInterval.class),
+                Mockito.any(OffsetDateTime.class)
+        )).thenReturn(candles);
     }
 
 }

@@ -20,6 +20,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +109,7 @@ public class GrafanaService {
         queryResult.setColumns(CANDLES_COLUMNS);
 
         final List<List<Object>> rows = new ArrayList<>();
-        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval);
+        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval, OffsetDateTime.now());
         for (Candle candle : candles) {
             rows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }

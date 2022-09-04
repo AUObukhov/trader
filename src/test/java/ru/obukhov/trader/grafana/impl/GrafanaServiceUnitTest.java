@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
@@ -23,9 +24,11 @@ import ru.obukhov.trader.grafana.model.QueryTableResult;
 import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.StatisticsService;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -45,6 +48,8 @@ class GrafanaServiceUnitTest {
     private ExtMarketDataService extMarketDataService;
     @Mock
     private StatisticsService statisticsService;
+    @Mock
+    private Context context;
 
     @InjectMocks
     private GrafanaService service;
@@ -219,25 +224,30 @@ class GrafanaServiceUnitTest {
                 TestData.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
                 TestData.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
         );
-        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
-        final List<QueryResult> results = service.getData(request);
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        Assertions.assertEquals(1, results.size());
-        QueryTableResult result = (QueryTableResult) results.get(0);
+        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, currentDateTime)).thenReturn(candles);
 
-        final List<Column> expectedColumns = List.of(
-                new Column("time", ColumnType.TIME),
-                new Column("open price", ColumnType.NUMBER)
-        );
-        AssertUtils.assertEquals(expectedColumns, result.getColumns());
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(currentDateTime)) {
+            final List<QueryResult> results = service.getData(request);
+
+            Assertions.assertEquals(1, results.size());
+            QueryTableResult result = (QueryTableResult) results.get(0);
+
+            final List<Column> expectedColumns = List.of(
+                    new Column("time", ColumnType.TIME),
+                    new Column("open price", ColumnType.NUMBER)
+            );
+            AssertUtils.assertEquals(expectedColumns, result.getColumns());
 
 
-        final List<List<Object>> expectedRows = new ArrayList<>(5);
-        for (Candle candle : candles) {
-            expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice()));
+            final List<List<Object>> expectedRows = new ArrayList<>(5);
+            for (Candle candle : candles) {
+                expectedRows.add(List.of(candle.getTime(), candle.getOpenPrice()));
+            }
+            AssertUtils.assertEquals(expectedRows, result.getRows());
         }
-        AssertUtils.assertEquals(expectedRows, result.getRows());
     }
 
     @Test

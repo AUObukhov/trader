@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
@@ -20,7 +19,6 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.io.IOException;
@@ -35,11 +33,7 @@ class ExtMarketDataServiceUnitTest {
     private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     @Mock
-    private Context context;
-    @Mock
     private ExtInstrumentsService extInstrumentsService;
-    @Mock
-    private InstrumentsService instrumentsService;
     @Mock
     private MarketDataService marketDataService;
     @Mock
@@ -49,8 +43,8 @@ class ExtMarketDataServiceUnitTest {
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new ExtMarketDataService(MARKET_PROPERTIES, context, extInstrumentsService, marketDataService);
-        Mockito.when(applicationContext.getBean("realExtMarketDataService", ExtMarketDataService.class)).thenReturn(service);
+        this.service = new ExtMarketDataService(MARKET_PROPERTIES, extInstrumentsService, marketDataService);
+        Mockito.when(applicationContext.getBean(ExtMarketDataService.class)).thenReturn(service);
         service.setApplicationContext(applicationContext);
     }
 
@@ -58,11 +52,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenFromIsReached() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -78,7 +70,9 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 6);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 13);
-        final List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 14);
+
+        final List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
@@ -91,11 +85,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -111,7 +103,9 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 23);
-        final List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 24);
+
+        final List<Candle> candles = service.getCandles(ticker, Interval.of(from, to), candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
@@ -124,11 +118,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_filterCandlesByYears() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -146,7 +138,9 @@ class ExtMarketDataServiceUnitTest {
                 DateTimeTestData.createDateTime(2016, 2, 1),
                 DateTimeTestData.createDateTime(2016, 2, 29)
         );
-        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 3, 1);
+
+        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval, currentDateTime);
 
         Assertions.assertEquals(5, candles.size());
         AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
@@ -158,11 +152,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenFromIsReached() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -180,7 +172,9 @@ class ExtMarketDataServiceUnitTest {
                 DateTimeTestData.createDateTime(2017, 1, 1),
                 DateTimeTestData.createDateTime(2020, 1, 1)
         );
-        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 2);
+
+        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
@@ -193,11 +187,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -215,7 +207,9 @@ class ExtMarketDataServiceUnitTest {
                 DateTimeTestData.createDateTime(2010, 1, 1),
                 DateTimeTestData.createDateTime(2020, 1, 1)
         );
-        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 2);
+
+        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
@@ -228,11 +222,9 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() throws IOException {
-        Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
-
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-        final String ticker = "ticker";
         final String figi = "figi";
+        final String ticker = "ticker";
+        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -249,7 +241,8 @@ class ExtMarketDataServiceUnitTest {
                 DateTimeTestData.createDateTime(2017, 1, 4),
                 DateTimeTestData.createDateTime(2020, 1, 1)
         );
-        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval);
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 2);
+        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval, currentDateTime);
 
         Assertions.assertEquals(3, candles.size());
         AssertUtils.assertEquals(3, candles.get(0).getClosePrice());
@@ -321,9 +314,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -346,10 +338,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime())
-                .thenReturn(DateTimeTestData.createDateTime(2020, 9, 10, 2));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10, 2);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(limit, candles.size());
         AssertUtils.assertEquals(2, candles.get(0).getClosePrice());
@@ -377,10 +368,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 10, 1))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime())
-                .thenReturn(DateTimeTestData.createDateTime(2020, 9, 10, 2));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10, 2);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
@@ -411,9 +401,8 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10))
                 .plusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -438,9 +427,8 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 11))
                 .plusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit());
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(3, candles.size());
         AssertUtils.assertEquals(4, candles.get(0).getClosePrice());
@@ -465,10 +453,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(5, DateTimeTestData.createDateTime(2020, 9, 9, 5))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime())
-                .thenReturn(DateTimeTestData.createDateTime(2020, 9, 9, 4));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 9, 4);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(3, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
@@ -486,9 +473,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
-        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -511,9 +497,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(limit, candles.size());
         AssertUtils.assertEquals(2, candles.get(0).getClosePrice());
@@ -541,9 +527,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 13))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
@@ -572,9 +558,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2019, 9, 13))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(6, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
@@ -603,9 +589,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2018, 9, 13))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 10));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 10);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertTrue(candles.isEmpty());
     }
@@ -628,9 +614,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(6, DateTimeTestData.createDateTime(2020, 9, 12))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(3, candles.size());
         AssertUtils.assertEquals(4, candles.get(0).getClosePrice());
@@ -655,9 +641,9 @@ class ExtMarketDataServiceUnitTest {
                 .add(5, DateTimeTestData.createDateTime(2020, 9, 17))
                 .mock();
 
-        Mockito.when(context.getCurrentDateTime()).thenReturn(DateTimeTestData.createDateTime(2020, 9, 15));
+        final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 15);
 
-        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval);
+        final List<Candle> candles = service.getLastCandles(ticker, limit, candleInterval, currentDateTime);
 
         Assertions.assertEquals(2, candles.size());
         AssertUtils.assertEquals(1, candles.get(0).getClosePrice());

@@ -8,6 +8,7 @@ import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -39,6 +40,12 @@ public class Mocker {
         final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mockito.mockStatic(OffsetDateTime.class, Mockito.CALLS_REAL_METHODS);
         offsetDateTimeStaticMock.when(OffsetDateTime::now).thenReturn(mockedNow);
         return offsetDateTimeStaticMock;
+    }
+
+    public static OffsetDateTime mockCurrentDateTime(final Context context) {
+        final OffsetDateTime currentDateTime = OffsetDateTime.now();
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
+        return currentDateTime;
     }
 
     public static void mockTinkoffOperations(

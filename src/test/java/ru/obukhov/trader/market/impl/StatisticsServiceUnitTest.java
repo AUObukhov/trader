@@ -4,14 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -31,6 +34,8 @@ class StatisticsServiceUnitTest {
     private ExtMarketDataService extMarketDataService;
     @Mock
     private ApplicationContext applicationContext;
+    @Mock
+    private Context context;
 
     @InjectMocks
     private StatisticsService service;
@@ -60,8 +65,6 @@ class StatisticsServiceUnitTest {
                 TestData.createCandle(20, 17, 24, 15, time.plusMinutes(2))
         );
 
-        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
-
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
         final List<BigDecimal> shortAverages = TestData.createBigDecimalsList(10.0, 15.0, 20.0);
@@ -70,15 +73,20 @@ class StatisticsServiceUnitTest {
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
 
-        // act
+        final OffsetDateTime mockedNow = OffsetDateTime.now();
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, mockedNow)).thenReturn(candles);
 
-        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
+            // act
 
-        // assert
+            GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
 
-        AssertUtils.assertEquals(candles, response.getCandles());
-        AssertUtils.assertEquals(shortAverages, response.getAverages1());
-        AssertUtils.assertEquals(longAverages, response.getAverages2());
+            // assert
+
+            AssertUtils.assertEquals(candles, response.getCandles());
+            AssertUtils.assertEquals(shortAverages, response.getAverages1());
+            AssertUtils.assertEquals(longAverages, response.getAverages2());
+        }
     }
 
     @Test
@@ -112,7 +120,6 @@ class StatisticsServiceUnitTest {
                 TestData.createCandle(60, 18, 22, 14, time.plusMinutes(8)),
                 TestData.createCandle(30, 18, 22, 14, time.plusMinutes(9))
         );
-        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
 
@@ -122,15 +129,20 @@ class StatisticsServiceUnitTest {
         mockAverages(smallWindow, shortAverages);
         mockAverages(bigWindow, longAverages);
 
-        // act
+        final OffsetDateTime mockedNow = OffsetDateTime.now();
+        try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
+            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, mockedNow)).thenReturn(candles);
 
-        GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
+            // act
 
-        // assert
+            GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
 
-        AssertUtils.assertEquals(candles, response.getCandles());
-        AssertUtils.assertEquals(shortAverages, response.getAverages1());
-        AssertUtils.assertEquals(longAverages, response.getAverages2());
+            // assert
+
+            AssertUtils.assertEquals(candles, response.getCandles());
+            AssertUtils.assertEquals(shortAverages, response.getAverages1());
+            AssertUtils.assertEquals(longAverages, response.getAverages2());
+        }
     }
 
     private void mockAverages(Integer window, List<BigDecimal> averages) {

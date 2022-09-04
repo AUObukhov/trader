@@ -72,7 +72,12 @@ public abstract class Bot {
         final String ticker = botConfig.ticker();
         final List<Order> orders = ordersService.getOrders(ticker);
         if (orders.isEmpty()) {
-            final List<Candle> currentCandles = extMarketDataService.getLastCandles(ticker, LAST_CANDLES_COUNT, botConfig.candleInterval());
+            final List<Candle> currentCandles = extMarketDataService.getLastCandles(
+                    ticker,
+                    LAST_CANDLES_COUNT,
+                    botConfig.candleInterval(),
+                    context.getCurrentDateTime()
+            );
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {

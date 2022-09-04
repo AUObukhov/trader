@@ -12,6 +12,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -42,7 +43,7 @@ public class StatisticsService {
             final int smallWindow,
             final int bigWindow
     ) throws IOException {
-        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval);
+        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval, OffsetDateTime.now());
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();

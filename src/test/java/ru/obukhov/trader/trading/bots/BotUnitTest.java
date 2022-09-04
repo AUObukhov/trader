@@ -133,6 +133,7 @@ class BotUnitTest {
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(ticker, List.of(candle));
+        Mocker.mockCurrentDateTime(context);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -298,8 +299,12 @@ class BotUnitTest {
     }
 
     private void mockCandles(final String ticker, final List<Candle> candles) {
-        Mockito.when(extMarketDataService.getLastCandles(Mockito.eq(ticker), Mockito.anyInt(), Mockito.any(CandleInterval.class)))
-                .thenReturn(candles);
+        Mockito.when(extMarketDataService.getLastCandles(
+                Mockito.eq(ticker),
+                Mockito.anyInt(),
+                Mockito.any(CandleInterval.class),
+                Mockito.any(OffsetDateTime.class))
+        ).thenReturn(candles);
     }
 
     private static final class TestStrategyCache implements StrategyCache {

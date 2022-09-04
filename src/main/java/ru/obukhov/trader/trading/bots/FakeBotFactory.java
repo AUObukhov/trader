@@ -19,7 +19,6 @@ import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -30,31 +29,23 @@ public class FakeBotFactory {
 
     private final MarketProperties marketProperties;
     private final TradingStrategyFactory strategyFactory;
+    private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
     private final ApplicationContext applicationContext;
-    private final MarketDataService marketDataService;
 
     public FakeBot createBot(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
         final FakeContext fakeContext = createFakeContext(botConfig, balanceConfig, currentDateTime);
-        final ExtMarketDataService fakeExtMarketDataService = (ExtMarketDataService) applicationContext.getBean(
-                "fakeExtMarketDataService",
-                marketProperties,
-                fakeContext,
-                extInstrumentsService,
-                marketDataService
-        );
-
         final ExtOperationsService fakeOperationsService = new FakeExtOperationsService(fakeContext);
         final FakeExtOrdersService fakeOrdersService = new FakeExtOrdersService(
                 fakeContext,
                 extInstrumentsService,
-                fakeExtMarketDataService,
+                extMarketDataService,
                 botConfig.commission()
         );
         final AbstractTradingStrategy strategy = strategyFactory.createStrategy(botConfig);
 
         return new FakeBot(
-                fakeExtMarketDataService,
+                extMarketDataService,
                 extInstrumentsService,
                 fakeOperationsService,
                 fakeOrdersService,

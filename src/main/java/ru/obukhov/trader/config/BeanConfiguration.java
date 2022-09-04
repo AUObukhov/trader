@@ -82,7 +82,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public Context realContext() {
+    public RealContext realContext() {
         return new RealContext();
     }
 
@@ -99,24 +99,12 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtMarketDataService realExtMarketDataService(
+    public ExtMarketDataService extMarketDataService(
             final MarketProperties marketProperties,
-            final Context realContext,
             final ExtInstrumentsService extInstrumentsService,
             final MarketDataService marketDataService
     ) {
-        return new ExtMarketDataService(marketProperties, realContext, extInstrumentsService, marketDataService);
-    }
-
-    @Bean
-    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    public ExtMarketDataService fakeExtMarketDataService(
-            final MarketProperties marketProperties,
-            final Context fakeContext,
-            final ExtInstrumentsService extInstrumentsService,
-            final MarketDataService marketDataService
-    ) {
-        return new ExtMarketDataService(marketProperties, fakeContext, extInstrumentsService, marketDataService);
+        return new ExtMarketDataService(marketProperties, extInstrumentsService, marketDataService);
     }
 
     @Bean
@@ -133,11 +121,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtOrdersService realExtOrdersService(
-            final OrdersService ordersService,
-            final ExtMarketDataService realExtMarketDataService,
-            final ExtInstrumentsService extInstrumentsService
-    ) {
+    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService, final ExtInstrumentsService extInstrumentsService) {
         return new RealExtOrdersService(ordersService, extInstrumentsService);
     }
 
@@ -147,7 +131,7 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public GrafanaService realGrafanaService(final ExtMarketDataService realExtMarketDataService, final StatisticsService statisticsService) {
+    public GrafanaService grafanaService(final ExtMarketDataService realExtMarketDataService, final StatisticsService statisticsService) {
         return new GrafanaService(realExtMarketDataService, statisticsService);
     }
 
