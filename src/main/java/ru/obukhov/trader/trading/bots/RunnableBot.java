@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
-import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.impl.RealContext;
+import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
 
@@ -16,13 +17,14 @@ public class RunnableBot extends Bot implements Runnable {
     private final MarketProperties marketProperties;
 
     public RunnableBot(
-            final TinkoffServices tinkoffServices,
+            final ServicesContainer services,
+            final RealContext realContext,
             final TradingStrategy strategy,
             final SchedulingProperties schedulingProperties,
             final BotConfig botConfig,
             final MarketProperties marketProperties
     ) {
-        super(tinkoffServices, strategy, strategy.initCache());
+        super(services, realContext, strategy, strategy.initCache());
 
         this.schedulingProperties = schedulingProperties;
         this.botConfig = botConfig;

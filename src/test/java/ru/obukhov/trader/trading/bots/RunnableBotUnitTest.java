@@ -14,7 +14,7 @@ import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
-import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
@@ -63,7 +63,7 @@ class RunnableBotUnitTest {
     private MarketProperties marketProperties;
 
     @InjectMocks
-    private TinkoffServices tinkoffServices;
+    private ServicesContainer services;
 
     @Test
     void run_doesNothing_whenDisabled() {
@@ -452,7 +452,7 @@ class RunnableBotUnitTest {
     }
 
     private RunnableBot createRunnableBot() {
-        return new RunnableBot(tinkoffServices, strategy, schedulingProperties, botConfig, marketProperties);
+        return new RunnableBot(services, realContext, strategy, schedulingProperties, botConfig, marketProperties);
     }
 
     private void mockBotConfig(

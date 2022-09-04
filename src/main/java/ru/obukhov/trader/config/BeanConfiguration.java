@@ -20,8 +20,8 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.RealExtOperationsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
+import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.impl.StatisticsService;
-import ru.obukhov.trader.market.impl.TinkoffServices;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
@@ -152,26 +152,20 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public TinkoffServices realTinkoffServices(
+    public ServicesContainer services(
             final ExtMarketDataService realExtMarketDataService,
             final ExtInstrumentsService extInstrumentsService,
             final ExtOperationsService realExtOperationsService,
-            final RealExtOrdersService realExtOrdersService,
-            final RealContext realContext
+            final RealExtOrdersService realExtOrdersService
     ) {
-        return new TinkoffServices(
-                realExtMarketDataService,
-                extInstrumentsService,
-                realExtOperationsService,
-                realExtOrdersService,
-                realContext
-        );
+        return new ServicesContainer(realExtMarketDataService, extInstrumentsService, realExtOperationsService, realExtOrdersService);
     }
 
     @Bean
     public List<RunnableBot> scheduledBots(
             final Environment environment,
-            final TinkoffServices tinkoffServices,
+            final ServicesContainer services,
+            final RealContext realContext,
             final TradingStrategyFactory strategyFactory,
             final SchedulingProperties schedulingProperties,
             final ScheduledBotsProperties scheduledBotsProperties,
@@ -181,7 +175,8 @@ public class BeanConfiguration {
         return scheduledBotsProperties.getBotConfigs().stream()
                 .map(botConfig -> {
                     final RunnableBot bot = new RunnableBot(
-                            tinkoffServices,
+                            services,
+                            realContext,
                             strategyFactory.createStrategy(botConfig),
                             schedulingProperties,
                             botConfig,

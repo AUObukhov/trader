@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.TinkoffServices;
+import ru.obukhov.trader.market.impl.RealContext;
+import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
@@ -47,12 +48,12 @@ public abstract class Bot {
     protected final TradingStrategy strategy;
     protected final StrategyCache strategyCache;
 
-    protected Bot(final TinkoffServices tinkoffServices, final TradingStrategy strategy, final StrategyCache strategyCache) {
-        this.extMarketDataService = tinkoffServices.extMarketDataService();
-        this.extInstrumentsService = tinkoffServices.extInstrumentsService();
-        this.extOperationsService = tinkoffServices.operationsService();
-        this.ordersService = tinkoffServices.ordersService();
-        this.context = tinkoffServices.realContext();
+    protected Bot(final ServicesContainer services, final RealContext realContext, final TradingStrategy strategy, final StrategyCache strategyCache) {
+        this.extMarketDataService = services.extMarketDataService();
+        this.extInstrumentsService = services.extInstrumentsService();
+        this.extOperationsService = services.extOperationsService();
+        this.ordersService = services.extOrdersService();
+        this.context = realContext;
         this.strategy = strategy;
         this.strategyCache = strategyCache;
     }
