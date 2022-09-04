@@ -9,7 +9,6 @@ import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.CurrencyPosition;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MoneyAmount;
 import ru.obukhov.trader.market.model.Order;
@@ -117,10 +116,6 @@ public class TestData {
         return new Candle().setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
     }
 
-    public static Candle createCandleWithOpenPriceAndTime(final double openPrice, final OffsetDateTime time) {
-        return createCandleWithOpenPrice(openPrice).setTime(time);
-    }
-
     public static Candle createCandleWithClosePrice(final double closePrice) {
         return new Candle()
                 .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
@@ -140,12 +135,6 @@ public class TestData {
     // endregion
 
     // region DecisionData creation
-
-    public static DecisionData createDecisionData(final Candle... candles) {
-        final DecisionData decisionData = new DecisionData();
-        decisionData.setCurrentCandles(List.of(candles));
-        return decisionData;
-    }
 
     public static DecisionData createDecisionData(
             final double averagePositionPrice,
@@ -315,18 +304,6 @@ public class TestData {
                 .setQuantityLots(createQuotation(quantityLots))
                 .build();
     }
-
-    // region CurrencyPosition creation
-
-    public static CurrencyPosition createCurrencyPosition(final String currency, final long balance) {
-        return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), null);
-    }
-
-    public static CurrencyPosition createCurrencyPosition(final String currency, final long balance, final long blocked) {
-        return new CurrencyPosition(currency, DecimalUtils.setDefaultScale(balance), DecimalUtils.setDefaultScale(blocked));
-    }
-
-    // endregion
 
     // region Operation
 
@@ -499,25 +476,6 @@ public class TestData {
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    public static Order createOrder(final String id, final String figi) {
-        return new Order(
-                id,
-                null,
-                0,
-                null,
-                null,
-                null,
-                null,
-                figi,
                 null,
                 null,
                 null,
