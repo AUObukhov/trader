@@ -9,12 +9,12 @@ import java.util.List;
 
 public record BackTestResult(
         BotConfig botConfig, // config of bot for which back test was ran
-        Interval interval, //back test interval
+        Interval interval, // back test interval
         Balances balances,
         Profits profits,
         @JsonIgnore List<BackTestPosition> positions, // positions after back test
         @JsonIgnore List<BackTestOperation> operations, // operations made during back test
-        @JsonIgnore List<Candle> candles, // all candles in back test {@code interval}
+        @JsonIgnore List<Candle> candles, // all candles in back test interval
         String error
 ) {
 }
