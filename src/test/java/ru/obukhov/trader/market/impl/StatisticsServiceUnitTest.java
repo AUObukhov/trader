@@ -20,7 +20,6 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -41,7 +40,7 @@ class StatisticsServiceUnitTest {
     private StatisticsService service;
 
     @Test
-    void getExtendedCandles_extendsCandles_withoutExtremes() throws IOException {
+    void getExtendedCandles_extendsCandles_withoutExtremes() {
 
         // arrange
 
@@ -90,7 +89,7 @@ class StatisticsServiceUnitTest {
     }
 
     @Test
-    void getExtendedCandles_extendsCandles_withExtremes() throws IOException {
+    void getExtendedCandles_extendsCandles_withExtremes() {
 
         // arrange
 

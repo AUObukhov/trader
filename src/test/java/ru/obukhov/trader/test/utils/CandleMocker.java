@@ -10,7 +10,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class CandleMocker {
         return this;
     }
 
-    public void mock() throws IOException {
+    public void mock() {
         Mockito.when(marketDataService.getCandlesSync(
                 Mockito.eq(figi),
                 Mockito.any(Instant.class),

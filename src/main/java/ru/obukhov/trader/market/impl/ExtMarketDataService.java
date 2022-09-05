@@ -19,7 +19,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -56,7 +55,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
             final Interval interval,
             final CandleInterval candleInterval,
             final OffsetDateTime currentDateTime
-    ) throws IOException {
+    ) {
         DateUtils.assertDateTimeNotFuture(interval.getTo(), currentDateTime, "to");
 
         final ChronoUnit period = DateUtils.getPeriodByCandleInterval(candleInterval);

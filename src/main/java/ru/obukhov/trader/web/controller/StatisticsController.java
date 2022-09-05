@@ -19,7 +19,6 @@ import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @Slf4j
@@ -64,7 +63,7 @@ public class StatisticsController {
 
             @RequestParam(required = false, defaultValue = "false")
             @ApiParam(value = "Flag indicating to save the back test result to a file. Default value is false", example = "true") final boolean saveToFile
-    ) throws IOException {
+    ) {
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
                 ticker,

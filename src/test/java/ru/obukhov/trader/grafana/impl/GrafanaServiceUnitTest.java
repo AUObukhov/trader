@@ -33,7 +33,6 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -203,7 +202,7 @@ class GrafanaServiceUnitTest {
     }
 
     @Test
-    void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() throws IOException {
+    void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() {
         final GetDataRequest request = new GetDataRequest();
 
         final String ticker = "ticker";
@@ -251,7 +250,7 @@ class GrafanaServiceUnitTest {
     }
 
     @Test
-    void getData_returnsExtendedCandles_whenMetricIsExtendedCandles_andParamsAreValid() throws IOException {
+    void getData_returnsExtendedCandles_whenMetricIsExtendedCandles_andParamsAreValid() {
 
         // arrange
 

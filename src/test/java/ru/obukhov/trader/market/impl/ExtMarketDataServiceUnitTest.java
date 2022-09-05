@@ -21,7 +21,6 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -50,7 +49,7 @@ class ExtMarketDataServiceUnitTest {
     // region getCandles tests
 
     @Test
-    void getCandles_skipsCandlesByDays_whenFromIsReached() throws IOException {
+    void getCandles_skipsCandlesByDays_whenFromIsReached() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -83,7 +82,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() throws IOException {
+    void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -116,7 +115,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_filterCandlesByYears() throws IOException {
+    void getCandles_filterCandlesByYears() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -150,7 +149,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenFromIsReached() throws IOException {
+    void getCandles_skipsCandlesByYears_whenFromIsReached() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -185,7 +184,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() throws IOException {
+    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -220,7 +219,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() throws IOException {
+    void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
         final String figi = "figi";
         final String ticker = "ticker";
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
@@ -264,7 +263,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() throws IOException {
+    void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
@@ -283,7 +282,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() throws IOException {
+    void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
@@ -320,7 +319,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
+    void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -350,7 +349,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
+    void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 10;
@@ -381,7 +380,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() throws IOException {
+    void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -407,7 +406,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() throws IOException {
+    void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -436,7 +435,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
+    void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -479,7 +478,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() throws IOException {
+    void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -509,7 +508,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() throws IOException {
+    void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 10;
@@ -540,7 +539,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() throws IOException {
+    void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 10;
@@ -571,7 +570,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() throws IOException {
+    void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -596,7 +595,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() throws IOException {
+    void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -624,7 +623,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() throws IOException {
+    void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final int limit = 5;
@@ -654,7 +653,7 @@ class ExtMarketDataServiceUnitTest {
     // region getMarketCandles tests
 
     @Test
-    void getMarketCandles_returnsMappedCandles() throws IOException {
+    void getMarketCandles_returnsMappedCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -699,7 +698,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() throws IOException {
+    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
