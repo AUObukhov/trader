@@ -24,7 +24,6 @@ import ru.tinkoff.piapi.core.MarketDataService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -655,7 +654,7 @@ class ExtMarketDataServiceUnitTest {
     // region getMarketCandles tests
 
     @Test
-    void getMarketCandles_returnsMappedCandles() {
+    void getMarketCandles_returnsMappedCandles() throws IOException {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -686,8 +685,9 @@ class ExtMarketDataServiceUnitTest {
         final OffsetDateTime time3 = from.plusMinutes(3);
         final HistoricCandle historicCandle3 = TestData.createHistoricCandle(openPrice3, closePrice3, highestPrice3, lowestPrice3, time3, false);
 
-        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
-                .thenReturn(List.of(historicCandle1, historicCandle2, historicCandle3));
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .add(historicCandle1, historicCandle2, historicCandle3)
+                .mock();
 
         final List<Candle> candles = service.getMarketCandles(ticker, interval, candleInterval);
 
@@ -699,7 +699,7 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
+    void getMarketCandles_returnsEmptyList_whenGetsNoCandles() throws IOException {
         final String ticker = "ticker";
         final String figi = "figi";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
@@ -709,8 +709,8 @@ class ExtMarketDataServiceUnitTest {
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
-        Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
-                .thenReturn(Collections.emptyList());
+        new CandleMocker(marketDataService, figi, candleInterval)
+                .mock();
 
         final List<Candle> candles = service.getMarketCandles(ticker, interval, candleInterval);
 
