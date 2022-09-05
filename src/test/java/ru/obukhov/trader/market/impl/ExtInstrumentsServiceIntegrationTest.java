@@ -2,28 +2,27 @@ package ru.obukhov.trader.market.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.util.Collections;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
-class ExtInstrumentsServiceUnitTest {
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@SpringBootTest
+class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
-    @Mock
-    private InstrumentsService instrumentsService;
-
-    @InjectMocks
+    @Autowired
     private ExtInstrumentsService extInstrumentsService;
 
     // region getFigiByTicker tests
