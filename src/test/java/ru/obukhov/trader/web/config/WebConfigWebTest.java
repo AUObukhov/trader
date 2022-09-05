@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.convert.support.GenericConversionService;
-import ru.obukhov.trader.ContextTest;
+import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 @SpringBootTest(args = "--trading.token=i identify myself as token")
-class WebConfigWebTest extends ContextTest {
+class WebConfigWebTest extends IntegrationTest {
 
     @Autowired
     private GenericConversionService conversionService;

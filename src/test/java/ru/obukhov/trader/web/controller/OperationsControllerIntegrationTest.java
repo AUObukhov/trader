@@ -2,7 +2,6 @@ package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,7 +14,6 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
 import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
@@ -25,9 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
-
-    @MockBean
-    private OperationsService operationsService;
 
     @Test
     @SuppressWarnings("java:S2699")

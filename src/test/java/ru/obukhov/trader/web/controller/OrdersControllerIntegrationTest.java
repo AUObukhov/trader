@@ -2,7 +2,6 @@ package ru.obukhov.trader.web.controller;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -14,15 +13,11 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
-import ru.tinkoff.piapi.core.OrdersService;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
-
-    @MockBean
-    private OrdersService ordersService;
 
     @Test
     @SuppressWarnings("java:S2699")
