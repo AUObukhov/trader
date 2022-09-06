@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -28,6 +29,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getFigiByTicker tests
 
     @Test
+    @DirtiesContext
     void getFigiByTicker_returnsFirstFigi_whenAssetAndInstrumentExists() {
         final String ticker1 = "ticker1";
         final String figi1 = "figi1";
@@ -62,6 +64,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getFigiByTicker_throwsIllegalArgumentException_whenAssetsNotExists() {
         final String ticker = "ticker";
 
@@ -74,6 +77,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getFigiByTicker_throwsIllegalArgumentException_whenInstrumentNotExists() {
         final String ticker1 = "ticker1";
         final String figi1 = "figi1";
@@ -111,6 +115,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTickerByFigi tests
 
     @Test
+    @DirtiesContext
     void getTickerByFigi_returnsTicker_whenInstrumentExists() {
         final String ticker = "ticker";
         final String figi = "figi";
@@ -122,6 +127,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     void getTickerByFigi_throwsIllegalArgumentException_whenInstrumentNotExists() {
         final String figi = "figi";
 

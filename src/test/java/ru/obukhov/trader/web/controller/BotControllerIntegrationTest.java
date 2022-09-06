@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -193,6 +194,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
