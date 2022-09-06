@@ -34,7 +34,7 @@ class MarketPropertiesContextTest {
 
                     Assertions.assertEquals(Duration.ofMinutes(480), marketProperties.getWorkSchedule().getDuration());
 
-                    Assertions.assertEquals(Integer.valueOf(5), marketProperties.getConsecutiveEmptyDaysLimit());
+                    Assertions.assertEquals(Integer.valueOf(7), marketProperties.getConsecutiveEmptyDaysLimit());
                 });
     }
 
@@ -43,7 +43,7 @@ class MarketPropertiesContextTest {
         this.contextRunner
                 .withPropertyValues(
                         "market.commission: 0.003",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market", "workSchedule is mandatory"));
@@ -55,7 +55,7 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.duration: 480",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market.work-schedule", "startTime is mandatory"));
@@ -67,7 +67,7 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market.work-schedule", "duration is mandatory"));
@@ -80,7 +80,7 @@ class MarketPropertiesContextTest {
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
                         "market.work-schedule.duration: -1",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
@@ -96,7 +96,7 @@ class MarketPropertiesContextTest {
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
                         "market.work-schedule.duration: 0",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
@@ -112,7 +112,7 @@ class MarketPropertiesContextTest {
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
                         "market.work-schedule.duration: 86400",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
@@ -128,7 +128,7 @@ class MarketPropertiesContextTest {
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
                         "market.work-schedule.duration: 86399",
-                        "market.consecutive-empty-days-limit: 5",
+                        "market.consecutive-empty-days-limit: 7",
                         "market.start-date: 2000-01-01T00:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
@@ -159,7 +159,7 @@ class MarketPropertiesContextTest {
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
                         "market.work-schedule.duration: 480",
-                        "market.consecutive-empty-days-limit: 5"
+                        "market.consecutive-empty-days-limit: 7"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market.startDate", "startDate is mandatory"));
     }
