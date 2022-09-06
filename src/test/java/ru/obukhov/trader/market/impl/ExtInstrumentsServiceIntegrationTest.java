@@ -70,7 +70,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
                 () -> extInstrumentsService.getFigiByTicker(ticker),
                 "Not found instrument for ticker '" + ticker + "'"
         );
@@ -104,7 +105,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        Assertions.assertThrows(IllegalArgumentException.class,
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
                 () -> extInstrumentsService.getFigiByTicker(ticker4),
                 "Not found instrument for ticker '" + ticker4 + "'"
         );
