@@ -65,7 +65,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_throwsIllegalArgumentException_whenAssetsNotExists() {
+    void getFigiByTicker_throwsIllegalArgumentException_whenNoAssets() {
         final String ticker = "ticker";
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
@@ -79,30 +79,28 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_throwsIllegalArgumentException_whenInstrumentNotExists() {
+    void getFigiByTicker_throwsIllegalArgumentException_whenNoInstrument() {
         final String ticker1 = "ticker1";
-        final String figi1 = "figi1";
-
         final String ticker2 = "ticker2";
-        final String figi2 = "figi2";
-
         final String ticker3 = "ticker3";
-        final String figi3 = "figi3";
-
         final String ticker4 = "ticker4";
 
-        Mocker.mockFigiByTicker(instrumentsService, figi1, ticker1);
+        final String figi2 = "figi2";
+        final String figi1 = "figi1";
+        final String figi3 = "figi3";
+
         final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
                 .build();
-
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
         final Asset asset2 = Asset.newBuilder()
                 .addInstruments(assetInstrument21)
                 .addInstruments(assetInstrument22)
                 .build();
+
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         Assertions.assertThrows(
@@ -130,7 +128,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getTickerByFigi_throwsIllegalArgumentException_whenInstrumentNotExists() {
+    void getTickerByFigi_throwsIllegalArgumentException_whenNoInstrument() {
         final String figi = "figi";
 
         Assertions.assertThrows(
@@ -145,7 +143,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getShare tests
 
     @Test
-    void getShare_returnsShare_whenExists() {
+    void getShare_returnsShare_whenShareExists() {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final Share share1 = Share.newBuilder().setTicker(ticker1).build();
@@ -159,7 +157,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getShare_returnsNull_whenShareNotExists() {
+    void getShare_returnsNull_whenNoShare() {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
         final String ticker3 = "ticker3";
