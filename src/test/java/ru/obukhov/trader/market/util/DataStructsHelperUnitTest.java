@@ -33,14 +33,14 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoneyValue_withStringCurrency() {
-        final String currency = Currency.EUR.name();
+        final Currency currency = Currency.EUR;
         final long units = 123;
         final int nano = 456;
         final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
 
         final MoneyValue moneyValue = DataStructsHelper.createMoneyValue(currency, value);
 
-        Assertions.assertEquals(currency, moneyValue.getCurrency());
+        Assertions.assertEquals(currency.name(), moneyValue.getCurrency());
         Assertions.assertEquals(units, moneyValue.getUnits());
         Assertions.assertEquals(nano, moneyValue.getNano());
     }

@@ -18,7 +18,7 @@ public record PortfolioPosition(
         @NotNull BigDecimal quantityLots
 ) {
 
-    public String getCurrency() {
+    public Currency getCurrency() {
         return averagePositionPrice.currency();
     }
 

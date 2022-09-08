@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 
 public record MoneyAmount(
-        @NotNull String currency,
+        @NotNull Currency currency,
         @NotNull BigDecimal value
 ) {
 }

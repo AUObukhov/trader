@@ -122,13 +122,15 @@ public class FakeExtOrdersService implements ExtOrdersService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
+            final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
+            final MoneyAmount price = new MoneyAmount(currency, currentPrice);
             position = new PortfolioPosition(
                     ticker,
                     InstrumentType.STOCK,
                     BigDecimal.valueOf(quantity),
-                    new MoneyAmount(share.getCurrency(), currentPrice),
+                    price,
                     BigDecimal.ZERO,
-                    new MoneyAmount(share.getCurrency(), currentPrice),
+                    price,
                     BigDecimal.valueOf(quantityLots)
             );
         } else {

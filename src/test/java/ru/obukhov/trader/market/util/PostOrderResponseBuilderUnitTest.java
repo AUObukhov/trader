@@ -27,7 +27,7 @@ class PostOrderResponseBuilderUnitTest {
         final String orderId = "orderId";
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
-                .setCurrency(currency.name())
+                .setCurrency(currency)
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
@@ -67,7 +67,7 @@ class PostOrderResponseBuilderUnitTest {
         final String orderId = null;
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
-                .setCurrency(currency.name())
+                .setCurrency(currency)
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)

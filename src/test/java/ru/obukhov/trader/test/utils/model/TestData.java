@@ -333,11 +333,11 @@ public class TestData {
     // endregion
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
-        return new MoneyAmount(currency.name(), DecimalUtils.setDefaultScale(value));
+        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
-        return new MoneyAmount(currency.name(), DecimalUtils.setDefaultScale(value));
+        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static Money createMoney(final Currency currency, final BigDecimal value) {

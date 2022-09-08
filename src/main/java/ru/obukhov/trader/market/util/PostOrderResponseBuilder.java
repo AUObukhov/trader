@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class PostOrderResponseBuilder {
 
-    private String currency;
+    private Currency currency;
     private BigDecimal totalOrderAmount;
     private BigDecimal totalCommissionAmount;
     private BigDecimal initialSecurityPrice;
@@ -28,8 +28,8 @@ public class PostOrderResponseBuilder {
     private String orderId;
 
     @Tolerate
-    public PostOrderResponseBuilder setCurrency(final Currency currency) {
-        return setCurrency(currency.name());
+    public PostOrderResponseBuilder setCurrency(final String currency) {
+        return setCurrency(Currency.valueOfIgnoreCase(currency));
     }
 
     @Tolerate
@@ -49,7 +49,7 @@ public class PostOrderResponseBuilder {
 
     public PostOrderResponse build() {
         final MoneyValue orderPrice = DataStructsHelper.createMoneyValue(currency, totalOrderAmount.add(totalCommissionAmount));
-        final MoneyValue commission = DataStructsHelper.createMoneyValue(Currency.valueOfIgnoreCase(currency), totalCommissionAmount);
+        final MoneyValue commission = DataStructsHelper.createMoneyValue(currency, totalCommissionAmount);
         final PostOrderResponse.Builder builder = PostOrderResponse.newBuilder()
                 .setExecutionReportStatus(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL)
                 .setLotsRequested(quantityLots)

@@ -127,7 +127,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final MoneyAmount expected, final MoneyAmount actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || !actual.currency().equalsIgnoreCase(expected.currency())) {
+        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || actual.currency() != expected.currency()) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }

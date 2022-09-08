@@ -20,16 +20,16 @@ public class DataStructsHelper {
 
     // region createMoneyValue
 
-    public static MoneyValue createMoneyValue(final Currency currency, final BigDecimal value) {
-        return createMoneyValue(currency.name(), value);
-    }
-
     public static MoneyValue createMoneyValue(final String currency, final BigDecimal value) {
         return MoneyValue.newBuilder()
                 .setCurrency(currency)
                 .setUnits(value.longValue())
                 .setNano(DecimalUtils.getNano(value))
                 .build();
+    }
+
+    public static MoneyValue createMoneyValue(final Currency currency, final BigDecimal value) {
+        return createMoneyValue(currency.name(), value);
     }
 
     // endregion
