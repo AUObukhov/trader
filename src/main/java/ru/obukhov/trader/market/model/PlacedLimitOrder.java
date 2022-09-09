@@ -10,6 +10,6 @@ public record PlacedLimitOrder(
         String message,
         Integer requestedLots,
         Integer executedLots,
-        MoneyAmount commission
+        Money commission
 ) {
 }

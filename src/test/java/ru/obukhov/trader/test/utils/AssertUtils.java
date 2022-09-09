@@ -29,13 +29,11 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
-import ru.obukhov.trader.market.model.MoneyAmount;
+import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
-import ru.tinkoff.piapi.core.models.Money;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -100,7 +98,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(@Nullable final MoneyValue expected, final BigDecimal actual) {
+    public static void assertEquals(@Nullable final ru.tinkoff.piapi.contract.v1.MoneyValue expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.map(expected))) {
@@ -108,7 +106,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(Double expected, MoneyValue actual) {
+    public static void assertEquals(Double expected, ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(MONEY_MAPPER.map(actual), expected)) {
@@ -116,7 +114,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(@Nullable final BigDecimal expected, final MoneyValue actual) {
+    public static void assertEquals(@Nullable final BigDecimal expected, final ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.map(actual))) {
@@ -124,7 +122,7 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(@Nullable final MoneyAmount expected, final MoneyAmount actual) {
+    public static void assertEquals(@Nullable final Money expected, final Money actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
         } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || actual.currency() != expected.currency()) {
@@ -158,7 +156,7 @@ public class AssertUtils {
         assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
     }
 
-    public static void assertEquals(final Money money1, final Money money2) {
+    public static void assertEquals(final ru.tinkoff.piapi.core.models.Money money1, final ru.tinkoff.piapi.core.models.Money money2) {
         Assertions.assertEquals(money1.getCurrency(), money2.getCurrency());
         assertEquals(money1.getValue(), money2.getValue());
     }
@@ -211,7 +209,7 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
-            } else if (expectedValue instanceof Money expectedMoney && actualValue instanceof Money actualMoney) {
+            } else if (expectedValue instanceof ru.tinkoff.piapi.core.models.Money expectedMoney && actualValue instanceof ru.tinkoff.piapi.core.models.Money actualMoney) {
                 if (!equals(expectedMoney, actualMoney)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
@@ -246,7 +244,7 @@ public class AssertUtils {
         }
     }
 
-    public static boolean equals(final Money money1, final Money money2) {
+    public static boolean equals(final ru.tinkoff.piapi.core.models.Money money1, final ru.tinkoff.piapi.core.models.Money money2) {
         return money1.getCurrency().equals(money2.getCurrency())
                 && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
     }
@@ -278,9 +276,9 @@ public class AssertUtils {
                 && DecimalUtils.numbersEqual(position1.quantityLots(), position2.quantityLots());
     }
 
-    private static boolean equals(final MoneyAmount moneyAmount1, MoneyAmount moneyAmount2) {
-        return moneyAmount1.currency().equals(moneyAmount2.currency())
-                && DecimalUtils.numbersEqual(moneyAmount1.value(), moneyAmount1.value());
+    private static boolean equals(final Money money1, Money money2) {
+        return money1.currency().equals(money2.currency())
+                && DecimalUtils.numbersEqual(money1.value(), money1.value());
     }
 
     private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {

@@ -130,7 +130,7 @@ class PortfolioPositionUnitTest {
                 newQuantity,
                 position.averagePositionPrice(),
                 newExpectedYield,
-                TestData.createMoneyAmount(currency, newCurrentPrice.doubleValue()),
+                Money.of(currency, newCurrentPrice),
                 newQuantityLots
         );
 

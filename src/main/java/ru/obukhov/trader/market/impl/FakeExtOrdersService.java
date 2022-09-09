@@ -7,7 +7,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.market.model.MoneyAmount;
+import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
@@ -122,8 +122,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
         final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
-            final MoneyAmount price = new MoneyAmount(currency, currentPrice);
+            final Money price = Money.of(Currency.valueOfIgnoreCase(share.getCurrency()), currentPrice);
             position = new PortfolioPosition(
                     ticker,
                     InstrumentType.STOCK,

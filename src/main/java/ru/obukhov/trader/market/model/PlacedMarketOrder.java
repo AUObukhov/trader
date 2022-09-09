@@ -13,6 +13,6 @@ public record PlacedMarketOrder(
         String message,
         BigDecimal requestedLots,
         BigDecimal executedLots,
-        MoneyAmount commission
+        Money commission
 ) {
 }

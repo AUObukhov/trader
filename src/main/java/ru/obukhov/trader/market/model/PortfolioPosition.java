@@ -12,9 +12,9 @@ public record PortfolioPosition(
         @NotNull String ticker,
         @NotNull InstrumentType instrumentType,
         @NotNull BigDecimal quantity,
-        @NotNull MoneyAmount averagePositionPrice,
+        @NotNull Money averagePositionPrice,
         @NotNull BigDecimal expectedYield,
-        @NotNull MoneyAmount currentPrice,
+        @NotNull Money currentPrice,
         @NotNull BigDecimal quantityLots
 ) {
 
@@ -54,8 +54,8 @@ public record PortfolioPosition(
             final BigDecimal newCurrentPriceValue,
             final BigDecimal quantityLots
     ) {
-        final MoneyAmount newAveragePositionPrice = new MoneyAmount(getCurrency(), averagePositionPriceValue);
-        final MoneyAmount newCurrentPrice = new MoneyAmount(getCurrency(), newCurrentPriceValue);
+        final Money newAveragePositionPrice = Money.of(getCurrency(), averagePositionPriceValue);
+        final Money newCurrentPrice = Money.of(getCurrency(), newCurrentPriceValue);
         return new PortfolioPosition(ticker, instrumentType, quantity, newAveragePositionPrice, newExpectedYield, newCurrentPrice, quantityLots);
     }
 
@@ -68,7 +68,7 @@ public record PortfolioPosition(
             final BigDecimal currentPrice,
             final BigDecimal quantityLots
     ) {
-        final MoneyAmount newCurrentPrice = new MoneyAmount(getCurrency(), currentPrice);
+        final Money newCurrentPrice = Money.of(getCurrency(), currentPrice);
         return new PortfolioPosition(
                 ticker,
                 instrumentType,

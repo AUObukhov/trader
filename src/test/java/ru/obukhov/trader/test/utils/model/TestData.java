@@ -10,7 +10,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
-import ru.obukhov.trader.market.model.MoneyAmount;
+import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
@@ -22,7 +22,6 @@ import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
-import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -33,7 +32,6 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
@@ -168,7 +166,7 @@ public class TestData {
                 null,
                 null,
                 BigDecimal.ZERO,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoney(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
                 BigDecimal.ZERO
@@ -180,7 +178,7 @@ public class TestData {
                 ticker,
                 null,
                 BigDecimal.ZERO,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoney(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
                 BigDecimal.ZERO
@@ -192,7 +190,7 @@ public class TestData {
                 null,
                 null,
                 BigDecimal.ZERO,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoney(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
                 createIntegerDecimal(quantityLots)
@@ -204,7 +202,7 @@ public class TestData {
                 ticker,
                 null,
                 BigDecimal.ZERO,
-                createMoneyAmount(Currency.RUB, 0),
+                createMoney(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
                 createIntegerDecimal(quantityLots)
@@ -216,7 +214,7 @@ public class TestData {
                 ticker,
                 null,
                 createIntegerDecimal(quantity),
-                createMoneyAmount(Currency.RUB, 0),
+                createMoney(Currency.RUB, 0),
                 BigDecimal.ZERO,
                 null,
                 createIntegerDecimal(quantityLots)
@@ -228,7 +226,7 @@ public class TestData {
                 null,
                 null,
                 BigDecimal.ZERO,
-                createMoneyAmount(Currency.RUB, averagePositionPrice),
+                createMoney(Currency.RUB, averagePositionPrice),
                 BigDecimal.ZERO,
                 null,
                 createIntegerDecimal(quantityLots)
@@ -249,9 +247,9 @@ public class TestData {
                 ticker,
                 instrumentType,
                 createIntegerDecimal(quantity),
-                createMoneyAmount(currency, averagePositionPrice),
+                createMoney(currency, averagePositionPrice),
                 DecimalUtils.setDefaultScale(expectedYield),
-                createMoneyAmount(currency, currentPrice),
+                createMoney(currency, currentPrice),
                 createIntegerDecimal(quantityLots)
         );
     }
@@ -270,9 +268,9 @@ public class TestData {
                 ticker,
                 instrumentType,
                 createIntegerDecimal(quantityLots * lotSize),
-                createMoneyAmount(currency, averagePositionPrice),
+                createMoney(currency, averagePositionPrice),
                 DecimalUtils.setDefaultScale(expectedYield),
-                createMoneyAmount(currency, currentPrice),
+                createMoney(currency, currentPrice),
                 createIntegerDecimal(quantityLots)
         );
     }
@@ -293,12 +291,12 @@ public class TestData {
                 .setFigi(figi)
                 .setInstrumentType(instrumentType.name())
                 .setQuantity(createQuotation(quantity))
-                .setAveragePositionPrice(createMoneyValue(averagePositionPrice, currency))
+                .setAveragePositionPrice(createTinkoffMoneyValue(averagePositionPrice, currency))
                 .setExpectedYield(createQuotation(expectedYield))
-                .setCurrentNkd(createMoneyValue(currency))
+                .setCurrentNkd(createTinkoffMoneyValue(currency))
                 .setAveragePositionPricePt(createQuotation())
-                .setCurrentPrice(createMoneyValue(currentPrice, currency))
-                .setAveragePositionPriceFifo(createMoneyValue(currency))
+                .setCurrentPrice(createTinkoffMoneyValue(currentPrice, currency))
+                .setAveragePositionPriceFifo(createTinkoffMoneyValue(currency))
                 .setQuantityLots(createQuotation(quantityLots))
                 .build();
     }
@@ -331,18 +329,6 @@ public class TestData {
     }
 
     // endregion
-
-    public static MoneyAmount createMoneyAmount(final Currency currency, final double value) {
-        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
-    }
-
-    public static MoneyAmount createMoneyAmount(final Currency currency, final long value) {
-        return new MoneyAmount(currency, DecimalUtils.setDefaultScale(value));
-    }
-
-    public static Money createMoney(final Currency currency, final BigDecimal value) {
-        return DataStructsHelper.createMoney(currency, value);
-    }
 
     // region BigDecimals list creation
 
@@ -444,16 +430,16 @@ public class TestData {
                 .setExecutionReportStatus(executionReportStatus)
                 .setLotsRequested(lotsRequested)
                 .setLotsExecuted(lotsExecuted)
-                .setInitialOrderPrice(TestData.createMoneyValue(initialOrderPrice, currency))
-                .setTotalOrderAmount(TestData.createMoneyValue(totalOrderAmount, currency))
-                .setAveragePositionPrice(TestData.createMoneyValue(averagePositionPrice, currency))
-                .setInitialCommission(TestData.createMoneyValue(initialCommission, currency))
-                .setExecutedCommission(TestData.createMoneyValue(executedCommission, currency))
+                .setInitialOrderPrice(TestData.createTinkoffMoneyValue(initialOrderPrice, currency))
+                .setTotalOrderAmount(TestData.createTinkoffMoneyValue(totalOrderAmount, currency))
+                .setAveragePositionPrice(TestData.createTinkoffMoneyValue(averagePositionPrice, currency))
+                .setInitialCommission(TestData.createTinkoffMoneyValue(initialCommission, currency))
+                .setExecutedCommission(TestData.createTinkoffMoneyValue(executedCommission, currency))
                 .setFigi(figi)
                 .setDirection(orderDirection)
-                .setInitialSecurityPrice(TestData.createMoneyValue(initialSecurityPrice, currency))
+                .setInitialSecurityPrice(TestData.createTinkoffMoneyValue(initialSecurityPrice, currency))
                 .addAllStages(stages)
-                .setServiceCommission(TestData.createMoneyValue(serviceCommission, currency))
+                .setServiceCommission(TestData.createTinkoffMoneyValue(serviceCommission, currency))
                 .setCurrency(currency.name())
                 .setOrderType(orderType)
                 .setOrderDate(DATE_TIME_MAPPER.map(orderDate))
@@ -533,23 +519,35 @@ public class TestData {
 
     // region MoneyValue creation
 
-    public static MoneyValue createMoneyValue(final double value, final Currency currency) {
+    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final double value, final Currency currency) {
         return DataStructsHelper.createMoneyValue(currency, BigDecimal.valueOf(value));
     }
 
-    public static MoneyValue createMoneyValue(final Currency currency) {
-        return MoneyValue.newBuilder().setCurrency(currency.name()).build();
+    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final Currency currency) {
+        return ru.tinkoff.piapi.contract.v1.MoneyValue.newBuilder().setCurrency(currency.name()).build();
     }
 
     // endregion
 
+    public static Money createMoney(final Currency currency, final double value) {
+        return new Money(currency, DecimalUtils.setDefaultScale(value));
+    }
+
+    public static Money createMoney(final Currency currency, final long value) {
+        return new Money(currency, DecimalUtils.setDefaultScale(value));
+    }
+
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final Currency currency, final BigDecimal value) {
+        return DataStructsHelper.createMoney(currency, value);
+    }
+
     public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
-                .setTotalAmountShares(createMoneyValue(Currency.RUB))
-                .setTotalAmountBonds(createMoneyValue(Currency.RUB))
-                .setTotalAmountEtf(createMoneyValue(Currency.RUB))
-                .setTotalAmountCurrencies(createMoneyValue(Currency.RUB))
-                .setTotalAmountFutures(createMoneyValue(Currency.RUB))
+                .setTotalAmountShares(createTinkoffMoneyValue(Currency.RUB))
+                .setTotalAmountBonds(createTinkoffMoneyValue(Currency.RUB))
+                .setTotalAmountEtf(createTinkoffMoneyValue(Currency.RUB))
+                .setTotalAmountCurrencies(createTinkoffMoneyValue(Currency.RUB))
+                .setTotalAmountFutures(createTinkoffMoneyValue(Currency.RUB))
                 .setExpectedYield(createQuotation());
         for (final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition : portfolioPositions) {
             builder.addPositions(portfolioPosition);
@@ -578,7 +576,7 @@ public class TestData {
 
     public static OrderStage createOrderStage(final Currency currency, final double price, final long quantity, final String tradeId) {
         return OrderStage.newBuilder()
-                .setPrice(createMoneyValue(price, currency))
+                .setPrice(createTinkoffMoneyValue(price, currency))
                 .setQuantity(quantity)
                 .setTradeId(tradeId)
                 .build();

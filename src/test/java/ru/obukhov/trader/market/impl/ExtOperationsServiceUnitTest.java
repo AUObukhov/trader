@@ -75,14 +75,14 @@ class ExtOperationsServiceUnitTest {
         final int eurBalance2 = 23;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createMoneyValue(usdBalance1, Currency.USD),
-                TestData.createMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createMoneyValue(eurBalance1, Currency.EUR)
+                TestData.createTinkoffMoneyValue(usdBalance1, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
+                TestData.createTinkoffMoneyValue(eurBalance1, Currency.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createMoneyValue(usdBalance2, Currency.USD),
-                TestData.createMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createMoneyValue(eurBalance2, Currency.EUR)
+                TestData.createTinkoffMoneyValue(usdBalance2, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
+                TestData.createTinkoffMoneyValue(eurBalance2, Currency.EUR)
         );
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1);
@@ -114,18 +114,18 @@ class ExtOperationsServiceUnitTest {
         final long rubBlocked2 = 200;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createMoneyValue(100, Currency.USD),
-                TestData.createMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
+                TestData.createTinkoffMoneyValue(10, Currency.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createMoneyValue(100, Currency.USD),
-                TestData.createMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
+                TestData.createTinkoffMoneyValue(10, Currency.EUR)
         );
 
-        final List<MoneyValue> blocked1 = List.of(TestData.createMoneyValue(rubBlocked1, Currency.RUB));
-        final List<MoneyValue> blocked2 = List.of(TestData.createMoneyValue(rubBlocked2, Currency.RUB));
+        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currency.RUB));
+        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currency.RUB));
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1);
         final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2);
@@ -158,21 +158,21 @@ class ExtOperationsServiceUnitTest {
         final long rubGuaranteeBlocked2 = 20;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createMoneyValue(100, Currency.USD),
-                TestData.createMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
+                TestData.createTinkoffMoneyValue(10, Currency.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createMoneyValue(100, Currency.USD),
-                TestData.createMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currency.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
+                TestData.createTinkoffMoneyValue(10, Currency.EUR)
         );
 
-        final List<MoneyValue> blocked1 = List.of(TestData.createMoneyValue(rubBlocked1, Currency.RUB));
-        final List<MoneyValue> blocked2 = List.of(TestData.createMoneyValue(rubBlocked2, Currency.RUB));
+        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currency.RUB));
+        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currency.RUB));
 
-        final List<MoneyValue> blockedGuarantee1 = List.of(TestData.createMoneyValue(rubGuaranteeBlocked1, Currency.RUB));
-        final List<MoneyValue> blockedGuarantee2 = List.of(TestData.createMoneyValue(rubGuaranteeBlocked2, Currency.RUB));
+        final List<MoneyValue> blockedGuarantee1 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked1, Currency.RUB));
+        final List<MoneyValue> blockedGuarantee2 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked2, Currency.RUB));
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1, blockedGuarantee1);
         final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2, blockedGuarantee2);
@@ -195,8 +195,8 @@ class ExtOperationsServiceUnitTest {
         final String accountId = "2000124699";
 
         final List<MoneyValue> moneys = List.of(
-                TestData.createMoneyValue(100, Currency.USD),
-                TestData.createMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currency.USD),
+                TestData.createTinkoffMoneyValue(10, Currency.EUR)
         );
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
