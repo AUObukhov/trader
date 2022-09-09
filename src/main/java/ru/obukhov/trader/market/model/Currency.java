@@ -1,5 +1,7 @@
 package ru.obukhov.trader.market.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum Currency {
     RUB,
     USD,
@@ -9,9 +11,16 @@ public enum Currency {
     CHF,
     JPY,
     CNY,
-    TRY;
+    TRY,
+    ILS,
+    CAD,
+    DKK,
+    SEK,
+    SGD,
+    NOK,
+    UNKNOWN;
 
     public static Currency valueOfIgnoreCase(final String name) {
-        return Currency.valueOf(name.toUpperCase());
+        return StringUtils.isEmpty(name) ? Currency.UNKNOWN : Currency.valueOf(name.toUpperCase());
     }
 }

@@ -1,7 +1,9 @@
 package ru.obukhov.trader.market.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,7 +24,14 @@ class CurrencyUnitTest {
                 Arguments.of("CHF", Currency.CHF),
                 Arguments.of("JPY", Currency.JPY),
                 Arguments.of("CNY", Currency.CNY),
-                Arguments.of("TRY", Currency.TRY)
+                Arguments.of("TRY", Currency.TRY),
+                Arguments.of("ILS", Currency.ILS),
+                Arguments.of("CAD", Currency.CAD),
+                Arguments.of("DKK", Currency.DKK),
+                Arguments.of("SEK", Currency.SEK),
+                Arguments.of("SGD", Currency.SGD),
+                Arguments.of("NOK", Currency.NOK),
+                Arguments.of("UNKNOWN", Currency.UNKNOWN)
         );
     }
 
@@ -43,6 +52,16 @@ class CurrencyUnitTest {
     void valueOfIgnoreCase(final String value, final Currency currency) {
         Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value.toLowerCase()));
         Assertions.assertEquals(currency, Currency.valueOfIgnoreCase(value));
+    }
+
+    @Test
+    void valueOfIgnoreCase_whenValueIsNull() {
+        Assertions.assertEquals(Currency.UNKNOWN, Currency.valueOfIgnoreCase(null));
+    }
+
+    @Test
+    void valueOfIgnoreCase_whenValueIsEmpty() {
+        Assertions.assertEquals(Currency.UNKNOWN, Currency.valueOfIgnoreCase(StringUtils.EMPTY));
     }
 
 }
