@@ -9,21 +9,22 @@ import java.math.BigDecimal;
 @Mapper
 public interface QuotationMapper {
 
-    default BigDecimal map(final Quotation quotation) {
-        return quotation.getUnits() == 0 && quotation.getNano() == 0
-                ? BigDecimal.ZERO
-                : BigDecimal.valueOf(quotation.getUnits()).add(BigDecimal.valueOf(quotation.getNano(), DecimalUtils.DEFAULT_SCALE));
+    default BigDecimal toBigDecimal(final Quotation quotation) {
+        return quotation == null
+                ? null
+                : DecimalUtils.createBigDecimal(quotation.getUnits(), quotation.getNano());
     }
 
-    default Quotation map(final BigDecimal bigDecimal) {
-        return Quotation.newBuilder()
-                .setUnits(bigDecimal.longValue())
-                .setNano(DecimalUtils.getNano(bigDecimal))
-                .build();
+    default Quotation fromBigDecimal(final BigDecimal bigDecimal) {
+        return bigDecimal == null
+                ? null
+                : Quotation.newBuilder().setUnits(bigDecimal.longValue()).setNano(DecimalUtils.getNano(bigDecimal)).build();
     }
 
-    default Quotation map(final double value) {
-        return map(BigDecimal.valueOf(value));
+    default Quotation fromDouble(final Double value) {
+        return value == null
+                ? null
+                : fromBigDecimal(BigDecimal.valueOf(value));
     }
 
 }

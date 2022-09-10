@@ -246,7 +246,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     private BigDecimal getOpenPrice(final HistoricCandle candle) {
-        return QUOTATION_MAPPER.map(candle.getOpen());
+        return QUOTATION_MAPPER.toBigDecimal(candle.getOpen());
     }
 
 }

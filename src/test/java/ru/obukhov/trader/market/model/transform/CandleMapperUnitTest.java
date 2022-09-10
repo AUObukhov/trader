@@ -49,10 +49,10 @@ class CandleMapperUnitTest {
 
         final HistoricCandle historicCandle = candleMapper.map(candle, isComplete);
 
-        AssertUtils.assertEquals(openPrice, quotationMapper.map(historicCandle.getOpen()));
-        AssertUtils.assertEquals(closePrice, quotationMapper.map(historicCandle.getClose()));
-        AssertUtils.assertEquals(highestPrice, quotationMapper.map(historicCandle.getHigh()));
-        AssertUtils.assertEquals(lowestPrice, quotationMapper.map(historicCandle.getLow()));
+        AssertUtils.assertEquals(openPrice, quotationMapper.toBigDecimal(historicCandle.getOpen()));
+        AssertUtils.assertEquals(closePrice, quotationMapper.toBigDecimal(historicCandle.getClose()));
+        AssertUtils.assertEquals(highestPrice, quotationMapper.toBigDecimal(historicCandle.getHigh()));
+        AssertUtils.assertEquals(lowestPrice, quotationMapper.toBigDecimal(historicCandle.getLow()));
         Assertions.assertEquals(dateTime, dateTimeMapper.map(historicCandle.getTime()));
         Assertions.assertEquals(isComplete, historicCandle.getIsComplete());
     }
