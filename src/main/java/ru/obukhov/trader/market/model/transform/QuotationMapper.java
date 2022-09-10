@@ -18,8 +18,12 @@ public interface QuotationMapper {
     default Quotation map(final BigDecimal bigDecimal) {
         return Quotation.newBuilder()
                 .setUnits(bigDecimal.longValue())
-                .setNano(bigDecimal.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(1_000_000_000)).intValue())
+                .setNano(DecimalUtils.getNano(bigDecimal))
                 .build();
+    }
+
+    default Quotation map(final double value) {
+        return map(BigDecimal.valueOf(value));
     }
 
 }
