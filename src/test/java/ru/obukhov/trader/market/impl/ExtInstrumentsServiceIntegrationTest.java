@@ -65,6 +65,44 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
+    void getFigiByTicker_returnsCachedValue() {
+        final String ticker1 = "ticker1";
+        final String figi1 = "figi1";
+
+        final String ticker2 = "ticker2";
+        final String figi2 = "figi2";
+
+        final String ticker3 = "ticker3";
+        final String figi3 = "figi3";
+
+        final String figi4 = "figi4";
+
+        Mocker.mockFigiByTicker(instrumentsService, figi1, ticker1);
+        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument1)
+                .build();
+
+        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
+        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument2)
+                .addInstruments(assetInstrument3)
+                .addInstruments(assetInstrument4)
+                .build();
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+        extInstrumentsService.getFigiByTicker(ticker3);
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
+        final String result = extInstrumentsService.getFigiByTicker(ticker3);
+
+        Assertions.assertEquals(figi3, result);
+    }
+
+    @Test
+    @DirtiesContext
     void getFigiByTicker_throwsIllegalArgumentException_whenNoAssets() {
         final String ticker = "ticker";
 
@@ -121,6 +159,21 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = "figi";
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
+        final String result = extInstrumentsService.getTickerByFigi(figi);
+
+        Assertions.assertEquals(ticker, result);
+    }
+
+    @Test
+    @DirtiesContext
+    void getTickerByFigi_returnsCachedValue() {
+        final String ticker = "ticker";
+        final String figi = "figi";
+
+        Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
+        extInstrumentsService.getTickerByFigi(figi);
+
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
         final String result = extInstrumentsService.getTickerByFigi(figi);
 
         Assertions.assertEquals(ticker, result);
