@@ -27,6 +27,18 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
+    void getPositions_returnsBadRequest_whenAccountIdIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/portfolio/positions")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'accountId' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
     void getPositions() throws Exception {
         final String accountId = "2000124699";
 
@@ -139,6 +151,18 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     // region getAvailableBalances tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getAvailableBalances_returnsBadRequest_whenAccountIdIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/portfolio/balances")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'accountId' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
 
     @Test
     @SuppressWarnings("java:S2699")
