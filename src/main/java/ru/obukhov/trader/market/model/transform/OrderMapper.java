@@ -8,7 +8,7 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.OrderState} to {@link ru.obukhov.trader.market.model.Order} and vice versa
  */
-@Mapper(uses = {DateTimeMapper.class, MoneyValueMapper.class})
+@Mapper(uses = {DateTimeMapper.class, MoneyMapper.class})
 public interface OrderMapper {
 
     @Mapping(target = "quantityLots", source = "lotsExecuted")

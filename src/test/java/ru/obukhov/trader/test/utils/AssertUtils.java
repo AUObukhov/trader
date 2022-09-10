@@ -33,7 +33,7 @@ import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
-import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.obukhov.trader.market.model.transform.MoneyMapper;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -58,7 +58,7 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
-    private static final MoneyValueMapper MONEY_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    private static final MoneyMapper MONEY_MAPPER = Mappers.getMapper(MoneyMapper.class);
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -101,7 +101,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final ru.tinkoff.piapi.contract.v1.MoneyValue expected, final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.map(expected))) {
+        } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.moneyValueToBigDecimal(expected))) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -109,7 +109,7 @@ public class AssertUtils {
     public static void assertEquals(Double expected, ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(MONEY_MAPPER.map(actual), expected)) {
+        } else if (!DecimalUtils.numbersEqual(MONEY_MAPPER.moneyValueToBigDecimal(actual), expected)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -117,7 +117,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final BigDecimal expected, final ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.map(actual))) {
+        } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.moneyValueToBigDecimal(actual))) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }

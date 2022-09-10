@@ -8,7 +8,7 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 /**
  * Maps {@link Operation} to {@link BackTestOperation} and vice versa
  */
-@Mapper(uses = {DateTimeMapper.class, MoneyValueMapper.class})
+@Mapper(uses = {DateTimeMapper.class, MoneyMapper.class})
 public interface OperationMapper {
 
     @Mapping(target = "dateTime", source = "operation.date")

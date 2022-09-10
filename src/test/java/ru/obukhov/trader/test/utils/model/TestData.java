@@ -14,7 +14,7 @@ import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
-import ru.obukhov.trader.market.model.transform.MoneyValueMapper;
+import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 public class TestData {
 
     public static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
-    public static final MoneyValueMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyValueMapper.class);
+    public static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     // region HistoricCandle creation
@@ -312,7 +312,7 @@ public class TestData {
         return Operation.newBuilder()
                 .setDate(DATE_TIME_MAPPER.map(operationDateTime))
                 .setOperationType(operationType)
-                .setPrice(MONEY_VALUE_MAPPER.map(operationPrice))
+                .setPrice(MONEY_VALUE_MAPPER.doubleToMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
                 .build();
     }
