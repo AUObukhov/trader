@@ -31,12 +31,10 @@ public class OrdersController {
     @ApiOperation("Get active orders at default broker account")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetOrdersResponse getOrders(
-            @RequestParam(required = false)
-            @ApiParam(name = "accountId. When null then default account used", example = "2008941383") final String accountId
-    ) {
+    public GetOrdersResponse getOrders(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
         final List<Order> orders = ordersService.getOrders(accountId);
 
         return new GetOrdersResponse(orders);

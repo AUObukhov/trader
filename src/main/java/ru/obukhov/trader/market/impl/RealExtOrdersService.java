@@ -41,7 +41,6 @@ public class RealExtOrdersService implements ExtOrdersService {
 
     /**
      * @return returns list of active orders at given {@code accountId}
-     * If {@code accountId} null, works with default broker account
      */
     @Override
     public List<Order> getOrders(final String accountId) {
