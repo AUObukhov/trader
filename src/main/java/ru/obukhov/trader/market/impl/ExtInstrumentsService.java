@@ -36,7 +36,7 @@ public class ExtInstrumentsService {
 
     public Share getShare(final String ticker) {
         return instrumentsService.getAllSharesSync().stream()
-                .filter(share -> ticker.equals(share.getTicker()))
+                .filter(share -> ticker.equalsIgnoreCase(share.getTicker()))
                 .findFirst()
                 .map(SHARE_MAPPER::map)
                 .orElse(null);

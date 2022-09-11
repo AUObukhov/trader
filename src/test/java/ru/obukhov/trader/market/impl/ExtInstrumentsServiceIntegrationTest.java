@@ -315,6 +315,111 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    void getShare_returnsShareIgnoreCase_whenShareExists() {
+        final String figi1 = "BBG000B9XRY4";
+        final String ticker1 = "aapl";
+        final int lotSize1 = 1;
+        final Currency currency1 = Currency.USD;
+        final String name1 = "Apple";
+        final OffsetDateTime ipoDate1 = DateTimeTestData.createDateTime(1980, 12, 12, 3);
+        final long issueSize1 = 16530166000L;
+        final String country1 = "Соединенные Штаты Америки";
+        final Sector sector1 = Sector.IT;
+        final long issueSizePlan1 = 50400000000L;
+        final double nominal1 = 0.00001;
+        final SecurityTradingStatus tradingStatus1 = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
+        final boolean buyAvailable1 = true;
+        final boolean sellAvailable1 = true;
+        final boolean apiTradeAvailable1 = true;
+        final double minPriceIncrement1 = 0.01;
+        final OffsetDateTime first1MinCandleDate1 = DateTimeTestData.createDateTime(2018, 1, 10, 10, 34);
+        final OffsetDateTime first1DayCandleDate1 = DateTimeTestData.createDateTime(1988, 9, 12, 3);
+
+        final String figi2 = "BBG004730N88";
+        final String ticker2 = "sber";
+        final int lotSize2 = 10;
+        final Currency currency2 = Currency.RUB;
+        final String name2 = "Сбер Банк";
+        final OffsetDateTime ipoDate2 = DateTimeTestData.createDateTime(2007, 7, 11, 3);
+        final long issueSize2 = 21586948000L;
+        final String country2 = "Российская Федерация";
+        final Sector sector2 = Sector.FINANCIAL;
+        final long issueSizePlan2 = 21586948000L;
+        final double nominal2 = 3;
+        final SecurityTradingStatus tradingStatus2 = SecurityTradingStatus.SECURITY_TRADING_STATUS_BREAK_IN_TRADING;
+        final boolean buyAvailable2 = true;
+        final boolean sellAvailable2 = true;
+        final boolean apiTradeAvailable2 = true;
+        final double minPriceIncrement2 = 0.010000000;
+        final OffsetDateTime first1MinCandleDate2 = DateTimeTestData.createDateTime(2018, 3, 7, 21, 33);
+        final OffsetDateTime first1DayCandleDate2 = DateTimeTestData.createDateTime(2000, 1, 4, 10);
+
+        final ru.tinkoff.piapi.contract.v1.Share share1 = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
+                .setFigi(figi1)
+                .setTicker(ticker1)
+                .setLot(lotSize1)
+                .setCurrency(currency1.name().toLowerCase())
+                .setName(name1)
+                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate1))
+                .setIssueSize(issueSize1)
+                .setCountryOfRiskName(country1)
+                .setSector(sector1.name().toLowerCase())
+                .setIssueSizePlan(issueSizePlan1)
+                .setNominal(MONEY_VALUE_MAPPER.doubleToMoneyValue(nominal1))
+                .setTradingStatus(tradingStatus1)
+                .setBuyAvailableFlag(buyAvailable1)
+                .setSellAvailableFlag(sellAvailable1)
+                .setApiTradeAvailableFlag(apiTradeAvailable1)
+                .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement1))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate1))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate1))
+                .build();
+        final ru.tinkoff.piapi.contract.v1.Share share2 = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
+                .setFigi(figi2)
+                .setTicker(ticker2)
+                .setLot(lotSize2)
+                .setCurrency(currency2.name().toLowerCase())
+                .setName(name2)
+                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate2))
+                .setIssueSize(issueSize2)
+                .setCountryOfRiskName(country2)
+                .setSector(sector2.name().toLowerCase())
+                .setIssueSizePlan(issueSizePlan2)
+                .setNominal(MONEY_VALUE_MAPPER.doubleToMoneyValue(nominal2))
+                .setTradingStatus(tradingStatus2)
+                .setBuyAvailableFlag(buyAvailable2)
+                .setSellAvailableFlag(sellAvailable2)
+                .setApiTradeAvailableFlag(apiTradeAvailable2)
+                .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement2))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate2))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate2))
+                .build();
+
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share1, share2));
+
+        final Share result = extInstrumentsService.getShare(ticker2);
+
+        Assertions.assertEquals(figi2, result.figi());
+        Assertions.assertEquals(ticker2, result.ticker());
+        Assertions.assertEquals(lotSize2, result.lotSize());
+        Assertions.assertEquals(currency2, result.currency());
+        Assertions.assertEquals(name2, result.name());
+        Assertions.assertEquals(ipoDate2, result.ipoDate());
+        Assertions.assertEquals(issueSize2, result.issueSize());
+        Assertions.assertEquals(country2, result.country());
+        Assertions.assertEquals(sector2, result.sector());
+        Assertions.assertEquals(issueSizePlan2, result.issueSizePlan());
+        AssertUtils.assertEquals(nominal2, result.nominal());
+        Assertions.assertEquals(tradingStatus2, result.tradingStatus());
+        Assertions.assertEquals(buyAvailable2, result.buyAvailable());
+        Assertions.assertEquals(sellAvailable2, result.sellAvailable());
+        Assertions.assertEquals(apiTradeAvailable2, result.apiTradeAvailable());
+        AssertUtils.assertEquals(minPriceIncrement2, result.minPriceIncrement());
+        Assertions.assertEquals(first1MinCandleDate2, result.first1MinCandleDate());
+        Assertions.assertEquals(first1DayCandleDate2, result.first1DayCandleDate());
+    }
+
+    @Test
     void getShare_returnsNull_whenNoShare() {
         final String ticker1 = "ticker1";
         final String ticker2 = "ticker2";
