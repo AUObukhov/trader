@@ -13,12 +13,11 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
 import ru.obukhov.trader.market.impl.FakeExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -64,8 +63,6 @@ public class FakeBotFactory {
         if (share == null) {
             throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
         }
-        final Currency currency = Currency.valueOfIgnoreCase(share.getCurrency());
-
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
 
         return (FakeContext) applicationContext.getBean(
@@ -73,7 +70,7 @@ public class FakeBotFactory {
                 marketProperties,
                 ceilingWorkTime,
                 botConfig.accountId(),
-                currency,
+                share.currency(),
                 initialBalance
         );
     }

@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
@@ -50,8 +49,6 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Autowired
     private SchedulingProperties schedulingProperties;
-    @Autowired
-    private ScheduledBotsProperties scheduledBotsProperties;
 
     // region backTest tests
 
@@ -253,7 +250,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShare(instrumentsService, figi, ticker, Currency.RUB, 1);
+        Mocker.mockTinkoffShare(instrumentsService, figi, ticker, Currency.RUB, 1);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);

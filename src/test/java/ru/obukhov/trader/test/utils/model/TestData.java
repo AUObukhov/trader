@@ -13,6 +13,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -31,7 +32,6 @@ import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
@@ -141,7 +141,7 @@ public class TestData {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(positionLotsCount, averagePositionPrice));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
-        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
+        decisionData.setShare(Share.builder().lotSize(lotSize).build());
 
         return decisionData;
     }
@@ -151,7 +151,7 @@ public class TestData {
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
+        decisionData.setShare(Share.builder().lotSize(lotSize).build());
         decisionData.setCommission(commission);
 
         return decisionData;
@@ -558,15 +558,29 @@ public class TestData {
     }
 
     public static Share createShare(final String ticker, final Currency currency, final int lotSize) {
-        return Share.newBuilder()
-                .setTicker(ticker)
-                .setCurrency(currency.name().toLowerCase())
-                .setLot(lotSize)
+        return Share.builder()
+                .ticker(ticker)
+                .currency(currency)
+                .lotSize(lotSize)
                 .build();
     }
 
     public static Share createShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
-        return Share.newBuilder()
+        return Share.builder()
+                .figi(figi)
+                .ticker(ticker)
+                .currency(currency)
+                .lotSize(lotSize)
+                .build();
+    }
+
+    public static ru.tinkoff.piapi.contract.v1.Share createTinkoffShare(
+            final String figi,
+            final String ticker,
+            final Currency currency,
+            final int lotSize
+    ) {
+        return ru.tinkoff.piapi.contract.v1.Share.newBuilder()
                 .setFigi(figi)
                 .setTicker(ticker)
                 .setCurrency(currency.name().toLowerCase())
@@ -593,7 +607,7 @@ public class TestData {
      * @return BigDecimal equal to given {@code value} with zero scale
      * @throws ArithmeticException if given {@code value} is not integer
      */
-    public static BigDecimal createIntegerDecimal(double value) {
+    public static BigDecimal createIntegerDecimal(final double value) {
         return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 

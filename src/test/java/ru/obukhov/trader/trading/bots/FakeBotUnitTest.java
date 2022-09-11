@@ -11,14 +11,13 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
-import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -37,8 +36,6 @@ class FakeBotUnitTest {
     @Mock
     private ExtOperationsService extOperationsService;
     @Mock
-    private RealExtOrdersService ordersService;
-    @Mock
     private TradingStrategy strategy;
     @Mock
     private FakeContext fakeContext;
@@ -49,10 +46,7 @@ class FakeBotUnitTest {
     @Test
     void getShare() {
         final String ticker = "ticker";
-        final Share expectedShare = Share.newBuilder()
-                .setTicker(ticker)
-                .setLot(10)
-                .build();
+        final Share expectedShare = Share.builder().ticker(ticker).lotSize(10).build();
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(expectedShare);
 
         final Share share = fakeBot.getShare(ticker);

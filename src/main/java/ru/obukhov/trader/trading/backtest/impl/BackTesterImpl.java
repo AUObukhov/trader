@@ -175,7 +175,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final Currency currency = getCurrency(fakeBot, ticker);
+            final Currency currency = fakeBot.getShare(ticker).currency();
             for (OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
@@ -227,10 +227,6 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private Currency getCurrency(final FakeBot fakeBot, final String ticker) {
-        return Currency.valueOfIgnoreCase(fakeBot.getShare(ticker).getCurrency());
-    }
-
     private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) {
         List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
         List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
@@ -252,7 +248,7 @@ public class BackTesterImpl implements BackTester {
             final List<BackTestPosition> positions,
             final String ticker
     ) {
-        final Currency currency = getCurrency(fakeBot, ticker);
+        final Currency currency = fakeBot.getShare(ticker).currency();
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());

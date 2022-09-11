@@ -10,13 +10,13 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
-import ru.tinkoff.piapi.contract.v1.Share;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -68,7 +68,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     ) {
         final Share share = extInstrumentsService.getShare(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
-        final Long quantity = quantityLots * share.getLot();
+        final Long quantity = quantityLots * share.lotSize();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
 
@@ -81,12 +81,12 @@ public class FakeExtOrdersService implements ExtOrdersService {
         }
 
         return new PostOrderResponseBuilder()
-                .setCurrency(share.getCurrency())
+                .setCurrency(share.currency())
                 .setTotalOrderAmount(totalPrice)
                 .setTotalCommissionAmount(totalCommissionAmount)
                 .setInitialSecurityPrice(currentPrice)
                 .setQuantityLots(quantityLots)
-                .setFigi(share.getFigi())
+                .setFigi(share.figi())
                 .setDirection(direction)
                 .setType(type)
                 .setOrderId(orderId)
@@ -117,12 +117,12 @@ public class FakeExtOrdersService implements ExtOrdersService {
     ) {
         final Share share = extInstrumentsService.getShare(ticker);
 
-        updateBalance(accountId, share.getCurrency(), totalPrice.negate().subtract(commissionAmount));
+        updateBalance(accountId, share.currency(), totalPrice.negate().subtract(commissionAmount));
 
         final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
         PortfolioPosition position;
         if (existingPosition == null) {
-            final Money price = Money.of(Currency.valueOfIgnoreCase(share.getCurrency()), currentPrice);
+            final Money price = Money.of(share.currency(), currentPrice);
             position = new PortfolioPosition(
                     ticker,
                     InstrumentType.STOCK,
@@ -139,13 +139,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
         fakeContext.addPosition(accountId, ticker, position);
     }
 
-    private void updateBalance(final String accountId, final String currency, final BigDecimal increment) {
-        final Currency enumCurrency = Currency.valueOfIgnoreCase(currency);
-
-        final BigDecimal newBalance = fakeContext.getBalance(accountId, enumCurrency).add(increment);
+    private void updateBalance(final String accountId, final Currency currency, final BigDecimal increment) {
+        final BigDecimal newBalance = fakeContext.getBalance(accountId, currency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 
-        fakeContext.setBalance(accountId, enumCurrency, newBalance);
+        fakeContext.setBalance(accountId, currency, newBalance);
     }
 
     private void sellPosition(
@@ -166,11 +164,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
         final Share share = extInstrumentsService.getShare(ticker);
 
-        updateBalance(accountId, share.getCurrency(), totalPrice.subtract(commissionAmount));
+        updateBalance(accountId, share.currency(), totalPrice.subtract(commissionAmount));
         if (compareToZero == 0) {
             fakeContext.removePosition(accountId, ticker);
         } else {
-            final BigDecimal newQuantityLots = newQuantity.divide(BigDecimal.valueOf(share.getLot()), 0, RoundingMode.UNNECESSARY);
+            final BigDecimal newQuantityLots = newQuantity.divide(BigDecimal.valueOf(share.lotSize()), 0, RoundingMode.UNNECESSARY);
             final BigDecimal newExpectedYield = currentPrice.subtract(existingPosition.averagePositionPrice().value())
                     .multiply(newQuantity);
             final PortfolioPosition newPosition = existingPosition.cloneWithNewValues(newQuantity, newExpectedYield, currentPrice, newQuantityLots);

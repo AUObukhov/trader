@@ -88,6 +88,20 @@ public class DateTimeTestData {
         return OffsetDateTime.of(year, month, dayOfMonth, hour, 0, 0, 0, offset);
     }
 
+    /**
+     * @return OffsetDateTime with by params, 0 seconds, 0 nanoseconds
+     */
+    public static OffsetDateTime createDateTime(
+            final int year,
+            final int month,
+            final int dayOfMonth,
+            final int hour,
+            final int minute,
+            final ZoneOffset offset
+    ) {
+        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, offset);
+    }
+
     // endregion
 
     /**

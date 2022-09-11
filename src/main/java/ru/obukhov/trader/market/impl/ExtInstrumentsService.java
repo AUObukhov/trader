@@ -1,15 +1,19 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
-import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 @RequiredArgsConstructor
 public class ExtInstrumentsService {
+
+    private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -34,6 +38,7 @@ public class ExtInstrumentsService {
         return instrumentsService.getAllSharesSync().stream()
                 .filter(share -> ticker.equals(share.getTicker()))
                 .findFirst()
+                .map(SHARE_MAPPER::map)
                 .orElse(null);
     }
 

@@ -16,6 +16,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -25,8 +26,6 @@ import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -42,8 +41,6 @@ class FakeBotFactoryUnitTest {
     private TradingStrategyFactory strategyFactory;
     @Mock
     private ApplicationContext applicationContext;
-    @Mock
-    private MarketDataService marketDataService;
     @Mock
     private ExtInstrumentsService extInstrumentsService;
 
@@ -166,7 +163,7 @@ class FakeBotFactoryUnitTest {
     }
 
     private void mockCurrency(final String ticker, final Currency currency) {
-        final Share share = Share.newBuilder().setCurrency(currency.name()).build();
+        final Share share = Share.builder().ticker(ticker).currency(currency).build();
         Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
     }
 
