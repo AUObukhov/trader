@@ -28,7 +28,6 @@ import ru.obukhov.trader.common.model.poi.ColorMapper;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -177,11 +176,6 @@ public class AssertUtils {
     }
 
     // endregion
-
-    public static void assertRangeInclusive(final long expectedMin, final long expectedMax, final long actual) {
-        Assertions.assertTrue(actual >= expectedMin);
-        Assertions.assertTrue(actual <= expectedMax);
-    }
 
     public static void assertMatchesRegex(final String value, final String regex) {
         final Matcher matcher = Pattern.compile(regex).matcher(value);
@@ -435,24 +429,6 @@ public class AssertUtils {
         Assertions.assertEquals(expected.getNumberOfSheets(), actual.getNumberOfSheets());
         for (int i = 0; i < expected.getNumberOfSheets(); i++) {
             Assertions.assertEquals(actual.getSheetName(i), actual.getSheetName(i));
-        }
-    }
-
-    // endregion
-
-    // region execution time assertions
-
-    public static void assertFaster(final Runnable runnable, final long maxTime) {
-        final long elapsed = ExecutionUtils.run(runnable).toMillis();
-        if (elapsed > maxTime) {
-            Assertions.fail("Expected execution within maximum " + maxTime + " ms. Actual is " + elapsed + " ms");
-        }
-    }
-
-    public static void assertSlower(final Runnable runnable, final long minTime) {
-        final long elapsed = ExecutionUtils.run(runnable).toMillis();
-        if (elapsed < minTime) {
-            Assertions.fail("Expected execution within minimum " + minTime + " ms. Actual is " + elapsed + " ms");
         }
     }
 
