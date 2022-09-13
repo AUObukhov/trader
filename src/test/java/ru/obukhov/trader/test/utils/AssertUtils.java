@@ -36,7 +36,7 @@ import ru.obukhov.trader.market.model.transform.MoneyMapper;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -59,7 +59,6 @@ public class AssertUtils {
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
     private static final MoneyMapper MONEY_MAPPER = Mappers.getMapper(MoneyMapper.class);
     private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
-    private static final Validator VALIDATOR = Validation.buildDefaultValidatorFactory().getValidator();
 
     // region assertEquals
 
@@ -475,16 +474,20 @@ public class AssertUtils {
     // region validation assertions
 
     public static <T> void assertNoViolations(T object) {
-        Set<ConstraintViolation<Object>> violations = VALIDATOR.validate(object);
+        try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            final Set<ConstraintViolation<Object>> violations = validatorFactory.getValidator().validate(object);
 
-        Assertions.assertTrue(violations.isEmpty());
+            Assertions.assertTrue(violations.isEmpty());
+        }
     }
 
     public static <T> void assertViolation(T object, final String expectedMessage) {
-        Set<ConstraintViolation<Object>> violations = VALIDATOR.validate(object);
+        try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            final Set<ConstraintViolation<Object>> violations = validatorFactory.getValidator().validate(object);
 
-        Assertions.assertEquals(1, violations.size(), "expected single violation");
-        Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
+            Assertions.assertEquals(1, violations.size(), "expected single violation");
+            Assertions.assertEquals(expectedMessage, violations.iterator().next().getMessage());
+        }
     }
 
     // endregion
