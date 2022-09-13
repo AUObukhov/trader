@@ -164,7 +164,7 @@ class FakeBotFactoryUnitTest {
 
     private void mockCurrency(final String ticker, final Currency currency) {
         final Share share = Share.builder().ticker(ticker).currency(currency).build();
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
     }
 
     private void mockFakeContext() {

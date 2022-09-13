@@ -103,7 +103,7 @@ public class Mocker {
             final int lotSize
     ) {
         final Share share = TestData.createShare(figi, ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
     }
 
     public static void mockTinkoffShare(

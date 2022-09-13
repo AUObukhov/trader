@@ -96,7 +96,7 @@ public abstract class Bot {
     }
 
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) {
-        final Share share = extInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getSingleShare(ticker);
 
         decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency()));
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), ticker));

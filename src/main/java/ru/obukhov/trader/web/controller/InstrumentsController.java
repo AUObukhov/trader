@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Share;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/trader/instruments")
@@ -22,18 +24,26 @@ public class InstrumentsController {
 
     private final ExtInstrumentsService extInstrumentsService;
 
-    @GetMapping("/share")
-    @ApiOperation("Get share info")
+    @GetMapping("/shares")
+    @ApiOperation("Get shares info")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public Share getShare(
-            @RequestParam
-            @ApiParam(example = "AAPL") final String ticker
-    ) {
-        return extInstrumentsService.getShare(ticker);
+    public List<Share> getShares(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
+        return extInstrumentsService.getShares(ticker);
+    }
+
+    @GetMapping("/share")
+    @ApiOperation("Get single share info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public Share getSingleShare(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
+        return extInstrumentsService.getSingleShare(ticker);
     }
 
 }

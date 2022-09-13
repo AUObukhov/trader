@@ -158,7 +158,7 @@ class BotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, Currency.RUB, lotSize);
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -194,7 +194,7 @@ class BotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
@@ -250,7 +250,7 @@ class BotUnitTest {
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(share);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))

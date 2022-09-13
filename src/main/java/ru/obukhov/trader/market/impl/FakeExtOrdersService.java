@@ -66,7 +66,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final OrderType type,
             final String orderId
     ) {
-        final Share share = extInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getSingleShare(ticker);
         final BigDecimal currentPrice = getCurrentPrice(ticker);
         final Long quantity = quantityLots * share.lotSize();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
@@ -115,7 +115,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
-        final Share share = extInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getSingleShare(ticker);
 
         updateBalance(accountId, share.currency(), totalPrice.negate().subtract(commissionAmount));
 
@@ -162,7 +162,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             throw new IllegalArgumentException(message);
         }
 
-        final Share share = extInstrumentsService.getShare(ticker);
+        final Share share = extInstrumentsService.getSingleShare(ticker);
 
         updateBalance(accountId, share.currency(), totalPrice.subtract(commissionAmount));
         if (compareToZero == 0) {

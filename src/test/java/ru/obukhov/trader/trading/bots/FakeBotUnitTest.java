@@ -47,7 +47,7 @@ class FakeBotUnitTest {
     void getShare() {
         final String ticker = "ticker";
         final Share expectedShare = Share.builder().ticker(ticker).lotSize(10).build();
-        Mockito.when(extInstrumentsService.getShare(ticker)).thenReturn(expectedShare);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(expectedShare);
 
         final Share share = fakeBot.getShare(ticker);
 

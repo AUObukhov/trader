@@ -42,7 +42,7 @@ public class FakeBot extends Bot {
     }
 
     public Share getShare(final String ticker) {
-        return extInstrumentsService.getShare(ticker);
+        return extInstrumentsService.getSingleShare(ticker);
     }
 
     public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {

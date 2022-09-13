@@ -59,7 +59,7 @@ public class FakeBotFactory {
             final OffsetDateTime currentDateTime
     ) {
         final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
-        final Share share = extInstrumentsService.getShare(botConfig.ticker());
+        final Share share = extInstrumentsService.getSingleShare(botConfig.ticker());
         if (share == null) {
             throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
         }

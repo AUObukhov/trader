@@ -10,6 +10,8 @@ import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class ExtInstrumentsService {
 
@@ -34,12 +36,17 @@ public class ExtInstrumentsService {
         return instrument.getTicker();
     }
 
-    public Share getShare(final String ticker) {
+    public List<Share> getShares(final String ticker) {
         return instrumentsService.getAllSharesSync().stream()
                 .filter(share -> ticker.equalsIgnoreCase(share.getTicker()))
-                .findFirst()
                 .map(SHARE_MAPPER::map)
-                .orElse(null);
+                .toList();
+    }
+
+    public Share getSingleShare(final String ticker) {
+        final List<Share> shares = getShares(ticker);
+        Assert.isTrue(shares.size() == 1, () -> "Expected single share for ticker " + ticker + ". Found " + shares.size());
+        return shares.get(0);
     }
 
 }
