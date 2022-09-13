@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Share;
 
 import java.util.List;
@@ -44,6 +45,28 @@ public class InstrumentsController {
     })
     public Share getSingleShare(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
         return extInstrumentsService.getSingleShare(ticker);
+    }
+
+    @GetMapping("/etfs")
+    @ApiOperation("Get ETFs info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public List<Etf> getEtfs(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+        return extInstrumentsService.getEtfs(ticker);
+    }
+
+    @GetMapping("/etf")
+    @ApiOperation("Get single ETF info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public Etf getSingleEtf(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+        return extInstrumentsService.getSingleEtf(ticker);
     }
 
 }

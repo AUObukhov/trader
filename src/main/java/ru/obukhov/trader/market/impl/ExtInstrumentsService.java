@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
@@ -16,6 +18,7 @@ import java.util.List;
 public class ExtInstrumentsService {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
+    private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -47,6 +50,19 @@ public class ExtInstrumentsService {
         final List<Share> shares = getShares(ticker);
         Assert.isTrue(shares.size() == 1, () -> "Expected single share for ticker " + ticker + ". Found " + shares.size());
         return shares.get(0);
+    }
+
+    public List<Etf> getEtfs(final String ticker) {
+        return instrumentsService.getAllEtfsSync().stream()
+                .filter(etf -> ticker.equalsIgnoreCase(etf.getTicker()))
+                .map(ETF_MAPPER::map)
+                .toList();
+    }
+
+    public Etf getSingleEtf(final String ticker) {
+        final List<Etf> etfs = getEtfs(ticker);
+        Assert.isTrue(etfs.size() == 1, () -> "Expected single etf for ticker " + ticker + ". Found " + etfs.size());
+        return etfs.get(0);
     }
 
 }
