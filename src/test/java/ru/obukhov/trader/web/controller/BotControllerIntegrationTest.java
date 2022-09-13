@@ -31,7 +31,6 @@ import ru.obukhov.trader.trading.model.Profits;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
-import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -315,11 +314,9 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final List<BackTestResult> backTestResults = List.of(backTestResult1, backTestResult2);
 
-        final BackTestResponse response = new BackTestResponse(backTestResults);
-
         // action & assertion
 
-        performAndExpectResponse(requestBuilder, response);
+        performAndExpectResponse(requestBuilder, backTestResults);
     }
 
     // endregion

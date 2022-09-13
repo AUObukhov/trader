@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.model.UserAccount;
-import ru.obukhov.trader.web.model.exchange.GetUserAccountsResponse;
 
 import java.util.List;
 
@@ -31,10 +30,8 @@ public class UserController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetUserAccountsResponse getAccounts() {
-        final List<UserAccount> accounts = extUsersService.getAccounts();
-
-        return new GetUserAccountsResponse(accounts);
+    public List<UserAccount> getAccounts() {
+        return extUsersService.getAccounts();
     }
 
 }

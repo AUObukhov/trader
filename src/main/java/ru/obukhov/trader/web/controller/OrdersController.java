@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 
 import java.util.List;
 
@@ -34,10 +33,8 @@ public class OrdersController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetOrdersResponse getOrders(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
-        final List<Order> orders = ordersService.getOrders(accountId);
-
-        return new GetOrdersResponse(orders);
+    public List<Order> getOrders(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
+        return ordersService.getOrders(accountId);
     }
 
 }

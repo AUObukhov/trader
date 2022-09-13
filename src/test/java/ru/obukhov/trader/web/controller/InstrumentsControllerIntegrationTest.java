@@ -13,7 +13,6 @@ import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.web.model.exchange.GetShareResponse;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
@@ -137,7 +136,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 first1DayCandleDate2
         );
 
-        performAndExpectResponse(requestBuilder, new GetShareResponse(expectedShare));
+        performAndExpectResponse(requestBuilder, expectedShare);
     }
 
     @Test
@@ -251,7 +250,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 first1DayCandleDate2
         );
 
-        performAndExpectResponse(requestBuilder, new GetShareResponse(expectedShare));
+        performAndExpectResponse(requestBuilder, expectedShare);
     }
 
     @Test

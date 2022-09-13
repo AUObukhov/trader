@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.web.model.exchange.GetShareResponse;
 
 @Slf4j
 @RestController
@@ -30,13 +29,11 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetShareResponse getShare(
+    public Share getShare(
             @RequestParam
             @ApiParam(example = "AAPL") final String ticker
     ) {
-        final Share share = extInstrumentsService.getShare(ticker);
-
-        return new GetShareResponse(share);
+        return extInstrumentsService.getShare(ticker);
     }
 
 }

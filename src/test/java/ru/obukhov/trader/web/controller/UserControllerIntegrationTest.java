@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.web.model.exchange.GetUserAccountsResponse;
 import ru.tinkoff.piapi.contract.v1.AccessLevel;
 import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.AccountStatus;
@@ -75,11 +74,11 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
 
         final UserAccount userAccount1 = new UserAccount(id1, accountType1, name1, accountStatus1, openedDateTime1, closedDateTime1, accessLevel1);
         final UserAccount userAccount2 = new UserAccount(id2, accountType2, name2, accountStatus2, openedDateTime2, closedDateTime2, accessLevel2);
-        final GetUserAccountsResponse getUserAccountsResponse = new GetUserAccountsResponse(List.of(userAccount1, userAccount2));
+        final List<UserAccount> userAccounts = List.of(userAccount1, userAccount2);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/user/accounts")
                 .contentType(MediaType.APPLICATION_JSON);
-        performAndExpectResponse(requestBuilder, getUserAccountsResponse);
+        performAndExpectResponse(requestBuilder, userAccounts);
     }
 
 }

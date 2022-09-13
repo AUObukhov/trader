@@ -16,7 +16,6 @@ import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
-import ru.obukhov.trader.web.model.exchange.BackTestResponse;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,14 +37,12 @@ public class BotController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public BackTestResponse backTest(@Valid @RequestBody final BackTestRequest request) {
+    public List<BackTestResult> backTest(@Valid @RequestBody final BackTestRequest request) {
 
         final Interval interval = DateUtils.getIntervalWithDefaultOffsets(request.getFrom(), request.getTo());
         final boolean saveToFiles = BooleanUtils.isTrue(request.getSaveToFiles());
 
-        final List<BackTestResult> results = backTester.test(request.getBotConfigs(), request.getBalanceConfig(), interval, saveToFiles);
-
-        return new BackTestResponse(results);
+        return backTester.test(request.getBotConfigs(), request.getBalanceConfig(), interval, saveToFiles);
 
     }
 

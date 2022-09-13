@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
-import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.piapi.core.models.Money;
 
 import java.util.List;
@@ -34,10 +32,8 @@ public class OperationsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetPortfolioPositionsResponse getPositions(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
-        final List<PortfolioPosition> positions = extOperationsService.getPositions(accountId);
-
-        return new GetPortfolioPositionsResponse(positions);
+    public List<PortfolioPosition> getPositions(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
+        return extOperationsService.getPositions(accountId);
     }
 
     @GetMapping("/balances")
@@ -47,10 +43,8 @@ public class OperationsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetAvailableBalancesResponse getAvailableBalances(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
-        final List<Money> moneys = extOperationsService.getAvailableBalances(accountId);
-
-        return new GetAvailableBalancesResponse(moneys);
+    public List<Money> getAvailableBalances(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
+        return extOperationsService.getAvailableBalances(accountId);
     }
 
 }

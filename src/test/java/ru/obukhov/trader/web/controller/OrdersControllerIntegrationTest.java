@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.web.model.exchange.GetOrdersResponse;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
@@ -131,7 +130,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
                 .get("/trader/orders/get")
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
-        performAndExpectResponse(requestBuilder, new GetOrdersResponse(orders));
+        performAndExpectResponse(requestBuilder, orders);
     }
 
 

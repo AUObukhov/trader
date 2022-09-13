@@ -11,8 +11,6 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.web.model.exchange.GetAvailableBalancesResponse;
-import ru.obukhov.trader.web.model.exchange.GetPortfolioPositionsResponse;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
@@ -147,7 +145,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final List<PortfolioPosition> portfolioPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
 
-        performAndExpectResponse(requestBuilder, new GetPortfolioPositionsResponse(portfolioPositions));
+        performAndExpectResponse(requestBuilder, portfolioPositions);
     }
 
     // region getAvailableBalances tests
@@ -206,7 +204,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Money money2 = TestData.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
         final List<Money> expectedBalances = List.of(money1, money2);
 
-        performAndExpectResponse(requestBuilder, new GetAvailableBalancesResponse(expectedBalances));
+        performAndExpectResponse(requestBuilder, expectedBalances);
     }
 
     @Test
@@ -240,7 +238,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Money money2 = TestData.createMoney(currency2, value2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
-        performAndExpectResponse(requestBuilder, new GetAvailableBalancesResponse(expectedBalances));
+        performAndExpectResponse(requestBuilder, expectedBalances);
     }
 
     // endregion
