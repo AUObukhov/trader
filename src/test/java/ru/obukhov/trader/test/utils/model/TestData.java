@@ -48,8 +48,8 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestData {
 
-    public static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
-    public static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
+    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
+    private static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     // region HistoricCandle creation
@@ -610,5 +610,6 @@ public class TestData {
     public static BigDecimal createIntegerDecimal(final double value) {
         return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
+
 
 }
