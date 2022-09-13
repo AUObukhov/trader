@@ -53,7 +53,7 @@ class CandleMapperUnitTest {
         AssertUtils.assertEquals(closePrice, quotationMapper.toBigDecimal(historicCandle.getClose()));
         AssertUtils.assertEquals(highestPrice, quotationMapper.toBigDecimal(historicCandle.getHigh()));
         AssertUtils.assertEquals(lowestPrice, quotationMapper.toBigDecimal(historicCandle.getLow()));
-        Assertions.assertEquals(dateTime, dateTimeMapper.map(historicCandle.getTime()));
+        Assertions.assertEquals(dateTime, dateTimeMapper.timestampToOffsetDateTime(historicCandle.getTime()));
         Assertions.assertEquals(isComplete, historicCandle.getIsComplete());
     }
 

@@ -133,7 +133,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
+        } else if (!DATE_TIME_MAPPER.timestampToOffsetDateTime(expected).equals(actual)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -141,7 +141,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final OffsetDateTime expected, @Nullable final Timestamp actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DATE_TIME_MAPPER.map(expected).equals(actual)) {
+        } else if (!DATE_TIME_MAPPER.offsetDateTimeToTimestamp(expected).equals(actual)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }

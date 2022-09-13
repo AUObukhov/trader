@@ -13,21 +13,35 @@ class DateTimeMapperUnitTest {
     private final DateTimeMapper mapper = Mappers.getMapper(DateTimeMapper.class);
 
     @Test
-    void mapsTimestampToOffsetDateTime() {
+    void timestampToOffsetDateTime_whenNull() {
+        final OffsetDateTime dateTime = mapper.timestampToOffsetDateTime(null);
+
+        Assertions.assertNull(dateTime);
+    }
+
+    @Test
+    void timestampToOffsetDateTime_whenNotNull() {
         final Timestamp timestamp = DateTimeTestData.createTimestamp(1651562430, 123);
         final OffsetDateTime expectedDateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
 
-        final OffsetDateTime dateTime = mapper.map(timestamp);
+        final OffsetDateTime dateTime = mapper.timestampToOffsetDateTime(timestamp);
 
         Assertions.assertEquals(expectedDateTime, dateTime);
     }
 
     @Test
-    void mapsOffsetDateTimeToTimestamp() {
+    void offsetDateTimeToTimestamp_whenNull() {
+        final Timestamp timestamp = mapper.offsetDateTimeToTimestamp(null);
+
+        Assertions.assertNull(timestamp);
+    }
+
+    @Test
+    void offsetDateTimeToTimestamp_whenNotNull() {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123);
         final Timestamp expectedTimestamp = DateTimeTestData.createTimestamp(1651562430, 123);
 
-        final Timestamp timestamp = mapper.map(dateTime);
+        final Timestamp timestamp = mapper.offsetDateTimeToTimestamp(dateTime);
 
         Assertions.assertEquals(expectedTimestamp, timestamp);
     }

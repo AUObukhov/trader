@@ -1076,7 +1076,7 @@ class DateUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forTimestampIsInInterval_throwIllegalArgumentException")
     void timestampIsInInterval_throwIllegalArgumentException(final OffsetDateTime from, final OffsetDateTime to) {
-        final Timestamp timestamp = dateTimeMapper.map(from);
+        final Timestamp timestamp = dateTimeMapper.offsetDateTimeToTimestamp(from);
         final Instant fromInstant = from.toInstant();
         final Instant toInstant = to.toInstant();
 
@@ -1126,7 +1126,7 @@ class DateUtilsUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forTimestampIsInInterval")
     void timestampIsInInterval(final OffsetDateTime dateTime, final OffsetDateTime from, final OffsetDateTime to, final boolean expectedResult) {
-        final Timestamp timestamp = dateTimeMapper.map(dateTime);
+        final Timestamp timestamp = dateTimeMapper.offsetDateTimeToTimestamp(dateTime);
 
         final boolean result = DateUtils.timestampIsInInterval(timestamp, from.toInstant(), to.toInstant());
 

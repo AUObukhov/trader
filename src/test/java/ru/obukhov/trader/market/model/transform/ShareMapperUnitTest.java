@@ -47,7 +47,7 @@ class ShareMapperUnitTest {
                 .setLot(lotSize)
                 .setCurrency(currency.name().toLowerCase())
                 .setName(name)
-                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ipoDate))
                 .setIssueSize(issueSize)
                 .setCountryOfRiskName(country)
                 .setSector(sector.name().toLowerCase())
@@ -58,8 +58,8 @@ class ShareMapperUnitTest {
                 .setSellAvailableFlag(sellAvailable)
                 .setApiTradeAvailableFlag(apiTradeAvailable)
                 .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement))
-                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate))
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1MinCandleDate))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate))
                 .build();
 
         final Share result = shareMapper.map(share);

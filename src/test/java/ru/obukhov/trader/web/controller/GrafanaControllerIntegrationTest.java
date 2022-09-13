@@ -242,7 +242,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     private String getTimeString(final HistoricCandle candle) {
-        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(DATE_TIME_MAPPER.map(candle.getTime()));
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(DATE_TIME_MAPPER.timestampToOffsetDateTime(candle.getTime()));
     }
 
     private BigDecimal getOpenPrice(final HistoricCandle candle) {

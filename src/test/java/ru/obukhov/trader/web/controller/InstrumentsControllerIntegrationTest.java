@@ -73,7 +73,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLot(lotSize1)
                 .setCurrency(currency1.name().toLowerCase())
                 .setName(name1)
-                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate1))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ipoDate1))
                 .setIssueSize(issueSize1)
                 .setCountryOfRiskName(country1)
                 .setSector(sector1.name().toLowerCase())
@@ -84,8 +84,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setSellAvailableFlag(sellAvailable1)
                 .setApiTradeAvailableFlag(apiTradeAvailable1)
                 .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement1))
-                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate1))
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate1))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1MinCandleDate1))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate1))
                 .build();
         final ru.tinkoff.piapi.contract.v1.Share tinkoffShare2 = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
                 .setFigi(figi2)
@@ -93,7 +93,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLot(lotSize2)
                 .setCurrency(currency2.name().toLowerCase())
                 .setName(name2)
-                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate2))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ipoDate2))
                 .setIssueSize(issueSize2)
                 .setCountryOfRiskName(country2)
                 .setSector(sector2.name().toLowerCase())
@@ -104,8 +104,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setSellAvailableFlag(sellAvailable2)
                 .setApiTradeAvailableFlag(apiTradeAvailable2)
                 .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement2))
-                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate2))
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate2))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1MinCandleDate2))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate2))
                 .build();
 
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(tinkoffShare1, tinkoffShare2));
@@ -187,7 +187,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLot(lotSize1)
                 .setCurrency(currency1.name().toLowerCase())
                 .setName(name1)
-                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate1))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ipoDate1))
                 .setIssueSize(issueSize1)
                 .setCountryOfRiskName(country1)
                 .setSector(sector1.name().toLowerCase())
@@ -198,8 +198,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setSellAvailableFlag(sellAvailable1)
                 .setApiTradeAvailableFlag(apiTradeAvailable1)
                 .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement1))
-                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate1))
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate1))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1MinCandleDate1))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate1))
                 .build();
         final ru.tinkoff.piapi.contract.v1.Share tinkoffShare2 = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
                 .setFigi(figi2)
@@ -207,7 +207,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLot(lotSize2)
                 .setCurrency(currency2.name().toLowerCase())
                 .setName(name2)
-                .setIpoDate(DATE_TIME_MAPPER.map(ipoDate2))
+                .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(ipoDate2))
                 .setIssueSize(issueSize2)
                 .setCountryOfRiskName(country2)
                 .setSector(sector2.name().toLowerCase())
@@ -218,8 +218,8 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setSellAvailableFlag(sellAvailable2)
                 .setApiTradeAvailableFlag(apiTradeAvailable2)
                 .setMinPriceIncrement(QUOTATION_MAPPER.fromDouble(minPriceIncrement2))
-                .setFirst1MinCandleDate(DATE_TIME_MAPPER.map(first1MinCandleDate2))
-                .setFirst1DayCandleDate(DATE_TIME_MAPPER.map(first1DayCandleDate2))
+                .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1MinCandleDate2))
+                .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(first1DayCandleDate2))
                 .build();
 
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(tinkoffShare1, tinkoffShare2));

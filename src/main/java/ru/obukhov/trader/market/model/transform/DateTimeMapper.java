@@ -10,12 +10,20 @@ import java.time.OffsetDateTime;
 @Mapper
 public interface DateTimeMapper {
 
-    default OffsetDateTime map(final Timestamp timestamp) {
+    default OffsetDateTime timestampToOffsetDateTime(final Timestamp timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+
         final Instant instant = Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos());
         return OffsetDateTime.ofInstant(instant, DateUtils.DEFAULT_OFFSET);
     }
 
-    default Timestamp map(final OffsetDateTime dateTime) {
+    default Timestamp offsetDateTimeToTimestamp(final OffsetDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+
         final Instant instant = dateTime.toInstant();
         return Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build();
     }

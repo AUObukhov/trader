@@ -67,7 +67,7 @@ public class TestData {
                 .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
                 .setHigh(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(highestPrice)))
                 .setLow(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(lowestPrice)))
-                .setTime(DATE_TIME_MAPPER.map(time))
+                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
                 .setIsComplete(isComplete)
                 .build();
     }
@@ -75,7 +75,7 @@ public class TestData {
     public static HistoricCandle createHistoricCandleOpen(final double openPrice, final OffsetDateTime time) {
         return HistoricCandle.newBuilder()
                 .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
-                .setTime(DATE_TIME_MAPPER.map(time))
+                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
                 .setIsComplete(true)
                 .build();
     }
@@ -83,7 +83,7 @@ public class TestData {
     public static HistoricCandle createHistoricCandleClosed(final double closePrice, final OffsetDateTime time) {
         return HistoricCandle.newBuilder()
                 .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
-                .setTime(DATE_TIME_MAPPER.map(time))
+                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
                 .setIsComplete(true)
                 .build();
     }
@@ -310,7 +310,7 @@ public class TestData {
             final long operationQuantity
     ) {
         return Operation.newBuilder()
-                .setDate(DATE_TIME_MAPPER.map(operationDateTime))
+                .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(operationDateTime))
                 .setOperationType(operationType)
                 .setPrice(MONEY_VALUE_MAPPER.doubleToMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
@@ -442,7 +442,7 @@ public class TestData {
                 .setServiceCommission(TestData.createTinkoffMoneyValue(serviceCommission, currency))
                 .setCurrency(currency.name())
                 .setOrderType(orderType)
-                .setOrderDate(DATE_TIME_MAPPER.map(orderDate))
+                .setOrderDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(orderDate))
                 .build();
     }
 
