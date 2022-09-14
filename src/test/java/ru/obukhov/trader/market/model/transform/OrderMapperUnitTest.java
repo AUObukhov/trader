@@ -7,6 +7,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
@@ -33,7 +34,7 @@ class OrderMapperUnitTest {
         final double averagePositionPrice = 5;
         final double initialCommission = 6;
         final double executedCommission = 7;
-        final String figi = "figi";
+        final String figi = TestShare1.FIGI;
         final OrderDirection orderDirection = OrderDirection.ORDER_DIRECTION_BUY;
         final double initialSecurityPrice = 8;
         final List<OrderStage> stages = List.of(

@@ -23,6 +23,7 @@ import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -62,7 +63,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(false);
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -84,7 +85,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -134,7 +135,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 null,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -156,7 +157,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -178,7 +179,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 null,
@@ -195,8 +196,8 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = "2000124699";
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;

@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
@@ -18,7 +19,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -32,7 +33,7 @@ class BotConfigValidationTest {
         return Stream.of(
                 Arguments.of(
                         null,
-                        "ticker",
+                        TestShare1.TICKER,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -50,7 +51,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         "2000124699",
-                        "ticker",
+                        TestShare1.TICKER,
                         null,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -59,7 +60,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         "2000124699",
-                        "ticker",
+                        TestShare1.TICKER,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
                         StrategyType.CONSERVATIVE,
@@ -68,7 +69,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         "2000124699",
-                        "ticker",
+                        TestShare1.TICKER,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         null,

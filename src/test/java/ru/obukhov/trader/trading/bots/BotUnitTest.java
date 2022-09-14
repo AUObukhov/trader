@@ -21,6 +21,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -58,7 +59,7 @@ class BotUnitTest {
     @Test
     void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final List<Order> orders = List.of(TestData.createOrder());
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
@@ -84,7 +85,7 @@ class BotUnitTest {
     void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
         final String accountId = "2000124699";
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         Mocker.mockEmptyOrder(ordersService, ticker);
 
@@ -107,7 +108,7 @@ class BotUnitTest {
     @Test
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
@@ -128,7 +129,7 @@ class BotUnitTest {
     @Test
     void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
@@ -154,7 +155,7 @@ class BotUnitTest {
     @Test
     void processTicker_doesNoOrder_whenDecisionIsWait() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
 
         final Share share = TestData.createShare(ticker, Currency.RUB, lotSize);
@@ -189,7 +190,7 @@ class BotUnitTest {
     @Test
     void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final Currency currency = Currency.USD;
         final int lotSize = 10;
 
@@ -245,7 +246,7 @@ class BotUnitTest {
     @Test
     void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final Currency currency = Currency.USD;
         final int lotSize = 10;
 

@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.model.exchange;
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -62,7 +63,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 null,
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -78,7 +79,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 null,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -94,7 +95,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -110,7 +111,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
-                "ticker",
+                TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 null,
@@ -127,7 +128,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = new BackTestRequest();
 
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
         request.setBalanceConfig(balanceConfig);

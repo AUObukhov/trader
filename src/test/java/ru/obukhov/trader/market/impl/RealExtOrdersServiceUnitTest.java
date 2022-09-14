@@ -13,6 +13,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
@@ -176,8 +177,8 @@ class RealExtOrdersServiceUnitTest {
     void getOrders_filtersOrdersByFigi() {
         final String accountId = "2000124699";
 
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
@@ -200,8 +201,8 @@ class RealExtOrdersServiceUnitTest {
     @Test
     void postOrder() {
         final String accountId = "2000124699";
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final Currency currency = Currency.USD;
         final int totalOrderAmount = 2000;

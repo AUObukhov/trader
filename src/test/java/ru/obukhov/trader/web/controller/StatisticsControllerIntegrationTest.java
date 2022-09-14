@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -62,7 +63,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
@@ -86,7 +87,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
@@ -110,7 +111,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenCandleIntervalIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
         final int bigWindow = 50;
@@ -133,7 +134,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final int smallWindow = 50;
         final int bigWindow = 50;
@@ -157,7 +158,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int bigWindow = 50;
@@ -180,7 +181,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
         final int smallWindow = 50;
@@ -204,8 +205,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
@@ -268,8 +269,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
@@ -302,8 +303,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
@@ -339,8 +340,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;
@@ -373,8 +374,8 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final int smallWindow = 1;

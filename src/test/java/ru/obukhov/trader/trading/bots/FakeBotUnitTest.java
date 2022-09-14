@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 
@@ -45,7 +46,7 @@ class FakeBotUnitTest {
 
     @Test
     void getShare() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final Share expectedShare = Share.builder().ticker(ticker).lotSize(10).build();
         Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(expectedShare);
 
@@ -103,7 +104,7 @@ class FakeBotUnitTest {
     void getOperations() {
         final String accountId = "2000124699";
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final List<Operation> expectedOperations = new ArrayList<>();
         Mockito.when(extOperationsService.getOperations(accountId, interval, ticker)).thenReturn(expectedOperations);
 
@@ -125,7 +126,7 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentPrice() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final BigDecimal expectedCurrentPrice = BigDecimal.TEN;
 

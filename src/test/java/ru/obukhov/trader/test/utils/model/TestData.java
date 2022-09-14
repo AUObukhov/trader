@@ -611,5 +611,4 @@ public class TestData {
         return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 
-
 }

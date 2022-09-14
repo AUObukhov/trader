@@ -24,6 +24,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -97,7 +98,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
@@ -120,7 +121,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
@@ -146,7 +147,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
@@ -168,7 +169,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
@@ -192,7 +193,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
@@ -220,7 +221,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
@@ -246,7 +247,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
@@ -273,7 +274,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
@@ -302,7 +303,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
@@ -338,7 +339,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
 
         Mocker.mockEmptyOrder(ordersService, ticker);
@@ -371,7 +372,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
@@ -398,7 +399,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final Currency currency = Currency.RUB;
         final int lotSize = 10;
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
@@ -432,7 +433,7 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         mockData(accountId, ticker, Currency.RUB, 10);
 

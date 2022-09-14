@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -15,13 +16,12 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsSet() {
-        // todo realistic data
-        final Currency currency = Currency.EUR;
+        final Currency currency = TestShare1.CURRENCY;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long quantityLots = 10;
-        final String figi = "figi";
+        final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
@@ -55,13 +55,12 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsNotSet() {
-        // todo realistic data
-        final Currency currency = Currency.EUR;
+        final Currency currency = TestShare1.CURRENCY;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
         final long quantityLots = 10;
-        final String figi = "figi";
+        final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = null;
@@ -95,13 +94,12 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreComplex() {
-        // todo realistic data
-        final Currency currency = Currency.EUR;
+        final Currency currency = TestShare1.CURRENCY;
         final BigDecimal totalPrice = BigDecimal.valueOf(1000);
         final BigDecimal totalCommissionAmount = BigDecimal.valueOf(5);
         final BigDecimal currentPrice = BigDecimal.valueOf(100);
         final long quantityLots = 10;
-        final String figi = "figi";
+        final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";

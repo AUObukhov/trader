@@ -17,6 +17,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -50,8 +51,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenFromIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -83,8 +84,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -116,8 +117,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_filterCandlesByYears() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -150,8 +151,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenFromIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -185,8 +186,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -220,8 +221,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
@@ -254,7 +255,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoCandles() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
         final Executable executable = () -> service.getLastPrice(ticker, to);
@@ -264,8 +265,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
         final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
@@ -283,8 +284,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
         final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() - 1);
         final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
@@ -308,7 +309,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
@@ -320,8 +321,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -350,8 +351,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -381,8 +382,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -407,8 +408,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -436,8 +437,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -467,7 +468,7 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final int limit = 5;
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
@@ -479,8 +480,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -509,8 +510,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -540,8 +541,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -571,8 +572,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -596,8 +597,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -624,8 +625,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -654,8 +655,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getMarketCandles_returnsMappedCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -699,8 +700,8 @@ class ExtMarketDataServiceUnitTest {
 
     @Test
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);

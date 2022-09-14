@@ -12,6 +12,8 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -40,7 +42,7 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = "2000124699";
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -104,11 +106,11 @@ class FakeExtOperationsServiceUnitTest {
 
         final String accountId = "2000124699";
 
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
+        final String ticker1 = TestShare1.TICKER;
+        final String ticker2 = TestShare2.TICKER;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        ;
+
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
@@ -166,14 +168,13 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = "2000124699";
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
+        final String ticker1 = TestShare1.TICKER;
+        final String ticker2 = TestShare2.TICKER;
 
-        final OffsetDateTime dateTime1 = dateTime;
-        final OffsetDateTime dateTime2 = dateTime.plusMinutes(1);
-        final OffsetDateTime dateTime3 = dateTime.plusMinutes(2);
+        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
+        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(2);
 
         final int price1 = 100;
         final int price2 = 200;
@@ -207,7 +208,7 @@ class FakeExtOperationsServiceUnitTest {
 
         Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 
-        final Interval interval = Interval.of(dateTime, dateTime.plusMinutes(2));
+        final Interval interval = Interval.of(dateTime1, dateTime1.plusMinutes(2));
 
         // action
 

@@ -24,6 +24,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
@@ -62,7 +63,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_savesMultipleResults() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig1 = new BotConfig(
                 "2000124699",
@@ -126,7 +127,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
@@ -162,7 +163,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
@@ -198,7 +199,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final String error = "error";
 
         final BotConfig botConfig = new BotConfig(
@@ -238,7 +239,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
@@ -276,7 +277,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
@@ -315,7 +316,7 @@ class ExcelServiceImplUnitTest {
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
@@ -396,7 +397,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_createsAndSaveWorkbook() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
@@ -440,7 +441,7 @@ class ExcelServiceImplUnitTest {
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);

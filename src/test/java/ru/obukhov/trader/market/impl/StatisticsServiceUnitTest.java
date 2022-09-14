@@ -10,13 +10,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
-import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
@@ -33,8 +33,6 @@ class StatisticsServiceUnitTest {
     private ExtMarketDataService extMarketDataService;
     @Mock
     private ApplicationContext applicationContext;
-    @Mock
-    private Context context;
 
     @InjectMocks
     private StatisticsService service;
@@ -44,7 +42,7 @@ class StatisticsServiceUnitTest {
 
         // arrange
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
@@ -93,7 +91,7 @@ class StatisticsServiceUnitTest {
 
         // arrange
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);

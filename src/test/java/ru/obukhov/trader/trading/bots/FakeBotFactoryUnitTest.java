@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,6 +22,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -85,8 +87,7 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentDateTimeToCeilingWorkTime")
     void createBot_movesCurrentDateTimeToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
-        final String ticker = "ticker";
-        final Currency currency = Currency.RUB;
+        final String ticker = TestShare1.TICKER;
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 ticker,
@@ -98,7 +99,7 @@ class FakeBotFactoryUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig();
 
-        mockCurrency(ticker, currency);
+        mockCurrency(ticker, TestShare1.CURRENCY);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
         mockFakeContext();
 
@@ -119,8 +120,8 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
     void createBot_initializesBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
-        final String ticker = "ticker";
-        final Currency currency = Currency.RUB;
+        final String ticker = TestShare1.TICKER;
+        final Currency currency = TestShare1.CURRENCY;
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 ticker,
@@ -143,7 +144,7 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_throwIllegalArgumentException_whenShareNotFound() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final BotConfig botConfig = new BotConfig(
                 "2000124699",
                 ticker,
@@ -155,11 +156,9 @@ class FakeBotFactoryUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(1000000.0);
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> factory.createBot(botConfig, balanceConfig, currentDateTime),
-                "Not found share for ticker '" + ticker + "'"
-        );
+        final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
+        final String expectedMessage = "Not found share for ticker '" + ticker + "'";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     private void mockCurrency(final String ticker, final Currency currency) {

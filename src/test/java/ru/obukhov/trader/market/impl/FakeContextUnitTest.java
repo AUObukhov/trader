@@ -15,6 +15,8 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 
 import java.math.BigDecimal;
@@ -406,7 +408,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         PortfolioPosition position = TestData.createPortfolioPosition();
 
         fakeContext.addPosition(accountId, ticker, position);
@@ -425,8 +427,8 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
+        final String ticker1 = TestShare1.TICKER;
+        final String ticker2 = TestShare2.TICKER;
         PortfolioPosition position1 = TestData.createPortfolioPosition();
         PortfolioPosition position2 = TestData.createPortfolioPosition();
 
@@ -449,7 +451,7 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         PortfolioPosition position = TestData.createPortfolioPosition();
 
         fakeContext.addPosition(accountId, ticker, position);

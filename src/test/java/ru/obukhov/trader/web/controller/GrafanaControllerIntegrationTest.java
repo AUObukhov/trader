@@ -22,6 +22,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
@@ -98,8 +99,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsCandles_whenMetricIsCandles() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
@@ -149,8 +150,8 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsExtendedCandles_whenMetricIsExtendedCandles() throws Exception {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 

@@ -19,6 +19,9 @@ import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PortfolioPositionMatcher;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare3;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
@@ -61,8 +64,8 @@ class FakeExtOrdersServiceUnitTest {
     @Test
     void getOrders_byAccountIdAndTicker_returnsEmptyList() {
         final String accountId = "2000124699";
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
 
@@ -80,8 +83,8 @@ class FakeExtOrdersServiceUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
         mockBalances(accountId, currency, 1000);
@@ -101,8 +104,8 @@ class FakeExtOrdersServiceUnitTest {
         final String accountId = "2000124699";
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = Currency.RUB;
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
         final int quantityLots = 1;
         final double currentPrice = 1000;
@@ -142,8 +145,8 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final Currency currency = Currency.RUB;
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
         final int quantityLots1 = 2;
         final int quantityLots2 = 1;
@@ -212,13 +215,13 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = 989368.2;
         final double balance3 = 988866.7;
 
-        final String figi1 = "figi1";
-        final String figi2 = "figi2";
-        final String figi3 = "figi3";
+        final String figi1 = TestShare1.FIGI;
+        final String figi2 = TestShare2.FIGI;
+        final String figi3 = TestShare3.FIGI;
 
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
+        final String ticker1 = TestShare1.TICKER;
+        final String ticker2 = TestShare2.TICKER;
+        final String ticker3 = TestShare3.TICKER;
 
         final int lotSize1 = 10;
         final int lotSize2 = 2;
@@ -307,8 +310,8 @@ class FakeExtOrdersServiceUnitTest {
         final double balance1 = 979940;
         final double balance2 = 939820;
 
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
 
         final double price1 = 1000;
@@ -380,8 +383,8 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = 939820;
         final double balance3 = 1029550;
 
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
 
         final double price1 = 1000;
@@ -455,8 +458,8 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = 939820;
         final double balance3 = 969730;
 
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final int lotSize = 10;
 
         final double price1 = 1000;

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 
 import java.math.BigDecimal;
 
@@ -11,9 +12,9 @@ class PortfolioPositionUnitTest {
 
     @Test
     void getCurrency() {
-        final Currency currency = Currency.EUR;
+        final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = TestData.createPortfolioPosition(
-                "ticker",
+                TestShare1.TICKER,
                 InstrumentType.STOCK,
                 1,
                 10,
@@ -29,14 +30,14 @@ class PortfolioPositionUnitTest {
     @Test
     void getTotalPrice() {
         final PortfolioPosition position = TestData.createPortfolioPosition(
-                "ticker",
+                TestShare1.TICKER,
                 InstrumentType.STOCK,
                 3,
                 10,
                 15,
                 15,
                 3,
-                Currency.EUR
+                TestShare1.CURRENCY
         );
 
         AssertUtils.assertEquals(30, position.getTotalPrice());
@@ -44,15 +45,16 @@ class PortfolioPositionUnitTest {
 
     @Test
     void addQuantities() {
+        final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = TestData.createPortfolioPosition(
-                "ticker",
+                TestShare1.TICKER,
                 InstrumentType.STOCK,
                 3,
                 10,
                 15,
                 20,
                 3,
-                Currency.EUR
+                currency
         );
 
         final PortfolioPosition newPosition = position.addQuantities(
@@ -64,25 +66,25 @@ class PortfolioPositionUnitTest {
 
         AssertUtils.assertEquals(5, newPosition.quantity());
         AssertUtils.assertEquals(12, newPosition.averagePositionPrice().value());
-        Assertions.assertEquals(Currency.EUR, newPosition.averagePositionPrice().currency());
+        Assertions.assertEquals(currency, newPosition.averagePositionPrice().currency());
         AssertUtils.assertEquals(15, newPosition.expectedYield());
         AssertUtils.assertEquals(5, newPosition.quantityLots());
         AssertUtils.assertEquals(15, newPosition.currentPrice().value());
-        Assertions.assertEquals(Currency.EUR, newPosition.currentPrice().currency());
+        Assertions.assertEquals(currency, newPosition.currentPrice().currency());
         AssertUtils.assertEquals(60, newPosition.getTotalPrice());
     }
 
     @Test
     void cloneWithNewQuantity() {
         final PortfolioPosition position = TestData.createPortfolioPosition(
-                "ticker",
+                TestShare1.TICKER,
                 InstrumentType.STOCK,
                 30,
                 10,
                 300,
                 20,
                 3,
-                Currency.EUR
+                TestShare1.CURRENCY
         );
 
         final BigDecimal newQuantity = BigDecimal.valueOf(20);
@@ -105,9 +107,9 @@ class PortfolioPositionUnitTest {
 
     @Test
     void cloneWithNewValues() {
-        final Currency currency = Currency.EUR;
+        final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = TestData.createPortfolioPosition(
-                "ticker",
+                TestShare1.TICKER,
                 InstrumentType.STOCK,
                 30,
                 10,

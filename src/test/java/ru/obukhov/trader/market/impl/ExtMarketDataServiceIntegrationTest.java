@@ -19,6 +19,10 @@ import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.obukhov.trader.test.utils.model.share.TestShare3;
+import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -44,7 +48,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_throwsIllegalArgumentException_whenNoAssets() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
@@ -60,18 +64,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_throwsIllegalArgumentException_whenNoInstrument() {
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
-        final String ticker4 = "ticker4";
-
-        final String figi2 = "figi2";
-        final String figi1 = "figi1";
-        final String figi3 = "figi3";
-
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
 
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
@@ -83,20 +78,22 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
+        final String ticker = TestShare4.TICKER;
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 6);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 13);
         final Interval interval = Interval.of(from, to);
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 1, 14);
 
-        final Executable executable = () -> extMarketDataService.getCandles(ticker4, interval, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
+        final Executable executable = () -> extMarketDataService.getCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getCandles_skipsCandlesByDays_whenFromIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -128,8 +125,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_skipsCandlesByDays_whenEmptyDaysLimitIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -161,8 +158,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_filterCandlesByYears() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -195,8 +192,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenFromIsReached() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -230,8 +227,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -265,8 +262,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
-        final String figi = "figi";
-        final String ticker = "ticker";
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -299,7 +296,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoCandles() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
         final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
@@ -309,7 +306,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoAssets() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
@@ -322,18 +319,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoInstrument() {
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
-        final String ticker4 = "ticker4";
-
-        final String figi2 = "figi2";
-        final String figi1 = "figi1";
-        final String figi3 = "figi3";
-
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
 
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
@@ -343,19 +331,21 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
                 .addInstruments(assetInstrument22)
                 .build();
 
+        final String ticker = TestShare4.TICKER;
+
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 13);
 
-        final Executable executable = () -> extMarketDataService.getLastPrice(ticker4, to);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker4 + "'";
+        final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
         final OffsetDateTime candlesTo = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit() + 1);
         final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
@@ -373,8 +363,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
         final OffsetDateTime candlesTo = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit() - 1);
         final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
@@ -398,7 +388,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_throwsIllegalArgumentException_whenThereAreNoAssets() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
@@ -410,18 +400,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_throwsIllegalArgumentException_whenNoInstrument() {
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
-        final String ticker4 = "ticker4";
-
-        final String figi2 = "figi2";
-        final String figi1 = "figi1";
-        final String figi3 = "figi3";
-
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
 
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
@@ -433,17 +414,19 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
+        final String ticker = TestShare4.TICKER;
+
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
-        final Executable executable = () -> extMarketDataService.getLastCandles(ticker4, 5, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
+        final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getLastCandlesDaily_returnsNoCandles_whenThereAreNoCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
@@ -457,8 +440,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -487,8 +470,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -518,8 +501,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_returnsNoCandles_whenThereIsBigEmptyIntervalAfterCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -544,8 +527,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_returnsCandlesOnlyAfterManyEmptyDays_whenThereIsBigEmptyIntervalBetweenCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -573,8 +556,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesDaily_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
@@ -604,7 +587,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_throwsIllegalArgumentException_whenThereAreNoAssets() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
@@ -616,18 +599,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_throwsIllegalArgumentException_whenNoInstrument() {
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
-        final String ticker4 = "ticker4";
-
-        final String figi2 = "figi2";
-        final String figi1 = "figi1";
-        final String figi3 = "figi3";
-
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
 
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
@@ -639,17 +613,19 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
+        final String ticker = TestShare4.TICKER;
+
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
-        final Executable executable = () -> extMarketDataService.getLastCandles(ticker4, 5, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
+        final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getLastCandlesYearly_returnsNoCandles_whenThereAreNoCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
@@ -662,8 +638,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsLimitedNumberOfCandles_whenThereAreMoreCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -692,8 +668,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsNumberOfCandlesLowerThanLimit_whenThereAreLessCandlesThanLimited() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -723,8 +699,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsPastYearCandles_whenThereAreNoCandlesInCurrentYear() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -754,8 +730,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsNoCandles_whenThereIsEmptyYearAfterCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -779,8 +755,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsCandlesOnlyAfterEmptyYear_whenThereEmptyYearBetweenCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -807,8 +783,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getLastCandlesYearly_returnsNoFutureCandles_whenThereAreFutureCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
@@ -837,7 +813,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getMarketCandles_throwsIllegalArgumentException_whenThereAreNoAssets() {
-        final String ticker = "ticker";
+        final String ticker = TestShare1.TICKER;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -851,18 +827,9 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getMarketCandles_throwsIllegalArgumentException_whenNoInstrument() {
-        final String ticker1 = "ticker1";
-        final String ticker2 = "ticker2";
-        final String ticker3 = "ticker3";
-        final String ticker4 = "ticker4";
-
-        final String figi2 = "figi2";
-        final String figi1 = "figi1";
-        final String figi3 = "figi3";
-
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(figi1, ticker1);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
 
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument11)
@@ -874,19 +841,21 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
+        final String ticker = TestShare4.TICKER;
+
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final Executable executable = () -> extMarketDataService.getMarketCandles(ticker4, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
+        final Executable executable = () -> extMarketDataService.getMarketCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getMarketCandles_returnsMappedCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
@@ -929,8 +898,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getMarketCandles_returnsEmptyList_whenGetsNoCandles() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);

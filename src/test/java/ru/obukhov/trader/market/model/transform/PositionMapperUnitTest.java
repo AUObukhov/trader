@@ -7,6 +7,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.core.models.Position;
 
 class PositionMapperUnitTest {
@@ -15,8 +16,8 @@ class PositionMapperUnitTest {
 
     @Test
     void map() {
-        final String ticker = "ticker";
-        final String figi = "figi";
+        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final InstrumentType instrumentType = InstrumentType.STOCK;
         final int quantity = 1000;
         final int averagePositionPrice = 110;
