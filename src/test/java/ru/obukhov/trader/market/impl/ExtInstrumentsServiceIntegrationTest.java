@@ -53,7 +53,6 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String figi4 = TestShare5.FIGI;
 
-        Mocker.mockFigiByTicker(instrumentsService, figi1, ticker1);
         final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument1)
@@ -88,7 +87,6 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String figi4 = TestShare5.FIGI;
 
-        Mocker.mockFigiByTicker(instrumentsService, figi1, ticker1);
         final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
         final Asset asset1 = Asset.newBuilder()
                 .addInstruments(assetInstrument1)
