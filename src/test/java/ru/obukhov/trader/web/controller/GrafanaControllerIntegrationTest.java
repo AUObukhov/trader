@@ -21,7 +21,7 @@ import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -110,9 +110,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                TestData.createHistoricCandleOpen(100, from),
-                TestData.createHistoricCandleOpen(101, from.plusMinutes(1)),
-                TestData.createHistoricCandleOpen(102, from.plusMinutes(2))
+                new HistoricCandleBuilder().setOpenPrice(100).setTime(from).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpenPrice(101).setTime(from.plusMinutes(1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpenPrice(102).setTime(from.plusMinutes(2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -161,9 +161,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                TestData.createHistoricCandleOpen(100, from),
-                TestData.createHistoricCandleOpen(101, from.plusMinutes(1)),
-                TestData.createHistoricCandleOpen(102, from.plusMinutes(2))
+                new HistoricCandleBuilder().setOpenPrice(100).setTime(from).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpenPrice(101).setTime(from.plusMinutes(1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpenPrice(102).setTime(from.plusMinutes(2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)

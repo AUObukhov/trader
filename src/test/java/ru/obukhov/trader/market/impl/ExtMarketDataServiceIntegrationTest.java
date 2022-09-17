@@ -18,6 +18,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -428,7 +429,6 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final int limit = 5;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
@@ -868,21 +868,42 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final int highestPrice1 = 2000;
         final int lowestPrice1 = 500;
         final OffsetDateTime time1 = from.plusMinutes(1);
-        final HistoricCandle historicCandle1 = TestData.createHistoricCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1, true);
+        final HistoricCandle historicCandle1 = new HistoricCandleBuilder()
+                .setOpenPrice(openPrice1)
+                .setClosePrice(closePrice1)
+                .setHighestPrice(highestPrice1)
+                .setLowestPrice(lowestPrice1)
+                .setTime(time1)
+                .setIsComplete(true)
+                .build();
 
         final int openPrice2 = 1500;
         final int closePrice2 = 2000;
         final int highestPrice2 = 2500;
         final int lowestPrice2 = 1000;
         final OffsetDateTime time2 = from.plusMinutes(2);
-        final HistoricCandle historicCandle2 = TestData.createHistoricCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2, true);
+        final HistoricCandle historicCandle2 = new HistoricCandleBuilder()
+                .setOpenPrice(openPrice2)
+                .setClosePrice(closePrice2)
+                .setHighestPrice(highestPrice2)
+                .setLowestPrice(lowestPrice2)
+                .setTime(time2)
+                .setIsComplete(true)
+                .build();
 
         final int openPrice3 = 2000;
         final int closePrice3 = 2500;
         final int highestPrice3 = 3000;
         final int lowestPrice3 = 500;
         final OffsetDateTime time3 = from.plusMinutes(3);
-        final HistoricCandle historicCandle3 = TestData.createHistoricCandle(openPrice3, closePrice3, highestPrice3, lowestPrice3, time3, false);
+        final HistoricCandle historicCandle3 = new HistoricCandleBuilder()
+                .setOpenPrice(openPrice3)
+                .setClosePrice(closePrice3)
+                .setHighestPrice(highestPrice3)
+                .setLowestPrice(lowestPrice3)
+                .setTime(time3)
+                .setIsComplete(false)
+                .build();
 
         Mockito.when(marketDataService.getCandlesSync(figi, from.toInstant(), to.toInstant(), candleInterval))
                 .thenReturn(List.of(historicCandle1, historicCandle2, historicCandle3));

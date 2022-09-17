@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -216,32 +217,33 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
 
-        final HistoricCandle candle1 = TestData.createHistoricCandle(
-                12000,
-                8000,
-                15000,
-                6000,
-                DateTimeTestData.createDateTime(2021, 3, 25, 10),
-                true
-        );
+        final HistoricCandle candle1 = new HistoricCandleBuilder()
+                .setOpenPrice(12000)
+                .setClosePrice(8000)
+                .setHighestPrice(15000)
+                .setLowestPrice(6000)
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10))
+                .setIsComplete(true)
+                .build();
 
-        final HistoricCandle candle2 = TestData.createHistoricCandle(
-                1200,
-                800,
-                1500,
-                600,
-                DateTimeTestData.createDateTime(2021, 3, 25, 10, 1),
-                true
-        );
+        final HistoricCandle candle2 = new HistoricCandleBuilder()
+                .setOpenPrice(1200)
+                .setClosePrice(800)
+                .setHighestPrice(1500)
+                .setLowestPrice(600)
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 1))
+                .setIsComplete(true)
+                .build();
 
-        final HistoricCandle candle3 = TestData.createHistoricCandle(
-                120,
-                80,
-                150,
-                60,
-                DateTimeTestData.createDateTime(2021, 3, 25, 10, 2),
-                true
-        );
+        final HistoricCandle candle3 = new HistoricCandleBuilder()
+                .setOpenPrice(120)
+                .setClosePrice(80)
+                .setHighestPrice(150)
+                .setLowestPrice(60)
+                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 2))
+                .setIsComplete(true)
+                .build();
+
         final List<HistoricCandle> historicCandles = List.of(candle1, candle2, candle3);
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)

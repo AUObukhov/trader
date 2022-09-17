@@ -6,6 +6,7 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
@@ -25,7 +26,14 @@ class CandleMapperUnitTest {
         final int lowestPrice = 400;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 1, 1, 10, 30, 15);
 
-        final HistoricCandle historicCandle = TestData.createHistoricCandle(openPrice, closePrice, highestPrice, lowestPrice, dateTime, true);
+        final HistoricCandle historicCandle = new HistoricCandleBuilder()
+                .setOpenPrice(openPrice)
+                .setClosePrice(closePrice)
+                .setHighestPrice(highestPrice)
+                .setLowestPrice(lowestPrice)
+                .setTime(dateTime)
+                .setIsComplete(false)
+                .build();
 
         final Candle candle = candleMapper.map(historicCandle);
 

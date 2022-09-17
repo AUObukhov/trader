@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
@@ -42,7 +42,12 @@ public class CandleMocker {
     }
 
     public CandleMocker add(@NotNull final Integer closePrice, @NotNull final OffsetDateTime time) {
-        this.candles.add(TestData.createHistoricCandleClosed(closePrice, time));
+        final HistoricCandle candle = new HistoricCandleBuilder()
+                .setClosePrice(closePrice)
+                .setTime(time)
+                .setIsComplete(true)
+                .build();
+        this.candles.add(candle);
         return this;
     }
 

@@ -22,7 +22,6 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
-import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -54,44 +53,6 @@ public class TestData {
 
     public static final String ACCOUNT_ID1 = "2000124699";
     public static final String ACCOUNT_ID2 = "2000124698";
-
-    // region HistoricCandle creation
-
-    public static HistoricCandle createHistoricCandle(
-            final double openPrice,
-            final double closePrice,
-            final double highestPrice,
-            final double lowestPrice,
-            final OffsetDateTime time,
-            final boolean isComplete
-    ) {
-        return HistoricCandle.newBuilder()
-                .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
-                .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
-                .setHigh(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(highestPrice)))
-                .setLow(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(lowestPrice)))
-                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
-                .setIsComplete(isComplete)
-                .build();
-    }
-
-    public static HistoricCandle createHistoricCandleOpen(final double openPrice, final OffsetDateTime time) {
-        return HistoricCandle.newBuilder()
-                .setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)))
-                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
-                .setIsComplete(true)
-                .build();
-    }
-
-    public static HistoricCandle createHistoricCandleClosed(final double closePrice, final OffsetDateTime time) {
-        return HistoricCandle.newBuilder()
-                .setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)))
-                .setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time))
-                .setIsComplete(true)
-                .build();
-    }
-
-    // endregion
 
     // region Candle creation
 
