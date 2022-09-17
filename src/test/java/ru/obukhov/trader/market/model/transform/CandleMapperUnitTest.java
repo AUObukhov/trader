@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
-import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.time.OffsetDateTime;
@@ -52,7 +52,13 @@ class CandleMapperUnitTest {
         final int lowestPrice = 400;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 1, 1, 10, 30, 15);
 
-        final Candle candle = TestData.createCandle(openPrice, closePrice, highestPrice, lowestPrice, dateTime);
+        final Candle candle = new CandleBuilder()
+                .setOpenPrice(openPrice)
+                .setClosePrice(closePrice)
+                .setHighestPrice(highestPrice)
+                .setLowestPrice(lowestPrice)
+                .setTime(dateTime)
+                .build();
         final boolean isComplete = true;
 
         final HistoricCandle historicCandle = candleMapper.map(candle, isComplete);

@@ -22,6 +22,7 @@ import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -564,16 +565,26 @@ class ExcelServiceImplUnitTest {
     }
 
     private List<Candle> createCandles() {
-        final Candle candle1 = TestData.createCandleWithOpenPrice(150)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10));
-        final Candle candle2 = TestData.createCandleWithOpenPrice(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11));
-        final Candle candle3 = TestData.createCandleWithOpenPrice(180)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11));
-        final Candle candle4 = TestData.createCandleWithOpenPrice(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50));
-        final Candle candle5 = TestData.createCandleWithOpenPrice(120)
-                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10));
+        final Candle candle1 = new CandleBuilder()
+                .setOpenPrice(150)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
+                .build();
+        final Candle candle2 = new CandleBuilder()
+                .setOpenPrice(160)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11))
+                .build();
+        final Candle candle3 = new CandleBuilder()
+                .setOpenPrice(180)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
+                .build();
+        final Candle candle4 = new CandleBuilder()
+                .setOpenPrice(160)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
+                .build();
+        final Candle candle5 = new CandleBuilder()
+                .setOpenPrice(120)
+                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
+                .build();
 
         return List.of(candle1, candle2, candle3, candle4, candle5);
     }

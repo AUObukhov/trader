@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -57,9 +58,9 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(10, 15, 20, 5, time),
-                TestData.createCandle(15, 20, 25, 10, time.plusMinutes(1)),
-                TestData.createCandle(20, 17, 24, 15, time.plusMinutes(2))
+                new CandleBuilder().setOpenPrice(10).setClosePrice(15).setHighestPrice(20).setLowestPrice(5).setTime(time).build(),
+                new CandleBuilder().setOpenPrice(15).setClosePrice(20).setHighestPrice(25).setLowestPrice(10).setTime(time.plusMinutes(1)).build(),
+                new CandleBuilder().setOpenPrice(20).setClosePrice(17).setHighestPrice(24).setLowestPrice(15).setTime(time.plusMinutes(2)).build()
         );
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
@@ -106,16 +107,16 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(80, 15, 20, 5, time),
-                TestData.createCandle(1000, 20, 25, 10, time.plusMinutes(1)),
-                TestData.createCandle(70, 17, 24, 15, time.plusMinutes(2)),
-                TestData.createCandle(40, 18, 22, 14, time.plusMinutes(3)),
-                TestData.createCandle(50, 18, 22, 14, time.plusMinutes(4)),
-                TestData.createCandle(10, 18, 22, 14, time.plusMinutes(5)),
-                TestData.createCandle(90, 18, 22, 14, time.plusMinutes(6)),
-                TestData.createCandle(1000, 18, 22, 14, time.plusMinutes(7)),
-                TestData.createCandle(60, 18, 22, 14, time.plusMinutes(8)),
-                TestData.createCandle(30, 18, 22, 14, time.plusMinutes(9))
+                new CandleBuilder().setOpenPrice(80).setClosePrice(15).setHighestPrice(20).setLowestPrice(5).setTime(time).build(),
+                new CandleBuilder().setOpenPrice(1000).setClosePrice(20).setHighestPrice(25).setLowestPrice(10).setTime(time.plusMinutes(1)).build(),
+                new CandleBuilder().setOpenPrice(70).setClosePrice(17).setHighestPrice(24).setLowestPrice(15).setTime(time.plusMinutes(2)).build(),
+                new CandleBuilder().setOpenPrice(40).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(3)).build(),
+                new CandleBuilder().setOpenPrice(50).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(4)).build(),
+                new CandleBuilder().setOpenPrice(10).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(5)).build(),
+                new CandleBuilder().setOpenPrice(90).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(6)).build(),
+                new CandleBuilder().setOpenPrice(1000).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(7)).build(),
+                new CandleBuilder().setOpenPrice(60).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(8)).build(),
+                new CandleBuilder().setOpenPrice(30).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(time.plusMinutes(9)).build()
         );
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);

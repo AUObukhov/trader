@@ -21,6 +21,7 @@ import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.ResourceUtils;
 import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -282,7 +283,13 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(10000),
                 1L
         );
-        final Candle candle = TestData.createCandle(10000, 20000, 30000, 5000, from);
+        final Candle candle = new CandleBuilder()
+                .setOpenPrice(10000)
+                .setClosePrice(20000)
+                .setHighestPrice(30000)
+                .setLowestPrice(5000)
+                .setTime(from)
+                .build();
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,
                 interval,

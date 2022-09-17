@@ -29,6 +29,7 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
@@ -218,11 +219,11 @@ class GrafanaServiceUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestData.createCandleWithOpenPrice(1000).setTime(from.plusHours(1)),
-                TestData.createCandleWithOpenPrice(2000).setTime(from.plusHours(2)),
-                TestData.createCandleWithOpenPrice(3000).setTime(from.plusHours(3)),
-                TestData.createCandleWithOpenPrice(4000).setTime(from.plusHours(4)),
-                TestData.createCandleWithOpenPrice(5000).setTime(from.plusHours(5))
+                new CandleBuilder().setOpenPrice(1000).setTime(from.plusHours(1)).build(),
+                new CandleBuilder().setOpenPrice(2000).setTime(from.plusHours(2)).build(),
+                new CandleBuilder().setOpenPrice(3000).setTime(from.plusHours(3)).build(),
+                new CandleBuilder().setOpenPrice(4000).setTime(from.plusHours(4)).build(),
+                new CandleBuilder().setOpenPrice(5000).setTime(from.plusHours(5)).build()
         );
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
@@ -279,16 +280,16 @@ class GrafanaServiceUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                TestData.createCandle(80, 15, 20, 5, from),
-                TestData.createCandle(1000, 20, 25, 10, from.plusMinutes(1)),
-                TestData.createCandle(70, 17, 24, 15, from.plusMinutes(2)),
-                TestData.createCandle(40, 18, 22, 14, from.plusMinutes(3)),
-                TestData.createCandle(50, 18, 22, 14, from.plusMinutes(4)),
-                TestData.createCandle(10, 18, 22, 14, from.plusMinutes(5)),
-                TestData.createCandle(90, 18, 22, 14, from.plusMinutes(6)),
-                TestData.createCandle(1000, 18, 22, 14, from.plusMinutes(7)),
-                TestData.createCandle(60, 18, 22, 14, from.plusMinutes(8)),
-                TestData.createCandle(30, 18, 22, 14, from.plusMinutes(9))
+                new CandleBuilder().setOpenPrice(80).setClosePrice(15).setHighestPrice(20).setLowestPrice(5).setTime(from).build(),
+                new CandleBuilder().setOpenPrice(1000).setClosePrice(20).setHighestPrice(25).setLowestPrice(10).setTime(from.plusMinutes(1)).build(),
+                new CandleBuilder().setOpenPrice(70).setClosePrice(17).setHighestPrice(24).setLowestPrice(15).setTime(from.plusMinutes(2)).build(),
+                new CandleBuilder().setOpenPrice(40).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(3)).build(),
+                new CandleBuilder().setOpenPrice(50).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(4)).build(),
+                new CandleBuilder().setOpenPrice(10).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(5)).build(),
+                new CandleBuilder().setOpenPrice(90).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(6)).build(),
+                new CandleBuilder().setOpenPrice(1000).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(7)).build(),
+                new CandleBuilder().setOpenPrice(60).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(8)).build(),
+                new CandleBuilder().setOpenPrice(30).setClosePrice(18).setHighestPrice(22).setLowestPrice(14).setTime(from.plusMinutes(9)).build()
         );
         final List<BigDecimal> averages1 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);

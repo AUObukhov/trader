@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,10 +44,10 @@ class DecisionDataUnitTest {
     @Test
     void getCurrentPrice_returnsLastCandleOpenPrice() {
         final List<Candle> candles = new ArrayList<>();
-        candles.add(TestData.createCandleWithOpenPrice(100));
-        candles.add(TestData.createCandleWithOpenPrice(200));
-        final BigDecimal lastCandleOpenPrice = BigDecimal.valueOf(300);
-        candles.add(new Candle().setOpenPrice(lastCandleOpenPrice));
+        candles.add(new CandleBuilder().setOpenPrice(100).build());
+        candles.add(new CandleBuilder().setOpenPrice(200).build());
+        final double lastCandleOpenPrice = 300;
+        candles.add(new CandleBuilder().setOpenPrice(lastCandleOpenPrice).build());
 
         final DecisionData decisionData = new DecisionData();
         decisionData.setCurrentCandles(candles);

@@ -20,6 +20,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -1052,7 +1053,7 @@ class BackTesterImplUnitTest {
                     final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
                     if (prices.containsKey(currentDateTime)) {
                         final double closePrice = prices.get(currentDateTime);
-                        final Candle candle = TestData.createCandleWithClosePriceAndTime(closePrice, currentDateTime);
+                        final Candle candle = new CandleBuilder().setClosePrice(closePrice).setTime(currentDateTime).build();
                         return List.of(candle);
                     } else {
                         return Collections.emptyList();

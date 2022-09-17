@@ -15,6 +15,7 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -714,8 +715,20 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getMarketCandles(ticker, interval, candleInterval);
 
         Assertions.assertEquals(2, candles.size());
-        final Candle expectedCandle1 = TestData.createCandle(openPrice1, closePrice1, highestPrice1, lowestPrice1, time1);
-        final Candle expectedCandle2 = TestData.createCandle(openPrice2, closePrice2, highestPrice2, lowestPrice2, time2);
+        final Candle expectedCandle1 = new CandleBuilder()
+                .setOpenPrice(openPrice1)
+                .setClosePrice(closePrice1)
+                .setHighestPrice(highestPrice1)
+                .setLowestPrice(lowestPrice1)
+                .setTime(time1)
+                .build();
+        final Candle expectedCandle2 = new CandleBuilder()
+                .setOpenPrice(openPrice2)
+                .setClosePrice(closePrice2)
+                .setHighestPrice(highestPrice2)
+                .setLowestPrice(lowestPrice2)
+                .setTime(time2)
+                .build();
         Assertions.assertEquals(expectedCandle1, candles.get(0));
         Assertions.assertEquals(expectedCandle2, candles.get(1));
     }

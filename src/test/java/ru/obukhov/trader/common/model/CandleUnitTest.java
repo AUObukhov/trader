@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.time.OffsetDateTime;
 
@@ -24,11 +24,16 @@ class CandleUnitTest {
 
     @Test
     void createAverage() {
-        final Candle candle1 = TestData.createCandleWithOpenPriceAndClosePrice(100, 200)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 1));
-
-        final Candle candle2 = TestData.createCandleWithOpenPriceAndClosePrice(300, 400)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2));
+        final Candle candle1 = new CandleBuilder()
+                .setOpenPrice(100)
+                .setClosePrice(200)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 1))
+                .build();
+        final Candle candle2 = new CandleBuilder()
+                .setOpenPrice(300)
+                .setClosePrice(400)
+                .setTime(DateTimeTestData.createDateTime(2020, 10, 11, 2))
+                .build();
 
         final Candle averageCandle = Candle.createAverage(candle1, candle2);
 

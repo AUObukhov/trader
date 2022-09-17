@@ -7,7 +7,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
-import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Money;
@@ -54,46 +53,6 @@ public class TestData {
     public static final String ACCOUNT_ID1 = "2000124699";
     public static final String ACCOUNT_ID2 = "2000124698";
 
-    // region Candle creation
-
-    public static Candle createCandle(
-            final double openPrice,
-            final double closePrice,
-            final double highestPrice,
-            final double lowestPrice,
-            final OffsetDateTime time
-    ) {
-        return new Candle(
-                DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)),
-                DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)),
-                DecimalUtils.setDefaultScale(BigDecimal.valueOf(highestPrice)),
-                DecimalUtils.setDefaultScale(BigDecimal.valueOf(lowestPrice)),
-                time
-        );
-    }
-
-    public static Candle createCandleWithOpenPrice(final double openPrice) {
-        return new Candle().setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)));
-    }
-
-    public static Candle createCandleWithClosePrice(final double closePrice) {
-        return new Candle()
-                .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
-    }
-
-    public static Candle createCandleWithClosePriceAndTime(final double closePrice, final OffsetDateTime time) {
-        return createCandleWithClosePrice(closePrice)
-                .setTime(time);
-    }
-
-    public static Candle createCandleWithOpenPriceAndClosePrice(final double openPrice, final double closePrice) {
-        return new Candle()
-                .setOpenPrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(openPrice)))
-                .setClosePrice(DecimalUtils.setDefaultScale(BigDecimal.valueOf(closePrice)));
-    }
-
-    // endregion
-
     // region DecisionData creation
 
     public static DecisionData createDecisionData(
@@ -104,7 +63,7 @@ public class TestData {
     ) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setPosition(createPortfolioPosition(positionLotsCount, averagePositionPrice));
-        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
         decisionData.setShare(Share.builder().lotSize(lotSize).build());
 
         return decisionData;
@@ -113,7 +72,7 @@ public class TestData {
     public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
-        decisionData.setCurrentCandles(List.of(createCandleWithOpenPrice(currentPrice)));
+        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(Share.builder().lotSize(lotSize).build());
         decisionData.setCommission(commission);
