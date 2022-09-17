@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -41,10 +42,10 @@ class ExtOperationsServiceUnitTest {
         final String ticker1 = TestShare1.TICKER;
         final String ticker2 = TestShare2.TICKER;
 
-        final PortfolioPosition portfolioPosition1 = TestData.createPortfolioPosition(ticker1, 1);
-        final PortfolioPosition portfolioPosition2 = TestData.createPortfolioPosition(ticker2, 2);
-        final PortfolioPosition portfolioPosition3 = TestData.createPortfolioPosition(ticker1, 3);
-        final PortfolioPosition portfolioPosition4 = TestData.createPortfolioPosition(ticker2, 4);
+        final PortfolioPosition portfolioPosition1 = new PortfolioPositionBuilder().setTicker(ticker1).setQuantityLots(1).build();
+        final PortfolioPosition portfolioPosition2 = new PortfolioPositionBuilder().setTicker(ticker2).setQuantityLots(2).build();
+        final PortfolioPosition portfolioPosition3 = new PortfolioPositionBuilder().setTicker(ticker1).setQuantityLots(3).build();
+        final PortfolioPosition portfolioPosition4 = new PortfolioPositionBuilder().setTicker(ticker2).setQuantityLots(4).build();
 
         final Map<String, List<PortfolioPosition>> accountsToPositions = Map.of(
                 accountId1, List.of(portfolioPosition1, portfolioPosition2),

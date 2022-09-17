@@ -18,6 +18,7 @@ import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PortfolioPositionMatcher;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -121,16 +122,15 @@ class FakeExtOrdersServiceUnitTest {
         // assert
 
         verifyBalanceSet(accountId, currency, balance2);
-        final PortfolioPosition expectedPosition = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots,
-                lotSize,
-                currency,
-                currentPrice,
-                0,
-                currentPrice
-        );
+        final PortfolioPosition expectedPosition = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(currentPrice)
+                .setExpectedYield(0)
+                .setCurrentPrice(currentPrice)
+                .setQuantityLots(quantityLots)
+                .setLotSize(lotSize)
+                .build();
         verifyPositionAdded(accountId, ticker, expectedPosition);
     }
 
@@ -156,29 +156,26 @@ class FakeExtOrdersServiceUnitTest {
         mockBalances(accountId, currency, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1,
-                lotSize,
-                currency,
-                price1,
-                0,
-                price1
-        );
-
+        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price1)
+                .setExpectedYield(0)
+                .setCurrentPrice(price1)
+                .setQuantityLots(quantityLots1)
+                .setLotSize(lotSize)
+                .build();
         final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1 + quantityLots2,
-                lotSize,
-                currency,
-                expectedAveragePositionPrice,
-                expectedExpectedYield,
-                price2
-        );
+        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(expectedAveragePositionPrice)
+                .setExpectedYield(expectedExpectedYield)
+                .setCurrentPrice(price2)
+                .setQuantityLots(quantityLots1 + quantityLots2)
+                .setLotSize(lotSize)
+                .build();
 
         Mockito.when(fakeContext.getPosition(accountId, ticker)).thenReturn(null, expectedPosition1);
 
@@ -234,36 +231,36 @@ class FakeExtOrdersServiceUnitTest {
         Mocker.mockShare(extInstrumentsService, TestShare3.createShare());
         Mocker.mockShare(extInstrumentsService, TestShare5.createShare());
 
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker1,
-                InstrumentType.STOCK,
-                quantityLots1,
-                lotSize1,
-                currency,
-                price1,
-                0,
-                price1
-        );
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker2,
-                InstrumentType.STOCK,
-                quantityLots2,
-                lotSize2,
-                currency,
-                price2,
-                0,
-                price2
-        );
-        final PortfolioPosition expectedPosition3 = TestData.createPortfolioPosition(
-                ticker3,
-                InstrumentType.STOCK,
-                quantityLots3,
-                lotSize3,
-                currency,
-                price3,
-                0,
-                price3
-        );
+        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setTicker(ticker1)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price1)
+                .setExpectedYield(0)
+                .setCurrentPrice(price1)
+                .setQuantityLots(quantityLots1)
+                .setCurrency(currency)
+                .setLotSize(lotSize1)
+                .build();
+        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setTicker(ticker2)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price2)
+                .setExpectedYield(0)
+                .setCurrentPrice(price2)
+                .setQuantityLots(quantityLots2)
+                .setCurrency(currency)
+                .setLotSize(lotSize2)
+                .build();
+        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
+                .setTicker(ticker3)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price3)
+                .setExpectedYield(0)
+                .setCurrentPrice(price3)
+                .setQuantityLots(quantityLots3)
+                .setCurrency(currency)
+                .setLotSize(lotSize3)
+                .build();
 
         Mockito.when(fakeContext.getPosition(accountId, ticker1)).thenReturn(null, expectedPosition1);
         Mockito.when(fakeContext.getPosition(accountId, ticker2)).thenReturn(null, expectedPosition2);
@@ -317,28 +314,28 @@ class FakeExtOrdersServiceUnitTest {
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1,
-                lotSize,
-                currency,
-                price1,
-                0,
-                price1
-        );
+        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price1)
+                .setExpectedYield(0)
+                .setCurrentPrice(price1)
+                .setQuantityLots(quantityLots1)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
         final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1 + quantityLots2,
-                lotSize,
-                currency,
-                expectedAveragePositionPrice,
-                expectedExpectedYield,
-                price2
-        );
+        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(expectedAveragePositionPrice)
+                .setExpectedYield(expectedExpectedYield)
+                .setCurrentPrice(price2)
+                .setQuantityLots(quantityLots1 + quantityLots2)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
 
         Mockito.when(fakeContext.getPosition(accountId, ticker)).thenReturn(null, expectedPosition1, expectedPosition2);
 
@@ -389,28 +386,28 @@ class FakeExtOrdersServiceUnitTest {
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1,
-                lotSize,
-                currency,
-                price1,
-                0,
-                price1
-        );
+        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price1)
+                .setExpectedYield(0)
+                .setCurrentPrice(price1)
+                .setQuantityLots(quantityLots1)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
         final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1 + quantityLots2,
-                lotSize,
-                currency,
-                expectedAveragePositionPrice,
-                expectedExpectedYield,
-                price2
-        );
+        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(expectedAveragePositionPrice)
+                .setExpectedYield(expectedExpectedYield)
+                .setCurrentPrice(price2)
+                .setQuantityLots(quantityLots1 + quantityLots2)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
 
         Mockito.when(fakeContext.getPosition(accountId, ticker)).thenReturn(null, expectedPosition1, expectedPosition2);
 
@@ -463,40 +460,40 @@ class FakeExtOrdersServiceUnitTest {
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
-        final PortfolioPosition expectedPosition1 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1,
-                lotSize,
-                currency,
-                price1,
-                0,
-                price1
-        );
+        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(price1)
+                .setExpectedYield(0)
+                .setCurrentPrice(price1)
+                .setQuantityLots(quantityLots1)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
         final double expectedAveragePositionPrice2 = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
         final double expectedExpectedYield2 = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1 + quantityLots2,
-                lotSize,
-                currency,
-                expectedAveragePositionPrice2,
-                expectedExpectedYield2,
-                price2
-        );
+        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(expectedAveragePositionPrice2)
+                .setExpectedYield(expectedExpectedYield2)
+                .setCurrentPrice(price2)
+                .setQuantityLots(quantityLots1 + quantityLots2)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
 
         final double expectedExpectedYield3 = (price3 - expectedAveragePositionPrice2) * (quantityLots1 + quantityLots2 - quantityLots3) * lotSize;
-        final PortfolioPosition expectedPosition3 = TestData.createPortfolioPosition(
-                ticker,
-                InstrumentType.STOCK,
-                quantityLots1 + quantityLots2 - quantityLots3,
-                lotSize,
-                currency,
-                expectedAveragePositionPrice2,
-                expectedExpectedYield3,
-                price3
-        );
+        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setInstrumentType(InstrumentType.STOCK)
+                .setAveragePositionPrice(expectedAveragePositionPrice2)
+                .setExpectedYield(expectedExpectedYield3)
+                .setCurrentPrice(price3)
+                .setQuantityLots(quantityLots1 + quantityLots2 - quantityLots3)
+                .setCurrency(currency)
+                .setLotSize(lotSize)
+                .build();
 
         Mockito.when(fakeContext.getPosition(accountId, ticker)).thenReturn(null, expectedPosition1, expectedPosition2, expectedPosition3);
 

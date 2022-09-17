@@ -62,7 +62,11 @@ public class TestData {
             final double currentPrice
     ) {
         final DecisionData decisionData = new DecisionData();
-        decisionData.setPosition(createPortfolioPosition(positionLotsCount, averagePositionPrice));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(positionLotsCount)
+                .setAveragePositionPrice(averagePositionPrice)
+                .build();
+        decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
         decisionData.setShare(Share.builder().lotSize(lotSize).build());
 
@@ -78,124 +82,6 @@ public class TestData {
         decisionData.setCommission(commission);
 
         return decisionData;
-    }
-
-    // endregion
-
-    // region PortfolioPosition creation
-
-    public static PortfolioPosition createPortfolioPosition() {
-        return new PortfolioPosition(
-                null,
-                null,
-                BigDecimal.ZERO,
-                createMoney(Currency.RUB, 0),
-                BigDecimal.ZERO,
-                null,
-                BigDecimal.ZERO
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final String ticker) {
-        return new PortfolioPosition(
-                ticker,
-                null,
-                BigDecimal.ZERO,
-                createMoney(Currency.RUB, 0),
-                BigDecimal.ZERO,
-                null,
-                BigDecimal.ZERO
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final int quantityLots) {
-        return new PortfolioPosition(
-                null,
-                null,
-                BigDecimal.ZERO,
-                createMoney(Currency.RUB, 0),
-                BigDecimal.ZERO,
-                null,
-                createIntegerDecimal(quantityLots)
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final String ticker, final int quantityLots) {
-        return new PortfolioPosition(
-                ticker,
-                null,
-                BigDecimal.ZERO,
-                createMoney(Currency.RUB, 0),
-                BigDecimal.ZERO,
-                null,
-                createIntegerDecimal(quantityLots)
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final String ticker, final int quantity, final int quantityLots) {
-        return new PortfolioPosition(
-                ticker,
-                null,
-                createIntegerDecimal(quantity),
-                createMoney(Currency.RUB, 0),
-                BigDecimal.ZERO,
-                null,
-                createIntegerDecimal(quantityLots)
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(final int quantityLots, final double averagePositionPrice) {
-        return new PortfolioPosition(
-                null,
-                null,
-                BigDecimal.ZERO,
-                createMoney(Currency.RUB, averagePositionPrice),
-                BigDecimal.ZERO,
-                null,
-                createIntegerDecimal(quantityLots)
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(
-            final String ticker,
-            final InstrumentType instrumentType,
-            final double quantity,
-            final double averagePositionPrice,
-            final double expectedYield,
-            final double currentPrice,
-            final long quantityLots,
-            final Currency currency
-    ) {
-        return new PortfolioPosition(
-                ticker,
-                instrumentType,
-                createIntegerDecimal(quantity),
-                createMoney(currency, averagePositionPrice),
-                DecimalUtils.setDefaultScale(expectedYield),
-                createMoney(currency, currentPrice),
-                createIntegerDecimal(quantityLots)
-        );
-    }
-
-    public static PortfolioPosition createPortfolioPosition(
-            final String ticker,
-            final InstrumentType instrumentType,
-            final long quantityLots,
-            final long lotSize,
-            final Currency currency,
-            final double averagePositionPrice,
-            final double expectedYield,
-            final double currentPrice
-    ) {
-        return new PortfolioPosition(
-                ticker,
-                instrumentType,
-                createIntegerDecimal(quantityLots * lotSize),
-                createMoney(currency, averagePositionPrice),
-                DecimalUtils.setDefaultScale(expectedYield),
-                createMoney(currency, currentPrice),
-                createIntegerDecimal(quantityLots)
-        );
     }
 
     // endregion
@@ -453,10 +339,6 @@ public class TestData {
     // endregion
 
     public static Money createMoney(final Currency currency, final double value) {
-        return new Money(currency, DecimalUtils.setDefaultScale(value));
-    }
-
-    public static Money createMoney(final Currency currency, final long value) {
         return new Money(currency, DecimalUtils.setDefaultScale(value));
     }
 

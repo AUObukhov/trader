@@ -10,7 +10,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.common.util.TrendUtils;
+import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.model.CrossStrategyParams;
 import ru.obukhov.trader.trading.model.Crossover;
@@ -140,7 +142,11 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
-        data.setPosition(TestData.createPortfolioPosition(10, 100));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(10)
+                .setAveragePositionPrice(100)
+                .build();
+        data.setPosition(portfolioPosition);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -164,7 +170,11 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
-        data.setPosition(TestData.createPortfolioPosition(10, 100));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(10)
+                .setAveragePositionPrice(100)
+                .build();
+        data.setPosition(portfolioPosition);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -188,7 +198,11 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
-        data.setPosition(TestData.createPortfolioPosition(10, 199));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(10)
+                .setAveragePositionPrice(199)
+                .build();
+        data.setPosition(portfolioPosition);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -212,7 +226,11 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final DecisionData data = TestData.createDecisionData(1000.0, 200.0, 1, 0.003);
-        data.setPosition(TestData.createPortfolioPosition(10, 199));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(10)
+                .setAveragePositionPrice(199)
+                .build();
+        data.setPosition(portfolioPosition);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());
@@ -236,7 +254,11 @@ class CrossStrategyUnitTest {
         final CrossStrategy strategy = new CrossStrategy(StringUtils.EMPTY, strategyParams, averager);
 
         final DecisionData data = TestData.createDecisionData(200.0, 200.0, 1, 0.003);
-        data.setPosition(TestData.createPortfolioPosition(10, 199));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setQuantityLots(10)
+                .setAveragePositionPrice(199)
+                .build();
+        data.setPosition(portfolioPosition);
 
         try (final MockedStatic<TrendUtils> trendUtilsStaticMock = mock_TrendUtils_getCrossoverIfLast(Crossover.ABOVE)) {
             final Decision decision = strategy.decide(data, strategy.initCache());

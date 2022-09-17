@@ -3,9 +3,10 @@ package ru.obukhov.trader.trading.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
-import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +18,8 @@ class DecisionDataUnitTest {
     void getQuantityLots() {
         final int quantityLots = 30;
 
-        final DecisionData decisionData = new DecisionData().setPosition(TestData.createPortfolioPosition(quantityLots));
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder().setQuantityLots(quantityLots).build();
+        final DecisionData decisionData = new DecisionData().setPosition(portfolioPosition);
 
         AssertUtils.assertEquals(quantityLots, decisionData.getQuantityLots());
 

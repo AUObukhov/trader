@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -409,7 +410,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final String ticker = TestShare1.TICKER;
-        PortfolioPosition position = TestData.createPortfolioPosition();
+        PortfolioPosition position = new PortfolioPositionBuilder().build();
 
         fakeContext.addPosition(accountId, ticker, position);
         PortfolioPosition readPosition = fakeContext.getPosition(accountId, ticker);
@@ -429,8 +430,8 @@ class FakeContextUnitTest {
 
         final String ticker1 = TestShare1.TICKER;
         final String ticker2 = TestShare2.TICKER;
-        PortfolioPosition position1 = TestData.createPortfolioPosition();
-        PortfolioPosition position2 = TestData.createPortfolioPosition();
+        PortfolioPosition position1 = new PortfolioPositionBuilder().build();
+        PortfolioPosition position2 = new PortfolioPositionBuilder().build();
 
         fakeContext.addPosition(accountId, ticker1, position1);
         fakeContext.addPosition(accountId, ticker2, position2);
@@ -452,7 +453,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
         final String ticker = TestShare1.TICKER;
-        PortfolioPosition position = TestData.createPortfolioPosition();
+        PortfolioPosition position = new PortfolioPositionBuilder().build();
 
         fakeContext.addPosition(accountId, ticker, position);
         fakeContext.removePosition(accountId, ticker);

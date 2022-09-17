@@ -18,6 +18,7 @@ import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -195,9 +196,12 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
-        final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setQuantityLots(0)
+                .build();
         Mockito.when(extOperationsService.getSecurity(accountId, ticker))
-                .thenReturn(position);
+                .thenReturn(portfolioPosition);
 
         final List<Operation> operations = List.of(TestData.createOperation());
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
@@ -248,9 +252,12 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
-        final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
+        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
+                .setTicker(ticker)
+                .setQuantityLots(0)
+                .build();
         Mockito.when(extOperationsService.getSecurity(accountId, ticker))
-                .thenReturn(position);
+                .thenReturn(portfolioPosition);
 
         final List<Operation> operations = List.of(TestData.createOperation());
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
