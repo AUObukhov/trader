@@ -20,11 +20,11 @@ import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -193,15 +193,14 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -221,15 +220,14 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         Mockito.when(extOperationsService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
@@ -247,15 +245,14 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
 
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         Mockito.when(extOperationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
@@ -274,15 +271,14 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
 
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -303,15 +299,14 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
 
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -372,14 +367,13 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
         mockBotConfig(null, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
 
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockCandles(ticker, List.of(candle1));
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, 10);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -399,11 +393,10 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
-        final Currency currency = Currency.RUB;
-        final int lotSize = 10;
+        final String ticker = TestShare2.TICKER;
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        mockData(accountId, ticker, currency, lotSize);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        mockData(accountId, ticker, TestShare2.CURRENCY);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -433,9 +426,10 @@ class RunnableBotUnitTest {
         final WorkSchedule workSchedule = new WorkSchedule(currentDateTime.toOffsetTime().minusHours(1), Duration.ofHours(8));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
 
-        final String ticker = TestShare1.TICKER;
+        final String ticker = TestShare2.TICKER;
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
-        mockData(accountId, ticker, Currency.RUB, 10);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        mockData(accountId, ticker, TestShare2.CURRENCY);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.nullable(StrategyCache.class)))
@@ -482,10 +476,7 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
-    private void mockData(final String accountId, final String ticker, final Currency currency, final int lotSize) {
-        final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
-
+    private void mockData(final String accountId, final String ticker, final Currency currency) {
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);

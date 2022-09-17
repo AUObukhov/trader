@@ -557,37 +557,6 @@ public class TestData {
         return Portfolio.fromResponse(portfolioResponse);
     }
 
-    public static Share createShare(final String ticker, final Currency currency, final int lotSize) {
-        return Share.builder()
-                .ticker(ticker)
-                .currency(currency)
-                .lotSize(lotSize)
-                .build();
-    }
-
-    public static Share createShare(final String figi, final String ticker, final Currency currency, final int lotSize) {
-        return Share.builder()
-                .figi(figi)
-                .ticker(ticker)
-                .currency(currency)
-                .lotSize(lotSize)
-                .build();
-    }
-
-    public static ru.tinkoff.piapi.contract.v1.Share createTinkoffShare(
-            final String figi,
-            final String ticker,
-            final Currency currency,
-            final int lotSize
-    ) {
-        return ru.tinkoff.piapi.contract.v1.Share.newBuilder()
-                .setFigi(figi)
-                .setTicker(ticker)
-                .setCurrency(currency.name().toLowerCase())
-                .setLot(lotSize)
-                .build();
-    }
-
     public static OrderStage createOrderStage(final Currency currency, final double price, final long quantity, final String tradeId) {
         return OrderStage.newBuilder()
                 .setPrice(createTinkoffMoneyValue(price, currency))

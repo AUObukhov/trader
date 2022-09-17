@@ -9,7 +9,6 @@ import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.Context;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -95,26 +94,8 @@ public class Mocker {
                 );
     }
 
-    public static void mockShare(
-            final ExtInstrumentsService extInstrumentsService,
-            final String figi,
-            final String ticker,
-            final Currency currency,
-            final int lotSize
-    ) {
-        final Share share = TestData.createShare(figi, ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
-    }
-
-    public static void mockTinkoffShare(
-            final InstrumentsService instrumentsService,
-            final String figi,
-            final String ticker,
-            final Currency currency,
-            final int lotSize
-    ) {
-        final ru.tinkoff.piapi.contract.v1.Share share = TestData.createTinkoffShare(figi, ticker, currency, lotSize);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(share));
+    public static void mockShare(final ExtInstrumentsService extInstrumentsService, final Share share) {
+        Mockito.when(extInstrumentsService.getSingleShare(share.ticker())).thenReturn(share);
     }
 
     public static void mockWorkSchedule(final MarketProperties marketProperties) {

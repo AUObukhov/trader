@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -14,7 +15,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
@@ -250,7 +250,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockTinkoffShare(instrumentsService, figi, ticker, Currency.RUB, 1);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);

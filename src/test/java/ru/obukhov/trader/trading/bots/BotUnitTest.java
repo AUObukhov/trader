@@ -14,14 +14,13 @@ import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -155,11 +154,9 @@ class BotUnitTest {
     @Test
     void processTicker_doesNoOrder_whenDecisionIsWait() {
         final String accountId = "2000124699";
-        final String ticker = TestShare1.TICKER;
-        final int lotSize = 10;
+        final String ticker = TestShare2.TICKER;
 
-        final Share share = TestData.createShare(ticker, Currency.RUB, lotSize);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -191,14 +188,11 @@ class BotUnitTest {
     void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = "2000124699";
         final String ticker = TestShare1.TICKER;
-        final Currency currency = Currency.USD;
-        final int lotSize = 10;
 
-        final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
@@ -246,15 +240,12 @@ class BotUnitTest {
     @Test
     void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = "2000124699";
-        final String ticker = TestShare1.TICKER;
-        final Currency currency = Currency.USD;
-        final int lotSize = 10;
+        final String ticker = TestShare2.TICKER;
 
-        final Share share = TestData.createShare(ticker, currency, lotSize);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
         final BigDecimal balance = BigDecimal.valueOf(10000);
-        Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
+        Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
         final PortfolioPosition position = TestData.createPortfolioPosition(ticker, 0);
