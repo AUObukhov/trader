@@ -42,7 +42,7 @@ class RealExtOrdersServiceUnitTest {
 
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         // todo realistic data (copy from OrderMapperTest)
         final Currency currency1 = Currency.EUR;
@@ -175,7 +175,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_filtersOrdersByFigi() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
@@ -200,7 +200,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void postOrder() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
@@ -249,7 +249,7 @@ class RealExtOrdersServiceUnitTest {
 
     @Test
     void cancelOrder() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String orderId = "orderId";
 
         realExtOrdersService.cancelOrder(accountId, orderId);

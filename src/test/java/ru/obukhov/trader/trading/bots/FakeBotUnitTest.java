@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -77,7 +78,7 @@ class FakeBotUnitTest {
 
     @Test
     void getInvestments() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), BigDecimal.TEN);
@@ -90,7 +91,7 @@ class FakeBotUnitTest {
 
     @Test
     void getBalance() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
         final BigDecimal expectedBalance = BigDecimal.TEN;
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
@@ -102,7 +103,7 @@ class FakeBotUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
         final String ticker = TestShare1.TICKER;
         final List<Operation> expectedOperations = new ArrayList<>();
@@ -115,7 +116,7 @@ class FakeBotUnitTest {
 
     @Test
     void getPortfolioPositions() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final List<PortfolioPosition> expectedPositions = new ArrayList<>();
         Mockito.when(extOperationsService.getPositions(accountId)).thenReturn(expectedPositions);
 

@@ -127,7 +127,7 @@ class BackTesterImplUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 2);
         final Interval interval = Interval.of(from, to);
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission = 0.003;
@@ -197,7 +197,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(50), finalPrice1);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 0.003,
                 balanceConfig,
@@ -221,7 +221,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(500), finalPrice2);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.001,
                 balanceConfig,
@@ -303,7 +303,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, balanceIncrement, BALANCE_INCREMENT_CRON);
 
-        final String accountId1 = "2000124699";
+        final String accountId1 = TestData.ACCOUNT_ID1;
         final String ticker1 = TestShare1.TICKER;
         final Currency currency1 = TestShare1.CURRENCY;
         final Double commission1 = 0.003;
@@ -331,7 +331,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
         mockPortfolioPosition(fakeBot1, accountId1, ticker1, positionLotsCount1);
 
-        final String accountId2 = "2000124698";
+        final String accountId2 = TestData.ACCOUNT_ID2;
         final String ticker2 = TestShare2.TICKER;
         final Currency currency2 = TestShare2.CURRENCY;
         final Double commission2 = 0.001;
@@ -411,7 +411,7 @@ class BackTesterImplUnitTest {
         final int quantityLots1 = 2;
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 0.003,
                 balanceConfig,
@@ -427,7 +427,7 @@ class BackTesterImplUnitTest {
         final double currentPrice2 = 5000.0;
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.001,
                 balanceConfig,
@@ -501,7 +501,7 @@ class BackTesterImplUnitTest {
         final Operation operation2 = TestData.createOperation(operationDateTime2, operationType2, operationPrice2, operationQuantity2);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 commission1,
                 balanceConfig,
@@ -514,7 +514,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 commission2,
                 balanceConfig,
@@ -582,7 +582,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(5), 500.0);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 0.003,
                 balanceConfig,
@@ -601,7 +601,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(40), 4000.0);
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 0.001,
                 balanceConfig,
@@ -653,7 +653,7 @@ class BackTesterImplUnitTest {
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 0.003,
                 balanceConfig,
@@ -666,7 +666,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.001,
                 balanceConfig,
@@ -714,7 +714,7 @@ class BackTesterImplUnitTest {
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 commission1,
                 balanceConfig,
@@ -727,7 +727,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.003,
                 balanceConfig,
@@ -772,7 +772,7 @@ class BackTesterImplUnitTest {
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
 
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 commission1,
                 balanceConfig,
@@ -785,7 +785,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.003,
                 balanceConfig,
@@ -829,7 +829,7 @@ class BackTesterImplUnitTest {
         final double commission1 = 0.003;
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 commission1,
                 balanceConfig,
@@ -901,7 +901,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
-        final String accountId2 = "2000124699";
+        final String accountId2 = TestData.ACCOUNT_ID1;
         final String ticker2 = TestShare2.TICKER;
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission2 = 0.001;
@@ -956,7 +956,7 @@ class BackTesterImplUnitTest {
         final double commission1 = 0.003;
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
         final BotConfig botConfig1 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.createShare(),
                 commission1,
                 balanceConfig,
@@ -969,7 +969,7 @@ class BackTesterImplUnitTest {
         );
 
         final BotConfig botConfig2 = arrangeBackTest(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare2.createShare(),
                 0.001,
                 balanceConfig,

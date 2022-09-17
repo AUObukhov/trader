@@ -35,8 +35,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getSecurity() {
-        final String accountId1 = "2000124699";
-        final String accountId2 = "2000124698";
+        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
 
         final String ticker1 = TestShare1.TICKER;
         final String ticker2 = TestShare2.TICKER;
@@ -65,8 +65,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalance_whenNoBlocked() {
-        final String accountId1 = "2000124699";
-        final String accountId2 = "2000124698";
+        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
 
         final int usdBalance1 = 11;
         final int rubBalance1 = 12;
@@ -106,8 +106,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlocked_whenCurrencyExists() {
-        final String accountId1 = "2000124699";
-        final String accountId2 = "2000124698";
+        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
 
         final long rubBalance1 = 1000;
         final long rubBlocked1 = 100;
@@ -148,8 +148,8 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_returnsBalanceMinusBlockedMinusBlockedGuarantee_whenCurrencyExists() {
-        final String accountId1 = "2000124699";
-        final String accountId2 = "2000124698";
+        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
 
         final long rubBalance1 = 1000;
         final long rubBlocked1 = 100;
@@ -194,7 +194,7 @@ class ExtOperationsServiceUnitTest {
 
     @Test
     void getAvailableBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final List<MoneyValue> moneys = List.of(
                 TestData.createTinkoffMoneyValue(100, Currency.USD),
@@ -214,7 +214,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withBlockedValues() {
         // arrange
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -259,7 +259,7 @@ class ExtOperationsServiceUnitTest {
     @Test
     void getAvailableBalances_withoutBlockedValues() {
         // arrange
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;

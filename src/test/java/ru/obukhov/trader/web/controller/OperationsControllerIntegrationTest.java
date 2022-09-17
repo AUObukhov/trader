@@ -41,7 +41,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getPositions() throws Exception {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
@@ -169,7 +169,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withBlockedValues() throws Exception {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
@@ -214,7 +214,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getAvailableBalances_withoutBlockedValues() throws Exception {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;

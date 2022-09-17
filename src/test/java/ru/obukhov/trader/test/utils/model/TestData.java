@@ -52,6 +52,9 @@ public class TestData {
     private static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
+    public static final String ACCOUNT_ID1 = "2000124699";
+    public static final String ACCOUNT_ID2 = "2000124698";
+
     // region HistoricCandle creation
 
     public static HistoricCandle createHistoricCandle(

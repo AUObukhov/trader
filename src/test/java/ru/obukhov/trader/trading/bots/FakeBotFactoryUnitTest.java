@@ -89,7 +89,7 @@ class FakeBotFactoryUnitTest {
     void createBot_movesCurrentDateTimeToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
         final String ticker = TestShare1.TICKER;
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -123,7 +123,7 @@ class FakeBotFactoryUnitTest {
         final String ticker = TestShare1.TICKER;
         final Currency currency = TestShare1.CURRENCY;
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
@@ -146,7 +146,7 @@ class FakeBotFactoryUnitTest {
     void createBot_throwIllegalArgumentException_whenShareNotFound() {
         final String ticker = TestShare1.TICKER;
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,

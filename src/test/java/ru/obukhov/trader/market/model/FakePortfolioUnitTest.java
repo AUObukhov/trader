@@ -2,12 +2,13 @@ package ru.obukhov.trader.market.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.test.utils.model.TestData;
 
 class FakePortfolioUnitTest {
 
     @Test
     void constructor_initsFields() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final FakePortfolio portfolio = new FakePortfolio(accountId);
 

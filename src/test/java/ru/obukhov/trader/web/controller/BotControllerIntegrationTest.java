@@ -62,7 +62,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(false);
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -84,7 +84,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(null);
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -134,7 +134,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.TICKER,
                 null,
                 0.0,
@@ -156,7 +156,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
@@ -178,7 +178,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBalanceConfig(TestData.createBalanceConfig(1000.0, 100.0, "0 0 0 1 * ?"));
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 TestShare1.TICKER,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -195,7 +195,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
         final String ticker = TestShare1.TICKER;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);

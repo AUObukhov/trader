@@ -36,16 +36,16 @@ class FakeContextUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> getData_forConstructor() {
         return Stream.of(
-                Arguments.of("2000124699", 100),
-                Arguments.of("2000124699", -100),
-                Arguments.of("2000124699", 0)
+                Arguments.of(TestData.ACCOUNT_ID1, 100),
+                Arguments.of(TestData.ACCOUNT_ID1, -100),
+                Arguments.of(TestData.ACCOUNT_ID1, 0)
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forConstructor")
     void constructor(final int balance) {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
@@ -63,7 +63,7 @@ class FakeContextUnitTest {
 
     @Test
     void nextMinute_movesToNextMinute_whenMiddleOfWorkDay() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
@@ -77,7 +77,7 @@ class FakeContextUnitTest {
 
     @Test
     void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
         final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
@@ -91,7 +91,7 @@ class FakeContextUnitTest {
 
     @Test
     void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
         final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
@@ -109,8 +109,8 @@ class FakeContextUnitTest {
     void getBalances() {
         // arrange
 
-        final String accountId1 = "2000124699";
-        final String accountId2 = "2000124698";
+        final String accountId1 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
@@ -180,7 +180,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutDateTime_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -218,7 +218,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutDateTime_subtractsBalance_whenAmountIsNegative() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -248,7 +248,7 @@ class FakeContextUnitTest {
     void addInvestment_withoutDateTime_notChangesBalance_whenAmountIsZero() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -282,7 +282,7 @@ class FakeContextUnitTest {
     void addInvestment_withDateTime_changesInvestmentsAndCurrentBalance() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -317,7 +317,7 @@ class FakeContextUnitTest {
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsNegative() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -347,7 +347,7 @@ class FakeContextUnitTest {
     void addInvestment_withDateTime_throwsIllegalArgumentException_whenAmountIsZero() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
         final BigDecimal balance = BigDecimal.valueOf(100);
@@ -377,7 +377,7 @@ class FakeContextUnitTest {
 
     @Test
     void addOperation_addsOperation_and_getOperationsReturnsOperations() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
@@ -400,7 +400,7 @@ class FakeContextUnitTest {
 
     @Test
     void addPosition_addsPosition_and_getPosition_returnsPosition() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
@@ -419,7 +419,7 @@ class FakeContextUnitTest {
 
     @Test
     void getPositions_returnsAllPositions() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
@@ -443,7 +443,7 @@ class FakeContextUnitTest {
 
     @Test
     void removePosition_removesPosition() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;

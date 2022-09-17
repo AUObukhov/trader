@@ -39,7 +39,7 @@ class RealExtOperationsServiceUnitTest {
 
     @Test
     void getOperations() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String figi = TestShare1.FIGI;
         final String ticker = TestShare1.TICKER;
@@ -65,7 +65,7 @@ class RealExtOperationsServiceUnitTest {
     void getPositions() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;

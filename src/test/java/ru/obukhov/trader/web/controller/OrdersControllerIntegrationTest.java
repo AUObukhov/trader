@@ -34,7 +34,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getOrders_returnsOrders() throws Exception {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.RUB;
         final List<OrderStage> stages1 = List.of(

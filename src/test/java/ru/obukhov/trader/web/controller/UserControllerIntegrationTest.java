@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.AccessLevel;
 import ru.tinkoff.piapi.contract.v1.Account;
 import ru.tinkoff.piapi.contract.v1.AccountStatus;
@@ -49,7 +50,7 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
                 .setAccessLevel(accessLevel1)
                 .build();
 
-        final String id2 = "2000124699";
+        final String id2 = TestData.ACCOUNT_ID1;
         final AccountType accountType2 = AccountType.ACCOUNT_TYPE_TINKOFF;
         final String name2 = "Брокерский счёт";
         final AccountStatus accountStatus2 = AccountStatus.ACCOUNT_STATUS_OPEN;

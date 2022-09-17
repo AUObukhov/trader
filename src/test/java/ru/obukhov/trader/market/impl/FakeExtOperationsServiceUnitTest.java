@@ -41,7 +41,7 @@ class FakeExtOperationsServiceUnitTest {
     void getOperations_filtersOperationsByInterval() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
@@ -104,7 +104,7 @@ class FakeExtOperationsServiceUnitTest {
     void getOperations_filtersOperationsByTicker_whenTickerIsNotNull() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker1 = TestShare1.TICKER;
         final String ticker2 = TestShare2.TICKER;
@@ -167,7 +167,7 @@ class FakeExtOperationsServiceUnitTest {
     void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker1 = TestShare1.TICKER;
         final String ticker2 = TestShare2.TICKER;
@@ -245,7 +245,7 @@ class FakeExtOperationsServiceUnitTest {
     void getWithdrawLimits() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final Currency currency1 = Currency.USD;
         final Currency currency2 = Currency.EUR;

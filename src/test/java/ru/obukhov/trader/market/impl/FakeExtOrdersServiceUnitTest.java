@@ -55,7 +55,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_byAccountId_returnsEmptyList() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         List<Order> orders = fakeExtOrdersService.getOrders(accountId);
 
@@ -64,7 +64,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void getOrders_byAccountIdAndTicker_returnsEmptyList() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
         final String ticker = TestShare1.TICKER;
 
@@ -81,7 +81,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
@@ -99,7 +99,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_createsNewPosition_whenNoPositions() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final Currency currency = TestShare2.CURRENCY;
         final String ticker = TestShare2.TICKER;
@@ -138,7 +138,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_addsValueToExistingPosition_whenPositionAlreadyExists() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final Currency currency = TestShare2.CURRENCY;
@@ -199,7 +199,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_buy_createsMultiplePositions_whenDifferentTickersAreBought() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -290,7 +290,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_throwsIllegalArgumentException_whenSellsMoreLotsThanExists() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -361,7 +361,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_removesPosition_whenAllLotsAreSold() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -435,7 +435,7 @@ class FakeExtOrdersServiceUnitTest {
     void postOrder_sell_reducesLotsCount() {
         // arrange
 
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
@@ -552,7 +552,7 @@ class FakeExtOrdersServiceUnitTest {
 
     @Test
     void cancelOrder_throwsUnsupportedOperationException() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String orderId = "orderId";
 
         Assertions.assertThrows(

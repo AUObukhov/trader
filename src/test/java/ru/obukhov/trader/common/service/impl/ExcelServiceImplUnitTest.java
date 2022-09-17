@@ -66,7 +66,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig1 = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_HOUR,
                 0.0,
@@ -76,7 +76,7 @@ class ExcelServiceImplUnitTest {
         final BackTestResult result1 = createBackTestResult(botConfig1);
 
         final BotConfig botConfig2 = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -86,7 +86,7 @@ class ExcelServiceImplUnitTest {
         final BackTestResult result2 = createBackTestResult(botConfig2);
 
         final BotConfig botConfig3 = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -130,7 +130,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -166,7 +166,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -203,7 +203,7 @@ class ExcelServiceImplUnitTest {
         final String error = "error";
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -242,7 +242,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -280,7 +280,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
@@ -319,7 +319,7 @@ class ExcelServiceImplUnitTest {
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
-                "2000124699",
+                TestData.ACCOUNT_ID1,
                 ticker,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,

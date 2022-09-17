@@ -57,7 +57,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
         final List<Order> orders = List.of(TestData.createOrder());
@@ -82,7 +82,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
 
         final String ticker = TestShare1.TICKER;
 
@@ -106,7 +106,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
         final BotConfig botConfig = new BotConfig(
@@ -127,7 +127,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
@@ -153,7 +153,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_doesNoOrder_whenDecisionIsWait() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare2.TICKER;
 
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
@@ -186,7 +186,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
         Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
@@ -239,7 +239,7 @@ class BotUnitTest {
 
     @Test
     void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare2.TICKER;
 
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());

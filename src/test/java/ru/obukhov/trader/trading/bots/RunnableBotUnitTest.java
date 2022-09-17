@@ -185,7 +185,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetAvailableBalanceThrowsException() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -212,7 +212,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_doesNoOrder_whenGetPositionThrowsException() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -291,7 +291,7 @@ class RunnableBotUnitTest {
     @Test
     @SuppressWarnings("java:S2699")
     void run_catchesException_whenPlaceMarketOrderThrowsException() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -385,7 +385,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_returnsFilledData_andPlacesBuyOrder_whenDecisionIsBuy() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
@@ -418,7 +418,7 @@ class RunnableBotUnitTest {
 
     @Test
     void run_andPlacesSellOrder_whenDecisionIsSell() {
-        final String accountId = "2000124699";
+        final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
         Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
