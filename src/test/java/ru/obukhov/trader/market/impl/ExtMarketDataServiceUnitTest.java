@@ -154,41 +154,6 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getCandles_skipsCandlesByYears_whenNoCandlesForOneYear() {
-        final String figi = TestShare1.FIGI;
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
-
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.createShare());
-
-        new CandleMocker(marketDataService, figi, candleInterval)
-                .add(10, DateTimeTestData.createDateTime(2015, 1, 1, 1))
-                .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(1, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(2, DateTimeTestData.createDateTime(2017, 1, 1, 1))
-                .add(3, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(4, DateTimeTestData.createDateTime(2018, 1, 1, 1))
-                .add(5, DateTimeTestData.createDateTime(2019, 1, 1, 1))
-                .mock();
-
-        final Interval interval = Interval.of(
-                DateTimeTestData.createDateTime(2010, 1, 1),
-                DateTimeTestData.createDateTime(2020, 1, 1)
-        );
-
-        final List<Candle> candles = service.getCandles(ticker, interval, candleInterval);
-
-        Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(1, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(5).getClosePrice());
-    }
-
-    @Test
     void getCandles_skipsCandlesBeforeFromByYears_whenFromInTheMiddleOfYear() {
         final String figi = TestShare1.FIGI;
         final String ticker = TestShare1.TICKER;

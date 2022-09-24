@@ -153,9 +153,11 @@ public class Interval {
      * Every interval is in one day.
      * <br/>
      * {@code from} of first interval equals {@code from} of current interval.
+     * <br/>
      * {@code from} of other intervals are at start of day.
      * <br/>
      * {@code to} of last interval equals {@code to} of current interval.
+     * <br/>
      * {@code to} of other intervals are at end of day.
      */
     public List<Interval> splitIntoDailyIntervals() {
@@ -169,6 +171,35 @@ public class Interval {
 
             currentFrom = endOfDay.plusNanos(1);
             endOfDay = endOfDay.plusDays(1);
+        }
+        result.add(Interval.of(currentFrom, to));
+
+        return result;
+    }
+
+    /**
+     * @return list of consecutive intervals starting with {@code from} and ending with {@code to}.
+     * Every interval is in one year.
+     * <br/>
+     * {@code from} of first interval equals {@code from} of current interval.
+     * <br/>
+     * {@code from} of other intervals are at start of day.
+     * <br/>
+     * {@code to} of last interval equals {@code to} of current interval.
+     * <br/>
+     * {@code to} of other intervals are at end of day.
+     */
+    public List<Interval> splitIntoYearlyIntervals() {
+        final List<Interval> result = new ArrayList<>();
+
+        OffsetDateTime currentFrom = from;
+        OffsetDateTime endOfYear = DateUtils.atEndOfYear(from);
+
+        while (endOfYear.isBefore(to)) {
+            result.add(Interval.of(currentFrom, endOfYear));
+
+            currentFrom = endOfYear.plusNanos(1);
+            endOfYear = endOfYear.plusYears(1);
         }
         result.add(Interval.of(currentFrom, to));
 
