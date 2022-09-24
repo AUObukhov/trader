@@ -75,17 +75,10 @@ public class DateTimeTestData {
     }
 
     /**
-     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds
+     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds and default offset
      */
-    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final ZoneOffset offset) {
-        return OffsetDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, offset);
-    }
-
-    /**
-     * @return OffsetDateTime with by params, 0 minutes, 0 seconds, 0 nanoseconds
-     */
-    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final int hour, final ZoneOffset offset) {
-        return OffsetDateTime.of(year, month, dayOfMonth, hour, 0, 0, 0, offset);
+    public static OffsetDateTime createDateTime(final int year) {
+        return OffsetDateTime.of(year, 1, 1, 0, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
     }
 
     /**
@@ -100,6 +93,28 @@ public class DateTimeTestData {
             final ZoneOffset offset
     ) {
         return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, offset);
+    }
+
+    /**
+     * @return OffsetDateTime with by params, 0 minutes, 0 seconds, 0 nanoseconds
+     */
+    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final int hour, final ZoneOffset offset) {
+        return OffsetDateTime.of(year, month, dayOfMonth, hour, 0, 0, 0, offset);
+    }
+
+    /**
+     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds
+     */
+    public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final ZoneOffset offset) {
+        return OffsetDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, offset);
+    }
+
+    public static OffsetDateTime createEndOfYear(final int year) {
+        return OffsetDateTime.of(year, 12, 31, 23, 59, 59, NANOS_MAX_VALUE, DateUtils.DEFAULT_OFFSET);
+    }
+
+    public static OffsetDateTime createEndOfDay(final int year, final int month, final int dayOfMonth) {
+        return OffsetDateTime.of(year, month, dayOfMonth, 23, 59, 59, NANOS_MAX_VALUE, DateUtils.DEFAULT_OFFSET);
     }
 
     // endregion

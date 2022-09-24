@@ -811,7 +811,7 @@ class DateUtilsUnitTest {
 
         final OffsetDateTime endOfDay = DateUtils.atEndOfDay(dateTime);
 
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expected = DateTimeTestData.createEndOfDay(2020, 10, 5);
 
         Assertions.assertEquals(expected, endOfDay);
     }
@@ -841,7 +841,7 @@ class DateUtilsUnitTest {
 
         final OffsetDateTime startOfDay = DateUtils.atEndOfYear(dateTime);
 
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime expected = DateTimeTestData.createEndOfDay(2020, 12, 31);
 
         Assertions.assertEquals(expected, startOfDay);
     }

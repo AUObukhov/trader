@@ -195,7 +195,7 @@ class IntervalUnitTest {
             final Interval extendedInterval = interval.extendToDay();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 10, 5);
-            final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+            final OffsetDateTime expectedTo = DateTimeTestData.createEndOfDay(2020, 10, 5);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
             Assertions.assertEquals(expectedTo, extendedInterval.getTo());
         }
@@ -278,7 +278,7 @@ class IntervalUnitTest {
             final Interval extendedInterval = interval.extendToYear();
 
             final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2020, 1, 1);
-            final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+            final OffsetDateTime expectedTo = DateTimeTestData.createEndOfDay(2020, 12, 31);
             Assertions.assertEquals(expectedFrom, extendedInterval.getFrom());
             Assertions.assertEquals(expectedTo, extendedInterval.getTo());
         }
@@ -731,7 +731,7 @@ class IntervalUnitTest {
                 ),
                 Arguments.of(
                         DateTimeTestData.createDateTime(2020, 10, 5),
-                        DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999),
+                        DateTimeTestData.createEndOfDay(2020, 10, 5),
                         true
                 ),
                 Arguments.of(
@@ -779,7 +779,7 @@ class IntervalUnitTest {
                 ),
                 Arguments.of(
                         DateTimeTestData.createDateTime(2020, 1, 1),
-                        DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999),
+                        DateTimeTestData.createEndOfDay(2020, 12, 31),
                         true
                 ),
                 Arguments.of(
@@ -914,7 +914,7 @@ class IntervalUnitTest {
     @Test
     void splitIntoDailyIntervals_returnsOnePair_whenFromAndToInOneWholeDay() {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime to = DateTimeTestData.createEndOfDay(2020, 10, 5);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
@@ -934,7 +934,7 @@ class IntervalUnitTest {
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfDay(2020, 10, 5);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
         final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2020, 10, 6);
@@ -952,7 +952,7 @@ class IntervalUnitTest {
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfDay(2020, 10, 5);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
         final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2020, 10, 6);
@@ -962,8 +962,8 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoDailyIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourDays() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+        final OffsetDateTime from = DateTimeTestData.createEndOfDay(2020, 10, 5);
+        final OffsetDateTime to = DateTimeTestData.createEndOfDay(2020, 10, 6);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoDailyIntervals();
 
@@ -987,12 +987,12 @@ class IntervalUnitTest {
         Assertions.assertEquals(3, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 10, 5, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfDay(2020, 10, 5);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
         final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2020, 10, 6);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        final OffsetDateTime expectedRight1 = DateTimeTestData.createDateTime(2020, 10, 6, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight1 = DateTimeTestData.createEndOfDay(2020, 10, 6);
         Assertions.assertEquals(expectedRight1, intervals.get(1).getTo());
 
         final OffsetDateTime expectedLeft2 = DateTimeTestData.createDateTime(2020, 10, 7);
@@ -1006,8 +1006,8 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToAreEqual() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
@@ -1019,8 +1019,8 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToInOneYear() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 2, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5, 12, 20, 30);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 2, 5);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
@@ -1032,8 +1032,8 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoYearlyIntervals_returnsOnePair_whenFromAndToInOneWholeYear() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020);
+        final OffsetDateTime to = DateTimeTestData.createEndOfYear(2020);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
@@ -1045,44 +1045,44 @@ class IntervalUnitTest {
 
     @Test
     void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToDiffersInOneYear() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 5, 10, 20, 30);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 10, 5);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfYear(2020);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToAreAtStartOfNeighbourYears() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
         Assertions.assertEquals(2, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfYear(2020);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoYearlyIntervals_returnsTwoPairs_whenFromAndToAreAtEndOfNeighbourYears() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime from = DateTimeTestData.createEndOfYear(2020);
+        final OffsetDateTime to = DateTimeTestData.createEndOfYear(2021);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
@@ -1091,30 +1091,30 @@ class IntervalUnitTest {
         Assertions.assertEquals(from, intervals.get(0).getFrom());
         Assertions.assertEquals(from, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
         Assertions.assertEquals(to, intervals.get(1).getTo());
     }
 
     @Test
     void splitIntoYearlyIntervals_returnsThreePairs_whenFromAndToDiffersInTwoYear() {
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 5, 10, 20, 30);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 5);
 
         final List<Interval> intervals = Interval.of(from, to).splitIntoYearlyIntervals();
 
         Assertions.assertEquals(3, intervals.size());
 
         Assertions.assertEquals(from, intervals.get(0).getFrom());
-        final OffsetDateTime expectedRight0 = DateTimeTestData.createDateTime(2020, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight0 = DateTimeTestData.createEndOfYear(2020);
         Assertions.assertEquals(expectedRight0, intervals.get(0).getTo());
 
-        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021, 1, 1);
+        final OffsetDateTime expectedLeft1 = DateTimeTestData.createDateTime(2021);
         Assertions.assertEquals(expectedLeft1, intervals.get(1).getFrom());
-        final OffsetDateTime expectedRight1 = DateTimeTestData.createDateTime(2021, 12, 31, 23, 59, 59, 999999999);
+        final OffsetDateTime expectedRight1 = DateTimeTestData.createEndOfYear(2021);
         Assertions.assertEquals(expectedRight1, intervals.get(1).getTo());
 
-        final OffsetDateTime expectedLeft2 = DateTimeTestData.createDateTime(2022, 1, 1);
+        final OffsetDateTime expectedLeft2 = DateTimeTestData.createDateTime(2022);
         Assertions.assertEquals(expectedLeft2, intervals.get(2).getFrom());
         Assertions.assertEquals(to, intervals.get(2).getTo());
     }
