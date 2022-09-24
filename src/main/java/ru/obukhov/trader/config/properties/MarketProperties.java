@@ -20,9 +20,6 @@ public class MarketProperties {
     @NotNull(message = "workSchedule is mandatory")
     private final WorkSchedule workSchedule;
 
-    @NotNull(message = "consecutiveEmptyDaysLimit is mandatory")
-    private final Integer consecutiveEmptyDaysLimit;
-
     @NotNull(message = "startDate is mandatory")
     private final OffsetDateTime startDate;
 
