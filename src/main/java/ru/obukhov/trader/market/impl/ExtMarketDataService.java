@@ -12,7 +12,6 @@ import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -39,7 +38,6 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
-    private final MarketProperties marketProperties;
     private final ExtInstrumentsService extInstrumentsService;
     private final MarketDataService marketDataService;
     private ExtMarketDataService self;
@@ -127,16 +125,15 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     /**
-     * Searches last price by {@code ticker} within last {@code trading.consecutive-empty-days-limit} days not after given {@code to}
+     * Searches last price by {@code ticker}
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
     public BigDecimal getLastPrice(final String ticker, final OffsetDateTime to) {
-        final OffsetDateTime candlesFrom = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit());
+        final Share share = extInstrumentsService.getSingleShare(ticker);
 
-        List<Interval> intervals = Interval.of(candlesFrom, to).splitIntoDailyIntervals();
-        intervals = CollectionsUtils.getTail(intervals, marketProperties.getConsecutiveEmptyDaysLimit() + 1);
+        final List<Interval> intervals = Interval.of(share.first1MinCandleDate(), to).splitIntoDailyIntervals();
         for (int i = intervals.size() - 1; i >= 0; i--) {
             final Interval interval = intervals.get(i);
             final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);

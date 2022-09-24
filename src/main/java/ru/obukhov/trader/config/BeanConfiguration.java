@@ -99,12 +99,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtMarketDataService extMarketDataService(
-            final MarketProperties marketProperties,
-            final ExtInstrumentsService extInstrumentsService,
-            final MarketDataService marketDataService
-    ) {
-        return new ExtMarketDataService(marketProperties, extInstrumentsService, marketDataService);
+    public ExtMarketDataService extMarketDataService(final ExtInstrumentsService extInstrumentsService, final MarketDataService marketDataService) {
+        return new ExtMarketDataService(extInstrumentsService, marketDataService);
     }
 
     @Bean

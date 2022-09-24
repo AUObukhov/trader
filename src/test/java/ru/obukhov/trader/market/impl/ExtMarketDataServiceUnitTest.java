@@ -11,14 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
-import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -31,8 +29,6 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 class ExtMarketDataServiceUnitTest {
 
-    private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
-
     @Mock
     private ExtInstrumentsService extInstrumentsService;
     @Mock
@@ -44,7 +40,7 @@ class ExtMarketDataServiceUnitTest {
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new ExtMarketDataService(MARKET_PROPERTIES, extInstrumentsService, marketDataService);
+        this.service = new ExtMarketDataService(extInstrumentsService, marketDataService);
         Mockito.when(applicationContext.getBean(ExtMarketDataService.class)).thenReturn(service);
         service.setApplicationContext(applicationContext);
     }
@@ -193,24 +189,7 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
-        final Executable executable = () -> service.getLastPrice(ticker, to);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
-        final String ticker = TestShare1.TICKER;
-        final String figi = TestShare1.FIGI;
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
-        final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() + 1);
-        final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
-
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
-
-        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(10, candlesFrom)
-                .mock();
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.createShare());
 
         final Executable executable = () -> service.getLastPrice(ticker, to);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
@@ -218,18 +197,18 @@ class ExtMarketDataServiceUnitTest {
     }
 
     @Test
-    void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastPrice_returnsCandle_whenCandleExists() {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
-        final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
-        final OffsetDateTime candlesTo = to.minusDays(MARKET_PROPERTIES.getConsecutiveEmptyDaysLimit() - 1);
-        final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
+        final OffsetDateTime from = TestShare1.FIRST_1_MIN_CANDLE_DATE;
+        final OffsetDateTime to = from.plusDays(1);
         final int closePrice = 10;
 
         Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.createShare());
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(closePrice, candlesFrom)
+                .add(closePrice, from)
                 .mock();
 
         final BigDecimal price = service.getLastPrice(ticker, to);

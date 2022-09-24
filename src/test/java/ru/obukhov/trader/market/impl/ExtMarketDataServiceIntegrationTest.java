@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.CandleMocker;
@@ -41,8 +40,6 @@ import java.util.List;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
 
-    @Autowired
-    private MarketProperties marketProperties;
     @Autowired
     private ExtMarketDataService extMarketDataService;
 
@@ -276,34 +273,16 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getLastPrice_throwsIllegalArgumentException_whenNoCandlesInMaxDaysToSearch() {
-        final String ticker = TestShare1.TICKER;
-        final String figi = TestShare1.FIGI;
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 10);
-        final OffsetDateTime candlesTo = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit() + 1);
-        final OffsetDateTime candlesFrom = candlesTo.minusDays(1);
-
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-
-        new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(10, candlesFrom)
-                .mock();
-
-        final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getLastPrice_returnsCandle_whenCandleExistsInMaxDayToSearch() {
+    void getLastPrice_returnsCandle_whenCandleExists() {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
-        final OffsetDateTime candlesTo = to.minusDays(marketProperties.getConsecutiveEmptyDaysLimit() - 1);
+        final OffsetDateTime candlesTo = TestShare1.FIRST_1_MIN_CANDLE_DATE.plusDays(1);
         final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
         final int closePrice = 10;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(closePrice, candlesFrom)
