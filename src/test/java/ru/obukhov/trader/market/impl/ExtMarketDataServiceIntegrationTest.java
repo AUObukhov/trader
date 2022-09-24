@@ -28,6 +28,7 @@ import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -815,6 +816,58 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final List<Candle> candles = extMarketDataService.getMarketCandles(ticker, interval, candleInterval);
 
         Assertions.assertTrue(candles.isEmpty());
+    }
+
+    // endregion
+
+    // region getTradingStatus tests
+
+    @Test
+    void getTradingStatus_throwsIllegalArgumentException_whenNoAssets() {
+        final String ticker = TestShare1.TICKER;
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
+
+        final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingStatus_throwsIllegalArgumentException_whenNoInstrument() {
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
+
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument11)
+                .build();
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument21)
+                .addInstruments(assetInstrument22)
+                .build();
+
+        final String ticker = TestShare4.TICKER;
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+
+        final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
+        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingStatus_returnsTradingStatus_whenInstrumentExists() {
+        final String figi = TestShare1.FIGI;
+        final String ticker = TestShare1.TICKER;
+
+        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        final SecurityTradingStatus status = SecurityTradingStatus.SECURITY_TRADING_STATUS_OPENING_PERIOD;
+        Mocker.mockTradingStatus(marketDataService, figi, status);
+
+        final SecurityTradingStatus result = extMarketDataService.getTradingStatus(ticker);
+
+        Assertions.assertEquals(status, result);
     }
 
     // endregion

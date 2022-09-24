@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.math.BigDecimal;
@@ -231,6 +232,11 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
         log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
         return candles;
+    }
+
+    public SecurityTradingStatus getTradingStatus(final String ticker) {
+        final String figi = extInstrumentsService.getFigiByTicker(ticker);
+        return marketDataService.getTradingStatusSync(figi).getTradingStatus();
     }
 
     // region ApplicationContextAware implementation

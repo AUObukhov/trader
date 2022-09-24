@@ -16,11 +16,14 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
+import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.core.InstrumentsService;
+import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -102,6 +105,13 @@ public class Mocker {
         final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
         final WorkSchedule workSchedule = new WorkSchedule(workStartTime, Duration.ofHours(9));
         Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
+    }
+
+    public static void mockTradingStatus(final MarketDataService marketDataService, final String figi, final SecurityTradingStatus status) {
+        final GetTradingStatusResponse response = GetTradingStatusResponse.newBuilder()
+                .setTradingStatus(status)
+                .build();
+        Mockito.when(marketDataService.getTradingStatusSync(figi)).thenReturn(response);
     }
 
 }
