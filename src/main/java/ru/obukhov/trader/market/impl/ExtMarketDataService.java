@@ -148,8 +148,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
     /**
      * @return last {@code limit} candles by {@code ticker}.
-     * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
-     * within {@code trading.consecutive-empty-days-limit} days or one year (when candleInterval >= 1 day).
+     * Searches from now to past. Stops searching when finds enough candles or when reaches first candle
      */
     public List<Candle> getLastCandles(
             final String ticker,
