@@ -228,7 +228,7 @@ class GrafanaServiceUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, currentDateTime)).thenReturn(candles);
+        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(currentDateTime)) {
             final List<QueryResult> results = service.getData(request);

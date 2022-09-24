@@ -1,6 +1,7 @@
 package ru.obukhov.trader.grafana;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.MapUtils;
@@ -82,9 +83,7 @@ public class GrafanaService {
         final Integer window1 = MapUtils.getRequiredInteger(data, "window1");
         final Integer window2 = MapUtils.getRequiredInteger(data, "window2");
 
-        return getExtendedCandles(
-                ticker, interval, candleInterval, movingAverageType, window1, window2
-        );
+        return getExtendedCandles(ticker, interval, candleInterval, movingAverageType, window1, window2);
     }
 
     private Map<String, Object> getRequiredTargetData(final GetDataRequest request) {
@@ -108,7 +107,8 @@ public class GrafanaService {
         queryResult.setColumns(CANDLES_COLUMNS);
 
         final List<List<Object>> rows = new ArrayList<>();
-        final List<Candle> candles = extMarketDataService.getCandles(ticker, interval, candleInterval, OffsetDateTime.now());
+        final Interval innerInterval = Interval.of(interval.getFrom(), ObjectUtils.defaultIfNull(interval.getTo(), OffsetDateTime.now()));
+        final List<Candle> candles = extMarketDataService.getCandles(ticker, innerInterval, candleInterval);
         for (Candle candle : candles) {
             rows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }

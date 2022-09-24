@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -103,6 +104,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -154,6 +156,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);

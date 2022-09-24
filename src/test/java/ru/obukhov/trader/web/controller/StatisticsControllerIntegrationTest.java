@@ -216,6 +216,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpenPrice(12000)
@@ -281,6 +282,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
@@ -315,6 +317,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
@@ -352,6 +355,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
@@ -386,6 +390,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")

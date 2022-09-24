@@ -73,7 +73,7 @@ class StatisticsServiceUnitTest {
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, mockedNow)).thenReturn(candles);
+            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
             // act
 
@@ -129,7 +129,7 @@ class StatisticsServiceUnitTest {
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval, mockedNow)).thenReturn(candles);
+            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
 
             // act
 

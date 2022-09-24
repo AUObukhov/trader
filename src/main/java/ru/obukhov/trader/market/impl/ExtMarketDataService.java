@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -47,22 +48,16 @@ public class ExtMarketDataService implements ApplicationContextAware {
     /**
      * Loads candles by conditions period by period.
      *
-     * @param interval search interval, default interval.from is start of trading, default interval.to is now
+     * @param interval search interval, default {@code interval.from} is first available candle
      * @return sorted by time list of loaded candles
      */
-    public List<Candle> getCandles(
-            final String ticker,
-            final Interval interval,
-            final CandleInterval candleInterval,
-            final OffsetDateTime currentDateTime
-    ) {
-        DateUtils.assertDateTimeNotFuture(interval.getTo(), currentDateTime, "to");
-
+    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
+        final Share share = extInstrumentsService.getSingleShare(ticker);
         final ChronoUnit period = DateUtils.getPeriodByCandleInterval(candleInterval);
 
         final List<Candle> candles = period == ChronoUnit.DAYS
-                ? getAllCandlesByDays(ticker, interval, candleInterval, currentDateTime)
-                : getAllCandlesByYears(ticker, interval, candleInterval, currentDateTime);
+                ? getAllCandlesByDays(share, interval, candleInterval)
+                : getAllCandlesByYears(share, interval, candleInterval);
 
         log.info("Loaded {} candles for ticker '{}'", candles.size(), ticker);
 
@@ -71,43 +66,26 @@ public class ExtMarketDataService implements ApplicationContextAware {
                 .toList();
     }
 
-    private List<Candle> getAllCandlesByDays(
-            final String ticker,
-            final Interval interval,
-            final CandleInterval candleInterval,
-            final OffsetDateTime currentDateTime
-    ) {
-        final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), marketProperties.getStartDate());
-        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), currentDateTime);
+    private List<Candle> getAllCandlesByDays(final Share share, final Interval interval, final CandleInterval candleInterval) {
+        final OffsetDateTime innerFrom = ObjectUtils.defaultIfNull(interval.getFrom(), share.first1MinCandleDate());
 
-        final List<Interval> subIntervals = Interval.of(innerFrom, innerTo).splitIntoDailyIntervals();
+        final List<Interval> subIntervals = Interval.of(innerFrom, interval.getTo()).splitIntoDailyIntervals();
         final ListIterator<Interval> listIterator = subIntervals.listIterator(subIntervals.size());
 
         final List<List<Candle>> candles = new ArrayList<>();
-        int emptyDaysCount = 0;
-        while (listIterator.hasPrevious() && emptyDaysCount <= marketProperties.getConsecutiveEmptyDaysLimit()) {
+        while (listIterator.hasPrevious()) {
             final Interval subInterval = listIterator.previous();
-            final List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, subInterval.extendToDay(), subInterval, candleInterval);
-            if (currentCandles.isEmpty()) {
-                emptyDaysCount++;
-            } else {
-                emptyDaysCount = 0;
-                candles.add(currentCandles);
-            }
+            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.ticker(), subInterval.extendToDay(), subInterval, candleInterval);
+            candles.add(currentCandles);
         }
 
         Collections.reverse(candles);
         return candles.stream().flatMap(Collection::stream).toList();
     }
 
-    private List<Candle> getAllCandlesByYears(
-            final String ticker,
-            final Interval interval,
-            final CandleInterval candleInterval,
-            final OffsetDateTime currentDateTime
-    ) {
-        final OffsetDateTime innerFrom = DateUtils.roundDownToYear(interval.getFrom());
-        final OffsetDateTime innerTo = ObjectUtils.defaultIfNull(interval.getTo(), currentDateTime);
+    private List<Candle> getAllCandlesByYears(final Share share, final Interval interval, final CandleInterval candleInterval) {
+        final OffsetDateTime innerFrom = DateUtils.roundDownToYear(ObjectUtils.defaultIfNull(interval.getFrom(), share.first1DayCandleDate()));
+        final OffsetDateTime innerTo = interval.getTo();
         OffsetDateTime currentFrom = DateUtils.roundUpToYear(innerTo);
         OffsetDateTime currentTo;
 
@@ -117,7 +95,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
             currentTo = currentFrom;
             currentFrom = DateUtils.minusLimited(currentFrom, 1, ChronoUnit.YEARS, innerFrom);
 
-            currentCandles = loadCandles(ticker, currentFrom, currentTo, candleInterval, currentDateTime)
+            currentCandles = self.getMarketCandles(share.ticker(), Interval.of(currentFrom, currentTo), candleInterval)
                     .stream()
                     .filter(candle -> interval.contains(candle.getTime()))
                     .toList();
@@ -125,17 +103,6 @@ public class ExtMarketDataService implements ApplicationContextAware {
         } while (DateUtils.isAfter(currentFrom, interval.getFrom()) && !currentCandles.isEmpty());
 
         return allCandles;
-    }
-
-    private List<Candle> loadCandles(
-            final String ticker,
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final CandleInterval candleInterval,
-            final OffsetDateTime currentDateTime
-    ) {
-        final OffsetDateTime innerTo = DateUtils.getEarliestDateTime(to, currentDateTime);
-        return self.getMarketCandles(ticker, Interval.of(from, innerTo), candleInterval);
     }
 
     /**
@@ -202,18 +169,18 @@ public class ExtMarketDataService implements ApplicationContextAware {
             final CandleInterval candleInterval,
             final OffsetDateTime currentDateTime
     ) {
+        final Share share = extInstrumentsService.getSingleShare(ticker);
         return DateUtils.getPeriodByCandleInterval(candleInterval) == ChronoUnit.DAYS
-                ? getLastCandlesDaily(ticker, limit, candleInterval, currentDateTime)
-                : getLastCandlesYearly(ticker, limit, candleInterval, currentDateTime);
+                ? getLastCandlesDaily(share, limit, candleInterval, currentDateTime)
+                : getLastCandlesYearly(share, limit, candleInterval, currentDateTime);
     }
 
     /**
      * @return last {@code limit} candles by {@code ticker}.
-     * Searches from now to past. Stops searching when finds enough candles or when consecutively getting no candles
-     * within {@code trading.consecutive-empty-days-limit} days.
+     * Searches from now to past. Stops searching when finds enough candles or when the total number of candles is less than {@code limit}.
      */
     private List<Candle> getLastCandlesDaily(
-            final String ticker,
+            final Share share,
             final int limit,
             final CandleInterval candleInterval,
             final OffsetDateTime currentDateTime
@@ -221,39 +188,41 @@ public class ExtMarketDataService implements ApplicationContextAware {
         final OffsetDateTime from = DateUtils.atStartOfDay(currentDateTime);
         Interval interval = Interval.of(from, currentDateTime);
 
-        List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, candleInterval);
+        List<Candle> currentCandles = getMarketCandles(share.ticker(), interval, candleInterval);
         final List<Candle> candles = new ArrayList<>(currentCandles);
-        int consecutiveEmptyDaysCount = candles.isEmpty() ? 1 : 0;
 
         interval = interval.minusDays(1).extendToDay();
 
         do {
-            currentCandles = self.getMarketCandles(ticker, interval, candleInterval);
-            if (currentCandles.isEmpty()) {
-                consecutiveEmptyDaysCount++;
-            } else {
-                consecutiveEmptyDaysCount = 0;
-                candles.addAll(currentCandles);
-            }
-
+            currentCandles = self.getMarketCandles(share.ticker(), interval, candleInterval);
+            candles.addAll(currentCandles);
             interval = interval.minusDays(1);
-        } while (candles.size() < limit && consecutiveEmptyDaysCount <= marketProperties.getConsecutiveEmptyDaysLimit());
+        } while (candles.size() < limit && share.first1MinCandleDate().isBefore(interval.getTo()));
 
         candles.sort(Comparator.comparing(Candle::getTime));
         return CollectionsUtils.getTail(candles, limit);
     }
 
-    private List<Candle> getLastCandlesYearly(String ticker, int limit, final CandleInterval candleInterval, final OffsetDateTime currentDateTime) {
+    /**
+     * @return last {@code limit} candles by {@code ticker}.
+     * Searches from now to past. Stops searching when finds enough candles or when the total number of candles is less than {@code limit}.
+     */
+    private List<Candle> getLastCandlesYearly(
+            final Share share,
+            final int limit,
+            final CandleInterval candleInterval,
+            final OffsetDateTime currentDateTime
+    ) {
         final OffsetDateTime from = DateUtils.atStartOfYear(currentDateTime);
         Interval interval = Interval.of(from, currentDateTime);
 
-        List<Candle> currentCandles = loadCandlesBetterCacheable(ticker, interval.extendToYear(), interval, candleInterval);
+        List<Candle> currentCandles = getMarketCandles(share.ticker(), interval, candleInterval);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
         interval = interval.minusYears(1).extendToYear();
 
         do {
-            currentCandles = self.getMarketCandles(ticker, interval, candleInterval);
+            currentCandles = self.getMarketCandles(share.ticker(), interval, candleInterval);
             candles.addAll(currentCandles);
             interval = interval.minusYears(1);
         } while (candles.size() < limit && !currentCandles.isEmpty());
