@@ -39,10 +39,7 @@ class MarketPropertiesContextTest {
     @Test
     void beanCreationFails_whenWorkScheduleIsNull() {
         this.contextRunner
-                .withPropertyValues(
-                        "market.commission: 0.003",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
-                )
+                .withPropertyValues("market.commission: 0.003")
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market", "workSchedule is mandatory"));
     }
 
@@ -51,8 +48,7 @@ class MarketPropertiesContextTest {
         this.contextRunner
                 .withPropertyValues(
                         "market.commission: 0.003",
-                        "market.work-schedule.duration: 480",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.duration: 480"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market.work-schedule", "startTime is mandatory"));
     }
@@ -62,8 +58,7 @@ class MarketPropertiesContextTest {
         this.contextRunner
                 .withPropertyValues(
                         "market.commission: 0.003",
-                        "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.start-time: 12:00:00+03:00"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(context, "market.work-schedule", "duration is mandatory"));
     }
@@ -74,8 +69,7 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.work-schedule.duration: -1",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.duration: -1"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
                         context,
@@ -89,8 +83,7 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.work-schedule.duration: 0",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.duration: 0"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
                         context,
@@ -104,8 +97,7 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.work-schedule.duration: 86400",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.duration: 86400"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
                         context,
@@ -119,24 +111,12 @@ class MarketPropertiesContextTest {
                 .withPropertyValues(
                         "market.commission: 0.003",
                         "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.work-schedule.duration: 86399",
-                        "market.start-date: 2000-01-01T00:00:00+03:00"
+                        "market.work-schedule.duration: 86399"
                 )
                 .run(context -> AssertUtils.assertContextStartupFailed(
                         context,
                         "market.work-schedule", "duration must be less than 1 day"
                 ));
-    }
-
-    @Test
-    void beanCreationFails_whenStartDateIsNull() {
-        this.contextRunner
-                .withPropertyValues(
-                        "market.commission: 0.003",
-                        "market.work-schedule.start-time: 12:00:00+03:00",
-                        "market.work-schedule.duration: 480"
-                )
-                .run(context -> AssertUtils.assertContextStartupFailed(context, "market.startDate", "startDate is mandatory"));
     }
 
     @EnableConfigurationProperties(MarketProperties.class)

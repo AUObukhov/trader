@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 import ru.obukhov.trader.config.model.WorkSchedule;
 
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
 
 @Data
 @ConstructorBinding
@@ -19,8 +18,5 @@ public class MarketProperties {
 
     @NotNull(message = "workSchedule is mandatory")
     private final WorkSchedule workSchedule;
-
-    @NotNull(message = "startDate is mandatory")
-    private final OffsetDateTime startDate;
 
 }

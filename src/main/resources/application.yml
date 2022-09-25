@@ -5,7 +5,6 @@ market:
   work-schedule:
     start-time: 07:00:00+03:00
     duration: 720
-  start-date: 2000-01-01T00:00:00+03:00
 
 scheduling:
   delay: 60000
