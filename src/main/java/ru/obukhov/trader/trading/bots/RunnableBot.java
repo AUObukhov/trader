@@ -1,34 +1,30 @@
 package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.RealContext;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
+import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 @Slf4j
 public class RunnableBot extends Bot implements Runnable {
 
     private final SchedulingProperties schedulingProperties;
     private final BotConfig botConfig;
-    private final MarketProperties marketProperties;
 
     public RunnableBot(
             final ServicesContainer services,
             final RealContext realContext,
             final TradingStrategy strategy,
             final SchedulingProperties schedulingProperties,
-            final BotConfig botConfig,
-            final MarketProperties marketProperties
+            final BotConfig botConfig
     ) {
         super(services, realContext, strategy, strategy.initCache());
 
         this.schedulingProperties = schedulingProperties;
         this.botConfig = botConfig;
-        this.marketProperties = marketProperties;
     }
 
     @Override
@@ -38,8 +34,12 @@ public class RunnableBot extends Bot implements Runnable {
             return;
         }
 
-        if (!DateUtils.isWorkTime(context.getCurrentDateTime(), marketProperties.getWorkSchedule())) {
-            log.debug("Not work time. Do nothing");
+        final SecurityTradingStatus tradingStatus = extMarketDataService.getTradingStatus(botConfig.ticker());
+        if (tradingStatus != SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING) {
+            log.debug(
+                    "Trading status fot ticker {} is {}. Expected {}",
+                    botConfig.ticker(), tradingStatus, SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING
+            );
             return;
         }
 

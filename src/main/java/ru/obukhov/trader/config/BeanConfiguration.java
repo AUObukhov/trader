@@ -149,7 +149,6 @@ public class BeanConfiguration {
             final TradingStrategyFactory strategyFactory,
             final SchedulingProperties schedulingProperties,
             final ScheduledBotsProperties scheduledBotsProperties,
-            final MarketProperties marketProperties,
             final TaskScheduler taskScheduler
     ) {
         return scheduledBotsProperties.getBotConfigs().stream()
@@ -159,8 +158,7 @@ public class BeanConfiguration {
                             realContext,
                             strategyFactory.createStrategy(botConfig),
                             schedulingProperties,
-                            botConfig,
-                            marketProperties
+                            botConfig
                     );
                     registerScheduledJob(environment, schedulingProperties, taskScheduler, bot);
                     return bot;
