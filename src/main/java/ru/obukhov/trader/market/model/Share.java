@@ -13,6 +13,7 @@ public record Share(
         Integer lotSize,
         Currency currency,
         String name,
+        Exchange exchange,
         OffsetDateTime ipoDate,
         Long issueSize,
         String country,
@@ -28,4 +29,3 @@ public record Share(
         OffsetDateTime first1DayCandleDate
 ) {
 }
-

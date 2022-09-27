@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.Share;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.Share} to {@link Share}
  */
-@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class})
+@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class, ExchangeMapper.class})
 public interface ShareMapper {
 
     @Mapping(target = "lotSize", source = "lot")

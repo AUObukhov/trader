@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model.share;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Sector;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
@@ -25,6 +26,7 @@ public class TestShare2 {
     public static final int LOT_SIZE = 10;
     public static final Currency CURRENCY = Currency.RUB;
     public static final String NAME = "Сбер Банк";
+    public static final Exchange EXCHANGE = Exchange.MOEX_PLUS;
     public static final OffsetDateTime IPO_DATE = DateTimeTestData.createDateTime(2007, 7, 11, 3);
     public static final long ISSUE_SIZE = 21586948000L;
     public static final String COUNTRY = "Российская Федерация";
@@ -46,6 +48,7 @@ public class TestShare2 {
                 .setLot(LOT_SIZE)
                 .setCurrency(CURRENCY.name().toLowerCase())
                 .setName(NAME)
+                .setExchange(EXCHANGE.getValue())
                 .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(IPO_DATE))
                 .setIssueSize(ISSUE_SIZE)
                 .setCountryOfRiskName(COUNTRY)
@@ -69,6 +72,7 @@ public class TestShare2 {
                 .lotSize(LOT_SIZE)
                 .currency(CURRENCY)
                 .name(NAME)
+                .exchange(EXCHANGE)
                 .ipoDate(IPO_DATE)
                 .issueSize(ISSUE_SIZE)
                 .country(COUNTRY)

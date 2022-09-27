@@ -4,6 +4,7 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Sector;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
@@ -23,6 +24,7 @@ public class TestEtf2 {
     public static final int LOT_SIZE = 1;
     public static final Currency CURRENCY = Currency.RUB;
     public static final String NAME = "FinEx Акции американских компаний";
+    public static final Exchange EXCHANGE = Exchange.MOEX;
     public static final OffsetDateTime RELEASED_DATE = DateTimeTestData.createDateTime(2013, 10, 31, 3, 0, 0);
     public static final BigDecimal NUM_SHARES = DecimalUtils.setDefaultScale(330000.000000000);
     public static final String COUNTRY = "Соединенные Штаты Америки";
@@ -42,6 +44,7 @@ public class TestEtf2 {
                 .setLot(LOT_SIZE)
                 .setCurrency(CURRENCY.name().toLowerCase())
                 .setName(NAME)
+                .setExchange(EXCHANGE.getValue())
                 .setReleasedDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(RELEASED_DATE))
                 .setNumShares(QUOTATION_MAPPER.fromBigDecimal(NUM_SHARES))
                 .setCountryOfRiskName(COUNTRY)
@@ -63,6 +66,7 @@ public class TestEtf2 {
                 .lotSize(LOT_SIZE)
                 .currency(CURRENCY)
                 .name(NAME)
+                .exchange(EXCHANGE)
                 .releasedDate(RELEASED_DATE)
                 .numShares(NUM_SHARES)
                 .country(COUNTRY)

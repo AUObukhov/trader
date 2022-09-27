@@ -13,6 +13,7 @@ public record Etf(
         Integer lotSize,
         Currency currency,
         String name,
+        Exchange exchange,
         OffsetDateTime releasedDate,
         BigDecimal numShares,
         String country,
@@ -26,4 +27,3 @@ public record Etf(
         OffsetDateTime first1DayCandleDate
 ) {
 }
-
