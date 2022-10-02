@@ -42,7 +42,7 @@ class ExchangeMapperUnitTest {
                 Arguments.of("lse", Exchange.LSE),
                 Arguments.of("lse_index", Exchange.LSE_INDEX),
                 Arguments.of("LSE_MORNING", Exchange.LSE_MORNING),
-                Arguments.of("madrid", Exchange.madrid),
+                Arguments.of("madrid", Exchange.MADRID),
                 Arguments.of("MOEX", Exchange.MOEX),
                 Arguments.of("MOEX_DEALER_WEEKEND", Exchange.MOEX_DEALER_WEEKEND),
                 Arguments.of("MOEX_EVENING_WEEKEND", Exchange.MOEX_EVENING_WEEKEND),

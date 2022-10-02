@@ -37,7 +37,7 @@ public enum Exchange {
     LSE("lse"),
     LSE_INDEX("lse_index"),
     LSE_MORNING("LSE_MORNING"),
-    madrid("madrid"),
+    MADRID("madrid"),
     MOEX("MOEX"),
     MOEX_DEALER_WEEKEND("MOEX_DEALER_WEEKEND"),
     MOEX_EVENING_WEEKEND("MOEX_EVENING_WEEKEND"),
