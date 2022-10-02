@@ -52,16 +52,29 @@ public abstract class ControllerIntegrationTest extends IntegrationTest {
     }
 
     protected void postAndExpectBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate);
+        performAndExpectBadRequestError(requestBuilder, request, expectedError);
+    }
+
+    protected void getAndExpectBadRequestError(final String urlTemplate, final Object request, final String expectedError) throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(urlTemplate);
+        performAndExpectBadRequestError(requestBuilder, request, expectedError);
+    }
+
+    protected void performAndExpectBadRequestError(
+            final MockHttpServletRequestBuilder requestBuilder,
+            final Object request,
+            final String expectedError
+    ) throws Exception {
         final String requestString = TestUtils.OBJECT_MAPPER.writeValueAsString(request);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post(urlTemplate)
+        final MockHttpServletRequestBuilder innerRequestBuilder = requestBuilder
                 .content(requestString)
                 .contentType(MediaType.APPLICATION_JSON);
-        mockMvc.perform(requestBuilder)
+        mockMvc.perform(innerRequestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(RESULT_MESSAGE_MATCHER.value("Invalid request"))
                 .andExpect(ERRORS_MATCHER.value(expectedError))
                 .andExpect(JSON_CONTENT_MATCHER);
     }
-
 }

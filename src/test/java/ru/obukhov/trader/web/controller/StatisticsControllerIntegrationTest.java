@@ -15,17 +15,18 @@ import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
 import ru.obukhov.trader.test.utils.CandleMocker;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.HistoricCandleBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,163 +43,105 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int smallWindow = 50;
-        final int bigWindow = 50;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("from", "2021-03-25T10:00:00+03:00")
-                .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("smallWindow", Integer.toString(smallWindow))
-                .param("bigWindow", Integer.toString(bigWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
-        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
+        request.setSmallWindow(50);
+        request.setBigWindow(50);
+        request.setSaveToFile(true);
+
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "ticker is mandatory");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
-    void getCandles_returnsBadRequest_whenFromIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int smallWindow = 50;
-        final int bigWindow = 50;
+    void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
+        request.setSmallWindow(50);
+        request.setBigWindow(50);
+        request.setSaveToFile(true);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("ticker", ticker)
-                .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("smallWindow", Integer.toString(smallWindow))
-                .param("bigWindow", Integer.toString(bigWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
-
-        final String expectedMessage = "Required request parameter 'from' for method parameter type OffsetDateTime is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
-    }
-
-    @Test
-    @SuppressWarnings("java:S2699")
-        // Sonar warning "Tests should include assertions"
-    void getCandles_returnsBadRequest_whenToIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int smallWindow = 50;
-        final int bigWindow = 50;
-
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("ticker", ticker)
-                .param("from", "2021-03-25T10:00:00+03:00")
-                .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("smallWindow", Integer.toString(smallWindow))
-                .param("bigWindow", Integer.toString(bigWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
-
-        final String expectedMessage = "Required request parameter 'to' for method parameter type OffsetDateTime is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "interval is mandatory");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenCandleIntervalIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int smallWindow = 50;
-        final int bigWindow = 50;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("ticker", ticker)
-                .param("from", "2021-03-25T10:00:00+03:00")
-                .param("to", "2021-03-25T19:00:00+03:00")
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("smallWindow", Integer.toString(smallWindow))
-                .param("bigWindow", Integer.toString(bigWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setInterval(Interval.of(from, to));
+        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
+        request.setSmallWindow(50);
+        request.setBigWindow(50);
+        request.setSaveToFile(true);
 
-        final String expectedMessage = "Required request parameter 'candleInterval' for method parameter type CandleInterval is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "candleInterval is mandatory");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenMovingAverageTypeIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final int smallWindow = 50;
-        final int bigWindow = 50;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder =
-                MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", "2021-03-25T10:00:00+03:00")
-                        .param("to", "2021-03-25T19:00:00+03:00")
-                        .param("candleInterval", candleInterval.name())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
-                        .contentType(MediaType.APPLICATION_JSON);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setSmallWindow(50);
+        request.setBigWindow(50);
+        request.setSaveToFile(true);
 
-        final String expectedMessage = "Required request parameter 'movingAverageType' for method parameter type MovingAverageType is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "movingAverageType is mandatory");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenSmallWindowIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int bigWindow = 50;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("ticker", ticker)
-                .param("from", "2021-03-25T10:00:00+03:00")
-                .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("bigWindow", Integer.toString(bigWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
+        request.setBigWindow(50);
+        request.setSaveToFile(true);
 
-        final String expectedMessage = "Required request parameter 'smallWindow' for method parameter type Integer is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "smallWindow is mandatory");
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenBigWindowIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.LINEAR_WEIGHTED;
-        final int smallWindow = 50;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/trader/statistics/candles")
-                .param("ticker", ticker)
-                .param("from", "2021-03-25T10:00:00+03:00")
-                .param("to", "2021-03-25T19:00:00+03:00")
-                .param("candleInterval", candleInterval.name())
-                .param("movingAverageType", movingAverageType.getValue())
-                .param("smallWindow", Integer.toString(smallWindow))
-                .param("saveToFile", Boolean.TRUE.toString())
-                .contentType(MediaType.APPLICATION_JSON);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
+        request.setSmallWindow(50);
+        request.setSaveToFile(true);
 
-        final String expectedMessage = "Required request parameter 'bigWindow' for method parameter type Integer is not present";
-        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "bigWindow is mandatory");
     }
 
     @Test
@@ -209,9 +152,6 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final int smallWindow = 1;
-        final int bigWindow = 2;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
@@ -255,15 +195,18 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final List<Candle> candles = historicCandles.stream().map(CANDLE_MAPPER::map).toList();
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, shortAverages, longAverages);
 
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(ticker);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(candleInterval);
+        request.setMovingAverageType(MovingAverageType.SIMPLE);
+        request.setSmallWindow(1);
+        request.setBigWindow(2);
+        request.setSaveToFile(true);
+
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.name())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
+                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON);
 
         performAndExpectResponse(requestBuilder, expectedResponse);
@@ -275,25 +218,24 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final int smallWindow = 1;
-        final int bigWindow = 2;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(ticker);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(candleInterval);
+        request.setMovingAverageType(MovingAverageType.SIMPLE);
+        request.setSmallWindow(1);
+        request.setBigWindow(2);
+        request.setSaveToFile(true);
+
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.name())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
+                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
@@ -310,25 +252,24 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final int smallWindow = 1;
-        final int bigWindow = 2;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(ticker);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(candleInterval);
+        request.setMovingAverageType(MovingAverageType.SIMPLE);
+        request.setSmallWindow(1);
+        request.setBigWindow(2);
+        request.setSaveToFile(true);
+
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.name())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.TRUE.toString())
+                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
@@ -348,25 +289,24 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final int smallWindow = 1;
-        final int bigWindow = 2;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
 
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(ticker);
+        request.setInterval(Interval.of(from, to));
+        request.setCandleInterval(candleInterval);
+        request.setMovingAverageType(MovingAverageType.SIMPLE);
+        request.setSmallWindow(1);
+        request.setBigWindow(2);
+        request.setSaveToFile(false);
+
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("candleInterval", candleInterval.name())
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
-                        .param("saveToFile", Boolean.FALSE.toString())
+                        .content(TestUtils.OBJECT_MAPPER.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
@@ -381,26 +321,26 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final String ticker = TestShare1.TICKER;
-        final String figi = TestShare1.FIGI;
-        final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
-        final int smallWindow = 1;
-        final int bigWindow = 2;
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
+        Mocker.mockFigiByTicker(instrumentsService, TestShare1.FIGI, ticker);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+
+        final String requestString = String.format("""
+                {
+                  "ticker": "%s",
+                  "interval": {
+                    "from": "2021-03-25T10:00:00+03:00",
+                    "to": "2021-03-25T19:00:00+03:00"
+                  },
+                  "candleInterval": "CANDLE_INTERVAL_1_MIN",
+                  "movingAverageType": "SMA",
+                  "smallWindow": 1,
+                  "bigWindow": 2
+                }""", ticker);
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
-                        .param("ticker", ticker)
-                        .param("from", from.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("to", to.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                        .param("movingAverageType", movingAverageType.getValue())
-                        .param("candleInterval", candleInterval.name())
-                        .param("smallWindow", Integer.toString(smallWindow))
-                        .param("bigWindow", Integer.toString(bigWindow))
+                        .content(requestString)
                         .contentType(MediaType.APPLICATION_JSON);
 
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());

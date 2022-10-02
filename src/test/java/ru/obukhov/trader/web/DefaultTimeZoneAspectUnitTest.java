@@ -12,7 +12,11 @@ import org.springframework.aop.ProxyMethodInvocation;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
+import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -23,7 +27,7 @@ import java.util.stream.Stream;
 class DefaultTimeZoneAspectUnitTest {
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forWithDefaultOffsetSameInstant() {
+    static Stream<Arguments> getData() {
         return Stream.of(
                 Arguments.of(null, null, null, null),
                 Arguments.of(
@@ -54,8 +58,13 @@ class DefaultTimeZoneAspectUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forWithDefaultOffsetSameInstant")
-    void withDefaultOffsetSameInstant(OffsetDateTime from, OffsetDateTime to, OffsetDateTime expectedFrom, OffsetDateTime expectedTo) {
+    @MethodSource("getData")
+    void beforeGrafanaControllerGetData(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
         final DefaultTimeZoneAspect aspect = new DefaultTimeZoneAspect();
 
         final Interval interval = Interval.of(from, to);
@@ -65,6 +74,36 @@ class DefaultTimeZoneAspectUnitTest {
         final JoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
 
         aspect.beforeGrafanaControllerGetData(joinPoint);
+
+        Assertions.assertEquals(expectedFrom, request.getInterval().getFrom());
+        Assertions.assertEquals(expectedTo, request.getInterval().getTo());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData")
+    void beforeStatisticsControllerGetCandles(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) {
+        final DefaultTimeZoneAspect aspect = new DefaultTimeZoneAspect();
+
+        final Interval interval = Interval.of(from, to);
+        final GetCandlesRequest request = new GetCandlesRequest();
+        request.setTicker(TestShare1.TICKER);
+        request.setInterval(interval);
+        request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
+        request.setMovingAverageType(MovingAverageType.SIMPLE);
+        request.setSmallWindow(50);
+        request.setBigWindow(200);
+        request.setSaveToFile(false);
+
+        final Object[] arguments = new Object[]{request};
+        final ProxyMethodInvocation methodInvocation = new TestMethodInvocation(arguments);
+        final JoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
+
+        aspect.beforeStatisticsControllerGetCandles(joinPoint);
 
         Assertions.assertEquals(expectedFrom, request.getInterval().getFrom());
         Assertions.assertEquals(expectedTo, request.getInterval().getTo());

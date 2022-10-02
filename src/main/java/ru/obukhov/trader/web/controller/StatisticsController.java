@@ -1,25 +1,21 @@
 package ru.obukhov.trader.web.controller;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.impl.StatisticsService;
-import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.time.OffsetDateTime;
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -37,45 +33,18 @@ public class StatisticsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public GetCandlesResponse getCandles(
-            @RequestParam
-            @ApiParam(example = "FXIT", required = true) final String ticker,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(value = "Start date time of candle search interval", example = "2019-01-01T00:00:00+03:00", required = true) final OffsetDateTime from,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @ApiParam(value = "End date time of candle search interval", example = "2020-01-01T00:00:00+03:00", required = true) final OffsetDateTime to,
-
-            @RequestParam
-            @ApiParam(value = "Candle interval", example = "CANDLE_INTERVAL_1_MIN", required = true) final CandleInterval candleInterval,
-
-            @RequestParam
-            @ApiParam(value = "Moving average algorithm type", example = "LWMA", required = true) final MovingAverageType movingAverageType,
-
-            @RequestParam
-            @ApiParam(value = "Window of short-term moving average", example = "50", required = true) final Integer smallWindow,
-
-            @RequestParam
-            @ApiParam(value = "Window of long-term moving average", example = "200", required = true) final Integer bigWindow,
-
-            @RequestParam(required = false, defaultValue = "false")
-            @ApiParam(value = "Flag indicating to save the back test result to a file. Default value is false", example = "true") final boolean saveToFile
-    ) {
-        final Interval interval = DateUtils.getIntervalWithDefaultOffsets(from, to);
+    public GetCandlesResponse getCandles(@Valid @RequestBody final GetCandlesRequest getCandlesRequest) {
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
-                ticker,
-                interval,
-                candleInterval,
-                movingAverageType,
-                smallWindow,
-                bigWindow
+                getCandlesRequest.getTicker(),
+                getCandlesRequest.getInterval(),
+                getCandlesRequest.getCandleInterval(),
+                getCandlesRequest.getMovingAverageType(),
+                getCandlesRequest.getSmallWindow(),
+                getCandlesRequest.getBigWindow()
         );
 
-        if (saveToFile) {
-            saveCandlesSafe(ticker, interval, response);
+        if (getCandlesRequest.isSaveToFile()) {
+            saveCandlesSafe(getCandlesRequest.getTicker(), getCandlesRequest.getInterval(), response);
         }
 
         return response;
