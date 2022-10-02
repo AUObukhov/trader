@@ -55,7 +55,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setInterval(null);
 
-        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "interval is mandatory");
+        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "interval is mandatory");
     }
 
     @Test
@@ -65,7 +65,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(null);
 
-        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
+        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
@@ -75,7 +75,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.setTargets(List.of());
 
-        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
+        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "targets is mandatory");
     }
 
     @Test
@@ -85,7 +85,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setMetric(null);
 
-        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.metric is mandatory");
+        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.metric is mandatory");
     }
 
     @Test
@@ -95,7 +95,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final GetDataRequest getDataRequest = createGetDataRequest();
         getDataRequest.getTargets().get(0).setType(null);
 
-        performAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.type is mandatory");
+        postAndExpectBadRequestError("/trader/grafana/query", getDataRequest, "target.type is mandatory");
     }
 
     @Test

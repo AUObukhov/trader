@@ -72,7 +72,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "from is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "from is mandatory");
     }
 
     @Test
@@ -94,7 +94,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "balanceConfig is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "balanceConfig is mandatory");
     }
 
     @Test
@@ -108,7 +108,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         request.setBotConfigs(null);
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
     }
 
     @Test
@@ -122,7 +122,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         request.setBotConfigs(Collections.emptyList());
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "botConfigs is mandatory");
     }
 
     @Test
@@ -144,7 +144,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "candleInterval is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "candleInterval is mandatory");
     }
 
     @Test
@@ -166,7 +166,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "commission is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "commission is mandatory");
     }
 
     @Test
@@ -188,7 +188,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         request.setBotConfigs(List.of(botConfig));
 
-        performAndExpectBadRequestError("/trader/bot/back-test", request, "strategyType is mandatory");
+        postAndExpectBadRequestError("/trader/bot/back-test", request, "strategyType is mandatory");
     }
 
     @Test
