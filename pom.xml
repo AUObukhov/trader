@@ -26,6 +26,7 @@
         <io.springfox.version>3.0.0</io.springfox.version>
         <spring-boot.version>2.7.3</spring-boot.version>
         <lombok.version>1.18.24</lombok.version>
+        <fasterxml.jackson.version>2.13.4</fasterxml.jackson.version>
     </properties>
 
     <dependencies>
@@ -158,7 +159,22 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.13.3</version>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
         <dependency>

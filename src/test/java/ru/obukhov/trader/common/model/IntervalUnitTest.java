@@ -1,5 +1,7 @@
 package ru.obukhov.trader.common.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -10,6 +12,7 @@ import org.mockito.MockedStatic;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
+import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
 import java.time.Duration;
@@ -810,7 +813,6 @@ class IntervalUnitTest {
 
     // endregion
 
-
     // region contains tests
 
     @SuppressWarnings("unused")
@@ -1203,6 +1205,95 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         AssertUtils.assertEquals(expected, interval.toDays());
+    }
+
+    // endregion
+
+    // region jsonMapping tests
+
+    @Test
+    void jsonMapping_mapsValue() throws JsonProcessingException {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 1, 10, 11, 12);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 11, 2, 15, 16, 17);
+        final Interval interval = Interval.of(from, to);
+
+        final String json = TestUtils.OBJECT_MAPPER.writeValueAsString(interval);
+
+        final String expectedJson = "{\"from\":\"2022-10-01T10:11:12+03:00\",\"to\":\"2022-11-02T15:16:17+03:00\"}";
+        Assertions.assertEquals(expectedJson, json);
+    }
+
+    @Test
+    void jsonMapping_createsFromValue_throwsValueInstantiationException_whenFromIsAfterTo() {
+        final String json = """
+                {
+                    "from": "2022-11-02T15:16:17+03:00",
+                    "to": "2022-10-01T10:11:12+03:00"
+                }
+                """;
+
+        final Executable executable = () -> TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
+        Assertions.assertThrows(ValueInstantiationException.class, executable, "from can't be after to");
+    }
+
+    @Test
+    void jsonMapping_createsFromValue_returnsInterval_whenFromAndToAreNull() throws JsonProcessingException {
+        final String json = "{}";
+
+        final Interval interval = TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
+
+        Assertions.assertNull(interval.getFrom());
+        Assertions.assertNull(interval.getTo());
+    }
+
+    @Test
+    void jsonMapping_createsFromValue_returnsInterval_whenFromIsNull() throws JsonProcessingException {
+        final String json = """
+                {
+                    "to": "2022-11-02T15:16:17+03:00"
+                }
+                """;
+
+        final Interval interval = TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
+
+        final OffsetDateTime expectedTo = DateTimeTestData.createDateTime(2022, 11, 2, 15, 16, 17);
+
+        Assertions.assertNull(interval.getFrom());
+        Assertions.assertEquals(expectedTo, interval.getTo());
+    }
+
+    @Test
+    void jsonMapping_createsFromValue_returnsInterval_whenToIsNull() throws JsonProcessingException {
+        final String json = """
+                {
+                    "from": "2022-10-01T10:11:12+03:00"
+                }
+                """;
+
+        final Interval interval = TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
+
+        final OffsetDateTime expectedFrom = DateTimeTestData.createDateTime(2022, 10, 1, 10, 11, 12);
+
+        Assertions.assertEquals(expectedFrom, interval.getFrom());
+        Assertions.assertNull(interval.getTo());
+    }
+
+    @Test
+    void jsonMapping_createsFromValue_whenFromAndToAreNotNull() throws JsonProcessingException {
+        final String json = """
+                {
+                    "from": "2022-10-01T10:11:12+03:00",
+                    "to": "2022-11-02T15:16:17+03:00"
+                }
+                """;
+
+        final Interval interval = TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 1, 10, 11, 12);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 11, 2, 15, 16, 17);
+        final Interval expectedInterval = Interval.of(from, to);
+
+        Assertions.assertEquals(expectedInterval, interval);
     }
 
     // endregion

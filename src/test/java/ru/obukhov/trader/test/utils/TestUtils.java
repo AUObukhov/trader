@@ -1,8 +1,10 @@
 package ru.obukhov.trader.test.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
@@ -13,7 +15,8 @@ public class TestUtils {
 
     public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule())
-            .setDateFormat(new SimpleDateFormat("yyyy-MM-d24'T'HH:mm:ssZ"))
+            .setDateFormat(new SimpleDateFormat(DateUtils.OFFSET_DATE_TIME_FORMAT))
+            .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
             .registerModule(new SimpleModule().addSerializer(new CronExpressionSerializer()));
 
     public static boolean equals(final Money money1, final Money money2) {
