@@ -4,14 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
+import ru.obukhov.trader.market.model.transform.TradingDayMapper;
+import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
+import java.time.Instant;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,6 +26,8 @@ public class ExtInstrumentsService {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
+    private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
+    private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -65,4 +74,20 @@ public class ExtInstrumentsService {
         return etfs.get(0);
     }
 
+    public List<TradingDay> getTradingSchedule(final Exchange exchange, final Interval interval) {
+        final Instant fromInstant = interval.getFrom().toInstant();
+        final Instant toInstant = interval.getTo().toInstant();
+        return instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)
+                .getDaysList()
+                .stream()
+                .map(TRADING_DAY_MAPPER::map)
+                .toList();
+    }
+
+    public List<TradingSchedule> getTradingSchedules(final Interval interval) {
+        return instrumentsService.getTradingSchedulesSync(interval.getFrom().toInstant(), interval.getTo().toInstant())
+                .stream()
+                .map(TRADING_SCHEDULE_MAPPER::map)
+                .toList();
+    }
 }

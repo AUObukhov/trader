@@ -3,6 +3,7 @@ package ru.obukhov.trader.web;
 import lombok.Getter;
 import org.aopalliance.intercept.MethodInvocation;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +13,7 @@ import org.springframework.aop.ProxyMethodInvocation;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
+import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -109,11 +111,58 @@ class DefaultTimeZoneAspectUnitTest {
         Assertions.assertEquals(expectedTo, request.getInterval().getTo());
     }
 
+    @ParameterizedTest
+    @MethodSource("getData")
+    void aroundInstrumentsControllerGetTradingSchedule(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) throws Throwable {
+        final DefaultTimeZoneAspect aspect = new DefaultTimeZoneAspect();
+
+        final Interval interval = Interval.of(from, to);
+
+        final Object[] arguments = new Object[]{Exchange.MOEX, interval};
+        final ProxyMethodInvocation methodInvocation = new TestMethodInvocation(arguments);
+        final ProceedingJoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
+
+        aspect.aroundInstrumentsControllerGetTradingSchedule(joinPoint);
+
+        final Interval argumentInterval = (Interval) methodInvocation.getArguments()[1];
+        Assertions.assertEquals(expectedFrom, argumentInterval.getFrom());
+        Assertions.assertEquals(expectedTo, argumentInterval.getTo());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData")
+    void aroundInstrumentsControllerGetTradingSchedules(
+            final OffsetDateTime from,
+            final OffsetDateTime to,
+            final OffsetDateTime expectedFrom,
+            final OffsetDateTime expectedTo
+    ) throws Throwable {
+        final DefaultTimeZoneAspect aspect = new DefaultTimeZoneAspect();
+
+        final Interval interval = Interval.of(from, to);
+
+        final Object[] arguments = new Object[]{interval};
+        final ProxyMethodInvocation methodInvocation = new TestMethodInvocation(arguments);
+        final ProceedingJoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
+
+        aspect.aroundInstrumentsControllerGetTradingSchedules(joinPoint);
+
+        final Interval argumentInterval = (Interval) methodInvocation.getArguments()[0];
+        Assertions.assertEquals(expectedFrom, argumentInterval.getFrom());
+        Assertions.assertEquals(expectedTo, argumentInterval.getTo());
+    }
+
+    // actual ProxyMethodInvocation implementation is private
     @Getter
     @SuppressWarnings("all")
     private static class TestMethodInvocation implements ProxyMethodInvocation {
 
-        private final Object[] arguments;
+        private Object[] arguments;
 
         public TestMethodInvocation(Object[] arguments) {
             this.arguments = arguments;
@@ -134,11 +183,12 @@ class DefaultTimeZoneAspectUnitTest {
         @NotNull
         @Override
         public MethodInvocation invocableClone(@NotNull Object... arguments) {
-            return null;
+            return new TestMethodInvocation(arguments);
         }
 
         @Override
         public void setArguments(@NotNull Object... arguments) {
+            this.arguments = arguments;
         }
 
         @Override

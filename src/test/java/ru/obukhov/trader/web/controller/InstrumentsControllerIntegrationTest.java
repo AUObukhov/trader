@@ -5,18 +5,28 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
+import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.test.utils.TestUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf4;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
+import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
 import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.obukhov.trader.test.utils.model.share.TestShare5;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
@@ -282,6 +292,76 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String expectedMessage = "Expected single etf for ticker " + TestEtf3.TICKER + ". Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
+    }
+
+    // endregion
+
+    // region getTradingSchedule tests
+
+    @Test
+    @SuppressWarnings("squid:S2699")
+        // Tests should include assertions
+    void getTradingSchedule() throws Exception {
+        final Exchange exchange = Exchange.MOEX;
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange.getValue())
+                .addDays(TestTradingDay1.createTinkoffTradingDay())
+                .addDays(TestTradingDay2.createTinkoffTradingDay())
+                .build();
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), from.toInstant(), to.toInstant())).thenReturn(tradingSchedule);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/trading-schedule")
+                .param("exchange", exchange.getValue())
+                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.createTradingDay(), TestTradingDay2.createTradingDay());
+
+        performAndExpectResponse(requestBuilder, expectedResult);
+    }
+
+    // endregion
+
+    // region getTradingSchedules tests
+
+    @Test
+    @SuppressWarnings("squid:S2699")
+        // Tests should include assertions
+    void getTradingSchedules() throws Exception {
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
+
+        final Exchange exchange1 = Exchange.MOEX;
+        final Exchange exchange2 = Exchange.SPB;
+
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange1.getValue())
+                .addDays(TestTradingDay1.createTinkoffTradingDay())
+                .addDays(TestTradingDay2.createTinkoffTradingDay())
+                .build();
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange2.getValue())
+                .addDays(TestTradingDay3.createTinkoffTradingDay())
+                .build();
+        Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
+                .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/trading-schedules")
+                .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final List<TradingDay> expectedTradingDays1 = List.of(TestTradingDay1.createTradingDay(), TestTradingDay2.createTradingDay());
+        final List<TradingDay> expectedTradingDays2 = List.of(TestTradingDay3.createTradingDay());
+        final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, expectedTradingDays1);
+        final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, expectedTradingDays2);
+        final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);
+
+        performAndExpectResponse(requestBuilder, expectedResult);
     }
 
     // endregion
