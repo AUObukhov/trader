@@ -9,17 +9,6 @@ API to launch and test them.
 
 - For build use maven version 4.0.0
 
-- Due to [Mapstruct and Intellij IDEA incompatibility problem](https://github.com/mapstruct/mapstruct/issues/2215) need
-  to set VM option for building:
-
-```
--Djps.track.ap.dependencies=false
-```
-
-at
-
-`File` -> `Settings` -> `Build, Execution, Deployment` -> `Compiler` -> `User-local build process VM options`
-
 - For launch need to pass Tinkoff token as command-line argument as "trading.token", for example:
 
 ```
