@@ -10,6 +10,7 @@ import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -20,7 +21,7 @@ class ExtendedRowUnitTest {
     // region constructor tests
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenSheetIsNull() {
+    void constructor_throwsIllegalArgumentException_whenSheetIsNull() throws IOException {
         final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
 
@@ -29,7 +30,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() throws IOException {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
 
         final Executable executable = () -> new ExtendedRow(extendedSheet, null);
@@ -37,7 +38,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedRow() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedRow() throws IOException {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
@@ -46,7 +47,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void constructor_CopiesCells() {
+    void constructor_CopiesCells() throws IOException {
         final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
 
@@ -66,7 +67,7 @@ class ExtendedRowUnitTest {
     // region createCells tests
 
     @Test
-    void createCells_withNoColumn() {
+    void createCells_withNoColumn() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final Object[] values = {
                 null,
@@ -137,7 +138,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCells_withColumn() {
+    void createCells_withColumn() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object[] values = {
@@ -213,7 +214,7 @@ class ExtendedRowUnitTest {
     // region createUnitedCell value tests
 
     @Test
-    void createUnitedCell_createsMergedRegion() {
+    void createUnitedCell_createsMergedRegion() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = "value";
@@ -235,7 +236,7 @@ class ExtendedRowUnitTest {
     // region createCell with Object value tests
 
     @Test
-    void createCell_withObjectValue_whenValueIsNull() {
+    void createCell_withObjectValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = null;
@@ -253,7 +254,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withObjectValue_whenValueIsString() {
+    void createCell_withObjectValue_whenValueIsString() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = "value";
@@ -271,7 +272,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withObjectValue_whenValueIsBigDecimal() {
+    void createCell_withObjectValue_whenValueIsBigDecimal() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = BigDecimal.TEN;
@@ -289,7 +290,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withObjectValue_whenValueIsInteger() {
+    void createCell_withObjectValue_whenValueIsInteger() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = 10;
@@ -307,7 +308,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withObjectValue_whenValueIsLocalDateTime() {
+    void createCell_withObjectValue_whenValueIsLocalDateTime() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = OffsetDateTime.now();
@@ -326,7 +327,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withObjectValue_whenValueIsOffsetDateTime() {
+    void createCell_withObjectValue_whenValueIsOffsetDateTime() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Object value = OffsetDateTime.now();
@@ -348,7 +349,7 @@ class ExtendedRowUnitTest {
     // region createCell with String value tests
 
     @Test
-    void createCell_withStringValue_whenValueIsNull() {
+    void createCell_withStringValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = null;
@@ -366,7 +367,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withStringValue_whenValueIsNotNull() {
+    void createCell_withStringValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final String value = "value";
@@ -388,7 +389,7 @@ class ExtendedRowUnitTest {
     // region createCell with BigDecimal value tests
 
     @Test
-    void createCell_withBigDecimalValue_whenValueIsNull() {
+    void createCell_withBigDecimalValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = null;
@@ -406,7 +407,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withBigDecimalValue_whenValueIsNotNull() {
+    void createCell_withBigDecimalValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final BigDecimal value = BigDecimal.TEN;
@@ -428,7 +429,7 @@ class ExtendedRowUnitTest {
     // region createCell with Double value tests
 
     @Test
-    void createCell_withDoubleValue_whenValueIsNull() {
+    void createCell_withDoubleValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = null;
@@ -446,7 +447,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withDoubleValue_whenValueIsNotNull() {
+    void createCell_withDoubleValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Double value = 10d;
@@ -468,7 +469,7 @@ class ExtendedRowUnitTest {
     // region createCell with Integer value tests
 
     @Test
-    void createCell_withIntegerValue_whenValueIsNull() {
+    void createCell_withIntegerValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = null;
@@ -486,7 +487,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withIntegerValue_whenValueIsNotNull() {
+    void createCell_withIntegerValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Integer value = 10;
@@ -508,7 +509,7 @@ class ExtendedRowUnitTest {
     // region createCell with LocalDateTime value tests
 
     @Test
-    void createCell_withLocalDateTimeValue_whenValueIsNull() {
+    void createCell_withLocalDateTimeValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final LocalDateTime value = null;
@@ -526,7 +527,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withLocalDateTimeValue_whenValueIsNotNull() {
+    void createCell_withLocalDateTimeValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime offsetDateTime = OffsetDateTime.now();
@@ -549,7 +550,7 @@ class ExtendedRowUnitTest {
     // region createCell with OffsetDateTime value tests
 
     @Test
-    void createCell_withOffsetDateTimeValue_whenValueIsNull() {
+    void createCell_withOffsetDateTimeValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = null;
@@ -567,7 +568,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withOffsetDateTimeValue_whenValueIsNotNull() {
+    void createCell_withOffsetDateTimeValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final OffsetDateTime value = OffsetDateTime.now();
@@ -589,7 +590,7 @@ class ExtendedRowUnitTest {
     // region createCell with Boolean value tests
 
     @Test
-    void createCell_withBooleanValue_whenValueIsNull() {
+    void createCell_withBooleanValue_whenValueIsNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = null;
@@ -607,7 +608,7 @@ class ExtendedRowUnitTest {
     }
 
     @Test
-    void createCell_withBooleanValue_whenValueIsNotNull() {
+    void createCell_withBooleanValue_whenValueIsNotNull() throws IOException {
         final ExtendedRow extendedRow = PoiTestData.createExtendedRow();
         final int column = 5;
         final Boolean value = true;

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
+import java.io.IOException;
 import java.util.List;
 
 class ExtendedWorkbookUnitTest {
@@ -23,11 +24,12 @@ class ExtendedWorkbookUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedWorkbook() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
 
-        final Executable executable = () -> new ExtendedWorkbook(extendedWorkbook);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be ExtendedWorkbook");
+            final Executable executable = () -> new ExtendedWorkbook(extendedWorkbook);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be ExtendedWorkbook");
+        }
     }
 
     @Test
@@ -65,13 +67,14 @@ class ExtendedWorkbookUnitTest {
     // region createCellStyle with name tests
 
     @Test
-    void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
-        final String cellStyleName = "cellStyle";
-        extendedWorkbook.createCellStyle(cellStyleName);
+    void createCellStyle_withName_throwsIllegalArgumentException_whenCellStyleAlreadyExists() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
+            final String cellStyleName = "cellStyle";
+            extendedWorkbook.createCellStyle(cellStyleName);
 
-        final Executable executable = () -> extendedWorkbook.createCellStyle(cellStyleName);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Cell style 'cellStyle' already exists");
+            final Executable executable = () -> extendedWorkbook.createCellStyle(cellStyleName);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Cell style 'cellStyle' already exists");
+        }
     }
 
     @Test
@@ -105,15 +108,16 @@ class ExtendedWorkbookUnitTest {
     // region getCellStyle tests
 
     @Test
-    void getCellStyle_returnsCreatedCellStyle() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
+    void getCellStyle_returnsCreatedCellStyle() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
 
-        final String cellStyleName = "cellStyle";
-        final CellStyle createdCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
+            final String cellStyleName = "cellStyle";
+            final CellStyle createdCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
 
-        final CellStyle returnedCellStyle = extendedWorkbook.getCellStyle(cellStyleName);
+            final CellStyle returnedCellStyle = extendedWorkbook.getCellStyle(cellStyleName);
 
-        Assertions.assertSame(createdCellStyle, returnedCellStyle);
+            Assertions.assertSame(createdCellStyle, returnedCellStyle);
+        }
     }
 
     // endregion
@@ -121,38 +125,41 @@ class ExtendedWorkbookUnitTest {
     // region getOrCreateCellStyle tests
 
     @Test
-    void getOrCreateCellStyle_returnsExistingCellStyle_whenCellStyleWithGivenNameExists() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
+    void getOrCreateCellStyle_returnsExistingCellStyle_whenCellStyleWithGivenNameExists() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
 
-        final String cellStyleName = "cellStyle";
-        final CellStyle existingCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
+            final String cellStyleName = "cellStyle";
+            final CellStyle existingCellStyle = extendedWorkbook.createCellStyle(cellStyleName);
 
-        final CellStyle newCellStyle = extendedWorkbook.getOrCreateCellStyle(cellStyleName);
+            final CellStyle newCellStyle = extendedWorkbook.getOrCreateCellStyle(cellStyleName);
 
-        Assertions.assertSame(existingCellStyle, newCellStyle);
+            Assertions.assertSame(existingCellStyle, newCellStyle);
+        }
     }
 
     @Test
-    void getOrCreateCellStyle_notAddsCellStyle_whenCellStyleWithGivenNameExists() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
+    void getOrCreateCellStyle_notAddsCellStyle_whenCellStyleWithGivenNameExists() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
 
-        final String cellStyleName = "cellStyle";
-        extendedWorkbook.createCellStyle(cellStyleName);
-        final int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
+            final String cellStyleName = "cellStyle";
+            extendedWorkbook.createCellStyle(cellStyleName);
+            final int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
 
-        extendedWorkbook.getOrCreateCellStyle(cellStyleName);
+            extendedWorkbook.getOrCreateCellStyle(cellStyleName);
 
-        Assertions.assertEquals(initialNumCellStyles, extendedWorkbook.getNumCellStyles());
+            Assertions.assertEquals(initialNumCellStyles, extendedWorkbook.getNumCellStyles());
+        }
     }
 
     @Test
-    void getOrCreateCellStyle_addsCellStyle_whenCellStyleWithGivenNameNotExists() {
-        final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
-        final int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
+    void getOrCreateCellStyle_addsCellStyle_whenCellStyleWithGivenNameNotExists() throws IOException {
+        try (final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook()) {
+            final int initialNumCellStyles = extendedWorkbook.getNumCellStyles();
 
-        extendedWorkbook.getOrCreateCellStyle("cellStyle");
+            extendedWorkbook.getOrCreateCellStyle("cellStyle");
 
-        Assertions.assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
+            Assertions.assertEquals(initialNumCellStyles + 1, extendedWorkbook.getNumCellStyles());
+        }
     }
 
     // endregion

@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
+import java.io.IOException;
+
 class ExtendedChartUnitTest {
 
     @Test
-    void createChartData() {
+    void createChartData() throws IOException {
         final ExtendedChart chart = PoiTestData.createExtendedChart();
         final AxisPosition categoryAxisPosition = AxisPosition.BOTTOM;
         final AxisPosition valueAxisPosition = AxisPosition.LEFT;

@@ -14,6 +14,7 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.List;
 
 class ExtendedChartDataUnitTest {
@@ -21,7 +22,7 @@ class ExtendedChartDataUnitTest {
     private ExtendedChartData chartData;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         chartData = PoiTestData.createExtendedChartData();
     }
 

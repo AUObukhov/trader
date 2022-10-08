@@ -9,12 +9,14 @@ import org.junit.jupiter.api.function.Executable;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
+import java.io.IOException;
+
 class ExtendedCellUnitTest {
 
     // region constructor tests
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenRowIsNull() {
+    void constructor_throwsIllegalArgumentException_whenRowIsNull() throws IOException {
         final Sheet sheet = PoiTestData.createXSSFSheet();
         final Row row = sheet.createRow(0);
         final Cell cell = row.createCell(0);
@@ -24,7 +26,7 @@ class ExtendedCellUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsNull() throws IOException {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
@@ -33,7 +35,7 @@ class ExtendedCellUnitTest {
     }
 
     @Test
-    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() {
+    void constructor_throwsIllegalArgumentException_whenDelegateIsExtendedCell() throws IOException {
         final ExtendedSheet extendedSheet = PoiTestData.createExtendedSheet();
         final ExtendedRow extendedRow = extendedSheet.addRow();
         final Cell extendedCell = extendedRow.createCell(0);

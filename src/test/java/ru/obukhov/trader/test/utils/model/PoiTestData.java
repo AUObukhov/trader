@@ -14,6 +14,7 @@ import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,26 +25,29 @@ public class PoiTestData {
         return new ExtendedWorkbook(workbook);
     }
 
-    public static ExtendedSheet createExtendedSheet() {
-        return (ExtendedSheet) createExtendedWorkbook().createSheet();
+    public static ExtendedSheet createExtendedSheet() throws IOException {
+        try (final ExtendedWorkbook workbook = createExtendedWorkbook()) {
+            return (ExtendedSheet) workbook.createSheet();
+        }
     }
 
-    public static XSSFSheet createXSSFSheet() {
-        final Workbook workbook = new XSSFWorkbook();
-        return (XSSFSheet) workbook.createSheet();
+    public static XSSFSheet createXSSFSheet() throws IOException {
+        try (final Workbook workbook = new XSSFWorkbook()) {
+            return (XSSFSheet) workbook.createSheet();
+        }
     }
 
-    public static ExtendedChart createExtendedChart() {
+    public static ExtendedChart createExtendedChart() throws IOException {
         final ExtendedSheet extendedSheet = createExtendedSheet();
         return extendedSheet.createChart(0, 0, 1, 1);
     }
 
-    public static ExtendedChartData createExtendedChartData() {
+    public static ExtendedChartData createExtendedChartData() throws IOException {
         final ExtendedChart extendedChart = createExtendedChart();
         return extendedChart.createChartData(AxisPosition.BOTTOM, AxisPosition.LEFT, ChartTypes.LINE);
     }
 
-    public static ExtendedRow createExtendedRow() {
+    public static ExtendedRow createExtendedRow() throws IOException {
         return (ExtendedRow) createExtendedSheet().createRow(0);
     }
 
