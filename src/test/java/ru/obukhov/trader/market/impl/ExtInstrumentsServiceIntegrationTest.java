@@ -46,11 +46,11 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Autowired
     private ExtInstrumentsService extInstrumentsService;
 
-    // region getFigiByTicker tests
+    // region getSingleFigiByTicker tests
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_returnsFirstFigi_whenAssetAndInstrumentFound() {
+    void getSingleFigiByTicker_returnsFirstFigi_whenAssetAndInstrumentFound() {
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
 
@@ -84,7 +84,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_returnsCachedValue() {
+    void getSingleFigiByTicker_returnsCachedValue() {
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
 
@@ -121,7 +121,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_throwsIllegalArgumentException_whenNoAssets() {
+    void getSingleFigiByTicker_throwsIllegalArgumentException_whenNoAssets() {
         final String ticker = TestShare1.TICKER;
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
@@ -133,7 +133,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getFigiByTicker_throwsIllegalArgumentException_whenNoInstrument() {
+    void getSingleFigiByTicker_throwsIllegalArgumentException_whenNoInstrument() {
         final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
         final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
         final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
