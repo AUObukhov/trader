@@ -15,7 +15,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TradingStrategyFactory {
     private final ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ApplicationContext applicationContext;
 
     public AbstractTradingStrategy createStrategy(final BotConfig botConfig) {
@@ -62,12 +61,14 @@ public class TradingStrategyFactory {
     }
 
     private void validate(final Object object) {
-        Set<ConstraintViolation<Object>> violations = validator.validate(object);
-        if (!violations.isEmpty()) {
-            String message = violations.stream()
-                    .map(ConstraintViolation::getMessage)
-                    .collect(Collectors.joining(System.lineSeparator()));
-            throw new IllegalArgumentException(message);
+        try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {
+            final Set<ConstraintViolation<Object>> violations = validatorFactory.getValidator().validate(object);
+            if (!violations.isEmpty()) {
+                String message = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .collect(Collectors.joining(System.lineSeparator()));
+                throw new IllegalArgumentException(message);
+            }
         }
     }
 
