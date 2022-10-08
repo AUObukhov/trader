@@ -116,9 +116,8 @@ class IntervalUnitTest {
         final OffsetDateTime now = OffsetDateTime.now();
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
-        final OffsetDateTime to = null;
 
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, null);
         final Interval newInterval = interval.limitByNowIfNull(now);
 
         Assertions.assertEquals(interval.getFrom(), newInterval.getFrom());
@@ -489,9 +488,8 @@ class IntervalUnitTest {
 
     @Test
     void minusDays_throwNullPointerException_whenFromIsNull() {
-        final OffsetDateTime from = null;
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(null, to);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
     }
@@ -499,17 +497,14 @@ class IntervalUnitTest {
     @Test
     void minusDays_throwNullPointerException_whenToIsNull() {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
-        final OffsetDateTime to = null;
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, null);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
     }
 
     @Test
     void minusDays_throwNullPointerException_whenFromAndToAreNull() {
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(null, null);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusDays(1));
     }
@@ -583,9 +578,8 @@ class IntervalUnitTest {
 
     @Test
     void minusYears_throwNullPointerException_whenFromIsNull() {
-        final OffsetDateTime from = null;
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(null, to);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
     }
@@ -593,17 +587,14 @@ class IntervalUnitTest {
     @Test
     void minusYears_throwNullPointerException_whenToIsNull() {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 10, 5);
-        final OffsetDateTime to = null;
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(from, null);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
     }
 
     @Test
     void minusYears_throwNullPointerException_whenFromAndToAreNull() {
-        final OffsetDateTime from = null;
-        final OffsetDateTime to = null;
-        final Interval interval = Interval.of(from, to);
+        final Interval interval = Interval.of(null, null);
 
         Assertions.assertThrows(NullPointerException.class, () -> interval.minusYears(1));
     }

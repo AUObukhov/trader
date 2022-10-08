@@ -162,19 +162,17 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void containsList_throwsIllegalArgumentException_whenListIsNull() {
-        final List<String> list = null;
         final List<String> searchedList = List.of("0", "1");
 
-        final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
+        final Executable executable = () -> CollectionsUtils.containsList(null, searchedList);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "list must not be null");
     }
 
     @Test
     void containsList_throwsIllegalArgumentException_whenSearchedListIsNull() {
         final List<String> list = List.of("0", "1");
-        final List<String> searchedList = null;
 
-        final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
+        final Executable executable = () -> CollectionsUtils.containsList(list, null);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "searchedList must not be null");
     }
 

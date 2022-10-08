@@ -63,7 +63,6 @@ class PostOrderResponseBuilderUnitTest {
         final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
-        final String orderId = null;
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
                 .setCurrency(currency)
@@ -74,7 +73,7 @@ class PostOrderResponseBuilderUnitTest {
                 .setFigi(figi)
                 .setDirection(direction)
                 .setType(type)
-                .setOrderId(orderId)
+                .setOrderId(null)
                 .build();
 
         Assertions.assertEquals(OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL, response.getExecutionReportStatus());

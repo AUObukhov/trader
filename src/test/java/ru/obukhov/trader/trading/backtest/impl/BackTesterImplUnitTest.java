@@ -890,7 +890,7 @@ class BackTesterImplUnitTest {
 
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(10000.0, 1000.0);
 
-        final String accountId1 = null;
+        final String accountId1 = TestData.ACCOUNT_ID1;
         final String ticker1 = TestShare1.TICKER;
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission1 = 0.003;
@@ -904,7 +904,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBotFactory.createBot(botConfig1, balanceConfig, from))
                 .thenThrow(new IllegalArgumentException(mockedExceptionMessage1));
 
-        final String accountId2 = TestData.ACCOUNT_ID1;
+        final String accountId2 = TestData.ACCOUNT_ID2;
         final String ticker2 = TestShare2.TICKER;
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final Double commission2 = 0.001;

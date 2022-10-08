@@ -250,8 +250,7 @@ class ExcelServiceImplUnitTest {
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
-        final List<Candle> candles = null;
-        final BackTestResult result = createBackTestResult(botConfig, candles);
+        final BackTestResult result = createBackTestResult(botConfig, (List<Candle>) null);
 
         excelService.saveBackTestResults(List.of(result));
 

@@ -288,9 +288,7 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withDouble_returnsNull_whenNumberIsNull() {
-        final Double number = null;
-
-        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
+        Assertions.assertNull(DecimalUtils.setDefaultScale((Double) null));
     }
 
     @ParameterizedTest
@@ -312,9 +310,7 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withLong_returnsNull_whenNumberIsNull() {
-        final Long number = null;
-
-        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
+        Assertions.assertNull(DecimalUtils.setDefaultScale((Long) null));
     }
 
     @Test
@@ -333,9 +329,7 @@ class DecimalUtilsUnitTest {
 
     @Test
     void setDefaultScale_withInteger_returnsNull_whenNumberIsNull() {
-        final Integer number = null;
-
-        Assertions.assertNull(DecimalUtils.setDefaultScale(number));
+        Assertions.assertNull(DecimalUtils.setDefaultScale((Integer) null));
     }
 
     @Test
