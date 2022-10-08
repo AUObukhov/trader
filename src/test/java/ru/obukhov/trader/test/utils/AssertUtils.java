@@ -154,11 +154,6 @@ public class AssertUtils {
         assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
     }
 
-    public static void assertEquals(final ru.tinkoff.piapi.core.models.Money money1, final ru.tinkoff.piapi.core.models.Money money2) {
-        Assertions.assertEquals(money1.getCurrency(), money2.getCurrency());
-        assertEquals(money1.getValue(), money2.getValue());
-    }
-
     public static void assertEquals(final byte[] expected, final byte[] actual) {
         Assertions.assertEquals(expected.length, actual.length);
         for (int i = 0; i < actual.length; i++) {
