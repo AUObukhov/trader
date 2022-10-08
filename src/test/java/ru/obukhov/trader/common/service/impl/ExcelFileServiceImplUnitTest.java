@@ -29,7 +29,7 @@ import java.io.IOException;
 class ExcelFileServiceImplUnitTest {
 
     @Rule
-    public TemporaryFolder temporaryFolder = TemporaryFolder.builder().assureDeletion().build();
+    public final TemporaryFolder temporaryFolder = TemporaryFolder.builder().assureDeletion().build();
 
     @Mock
     private ReportProperties reportProperties;
