@@ -79,14 +79,14 @@ public class BackTesterImpl implements BackTester {
 
         ExecutionResult<List<BackTestResult>> executionResult = ExecutionUtils.get(() -> test(botConfigs, balanceConfig, interval));
 
-        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.duration().toMillis());
         log.info("Back test ended within {}", backTestDurationString);
 
         if (saveToFiles) {
-            saveBackTestResultsSafe(executionResult.getResult());
+            saveBackTestResultsSafe(executionResult.result());
         }
 
-        return executionResult.getResult();
+        return executionResult.result();
     }
 
     private List<BackTestResult> test(final List<BotConfig> botConfigs, final BalanceConfig balanceConfig, final Interval interval) {
@@ -118,17 +118,17 @@ public class BackTesterImpl implements BackTester {
 
         ExecutionResult<BackTestResult> executionResult = ExecutionUtils.getSafe(() -> test(botConfig, balanceConfig, interval));
 
-        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.getDuration().toMillis());
+        final String backTestDurationString = DurationFormatUtils.formatDurationHMS(executionResult.duration().toMillis());
 
-        if (executionResult.getException() == null) {
+        if (executionResult.exception() == null) {
             log.info("Back test for '{}' succeed within {}", botConfig, backTestDurationString);
-            return executionResult.getResult();
+            return executionResult.result();
         } else {
             final String message = String.format(
                     "Back test for '%s' failed within %s with error: %s",
-                    botConfig, backTestDurationString, executionResult.getException().getMessage()
+                    botConfig, backTestDurationString, executionResult.exception().getMessage()
             );
-            log.error(message, executionResult.getException());
+            log.error(message, executionResult.exception());
             return createFailedBackTestResult(botConfig, balanceConfig.getInitialBalance(), interval, message);
         }
     }

@@ -44,9 +44,9 @@ class ExecutionUtilsUnitTest {
 
         final ExecutionResult<String> executionResult = ExecutionUtils.get(() -> supplierResult);
 
-        Assertions.assertEquals(supplierResult, executionResult.getResult());
-        Assertions.assertFalse(executionResult.getDuration().isNegative());
-        Assertions.assertNull(executionResult.getException());
+        Assertions.assertEquals(supplierResult, executionResult.result());
+        Assertions.assertFalse(executionResult.duration().isNegative());
+        Assertions.assertNull(executionResult.exception());
     }
 
     @Test
@@ -70,9 +70,9 @@ class ExecutionUtilsUnitTest {
 
         final ExecutionResult<String> executionResult = ExecutionUtils.getSafe(() -> supplierResult);
 
-        Assertions.assertEquals(supplierResult, executionResult.getResult());
-        Assertions.assertFalse(executionResult.getDuration().isNegative());
-        Assertions.assertNull(executionResult.getException());
+        Assertions.assertEquals(supplierResult, executionResult.result());
+        Assertions.assertFalse(executionResult.duration().isNegative());
+        Assertions.assertNull(executionResult.exception());
     }
 
     @Test
@@ -83,11 +83,11 @@ class ExecutionUtilsUnitTest {
             throw supplierException;
         });
 
-        Assertions.assertNull(executionResult.getResult());
-        Assertions.assertFalse(executionResult.getDuration().isNegative());
-        Assertions.assertNotNull(executionResult.getException());
-        Assertions.assertEquals(supplierException.getClass(), executionResult.getException().getClass());
-        Assertions.assertEquals(supplierException.getMessage(), executionResult.getException().getMessage());
+        Assertions.assertNull(executionResult.result());
+        Assertions.assertFalse(executionResult.duration().isNegative());
+        Assertions.assertNotNull(executionResult.exception());
+        Assertions.assertEquals(supplierException.getClass(), executionResult.exception().getClass());
+        Assertions.assertEquals(supplierException.getMessage(), executionResult.exception().getMessage());
     }
 
     // endregion
