@@ -257,6 +257,7 @@ class RealExtOrdersServiceUnitTest {
         Mockito.verify(ordersService, Mockito.times(1)).cancelOrderSync(accountId, orderId);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockOrders(final String accountId, final OrderState... orderStates) {
         Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(List.of(orderStates));
     }

@@ -514,6 +514,7 @@ class FakeExtOrdersServiceUnitTest {
         verifyBalanceSet(accountId, currency, balance3);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockBalances(final String accountId, final Currency currency, double balance1, double... balances) {
         final BigDecimal[] bigDecimalBalances = Arrays.stream(balances)
                 .mapToObj(BigDecimal::valueOf)
@@ -521,6 +522,7 @@ class FakeExtOrdersServiceUnitTest {
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(BigDecimal.valueOf(balance1), bigDecimalBalances);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void postOrder(
             final String accountId,
             final String ticker,
@@ -535,11 +537,13 @@ class FakeExtOrdersServiceUnitTest {
         fakeExtOrdersService.postOrder(accountId, ticker, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void verifyBalanceSet(final String accountId, final Currency currency, final double balance) {
         Mockito.verify(fakeContext, Mockito.times(1))
                 .setBalance(Mockito.eq(accountId), Mockito.eq(currency), ArgumentMatchers.argThat(BigDecimalMatcher.of(balance)));
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void verifyPositionAdded(final String accountId, final String ticker, final PortfolioPosition position) {
         Mockito.verify(fakeContext, Mockito.times(1))
                 .addPosition(Mockito.eq(accountId), Mockito.eq(ticker), ArgumentMatchers.argThat(PortfolioPositionMatcher.of(position)));
