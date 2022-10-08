@@ -1,6 +1,5 @@
 package ru.obukhov.trader;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -12,6 +11,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.ConfigurableApplicationContext;
 import ru.obukhov.trader.market.impl.ExtUsersService;
+import ru.obukhov.trader.test.utils.AssertUtils;
 
 @ExtendWith(MockitoExtension.class)
 class TokenValidationStartupListenerContextTest {
@@ -31,8 +31,7 @@ class TokenValidationStartupListenerContextTest {
         contextRunner
                 .withBean(ExtUsersService.class, () -> extUsersService)
                 .withBean(TokenValidationStartupListener.class)
-                .run(context -> Assertions.assertThrows(RuntimeException.class, () -> publishApplicationStartedEvent(context), message)
-                );
+                .run(context -> AssertUtils.assertThrowsWithMessage(RuntimeException.class, () -> publishApplicationStartedEvent(context), message));
     }
 
     private void publishApplicationStartedEvent(ConfigurableApplicationContext context) {

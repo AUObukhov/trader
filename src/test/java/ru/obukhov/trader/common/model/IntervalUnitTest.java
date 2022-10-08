@@ -31,7 +31,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 5);
 
         final Executable executable = () -> Interval.of(from, to);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "from can't be after to");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "from can't be after to");
     }
 
     @Test
@@ -40,7 +40,7 @@ class IntervalUnitTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 10, 10, ZoneOffset.ofHours(2));
 
         final Executable executable = () -> Interval.of(from, to);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "offsets of from and to must be equal");
     }
 
     @Test
@@ -150,7 +150,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = interval::extendToDay;
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "'from' and 'to' must be at same day");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "'from' and 'to' must be at same day");
     }
 
     @Test
@@ -165,7 +165,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -181,7 +181,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToDay;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -233,7 +233,7 @@ class IntervalUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = interval::extendToYear;
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "'from' and 'to' must be at same year");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "'from' and 'to' must be at same year");
     }
 
     @Test
@@ -248,7 +248,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'from' (2020-09-23T11:11:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -264,7 +264,7 @@ class IntervalUnitTest {
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
             final Executable executable = interval::extendToYear;
             final String expectedMessage = "'to' (2020-09-23T10:21:12+03:00) can't be in future. Now is 2020-09-23T10:11:12+03:00";
-            Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+            AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
         }
     }
 
@@ -1233,7 +1233,7 @@ class IntervalUnitTest {
                 """;
 
         final Executable executable = () -> TestUtils.OBJECT_MAPPER.readValue(json, Interval.class);
-        Assertions.assertThrows(ValueInstantiationException.class, executable, "from can't be after to");
+        AssertUtils.assertThrowsWithMessageSubStrings(ValueInstantiationException.class, executable, "from can't be after to");
     }
 
     @Test

@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.beans.IntrospectionException;
 
@@ -29,7 +30,7 @@ class ReflectionUtilsUnitTest {
         final FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
 
         final Executable executable = () -> ReflectionUtils.getFieldValueByReadMethod(container, "notExistingField");
-        Assertions.assertThrows(IntrospectionException.class, executable, "Method not found: isNotExistingField");
+        AssertUtils.assertThrowsWithMessage(IntrospectionException.class, executable, "Method not found: isNotExistingField");
     }
 
     @Test
@@ -39,7 +40,7 @@ class ReflectionUtilsUnitTest {
         final FieldContainer container = new FieldContainer(fieldWithReadMethodValue, fieldWithoutReadMethodValue);
 
         final Executable executable = () -> ReflectionUtils.getFieldValueByReadMethod(container, "fieldWithoutReadMethod");
-        Assertions.assertThrows(IntrospectionException.class, executable, "Method not found: isFieldWithoutReadMethod");
+        AssertUtils.assertThrowsWithMessage(IntrospectionException.class, executable, "Method not found: isFieldWithoutReadMethod");
     }
 
     @AllArgsConstructor

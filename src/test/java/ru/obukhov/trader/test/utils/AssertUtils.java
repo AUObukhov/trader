@@ -451,6 +451,27 @@ public class AssertUtils {
 
     // region exceptions assertions
 
+    public static <T extends Throwable> void assertThrowsWithMessage(
+            final Class<T> expectedType,
+            final Executable executable,
+            final String expectedMessage
+    ) {
+        final Throwable throwable = Assertions.assertThrows(expectedType, executable);
+        Assertions.assertEquals(expectedMessage, throwable.getMessage());
+    }
+
+    public static <T extends Throwable> void assertThrowsWithMessageSubStrings(
+            final Class<T> expectedType,
+            final Executable executable,
+            final String... expectedMessageSubstrings
+    ) {
+        final Throwable throwable = Assertions.assertThrows(expectedType, executable);
+        final String message = throwable.getMessage();
+        for (String expectedSubstring : expectedMessageSubstrings) {
+            Assertions.assertTrue(message.contains(expectedSubstring));
+        }
+    }
+
     public static <T extends Throwable> void assertThrowsWithMessagePattern(
             final Executable executable,
             final Class<T> expectedType,

@@ -57,8 +57,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> extMarketDataService.getCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -84,8 +84,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> extMarketDataService.getCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -231,8 +231,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
         final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -244,8 +244,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
         final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -269,8 +269,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 1, 13);
 
         final Executable executable = () -> extMarketDataService.getLastPrice(ticker, to);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -307,8 +307,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -332,8 +332,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -454,8 +454,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -479,8 +479,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         final Executable executable = () -> extMarketDataService.getLastCandles(ticker, 5, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -689,8 +689,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getMarketCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -716,8 +716,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> extMarketDataService.getMarketCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -829,8 +829,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -852,8 +852,8 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
-        final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

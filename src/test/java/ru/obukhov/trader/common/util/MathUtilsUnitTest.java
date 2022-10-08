@@ -87,7 +87,7 @@ class MathUtilsUnitTest {
         final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 24);
 
         final Executable executable = () -> MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
     }
 
     @Test

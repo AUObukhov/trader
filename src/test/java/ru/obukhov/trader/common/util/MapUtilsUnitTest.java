@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ class MapUtilsUnitTest {
         final Map<String, Object> map = Map.of("key1", "value1", "key2", "value2");
 
         final Executable executable = () -> MapUtils.getRequiredString(map, "key");
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "\"key\" is mandatory");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "\"key\" is mandatory");
     }
 
     @Test
@@ -37,7 +38,7 @@ class MapUtilsUnitTest {
         final Map<String, Object> map = Map.of("key1", "value1", "key2", "value2");
 
         final Executable executable = () -> MapUtils.getNotBlankString(map, "key");
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "\"key\" must be not blank");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "\"key\" must be not blank");
     }
 
     @Test
@@ -45,7 +46,7 @@ class MapUtilsUnitTest {
         final Map<String, Object> map = Map.of("key1", StringUtils.EMPTY, "key2", "value2");
 
         final Executable executable = () -> MapUtils.getNotBlankString(map, "key1");
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "\"key1\" must be not blank");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "\"key1\" must be not blank");
     }
 
     @Test
@@ -53,7 +54,7 @@ class MapUtilsUnitTest {
         final Map<String, Object> map = Map.of("key1", "    ", "key2", "value2");
 
         final Executable executable = () -> MapUtils.getNotBlankString(map, "key1");
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "\"key1\" must be not blank");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "\"key1\" must be not blank");
     }
 
     @Test
@@ -74,7 +75,7 @@ class MapUtilsUnitTest {
         final Map<String, Object> map = Map.of("key1", 1, "key2", 2);
 
         final Executable executable = () -> MapUtils.getRequiredInteger(map, "key");
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "\"key\" is mandatory");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "\"key\" is mandatory");
     }
 
     @Test

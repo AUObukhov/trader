@@ -95,7 +95,7 @@ class CollectionsUtilsUnitTest {
         final int index = -1;
 
         final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "index can't be negative");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "index can't be negative");
     }
 
     @Test
@@ -104,7 +104,7 @@ class CollectionsUtilsUnitTest {
         final int index = 3;
 
         final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "index can't be greater than size of list");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "index can't be greater than size of list");
     }
 
     @Test
@@ -113,7 +113,7 @@ class CollectionsUtilsUnitTest {
         final int index = 0;
 
         final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "list can't be empty");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "list can't be empty");
     }
 
     @Test
@@ -166,7 +166,7 @@ class CollectionsUtilsUnitTest {
         final List<String> searchedList = List.of("0", "1");
 
         final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "list must not be null");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "list must not be null");
     }
 
     @Test
@@ -175,7 +175,7 @@ class CollectionsUtilsUnitTest {
         final List<String> searchedList = null;
 
         final Executable executable = () -> CollectionsUtils.containsList(list, searchedList);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "searchedList must not be null");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "searchedList must not be null");
     }
 
     @SuppressWarnings("unused")

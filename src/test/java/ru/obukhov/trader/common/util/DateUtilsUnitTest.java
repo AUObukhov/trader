@@ -871,7 +871,7 @@ class DateUtilsUnitTest {
 
         final Executable executable = () -> DateUtils.assertDateTimeNotFuture(dateTime, now, "name");
         final String expectedMessage = "'name' (2021-01-01T10:00:01+03:00) can't be in future. Now is 2021-01-01T10:00+03:00";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -988,7 +988,7 @@ class DateUtilsUnitTest {
         final CronExpression cronExpression = new CronExpression(expression);
 
         final Executable executable = () -> DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("unused")
@@ -1080,7 +1080,7 @@ class DateUtilsUnitTest {
         final Instant fromInstant = from.toInstant();
         final Instant toInstant = to.toInstant();
 
-        Assertions.assertThrows(
+        AssertUtils.assertThrowsWithMessage(
                 IllegalArgumentException.class,
                 () -> DateUtils.timestampIsInInterval(timestamp, fromInstant, toInstant),
                 "From must be before to"

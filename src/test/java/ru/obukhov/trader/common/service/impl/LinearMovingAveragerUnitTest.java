@@ -32,7 +32,7 @@ class LinearMovingAveragerUnitTest {
         final List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
 
         final Executable executable = () -> averager.getAverages(bigDecimalValues, window);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("unused")
@@ -49,7 +49,7 @@ class LinearMovingAveragerUnitTest {
         List<BigDecimal> bigDecimalValues = TestData.createBigDecimalsList(values);
 
         final Executable executable = () -> averager.getAverages(bigDecimalValues, 1, order);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("unused")

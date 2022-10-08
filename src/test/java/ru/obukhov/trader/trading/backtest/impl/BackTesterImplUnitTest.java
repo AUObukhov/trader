@@ -118,7 +118,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> backTester.test(botConfigs, balanceConfig, interval, false);
-        Assertions.assertThrows(RuntimeException.class, executable, "interval can't be shorter than 1 day");
+        AssertUtils.assertThrowsWithMessage(RuntimeException.class, executable, "interval can't be shorter than 1 day");
     }
 
     @Test

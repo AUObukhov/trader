@@ -1,6 +1,5 @@
 package ru.obukhov.trader.common.util;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +17,7 @@ class FinUtilsUnitTest {
     @Test
     void getRelativeProfit_throwsIllegalArgumentException_whenInvestmentIsNegative() {
         final Executable executable = () -> FinUtils.getRelativeProfit(BigDecimal.valueOf(-0.1), BigDecimal.TEN);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "investment can't be negative");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "investment can't be negative");
     }
 
     @SuppressWarnings("unused")
@@ -59,7 +58,7 @@ class FinUtilsUnitTest {
     @MethodSource("getData_forGetAverageAnnualReturn_throwsIllegalArgumentException")
     void getAverageAnnualReturn_throwsIllegalArgumentException(final double daysCount, final double relativeProfit, final String expectedMessage) {
         final Executable executable = () -> FinUtils.getAverageAnnualReturn(daysCount, relativeProfit);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("unused")

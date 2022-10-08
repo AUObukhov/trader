@@ -14,6 +14,7 @@ import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PortfolioPositionMatcher;
@@ -90,7 +91,7 @@ class FakeExtOrdersServiceUnitTest {
         Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
 
         final Executable executable = () -> postOrder(accountId, TestShare1.TICKER, 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime, 500);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "balance can't be negative");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Mockito.verify(fakeContext, Mockito.never())
                 .setBalance(Mockito.any(), Mockito.any(), Mockito.any());
@@ -344,8 +345,8 @@ class FakeExtOrdersServiceUnitTest {
         postOrder(accountId, ticker, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
         postOrder(accountId, ticker, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
         final Executable sellExecutable = () -> postOrder(accountId, ticker, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, dateTime3, price3);
-        final String expectedMessage = "lotsCount 4 can't be greater than existing position lots count 3";
-        Assertions.assertThrows(IllegalArgumentException.class, sellExecutable, expectedMessage);
+        final String expectedMessage = "quantity 40 can't be greater than existing position's quantity 30";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
         verifyPositionAdded(accountId, ticker, expectedPosition1);
         verifyPositionAdded(accountId, ticker, expectedPosition2);
@@ -556,7 +557,7 @@ class FakeExtOrdersServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String orderId = "orderId";
 
-        Assertions.assertThrows(
+        AssertUtils.assertThrowsWithMessage(
                 UnsupportedOperationException.class,
                 () -> fakeExtOrdersService.cancelOrder(accountId, orderId),
                 "Back test does not support cancelling of orders"

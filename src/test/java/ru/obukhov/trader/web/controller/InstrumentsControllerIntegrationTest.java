@@ -136,7 +136,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker3)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single share for ticker " + ticker3 + ". Found 0";
+        final String expectedMessage = "Expected single share for ticker '" + ticker3 + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -157,7 +157,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single share for ticker " + ticker + ". Found 2";
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -270,7 +270,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single etf for ticker " + TestEtf3.TICKER + ". Found 0";
+        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -290,7 +290,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single etf for ticker " + TestEtf3.TICKER + ". Found 2";
+        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 

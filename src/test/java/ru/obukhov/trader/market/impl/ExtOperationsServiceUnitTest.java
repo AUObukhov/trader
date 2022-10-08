@@ -205,7 +205,7 @@ class ExtOperationsServiceUnitTest {
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
 
         final Executable executable = () -> extOperationsService.getAvailableBalance(accountId, Currency.RUB);
-        Assertions.assertThrows(NoSuchElementException.class, executable, "No value present");
+        AssertUtils.assertThrowsWithMessage(NoSuchElementException.class, executable, "No value present");
     }
 
     // endregion

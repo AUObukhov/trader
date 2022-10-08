@@ -241,7 +241,7 @@ class TrendUtilsUnitTest {
         final List<Integer> localExtremes = List.of(0, 1);
 
         final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "times and values must have same size");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "times and values must have same size");
     }
 
     @Test
@@ -251,7 +251,7 @@ class TrendUtilsUnitTest {
         final List<Integer> localExtremes = List.of(0, 1);
 
         final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "times and values must have same size");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "times and values must have same size");
     }
 
     @Test
@@ -262,7 +262,7 @@ class TrendUtilsUnitTest {
 
         final Executable executable = () -> TrendUtils.getRestraintLines(times, values, localExtremes);
         final String expectedMessage = "localExtremes can't be longer than times and values";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -343,7 +343,7 @@ class TrendUtilsUnitTest {
         final List<BigDecimal> values2 = TestData.createBigDecimalsList(10.0);
 
         final Executable executable = () -> TrendUtils.getCrossovers(values1, values2);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "values1 and values2 must have same size");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "values1 and values2 must have same size");
     }
 
     @SuppressWarnings("unused")
@@ -439,7 +439,7 @@ class TrendUtilsUnitTest {
         final int index = 2;
 
         final Executable executable = () -> TrendUtils.getCrossoverIfLast(values1, values2, index);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "Collections must has same size");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Collections must has same size");
     }
 
     @SuppressWarnings("unused")

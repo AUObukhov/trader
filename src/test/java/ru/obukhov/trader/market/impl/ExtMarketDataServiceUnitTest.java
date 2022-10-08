@@ -193,7 +193,7 @@ class ExtMarketDataServiceUnitTest {
 
         final Executable executable = () -> service.getLastPrice(ticker, to);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test

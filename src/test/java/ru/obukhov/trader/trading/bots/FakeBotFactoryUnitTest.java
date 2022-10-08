@@ -158,7 +158,7 @@ class FakeBotFactoryUnitTest {
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
         final String expectedMessage = "Not found share for ticker '" + ticker + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     private void mockCurrency(final String ticker, final Currency currency) {

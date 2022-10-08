@@ -67,7 +67,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     public Share getSingleShare(final String ticker) {
         final List<Share> shares = getShares(ticker);
-        Assert.isTrue(shares.size() == 1, () -> "Expected single share for ticker " + ticker + ". Found " + shares.size());
+        Assert.isTrue(shares.size() == 1, () -> "Expected single share for ticker '" + ticker + "'. Found " + shares.size());
         return shares.get(0);
     }
 
@@ -80,7 +80,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     public Etf getSingleEtf(final String ticker) {
         final List<Etf> etfs = getEtfs(ticker);
-        Assert.isTrue(etfs.size() == 1, () -> "Expected single etf for ticker " + ticker + ". Found " + etfs.size());
+        Assert.isTrue(etfs.size() == 1, () -> "Expected single etf for ticker '" + ticker + "'. Found " + etfs.size());
         return etfs.get(0);
     }
 

@@ -19,7 +19,7 @@ class CandleUnitTest {
         final Candle rightCandle = new Candle().setTime(DateTimeTestData.createDateTime(2020, 10, 10, 2));
 
         final Executable executable = () -> Candle.createAverage(leftCandle, rightCandle);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "leftCandle can't be after rightCandle");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "leftCandle can't be after rightCandle");
     }
 
     @Test

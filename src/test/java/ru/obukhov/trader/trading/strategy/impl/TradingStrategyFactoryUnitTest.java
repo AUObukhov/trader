@@ -15,6 +15,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.service.impl.MovingAverager;
 import ru.obukhov.trader.market.model.MovingAverageType;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -287,7 +288,7 @@ class TradingStrategyFactoryUnitTest {
     ) {
         final BotConfig botConfig = new BotConfig(null, null, null, null, StrategyType.CROSS, strategyParams);
         final Executable executable = () -> factory.createStrategy(botConfig);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -305,13 +306,13 @@ class TradingStrategyFactoryUnitTest {
 
         final String averagerName = MovingAverageType.SIMPLE.getAveragerName();
         Mockito.when(applicationContext.getBean(averagerName, MovingAverager.class))
-                .thenThrow(new NoSuchBeanDefinitionException("No bean named '" + averagerName + "' available"));
+                .thenThrow(new NoSuchBeanDefinitionException(MovingAverager.class));
         factory = new TradingStrategyFactory(applicationContext);
 
-        final String expectedMessage = "Averager with movingAverageType 'SMA' not found";
+        final String expectedMessage = "No qualifying bean of type 'ru.obukhov.trader.common.service.impl.MovingAverager' available";
 
         final Executable executable = () -> factory.createStrategy(botConfig);
-        Assertions.assertThrows(NoSuchBeanDefinitionException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(NoSuchBeanDefinitionException.class, executable, expectedMessage);
     }
 
     @Test
@@ -325,14 +326,17 @@ class TradingStrategyFactoryUnitTest {
                 Collections.emptyMap()
         );
         final Executable executable = () -> factory.createStrategy(botConfig);
-        final IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, executable);
+        AssertUtils.assertThrowsWithMessageSubStrings(
+                IllegalArgumentException.class,
+                executable,
+                "minimumProfit is mandatory",
+                "smallWindow is mandatory",
+                "bigWindow is mandatory",
+                "indexCoefficient is mandatory",
+                "greedy is mandatory"
+        );
 
-        final String message = exception.getMessage();
-        Assertions.assertTrue(message.contains("minimumProfit is mandatory"));
-        Assertions.assertTrue(message.contains("smallWindow is mandatory"));
-        Assertions.assertTrue(message.contains("bigWindow is mandatory"));
-        Assertions.assertTrue(message.contains("indexCoefficient is mandatory"));
-        Assertions.assertTrue(message.contains("greedy is mandatory"));
+
     }
 
     // endregion

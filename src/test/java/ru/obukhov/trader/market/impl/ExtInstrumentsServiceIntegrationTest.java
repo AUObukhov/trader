@@ -16,6 +16,7 @@ import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -150,7 +151,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker3);
         final String expectedMessage = "Expected single instrument with ticker '" + ticker3 + "'. Found 2";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -162,7 +163,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker);
         final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -185,7 +186,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker4);
         final String expectedMessage = "Expected single instrument with ticker '" + ticker4 + "'. Found 0";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -338,7 +339,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final Executable executable = () -> extInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Not found instrument for figi '" + figi + "'";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -441,8 +442,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestShare3.TICKER;
         final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single share for ticker " + ticker + ". Found 0";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -456,8 +457,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestShare4.TICKER;
         final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single share for ticker " + ticker + ". Found 2";
-        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -537,7 +538,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getEtf_returnsNull_whenNoEtf() {
+    void getSingleEtf_throwsIllegalArgumentException_whenNoEtfs() {
         final String ticker1 = "FXIT";
         final String ticker2 = "TECH";
         final String ticker3 = "DRIV";
@@ -546,12 +547,12 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(List.of(etf1, etf2));
 
-        final String expectedMessage = "Expected single etf for ticker " + ticker3 + ". Found 0";
-        Assertions.assertThrows(IllegalArgumentException.class, () -> extInstrumentsService.getSingleShare(ticker3), expectedMessage);
+        final String expectedMessage = "Expected single etf for ticker '" + ticker3 + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(ticker3), expectedMessage);
     }
 
     @Test
-    void getSingleEtf_throwIllegalArgumentException_whenMultipleEtfs() {
+    void getSingleEtf_throwsIllegalArgumentException_whenMultipleEtfs() {
         final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
                 TestEtf1.createTinkoffEtf(),
                 TestEtf3.createTinkoffEtf(),
@@ -559,8 +560,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         );
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
-        final String expectedMessage = "Expected single etf for ticker " + TestEtf3.TICKER + ". Found 2";
-        Assertions.assertThrows(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
+        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
     }
 
     // endregion

@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 class ExtendedCellUnitTest {
@@ -19,7 +20,7 @@ class ExtendedCellUnitTest {
         final Cell cell = row.createCell(0);
 
         final Executable executable = () -> new ExtendedCell(null, cell);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "row can't be null");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "row can't be null");
     }
 
     @Test
@@ -28,7 +29,7 @@ class ExtendedCellUnitTest {
         final ExtendedRow extendedRow = extendedSheet.addRow();
 
         final Executable executable = () -> new ExtendedCell(extendedRow, null);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be null");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be null");
     }
 
     @Test
@@ -38,7 +39,7 @@ class ExtendedCellUnitTest {
         final Cell extendedCell = extendedRow.createCell(0);
 
         final Executable executable = () -> new ExtendedCell(extendedRow, extendedCell);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be ExtendedCell");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be ExtendedCell");
     }
 
     // endregion

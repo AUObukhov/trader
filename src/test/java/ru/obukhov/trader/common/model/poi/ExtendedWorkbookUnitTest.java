@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PoiTestData;
 
 import java.util.List;
@@ -18,7 +19,7 @@ class ExtendedWorkbookUnitTest {
     @Test
     void constructor_throwsIllegalArgumentException_whenDelegateIsNull() {
         final Executable executable = () -> new ExtendedWorkbook(null);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be null");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be null");
     }
 
     @Test
@@ -26,7 +27,7 @@ class ExtendedWorkbookUnitTest {
         final ExtendedWorkbook extendedWorkbook = PoiTestData.createExtendedWorkbook();
 
         final Executable executable = () -> new ExtendedWorkbook(extendedWorkbook);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "delegate can't be ExtendedWorkbook");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "delegate can't be ExtendedWorkbook");
     }
 
     @Test
@@ -70,7 +71,7 @@ class ExtendedWorkbookUnitTest {
         extendedWorkbook.createCellStyle(cellStyleName);
 
         final Executable executable = () -> extendedWorkbook.createCellStyle(cellStyleName);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "Cell style 'cellStyle' already exists");
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "Cell style 'cellStyle' already exists");
     }
 
     @Test
