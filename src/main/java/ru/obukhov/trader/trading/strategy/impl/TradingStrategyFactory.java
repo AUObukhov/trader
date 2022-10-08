@@ -43,7 +43,7 @@ public class TradingStrategyFactory {
         return new CrossStrategy(fullName, crossStrategyParams, averager);
     }
 
-    private MovingAverageType getMovingAverageType(Map<String, Object> strategyParams) {
+    private MovingAverageType getMovingAverageType(final Map<String, Object> strategyParams) {
         final String movingAverageTypeString = (String) strategyParams.get("movingAverageType");
         Assert.notNull(movingAverageTypeString, "movingAverageType is mandatory");
 
@@ -61,7 +61,7 @@ public class TradingStrategyFactory {
         return strategyParams;
     }
 
-    private void validate(Object object) {
+    private void validate(final Object object) {
         Set<ConstraintViolation<Object>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
             String message = violations.stream()
