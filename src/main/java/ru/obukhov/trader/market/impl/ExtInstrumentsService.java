@@ -1,8 +1,11 @@
 package ru.obukhov.trader.market.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Etf;
@@ -22,7 +25,7 @@ import java.time.Instant;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ExtInstrumentsService {
+public class ExtInstrumentsService implements ApplicationContextAware {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
@@ -30,15 +33,22 @@ public class ExtInstrumentsService {
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
 
     private final InstrumentsService instrumentsService;
+    private ExtInstrumentsService self;
 
     @Cacheable(value = "singleFigiByTicker", sync = true)
     public String getSingleFigiByTicker(final String ticker) {
+        final List<String> figies = self.getFigiesByTicker(ticker);
+        Assert.isTrue(figies.size() == 1, "Expected single instrument with ticker '" + ticker + "'. Found " + figies.size());
+        return figies.get(0);
+    }
+
+    @Cacheable(value = "figiesByTicker", sync = true)
+    public List<String> getFigiesByTicker(final String ticker) {
         return instrumentsService.getAssetsSync().stream()
                 .flatMap(asset -> asset.getInstrumentsList().stream())
                 .filter(assetInstrument -> assetInstrument.getTicker().equals(ticker))
-                .findFirst()
                 .map(AssetInstrument::getFigi)
-                .orElseThrow(() -> new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'"));
+                .toList();
     }
 
     @Cacheable(value = "tickerByFigi", sync = true)
@@ -90,4 +100,10 @@ public class ExtInstrumentsService {
                 .map(TRADING_SCHEDULE_MAPPER::map)
                 .toList();
     }
+
+    @Override
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
+        this.self = applicationContext.getBean(ExtInstrumentsService.class);
+    }
+
 }

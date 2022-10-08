@@ -50,7 +50,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     @DirtiesContext
-    void getSingleFigiByTicker_returnsFirstFigi_whenAssetAndInstrumentFound() {
+    void getSingleFigiByTicker_returnsFigi_whenAssetAndInstrumentFound() {
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
 
@@ -77,9 +77,9 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final String result = extInstrumentsService.getSingleFigiByTicker(ticker3);
+        final String result = extInstrumentsService.getSingleFigiByTicker(ticker2);
 
-        Assertions.assertEquals(figi3, result);
+        Assertions.assertEquals(figi2, result);
     }
 
     @Test
@@ -111,12 +111,46 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        extInstrumentsService.getSingleFigiByTicker(ticker3);
+        extInstrumentsService.getSingleFigiByTicker(ticker2);
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final String result = extInstrumentsService.getSingleFigiByTicker(ticker3);
+        final String result = extInstrumentsService.getSingleFigiByTicker(ticker2);
 
-        Assertions.assertEquals(figi3, result);
+        Assertions.assertEquals(figi2, result);
+    }
+
+    @Test
+    @DirtiesContext
+    void getSingleFigiByTicker_throwsIllegalArgumentException_whenMultipleInstrumentsFound() {
+        final String ticker1 = TestShare1.TICKER;
+        final String figi1 = TestShare1.FIGI;
+
+        final String ticker2 = TestShare2.TICKER;
+        final String figi2 = TestShare2.FIGI;
+
+        final String ticker3 = TestShare4.TICKER;
+        final String figi3 = TestShare4.FIGI;
+
+        final String figi4 = TestShare5.FIGI;
+
+        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument1)
+                .build();
+
+        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
+        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument2)
+                .addInstruments(assetInstrument3)
+                .addInstruments(assetInstrument4)
+                .build();
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+
+        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker3);
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker3 + "'. Found 2";
+        Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -127,7 +161,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -150,8 +184,120 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker4);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker4 + "'. Found 0";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region getFigiesByTicker tests
+
+    @Test
+    @DirtiesContext
+    void getFigiesByTicker_returnsFirstFigi_whenAssetAndInstrumentFound() {
+        final String ticker1 = TestShare1.TICKER;
+        final String figi1 = TestShare1.FIGI;
+
+        final String ticker2 = TestShare2.TICKER;
+        final String figi2 = TestShare2.FIGI;
+
+        final String ticker3 = TestShare4.TICKER;
+        final String figi3 = TestShare4.FIGI;
+
+        final String figi4 = TestShare5.FIGI;
+
+        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument1)
+                .build();
+
+        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
+        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument2)
+                .addInstruments(assetInstrument3)
+                .addInstruments(assetInstrument4)
+                .build();
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+
+        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker3);
+
+        final List<String> expectedResult = List.of(figi3, figi4);
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    @DirtiesContext
+    void getFigiesByTicker_returnsCachedValue() {
+        final String ticker1 = TestShare1.TICKER;
+        final String figi1 = TestShare1.FIGI;
+
+        final String ticker2 = TestShare2.TICKER;
+        final String figi2 = TestShare2.FIGI;
+
+        final String ticker3 = TestShare4.TICKER;
+        final String figi3 = TestShare4.FIGI;
+
+        final String figi4 = TestShare5.FIGI;
+
+        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument1)
+                .build();
+
+        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
+        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
+        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument2)
+                .addInstruments(assetInstrument3)
+                .addInstruments(assetInstrument4)
+                .build();
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+        extInstrumentsService.getFigiesByTicker(ticker3);
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
+        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker3);
+
+        final List<String> expectedResult = List.of(figi3, figi4);
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    @DirtiesContext
+    void getFigiesByTicker_returnsEmptyList_whenNoAssets() {
+        final String ticker = TestShare1.TICKER;
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
+
+        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker);
+
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DirtiesContext
+    void getFigiesByTicker_returnsEmptyList_whenNoInstrument() {
+        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
+        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
+        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
+        final String ticker4 = TestShare4.TICKER;
+
+        final Asset asset1 = Asset.newBuilder()
+                .addInstruments(assetInstrument11)
+                .build();
+        final Asset asset2 = Asset.newBuilder()
+                .addInstruments(assetInstrument21)
+                .addInstruments(assetInstrument22)
+                .build();
+
+        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
+
+        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker4);
+
+        Assertions.assertTrue(result.isEmpty());
     }
 
     // endregion

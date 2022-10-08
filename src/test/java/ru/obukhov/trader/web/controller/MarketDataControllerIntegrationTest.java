@@ -36,6 +36,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getTradingStatus_returnsServerError_whenNoAsset() throws Exception {
@@ -50,7 +51,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -83,7 +84,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
