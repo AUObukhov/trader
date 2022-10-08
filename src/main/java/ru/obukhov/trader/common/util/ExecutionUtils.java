@@ -23,7 +23,7 @@ public class ExecutionUtils {
      *
      * @return result of execution of given {@code supplier} and execution time.
      */
-    public static <T> ExecutionResult<T> get(Supplier<T> supplier) {
+    public static <T> ExecutionResult<T> get(final Supplier<T> supplier) {
         final long start = System.nanoTime();
 
         final T result = supplier.get();
@@ -39,7 +39,7 @@ public class ExecutionUtils {
      *
      * @return result of execution of given {@code supplier} and execution time and exception if it has occurred during execution
      */
-    public static <T> ExecutionResult<T> getSafe(ThrowingSupplier<T> supplier) {
+    public static <T> ExecutionResult<T> getSafe(final ThrowingSupplier<T> supplier) {
         T result = null;
         Duration duration;
         Exception exception = null;
@@ -47,7 +47,7 @@ public class ExecutionUtils {
         final long start = System.nanoTime();
         try {
             result = supplier.get();
-        } catch (Exception caughtException) {
+        } catch (final Exception caughtException) {
             exception = caughtException;
         } finally {
             final long end = System.nanoTime();
