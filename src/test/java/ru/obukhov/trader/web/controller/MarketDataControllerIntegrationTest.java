@@ -51,7 +51,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -84,7 +84,7 @@ class MarketDataControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 

@@ -689,7 +689,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getMarketCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -716,7 +716,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         final Executable executable = () -> extMarketDataService.getMarketCandles(ticker, interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -829,7 +829,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -852,7 +852,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final Executable executable = () -> extMarketDataService.getTradingStatus(ticker);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 

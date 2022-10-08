@@ -38,7 +38,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     @Cacheable(value = "singleFigiByTicker", sync = true)
     public String getSingleFigiByTicker(final String ticker) {
         final List<String> figies = self.getFigiesByTicker(ticker);
-        Assert.isTrue(figies.size() == 1, "Expected single instrument with ticker '" + ticker + "'. Found " + figies.size());
+        Assert.isTrue(figies.size() == 1, () -> getInstrumentsCountErrorMessage("instrument", ticker, figies.size()));
         return figies.get(0);
     }
 
@@ -67,7 +67,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     public Share getSingleShare(final String ticker) {
         final List<Share> shares = getShares(ticker);
-        Assert.isTrue(shares.size() == 1, () -> "Expected single share for ticker '" + ticker + "'. Found " + shares.size());
+        Assert.isTrue(shares.size() == 1, () -> getInstrumentsCountErrorMessage("share", ticker, shares.size()));
         return shares.get(0);
     }
 
@@ -80,7 +80,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     public Etf getSingleEtf(final String ticker) {
         final List<Etf> etfs = getEtfs(ticker);
-        Assert.isTrue(etfs.size() == 1, () -> "Expected single etf for ticker '" + ticker + "'. Found " + etfs.size());
+        Assert.isTrue(etfs.size() == 1, () -> getInstrumentsCountErrorMessage("etf", ticker, etfs.size()));
         return etfs.get(0);
     }
 
@@ -99,6 +99,10 @@ public class ExtInstrumentsService implements ApplicationContextAware {
                 .stream()
                 .map(TRADING_SCHEDULE_MAPPER::map)
                 .toList();
+    }
+
+    private static String getInstrumentsCountErrorMessage(final String instrumentType, final String ticker, final int actualCount) {
+        return "Expected single " + instrumentType + " for ticker '" + ticker + "'. Found " + actualCount;
     }
 
     @Override

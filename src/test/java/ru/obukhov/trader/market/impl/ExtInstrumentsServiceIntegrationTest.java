@@ -150,7 +150,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker3);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker3 + "'. Found 2";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker3 + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -162,7 +162,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -185,7 +185,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
         final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker4);
-        final String expectedMessage = "Expected single instrument with ticker '" + ticker4 + "'. Found 0";
+        final String expectedMessage = "Expected single instrument for ticker '" + ticker4 + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
