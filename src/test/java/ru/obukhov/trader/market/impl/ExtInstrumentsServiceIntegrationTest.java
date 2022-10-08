@@ -77,7 +77,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final String result = extInstrumentsService.getFigiByTicker(ticker3);
+        final String result = extInstrumentsService.getSingleFigiByTicker(ticker3);
 
         Assertions.assertEquals(figi3, result);
     }
@@ -111,10 +111,10 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        extInstrumentsService.getFigiByTicker(ticker3);
+        extInstrumentsService.getSingleFigiByTicker(ticker3);
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final String result = extInstrumentsService.getFigiByTicker(ticker3);
+        final String result = extInstrumentsService.getSingleFigiByTicker(ticker3);
 
         Assertions.assertEquals(figi3, result);
     }
@@ -126,7 +126,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
-        final Executable executable = () -> extInstrumentsService.getFigiByTicker(ticker);
+        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker);
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -149,7 +149,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final Executable executable = () -> extInstrumentsService.getFigiByTicker(ticker4);
+        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker4);
         final String expectedMessage = "Not found instrument for ticker '" + ticker4 + "'";
         Assertions.assertThrows(IllegalArgumentException.class, executable, expectedMessage);
     }

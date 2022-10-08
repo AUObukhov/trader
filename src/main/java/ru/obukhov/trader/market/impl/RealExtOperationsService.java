@@ -24,7 +24,7 @@ public class RealExtOperationsService implements ExtOperationsService {
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker) {
-        final String figi = extInstrumentsService.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
         return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 

@@ -69,7 +69,7 @@ class FakeExtOrdersServiceUnitTest {
         final String figi = TestShare1.FIGI;
         final String ticker = TestShare1.TICKER;
 
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
 
         List<Order> orders = fakeExtOrdersService.getOrders(accountId, ticker);
 

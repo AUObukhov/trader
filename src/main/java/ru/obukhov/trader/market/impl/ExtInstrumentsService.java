@@ -31,8 +31,8 @@ public class ExtInstrumentsService {
 
     private final InstrumentsService instrumentsService;
 
-    @Cacheable(value = "figiByTicker", sync = true)
-    public String getFigiByTicker(final String ticker) {
+    @Cacheable(value = "singleFigiByTicker", sync = true)
+    public String getSingleFigiByTicker(final String ticker) {
         return instrumentsService.getAssetsSync().stream()
                 .flatMap(asset -> asset.getInstrumentsList().stream())
                 .filter(assetInstrument -> assetInstrument.getTicker().equals(ticker))

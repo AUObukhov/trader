@@ -53,7 +53,7 @@ class RealExtOperationsServiceUnitTest {
                 TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED)
         );
 
-        Mockito.when(extInstrumentsService.getFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
         Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi))
                 .thenReturn(operations);
 

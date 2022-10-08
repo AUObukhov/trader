@@ -41,7 +41,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
      */
     @Override
     public List<Order> getOrders(final String accountId, final String ticker) {
-        final String figi = extInstrumentsService.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
         return getOrders(accountId).stream()
                 .filter(order -> figi.equals(order.figi()))
                 .toList();

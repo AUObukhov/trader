@@ -221,7 +221,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
 
     @Cacheable(value = "marketCandles", sync = true)
     public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
-        final String figi = extInstrumentsService.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
         final Instant fromInstant = interval.getFrom().toInstant();
         final Instant toInstant = interval.getTo().toInstant();
         final List<Candle> candles = marketDataService.getCandlesSync(figi, fromInstant, toInstant, candleInterval)
@@ -235,7 +235,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
     }
 
     public SecurityTradingStatus getTradingStatus(final String ticker) {
-        final String figi = extInstrumentsService.getFigiByTicker(ticker);
+        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
         return marketDataService.getTradingStatusSync(figi).getTradingStatus();
     }
 
