@@ -460,6 +460,7 @@ class FakeContextUnitTest {
         Assertions.assertTrue(fakeContext.getPositions(accountId).isEmpty());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private FakeContext getFakeContext(
             final OffsetDateTime currentDateTime,
             final String accountId,

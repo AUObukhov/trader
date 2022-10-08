@@ -54,6 +54,7 @@ public class TradingStrategyFactory {
         return movingAverageType;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private <T extends TradingStrategyParams> T getStrategyParams(final Map<String, Object> params, final Class<T> type) {
         final T strategyParams = mapper.convertValue(params, type);
         validate(strategyParams);

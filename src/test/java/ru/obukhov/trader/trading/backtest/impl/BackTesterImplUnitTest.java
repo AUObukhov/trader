@@ -260,6 +260,7 @@ class BackTesterImplUnitTest {
         );
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void assertCommonStatistics(
             final BackTestResult backTestResult,
             final BotConfig botConfig,
@@ -1085,6 +1086,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockPortfolioPosition(final FakeBot fakeBot, final String accountId, final String ticker, final int quantityLots) {
         final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
                 .setTicker(ticker)

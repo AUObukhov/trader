@@ -396,6 +396,7 @@ class RunnableBotUnitTest {
         return new RunnableBot(services, realContext, strategy, schedulingProperties, botConfig);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockBotConfig(final String accountId, final String ticker, final CandleInterval candleInterval, final double commission) {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
@@ -403,17 +404,20 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.commission()).thenReturn(commission);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockBotConfig(final String accountId, final String ticker, final CandleInterval candleInterval) {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockBotConfig(final String ticker, final CandleInterval candleInterval) {
         Mockito.when(botConfig.ticker()).thenReturn(ticker);
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockData(final String accountId, final String ticker, final Currency currency) {
         final BigDecimal balance = BigDecimal.valueOf(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))

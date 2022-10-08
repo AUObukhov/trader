@@ -161,6 +161,7 @@ class FakeBotFactoryUnitTest {
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void mockCurrency(final String ticker, final Currency currency) {
         final Share share = Share.builder().ticker(ticker).currency(currency).build();
         Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);

@@ -348,6 +348,7 @@ class ExcelServiceImplUnitTest {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");

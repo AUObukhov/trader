@@ -396,6 +396,7 @@ public class ExcelServiceImpl implements ExcelService {
         addSeries(chartData, timesDataSource, prices, MarkerProperties.NO_MARKER);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void addLine(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,
