@@ -28,7 +28,7 @@ class QuotationMapperUnitTest {
 
         final BigDecimal bigDecimal = mapper.toBigDecimal(quotation);
 
-        Assertions.assertEquals(BigDecimal.ZERO, bigDecimal);
+        Assertions.assertEquals(DecimalUtils.setDefaultScale(0), bigDecimal);
     }
 
     @Test
@@ -54,7 +54,7 @@ class QuotationMapperUnitTest {
 
     @Test
     void fromBigDecimal_whenZero() {
-        final Quotation quotation = mapper.fromBigDecimal(BigDecimal.ZERO);
+        final Quotation quotation = mapper.fromBigDecimal(DecimalUtils.setDefaultScale(0));
 
         Assertions.assertEquals(0, quotation.getUnits());
         Assertions.assertEquals(0, quotation.getNano());

@@ -34,7 +34,7 @@ public class SimpleMovingAverager implements MovingAverager {
         final List<BigDecimal> movingAverages = new ArrayList<>(size);
         final int count = Math.min(window, size);
         for (int i = 0; i < count; i++) {
-            BigDecimal sum = BigDecimal.ZERO;
+            BigDecimal sum = DecimalUtils.setDefaultScale(0);
             for (int j = 0; j <= i; j++) {
                 final BigDecimal value = values.get(j);
                 sum = sum.add(value);

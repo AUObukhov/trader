@@ -3,8 +3,10 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -20,7 +22,7 @@ class OperationMapperUnitTest {
     void mapsOperationToBackTestOperation() {
         final Operation source = TestData.createOperation(OffsetDateTime.now(), OperationType.OPERATION_TYPE_BUY, 10, 2);
 
-        final BackTestOperation target = operationMapper.map(null, source);
+        final BackTestOperation target = operationMapper.map(TestShare1.TICKER, source);
 
         AssertUtils.assertEquals(source.getDate(), target.dateTime());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.operationType());
@@ -30,7 +32,13 @@ class OperationMapperUnitTest {
 
     @Test
     void mapsBackTestOperationToOperation() {
-        final BackTestOperation source = new BackTestOperation(null, OffsetDateTime.now(), OperationType.OPERATION_TYPE_BUY, BigDecimal.TEN, 2L);
+        final BackTestOperation source = new BackTestOperation(
+                TestShare1.TICKER,
+                OffsetDateTime.now(),
+                OperationType.OPERATION_TYPE_BUY,
+                DecimalUtils.setDefaultScale(10),
+                2L
+        );
 
         final Operation target = operationMapper.map(source);
 

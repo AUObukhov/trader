@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 /**
  * Utilities for financial calculations
@@ -24,7 +23,7 @@ public class FinUtils {
 
         return investmentSign == 0
                 ? 0.0
-                : absoluteProfit.divide(investment, RoundingMode.HALF_UP).doubleValue();
+                : DecimalUtils.divide(absoluteProfit, investment).doubleValue();
     }
 
     /**
@@ -40,7 +39,7 @@ public class FinUtils {
 
         final double pow = Math.pow(relativeProfit + 1, DateUtils.DAYS_IN_YEAR / daysCount);
         // using BigDecimal due to Double's loss of precision, but it is not necessary
-        return DecimalUtils.subtract(BigDecimal.valueOf(pow), 1).doubleValue();
+        return DecimalUtils.subtract(DecimalUtils.setDefaultScale(pow), 1).doubleValue();
     }
 
 }

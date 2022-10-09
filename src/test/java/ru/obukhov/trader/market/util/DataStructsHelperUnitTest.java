@@ -52,7 +52,7 @@ class DataStructsHelperUnitTest {
     @Test
     void createMoney() {
         final Currency currency = Currency.EUR;
-        final BigDecimal value = BigDecimal.valueOf(123.456);
+        final BigDecimal value = DecimalUtils.setDefaultScale(123.456);
 
         final Money money = DataStructsHelper.createMoney(currency, value);
 
@@ -71,8 +71,8 @@ class DataStructsHelperUnitTest {
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
 
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final BigDecimal value2 = BigDecimal.valueOf(789.012);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
         final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
         final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
@@ -88,12 +88,12 @@ class DataStructsHelperUnitTest {
         final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -108,15 +108,15 @@ class DataStructsHelperUnitTest {
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
 
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final BigDecimal value2 = BigDecimal.valueOf(789.012);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
         final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
         final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
         final List<MoneyValue> moneys = List.of(moneyValue1, moneyValue2);
 
-        final BigDecimal blockedValue1 = BigDecimal.valueOf(12.34);
-        final BigDecimal blockedValue2 = BigDecimal.valueOf(56.78);
+        final BigDecimal blockedValue1 = DecimalUtils.setDefaultScale(12.34);
+        final BigDecimal blockedValue2 = DecimalUtils.setDefaultScale(56.78);
 
         final MoneyValue blocked1 = DataStructsHelper.createMoneyValue(currency1, blockedValue1);
         final MoneyValue blocked2 = DataStructsHelper.createMoneyValue(currency2, blockedValue2);
@@ -136,8 +136,8 @@ class DataStructsHelperUnitTest {
         final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, blockedValue2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, BigDecimal.ZERO);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, BigDecimal.ZERO);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -152,22 +152,22 @@ class DataStructsHelperUnitTest {
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
 
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final BigDecimal value2 = BigDecimal.valueOf(789.012);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
         final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
         final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
         final List<MoneyValue> moneys = List.of(moneyValue1, moneyValue2);
 
-        final BigDecimal blockedValue1 = BigDecimal.valueOf(12.34);
-        final BigDecimal blockedValue2 = BigDecimal.valueOf(56.78);
+        final BigDecimal blockedValue1 = DecimalUtils.setDefaultScale(12.34);
+        final BigDecimal blockedValue2 = DecimalUtils.setDefaultScale(56.78);
 
         final MoneyValue blocked1 = DataStructsHelper.createMoneyValue(currency1, blockedValue1);
         final MoneyValue blocked2 = DataStructsHelper.createMoneyValue(currency2, blockedValue2);
         final List<MoneyValue> blocked = List.of(blocked1, blocked2);
 
-        final BigDecimal blockedGuaranteeValue1 = BigDecimal.valueOf(1.2);
-        final BigDecimal blockedGuaranteeValue2 = BigDecimal.valueOf(3.4);
+        final BigDecimal blockedGuaranteeValue1 = DecimalUtils.setDefaultScale(1.2);
+        final BigDecimal blockedGuaranteeValue2 = DecimalUtils.setDefaultScale(3.4);
 
         final MoneyValue blockedGuarantee1 = DataStructsHelper.createMoneyValue(currency1, blockedGuaranteeValue1);
         final MoneyValue blockedGuarantee2 = DataStructsHelper.createMoneyValue(currency2, blockedGuaranteeValue2);
@@ -203,11 +203,11 @@ class DataStructsHelperUnitTest {
     @Test
     void getBalance() {
         final Currency currency1 = Currency.EUR;
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
         final Currency currency2 = Currency.USD;
-        final BigDecimal value2 = BigDecimal.valueOf(78.9);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
         final List<Money> moneys = List.of(money1, money2);
@@ -222,11 +222,11 @@ class DataStructsHelperUnitTest {
     @Test
     void getBalance_throwsNoSuchElementException_whenNoCurrency() {
         final Currency currency1 = Currency.EUR;
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
         final Currency currency2 = Currency.USD;
-        final BigDecimal value2 = BigDecimal.valueOf(78.9);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
         final List<Money> moneys = List.of(money1, money2);

@@ -67,7 +67,7 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
+        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
 
         final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
 
@@ -81,7 +81,7 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
 
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
+        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
 
         final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
 
@@ -95,7 +95,7 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
 
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, BigDecimal.ZERO);
+        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
 
         final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
 
@@ -116,10 +116,10 @@ class FakeContextUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Currency currency1 = Currency.RUB;
-        final BigDecimal balance1 = BigDecimal.valueOf(100);
-        final BigDecimal investment11 = BigDecimal.valueOf(20);
-        final BigDecimal investment12 = BigDecimal.valueOf(50);
-        final BigDecimal investment13 = BigDecimal.valueOf(30);
+        final BigDecimal balance1 = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment11 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment12 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment13 = DecimalUtils.setDefaultScale(30);
         final OffsetDateTime investment11DateTime = currentDateTime.plusHours(1);
         final OffsetDateTime investment12DateTime = investment11DateTime.plusHours(1);
 
@@ -132,10 +132,10 @@ class FakeContextUnitTest {
         fakeContext.addInvestment(accountId1, currency1, investment13);
 
         final Currency currency2 = Currency.USD;
-        final BigDecimal balance2 = BigDecimal.valueOf(1000);
-        final BigDecimal investment21 = BigDecimal.valueOf(200);
-        final BigDecimal investment22 = BigDecimal.valueOf(500);
-        final BigDecimal investment23 = BigDecimal.valueOf(300);
+        final BigDecimal balance2 = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal investment21 = DecimalUtils.setDefaultScale(200);
+        final BigDecimal investment22 = DecimalUtils.setDefaultScale(500);
+        final BigDecimal investment23 = DecimalUtils.setDefaultScale(300);
         final OffsetDateTime investment21DateTime = currentDateTime.plusHours(2);
         final OffsetDateTime investment22DateTime = investment21DateTime.plusHours(1);
 
@@ -147,10 +147,10 @@ class FakeContextUnitTest {
         fakeContext.addInvestment(accountId2, currency2, investment23);
 
         final Currency currency3 = Currency.EUR;
-        final BigDecimal balance3 = BigDecimal.valueOf(2000);
-        final BigDecimal investment31 = BigDecimal.valueOf(400);
-        final BigDecimal investment32 = BigDecimal.valueOf(1000);
-        final BigDecimal investment33 = BigDecimal.valueOf(600);
+        final BigDecimal balance3 = DecimalUtils.setDefaultScale(2000);
+        final BigDecimal investment31 = DecimalUtils.setDefaultScale(400);
+        final BigDecimal investment32 = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal investment33 = DecimalUtils.setDefaultScale(600);
         final OffsetDateTime investment31DateTime = currentDateTime.plusHours(2);
         final OffsetDateTime investment32DateTime = investment31DateTime.plusHours(1);
 
@@ -184,10 +184,10 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment1 = BigDecimal.valueOf(20);
-        final BigDecimal investment2 = BigDecimal.valueOf(50);
-        final BigDecimal investment3 = BigDecimal.valueOf(30);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment1 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment2 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment3 = DecimalUtils.setDefaultScale(30);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investment1DateTime = initialDateTime.plusHours(1);
@@ -222,8 +222,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.valueOf(-20);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(-20);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -252,8 +252,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.ZERO;
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -286,10 +286,10 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment1 = BigDecimal.valueOf(20);
-        final BigDecimal investment2 = BigDecimal.valueOf(50);
-        final BigDecimal investment3 = BigDecimal.valueOf(30);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment1 = DecimalUtils.setDefaultScale(20);
+        final BigDecimal investment2 = DecimalUtils.setDefaultScale(50);
+        final BigDecimal investment3 = DecimalUtils.setDefaultScale(30);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investment1DateTime = initialDateTime.plusHours(1);
@@ -321,8 +321,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.valueOf(-20);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(-20);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -351,8 +351,8 @@ class FakeContextUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final Currency currency = Currency.RUB;
 
-        final BigDecimal balance = BigDecimal.valueOf(100);
-        final BigDecimal investment = BigDecimal.ZERO;
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
+        final BigDecimal investment = DecimalUtils.setDefaultScale(0);
 
         final OffsetDateTime initialDateTime = OffsetDateTime.now();
         final OffsetDateTime investmentDateTime = initialDateTime.plusHours(1);
@@ -382,7 +382,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -405,7 +405,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -424,7 +424,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
@@ -448,7 +448,7 @@ class FakeContextUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final Currency currency = Currency.RUB;
-        final BigDecimal balance = BigDecimal.valueOf(100);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(100);
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 

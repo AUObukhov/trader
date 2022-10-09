@@ -187,7 +187,7 @@ class BackTesterImplUnitTest {
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
 
-        final BigDecimal finalBalance1 = BigDecimal.valueOf(2000);
+        final BigDecimal finalBalance1 = DecimalUtils.setDefaultScale(2000);
         final int finalQuantityLots1 = 8;
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
@@ -204,14 +204,14 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(2000),
+                DecimalUtils.setDefaultScale(2000),
                 finalQuantityLots1,
                 prices1,
                 finalPrice1,
                 null
         );
 
-        final BigDecimal finalBalance2 = BigDecimal.valueOf(100);
+        final BigDecimal finalBalance2 = DecimalUtils.setDefaultScale(100);
         final int finalQuantityLots2 = 50;
 
         final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
@@ -318,7 +318,7 @@ class BackTesterImplUnitTest {
         prices1.put(from.plusMinutes(40), 400.0);
         prices1.put(from.plusMinutes(50), 500.0);
 
-        final BigDecimal currentBalance1 = BigDecimal.valueOf(2000);
+        final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(2000);
         final int positionLotsCount1 = 2;
 
         final BotConfig botConfig1 = new BotConfig(accountId1, ticker1, null, commission1, null, null);
@@ -346,7 +346,7 @@ class BackTesterImplUnitTest {
         prices2.put(from.plusMinutes(400), 40.0);
         prices2.put(from.plusMinutes(500), 50.0);
 
-        final BigDecimal currentBalance2 = BigDecimal.valueOf(2000);
+        final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(2000);
         final int positionLotsCount2 = 2;
 
         final BotConfig botConfig2 = new BotConfig(accountId2, ticker2, null, commission2, null, null);
@@ -419,7 +419,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(20000),
+                DecimalUtils.setDefaultScale(20000),
                 quantityLots1,
                 prices1,
                 currentPrice1,
@@ -435,7 +435,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(10000),
+                DecimalUtils.setDefaultScale(10000),
                 quantityLots2,
                 Collections.emptyMap(),
                 currentPrice2,
@@ -480,7 +480,7 @@ class BackTesterImplUnitTest {
         final String ticker1 = TestShare1.TICKER;
         final double commission1 = 0.003;
 
-        final BigDecimal currentBalance1 = BigDecimal.valueOf(20000);
+        final BigDecimal currentBalance1 = DecimalUtils.setDefaultScale(20000);
 
         final int quantityLots1 = 1;
 
@@ -493,7 +493,7 @@ class BackTesterImplUnitTest {
         final String ticker2 = TestShare2.TICKER;
         final double commission2 = 0.001;
 
-        final BigDecimal currentBalance2 = BigDecimal.valueOf(10000);
+        final BigDecimal currentBalance2 = DecimalUtils.setDefaultScale(10000);
 
         final int quantityLots2 = 1;
 
@@ -590,7 +590,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(20000),
+                DecimalUtils.setDefaultScale(20000),
                 1,
                 prices1,
                 500,
@@ -609,7 +609,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(10000),
+                DecimalUtils.setDefaultScale(10000),
                 2,
                 prices2,
                 4000,
@@ -661,7 +661,7 @@ class BackTesterImplUnitTest {
                 0.003,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(20000),
+                DecimalUtils.setDefaultScale(20000),
                 null,
                 Collections.emptyMap(),
                 300,
@@ -674,7 +674,7 @@ class BackTesterImplUnitTest {
                 0.001,
                 balanceConfig,
                 interval,
-                BigDecimal.valueOf(10000),
+                DecimalUtils.setDefaultScale(10000),
                 null,
                 Collections.emptyMap(),
                 200,
@@ -711,7 +711,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = BigDecimal.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
@@ -769,7 +769,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = BigDecimal.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.001;
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
@@ -826,7 +826,7 @@ class BackTesterImplUnitTest {
         final Interval interval = Interval.of(from, to);
 
         final double initialInvestment = 0;
-        final BigDecimal currentBalance = BigDecimal.valueOf(20000);
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(20000);
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment);
 
         final double commission1 = 0.003;
@@ -954,7 +954,7 @@ class BackTesterImplUnitTest {
 
         final double initialInvestment = 10000;
         final BalanceConfig balanceConfig = TestData.createBalanceConfig(initialInvestment, 1000.0, BALANCE_INCREMENT_CRON);
-        final BigDecimal currentBalance = BigDecimal.ZERO;
+        final BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
 
         final double commission1 = 0.003;
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);

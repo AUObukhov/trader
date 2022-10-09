@@ -16,7 +16,7 @@ class FinUtilsUnitTest {
 
     @Test
     void getRelativeProfit_throwsIllegalArgumentException_whenInvestmentIsNegative() {
-        final Executable executable = () -> FinUtils.getRelativeProfit(BigDecimal.valueOf(-0.1), BigDecimal.TEN);
+        final Executable executable = () -> FinUtils.getRelativeProfit(DecimalUtils.setDefaultScale(-0.1), DecimalUtils.setDefaultScale(10));
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "investment can't be negative");
     }
 

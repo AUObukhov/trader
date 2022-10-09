@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -60,21 +61,21 @@ class FakeExtOperationsServiceUnitTest {
                 ticker,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price1),
+                DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
                 ticker,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price2),
+                DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
                 ticker,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
-                BigDecimal.valueOf(price3),
+                DecimalUtils.setDefaultScale(price3),
                 quantity3
         );
 
@@ -126,21 +127,21 @@ class FakeExtOperationsServiceUnitTest {
                 ticker1,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price1),
+                DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
                 ticker2,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price2),
+                DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
                 ticker2,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
-                BigDecimal.valueOf(price3),
+                DecimalUtils.setDefaultScale(price3),
                 quantity3
         );
 
@@ -188,21 +189,21 @@ class FakeExtOperationsServiceUnitTest {
                 ticker1,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price1),
+                DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
                 ticker2,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(price2),
+                DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
                 ticker2,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
-                BigDecimal.valueOf(price3),
+                DecimalUtils.setDefaultScale(price3),
                 quantity3
         );
 
@@ -251,8 +252,8 @@ class FakeExtOperationsServiceUnitTest {
         final Currency currency2 = Currency.EUR;
 
         final Map<Currency, BigDecimal> balances = Map.of(
-                currency1, BigDecimal.valueOf(2000),
-                currency2, BigDecimal.valueOf(4000)
+                currency1, DecimalUtils.setDefaultScale(2000),
+                currency2, DecimalUtils.setDefaultScale(4000)
         );
         Mockito.when(fakeContext.getBalances(accountId)).thenReturn(balances);
 

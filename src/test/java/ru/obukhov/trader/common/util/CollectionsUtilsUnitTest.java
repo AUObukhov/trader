@@ -91,7 +91,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsNegative() {
-        final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
+        final List<BigDecimal> list = List.of(DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(10));
         final int index = -1;
 
         final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);
@@ -100,7 +100,7 @@ class CollectionsUtilsUnitTest {
 
     @Test
     void insertInterpolated_throwsIllegalArgumentException_whenIndexIsGreaterThanListSize() {
-        final List<BigDecimal> list = List.of(BigDecimal.ONE, BigDecimal.TEN);
+        final List<BigDecimal> list = List.of(DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(10));
         final int index = 3;
 
         final Executable executable = () -> CollectionsUtils.insertInterpolated(list, index, MathUtils::getAverage);

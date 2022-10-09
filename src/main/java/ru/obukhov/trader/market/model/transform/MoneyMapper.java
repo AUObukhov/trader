@@ -39,7 +39,7 @@ public interface MoneyMapper {
     default MoneyValue doubleToMoneyValue(final Double doubleValue) {
         return doubleValue == null
                 ? null
-                : bigDecimalToMoneyValue(BigDecimal.valueOf(doubleValue));
+                : bigDecimalToMoneyValue(DecimalUtils.setDefaultScale(doubleValue));
     }
 
 }

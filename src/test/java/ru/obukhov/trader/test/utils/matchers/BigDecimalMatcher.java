@@ -21,7 +21,7 @@ public class BigDecimalMatcher implements ArgumentMatcher<BigDecimal> {
     }
 
     @Override
-    public boolean matches(BigDecimal otherValue) {
+    public boolean matches(final BigDecimal otherValue) {
         return DecimalUtils.numbersEqual(value, otherValue);
     }
 

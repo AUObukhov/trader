@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
@@ -214,7 +215,13 @@ public class BackTesterImpl implements BackTester {
             final Interval interval,
             final String message
     ) {
-        final Balances balances = new Balances(initialInvestment, initialInvestment, initialInvestment, BigDecimal.ZERO, BigDecimal.ZERO);
+        final Balances balances = new Balances(
+                initialInvestment,
+                initialInvestment,
+                initialInvestment,
+                DecimalUtils.setDefaultScale(0),
+                DecimalUtils.setDefaultScale(0)
+        );
         return new BackTestResult(
                 botConfig,
                 interval,
@@ -255,7 +262,7 @@ public class BackTesterImpl implements BackTester {
         final BigDecimal finalBalance = fakeBot.getCurrentBalance(accountId, currency);
         final BigDecimal finalTotalSavings = getTotalBalance(finalBalance, positions);
 
-        final BigDecimal totalInvestment = investments.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal totalInvestment = investments.values().stream().reduce(DecimalUtils.setDefaultScale(0), BigDecimal::add);
         final BigDecimal weightedAverageInvestment = getWeightedAverage(investments, interval.getTo());
 
         return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
@@ -274,7 +281,7 @@ public class BackTesterImpl implements BackTester {
 
     private SortedMap<OffsetDateTime, BigDecimal> getTotalInvestments(final SortedMap<OffsetDateTime, BigDecimal> investments) {
         final SortedMap<OffsetDateTime, BigDecimal> balances = new TreeMap<>();
-        BigDecimal currentBalance = BigDecimal.ZERO;
+        BigDecimal currentBalance = DecimalUtils.setDefaultScale(0);
         for (final Map.Entry<OffsetDateTime, BigDecimal> entry : investments.entrySet()) {
             currentBalance = currentBalance.add(entry.getValue());
             balances.put(entry.getKey(), currentBalance);

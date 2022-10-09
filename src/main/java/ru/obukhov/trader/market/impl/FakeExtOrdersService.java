@@ -128,7 +128,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
                     InstrumentType.SHARE,
                     BigDecimal.valueOf(quantity),
                     price,
-                    BigDecimal.ZERO,
+                    DecimalUtils.setDefaultScale(0),
                     price,
                     BigDecimal.valueOf(quantityLots)
             );

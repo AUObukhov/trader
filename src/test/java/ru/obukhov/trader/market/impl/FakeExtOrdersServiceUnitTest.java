@@ -520,7 +520,7 @@ class FakeExtOrdersServiceUnitTest {
         final BigDecimal[] bigDecimalBalances = Arrays.stream(balances)
                 .mapToObj(BigDecimal::valueOf)
                 .toArray(BigDecimal[]::new);
-        Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(BigDecimal.valueOf(balance1), bigDecimalBalances);
+        Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(DecimalUtils.setDefaultScale(balance1), bigDecimalBalances);
     }
 
     @SuppressWarnings("SameParameterValue")

@@ -2,6 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
 import org.quartz.CronExpression;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -10,7 +11,6 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
@@ -128,7 +128,7 @@ class BackTestRequestValidationTest {
     private BackTestRequest createValidBackTestRequest() throws ParseException {
         final BackTestRequest request = new BackTestRequest();
 
-        BalanceConfig balanceConfig = new BalanceConfig(BigDecimal.TEN, BigDecimal.ONE, new CronExpression("0 0 0 1 * ?"));
+        BalanceConfig balanceConfig = new BalanceConfig(DecimalUtils.setDefaultScale(10), DecimalUtils.setDefaultScale(1), new CronExpression("0 0 0 1 * ?"));
         request.setBalanceConfig(balanceConfig);
 
         request.setFrom(OffsetDateTime.now());

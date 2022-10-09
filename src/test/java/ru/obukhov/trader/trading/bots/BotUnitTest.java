@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
@@ -192,7 +193,7 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
 
-        final BigDecimal balance = BigDecimal.valueOf(10000);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
@@ -248,7 +249,7 @@ class BotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
 
-        final BigDecimal balance = BigDecimal.valueOf(10000);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 

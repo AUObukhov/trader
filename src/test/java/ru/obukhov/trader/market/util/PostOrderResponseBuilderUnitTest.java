@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -94,9 +95,9 @@ class PostOrderResponseBuilderUnitTest {
     @Test
     void test_whenTypesAreComplex() {
         final Currency currency = TestShare1.CURRENCY;
-        final BigDecimal totalPrice = BigDecimal.valueOf(1000);
-        final BigDecimal totalCommissionAmount = BigDecimal.valueOf(5);
-        final BigDecimal currentPrice = BigDecimal.valueOf(100);
+        final BigDecimal totalPrice = DecimalUtils.setDefaultScale(1000);
+        final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(5);
+        final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);
         final long quantityLots = 10;
         final String figi = TestShare1.FIGI;
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;

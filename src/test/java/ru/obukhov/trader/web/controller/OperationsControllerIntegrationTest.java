@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -176,22 +177,22 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
 
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final BigDecimal value2 = BigDecimal.valueOf(789.012);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
         final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
         final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);
         final List<MoneyValue> moneys = List.of(moneyValue1, moneyValue2);
 
-        final BigDecimal blockedValue1 = BigDecimal.valueOf(12.34);
-        final BigDecimal blockedValue2 = BigDecimal.valueOf(56.78);
+        final BigDecimal blockedValue1 = DecimalUtils.setDefaultScale(12.34);
+        final BigDecimal blockedValue2 = DecimalUtils.setDefaultScale(56.78);
 
         final MoneyValue blocked1 = DataStructsHelper.createMoneyValue(currency1, blockedValue1);
         final MoneyValue blocked2 = DataStructsHelper.createMoneyValue(currency2, blockedValue2);
         final List<MoneyValue> blocked = List.of(blocked1, blocked2);
 
-        final BigDecimal blockedGuaranteeValue1 = BigDecimal.valueOf(1.2);
-        final BigDecimal blockedGuaranteeValue2 = BigDecimal.valueOf(3.4);
+        final BigDecimal blockedGuaranteeValue1 = DecimalUtils.setDefaultScale(1.2);
+        final BigDecimal blockedGuaranteeValue2 = DecimalUtils.setDefaultScale(3.4);
 
         final MoneyValue blockedGuarantee1 = DataStructsHelper.createMoneyValue(currency1, blockedGuaranteeValue1);
         final MoneyValue blockedGuarantee2 = DataStructsHelper.createMoneyValue(currency2, blockedGuaranteeValue2);
@@ -221,8 +222,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final Currency currency1 = Currency.EUR;
         final Currency currency2 = Currency.USD;
 
-        final BigDecimal value1 = BigDecimal.valueOf(123.456);
-        final BigDecimal value2 = BigDecimal.valueOf(789.012);
+        final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
+        final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
 
         final MoneyValue moneyValue1 = DataStructsHelper.createMoneyValue(currency1, value1);
         final MoneyValue moneyValue2 = DataStructsHelper.createMoneyValue(currency2, value2);

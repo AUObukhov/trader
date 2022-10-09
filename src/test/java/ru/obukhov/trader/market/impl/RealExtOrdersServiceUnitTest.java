@@ -209,7 +209,7 @@ class RealExtOrdersServiceUnitTest {
         final int totalCommissionAmount = 10;
         final int initialSecurityPrice = 20;
         final long quantityLots = 30;
-        final BigDecimal price = BigDecimal.valueOf(200);
+        final BigDecimal price = DecimalUtils.setDefaultScale(200);
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";

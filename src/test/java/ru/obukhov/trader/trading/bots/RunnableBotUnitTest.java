@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -419,7 +420,7 @@ class RunnableBotUnitTest {
 
     @SuppressWarnings("SameParameterValue")
     private void mockData(final String accountId, final String ticker, final Currency currency) {
-        final BigDecimal balance = BigDecimal.valueOf(10000);
+        final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);
 

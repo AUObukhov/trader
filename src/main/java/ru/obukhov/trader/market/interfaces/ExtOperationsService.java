@@ -3,6 +3,7 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -74,8 +75,8 @@ public interface ExtOperationsService {
             final Map<Currency, BigDecimal> blockedGuarantee
     ) {
         final Currency currency = Currency.valueOf(money.getCurrency());
-        final BigDecimal blockedValue = blocked.getOrDefault(currency, BigDecimal.ZERO);
-        final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, BigDecimal.ZERO);
+        final BigDecimal blockedValue = blocked.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
+        final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
         final BigDecimal value = money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);
         return DataStructsHelper.createMoney(money.getCurrency(), value);
     }

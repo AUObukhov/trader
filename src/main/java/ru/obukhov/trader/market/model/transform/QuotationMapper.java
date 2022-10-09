@@ -24,7 +24,7 @@ public interface QuotationMapper {
     default Quotation fromDouble(final Double value) {
         return value == null
                 ? null
-                : fromBigDecimal(BigDecimal.valueOf(value));
+                : fromBigDecimal(DecimalUtils.setDefaultScale(value));
     }
 
 }

@@ -30,7 +30,7 @@ public class DecimalUtils {
      */
     public static BigDecimal createBigDecimal(final long units, final int nano) {
         return units == 0 && nano == 0
-                ? BigDecimal.ZERO
+                ? BigDecimal.valueOf(0, DecimalUtils.DEFAULT_SCALE)
                 : BigDecimal.valueOf(units).add(BigDecimal.valueOf(nano, DecimalUtils.DEFAULT_SCALE));
     }
 

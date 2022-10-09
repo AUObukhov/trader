@@ -54,7 +54,7 @@ class MathUtilsUnitTest {
 
     @Test
     void getAverage_withVarArgs_returnsNumber_whenSingleArguments() {
-        final BigDecimal number = BigDecimal.TEN;
+        final BigDecimal number = DecimalUtils.setDefaultScale(10);
 
         final BigDecimal average = MathUtils.getAverage(number);
 
@@ -63,7 +63,11 @@ class MathUtilsUnitTest {
 
     @Test
     void getAverage_withVarArgs_returnsAverage_whenMultipleNumbersInCollection() {
-        final BigDecimal average = MathUtils.getAverage(BigDecimal.valueOf(100), BigDecimal.valueOf(200), BigDecimal.valueOf(1000));
+        final BigDecimal average = MathUtils.getAverage(
+                DecimalUtils.setDefaultScale(100),
+                DecimalUtils.setDefaultScale(200),
+                DecimalUtils.setDefaultScale(1000)
+        );
 
         AssertUtils.assertEquals(433.333333333, average);
     }
@@ -76,11 +80,11 @@ class MathUtilsUnitTest {
     void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
-        BigDecimal amount = BigDecimal.valueOf(10000);
+        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
         dateTimesToAmounts.put(dateTime, amount);
         for (int i = 0; i < 24; i++) {
             dateTime = dateTime.plusDays(1);
-            amount = amount.add(BigDecimal.valueOf(1000));
+            amount = amount.add(DecimalUtils.setDefaultScale(1000));
             dateTimesToAmounts.put(dateTime, amount);
         }
 
@@ -104,11 +108,11 @@ class MathUtilsUnitTest {
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
         final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
         OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
-        BigDecimal amount = BigDecimal.valueOf(10000);
+        BigDecimal amount = DecimalUtils.setDefaultScale(10000);
         dateTimesToAmounts.put(dateTime, amount);
         for (int i = 0; i < 24; i++) {
             dateTime = dateTime.plusDays(1);
-            amount = amount.add(BigDecimal.valueOf(1000));
+            amount = amount.add(DecimalUtils.setDefaultScale(1000));
             dateTimesToAmounts.put(dateTime, amount);
         }
 

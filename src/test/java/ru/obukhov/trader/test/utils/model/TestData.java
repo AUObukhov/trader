@@ -297,14 +297,14 @@ public class TestData {
                 orderId,
                 executionReportStatus,
                 lotsExecuted,
-                BigDecimal.valueOf(initialOrderPrice),
+                DecimalUtils.setDefaultScale(initialOrderPrice),
                 BigDecimal.valueOf(totalOrderAmount),
-                BigDecimal.valueOf(averagePositionPrice),
-                BigDecimal.valueOf(executedCommission),
+                DecimalUtils.setDefaultScale(averagePositionPrice),
+                DecimalUtils.setDefaultScale(executedCommission),
                 figi,
                 orderDirection,
-                BigDecimal.valueOf(initialSecurityPrice),
-                BigDecimal.valueOf(serviceCommission),
+                DecimalUtils.setDefaultScale(initialSecurityPrice),
+                DecimalUtils.setDefaultScale(serviceCommission),
                 currency,
                 orderType,
                 orderDate
@@ -328,7 +328,7 @@ public class TestData {
     // region MoneyValue creation
 
     public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final double value, final Currency currency) {
-        return DataStructsHelper.createMoneyValue(currency, BigDecimal.valueOf(value));
+        return DataStructsHelper.createMoneyValue(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final Currency currency) {

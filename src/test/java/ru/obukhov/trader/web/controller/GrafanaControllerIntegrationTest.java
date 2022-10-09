@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -205,13 +206,13 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
                         getTimeString(historicCandles.get(1)),
                         getOpenPrice(historicCandles.get(1)),
                         getOpenPrice(historicCandles.get(1)),
-                        BigDecimal.valueOf(100.5)
+                        DecimalUtils.setDefaultScale(100.5)
                 ),
                 List.of(
                         getTimeString(historicCandles.get(2)),
                         getOpenPrice(historicCandles.get(2)),
                         getOpenPrice(historicCandles.get(2)),
-                        BigDecimal.valueOf(101.5)
+                        DecimalUtils.setDefaultScale(101.5)
                 )
         );
         queryResult.setRows(rows);

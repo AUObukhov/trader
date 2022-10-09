@@ -308,7 +308,11 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000),
                 DecimalUtils.setDefaultScale(1000)
         );
-        final BackTestPosition backTestPosition2 = new BackTestPosition(ticker, DecimalUtils.setDefaultScale(100000), BigDecimal.TEN);
+        final BackTestPosition backTestPosition2 = new BackTestPosition(
+                ticker,
+                DecimalUtils.setDefaultScale(100000),
+                DecimalUtils.setDefaultScale(10)
+        );
         final BackTestResult backTestResult2 = new BackTestResult(
                 botConfig2,
                 interval,

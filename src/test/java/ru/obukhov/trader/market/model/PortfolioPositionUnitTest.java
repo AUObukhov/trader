@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.model;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -57,8 +58,8 @@ class PortfolioPositionUnitTest {
         final PortfolioPosition newPosition = position.addQuantities(
                 2,
                 2,
-                BigDecimal.valueOf(30),
-                BigDecimal.valueOf(15)
+                DecimalUtils.setDefaultScale(30),
+                DecimalUtils.setDefaultScale(15)
         );
 
         AssertUtils.assertEquals(5, newPosition.quantity());
@@ -116,8 +117,8 @@ class PortfolioPositionUnitTest {
                 .build();
 
         final BigDecimal newQuantity = BigDecimal.valueOf(20);
-        final BigDecimal newExpectedYield = BigDecimal.valueOf(400);
-        final BigDecimal newCurrentPrice = BigDecimal.valueOf(30);
+        final BigDecimal newExpectedYield = DecimalUtils.setDefaultScale(400);
+        final BigDecimal newCurrentPrice = DecimalUtils.setDefaultScale(30);
         final BigDecimal newQuantityLots = BigDecimal.valueOf(2);
 
         final PortfolioPosition newPosition = position.cloneWithNewValues(newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
