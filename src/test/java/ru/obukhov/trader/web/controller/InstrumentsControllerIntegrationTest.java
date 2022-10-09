@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
@@ -13,6 +14,10 @@ import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.bond.TestBond1;
+import ru.obukhov.trader.test.utils.model.bond.TestBond2;
+import ru.obukhov.trader.test.utils.model.bond.TestBond3;
+import ru.obukhov.trader.test.utils.model.bond.TestBond4;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -291,6 +296,158 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
+        performAndExpectServerError(requestBuilder, expectedMessage);
+    }
+
+    // endregion
+
+    // region getBonds tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getBonds_returnsBadRequest_whenTickerIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bonds")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getBonds_returnsEmptyResponse_whenNoBonds() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bonds")
+                .param("ticker", TestBond2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, List.of());
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getBonds_returnsMultipleBonds_whenMultipleBonds() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bonds")
+                .param("ticker", TestBond3.TICKER.toLowerCase())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final List<Bond> expectedBonds = List.of(TestBond3.BOND, TestBond4.BOND);
+        performAndExpectResponse(requestBuilder, expectedBonds);
+    }
+
+    // endregion
+
+    // region getSingleBond tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleBond_returnsBond() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bond")
+                .param("ticker", TestBond2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, TestBond2.BOND);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleBond_returnsBondIgnoreCase() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bond")
+                .param("ticker", TestBond2.TICKER.toLowerCase())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, TestBond2.BOND);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleBond_returnsBadRequest_whenTickerIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bond")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleBond_returnsServerError_whenNoBond() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bond")
+                .param("ticker", TestBond2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Expected single bond for ticker '" + TestBond2.TICKER + "'. Found 0";
+        performAndExpectServerError(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleBond_returnsServerError_whenMultipleBonds() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/bond")
+                .param("ticker", TestBond3.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Expected single bond for ticker '" + TestBond3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 

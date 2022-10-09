@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
+import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
@@ -73,6 +74,28 @@ public class InstrumentsController {
     })
     public Etf getSingleEtf(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
         return extInstrumentsService.getSingleEtf(ticker);
+    }
+
+    @GetMapping("/bonds")
+    @ApiOperation("Get bonds info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public List<Bond> getBonds(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+        return extInstrumentsService.getBonds(ticker);
+    }
+
+    @GetMapping("/bond")
+    @ApiOperation("Get single bond info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public Bond getSingleBond(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+        return extInstrumentsService.getSingleBond(ticker);
     }
 
     @GetMapping("/trading-schedule")

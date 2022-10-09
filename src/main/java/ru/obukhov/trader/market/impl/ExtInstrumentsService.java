@@ -8,12 +8,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.market.model.transform.BondMapper;
 import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
@@ -30,6 +32,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
+    private static final BondMapper BOND_MAPPER = Mappers.getMapper(BondMapper.class);
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
 
@@ -108,6 +111,26 @@ public class ExtInstrumentsService implements ApplicationContextAware {
         final List<Etf> etfs = getEtfs(ticker);
         Assert.isTrue(etfs.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
         return etfs.get(0);
+    }
+
+    /**
+     * @return list of {@link Bond} corresponding to given {@code ticker}
+     */
+    public List<Bond> getBonds(final String ticker) {
+        return instrumentsService.getAllBondsSync().stream()
+                .filter(bond -> ticker.equalsIgnoreCase(bond.getTicker()))
+                .map(BOND_MAPPER::map)
+                .toList();
+    }
+
+    /**
+     * @return {@link Bond} corresponding to given {@code ticker}
+     * @throws IllegalArgumentException when given {@code ticker} has no corresponding bond or has more than one corresponding bond
+     */
+    public Bond getSingleBond(final String ticker) {
+        final List<Bond> bonds = getBonds(ticker);
+        Assert.isTrue(bonds.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
+        return bonds.get(0);
     }
 
     /**

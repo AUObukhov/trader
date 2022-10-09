@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
@@ -20,6 +21,10 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.bond.TestBond1;
+import ru.obukhov.trader.test.utils.model.bond.TestBond2;
+import ru.obukhov.trader.test.utils.model.bond.TestBond3;
+import ru.obukhov.trader.test.utils.model.bond.TestBond4;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -562,6 +567,134 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
+    }
+
+    // endregion
+
+    // region getBonds tests
+
+    @Test
+    void getBonds_returnsBond_whenSingleBondFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER);
+
+        final List<Bond> expectedBonds = List.of(TestBond1.BOND);
+        Assertions.assertEquals(expectedBonds, result);
+    }
+
+    @Test
+    void getBonds_returnsBondIgnoreCase_whenSingleBondFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER.toLowerCase());
+
+        final List<Bond> expectedBonds = List.of(TestBond1.BOND);
+        Assertions.assertEquals(expectedBonds, result);
+    }
+
+    @Test
+    void getBonds_returnsEmptyList_whenNoBonds() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final List<Bond> result = extInstrumentsService.getBonds(TestBond2.TICKER);
+
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getBonds_returnsMultipleBonds_whenMultipleBonds() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final List<Bond> result = extInstrumentsService.getBonds(TestBond4.TICKER);
+
+        final List<Bond> expectedBonds = List.of(TestBond3.BOND, TestBond4.BOND);
+
+        Assertions.assertEquals(expectedBonds, result);
+    }
+
+    // endregion
+
+    // region getSingleBond tests
+
+    @Test
+    void getSingleBond_returnsBond_whenBondFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER);
+
+        Assertions.assertEquals(TestBond2.BOND, result);
+    }
+
+    @Test
+    void getSingleBond_returnsBondIgnoreCase_whenBondFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER.toLowerCase());
+
+        Assertions.assertEquals(TestBond2.BOND, result);
+    }
+
+    @Test
+    void getSingleBond_throwsIllegalArgumentException_whenNoBonds() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final String ticker = TestBond2.TICKER;
+
+        final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleBond(ticker), expectedMessage);
+    }
+
+    @Test
+    void getSingleBond_throwsIllegalArgumentException_whenMultipleBonds() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final String ticker = TestBond3.TICKER;
+
+        final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleBond(ticker), expectedMessage);
     }
 
     // endregion
