@@ -54,7 +54,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getShares_returnsEmptyResponse_whenNoShares() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.createTinkoffShare(), TestShare2.createTinkoffShare());
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -69,7 +69,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getShares_returnsMultipleShares_whenMultipleShares() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare4.createTinkoffShare(), TestShare5.createTinkoffShare());
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -77,7 +77,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestShare4.TICKER.toLowerCase())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final List<Share> expectedShares = List.of(TestShare4.createShare(), TestShare5.createShare());
+        final List<Share> expectedShares = List.of(TestShare4.SHARE, TestShare5.SHARE);
         performAndExpectResponse(requestBuilder, expectedShares);
     }
 
@@ -89,7 +89,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsShare() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.createTinkoffShare(), TestShare2.createTinkoffShare());
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -97,14 +97,14 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestShare2.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestShare2.createShare());
+        performAndExpectResponse(requestBuilder, TestShare2.SHARE);
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsShareIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.createTinkoffShare(), TestShare2.createTinkoffShare());
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -112,7 +112,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestShare2.TICKER.toLowerCase())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestShare2.createShare());
+        performAndExpectResponse(requestBuilder, TestShare2.SHARE);
     }
 
     @Test
@@ -131,7 +131,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsBadRequest_whenNoShare() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.createTinkoffShare(), TestShare2.createTinkoffShare());
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final String ticker3 = TestShare3.TICKER;
@@ -150,9 +150,9 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsServerError_whenMultipleShares() throws Exception {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare4.createTinkoffShare(),
-                TestShare5.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
@@ -186,7 +186,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getEtfs_returnsEmptyResponse_whenNoEtfs() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf2.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -202,9 +202,9 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() throws Exception {
         final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.createTinkoffEtf(),
-                TestEtf3.createTinkoffEtf(),
-                TestEtf4.createTinkoffEtf()
+                TestEtf1.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
         );
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
@@ -213,7 +213,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf3.TICKER.toLowerCase())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final List<Etf> expectedEtfs = List.of(TestEtf3.createEtf(), TestEtf4.createEtf());
+        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF, TestEtf4.ETF);
         performAndExpectResponse(requestBuilder, expectedEtfs);
     }
 
@@ -225,7 +225,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsEtf() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf2.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -233,14 +233,14 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf2.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestEtf2.createEtf());
+        performAndExpectResponse(requestBuilder, TestEtf2.ETF);
     }
 
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsEtfIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf2.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -248,7 +248,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf2.TICKER.toLowerCase())
                 .contentType(MediaType.APPLICATION_JSON);
 
-        performAndExpectResponse(requestBuilder, TestEtf2.createEtf());
+        performAndExpectResponse(requestBuilder, TestEtf2.ETF);
     }
 
     @Test
@@ -267,7 +267,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsServerError_whenNoEtf() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf2.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -284,9 +284,9 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsServerError_whenMultipleEtfs() throws Exception {
         final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.createTinkoffEtf(),
-                TestEtf3.createTinkoffEtf(),
-                TestEtf4.createTinkoffEtf()
+                TestEtf1.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
         );
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 

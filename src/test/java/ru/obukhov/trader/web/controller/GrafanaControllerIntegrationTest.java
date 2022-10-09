@@ -105,7 +105,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -157,7 +157,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);

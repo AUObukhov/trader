@@ -173,7 +173,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -196,7 +196,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         Mockito.when(extOperationsService.getSecurity(accountId, ticker)).thenThrow(new IllegalArgumentException());
 
@@ -217,7 +217,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         Mockito.when(extOperationsService.getOperations(Mockito.anyString(), Mockito.any(Interval.class), Mockito.eq(ticker)))
                 .thenThrow(new IllegalArgumentException());
@@ -239,7 +239,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -263,7 +263,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
@@ -321,7 +321,7 @@ class RunnableBotUnitTest {
         final Candle candle1 = new Candle().setTime(currentDateTime);
         mockLastCandles(ticker, List.of(candle1));
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         Mockito.when(strategy.decide(Mockito.any(DecisionData.class), Mockito.any(StrategyCache.class)))
                 .thenReturn(new Decision(DecisionAction.WAIT));
@@ -341,7 +341,7 @@ class RunnableBotUnitTest {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(ticker)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
         mockData(accountId, ticker, TestShare2.CURRENCY);
 
         final Decision decision = new Decision(DecisionAction.BUY, 5L);
@@ -372,7 +372,7 @@ class RunnableBotUnitTest {
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(ticker)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
         mockData(accountId, ticker, TestShare2.CURRENCY);
 
         final Decision decision = new Decision(DecisionAction.SELL, 5L);

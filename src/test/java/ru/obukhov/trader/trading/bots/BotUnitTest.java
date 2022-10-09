@@ -158,7 +158,7 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare2.TICKER;
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
         mockCandles(ticker, List.of(candle));
@@ -191,7 +191,7 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare1.TICKER;
 
-        Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
@@ -247,7 +247,7 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String ticker = TestShare2.TICKER;
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))

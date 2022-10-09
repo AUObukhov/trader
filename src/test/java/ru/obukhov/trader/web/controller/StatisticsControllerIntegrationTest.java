@@ -156,7 +156,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpenPrice(12000)
@@ -222,7 +222,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setTicker(ticker);
@@ -256,7 +256,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setTicker(ticker);
@@ -293,7 +293,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setTicker(ticker);
@@ -323,7 +323,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker = TestShare1.TICKER;
 
         Mocker.mockFigiByTicker(instrumentsService, TestShare1.FIGI, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.createTinkoffShare()));
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
 
         final String requestString = String.format("""
                 {

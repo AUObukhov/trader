@@ -200,7 +200,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -224,7 +224,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.001,
                 balanceConfig,
                 interval,
@@ -324,7 +324,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig1 = new BotConfig(accountId1, ticker1, null, commission1, null, null);
 
         final FakeBot fakeBot1 = mockFakeBot(botConfig1, balanceConfig, from);
-        Mockito.when(fakeBot1.getShare(ticker1)).thenReturn(TestShare1.createShare());
+        Mockito.when(fakeBot1.getShare(ticker1)).thenReturn(TestShare1.SHARE);
 
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, ticker1, 500);
@@ -352,7 +352,7 @@ class BackTesterImplUnitTest {
         final BotConfig botConfig2 = new BotConfig(accountId2, ticker2, null, commission2, null, null);
 
         final FakeBot fakeBot2 = mockFakeBot(botConfig2, balanceConfig, from);
-        Mockito.when(fakeBot2.getShare(ticker2)).thenReturn(TestShare2.createShare());
+        Mockito.when(fakeBot2.getShare(ticker2)).thenReturn(TestShare2.SHARE);
 
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, ticker2, 50);
@@ -415,7 +415,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -431,7 +431,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.001,
                 balanceConfig,
                 interval,
@@ -505,7 +505,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 commission1,
                 balanceConfig,
                 interval,
@@ -518,7 +518,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 commission2,
                 balanceConfig,
                 interval,
@@ -586,7 +586,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -605,7 +605,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 0.001,
                 balanceConfig,
                 interval,
@@ -657,7 +657,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -670,7 +670,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.001,
                 balanceConfig,
                 interval,
@@ -718,7 +718,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 commission1,
                 balanceConfig,
                 interval,
@@ -731,7 +731,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -776,7 +776,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 commission1,
                 balanceConfig,
                 interval,
@@ -789,7 +789,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.003,
                 balanceConfig,
                 interval,
@@ -833,7 +833,7 @@ class BackTesterImplUnitTest {
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 commission1,
                 balanceConfig,
                 interval,
@@ -846,7 +846,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 null,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.001,
                 balanceConfig,
                 interval,
@@ -960,7 +960,7 @@ class BackTesterImplUnitTest {
         final Operation operation = TestData.createOperation(from.plusMinutes(2), OperationType.OPERATION_TYPE_BUY, 100, 2);
         final BotConfig botConfig1 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare1.createShare(),
+                TestShare1.SHARE,
                 commission1,
                 balanceConfig,
                 interval,
@@ -973,7 +973,7 @@ class BackTesterImplUnitTest {
 
         final BotConfig botConfig2 = arrangeBackTest(
                 TestData.ACCOUNT_ID1,
-                TestShare2.createShare(),
+                TestShare2.SHARE,
                 0.001,
                 balanceConfig,
                 interval,

@@ -354,36 +354,36 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getShares_returnsShare_whenSingleShareFound() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER);
 
-        final List<Share> expectedShares = List.of(TestShare2.createShare());
+        final List<Share> expectedShares = List.of(TestShare2.SHARE);
         Assertions.assertEquals(expectedShares, result);
     }
 
     @Test
     void getShares_returnsShareIgnoreCase_whenSingleShareFound() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER.toLowerCase());
 
-        final List<Share> expectedShares = List.of(TestShare2.createShare());
+        final List<Share> expectedShares = List.of(TestShare2.SHARE);
         Assertions.assertEquals(expectedShares, result);
     }
 
     @Test
     void getShares_returnsEmptyList_whenNoShares() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
@@ -395,15 +395,15 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getShares_returnsMultipleShares_whenMultipleShares() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare4.createTinkoffShare(),
-                TestShare5.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare5.TICKER);
 
-        final List<Share> expectedShares = List.of(TestShare4.createShare(), TestShare5.createShare());
+        final List<Share> expectedShares = List.of(TestShare4.SHARE, TestShare5.SHARE);
         Assertions.assertEquals(expectedShares, result);
     }
 
@@ -414,34 +414,34 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getSingleShare_returnsShare_whenSingleShareFound() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER);
 
-        Assertions.assertEquals(TestShare2.createShare(), result);
+        Assertions.assertEquals(TestShare2.SHARE, result);
     }
 
     @Test
     void getSingleShare_returnsShareIgnoreCase_whenSingleShareFound() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER.toLowerCase());
 
-        Assertions.assertEquals(TestShare2.createShare(), result);
+        Assertions.assertEquals(TestShare2.SHARE, result);
     }
 
     @Test
     void getSingleShare_throwIllegalArgumentException_whenNoShare() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare2.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
@@ -454,9 +454,9 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getSingleShare_throwIllegalArgumentException_whenMultipleShares() {
         final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.createTinkoffShare(),
-                TestShare4.createTinkoffShare(),
-                TestShare5.createTinkoffShare()
+                TestShare1.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
         );
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
@@ -472,29 +472,29 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtfs_returnsEtf_whenSingleEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf3.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
 
-        final List<Etf> expectedEtfs = List.of(TestEtf3.createEtf());
+        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
         Assertions.assertEquals(expectedEtfs, result);
     }
 
     @Test
     void getEtfs_returnsEtfIgnoreCase_whenSingleEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf3.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER.toLowerCase());
 
-        final List<Etf> expectedEtfs = List.of(TestEtf3.createEtf());
+        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
         Assertions.assertEquals(expectedEtfs, result);
     }
 
     @Test
     void getEtfs_returnsEmptyList_whenNoEtfs() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf2.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
@@ -505,15 +505,15 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() {
         final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.createTinkoffEtf(),
-                TestEtf3.createTinkoffEtf(),
-                TestEtf4.createTinkoffEtf()
+                TestEtf1.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
         );
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
 
-        final List<Etf> expectedEtfs = List.of(TestEtf3.createEtf(), TestEtf4.createEtf());
+        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF, TestEtf4.ETF);
 
         Assertions.assertEquals(expectedEtfs, result);
     }
@@ -524,22 +524,22 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleEtf_returnsEtf_whenEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf3.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER);
 
-        Assertions.assertEquals(TestEtf3.createEtf(), result);
+        Assertions.assertEquals(TestEtf3.ETF, result);
     }
 
     @Test
     void getSingleEtf_returnsEtfIgnoreCase_whenEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.createTinkoffEtf(), TestEtf3.createTinkoffEtf());
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 
         final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER.toLowerCase());
 
-        Assertions.assertEquals(TestEtf3.createEtf(), result);
+        Assertions.assertEquals(TestEtf3.ETF, result);
     }
 
     @Test
@@ -559,9 +559,9 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getSingleEtf_throwsIllegalArgumentException_whenMultipleEtfs() {
         final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.createTinkoffEtf(),
-                TestEtf3.createTinkoffEtf(),
-                TestEtf4.createTinkoffEtf()
+                TestEtf1.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
         );
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
 

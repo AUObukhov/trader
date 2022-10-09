@@ -88,7 +88,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
         mockBalances(accountId, TestShare1.CURRENCY, 1000);
-        Mocker.mockShare(extInstrumentsService, TestShare1.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
         final Executable executable = () -> postOrder(accountId, TestShare1.TICKER, 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime, 500);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "balance can't be negative");
@@ -114,7 +114,7 @@ class FakeExtOrdersServiceUnitTest {
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
         mockBalances(accountId, currency, balance1);
         Mockito.when(fakeContext.getPosition(accountId, ticker)).thenReturn(null);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         // action
 
@@ -155,7 +155,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2);
         mockBalances(accountId, currency, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
@@ -228,9 +228,9 @@ class FakeExtOrdersServiceUnitTest {
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
 
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
-        Mocker.mockShare(extInstrumentsService, TestShare3.createShare());
-        Mocker.mockShare(extInstrumentsService, TestShare5.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
+        Mocker.mockShare(extInstrumentsService, TestShare3.SHARE);
+        Mocker.mockShare(extInstrumentsService, TestShare5.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker1)
@@ -313,7 +313,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
@@ -385,7 +385,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
@@ -459,7 +459,7 @@ class FakeExtOrdersServiceUnitTest {
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
-        Mocker.mockShare(extInstrumentsService, TestShare2.createShare());
+        Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)

@@ -12,9 +12,9 @@ class EtfMapperUnitTest {
 
     @Test
     void map() {
-        final Etf result = etfMapper.map(TestEtf1.createTinkoffEtf());
+        final Etf result = etfMapper.map(TestEtf1.TINKOFF_ETF);
 
-        Assertions.assertEquals(TestEtf1.createEtf(), result);
+        Assertions.assertEquals(TestEtf1.ETF, result);
     }
 
     @Test

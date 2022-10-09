@@ -12,9 +12,9 @@ class ShareMapperUnitTest {
 
     @Test
     void map() {
-        final Share result = shareMapper.map(TestShare1.createTinkoffShare());
+        final Share result = shareMapper.map(TestShare1.TINKOFF_SHARE);
 
-        Assertions.assertEquals(TestShare1.createShare(), result);
+        Assertions.assertEquals(TestShare1.SHARE, result);
     }
 
     @Test
