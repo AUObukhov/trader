@@ -17,6 +17,8 @@ public enum Sector {
     UTILITIES,
     TELECOM,
     ELECTROCARS,
+    GOVERNMENT,
+    MUNICIPAL,
     OTHER,
     UNKNOWN;
 

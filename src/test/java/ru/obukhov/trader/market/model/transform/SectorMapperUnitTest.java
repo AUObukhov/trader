@@ -32,6 +32,8 @@ class SectorMapperUnitTest {
                 Arguments.of("UTILITIES", Sector.UTILITIES),
                 Arguments.of("TELECOM", Sector.TELECOM),
                 Arguments.of("ELECTROCARS", Sector.ELECTROCARS),
+                Arguments.of("GOVERNMENT", Sector.GOVERNMENT),
+                Arguments.of("MUNICIPAL", Sector.MUNICIPAL),
                 Arguments.of("OTHER", Sector.OTHER),
                 Arguments.of("UNKNOWN", Sector.UNKNOWN),
                 Arguments.of(StringUtils.EMPTY, Sector.UNKNOWN)
