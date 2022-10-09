@@ -137,7 +137,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
+    public void setApplicationContext(@NotNull final ApplicationContext applicationContext) {
         this.self = applicationContext.getBean(ExtInstrumentsService.class);
     }
 
