@@ -15,7 +15,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.STOCK)
+                .setInstrumentType(InstrumentType.SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(5)
                 .setCurrentPrice(15)
@@ -30,7 +30,7 @@ class PortfolioPositionUnitTest {
     void getTotalPrice() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.STOCK)
+                .setInstrumentType(InstrumentType.SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
                 .setCurrentPrice(15)
@@ -46,7 +46,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.STOCK)
+                .setInstrumentType(InstrumentType.SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
                 .setCurrentPrice(20)
@@ -75,7 +75,7 @@ class PortfolioPositionUnitTest {
     void cloneWithNewQuantity() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.STOCK)
+                .setInstrumentType(InstrumentType.SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentPrice(20)
@@ -106,7 +106,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.STOCK)
+                .setInstrumentType(InstrumentType.SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentPrice(20)

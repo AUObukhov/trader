@@ -10,6 +10,7 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
+import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -85,7 +86,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      */
     public Share getSingleShare(final String ticker) {
         final List<Share> shares = getShares(ticker);
-        Assert.isTrue(shares.size() == 1, () -> getInstrumentsCountErrorMessage("share", ticker, shares.size()));
+        Assert.isTrue(shares.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
         return shares.get(0);
     }
 
@@ -105,7 +106,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      */
     public Etf getSingleEtf(final String ticker) {
         final List<Etf> etfs = getEtfs(ticker);
-        Assert.isTrue(etfs.size() == 1, () -> getInstrumentsCountErrorMessage("etf", ticker, etfs.size()));
+        Assert.isTrue(etfs.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
         return etfs.get(0);
     }
 

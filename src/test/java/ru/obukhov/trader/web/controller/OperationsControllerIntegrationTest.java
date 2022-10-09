@@ -46,7 +46,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
-        final InstrumentType instrumentType1 = InstrumentType.STOCK;
+        final InstrumentType instrumentType1 = InstrumentType.SHARE;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
@@ -56,7 +56,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
-        final InstrumentType instrumentType2 = InstrumentType.STOCK;
+        final InstrumentType instrumentType2 = InstrumentType.SHARE;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;

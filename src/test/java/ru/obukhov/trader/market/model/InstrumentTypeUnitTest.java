@@ -14,9 +14,10 @@ class InstrumentTypeUnitTest {
     @SuppressWarnings("unused")
     static Stream<Arguments> valuesAndInstrumentTypes() {
         return Stream.of(
-                Arguments.of("Stock", InstrumentType.STOCK),
-                Arguments.of("Currency", InstrumentType.CURRENCY),
-                Arguments.of("Etf", InstrumentType.ETF)
+                Arguments.of("share", InstrumentType.SHARE),
+                Arguments.of("etf", InstrumentType.ETF),
+                Arguments.of("bond", InstrumentType.BOND),
+                Arguments.of("currency", InstrumentType.CURRENCY)
         );
     }
 
@@ -34,14 +35,14 @@ class InstrumentTypeUnitTest {
 
     @ParameterizedTest
     @MethodSource("valuesAndInstrumentTypes")
-    void jsonMapping_mapsValue(final String value, final InstrumentType instrumentType) throws JsonProcessingException {
-        Assertions.assertEquals('"' + value + '"', TestUtils.OBJECT_MAPPER.writeValueAsString(instrumentType));
+    void jsonMapping_mapsValue(final String expectedValue, final InstrumentType instrumentType) throws JsonProcessingException {
+        Assertions.assertEquals('"' + expectedValue + '"', TestUtils.OBJECT_MAPPER.writeValueAsString(instrumentType));
     }
 
     @ParameterizedTest
     @MethodSource("valuesAndInstrumentTypes")
-    void jsonMapping_createsFromValue(final String value, final InstrumentType instrumentType) throws JsonProcessingException {
-        Assertions.assertEquals(instrumentType, TestUtils.OBJECT_MAPPER.readValue('"' + value + '"', InstrumentType.class));
+    void jsonMapping_createsFromValue(final String value, final InstrumentType expectedInstrumentType) throws JsonProcessingException {
+        Assertions.assertEquals(expectedInstrumentType, TestUtils.OBJECT_MAPPER.readValue('"' + value + '"', InstrumentType.class));
     }
 
 }

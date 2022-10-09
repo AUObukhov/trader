@@ -19,7 +19,7 @@ class PositionMapperUnitTest {
     void map() {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
-        final InstrumentType instrumentType = InstrumentType.STOCK;
+        final InstrumentType instrumentType = InstrumentType.SHARE;
         final int averagePositionPrice = 110;
         final int expectedYield = 10000;
         final int currentPrice = 120;

@@ -11,9 +11,10 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public enum InstrumentType {
 
-    STOCK("Stock"),
-    CURRENCY("Currency"),
-    ETF("Etf");
+    SHARE("share"),
+    ETF("etf"),
+    BOND("bond"),
+    CURRENCY("currency");
 
     private static final Map<String, InstrumentType> LOOKUP = Stream.of(InstrumentType.values())
             .collect(Collectors.toMap(InstrumentType::getValue, instrumentType -> instrumentType));

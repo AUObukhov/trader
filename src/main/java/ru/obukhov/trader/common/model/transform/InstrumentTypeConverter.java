@@ -6,7 +6,7 @@ import ru.obukhov.trader.market.model.InstrumentType;
 
 public class InstrumentTypeConverter implements Converter<String, InstrumentType> {
     @Override
-    public InstrumentType convert(@NotNull String source) {
+    public InstrumentType convert(final @NotNull String source) {
         return InstrumentType.fromValue(source);
     }
 }
