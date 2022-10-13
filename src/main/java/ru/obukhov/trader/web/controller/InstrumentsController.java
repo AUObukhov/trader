@@ -83,7 +83,7 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<Bond> getBonds(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+    public List<Bond> getBonds(@RequestParam @ApiParam(example = "RU000A1043Z7") final String ticker) {
         return extInstrumentsService.getBonds(ticker);
     }
 
@@ -94,7 +94,7 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public Bond getSingleBond(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
+    public Bond getSingleBond(@RequestParam @ApiParam(example = "RU000A0ZYG52") final String ticker) {
         return extInstrumentsService.getSingleBond(ticker);
     }
 
