@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Bond;
+import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
@@ -25,6 +26,10 @@ import ru.obukhov.trader.test.utils.model.bond.TestBond1;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
 import ru.obukhov.trader.test.utils.model.bond.TestBond3;
 import ru.obukhov.trader.test.utils.model.bond.TestBond4;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency3;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency4;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -695,6 +700,138 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleBond(ticker), expectedMessage);
+    }
+
+    // endregion
+
+    // region getCurrencies tests
+
+    @Test
+    void getCurrencies_returnsCurrency_whenSingleCurrencyFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER);
+
+        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
+        Assertions.assertEquals(expectedCurrencies, result);
+    }
+
+    @Test
+    void getCurrencies_returnsCurrencyIgnoreCase_whenSingleCurrencyFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER.toLowerCase());
+
+        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
+        Assertions.assertEquals(expectedCurrencies, result);
+    }
+
+    @Test
+    void getCurrencies_returnsEmptyList_whenNoCurrencies() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency2.TICKER);
+
+        Assertions.assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getCurrencies_returnsMultipleCurrencies_whenMultipleCurrencies() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency3.TICKER);
+
+        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency3.CURRENCY, TestCurrency4.CURRENCY);
+
+        Assertions.assertEquals(expectedCurrencies, result);
+    }
+
+    // endregion
+
+    // region getSingleCurrency tests
+
+    @Test
+    void getSingleCurrency_returnsCurrency_whenCurrencyFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER);
+
+        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
+    }
+
+    @Test
+    void getSingleCurrency_returnsCurrencyIgnoreCase_whenCurrencyFound() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER.toLowerCase());
+
+        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
+    }
+
+    @Test
+    void getSingleCurrency_throwsIllegalArgumentException_whenNoCurrencies() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final String ticker = TestCurrency2.TICKER;
+
+        final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleCurrency(ticker), expectedMessage);
+    }
+
+    @Test
+    void getSingleCurrency_throwsIllegalArgumentException_whenMultipleCurrencies() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final String ticker = TestCurrency3.TICKER;
+
+        final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
     // endregion

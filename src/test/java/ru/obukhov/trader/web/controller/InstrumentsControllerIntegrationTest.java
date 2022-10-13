@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Bond;
+import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
@@ -18,6 +19,10 @@ import ru.obukhov.trader.test.utils.model.bond.TestBond1;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
 import ru.obukhov.trader.test.utils.model.bond.TestBond3;
 import ru.obukhov.trader.test.utils.model.bond.TestBond4;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency3;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency4;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
@@ -448,6 +453,158 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final String expectedMessage = "Expected single bond for ticker '" + TestBond3.TICKER + "'. Found 2";
+        performAndExpectServerError(requestBuilder, expectedMessage);
+    }
+
+    // endregion
+
+    // region getCurrencies tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getCurrencies_returnsBadRequest_whenTickerIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currencies")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getCurrencies_returnsEmptyResponse_whenNoCurrencies() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currencies")
+                .param("ticker", TestCurrency2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, List.of());
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getCurrencies_returnsMultipleCurrencies_whenMultipleCurrencies() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currencies")
+                .param("ticker", TestCurrency3.TICKER.toLowerCase())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency3.CURRENCY, TestCurrency4.CURRENCY);
+        performAndExpectResponse(requestBuilder, expectedCurrencies);
+    }
+
+    // endregion
+
+    // region getSingleBond tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleCurrency_returnsCurrency() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currency")
+                .param("ticker", TestCurrency2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, TestCurrency2.CURRENCY);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleCurrency_returnsCurrencyIgnoreCase() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currency")
+                .param("ticker", TestCurrency2.TICKER.toLowerCase())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, TestCurrency2.CURRENCY);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleCurrency_returnsBadRequest_whenTickerIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currency")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'ticker' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleCurrency_returnsServerError_whenNoCurrency() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currency")
+                .param("ticker", TestCurrency2.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Expected single currency for ticker '" + TestCurrency2.TICKER + "'. Found 0";
+        performAndExpectServerError(requestBuilder, expectedMessage);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getSingleCurrency_returnsServerError_whenMultipleCurrencies() throws Exception {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/currency")
+                .param("ticker", TestCurrency3.TICKER)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Expected single currency for ticker '" + TestCurrency3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
