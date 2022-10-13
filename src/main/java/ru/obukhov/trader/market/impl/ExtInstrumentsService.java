@@ -50,7 +50,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     @Cacheable(value = "singleFigiByTicker", sync = true)
     public String getSingleFigiByTicker(final String ticker) {
         final List<String> figies = self.getFigiesByTicker(ticker);
-        Assert.isTrue(figies.size() == 1, () -> getInstrumentsCountErrorMessage("instrument", ticker, figies.size()));
+        Assert.isTrue(figies.size() == 1, () -> getSingleInstrumentCountErrorMessage("instrument", ticker, figies.size()));
         return figies.get(0);
     }
 
@@ -78,6 +78,38 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     }
 
     /**
+     * @return exchange of instrument for given {@code ticker}
+     * @throws IllegalArgumentException if instrument not found
+     */
+    public Exchange getExchange(final String ticker) {
+        final List<Share> shares = getShares(ticker);
+        if (!shares.isEmpty()) {
+            Assert.isTrue(shares.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
+            return shares.get(0).exchange();
+        }
+
+        final List<CurrencyInstrument> currencies = getCurrencies(ticker);
+        if (!currencies.isEmpty()) {
+            Assert.isTrue(currencies.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size()));
+            return currencies.get(0).exchange();
+        }
+
+        final List<Etf> etfs = getEtfs(ticker);
+        if (!etfs.isEmpty()) {
+            Assert.isTrue(etfs.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
+            return etfs.get(0).exchange();
+        }
+
+        final List<Bond> bonds = getBonds(ticker);
+        if (!bonds.isEmpty()) {
+            Assert.isTrue(bonds.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
+            return bonds.get(0).exchange();
+        }
+
+        throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
+    }
+
+    /**
      * @return list of {@link Share} corresponding to given {@code ticker}
      */
     public List<Share> getShares(final String ticker) {
@@ -93,7 +125,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      */
     public Share getSingleShare(final String ticker) {
         final List<Share> shares = getShares(ticker);
-        Assert.isTrue(shares.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
+        Assert.isTrue(shares.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
         return shares.get(0);
     }
 
@@ -113,7 +145,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      */
     public Etf getSingleEtf(final String ticker) {
         final List<Etf> etfs = getEtfs(ticker);
-        Assert.isTrue(etfs.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
+        Assert.isTrue(etfs.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
         return etfs.get(0);
     }
 
@@ -133,7 +165,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      */
     public Bond getSingleBond(final String ticker) {
         final List<Bond> bonds = getBonds(ticker);
-        Assert.isTrue(bonds.size() == 1, () -> getInstrumentsCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
+        Assert.isTrue(bonds.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
         return bonds.get(0);
     }
 
@@ -154,7 +186,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     public CurrencyInstrument getSingleCurrency(final String ticker) {
         final List<CurrencyInstrument> currencies = getCurrencies(ticker);
         final Supplier<String> messageSupplier =
-                () -> getInstrumentsCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size());
+                () -> getSingleInstrumentCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size());
         Assert.isTrue(currencies.size() == 1, messageSupplier);
         return currencies.get(0);
     }
@@ -182,8 +214,12 @@ public class ExtInstrumentsService implements ApplicationContextAware {
                 .toList();
     }
 
-    private static String getInstrumentsCountErrorMessage(final String instrumentType, final String ticker, final int actualCount) {
+    private static String getSingleInstrumentCountErrorMessage(final String instrumentType, final String ticker, final int actualCount) {
         return "Expected single " + instrumentType + " for ticker '" + ticker + "'. Found " + actualCount;
+    }
+
+    private static String getNotMultipleInstrumentCountErrorMessage(final String instrumentType, final String ticker, final int actualCount) {
+        return "Expected maximum of one " + instrumentType + " for ticker '" + ticker + "'. Found " + actualCount;
     }
 
     @Override

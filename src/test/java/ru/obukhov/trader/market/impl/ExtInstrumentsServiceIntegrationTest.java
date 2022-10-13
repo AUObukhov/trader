@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -49,7 +48,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
-@AutoConfigureMockMvc
+//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
 class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
@@ -350,6 +349,130 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final Executable executable = () -> extInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Not found instrument for figi '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
+    // region getExchange tests
+
+    @Test
+    void getExchange_returnsExchange_whenShareTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
+        );
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+
+        final Exchange result = extInstrumentsService.getExchange(TestShare2.TICKER);
+
+        Assertions.assertEquals(TestShare2.EXCHANGE, result);
+    }
+
+    @Test
+    void getExchange_throwIllegalArgumentException_whenMultipleSharesFound() {
+        final String ticker = TestShare4.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE,
+                TestShare3.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
+        );
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+
+        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+    }
+
+    @Test
+    void getExchange_returnsExchange_whenCurrencyTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final Exchange result = extInstrumentsService.getExchange(TestCurrency2.TICKER);
+
+        Assertions.assertEquals(TestCurrency2.EXCHANGE, result);
+    }
+
+    @Test
+    void getExchange_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
+        final String ticker = TestCurrency3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+    }
+
+    @Test
+    void getExchange_returnsExchange_whenEtfTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+
+        final Exchange result = extInstrumentsService.getExchange(TestEtf3.TICKER);
+
+        Assertions.assertEquals(TestEtf3.EXCHANGE, result);
+    }
+
+    @Test
+    void getExchange_throwIllegalArgumentException_whenMultipleEtfsFound() {
+        final String ticker = TestEtf3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
+                TestEtf1.TINKOFF_ETF,
+                TestEtf2.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
+        );
+        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+
+        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+    }
+
+    @Test
+    void getExchange_returnsExchange_whenBondTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final Exchange result = extInstrumentsService.getExchange(TestBond2.TICKER);
+
+        Assertions.assertEquals(TestBond2.EXCHANGE, result);
+    }
+
+    @Test
+    void getExchange_throwIllegalArgumentException_whenMultipleBondsFound() {
+        final String ticker = TestBond3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+    }
+
+    @Test
+    void getExchange_throwIllegalArgumentException_whenInstrumentNotFound() {
+        final String ticker = TestShare2.TICKER;
+
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     // endregion
