@@ -129,4 +129,8 @@ public class Mocker {
         Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(List.of(currencies));
     }
 
+    public static void mockBonds(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Bond... bonds) {
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(List.of(bonds));
+    }
+
 }

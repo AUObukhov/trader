@@ -425,13 +425,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange_whenBondTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final Exchange result = extInstrumentsService.getExchange(TestBond2.TICKER);
 
@@ -441,13 +435,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getExchange_throwIllegalArgumentException_whenMultipleBondsFound() {
         final String ticker = TestBond3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
@@ -636,13 +625,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getBonds_returnsBond_whenSingleBondFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER);
 
@@ -652,13 +635,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getBonds_returnsBondIgnoreCase_whenSingleBondFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER.toLowerCase());
 
@@ -668,8 +645,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getBonds_returnsEmptyList_whenNoBonds() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final List<Bond> result = extInstrumentsService.getBonds(TestBond2.TICKER);
 
@@ -678,13 +654,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getBonds_returnsMultipleBonds_whenMultipleBonds() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final List<Bond> result = extInstrumentsService.getBonds(TestBond4.TICKER);
 
@@ -699,13 +669,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleBond_returnsBond_whenBondFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER);
 
@@ -714,13 +678,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleBond_returnsBondIgnoreCase_whenBondFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER.toLowerCase());
 
@@ -729,12 +687,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleBond_throwsIllegalArgumentException_whenNoBonds() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final String ticker = TestBond2.TICKER;
 
@@ -744,13 +697,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleBond_throwsIllegalArgumentException_whenMultipleBonds() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final String ticker = TestBond3.TICKER;
 
@@ -1016,13 +963,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withTicker_returnsSchedule_whenBondTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
@@ -1039,13 +980,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleBondsFound() {
         final String ticker = TestBond3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);

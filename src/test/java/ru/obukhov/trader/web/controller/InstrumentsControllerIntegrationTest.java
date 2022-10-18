@@ -301,12 +301,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getBonds_returnsEmptyResponse_whenNoBonds() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bonds")
@@ -320,13 +315,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getBonds_returnsMultipleBonds_whenMultipleBonds() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bonds")
@@ -345,13 +334,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleBond_returnsBond() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
@@ -365,13 +348,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleBond_returnsBondIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond2.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
@@ -397,12 +374,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleBond_returnsServerError_whenNoBond() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
@@ -417,12 +389,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleBond_returnsServerError_whenMultipleBonds() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
-                TestBond1.TINKOFF_BOND,
-                TestBond3.TINKOFF_BOND,
-                TestBond4.TINKOFF_BOND
-        );
-        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/bond")
