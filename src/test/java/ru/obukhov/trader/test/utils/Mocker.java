@@ -118,4 +118,8 @@ public class Mocker {
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(shares));
     }
 
+    public static void mockEtfs(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Etf... etfs) {
+        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(List.of(etfs));
+    }
+
 }

@@ -410,8 +410,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange_whenEtfTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final Exchange result = extInstrumentsService.getExchange(TestEtf3.TICKER);
 
@@ -421,13 +420,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getExchange_throwIllegalArgumentException_whenMultipleEtfsFound() {
         final String ticker = TestEtf3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf2.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
@@ -562,8 +555,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtfs_returnsEtf_whenSingleEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
 
@@ -573,8 +565,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtfs_returnsEtfIgnoreCase_whenSingleEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER.toLowerCase());
 
@@ -584,8 +575,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtfs_returnsEmptyList_whenNoEtfs() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
 
@@ -594,12 +584,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
 
@@ -614,8 +599,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleEtf_returnsEtf_whenEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER);
 
@@ -624,8 +608,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleEtf_returnsEtfIgnoreCase_whenEtfFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER.toLowerCase());
 
@@ -634,26 +617,17 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleEtf_throwsIllegalArgumentException_whenNoEtfs() {
-        final String ticker1 = "FXIT";
-        final String ticker2 = "TECH";
-        final String ticker3 = "DRIV";
-        final ru.tinkoff.piapi.contract.v1.Etf etf1 = ru.tinkoff.piapi.contract.v1.Etf.newBuilder().setTicker(ticker1).build();
-        final ru.tinkoff.piapi.contract.v1.Etf etf2 = ru.tinkoff.piapi.contract.v1.Etf.newBuilder().setTicker(ticker2).build();
+        final String ticker = TestEtf2.TICKER;
 
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(List.of(etf1, etf2));
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final String expectedMessage = "Expected single etf for ticker '" + ticker3 + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(ticker3), expectedMessage);
+        final String expectedMessage = "Expected single etf for ticker '" + ticker + "'. Found 0";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(ticker), expectedMessage);
     }
 
     @Test
     void getSingleEtf_throwsIllegalArgumentException_whenMultipleEtfs() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
@@ -1015,8 +989,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withTicker_returnsSchedule_whenEtfTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
@@ -1033,13 +1006,8 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleEtfsFound() {
         final String ticker = TestEtf3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf2.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);

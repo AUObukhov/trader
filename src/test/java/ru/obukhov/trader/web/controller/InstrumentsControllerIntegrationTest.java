@@ -182,8 +182,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getEtfs_returnsEmptyResponse_whenNoEtfs() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etfs")
@@ -197,12 +196,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etfs")
@@ -221,8 +215,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsEtf() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
@@ -236,8 +229,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsEtfIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
@@ -263,8 +255,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsServerError_whenNoEtf() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
@@ -279,12 +270,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleEtf_returnsServerError_whenMultipleEtfs() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
-                TestEtf1.TINKOFF_ETF,
-                TestEtf3.TINKOFF_ETF,
-                TestEtf4.TINKOFF_ETF
-        );
-        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/etf")
