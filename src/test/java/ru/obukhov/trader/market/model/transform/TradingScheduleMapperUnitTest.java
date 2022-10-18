@@ -21,14 +21,14 @@ class TradingScheduleMapperUnitTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange.getValue())
-                .addDays(TestTradingDay1.createTinkoffTradingDay())
-                .addDays(TestTradingDay2.createTinkoffTradingDay())
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
 
         final TradingSchedule result = TRADING_SCHEDULE_MAPPER.map(tradingSchedule);
 
-        final TradingDay expectedTradingDay1 = TestTradingDay1.createTradingDay();
-        final TradingDay expectedTradingDay2 = TestTradingDay2.createTradingDay();
+        final TradingDay expectedTradingDay1 = TestTradingDay1.TRADING_DAY;
+        final TradingDay expectedTradingDay2 = TestTradingDay2.TRADING_DAY;
         final TradingSchedule expectedResult = new TradingSchedule(exchange, List.of(expectedTradingDay1, expectedTradingDay2));
 
         Assertions.assertEquals(expectedResult, result);

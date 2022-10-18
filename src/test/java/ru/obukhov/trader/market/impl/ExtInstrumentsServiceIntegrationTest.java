@@ -969,14 +969,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange.getValue())
-                .addDays(TestTradingDay1.createTinkoffTradingDay())
-                .addDays(TestTradingDay2.createTinkoffTradingDay())
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
         Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), from.toInstant(), to.toInstant())).thenReturn(tradingSchedule);
 
         final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
-        final List<TradingDay> expectedResult = List.of(TestTradingDay1.createTradingDay(), TestTradingDay2.createTradingDay());
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
         Assertions.assertEquals(expectedResult, result);
     }
@@ -995,20 +995,20 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange1.getValue())
-                .addDays(TestTradingDay1.createTinkoffTradingDay())
-                .addDays(TestTradingDay2.createTinkoffTradingDay())
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange2.getValue())
-                .addDays(TestTradingDay3.createTinkoffTradingDay())
+                .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
 
         final List<TradingSchedule> result = extInstrumentsService.getTradingSchedules(Interval.of(from, to));
 
-        final List<TradingDay> expectedTradingDays1 = List.of(TestTradingDay1.createTradingDay(), TestTradingDay2.createTradingDay());
-        final List<TradingDay> expectedTradingDays2 = List.of(TestTradingDay3.createTradingDay());
+        final List<TradingDay> expectedTradingDays1 = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+        final List<TradingDay> expectedTradingDays2 = List.of(TestTradingDay3.TRADING_DAY);
         final TradingSchedule expectedTradingSchedule1 = new TradingSchedule(exchange1, expectedTradingDays1);
         final TradingSchedule expectedTradingSchedule2 = new TradingSchedule(exchange2, expectedTradingDays2);
         final List<TradingSchedule> expectedResult = List.of(expectedTradingSchedule1, expectedTradingSchedule2);

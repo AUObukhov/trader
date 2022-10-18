@@ -12,11 +12,11 @@ class TradingDayMapperUnitTest {
 
     @Test
     void map() {
-        final ru.tinkoff.piapi.contract.v1.TradingDay source = TestTradingDay1.createTinkoffTradingDay();
+        final ru.tinkoff.piapi.contract.v1.TradingDay source = TestTradingDay1.TINKOFF_TRADING_DAY;
 
         final TradingDay result = TRADING_DAY_MAPPER.map(source);
 
-        final TradingDay expectedResult = TestTradingDay1.createTradingDay();
+        final TradingDay expectedResult = TestTradingDay1.TRADING_DAY;
         Assertions.assertEquals(expectedResult, result);
     }
 
