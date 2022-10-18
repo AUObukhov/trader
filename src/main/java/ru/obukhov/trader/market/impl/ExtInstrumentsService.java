@@ -205,6 +205,14 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     }
 
     /**
+     * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code ticker}
+     */
+    public List<TradingDay> getTradingSchedule(final String ticker, final Interval interval) {
+        final Exchange exchange = getExchange(ticker);
+        return getTradingSchedule(exchange, interval);
+    }
+
+    /**
      * @return list of {@link TradingSchedule} with given {@code interval}. Each schedule corresponds to some exchange
      */
     public List<TradingSchedule> getTradingSchedules(final Interval interval) {

@@ -962,23 +962,186 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTradingSchedule tests
 
     @Test
-    void getTradingSchedule() {
+    void getTradingSchedule_withExchange() {
         final Exchange exchange = Exchange.MOEX;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange.getValue())
-                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
-                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
-                .build();
-        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), from.toInstant(), to.toInstant())).thenReturn(tradingSchedule);
+        mockTradingSchedule(exchange, from, to);
 
         final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
         Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_returnsSchedule_whenShareTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE
+        );
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleSharesFound() {
+        final String ticker = TestShare4.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE,
+                TestShare3.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
+        );
+        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_returnsSchedule_whenCurrencyTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        mockTradingSchedule(TestCurrency2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestCurrency2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
+        final String ticker = TestCurrency3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_returnsSchedule_whenEtfTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        mockTradingSchedule(TestEtf3.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestEtf3.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleEtfsFound() {
+        final String ticker = TestEtf3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Etf> etfs = List.of(
+                TestEtf1.TINKOFF_ETF,
+                TestEtf2.TINKOFF_ETF,
+                TestEtf3.TINKOFF_ETF,
+                TestEtf4.TINKOFF_ETF
+        );
+        Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(etfs);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_returnsSchedule_whenBondTicker() {
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        mockTradingSchedule(TestBond2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestBond2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleBondsFound() {
+        final String ticker = TestBond3.TICKER;
+        final List<ru.tinkoff.piapi.contract.v1.Bond> bonds = List.of(
+                TestBond1.TINKOFF_BOND,
+                TestBond2.TINKOFF_BOND,
+                TestBond3.TINKOFF_BOND,
+                TestBond4.TINKOFF_BOND
+        );
+        Mockito.when(instrumentsService.getAllBondsSync()).thenReturn(bonds);
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenInstrumentNotFound() {
+        final String ticker = TestShare2.TICKER;
+
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
@@ -1017,5 +1180,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     // endregion
+
+    private void mockTradingSchedule(final Exchange exchange, final OffsetDateTime from, final OffsetDateTime to) {
+        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+                .setExchange(exchange.getValue())
+                .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
+                .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
+                .build();
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), from.toInstant(), to.toInstant())).thenReturn(tradingSchedule);
+    }
 
 }
