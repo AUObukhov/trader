@@ -382,11 +382,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange_whenCurrencyTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY
-        );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
+        Mocker.mockCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
 
         final Exchange result = extInstrumentsService.getExchange(TestCurrency2.TICKER);
 
@@ -396,13 +392,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getExchange_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
         final String ticker = TestCurrency3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
@@ -767,14 +764,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencies_returnsCurrency_whenSingleCurrencyFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
-
         final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER);
 
         final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
@@ -783,13 +779,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencies_returnsCurrencyIgnoreCase_whenSingleCurrencyFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER.toLowerCase());
 
@@ -799,12 +795,12 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencies_returnsEmptyList_whenNoCurrencies() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency2.TICKER);
 
@@ -813,13 +809,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrencies_returnsMultipleCurrencies_whenMultipleCurrencies() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency3.TICKER);
 
@@ -834,13 +830,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleCurrency_returnsCurrency_whenCurrencyFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER);
 
@@ -849,13 +845,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleCurrency_returnsCurrencyIgnoreCase_whenCurrencyFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER.toLowerCase());
 
@@ -864,12 +860,12 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleCurrency_throwsIllegalArgumentException_whenNoCurrencies() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final String ticker = TestCurrency2.TICKER;
 
@@ -879,13 +875,13 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleCurrency_throwsIllegalArgumentException_whenMultipleCurrencies() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final String ticker = TestCurrency3.TICKER;
 
@@ -950,11 +946,11 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withTicker_returnsSchedule_whenCurrencyTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
@@ -971,13 +967,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
         final String ticker = TestCurrency3.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);

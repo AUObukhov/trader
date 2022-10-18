@@ -122,4 +122,11 @@ public class Mocker {
         Mockito.when(instrumentsService.getAllEtfsSync()).thenReturn(List.of(etfs));
     }
 
+    public static void mockCurrencies(
+            final InstrumentsService instrumentsService,
+            final ru.tinkoff.piapi.contract.v1.Currency... currencies
+    ) {
+        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(List.of(currencies));
+    }
+
 }

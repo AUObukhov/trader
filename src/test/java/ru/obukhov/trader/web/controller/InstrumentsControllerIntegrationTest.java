@@ -453,12 +453,12 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCurrencies_returnsEmptyResponse_whenNoCurrencies() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currencies")
@@ -472,13 +472,13 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCurrencies_returnsMultipleCurrencies_whenMultipleCurrencies() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currencies")
@@ -497,13 +497,13 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleCurrency_returnsCurrency() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
@@ -517,13 +517,13 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleCurrency_returnsCurrencyIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency2.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
@@ -549,12 +549,12 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleCurrency_returnsServerError_whenNoCurrency() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
@@ -569,12 +569,12 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleCurrency_returnsServerError_whenMultipleCurrencies() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Currency> currencies = List.of(
+        Mocker.mockCurrencies(
+                instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        Mockito.when(instrumentsService.getAllCurrenciesSync()).thenReturn(currencies);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")
