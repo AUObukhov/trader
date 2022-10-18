@@ -95,7 +95,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2020, 1, 5))
@@ -128,7 +128,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1))
@@ -162,7 +162,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1, 1))
@@ -197,7 +197,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
@@ -283,7 +283,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final int closePrice = 10;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(closePrice, candlesFrom)
@@ -344,7 +344,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
 
@@ -359,7 +359,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -390,7 +390,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -422,7 +422,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
@@ -491,7 +491,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final List<Candle> candles = extMarketDataService.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
 
@@ -506,7 +506,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -537,7 +537,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -569,7 +569,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2019, 9, 8))
@@ -601,7 +601,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 8))
@@ -627,7 +627,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 1))
@@ -656,7 +656,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 12))

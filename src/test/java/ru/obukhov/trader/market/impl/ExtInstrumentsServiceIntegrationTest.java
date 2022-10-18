@@ -357,11 +357,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getExchange_returnsExchange_whenShareTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final Exchange result = extInstrumentsService.getExchange(TestShare2.TICKER);
 
@@ -371,14 +367,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getExchange_throwIllegalArgumentException_whenMultipleSharesFound() {
         final String ticker = TestShare4.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+        Mocker.mockShares(
+                instrumentsService,
                 TestShare1.TINKOFF_SHARE,
                 TestShare2.TINKOFF_SHARE,
                 TestShare3.TINKOFF_SHARE,
                 TestShare4.TINKOFF_SHARE,
                 TestShare5.TINKOFF_SHARE
         );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
@@ -481,11 +477,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShares_returnsShare_whenSingleShareFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER);
 
@@ -495,11 +487,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShares_returnsShareIgnoreCase_whenSingleShareFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER.toLowerCase());
 
@@ -509,11 +497,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShares_returnsEmptyList_whenNoShares() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare4.TICKER);
 
@@ -522,12 +506,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getShares_returnsMultipleShares_whenMultipleShares() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final List<Share> result = extInstrumentsService.getShares(TestShare5.TICKER);
 
@@ -541,11 +520,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleShare_returnsShare_whenSingleShareFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER);
 
@@ -554,11 +529,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleShare_returnsShareIgnoreCase_whenSingleShareFound() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER.toLowerCase());
 
@@ -567,11 +538,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleShare_throwIllegalArgumentException_whenNoShare() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final String ticker = TestShare3.TICKER;
         final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
@@ -581,12 +548,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getSingleShare_throwIllegalArgumentException_whenMultipleShares() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final String ticker = TestShare4.TICKER;
         final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
@@ -978,11 +940,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withTicker_returnsSchedule_whenShareTicker() {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
@@ -999,14 +957,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     @Test
     void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleSharesFound() {
         final String ticker = TestShare4.TICKER;
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
+        Mocker.mockShares(
+                instrumentsService,
                 TestShare1.TINKOFF_SHARE,
                 TestShare2.TINKOFF_SHARE,
                 TestShare3.TINKOFF_SHARE,
                 TestShare4.TINKOFF_SHARE,
                 TestShare5.TINKOFF_SHARE
         );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);

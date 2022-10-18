@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
@@ -251,7 +250,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(TestShare1.TINKOFF_SHARE));
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);

@@ -13,6 +13,7 @@ import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
+import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.bond.TestBond1;
@@ -59,8 +60,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getShares_returnsEmptyResponse_whenNoShares() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/shares")
@@ -74,8 +74,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getShares_returnsMultipleShares_whenMultipleShares() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/shares")
@@ -94,8 +93,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsShare() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
@@ -109,8 +107,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsShareIgnoreCase() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/share")
@@ -136,8 +133,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsBadRequest_whenNoShare() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final String ticker3 = TestShare3.TICKER;
 
@@ -154,12 +150,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getSingleShare_returnsServerError_whenMultipleShares() throws Exception {
-        final List<ru.tinkoff.piapi.contract.v1.Share> shares = List.of(
-                TestShare1.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
-        Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(shares);
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final String ticker = TestShare4.TICKER.toLowerCase();
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
