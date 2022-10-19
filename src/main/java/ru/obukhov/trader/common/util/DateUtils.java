@@ -164,6 +164,12 @@ public class DateUtils {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
     }
 
+    /**
+     * Moves given {@code dateTime} to start of next day.
+     * If given {@code dateTime} is already start of day, does not change it
+     *
+     * @return moved date
+     */
     public static OffsetDateTime roundUpToDay(final OffsetDateTime dateTime) {
         OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
         if (!date.equals(dateTime)) {
@@ -174,8 +180,8 @@ public class DateUtils {
     }
 
     /**
-     * Moves given {@code dateTime} to start of it's year.
-     * If given {@code dateTime} is already start of year, not changes it
+     * Moves given {@code dateTime} to start of its year.
+     * If given {@code dateTime} is already start of year, does not change it
      *
      * @return moved date
      */
