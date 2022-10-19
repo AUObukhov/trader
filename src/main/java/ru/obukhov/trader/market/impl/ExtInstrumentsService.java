@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
@@ -195,8 +196,8 @@ public class ExtInstrumentsService implements ApplicationContextAware {
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code exchange}
      */
     public List<TradingDay> getTradingSchedule(final Exchange exchange, final Interval interval) {
-        final Instant fromInstant = interval.getFrom().toInstant();
-        final Instant toInstant = interval.getTo().toInstant();
+        final Instant fromInstant = DateUtils.toSameDayInstant(interval.getFrom());
+        final Instant toInstant = DateUtils.toSameDayInstant(interval.getTo());
         return instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)
                 .getDaysList()
                 .stream()

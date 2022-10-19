@@ -10,6 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
@@ -44,11 +45,12 @@ import ru.obukhov.trader.test.utils.model.share.TestShare5;
 import ru.tinkoff.piapi.contract.v1.Asset;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
-//@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
 class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
@@ -838,7 +840,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getTradingSchedule tests
+    // region getTradingSchedule with exchange tests
 
     @Test
     void getTradingSchedule_withExchange() {
@@ -853,6 +855,146 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
         Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void getTradingSchedule_withExchange_adjustsFromInstant_positiveOffset() {
+        final Exchange exchange = Exchange.MOEX;
+
+        final ZoneOffset offset = ZoneOffset.ofHours(3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+
+        mockTradingSchedule(exchange, from, to);
+
+        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void getTradingSchedule_withExchange_adjustsFromInstant_negativeOffset() {
+        final Exchange exchange = Exchange.MOEX;
+
+        final ZoneOffset offset = ZoneOffset.ofHours(-3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+
+        mockTradingSchedule(exchange, from, to);
+
+        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void getTradingSchedule_withExchange_adjustsToInstant_positiveOffset() {
+        final Exchange exchange = Exchange.MOEX;
+
+        final ZoneOffset offset = ZoneOffset.ofHours(3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
+
+        mockTradingSchedule(exchange, from, to);
+
+        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void getTradingSchedule_withExchange_adjustsToInstant_negativeOffset() {
+        final Exchange exchange = Exchange.MOEX;
+
+        final ZoneOffset offset = ZoneOffset.ofHours(-3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
+
+        mockTradingSchedule(exchange, from, to);
+
+        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+
+        final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    // endregion
+
+    // region getTradingSchedule with ticker tests
+
+    @Test
+    void getTradingSchedule_withTicker_adjustsFromInstant_positiveOffset() {
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+
+        final ZoneOffset offset = ZoneOffset.ofHours(3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_adjustsFromInstant_negativeOffset() {
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+
+        final ZoneOffset offset = ZoneOffset.ofHours(-3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_adjustsToInstant_positiveOffset() {
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+
+        final ZoneOffset offset = ZoneOffset.ofHours(3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
+    }
+
+    @Test
+    void getTradingSchedule_withTicker_adjustsToInstant_negativeOffset() {
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+
+        final ZoneOffset offset = ZoneOffset.ofHours(-3);
+        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
+        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+
+        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+
+        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
+
+        Assertions.assertEquals(expectedSchedule, schedule);
     }
 
     @Test
@@ -1041,12 +1183,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // endregion
 
     private void mockTradingSchedule(final Exchange exchange, final OffsetDateTime from, final OffsetDateTime to) {
+        final Instant fromInstant = DateUtils.toSameDayInstant(from);
+        final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
                 .setExchange(exchange.getValue())
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
-        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), from.toInstant(), to.toInstant())).thenReturn(tradingSchedule);
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)).thenReturn(tradingSchedule);
     }
 
 }
