@@ -1119,4 +1119,56 @@ class DateUtilsUnitTest {
     }
 
     // endregion
+
+    // region toSameDayInstant tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToSameDayInstant() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 1, 1, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 1, 1, 1, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 1, 1, 3, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 1, 1, 5, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 2, 10, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 2, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 2, 10, 1, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 2, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 2, 10, 3, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 2, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 2, 10, 5, ZoneOffset.ofHours(3)),
+                        OffsetDateTime.of(2020, 2, 10, 0, 0, 0, 0, ZoneOffset.UTC).toInstant()
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToSameDayInstant")
+    void toSameDayInstant(final OffsetDateTime dateTime, final Instant expected) {
+        final Instant instant = DateUtils.toSameDayInstant(dateTime);
+
+        Assertions.assertEquals(expected, instant);
+    }
+
+    // endregion
+
 }

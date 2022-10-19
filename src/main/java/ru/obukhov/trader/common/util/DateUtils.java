@@ -356,4 +356,13 @@ public class DateUtils {
         return !time.isBefore(from) && time.isBefore(to);
     }
 
+    /**
+     * @return Instant with same day of year as given @{code dateTime}, but with zero time and offset
+     */
+    public static Instant toSameDayInstant(final OffsetDateTime dateTime) {
+        return dateTime.truncatedTo(ChronoUnit.DAYS)
+                .withOffsetSameLocal(ZoneOffset.UTC)
+                .toInstant();
+    }
+
 }
