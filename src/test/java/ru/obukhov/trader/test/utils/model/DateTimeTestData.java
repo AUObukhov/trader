@@ -9,6 +9,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -142,7 +143,7 @@ public class DateTimeTestData {
      * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
      */
     public static Interval createIntervalOfDay(@NotNull final OffsetDateTime dateTime) {
-        final OffsetDateTime from = DateUtils.atStartOfDay(dateTime);
+        final OffsetDateTime from = dateTime.truncatedTo(ChronoUnit.DAYS);
         final OffsetDateTime to = DateUtils.atEndOfDay(from);
         return Interval.of(from, to);
     }

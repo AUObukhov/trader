@@ -15,6 +15,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class Interval {
         DateUtils.assertDateTimeNotFuture(from, now, "from");
         DateUtils.assertDateTimeNotFuture(to, now, "to");
 
-        final OffsetDateTime extendedFrom = DateUtils.atStartOfDay(from);
+        final OffsetDateTime extendedFrom = from.truncatedTo(ChronoUnit.DAYS);
         final OffsetDateTime extendedTo = DateUtils.getEarliestDateTime(DateUtils.atEndOfDay(to), now);
 
         return new Interval(extendedFrom, extendedTo);
@@ -141,7 +142,7 @@ public class Interval {
             return to == null;
         }
 
-        return to != null && DateUtils.atStartOfDay(from).equals(DateUtils.atStartOfDay(to));
+        return to != null && from.truncatedTo(ChronoUnit.DAYS).equals(to.truncatedTo(ChronoUnit.DAYS));
     }
 
     /**

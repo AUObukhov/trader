@@ -173,7 +173,7 @@ public class ExtMarketDataService implements ApplicationContextAware {
             final CandleInterval candleInterval,
             final OffsetDateTime currentDateTime
     ) {
-        final OffsetDateTime from = DateUtils.atStartOfDay(currentDateTime);
+        final OffsetDateTime from = currentDateTime.truncatedTo(ChronoUnit.DAYS);
         Interval interval = Interval.of(from, currentDateTime);
 
         List<Candle> currentCandles = getMarketCandles(share.ticker(), interval, candleInterval);

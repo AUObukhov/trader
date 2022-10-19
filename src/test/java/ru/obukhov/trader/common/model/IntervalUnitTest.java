@@ -18,6 +18,7 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -101,7 +102,7 @@ class IntervalUnitTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 10, 11, 12, 13);
         final Interval interval = DateTimeTestData.createIntervalOfDay(dateTime);
 
-        final OffsetDateTime expectedFrom = DateUtils.atStartOfDay(dateTime);
+        final OffsetDateTime expectedFrom = dateTime.truncatedTo(ChronoUnit.DAYS);
         final OffsetDateTime expectedToo = DateUtils.atEndOfDay(dateTime);
         Assertions.assertEquals(expectedFrom, interval.getFrom());
         Assertions.assertEquals(expectedToo, interval.getTo());

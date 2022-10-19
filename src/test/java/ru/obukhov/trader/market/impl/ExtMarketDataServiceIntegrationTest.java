@@ -32,6 +32,7 @@ import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
@@ -279,7 +280,7 @@ class ExtMarketDataServiceIntegrationTest extends IntegrationTest {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime to = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 1, 10));
         final OffsetDateTime candlesTo = TestShare1.FIRST_1_MIN_CANDLE_DATE.plusDays(1);
-        final OffsetDateTime candlesFrom = DateUtils.atStartOfDay(candlesTo);
+        final OffsetDateTime candlesFrom = candlesTo.truncatedTo(ChronoUnit.DAYS);
         final int closePrice = 10;
 
         Mocker.mockFigiByTicker(instrumentsService, figi, ticker);

@@ -788,21 +788,6 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region atStartOfDay tests
-
-    @Test
-    void atStartOfDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30, 40);
-
-        final OffsetDateTime startOfDay = DateUtils.atStartOfDay(dateTime);
-
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2020, 10, 5);
-
-        Assertions.assertEquals(expected, startOfDay);
-    }
-
-    // endregion
-
     // region atEndOfDay tests
 
     @Test
