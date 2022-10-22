@@ -1171,4 +1171,59 @@ class DateUtilsUnitTest {
 
     // endregion
 
+    // region equalDates tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forEqualDates() {
+        return Stream.of(
+                Arguments.of(
+                        null,
+                        null,
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 10, 20, 30, 40),
+                        DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5),
+                        DateTimeTestData.createEndOfDay(2020, 10, 5),
+                        true
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 1, 1, 5, ZoneOffset.ofHours(10)),
+                        DateTimeTestData.createDateTime(2019, 12, 31, 5, ZoneOffset.ofHours(1)),
+                        true
+                ),
+                Arguments.of(
+                        null,
+                        DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5, 11, 30, 40, 50),
+                        null,
+                        false
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2020, 10, 5).minusNanos(1),
+                        DateTimeTestData.createDateTime(2020, 10, 5),
+                        false
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forEqualDates")
+    void equalDates(OffsetDateTime dateTime1, OffsetDateTime dateTime2, boolean expected) {
+        final boolean result1 = DateUtils.equalDates(dateTime1, dateTime2);
+        final boolean result2 = DateUtils.equalDates(dateTime2, dateTime1);
+
+        Assertions.assertEquals(result1, result2);
+        Assertions.assertEquals(expected, result1);
+    }
+
+    // endregion
+
 }

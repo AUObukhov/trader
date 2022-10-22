@@ -365,4 +365,21 @@ public class DateUtils {
                 .toInstant();
     }
 
+    /**
+     * @return true, if dates of instants of given {@code dateTime1} and {@code dateTime2} are equal, or else false
+     */
+    public static boolean equalDates(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
+        if (dateTime1 == null) {
+            return dateTime2 == null;
+        } else if (dateTime2 == null) {
+            return false;
+        }
+
+        final OffsetDateTime adjustedDateTime1 = dateTime1.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
+        final OffsetDateTime adjustedDateTime2 = dateTime2.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
+
+        return adjustedDateTime1.getYear() == adjustedDateTime2.getYear()
+                && adjustedDateTime1.getDayOfYear() == adjustedDateTime2.getDayOfYear();
+    }
+
 }

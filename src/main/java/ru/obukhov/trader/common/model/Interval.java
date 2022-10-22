@@ -135,14 +135,10 @@ public class Interval {
     }
 
     /**
-     * @return true, if days of year of {@code from} and {@code to} are equal, or else false
+     * @return true, if dates of instants of {@code from} and {@code to} are equal, or else false
      */
     public boolean equalDates() {
-        if (from == null) {
-            return to == null;
-        }
-
-        return to != null && from.truncatedTo(ChronoUnit.DAYS).equals(to.truncatedTo(ChronoUnit.DAYS));
+        return DateUtils.equalDates(from, to);
     }
 
     /**
