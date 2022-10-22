@@ -367,7 +367,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenMultipleSharesFound() {
+    void getExchange_throwsIllegalArgumentException_whenMultipleSharesFound() {
         final String ticker = TestShare4.TICKER;
         Mocker.mockShares(
                 instrumentsService,
@@ -392,7 +392,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
+    void getExchange_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
         final String ticker = TestCurrency3.TICKER;
 
         Mocker.mockCurrencies(
@@ -417,7 +417,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenMultipleEtfsFound() {
+    void getExchange_throwsIllegalArgumentException_whenMultipleEtfsFound() {
         final String ticker = TestEtf3.TICKER;
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
@@ -435,7 +435,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenMultipleBondsFound() {
+    void getExchange_throwsIllegalArgumentException_whenMultipleBondsFound() {
         final String ticker = TestBond3.TICKER;
 
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
@@ -445,7 +445,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getExchange_throwIllegalArgumentException_whenInstrumentNotFound() {
+    void getExchange_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String ticker = TestShare2.TICKER;
 
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
@@ -518,7 +518,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getSingleShare_throwIllegalArgumentException_whenNoShare() {
+    void getSingleShare_throwsIllegalArgumentException_whenNoShare() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final String ticker = TestShare3.TICKER;
@@ -528,7 +528,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getSingleShare_throwIllegalArgumentException_whenMultipleShares() {
+    void getSingleShare_throwsIllegalArgumentException_whenMultipleShares() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final String ticker = TestShare4.TICKER;
@@ -1014,7 +1014,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleSharesFound() {
+    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleSharesFound() {
         final String ticker = TestShare4.TICKER;
         Mocker.mockShares(
                 instrumentsService,
@@ -1054,7 +1054,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleCurrenciesFound() {
+    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
         final String ticker = TestCurrency3.TICKER;
 
         Mocker.mockCurrencies(
@@ -1090,7 +1090,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleEtfsFound() {
+    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleEtfsFound() {
         final String ticker = TestEtf3.TICKER;
 
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
@@ -1120,7 +1120,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenMultipleBondsFound() {
+    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleBondsFound() {
         final String ticker = TestBond3.TICKER;
 
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
@@ -1134,7 +1134,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwIllegalArgumentException_whenInstrumentNotFound() {
+    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String ticker = TestShare2.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);

@@ -338,7 +338,7 @@ class TrendUtilsUnitTest {
     // region getCrossovers tests
 
     @Test
-    void getCrossovers_throwIllegalArgumentException_whenArgumentsHaveDifferentSizes() {
+    void getCrossovers_throwsIllegalArgumentException_whenArgumentsHaveDifferentSizes() {
         final List<BigDecimal> values1 = TestData.createBigDecimalsList(10.0, 20.0);
         final List<BigDecimal> values2 = TestData.createBigDecimalsList(10.0);
 
@@ -433,7 +433,7 @@ class TrendUtilsUnitTest {
     // region getCrossoverIfLast tests
 
     @Test
-    void getCrossoverIfLast_throwIllegalArgumentException_whenDifferentSizes() {
+    void getCrossoverIfLast_throwsIllegalArgumentException_whenDifferentSizes() {
         final List<BigDecimal> values1 = TestData.createRandomBigDecimalsList(10);
         final List<BigDecimal> values2 = TestData.createRandomBigDecimalsList(9);
         final int index = 2;

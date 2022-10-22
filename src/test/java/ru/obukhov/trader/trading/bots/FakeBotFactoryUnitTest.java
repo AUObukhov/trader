@@ -143,7 +143,7 @@ class FakeBotFactoryUnitTest {
     }
 
     @Test
-    void createBot_throwIllegalArgumentException_whenShareNotFound() {
+    void createBot_throwsIllegalArgumentException_whenShareNotFound() {
         final String ticker = TestShare1.TICKER;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,

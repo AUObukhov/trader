@@ -1045,7 +1045,7 @@ class DateUtilsUnitTest {
     // region timestampIsInInterval tests
 
     @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forTimestampIsInInterval_throwIllegalArgumentException() {
+    static Stream<Arguments> getData_forTimestampIsInInterval_throwsIllegalArgumentException() {
         return Stream.of(
                 Arguments.of(
                         DateTimeTestData.createDateTime(2020, 10, 5, 14),
@@ -1059,8 +1059,8 @@ class DateUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("getData_forTimestampIsInInterval_throwIllegalArgumentException")
-    void timestampIsInInterval_throwIllegalArgumentException(final OffsetDateTime from, final OffsetDateTime to) {
+    @MethodSource("getData_forTimestampIsInInterval_throwsIllegalArgumentException")
+    void timestampIsInInterval_throwsIllegalArgumentException(final OffsetDateTime from, final OffsetDateTime to) {
         final Timestamp timestamp = dateTimeMapper.offsetDateTimeToTimestamp(from);
         final Instant fromInstant = from.toInstant();
         final Instant toInstant = to.toInstant();
