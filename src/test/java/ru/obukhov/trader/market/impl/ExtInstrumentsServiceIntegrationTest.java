@@ -840,6 +840,141 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
+    // region getTradingDay tests
+
+    @Test
+    void getTradingDay_returnsTradingDay_whenShareTicker() {
+        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        mockTradingSchedule(TestShare2.EXCHANGE, dateTime, dateTime);
+
+        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestShare2.TICKER, dateTime);
+
+        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
+    }
+
+    @Test
+    void getTradingDay_throwsIllegalArgumentException_whenMultipleSharesFound() {
+        final String ticker = TestShare4.TICKER;
+        Mocker.mockShares(
+                instrumentsService,
+                TestShare1.TINKOFF_SHARE,
+                TestShare2.TINKOFF_SHARE,
+                TestShare3.TINKOFF_SHARE,
+                TestShare4.TINKOFF_SHARE,
+                TestShare5.TINKOFF_SHARE
+        );
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingDay_returnsTradingDay_whenCurrencyTicker() {
+        Mocker.mockCurrencies(
+                instrumentsService,
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY
+        );
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        mockTradingSchedule(TestCurrency2.EXCHANGE, dateTime, dateTime);
+
+        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestCurrency2.TICKER, dateTime);
+
+        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
+    }
+
+    @Test
+    void getTradingDay_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
+        final String ticker = TestCurrency3.TICKER;
+
+        Mocker.mockCurrencies(
+                instrumentsService,
+                TestCurrency1.TINKOFF_CURRENCY,
+                TestCurrency2.TINKOFF_CURRENCY,
+                TestCurrency3.TINKOFF_CURRENCY,
+                TestCurrency4.TINKOFF_CURRENCY
+        );
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingDay_returnsTradingDay_whenEtfTicker() {
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        mockTradingSchedule(TestEtf3.EXCHANGE, dateTime, dateTime);
+
+        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestEtf3.TICKER, dateTime);
+
+        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
+    }
+
+    @Test
+    void getTradingDay_throwsIllegalArgumentException_whenMultipleEtfsFound() {
+        final String ticker = TestEtf3.TICKER;
+
+        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingDay_returnsTradingDay_whenBondTicker() {
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        mockTradingSchedule(TestBond2.EXCHANGE, dateTime, dateTime);
+
+        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestBond2.TICKER, dateTime);
+
+        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
+    }
+
+    @Test
+    void getTradingDay_throwsIllegalArgumentException_whenMultipleBondsFound() {
+        final String ticker = TestBond3.TICKER;
+
+        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @Test
+    void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
+        final String ticker = TestShare2.TICKER;
+
+        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
+
+        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    // endregion
+
     // region getTradingSchedule with exchange tests
 
     @Test

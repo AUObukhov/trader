@@ -28,6 +28,7 @@ import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -190,6 +191,14 @@ public class ExtInstrumentsService implements ApplicationContextAware {
                 () -> getSingleInstrumentCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size());
         Assert.isTrue(currencies.size() == 1, messageSupplier);
         return currencies.get(0);
+    }
+
+    /**
+     * @return {@link TradingDay} with given {@code dateTime} corresponding to given {@code ticker}
+     */
+    public TradingDay getTradingDay(final String ticker, final OffsetDateTime dateTime) {
+        final Interval interval = Interval.of(dateTime, dateTime);
+        return getTradingSchedule(ticker, interval).get(0);
     }
 
     /**
