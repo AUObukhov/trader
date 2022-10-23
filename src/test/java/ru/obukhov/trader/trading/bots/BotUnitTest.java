@@ -11,9 +11,9 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -48,7 +48,7 @@ class BotUnitTest {
     @Mock
     private ExtOperationsService extOperationsService;
     @Mock
-    private RealExtOrdersService ordersService;
+    private ExtOrdersService ordersService;
     @Mock
     private Context context;
     @Mock
@@ -315,7 +315,7 @@ class BotUnitTest {
                 final ExtMarketDataService extMarketDataService,
                 final ExtInstrumentsService extInstrumentsService,
                 final ExtOperationsService operationsService,
-                final RealExtOrdersService ordersService,
+                final ExtOrdersService ordersService,
                 final Context context,
                 final TradingStrategy strategy
         ) {

@@ -7,8 +7,8 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
-import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.interfaces.Context;
+import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -33,7 +33,7 @@ import java.util.List;
 @UtilityClass
 public class Mocker {
 
-    public static void mockEmptyOrder(final RealExtOrdersService ordersService, final String ticker) {
+    public static void mockEmptyOrder(final ExtOrdersService ordersService, final String ticker) {
         final Order order = TestData.createOrder();
         Mockito.when(ordersService.getOrders(ticker)).thenReturn(List.of(order));
     }
@@ -84,7 +84,7 @@ public class Mocker {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
     }
 
-    public static void verifyNoOrdersMade(final RealExtOrdersService ordersService) {
+    public static void verifyNoOrdersMade(final ExtOrdersService ordersService) {
         Mockito.verify(ordersService, Mockito.never())
                 .postOrder(
                         Mockito.anyString(),

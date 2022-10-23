@@ -11,10 +11,10 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
-import ru.obukhov.trader.market.impl.RealContext;
-import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
+import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
+import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
@@ -51,9 +51,9 @@ class RunnableBotUnitTest {
     @Mock
     private ExtOperationsService extOperationsService;
     @Mock
-    private RealExtOrdersService ordersService;
+    private ExtOrdersService ordersService;
     @Mock
-    private RealContext realContext;
+    private Context context;
     @Mock
     private TradingStrategy strategy;
     @Mock
@@ -337,7 +337,7 @@ class RunnableBotUnitTest {
         final String ticker = TestShare2.TICKER;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(ticker)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
@@ -368,7 +368,7 @@ class RunnableBotUnitTest {
         final String ticker = TestShare2.TICKER;
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 9, 23, 6);
 
-        Mockito.when(realContext.getCurrentDateTime()).thenReturn(currentDateTime);
+        Mockito.when(context.getCurrentDateTime()).thenReturn(currentDateTime);
         Mockito.when(schedulingProperties.isEnabled()).thenReturn(true);
         mockBotConfig(accountId, ticker, CandleInterval.CANDLE_INTERVAL_1_MIN, 0.0);
         Mockito.when(extMarketDataService.getTradingStatus(ticker)).thenReturn(SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING);
@@ -394,7 +394,7 @@ class RunnableBotUnitTest {
     }
 
     private RunnableBot createRunnableBot() {
-        return new RunnableBot(services, realContext, strategy, schedulingProperties, botConfig);
+        return new RunnableBot(services, context, strategy, schedulingProperties, botConfig);
     }
 
     @SuppressWarnings("SameParameterValue")
