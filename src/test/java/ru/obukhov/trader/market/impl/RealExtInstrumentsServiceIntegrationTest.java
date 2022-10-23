@@ -53,10 +53,10 @@ import java.util.List;
 
 @ActiveProfiles("test")
 @SpringBootTest
-class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
+class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
-    private ExtInstrumentsService extInstrumentsService;
+    private RealExtInstrumentsService realExtInstrumentsService;
 
     // region getSingleFigiByTicker tests
 
@@ -89,7 +89,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final String result = extInstrumentsService.getSingleFigiByTicker(ticker2);
+        final String result = realExtInstrumentsService.getSingleFigiByTicker(ticker2);
 
         Assertions.assertEquals(figi2, result);
     }
@@ -123,10 +123,10 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        extInstrumentsService.getSingleFigiByTicker(ticker2);
+        realExtInstrumentsService.getSingleFigiByTicker(ticker2);
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final String result = extInstrumentsService.getSingleFigiByTicker(ticker2);
+        final String result = realExtInstrumentsService.getSingleFigiByTicker(ticker2);
 
         Assertions.assertEquals(figi2, result);
     }
@@ -160,7 +160,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker3);
+        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker3);
         final String expectedMessage = "Expected single instrument for ticker '" + ticker3 + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -172,7 +172,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
-        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker);
+        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker);
         final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -195,7 +195,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final Executable executable = () -> extInstrumentsService.getSingleFigiByTicker(ticker4);
+        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker4);
         final String expectedMessage = "Expected single instrument for ticker '" + ticker4 + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -233,7 +233,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker3);
+        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker3);
 
         final List<String> expectedResult = List.of(figi3, figi4);
         Assertions.assertEquals(expectedResult, result);
@@ -268,10 +268,10 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 .build();
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        extInstrumentsService.getFigiesByTicker(ticker3);
+        realExtInstrumentsService.getFigiesByTicker(ticker3);
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker3);
+        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker3);
 
         final List<String> expectedResult = List.of(figi3, figi4);
         Assertions.assertEquals(expectedResult, result);
@@ -284,7 +284,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
 
-        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker);
+        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -307,7 +307,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
 
-        final List<String> result = extInstrumentsService.getFigiesByTicker(ticker4);
+        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker4);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -323,7 +323,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        final String result = extInstrumentsService.getTickerByFigi(figi);
+        final String result = realExtInstrumentsService.getTickerByFigi(figi);
 
         Assertions.assertEquals(ticker, result);
     }
@@ -335,10 +335,10 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = TestShare1.FIGI;
 
         Mocker.mockTickerByFigi(instrumentsService, ticker, figi);
-        extInstrumentsService.getTickerByFigi(figi);
+        realExtInstrumentsService.getTickerByFigi(figi);
 
         Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(null);
-        final String result = extInstrumentsService.getTickerByFigi(figi);
+        final String result = realExtInstrumentsService.getTickerByFigi(figi);
 
         Assertions.assertEquals(ticker, result);
     }
@@ -348,7 +348,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getTickerByFigi_throwsIllegalArgumentException_whenNoInstrument() {
         final String figi = TestShare1.FIGI;
 
-        final Executable executable = () -> extInstrumentsService.getTickerByFigi(figi);
+        final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
         final String expectedMessage = "Not found instrument for figi '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -361,7 +361,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_returnsExchange_whenShareTicker() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final Exchange result = extInstrumentsService.getExchange(TestShare2.TICKER);
+        final Exchange result = realExtInstrumentsService.getExchange(TestShare2.TICKER);
 
         Assertions.assertEquals(TestShare2.EXCHANGE, result);
     }
@@ -379,14 +379,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         );
 
         final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     @Test
     void getExchange_returnsExchange_whenCurrencyTicker() {
         Mocker.mockCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
 
-        final Exchange result = extInstrumentsService.getExchange(TestCurrency2.TICKER);
+        final Exchange result = realExtInstrumentsService.getExchange(TestCurrency2.TICKER);
 
         Assertions.assertEquals(TestCurrency2.EXCHANGE, result);
     }
@@ -404,14 +404,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         );
 
         final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     @Test
     void getExchange_returnsExchange_whenEtfTicker() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final Exchange result = extInstrumentsService.getExchange(TestEtf3.TICKER);
+        final Exchange result = realExtInstrumentsService.getExchange(TestEtf3.TICKER);
 
         Assertions.assertEquals(TestEtf3.EXCHANGE, result);
     }
@@ -422,14 +422,14 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     @Test
     void getExchange_returnsExchange_whenBondTicker() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final Exchange result = extInstrumentsService.getExchange(TestBond2.TICKER);
+        final Exchange result = realExtInstrumentsService.getExchange(TestBond2.TICKER);
 
         Assertions.assertEquals(TestBond2.EXCHANGE, result);
     }
@@ -441,7 +441,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     @Test
@@ -449,7 +449,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestShare2.TICKER;
 
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getExchange(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
     // endregion
@@ -460,7 +460,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getShares_returnsShare_whenSingleShareFound() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER);
+        final List<Share> result = realExtInstrumentsService.getShares(TestShare2.TICKER);
 
         final List<Share> expectedShares = List.of(TestShare2.SHARE);
         Assertions.assertEquals(expectedShares, result);
@@ -470,7 +470,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getShares_returnsShareIgnoreCase_whenSingleShareFound() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final List<Share> result = extInstrumentsService.getShares(TestShare2.TICKER.toLowerCase());
+        final List<Share> result = realExtInstrumentsService.getShares(TestShare2.TICKER.toLowerCase());
 
         final List<Share> expectedShares = List.of(TestShare2.SHARE);
         Assertions.assertEquals(expectedShares, result);
@@ -480,7 +480,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getShares_returnsEmptyList_whenNoShares() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final List<Share> result = extInstrumentsService.getShares(TestShare4.TICKER);
+        final List<Share> result = realExtInstrumentsService.getShares(TestShare4.TICKER);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -489,7 +489,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getShares_returnsMultipleShares_whenMultipleShares() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
-        final List<Share> result = extInstrumentsService.getShares(TestShare5.TICKER);
+        final List<Share> result = realExtInstrumentsService.getShares(TestShare5.TICKER);
 
         final List<Share> expectedShares = List.of(TestShare4.SHARE, TestShare5.SHARE);
         Assertions.assertEquals(expectedShares, result);
@@ -503,7 +503,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleShare_returnsShare_whenSingleShareFound() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER);
+        final Share result = realExtInstrumentsService.getSingleShare(TestShare2.TICKER);
 
         Assertions.assertEquals(TestShare2.SHARE, result);
     }
@@ -512,7 +512,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleShare_returnsShareIgnoreCase_whenSingleShareFound() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final Share result = extInstrumentsService.getSingleShare(TestShare2.TICKER.toLowerCase());
+        final Share result = realExtInstrumentsService.getSingleShare(TestShare2.TICKER.toLowerCase());
 
         Assertions.assertEquals(TestShare2.SHARE, result);
     }
@@ -522,7 +522,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final String ticker = TestShare3.TICKER;
-        final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
+        final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
         final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -532,7 +532,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
 
         final String ticker = TestShare4.TICKER;
-        final Executable executable = () -> extInstrumentsService.getSingleShare(ticker);
+        final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
         final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -545,7 +545,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getEtfs_returnsEtf_whenSingleEtfFound() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
+        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
 
         final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
         Assertions.assertEquals(expectedEtfs, result);
@@ -555,7 +555,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getEtfs_returnsEtfIgnoreCase_whenSingleEtfFound() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER.toLowerCase());
+        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER.toLowerCase());
 
         final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
         Assertions.assertEquals(expectedEtfs, result);
@@ -565,7 +565,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getEtfs_returnsEmptyList_whenNoEtfs() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
 
-        final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
+        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -574,7 +574,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
-        final List<Etf> result = extInstrumentsService.getEtfs(TestEtf3.TICKER);
+        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
 
         final List<Etf> expectedEtfs = List.of(TestEtf3.ETF, TestEtf4.ETF);
 
@@ -589,7 +589,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleEtf_returnsEtf_whenEtfFound() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER);
+        final Etf result = realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER);
 
         Assertions.assertEquals(TestEtf3.ETF, result);
     }
@@ -598,7 +598,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleEtf_returnsEtfIgnoreCase_whenEtfFound() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final Etf result = extInstrumentsService.getSingleEtf(TestEtf3.TICKER.toLowerCase());
+        final Etf result = realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER.toLowerCase());
 
         Assertions.assertEquals(TestEtf3.ETF, result);
     }
@@ -610,7 +610,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final String expectedMessage = "Expected single etf for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(ticker), expectedMessage);
     }
 
     @Test
@@ -618,7 +618,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
         final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
     }
 
     // endregion
@@ -629,7 +629,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getBonds_returnsBond_whenSingleBondFound() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER);
+        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond1.TICKER);
 
         final List<Bond> expectedBonds = List.of(TestBond1.BOND);
         Assertions.assertEquals(expectedBonds, result);
@@ -639,7 +639,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getBonds_returnsBondIgnoreCase_whenSingleBondFound() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final List<Bond> result = extInstrumentsService.getBonds(TestBond1.TICKER.toLowerCase());
+        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond1.TICKER.toLowerCase());
 
         final List<Bond> expectedBonds = List.of(TestBond1.BOND);
         Assertions.assertEquals(expectedBonds, result);
@@ -649,7 +649,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getBonds_returnsEmptyList_whenNoBonds() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final List<Bond> result = extInstrumentsService.getBonds(TestBond2.TICKER);
+        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond2.TICKER);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -658,7 +658,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getBonds_returnsMultipleBonds_whenMultipleBonds() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final List<Bond> result = extInstrumentsService.getBonds(TestBond4.TICKER);
+        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond4.TICKER);
 
         final List<Bond> expectedBonds = List.of(TestBond3.BOND, TestBond4.BOND);
 
@@ -673,7 +673,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleBond_returnsBond_whenBondFound() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER);
+        final Bond result = realExtInstrumentsService.getSingleBond(TestBond2.TICKER);
 
         Assertions.assertEquals(TestBond2.BOND, result);
     }
@@ -682,7 +682,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleBond_returnsBondIgnoreCase_whenBondFound() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final Bond result = extInstrumentsService.getSingleBond(TestBond2.TICKER.toLowerCase());
+        final Bond result = realExtInstrumentsService.getSingleBond(TestBond2.TICKER.toLowerCase());
 
         Assertions.assertEquals(TestBond2.BOND, result);
     }
@@ -694,7 +694,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestBond2.TICKER;
 
         final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleBond(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
     }
 
     @Test
@@ -704,7 +704,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestBond3.TICKER;
 
         final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleBond(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
     }
 
     // endregion
@@ -720,7 +720,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency3.TINKOFF_CURRENCY,
                 TestCurrency4.TINKOFF_CURRENCY
         );
-        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER);
+        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency1.TICKER);
 
         final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
         Assertions.assertEquals(expectedCurrencies, result);
@@ -736,7 +736,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency1.TICKER.toLowerCase());
+        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency1.TICKER.toLowerCase());
 
         final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
         Assertions.assertEquals(expectedCurrencies, result);
@@ -751,7 +751,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency2.TICKER);
+        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency2.TICKER);
 
         Assertions.assertTrue(result.isEmpty());
     }
@@ -766,7 +766,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final List<CurrencyInstrument> result = extInstrumentsService.getCurrencies(TestCurrency3.TICKER);
+        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency3.TICKER);
 
         final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency3.CURRENCY, TestCurrency4.CURRENCY);
 
@@ -787,7 +787,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER);
+        final CurrencyInstrument result = realExtInstrumentsService.getSingleCurrency(TestCurrency2.TICKER);
 
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
     }
@@ -802,7 +802,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final CurrencyInstrument result = extInstrumentsService.getSingleCurrency(TestCurrency2.TICKER.toLowerCase());
+        final CurrencyInstrument result = realExtInstrumentsService.getSingleCurrency(TestCurrency2.TICKER.toLowerCase());
 
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
     }
@@ -819,7 +819,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestCurrency2.TICKER;
 
         final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleCurrency(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
     @Test
@@ -835,7 +835,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestCurrency3.TICKER;
 
         final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> extInstrumentsService.getSingleCurrency(ticker), expectedMessage);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
     // endregion
@@ -850,7 +850,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestShare2.TICKER, dateTime);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestShare2.TICKER, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
     }
@@ -869,7 +869,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
         final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -886,7 +886,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestCurrency2.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestCurrency2.TICKER, dateTime);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestCurrency2.TICKER, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
     }
@@ -905,7 +905,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
         final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -918,7 +918,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestEtf3.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestEtf3.TICKER, dateTime);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestEtf3.TICKER, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
     }
@@ -931,7 +931,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
         final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -944,7 +944,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestBond2.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = extInstrumentsService.getTradingDay(TestBond2.TICKER, dateTime);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestBond2.TICKER, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
     }
@@ -957,7 +957,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
         final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -968,7 +968,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingDay(ticker, dateTime);
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -985,7 +985,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+        final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1002,7 +1002,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+        final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1019,7 +1019,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+        final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1036,7 +1036,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+        final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1053,7 +1053,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(exchange, from, to);
 
-        final List<TradingDay> result = extInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
+        final List<TradingDay> result = realExtInstrumentsService.getTradingSchedule(exchange, Interval.of(from, to));
 
         final List<TradingDay> expectedResult = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1074,7 +1074,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1091,7 +1091,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1108,7 +1108,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1125,7 +1125,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1141,7 +1141,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1163,7 +1163,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1181,7 +1181,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestCurrency2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestCurrency2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestCurrency2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1203,7 +1203,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1217,7 +1217,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestEtf3.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestEtf3.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestEtf3.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1233,7 +1233,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1247,7 +1247,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestBond2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = extInstrumentsService.getTradingSchedule(TestBond2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestBond2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1263,7 +1263,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1275,7 +1275,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> extInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1304,7 +1304,7 @@ class ExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
                 .thenReturn(List.of(tradingSchedule1, tradingSchedule2));
 
-        final List<TradingSchedule> result = extInstrumentsService.getTradingSchedules(Interval.of(from, to));
+        final List<TradingSchedule> result = realExtInstrumentsService.getTradingSchedules(Interval.of(from, to));
 
         final List<TradingDay> expectedTradingDays1 = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
         final List<TradingDay> expectedTradingDays2 = List.of(TestTradingDay3.TRADING_DAY);

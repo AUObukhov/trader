@@ -32,7 +32,7 @@ class RealExtOrdersServiceUnitTest {
     @Mock
     private OrdersService ordersService;
     @Mock
-    private ExtInstrumentsService extInstrumentsService;
+    private RealExtInstrumentsService realExtInstrumentsService;
 
     @InjectMocks
     private RealExtOrdersService realExtOrdersService;
@@ -180,7 +180,7 @@ class RealExtOrdersServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
                 accountId,
                 TestData.createOrderState("order0", figi),
@@ -214,7 +214,7 @@ class RealExtOrdersServiceUnitTest {
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
                 .setCurrency(currency)

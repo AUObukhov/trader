@@ -13,16 +13,17 @@ import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
 import ru.obukhov.trader.grafana.GrafanaService;
-import ru.obukhov.trader.market.impl.ExtInstrumentsService;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.RealContext;
+import ru.obukhov.trader.market.impl.RealExtInstrumentsService;
 import ru.obukhov.trader.market.impl.RealExtOperationsService;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.interfaces.Context;
+import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.trading.bots.RunnableBot;
@@ -99,26 +100,29 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtMarketDataService extMarketDataService(final ExtInstrumentsService extInstrumentsService, final MarketDataService marketDataService) {
-        return new ExtMarketDataService(extInstrumentsService, marketDataService);
+    public ExtMarketDataService extMarketDataService(
+            final RealExtInstrumentsService realExtInstrumentsService,
+            final MarketDataService marketDataService
+    ) {
+        return new ExtMarketDataService(realExtInstrumentsService, marketDataService);
     }
 
     @Bean
-    public ExtInstrumentsService extInstrumentsService(final InstrumentsService instrumentsService) {
-        return new ExtInstrumentsService(instrumentsService);
+    public RealExtInstrumentsService realExtInstrumentsService(final InstrumentsService instrumentsService) {
+        return new RealExtInstrumentsService(instrumentsService);
     }
 
     @Bean
     public ExtOperationsService realExtOperationsService(
             final OperationsService operationsService,
-            final ExtInstrumentsService extInstrumentsService
+            final RealExtInstrumentsService realExtInstrumentsService
     ) {
-        return new RealExtOperationsService(operationsService, extInstrumentsService);
+        return new RealExtOperationsService(operationsService, realExtInstrumentsService);
     }
 
     @Bean
-    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService, final ExtInstrumentsService extInstrumentsService) {
-        return new RealExtOrdersService(ordersService, extInstrumentsService);
+    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService, final RealExtInstrumentsService realExtInstrumentsService) {
+        return new RealExtOrdersService(ordersService, realExtInstrumentsService);
     }
 
     @Bean
@@ -134,11 +138,11 @@ public class BeanConfiguration {
     @Bean
     public ServicesContainer services(
             final ExtMarketDataService realExtMarketDataService,
-            final ExtInstrumentsService extInstrumentsService,
+            final ExtInstrumentsService realExtInstrumentsService,
             final ExtOperationsService realExtOperationsService,
             final RealExtOrdersService realExtOrdersService
     ) {
-        return new ServicesContainer(realExtMarketDataService, extInstrumentsService, realExtOperationsService, realExtOrdersService);
+        return new ServicesContainer(realExtMarketDataService, realExtInstrumentsService, realExtOperationsService, realExtOrdersService);
     }
 
     @Bean

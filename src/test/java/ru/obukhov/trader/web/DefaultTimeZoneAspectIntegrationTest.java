@@ -16,7 +16,7 @@ import ru.obukhov.trader.grafana.model.GetDataRequest;
 import ru.obukhov.trader.grafana.model.Metric;
 import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
-import ru.obukhov.trader.market.impl.ExtInstrumentsService;
+import ru.obukhov.trader.market.impl.RealExtInstrumentsService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -40,7 +40,7 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
     @MockBean
     private StatisticsService statisticsService;
     @MockBean
-    private ExtInstrumentsService extInstrumentsService;
+    private RealExtInstrumentsService realExtInstrumentsService;
 
     @SuppressWarnings("unused")
     static Stream<Arguments> getData() {
@@ -166,7 +166,7 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
         mockMvc.perform(requestBuilder);
 
         final ArgumentCaptor<Interval> argumentCaptor = ArgumentCaptor.forClass(Interval.class);
-        Mockito.verify(extInstrumentsService, Mockito.times(1))
+        Mockito.verify(realExtInstrumentsService, Mockito.times(1))
                 .getTradingSchedule(Mockito.any(Exchange.class), argumentCaptor.capture());
 
         final Interval expectedInterval = Interval.of(expectedFrom, expectedTo);
@@ -194,7 +194,7 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
         mockMvc.perform(requestBuilder);
 
         final ArgumentCaptor<Interval> argumentCaptor = ArgumentCaptor.forClass(Interval.class);
-        Mockito.verify(extInstrumentsService, Mockito.times(1))
+        Mockito.verify(realExtInstrumentsService, Mockito.times(1))
                 .getTradingSchedules(argumentCaptor.capture());
 
         final Interval expectedInterval = Interval.of(expectedFrom, expectedTo);

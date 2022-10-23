@@ -30,7 +30,7 @@ import java.util.List;
 class ExtMarketDataServiceUnitTest {
 
     @Mock
-    private ExtInstrumentsService extInstrumentsService;
+    private RealExtInstrumentsService realExtInstrumentsService;
     @Mock
     private MarketDataService marketDataService;
     @Mock
@@ -40,7 +40,7 @@ class ExtMarketDataServiceUnitTest {
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new ExtMarketDataService(extInstrumentsService, marketDataService);
+        this.service = new ExtMarketDataService(realExtInstrumentsService, marketDataService);
         Mockito.when(applicationContext.getBean(ExtMarketDataService.class)).thenReturn(service);
         service.setApplicationContext(applicationContext);
     }
@@ -53,8 +53,8 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2020, 1, 5))
@@ -86,8 +86,8 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1))
@@ -120,8 +120,8 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(10, DateTimeTestData.createDateTime(2016, 1, 1, 1))
@@ -155,8 +155,8 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(0, DateTimeTestData.createDateTime(2017, 1, 1, 1))
@@ -189,7 +189,7 @@ class ExtMarketDataServiceUnitTest {
         final String ticker = TestShare1.TICKER;
         final OffsetDateTime to = OffsetDateTime.now().minusDays(10);
 
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         final Executable executable = () -> service.getLastPrice(ticker, to);
         final String expectedMessage = "Not found last candle for ticker '" + ticker + "'";
@@ -204,8 +204,8 @@ class ExtMarketDataServiceUnitTest {
         final OffsetDateTime to = from.plusDays(1);
         final int closePrice = 10;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
                 .add(closePrice, from)
@@ -228,7 +228,7 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_1_MIN, currentDateTime);
 
@@ -242,8 +242,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -273,8 +273,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8, 1))
@@ -305,8 +305,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 9, 1))
@@ -337,7 +337,7 @@ class ExtMarketDataServiceUnitTest {
 
         final OffsetDateTime currentDateTime = DateUtils.atEndOfDay(DateTimeTestData.createDateTime(2020, 9, 10));
 
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         final List<Candle> candles = service.getLastCandles(ticker, limit, CandleInterval.CANDLE_INTERVAL_DAY, currentDateTime);
 
@@ -351,8 +351,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -382,8 +382,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 8))
@@ -414,8 +414,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 10;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2019, 9, 8))
@@ -446,8 +446,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 8))
@@ -472,8 +472,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2018, 9, 1))
@@ -501,8 +501,8 @@ class ExtMarketDataServiceUnitTest {
         final int limit = 5;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_DAY;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleShare(ticker)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(1, DateTimeTestData.createDateTime(2020, 9, 12))
@@ -534,7 +534,7 @@ class ExtMarketDataServiceUnitTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
 
         final int openPrice1 = 1000;
         final int closePrice1 = 1500;
@@ -612,7 +612,7 @@ class ExtMarketDataServiceUnitTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
 
         new CandleMocker(marketDataService, figi, candleInterval)
                 .mock();

@@ -30,7 +30,7 @@ import java.util.List;
 class RealExtOperationsServiceUnitTest {
 
     @Mock
-    private ExtInstrumentsService extInstrumentsService;
+    private RealExtInstrumentsService realExtInstrumentsService;
     @Mock
     private OperationsService operationsService;
 
@@ -53,7 +53,7 @@ class RealExtOperationsServiceUnitTest {
                 TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED)
         );
 
-        Mockito.when(extInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
+        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
         Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi))
                 .thenReturn(operations);
 
@@ -132,9 +132,9 @@ class RealExtOperationsServiceUnitTest {
         final Portfolio portfolio = TestData.createPortfolio(tinkoffPosition1, tinkoffPosition2, tinkoffPosition3);
         Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
 
-        Mockito.when(extInstrumentsService.getTickerByFigi(figi1)).thenReturn(ticker1);
-        Mockito.when(extInstrumentsService.getTickerByFigi(figi2)).thenReturn(ticker2);
-        Mockito.when(extInstrumentsService.getTickerByFigi(figi3)).thenReturn(ticker3);
+        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi1)).thenReturn(ticker1);
+        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi2)).thenReturn(ticker2);
+        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi3)).thenReturn(ticker3);
 
         // action
 

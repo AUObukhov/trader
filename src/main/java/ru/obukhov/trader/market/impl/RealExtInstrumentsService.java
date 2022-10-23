@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor
-public class ExtInstrumentsService implements ApplicationContextAware {
+public class RealExtInstrumentsService implements ExtInstrumentsService, ApplicationContextAware {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
@@ -43,7 +44,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
 
     private final InstrumentsService instrumentsService;
-    private ExtInstrumentsService self;
+    private RealExtInstrumentsService self;
 
     /**
      * @return FIGI corresponding to given {@code ticker}
@@ -242,7 +243,7 @@ public class ExtInstrumentsService implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(@NotNull final ApplicationContext applicationContext) {
-        this.self = applicationContext.getBean(ExtInstrumentsService.class);
+        this.self = applicationContext.getBean(RealExtInstrumentsService.class);
     }
 
 }

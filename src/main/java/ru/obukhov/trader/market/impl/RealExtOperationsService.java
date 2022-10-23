@@ -20,11 +20,11 @@ public class RealExtOperationsService implements ExtOperationsService {
     private static final PositionMapper POSITION_MAPPER = Mappers.getMapper(PositionMapper.class);
 
     private final OperationsService operationsService;
-    private final ExtInstrumentsService extInstrumentsService;
+    private final RealExtInstrumentsService realExtInstrumentsService;
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker) {
-        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
+        final String figi = realExtInstrumentsService.getSingleFigiByTicker(ticker);
         return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 
@@ -32,7 +32,7 @@ public class RealExtOperationsService implements ExtOperationsService {
     public List<PortfolioPosition> getPositions(final String accountId) {
         return operationsService.getPortfolioSync(accountId).getPositions().stream()
                 .map(position -> {
-                    final String ticker = extInstrumentsService.getTickerByFigi(position.getFigi());
+                    final String ticker = realExtInstrumentsService.getTickerByFigi(position.getFigi());
                     return POSITION_MAPPER.map(ticker, position);
                 })
                 .toList();
