@@ -949,30 +949,25 @@ class DateUtilsUnitTest {
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 11),
-                        DateTimeTestData.createDateTime(2021, 10, 11),
-                        "from must be before to"
+                        DateTimeTestData.createDateTime(2021, 10, 11)
                 ),
                 Arguments.of(
                         "0 0 0 1 * ?",
                         DateTimeTestData.createDateTime(2021, 10, 11, 0, 0, 0, 1),
-                        DateTimeTestData.createDateTime(2021, 10, 11),
-                        "from must be before to"
+                        DateTimeTestData.createDateTime(2021, 10, 11)
                 )
         );
     }
 
     @ParameterizedTest
     @MethodSource("getData_forGetCronHitsBetweenDates_throwsIllegalArgumentException")
-    void getCronHitsBetweenDates_throwsIllegalArgumentException(
-            final String expression,
-            final OffsetDateTime from,
-            final OffsetDateTime to,
-            final String expectedMessage
-    ) throws ParseException {
+    void getCronHitsBetweenDates_throwsIllegalArgumentException(final String expression, final OffsetDateTime from, final OffsetDateTime to)
+            throws ParseException {
 
         final CronExpression cronExpression = new CronExpression(expression);
 
         final Executable executable = () -> DateUtils.getCronHitsBetweenDates(cronExpression, from, to);
+        final String expectedMessage = String.format("from [%s] must be before to [%s]", from, to);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
