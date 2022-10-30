@@ -28,4 +28,12 @@ public interface DateTimeMapper {
         return Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build();
     }
 
+    default Timestamp instantToTimestamp(final Instant instant) {
+        if (instant == null) {
+            return null;
+        }
+
+        return Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build();
+    }
+
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 class DateTimeMapperUnitTest {
@@ -42,6 +43,24 @@ class DateTimeMapperUnitTest {
         final Timestamp expectedTimestamp = DateTimeTestData.createTimestamp(1651562430, 123);
 
         final Timestamp timestamp = mapper.offsetDateTimeToTimestamp(dateTime);
+
+        Assertions.assertEquals(expectedTimestamp, timestamp);
+    }
+
+    @Test
+    void instantToTimestampToTimestamp_whenNull() {
+        final Timestamp timestamp = mapper.instantToTimestamp(null);
+
+        Assertions.assertNull(timestamp);
+    }
+
+    @Test
+    void instantToTimestampToTimestamp_whenNotNull() {
+        final Instant instant = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123)
+                .toInstant();
+        final Timestamp expectedTimestamp = DateTimeTestData.createTimestamp(1651562430, 123);
+
+        final Timestamp timestamp = mapper.instantToTimestamp(instant);
 
         Assertions.assertEquals(expectedTimestamp, timestamp);
     }
