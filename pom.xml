@@ -21,8 +21,8 @@
         <java.version>17</java.version>
         <apache.poi.version>5.0.0</apache.poi.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
-        <mockito.version>4.8.0</mockito.version>
-        <junit-jupiter.version>5.9.0</junit-jupiter.version>
+        <mockito.version>5.2.0</mockito.version>
+        <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <io.springfox.version>3.0.0</io.springfox.version>
         <spring-boot.version>2.7.4</spring-boot.version>
         <lombok.version>1.18.26</lombok.version>
@@ -203,7 +203,7 @@
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.12.16</version>
+            <version>1.14.2</version>
             <scope>test</scope>
         </dependency>
 
