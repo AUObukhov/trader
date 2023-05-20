@@ -25,7 +25,7 @@
         <junit-jupiter.version>5.9.0</junit-jupiter.version>
         <io.springfox.version>3.0.0</io.springfox.version>
         <spring-boot.version>2.7.4</spring-boot.version>
-        <lombok.version>1.18.24</lombok.version>
+        <lombok.version>1.18.26</lombok.version>
         <fasterxml.jackson.version>2.14.2</fasterxml.jackson.version>
     </properties>
 
