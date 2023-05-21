@@ -175,6 +175,14 @@
             <version>2.5</version>
         </dependency>
 
+        <!-- tinkoff -->
+
+        <dependency>
+            <groupId>ru.tinkoff.piapi</groupId>
+            <artifactId>java-sdk-core</artifactId>
+            <version>1.2</version>
+        </dependency>
+
         <!-- testing -->
 
         <dependency>
@@ -217,12 +225,6 @@
             <artifactId>spring-test</artifactId>
             <version>6.0.9</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.tinkoff.piapi</groupId>
-            <artifactId>java-sdk-core</artifactId>
-            <version>1.0.14</version>
         </dependency>
 
     </dependencies>
