@@ -2,6 +2,9 @@ package ru.obukhov.trader.trading.strategy.impl;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,6 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.model.TradingStrategyParams;
 import ru.obukhov.trader.web.model.BotConfig;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;

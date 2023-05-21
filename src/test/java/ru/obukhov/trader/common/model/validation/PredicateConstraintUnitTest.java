@@ -1,5 +1,7 @@
 package ru.obukhov.trader.common.model.validation;
 
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
@@ -11,8 +13,6 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.metadata.ConstraintDescriptor;
 import java.util.function.Predicate;
 
 class PredicateConstraintUnitTest {

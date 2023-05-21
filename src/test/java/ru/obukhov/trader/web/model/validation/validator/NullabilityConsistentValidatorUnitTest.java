@@ -1,5 +1,7 @@
 package ru.obukhov.trader.web.model.validation.validator;
 
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.metadata.ConstraintDescriptor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
@@ -11,9 +13,6 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
-
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.metadata.ConstraintDescriptor;
 
 class NullabilityConsistentValidatorUnitTest {
 

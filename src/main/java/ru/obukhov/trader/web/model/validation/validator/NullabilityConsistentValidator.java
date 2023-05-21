@@ -1,11 +1,11 @@
 package ru.obukhov.trader.web.model.validation.validator;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 import ru.obukhov.trader.common.util.ReflectionUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.Map;
 
 /**

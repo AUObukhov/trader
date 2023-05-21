@@ -8,7 +8,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Candle;
@@ -33,16 +32,17 @@ class ExtMarketDataServiceUnitTest {
     private RealExtInstrumentsService realExtInstrumentsService;
     @Mock
     private MarketDataService marketDataService;
-    @Mock
-    private ApplicationContext applicationContext;
 
     private ExtMarketDataService service;
+    private final ExtMarketDataService self = new ExtMarketDataService(realExtInstrumentsService, marketDataService, null) {
+        public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
+            return service.getMarketCandles(ticker, interval, candleInterval);
+        }
+    };
 
     @BeforeEach
     public void setUpEach() {
-        this.service = new ExtMarketDataService(realExtInstrumentsService, marketDataService);
-        Mockito.when(applicationContext.getBean(ExtMarketDataService.class)).thenReturn(service);
-        service.setApplicationContext(applicationContext);
+        this.service = new ExtMarketDataService(realExtInstrumentsService, marketDataService, self);
     }
 
     // region getCandles tests

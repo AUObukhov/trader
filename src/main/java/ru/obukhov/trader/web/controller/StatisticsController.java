@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.web.model.exchange.GetCandlesRequest;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
-
-import javax.validation.Valid;
 
 @Slf4j
 @RestController

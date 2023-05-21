@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.3</version>
+        <version>3.1.0</version>
     </parent>
 
     <properties>
@@ -24,7 +24,7 @@
         <mockito.version>5.2.0</mockito.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <io.springfox.version>3.0.0</io.springfox.version>
-        <spring-boot.version>2.7.4</spring-boot.version>
+        <spring-boot.version>3.1.0</spring-boot.version>
         <lombok.version>1.18.26</lombok.version>
         <fasterxml.jackson.version>2.14.2</fasterxml.jackson.version>
     </properties>
@@ -32,12 +32,6 @@
     <dependencies>
 
         <!-- springframework -->
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.3.23</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -169,6 +163,18 @@
             <version>3.1.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+
         <!-- testing -->
 
         <dependency>
@@ -204,6 +210,12 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>1.14.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>6.0.9</version>
             <scope>test</scope>
         </dependency>
 

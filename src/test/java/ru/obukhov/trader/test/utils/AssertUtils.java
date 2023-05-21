@@ -1,6 +1,9 @@
 package ru.obukhov.trader.test.utils;
 
 import com.google.protobuf.Timestamp;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.BooleanUtils;
@@ -34,9 +37,6 @@ import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
 import java.awt.Color;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;

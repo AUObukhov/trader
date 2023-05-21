@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,6 @@ import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j

@@ -1,11 +1,11 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.market.model.Currency;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data

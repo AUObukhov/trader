@@ -1,13 +1,12 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
-
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter

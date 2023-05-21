@@ -13,6 +13,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import ru.obukhov.trader.market.impl.ExtUsersService;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
+import java.time.Duration;
+
 @ExtendWith(MockitoExtension.class)
 class TokenValidationStartupListenerContextTest {
 
@@ -36,7 +38,9 @@ class TokenValidationStartupListenerContextTest {
 
     private void publishApplicationStartedEvent(ConfigurableApplicationContext context) {
         final SpringApplication springApplication = Mockito.mock(SpringApplication.class);
-        final ApplicationStartedEvent applicationStartedEvent = new ApplicationStartedEvent(springApplication, new String[0], context);
+        final String[] args = new String[0];
+        final Duration timeTaken = Duration.ofSeconds(10);
+        final ApplicationStartedEvent applicationStartedEvent = new ApplicationStartedEvent(springApplication, args, context, timeTaken);
         context.publishEvent(applicationStartedEvent);
     }
 

@@ -1,14 +1,12 @@
 package ru.obukhov.trader.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import jakarta.validation.constraints.NotNull;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@ConstructorBinding
 public record BotConfig(
         @NotNull(message = "accountId is mandatory")
         @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")

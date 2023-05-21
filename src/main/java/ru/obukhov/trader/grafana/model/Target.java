@@ -2,10 +2,9 @@ package ru.obukhov.trader.grafana.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @Accessors(chain = true)

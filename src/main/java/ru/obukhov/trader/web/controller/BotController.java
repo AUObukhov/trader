@@ -3,6 +3,7 @@ package ru.obukhov.trader.web.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -17,7 +18,6 @@ import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j

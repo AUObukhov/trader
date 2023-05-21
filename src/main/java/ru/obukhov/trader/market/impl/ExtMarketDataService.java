@@ -1,13 +1,10 @@
 package ru.obukhov.trader.market.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.CollectionUtils;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.CollectionsUtils;
@@ -35,14 +32,23 @@ import java.util.List;
  * Service to get information about market prices and instruments
  */
 @Slf4j
-@RequiredArgsConstructor
-public class ExtMarketDataService implements ApplicationContextAware {
+public class ExtMarketDataService {
 
     private static final CandleMapper CANDLE_MAPPER = Mappers.getMapper(CandleMapper.class);
 
     private final ExtInstrumentsService extInstrumentsService;
     private final MarketDataService marketDataService;
-    private ExtMarketDataService self;
+    private final ExtMarketDataService self;
+
+    public ExtMarketDataService(
+            final ExtInstrumentsService extInstrumentsService,
+            final MarketDataService marketDataService,
+            @Lazy final ExtMarketDataService self
+    ) {
+        this.extInstrumentsService = extInstrumentsService;
+        this.marketDataService = marketDataService;
+        this.self = self;
+    }
 
     /**
      * Loads candles by conditions period by period.
@@ -239,14 +245,5 @@ public class ExtMarketDataService implements ApplicationContextAware {
         final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
         return marketDataService.getTradingStatusSync(figi).getTradingStatus();
     }
-
-    // region ApplicationContextAware implementation
-
-    @Override
-    public void setApplicationContext(@NotNull ApplicationContext applicationContext) {
-        this.self = applicationContext.getBean(ExtMarketDataService.class);
-    }
-
-    // endregion
 
 }

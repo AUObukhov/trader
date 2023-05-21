@@ -1,11 +1,8 @@
 package ru.obukhov.trader.market.impl;
 
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
@@ -33,8 +30,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.function.Supplier;
 
-@RequiredArgsConstructor
-public class RealExtInstrumentsService implements ExtInstrumentsService, ApplicationContextAware {
+public class RealExtInstrumentsService implements ExtInstrumentsService {
 
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
@@ -44,7 +40,12 @@ public class RealExtInstrumentsService implements ExtInstrumentsService, Applica
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
 
     private final InstrumentsService instrumentsService;
-    private RealExtInstrumentsService self;
+    private final RealExtInstrumentsService self;
+
+    public RealExtInstrumentsService(final InstrumentsService instrumentsService, @Lazy final RealExtInstrumentsService self) {
+        this.instrumentsService = instrumentsService;
+        this.self = self;
+    }
 
     /**
      * @return FIGI corresponding to given {@code ticker}
@@ -239,11 +240,6 @@ public class RealExtInstrumentsService implements ExtInstrumentsService, Applica
 
     private static String getNotMultipleInstrumentCountErrorMessage(final String instrumentType, final String ticker, final int actualCount) {
         return "Expected maximum of one " + instrumentType + " for ticker '" + ticker + "'. Found " + actualCount;
-    }
-
-    @Override
-    public void setApplicationContext(@NotNull final ApplicationContext applicationContext) {
-        this.self = applicationContext.getBean(RealExtInstrumentsService.class);
     }
 
 }

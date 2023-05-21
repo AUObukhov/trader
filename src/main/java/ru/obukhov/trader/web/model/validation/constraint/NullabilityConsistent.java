@@ -1,9 +1,9 @@
 package ru.obukhov.trader.web.model.validation.constraint;
 
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import ru.obukhov.trader.web.model.validation.validator.NullabilityConsistentValidator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

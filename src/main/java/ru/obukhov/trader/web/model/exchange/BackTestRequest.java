@@ -1,13 +1,13 @@
 package ru.obukhov.trader.web.model.exchange;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.List;
 

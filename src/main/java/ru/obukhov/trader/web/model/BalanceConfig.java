@@ -1,6 +1,8 @@
 package ru.obukhov.trader.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +10,6 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.web.model.validation.constraint.NullabilityConsistent;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Objects;
 

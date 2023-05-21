@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,6 @@ import ru.obukhov.trader.grafana.GrafanaService;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
 import ru.obukhov.trader.grafana.model.QueryResult;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Api(tags = "Grafana datasource")
 @RestController
-@RequestMapping("/trader/grafana")
+@RequestMapping("/trader/grafana/")
 @RequiredArgsConstructor
 public class GrafanaController {
 
@@ -40,7 +40,7 @@ public class GrafanaController {
         // health check - do nothing
     }
 
-    @PostMapping("/query")
+    @PostMapping("query")
     @ApiOperation("Get metric's data")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),

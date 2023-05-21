@@ -1,8 +1,8 @@
 package ru.obukhov.trader.market.model;
 
+import jakarta.validation.constraints.NotNull;
 import ru.obukhov.trader.common.util.DecimalUtils;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 /**

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
@@ -102,14 +103,18 @@ public class BeanConfiguration {
     @Bean
     public ExtMarketDataService extMarketDataService(
             final RealExtInstrumentsService realExtInstrumentsService,
-            final MarketDataService marketDataService
+            final MarketDataService marketDataService,
+            @Lazy final ExtMarketDataService extMarketDataService
     ) {
-        return new ExtMarketDataService(realExtInstrumentsService, marketDataService);
+        return new ExtMarketDataService(realExtInstrumentsService, marketDataService, extMarketDataService);
     }
 
     @Bean
-    public RealExtInstrumentsService realExtInstrumentsService(final InstrumentsService instrumentsService) {
-        return new RealExtInstrumentsService(instrumentsService);
+    public RealExtInstrumentsService realExtInstrumentsService(
+            final InstrumentsService instrumentsService,
+            @Lazy final RealExtInstrumentsService realExtInstrumentsService
+    ) {
+        return new RealExtInstrumentsService(instrumentsService, realExtInstrumentsService);
     }
 
     @Bean
