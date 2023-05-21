@@ -11,7 +11,7 @@ market:
     duration: 480
 
 scheduling:
-  delay: 60000
+  delay: 120000
   enabled: true
 
 scheduled-bot:

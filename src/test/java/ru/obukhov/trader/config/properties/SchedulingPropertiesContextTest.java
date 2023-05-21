@@ -6,6 +6,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.time.Duration;
+
 class SchedulingPropertiesContextTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
@@ -21,6 +23,7 @@ class SchedulingPropertiesContextTest {
 
                     final SchedulingProperties schedulingProperties = context.getBean(SchedulingProperties.class);
 
+                    Assertions.assertEquals(Duration.ofMillis(120000), schedulingProperties.getDelay());
                     Assertions.assertTrue(schedulingProperties.isEnabled());
                 });
     }
