@@ -119,6 +119,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+                .setFigi(figi1)
                 .setTicker(ticker1)
                 .setInstrumentType(instrumentType1)
                 .setAveragePositionPrice(averagePositionPrice1)
@@ -129,6 +130,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLotSize(lotSize1)
                 .build();
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
+                .setFigi(figi2)
                 .setTicker(ticker2)
                 .setInstrumentType(instrumentType2)
                 .setAveragePositionPrice(averagePositionPrice2)
@@ -139,6 +141,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setLotSize(lotSize2)
                 .build();
         final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
+                .setFigi(figi3)
                 .setTicker(ticker3)
                 .setInstrumentType(instrumentType3)
                 .setAveragePositionPrice(averagePositionPrice3)

@@ -90,6 +90,7 @@ class PortfolioPositionUnitTest {
         final PortfolioPosition newPosition = position.cloneWithNewQuantity(newQuantity, newQuantityLots);
 
         final PortfolioPosition expectedPosition = new PortfolioPosition(
+                null,
                 position.ticker(),
                 position.instrumentType(),
                 newQuantity,
@@ -124,6 +125,7 @@ class PortfolioPositionUnitTest {
         final PortfolioPosition newPosition = position.cloneWithNewValues(newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
 
         final PortfolioPosition expectedPosition = new PortfolioPosition(
+                null,
                 position.ticker(),
                 position.instrumentType(),
                 newQuantity,

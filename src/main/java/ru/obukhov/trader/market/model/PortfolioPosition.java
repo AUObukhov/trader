@@ -9,6 +9,7 @@ import java.math.BigDecimal;
  * Convenient replacement to {@link ru.tinkoff.piapi.core.models.Position}
  */
 public record PortfolioPosition(
+        @NotNull String figi,
         @NotNull String ticker,
         @NotNull InstrumentType instrumentType,
         @NotNull BigDecimal quantity,
@@ -56,7 +57,16 @@ public record PortfolioPosition(
     ) {
         final Money newAveragePositionPrice = Money.of(getCurrency(), averagePositionPriceValue);
         final Money newCurrentPrice = Money.of(getCurrency(), newCurrentPriceValue);
-        return new PortfolioPosition(ticker, instrumentType, quantity, newAveragePositionPrice, newExpectedYield, newCurrentPrice, quantityLots);
+        return new PortfolioPosition(
+                figi,
+                ticker,
+                instrumentType,
+                quantity,
+                newAveragePositionPrice,
+                newExpectedYield,
+                newCurrentPrice,
+                quantityLots
+        );
     }
 
     /**
@@ -70,6 +80,7 @@ public record PortfolioPosition(
     ) {
         final Money newCurrentPrice = Money.of(getCurrency(), currentPrice);
         return new PortfolioPosition(
+                figi,
                 ticker,
                 instrumentType,
                 quantity,
@@ -85,6 +96,7 @@ public record PortfolioPosition(
      */
     public PortfolioPosition cloneWithNewQuantity(final BigDecimal quantity, final BigDecimal quantityLots) {
         return new PortfolioPosition(
+                figi,
                 ticker,
                 instrumentType,
                 quantity,

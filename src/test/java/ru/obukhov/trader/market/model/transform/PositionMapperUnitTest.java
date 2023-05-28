@@ -41,7 +41,8 @@ class PositionMapperUnitTest {
 
         final PortfolioPosition position = mapper.map(ticker, source);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
+        final PortfolioPosition expectedPosition = new PortfolioPositionBuilder()
+                .setFigi(figi)
                 .setTicker(ticker)
                 .setInstrumentType(instrumentType)
                 .setAveragePositionPrice(averagePositionPrice)
@@ -52,7 +53,7 @@ class PositionMapperUnitTest {
                 .setLotSize(lotSize)
                 .build();
 
-        AssertUtils.assertEquals(expectedPosition1, position);
+        AssertUtils.assertEquals(expectedPosition, position);
     }
 
 }

@@ -98,7 +98,7 @@ public class TestData {
     ) {
         return ru.tinkoff.piapi.contract.v1.PortfolioPosition.newBuilder()
                 .setFigi(figi)
-                .setInstrumentType(instrumentType.name())
+                .setInstrumentType(instrumentType.getValue())
                 .setQuantity(createQuotation(quantity))
                 .setAveragePositionPrice(createTinkoffMoneyValue(averagePositionPrice, currency))
                 .setExpectedYield(createQuotation(expectedYield))

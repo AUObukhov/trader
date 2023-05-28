@@ -125,6 +125,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
         if (existingPosition == null) {
             final Money price = Money.of(share.currency(), currentPrice);
             position = new PortfolioPosition(
+                    null,
                     ticker,
                     InstrumentType.SHARE,
                     BigDecimal.valueOf(quantity),
