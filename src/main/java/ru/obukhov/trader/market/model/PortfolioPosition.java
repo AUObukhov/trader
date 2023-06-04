@@ -2,6 +2,7 @@ package ru.obukhov.trader.market.model;
 
 import jakarta.validation.constraints.NotNull;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
 import java.math.BigDecimal;
 

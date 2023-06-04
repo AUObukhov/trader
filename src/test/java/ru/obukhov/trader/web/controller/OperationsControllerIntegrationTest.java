@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -16,6 +15,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
@@ -47,7 +47,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
-        final InstrumentType instrumentType1 = InstrumentType.SHARE;
+        final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
@@ -57,7 +57,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
-        final InstrumentType instrumentType2 = InstrumentType.SHARE;
+        final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
@@ -67,7 +67,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final String ticker3 = TestShare3.TICKER;
         final String figi3 = TestShare3.FIGI;
-        final InstrumentType instrumentType3 = InstrumentType.ETF;
+        final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;

@@ -7,13 +7,13 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
@@ -127,7 +127,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             position = new PortfolioPosition(
                     null,
                     ticker,
-                    InstrumentType.SHARE,
+                    InstrumentType.INSTRUMENT_TYPE_SHARE,
                     BigDecimal.valueOf(quantity),
                     price,
                     DecimalUtils.setDefaultScale(0),

@@ -6,6 +6,7 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
 import java.math.BigDecimal;
 
@@ -16,7 +17,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(5)
                 .setCurrentPrice(15)
@@ -31,7 +32,7 @@ class PortfolioPositionUnitTest {
     void getTotalPrice() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
                 .setCurrentPrice(15)
@@ -47,7 +48,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
                 .setCurrentPrice(20)
@@ -76,7 +77,7 @@ class PortfolioPositionUnitTest {
     void cloneWithNewQuantity() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentPrice(20)
@@ -108,7 +109,7 @@ class PortfolioPositionUnitTest {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setTicker(TestShare1.TICKER)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
                 .setCurrentPrice(20)

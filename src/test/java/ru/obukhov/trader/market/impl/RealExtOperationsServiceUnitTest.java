@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -18,6 +17,7 @@ import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.core.OperationsService;
@@ -70,7 +70,7 @@ class RealExtOperationsServiceUnitTest {
 
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
-        final InstrumentType instrumentType1 = InstrumentType.SHARE;
+        final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
@@ -80,7 +80,7 @@ class RealExtOperationsServiceUnitTest {
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
-        final InstrumentType instrumentType2 = InstrumentType.SHARE;
+        final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
@@ -90,7 +90,7 @@ class RealExtOperationsServiceUnitTest {
 
         final String ticker3 = TestEtf1.TICKER;
         final String figi3 = TestEtf1.FIGI;
-        final InstrumentType instrumentType3 = InstrumentType.ETF;
+        final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;

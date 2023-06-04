@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -26,6 +25,7 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
 import ru.obukhov.trader.test.utils.model.share.TestShare5;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
@@ -126,7 +126,7 @@ class FakeExtOrdersServiceUnitTest {
         verifyBalanceSet(accountId, currency, balance2);
         final PortfolioPosition expectedPosition = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(currentPrice)
                 .setExpectedYield(0)
                 .setCurrentPrice(currentPrice)
@@ -160,7 +160,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
@@ -171,7 +171,7 @@ class FakeExtOrdersServiceUnitTest {
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(expectedAveragePositionPrice)
                 .setExpectedYield(expectedExpectedYield)
                 .setCurrentPrice(price2)
@@ -235,7 +235,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker1)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
@@ -245,7 +245,7 @@ class FakeExtOrdersServiceUnitTest {
                 .build();
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setTicker(ticker2)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price2)
                 .setExpectedYield(0)
                 .setCurrentPrice(price2)
@@ -255,7 +255,7 @@ class FakeExtOrdersServiceUnitTest {
                 .build();
         final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
                 .setTicker(ticker3)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price3)
                 .setExpectedYield(0)
                 .setCurrentPrice(price3)
@@ -318,7 +318,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
@@ -330,7 +330,7 @@ class FakeExtOrdersServiceUnitTest {
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(expectedAveragePositionPrice)
                 .setExpectedYield(expectedExpectedYield)
                 .setCurrentPrice(price2)
@@ -390,7 +390,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
@@ -402,7 +402,7 @@ class FakeExtOrdersServiceUnitTest {
         final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(expectedAveragePositionPrice)
                 .setExpectedYield(expectedExpectedYield)
                 .setCurrentPrice(price2)
@@ -464,7 +464,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(price1)
                 .setExpectedYield(0)
                 .setCurrentPrice(price1)
@@ -476,7 +476,7 @@ class FakeExtOrdersServiceUnitTest {
         final double expectedExpectedYield2 = quantityLots1 * (price2 - price1) * lotSize;
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(expectedAveragePositionPrice2)
                 .setExpectedYield(expectedExpectedYield2)
                 .setCurrentPrice(price2)
@@ -488,7 +488,7 @@ class FakeExtOrdersServiceUnitTest {
         final double expectedExpectedYield3 = (price3 - expectedAveragePositionPrice2) * (quantityLots1 + quantityLots2 - quantityLots3) * lotSize;
         final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
                 .setTicker(ticker)
-                .setInstrumentType(InstrumentType.SHARE)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(expectedAveragePositionPrice2)
                 .setExpectedYield(expectedExpectedYield3)
                 .setCurrentPrice(price3)

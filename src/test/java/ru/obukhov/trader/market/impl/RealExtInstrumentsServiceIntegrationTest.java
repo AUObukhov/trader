@@ -378,7 +378,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestShare5.TINKOFF_SHARE
         );
 
-        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
@@ -403,7 +403,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
                 TestCurrency4.TINKOFF_CURRENCY
         );
 
-        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
@@ -421,7 +421,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String ticker = TestEtf3.TICKER;
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
-        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
@@ -440,7 +440,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
     }
 
@@ -523,7 +523,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestShare3.TICKER;
         final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -533,7 +533,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestShare4.TICKER;
         final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -609,7 +609,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final String expectedMessage = "Expected single etf for ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(ticker), expectedMessage);
     }
 
@@ -617,7 +617,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getSingleEtf_throwsIllegalArgumentException_whenMultipleEtfs() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
 
-        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + TestEtf3.TICKER + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
     }
 
@@ -693,7 +693,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestBond2.TICKER;
 
-        final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
     }
 
@@ -703,7 +703,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestBond3.TICKER;
 
-        final String expectedMessage = "Expected single bond for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
     }
 
@@ -818,7 +818,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestCurrency2.TICKER;
 
-        final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 0";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
@@ -834,7 +834,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         final String ticker = TestCurrency3.TICKER;
 
-        final String expectedMessage = "Expected single currency for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
@@ -870,7 +870,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -906,7 +906,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -932,7 +932,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -958,7 +958,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -1164,7 +1164,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one share for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -1204,7 +1204,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one currency for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -1234,7 +1234,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one etf for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -1264,7 +1264,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
         final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one bond for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 

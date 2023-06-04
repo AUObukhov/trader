@@ -3,12 +3,12 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.models.Position;
 
 class PositionMapperUnitTest {
@@ -19,7 +19,7 @@ class PositionMapperUnitTest {
     void map() {
         final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
-        final InstrumentType instrumentType = InstrumentType.SHARE;
+        final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice = 110;
         final int expectedYield = 10000;
         final int currentPrice = 120;

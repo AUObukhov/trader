@@ -11,7 +11,6 @@ import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Exchange;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -23,6 +22,7 @@ import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.Instrument;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
@@ -88,25 +88,33 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     public Exchange getExchange(final String ticker) {
         final List<Share> shares = getShares(ticker);
         if (!shares.isEmpty()) {
-            Assert.isTrue(shares.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
+            final Supplier<String> messageSupplier =
+                    () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_SHARE.toString(), ticker, shares.size());
+            Assert.isTrue(shares.size() == 1, messageSupplier);
             return shares.get(0).exchange();
         }
 
         final List<CurrencyInstrument> currencies = getCurrencies(ticker);
         if (!currencies.isEmpty()) {
-            Assert.isTrue(currencies.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size()));
+            final Supplier<String> messageSupplier =
+                    () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_CURRENCY.toString(), ticker, currencies.size());
+            Assert.isTrue(currencies.size() == 1, messageSupplier);
             return currencies.get(0).exchange();
         }
 
         final List<Etf> etfs = getEtfs(ticker);
         if (!etfs.isEmpty()) {
-            Assert.isTrue(etfs.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
+            final Supplier<String> messageSupplier =
+                    () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_ETF.toString(), ticker, etfs.size());
+            Assert.isTrue(etfs.size() == 1, messageSupplier);
             return etfs.get(0).exchange();
         }
 
         final List<Bond> bonds = getBonds(ticker);
         if (!bonds.isEmpty()) {
-            Assert.isTrue(bonds.size() == 1, () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
+            final Supplier<String> messageSupplier =
+                    () -> getNotMultipleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_BOND.toString(), ticker, bonds.size());
+            Assert.isTrue(bonds.size() == 1, messageSupplier);
             return bonds.get(0).exchange();
         }
 
@@ -129,7 +137,9 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     public Share getSingleShare(final String ticker) {
         final List<Share> shares = getShares(ticker);
-        Assert.isTrue(shares.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.SHARE.getValue(), ticker, shares.size()));
+        final Supplier<String> messageSupplier =
+                () -> getSingleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_SHARE.toString(), ticker, shares.size());
+        Assert.isTrue(shares.size() == 1, messageSupplier);
         return shares.get(0);
     }
 
@@ -149,7 +159,9 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     public Etf getSingleEtf(final String ticker) {
         final List<Etf> etfs = getEtfs(ticker);
-        Assert.isTrue(etfs.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.ETF.getValue(), ticker, etfs.size()));
+        final Supplier<String> messageSupplier =
+                () -> getSingleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_ETF.toString(), ticker, etfs.size());
+        Assert.isTrue(etfs.size() == 1, messageSupplier);
         return etfs.get(0);
     }
 
@@ -169,7 +181,9 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     public Bond getSingleBond(final String ticker) {
         final List<Bond> bonds = getBonds(ticker);
-        Assert.isTrue(bonds.size() == 1, () -> getSingleInstrumentCountErrorMessage(InstrumentType.BOND.getValue(), ticker, bonds.size()));
+        final Supplier<String> messageSupplier =
+                () -> getSingleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_BOND.toString(), ticker, bonds.size());
+        Assert.isTrue(bonds.size() == 1, messageSupplier);
         return bonds.get(0);
     }
 
@@ -190,7 +204,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     public CurrencyInstrument getSingleCurrency(final String ticker) {
         final List<CurrencyInstrument> currencies = getCurrencies(ticker);
         final Supplier<String> messageSupplier =
-                () -> getSingleInstrumentCountErrorMessage(InstrumentType.CURRENCY.getValue(), ticker, currencies.size());
+                () -> getSingleInstrumentCountErrorMessage(InstrumentType.INSTRUMENT_TYPE_CURRENCY.toString(), ticker, currencies.size());
         Assert.isTrue(currencies.size() == 1, messageSupplier);
         return currencies.get(0);
     }

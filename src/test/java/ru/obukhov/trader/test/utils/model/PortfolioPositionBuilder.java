@@ -4,8 +4,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
 @Setter
 @Accessors(chain = true)

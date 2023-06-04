@@ -145,7 +145,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker3)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single share for ticker '" + ticker3 + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker3 + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -161,7 +161,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", ticker)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single share for ticker '" + ticker + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -265,7 +265,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + TestEtf3.TICKER + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -280,7 +280,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestEtf3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single etf for ticker '" + TestEtf3.TICKER + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + TestEtf3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -384,7 +384,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestBond2.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single bond for ticker '" + TestBond2.TICKER + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + TestBond2.TICKER + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -399,7 +399,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestBond3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single bond for ticker '" + TestBond3.TICKER + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + TestBond3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -531,7 +531,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestCurrency2.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single currency for ticker '" + TestCurrency2.TICKER + "'. Found 0";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + TestCurrency2.TICKER + "'. Found 0";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 
@@ -551,7 +551,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("ticker", TestCurrency3.TICKER)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final String expectedMessage = "Expected single currency for ticker '" + TestCurrency3.TICKER + "'. Found 2";
+        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + TestCurrency3.TICKER + "'. Found 2";
         performAndExpectServerError(requestBuilder, expectedMessage);
     }
 

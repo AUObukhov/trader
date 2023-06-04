@@ -8,7 +8,6 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.InstrumentType;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -21,6 +20,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
+import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
@@ -98,7 +98,7 @@ public class TestData {
     ) {
         return ru.tinkoff.piapi.contract.v1.PortfolioPosition.newBuilder()
                 .setFigi(figi)
-                .setInstrumentType(instrumentType.getValue())
+                .setInstrumentType(instrumentType.name())
                 .setQuantity(createQuotation(quantity))
                 .setAveragePositionPrice(createTinkoffMoneyValue(averagePositionPrice, currency))
                 .setExpectedYield(createQuotation(expectedYield))
