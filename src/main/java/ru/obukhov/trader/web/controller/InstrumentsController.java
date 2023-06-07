@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -31,6 +32,17 @@ import java.util.List;
 public class InstrumentsController {
 
     private final ExtInstrumentsService extInstrumentsService;
+
+    @GetMapping("/instrument")
+    @ApiOperation("Get instrument info")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    public Instrument getInstrument(@RequestParam @ApiParam(example = "AAPBBG000B9XRY4L") final String figi) {
+        return extInstrumentsService.getInstrument(figi);
+    }
 
     @GetMapping("/shares")
     @ApiOperation("Get shares info")

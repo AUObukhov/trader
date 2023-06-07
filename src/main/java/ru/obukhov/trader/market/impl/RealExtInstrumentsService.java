@@ -10,17 +10,18 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
+import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.market.model.transform.BondMapper;
 import ru.obukhov.trader.market.model.transform.CurrencyInstrumentMapper;
 import ru.obukhov.trader.market.model.transform.EtfMapper;
+import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.AssetInstrument;
-import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
@@ -31,6 +32,7 @@ import java.util.function.Supplier;
 
 public class RealExtInstrumentsService implements ExtInstrumentsService {
 
+    private static final InstrumentMapper INSTRUMENT_MAPPER = Mappers.getMapper(InstrumentMapper.class);
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
     private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
     private static final BondMapper BOND_MAPPER = Mappers.getMapper(BondMapper.class);
@@ -75,7 +77,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
-        final Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
+        final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for figi '" + figi + "'");
         return instrument.getTicker();
     }
@@ -118,6 +120,14 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
         }
 
         throw new IllegalArgumentException("Not found instrument for ticker '" + ticker + "'");
+    }
+
+    /**
+     * @return {@link Instrument} corresponding to given {@code figi}
+     * @throws IllegalArgumentException when given {@code figi} has no corresponding share or has more than one corresponding share
+     */
+    public Instrument getInstrument(final String figi) {
+        return INSTRUMENT_MAPPER.map(instrumentsService.getInstrumentByFigiSync(figi));
     }
 
     /**

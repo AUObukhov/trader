@@ -114,6 +114,14 @@ public class Mocker {
         Mockito.when(marketDataService.getTradingStatusSync(figi)).thenReturn(response);
     }
 
+    public static void mockInstrument(
+            final InstrumentsService instrumentsService,
+            final String figi,
+            final ru.tinkoff.piapi.contract.v1.Instrument instrument
+    ) {
+        Mockito.when(instrumentsService.getInstrumentByFigiSync(figi)).thenReturn(instrument);
+    }
+
     public static void mockShares(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Share... shares) {
         Mockito.when(instrumentsService.getAllSharesSync()).thenReturn(List.of(shares));
     }

@@ -28,6 +28,7 @@ import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf4;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
@@ -43,6 +44,36 @@ import java.time.ZoneOffset;
 import java.util.List;
 
 class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
+
+    // region getInstrument tests
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getInstrument_returnsInstrument() throws Exception {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.FIGI, TestInstrument1.TINKOFF_INSTRUMENT);
+
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/instrument")
+                .param("figi", TestInstrument1.FIGI)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        performAndExpectResponse(requestBuilder, TestInstrument1.INSTRUMENT);
+    }
+
+    @Test
+    @SuppressWarnings("java:S2699")
+        // Sonar warning "Tests should include assertions"
+    void getInstrument_returnsBadRequest_whenFigiIsNull() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/trader/instruments/instrument")
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final String expectedMessage = "Required request parameter 'figi' for method parameter type String is not present";
+        performAndExpectBadRequestResult(requestBuilder, expectedMessage);
+    }
+
+    // endregion
 
     // region getShares tests
 
