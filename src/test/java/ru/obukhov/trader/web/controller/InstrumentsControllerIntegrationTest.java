@@ -10,7 +10,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -563,7 +562,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
     void getTradingSchedule() throws Exception {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
@@ -571,7 +570,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange.getValue())
+                .param("exchange", exchange)
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -584,7 +583,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
     void getTradingSchedule_adjustsFromInstant() throws Exception {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
@@ -594,7 +593,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange.getValue())
+                .param("exchange", exchange)
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -607,7 +606,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("squid:S2699")
         // Tests should include assertions
     void getTradingSchedule_adjustsToInstant() throws Exception {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
@@ -617,7 +616,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange.getValue())
+                .param("exchange", exchange)
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -637,16 +636,16 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
 
-        final Exchange exchange1 = Exchange.MOEX;
-        final Exchange exchange2 = Exchange.SPB;
+        final String exchange1 = "MOEX";
+        final String exchange2 = "SPB";
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange1.getValue())
+                .setExchange(exchange1)
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange2.getValue())
+                .setExchange(exchange2)
                 .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
@@ -668,15 +667,15 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
 
     // endregion
 
-    private void mockTradingSchedule(final Exchange exchange, final OffsetDateTime from, final OffsetDateTime to) {
+    private void mockTradingSchedule(final String exchange, final OffsetDateTime from, final OffsetDateTime to) {
         final Instant fromInstant = DateUtils.toSameDayInstant(from);
         final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange.getValue())
+                .setExchange(exchange)
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
-        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)).thenReturn(tradingSchedule);
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }
 
 }

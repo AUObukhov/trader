@@ -18,7 +18,6 @@ import ru.obukhov.trader.grafana.model.Target;
 import ru.obukhov.trader.grafana.model.TargetType;
 import ru.obukhov.trader.market.impl.RealExtInstrumentsService;
 import ru.obukhov.trader.market.impl.StatisticsService;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -155,11 +154,11 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
             final OffsetDateTime expectedFrom,
             final OffsetDateTime expectedTo
     ) throws Exception {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedule")
-                .param("exchange", exchange.getValue())
+                .param("exchange", exchange)
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -167,7 +166,7 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
 
         final ArgumentCaptor<Interval> argumentCaptor = ArgumentCaptor.forClass(Interval.class);
         Mockito.verify(realExtInstrumentsService, Mockito.times(1))
-                .getTradingSchedule(Mockito.any(Exchange.class), argumentCaptor.capture());
+                .getTradingSchedule(Mockito.any(String.class), argumentCaptor.capture());
 
         final Interval expectedInterval = Interval.of(expectedFrom, expectedTo);
 
@@ -183,11 +182,11 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
             final OffsetDateTime expectedFrom,
             final OffsetDateTime expectedTo
     ) throws Exception {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/trading-schedules")
-                .param("exchange", exchange.getValue())
+                .param("exchange", exchange)
                 .content(TestUtils.OBJECT_MAPPER.writeValueAsString(Interval.of(from, to)))
                 .contentType(MediaType.APPLICATION_JSON);
 

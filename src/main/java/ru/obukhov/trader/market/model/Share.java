@@ -13,7 +13,7 @@ public record Share(
         Integer lotSize,
         Currency currency,
         String name,
-        Exchange exchange,
+        String exchange,
         OffsetDateTime ipoDate,
         Long issueSize,
         String country,

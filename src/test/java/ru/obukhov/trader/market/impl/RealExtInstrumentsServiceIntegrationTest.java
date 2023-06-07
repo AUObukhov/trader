@@ -14,7 +14,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -361,7 +360,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_returnsExchange_whenShareTicker() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
-        final Exchange result = realExtInstrumentsService.getExchange(TestShare2.TICKER);
+        final String result = realExtInstrumentsService.getExchange(TestShare2.TICKER);
 
         Assertions.assertEquals(TestShare2.EXCHANGE, result);
     }
@@ -386,7 +385,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_returnsExchange_whenCurrencyTicker() {
         Mocker.mockCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
 
-        final Exchange result = realExtInstrumentsService.getExchange(TestCurrency2.TICKER);
+        final String result = realExtInstrumentsService.getExchange(TestCurrency2.TICKER);
 
         Assertions.assertEquals(TestCurrency2.EXCHANGE, result);
     }
@@ -411,7 +410,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_returnsExchange_whenEtfTicker() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
-        final Exchange result = realExtInstrumentsService.getExchange(TestEtf3.TICKER);
+        final String result = realExtInstrumentsService.getExchange(TestEtf3.TICKER);
 
         Assertions.assertEquals(TestEtf3.EXCHANGE, result);
     }
@@ -429,7 +428,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     void getExchange_returnsExchange_whenBondTicker() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
-        final Exchange result = realExtInstrumentsService.getExchange(TestBond2.TICKER);
+        final String result = realExtInstrumentsService.getExchange(TestBond2.TICKER);
 
         Assertions.assertEquals(TestBond2.EXCHANGE, result);
     }
@@ -979,7 +978,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withExchange() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
@@ -994,7 +993,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withExchange_adjustsFromInstant_positiveOffset() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
@@ -1011,7 +1010,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withExchange_adjustsFromInstant_negativeOffset() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
@@ -1028,7 +1027,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withExchange_adjustsToInstant_positiveOffset() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
@@ -1045,7 +1044,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getTradingSchedule_withExchange_adjustsToInstant_negativeOffset() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
@@ -1065,7 +1064,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTradingSchedule with ticker tests
 
     @Test
-    void getTradingSchedule_withTicker_adjustsFromInstant_positiveOffset() {
+    void getTradingScheduleByTicker_adjustsFromInstant_positiveOffset() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
@@ -1074,7 +1073,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1082,7 +1081,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_adjustsFromInstant_negativeOffset() {
+    void getTradingScheduleByTicker_adjustsFromInstant_negativeOffset() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
@@ -1091,7 +1090,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1099,7 +1098,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_adjustsToInstant_positiveOffset() {
+    void getTradingScheduleByTicker_adjustsToInstant_positiveOffset() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
@@ -1108,7 +1107,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1116,7 +1115,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_adjustsToInstant_negativeOffset() {
+    void getTradingScheduleByTicker_adjustsToInstant_negativeOffset() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
@@ -1125,7 +1124,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1133,7 +1132,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_returnsSchedule_whenShareTicker() {
+    void getTradingScheduleByTicker_returnsSchedule_whenShareTicker() {
         Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
@@ -1141,7 +1140,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestShare2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1149,7 +1148,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleSharesFound() {
+    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleSharesFound() {
         final String ticker = TestShare4.TICKER;
         Mocker.mockShares(
                 instrumentsService,
@@ -1163,13 +1162,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void getTradingSchedule_withTicker_returnsSchedule_whenCurrencyTicker() {
+    void getTradingScheduleByTicker_returnsSchedule_whenCurrencyTicker() {
         Mocker.mockCurrencies(
                 instrumentsService,
                 TestCurrency1.TINKOFF_CURRENCY,
@@ -1181,7 +1180,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestCurrency2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestCurrency2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestCurrency2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1189,7 +1188,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
+    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
         final String ticker = TestCurrency3.TICKER;
 
         Mocker.mockCurrencies(
@@ -1203,13 +1202,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void getTradingSchedule_withTicker_returnsSchedule_whenEtfTicker() {
+    void getTradingScheduleByTicker_returnsSchedule_whenEtfTicker() {
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
@@ -1217,7 +1216,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestEtf3.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestEtf3.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestEtf3.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1225,7 +1224,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleEtfsFound() {
+    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleEtfsFound() {
         final String ticker = TestEtf3.TICKER;
 
         Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
@@ -1233,13 +1232,13 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void getTradingSchedule_withTicker_returnsSchedule_whenBondTicker() {
+    void getTradingScheduleByTicker_returnsSchedule_whenBondTicker() {
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
@@ -1247,7 +1246,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
         mockTradingSchedule(TestBond2.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingSchedule(TestBond2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestBond2.TICKER, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1255,7 +1254,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenMultipleBondsFound() {
+    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleBondsFound() {
         final String ticker = TestBond3.TICKER;
 
         Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
@@ -1263,19 +1262,19 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
         final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
-    void getTradingSchedule_withTicker_throwsIllegalArgumentException_whenInstrumentNotFound() {
+    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenInstrumentNotFound() {
         final String ticker = TestShare2.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingSchedule(ticker, Interval.of(from, to));
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
         final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
@@ -1289,16 +1288,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 8, 3);
 
-        final Exchange exchange1 = Exchange.MOEX;
-        final Exchange exchange2 = Exchange.SPB;
+        final String exchange1 = "MOEX";
+        final String exchange2 = "SPB";
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange1.getValue())
+                .setExchange(exchange1)
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange2.getValue())
+                .setExchange(exchange2)
                 .addDays(TestTradingDay3.TINKOFF_TRADING_DAY)
                 .build();
         Mockito.when(instrumentsService.getTradingSchedulesSync(from.toInstant(), to.toInstant()))
@@ -1317,15 +1316,15 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    private void mockTradingSchedule(final Exchange exchange, final OffsetDateTime from, final OffsetDateTime to) {
+    private void mockTradingSchedule(final String exchange, final OffsetDateTime from, final OffsetDateTime to) {
         final Instant fromInstant = DateUtils.toSameDayInstant(from);
         final Instant toInstant = DateUtils.toSameDayInstant(to);
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange.getValue())
+                .setExchange(exchange)
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();
-        Mockito.when(instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)).thenReturn(tradingSchedule);
+        Mockito.when(instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)).thenReturn(tradingSchedule);
     }
 
 }

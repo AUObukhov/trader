@@ -4,7 +4,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -20,7 +19,7 @@ public interface ExtInstrumentsService {
 
     String getTickerByFigi(final String figi);
 
-    Exchange getExchange(final String ticker);
+    String getExchange(final String ticker);
 
     List<Share> getShares(final String ticker);
 
@@ -40,9 +39,9 @@ public interface ExtInstrumentsService {
 
     TradingDay getTradingDay(final String ticker, final OffsetDateTime dateTime);
 
-    List<TradingDay> getTradingSchedule(final Exchange exchange, final Interval interval);
+    List<TradingDay> getTradingSchedule(final String exchange, final Interval interval);
 
-    List<TradingDay> getTradingSchedule(final String ticker, final Interval interval);
+    List<TradingDay> getTradingScheduleByTicker(final String ticker, final Interval interval);
 
     List<TradingSchedule> getTradingSchedules(final Interval interval);
 

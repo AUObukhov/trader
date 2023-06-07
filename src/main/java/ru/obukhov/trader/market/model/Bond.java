@@ -13,7 +13,7 @@ public record Bond(
         Integer lotSize,
         Currency currency,
         String name,
-        Exchange exchange,
+        String exchange,
         OffsetDateTime maturityDate,
         BigDecimal nominal,
         OffsetDateTime stateRegDate,

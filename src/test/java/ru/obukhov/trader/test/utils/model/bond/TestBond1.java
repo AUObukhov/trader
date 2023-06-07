@@ -3,7 +3,6 @@ package ru.obukhov.trader.test.utils.model.bond;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Sector;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
@@ -19,7 +18,7 @@ public class TestBond1 extends TestSecurityData {
     public static final int LOT_SIZE = 1;
     public static final Currency CURRENCY = Currency.RUB;
     public static final String NAME = "Ростелеком выпуск 3";
-    public static final Exchange EXCHANGE = Exchange.MOEX;
+    public static final String EXCHANGE = "MOEX";
     public static final OffsetDateTime MATURITY_DATE = DateTimeTestData.createDateTime(2027, 11, 9, 3);
     public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1000);
     public static final OffsetDateTime STATE_REG_DATE = DateTimeTestData.createDateTime(2017, 11, 16, 3);
@@ -44,7 +43,7 @@ public class TestBond1 extends TestSecurityData {
             .setLot(TestBond1.LOT_SIZE)
             .setCurrency(TestBond1.CURRENCY.name().toLowerCase())
             .setName(TestBond1.NAME)
-            .setExchange(TestBond1.EXCHANGE.getValue())
+            .setExchange(TestBond1.EXCHANGE)
             .setMaturityDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.MATURITY_DATE))
             .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestBond1.NOMINAL))
             .setStateRegDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.STATE_REG_DATE))

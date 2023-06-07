@@ -13,7 +13,6 @@ import org.springframework.aop.ProxyMethodInvocation;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -123,7 +122,7 @@ class DefaultTimeZoneAspectUnitTest {
 
         final Interval interval = Interval.of(from, to);
 
-        final Object[] arguments = new Object[]{Exchange.MOEX, interval};
+        final Object[] arguments = new Object[]{"MOEX", interval};
         final ProxyMethodInvocation methodInvocation = new TestMethodInvocation(arguments);
         final ProceedingJoinPoint joinPoint = new MethodInvocationProceedingJoinPoint(methodInvocation);
 

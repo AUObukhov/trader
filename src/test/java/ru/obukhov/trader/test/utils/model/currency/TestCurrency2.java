@@ -3,7 +3,6 @@ package ru.obukhov.trader.test.utils.model.currency;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
@@ -16,7 +15,7 @@ public class TestCurrency2 extends TestSecurityData {
     public static final int LOT_SIZE = 1;
     public static final Currency CURRENCY_VALUE = Currency.RUB;
     public static final String NAME = "Российский рубль";
-    public static final Exchange EXCHANGE = Exchange.FX;
+    public static final String EXCHANGE = "FX";
     public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);
     public static final String COUNTRY = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
@@ -31,7 +30,7 @@ public class TestCurrency2 extends TestSecurityData {
             .setLot(TestCurrency2.LOT_SIZE)
             .setCurrency(TestCurrency2.CURRENCY_VALUE.name().toLowerCase())
             .setName(TestCurrency2.NAME)
-            .setExchange(TestCurrency2.EXCHANGE.getValue())
+            .setExchange(TestCurrency2.EXCHANGE)
             .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestCurrency2.NOMINAL))
             .setCountryOfRiskName(TestCurrency2.COUNTRY)
             .setTradingStatus(TestCurrency2.TRADING_STATUS)

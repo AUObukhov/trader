@@ -17,7 +17,6 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -129,7 +128,7 @@ public class InstrumentsController {
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
     public List<TradingDay> getTradingSchedule(
-            @RequestParam @ApiParam(example = "SPB") final Exchange exchange,
+            @RequestParam @ApiParam(example = "SPB") final String exchange,
             @Valid @RequestBody final Interval interval
     ) {
         return extInstrumentsService.getTradingSchedule(exchange, interval);

@@ -13,7 +13,7 @@ public record CurrencyInstrument(
         Integer lotSize,
         Currency currency,
         String name,
-        Exchange exchange,
+        String exchange,
         BigDecimal nominal,
         String country,
         SecurityTradingStatus tradingStatus,

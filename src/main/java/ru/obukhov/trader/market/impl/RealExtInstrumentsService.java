@@ -10,7 +10,6 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Bond;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Etf;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
@@ -85,7 +84,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return exchange of instrument for given {@code ticker}
      * @throws IllegalArgumentException if instrument not found
      */
-    public Exchange getExchange(final String ticker) {
+    public String getExchange(final String ticker) {
         final List<Share> shares = getShares(ticker);
         if (!shares.isEmpty()) {
             final Supplier<String> messageSupplier =
@@ -214,16 +213,16 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     public TradingDay getTradingDay(final String ticker, final OffsetDateTime dateTime) {
         final Interval interval = Interval.of(dateTime, dateTime);
-        return getTradingSchedule(ticker, interval).get(0);
+        return getTradingScheduleByTicker(ticker, interval).get(0);
     }
 
     /**
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code exchange}
      */
-    public List<TradingDay> getTradingSchedule(final Exchange exchange, final Interval interval) {
+    public List<TradingDay> getTradingSchedule(final String exchange, final Interval interval) {
         final Instant fromInstant = DateUtils.toSameDayInstant(interval.getFrom());
         final Instant toInstant = DateUtils.toSameDayInstant(interval.getTo());
-        return instrumentsService.getTradingScheduleSync(exchange.getValue(), fromInstant, toInstant)
+        return instrumentsService.getTradingScheduleSync(exchange, fromInstant, toInstant)
                 .getDaysList()
                 .stream()
                 .map(TRADING_DAY_MAPPER::map)
@@ -233,8 +232,8 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     /**
      * @return list of {@link TradingDay} with given {@code interval} corresponding to given {@code ticker}
      */
-    public List<TradingDay> getTradingSchedule(final String ticker, final Interval interval) {
-        final Exchange exchange = getExchange(ticker);
+    public List<TradingDay> getTradingScheduleByTicker(final String ticker, final Interval interval) {
+        final String exchange = getExchange(ticker);
         return getTradingSchedule(exchange, interval);
     }
 

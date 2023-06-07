@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.Etf;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.Etf} to {@link Etf}
  */
-@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class, ExchangeMapper.class})
+@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class})
 public interface EtfMapper {
 
     @Mapping(target = "lotSize", source = "lot")

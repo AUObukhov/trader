@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.market.model.Exchange;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
@@ -17,10 +16,10 @@ class TradingScheduleMapperUnitTest {
 
     @Test
     void map() {
-        final Exchange exchange = Exchange.MOEX;
+        final String exchange = "MOEX";
 
         final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
-                .setExchange(exchange.getValue())
+                .setExchange(exchange)
                 .addDays(TestTradingDay1.TINKOFF_TRADING_DAY)
                 .addDays(TestTradingDay2.TINKOFF_TRADING_DAY)
                 .build();

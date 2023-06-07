@@ -13,7 +13,7 @@ public record Etf(
         Integer lotSize,
         Currency currency,
         String name,
-        Exchange exchange,
+        String exchange,
         OffsetDateTime releasedDate,
         BigDecimal numShares,
         String country,

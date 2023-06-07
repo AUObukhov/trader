@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.Bond;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.Bond} to {@link Bond}
  */
-@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class, ExchangeMapper.class})
+@Mapper(uses = {SectorMapper.class, QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class})
 public interface BondMapper {
 
     @Mapping(target = "lotSize", source = "lot")
