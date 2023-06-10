@@ -100,11 +100,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsCandles_whenMetricIsCandles() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -127,7 +125,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         target.setMetric(Metric.CANDLES);
         target.setType(TargetType.TABLE);
         target.setData(Map.of(
-                "ticker", ticker,
+                "figi", figi,
                 "candleInterval", candleInterval.toString()
         ));
         getDataRequest.setTargets(List.of(target));
@@ -152,11 +150,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
 
     @Test
     void getData_returnsExtendedCandles_whenMetricIsExtendedCandles() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 2, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1, 19);
@@ -179,7 +175,7 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         target.setMetric(Metric.EXTENDED_CANDLES);
         target.setType(TargetType.TABLE);
         target.setData(Map.of(
-                "ticker", ticker,
+                "figi", figi,
                 "candleInterval", candleInterval.toString(),
                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                 "window1", 1,

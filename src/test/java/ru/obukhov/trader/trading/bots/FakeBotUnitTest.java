@@ -48,11 +48,11 @@ class FakeBotUnitTest {
 
     @Test
     void getShare() {
-        final String ticker = TestShare1.TICKER;
-        final Share expectedShare = Share.builder().ticker(ticker).lotSize(10).build();
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(expectedShare);
+        final String figi = TestShare1.FIGI;
+        final Share expectedShare = Share.builder().ticker(figi).lotSize(10).build();
+        Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(expectedShare);
 
-        final Share share = fakeBot.getShare(ticker);
+        final Share share = fakeBot.getShare(figi);
 
         Assertions.assertEquals(expectedShare, share);
     }
@@ -106,11 +106,11 @@ class FakeBotUnitTest {
     void getOperations() {
         final String accountId = TestData.ACCOUNT_ID1;
         final Interval interval = Interval.of(OffsetDateTime.now(), OffsetDateTime.now());
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final List<Operation> expectedOperations = new ArrayList<>();
-        Mockito.when(extOperationsService.getOperations(accountId, interval, ticker)).thenReturn(expectedOperations);
+        Mockito.when(extOperationsService.getOperations(accountId, interval, figi)).thenReturn(expectedOperations);
 
-        final List<Operation> operations = fakeBot.getOperations(accountId, interval, ticker);
+        final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
 
         AssertUtils.assertEquals(expectedOperations, operations);
     }
@@ -128,15 +128,15 @@ class FakeBotUnitTest {
 
     @Test
     void getCurrentPrice() {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
         final BigDecimal expectedCurrentPrice = DecimalUtils.setDefaultScale(10);
 
         Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(currentDateTime);
 
-        Mockito.when(extMarketDataService.getLastPrice(ticker, currentDateTime)).thenReturn(expectedCurrentPrice);
+        Mockito.when(extMarketDataService.getLastPrice(figi, currentDateTime)).thenReturn(expectedCurrentPrice);
 
-        final BigDecimal currentPrice = fakeBot.getCurrentPrice(ticker);
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
 
         AssertUtils.assertEquals(expectedCurrentPrice, currentPrice);
     }

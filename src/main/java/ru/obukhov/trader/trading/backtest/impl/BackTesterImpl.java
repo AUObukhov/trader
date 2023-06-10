@@ -67,7 +67,7 @@ public class BackTesterImpl implements BackTester {
      * @param balanceConfig all back tests balance configuration
      * @param interval      all back tests interval
      * @param saveToFiles   flag to save back tests results to file
-     * @return map of back tests results by tickers
+     * @return map of back tests results by FIGIes
      */
     @Override
     public List<BackTestResult> test(
@@ -149,7 +149,7 @@ public class BackTesterImpl implements BackTester {
                 addLastCandle(historicalCandles, currentCandles);
             }
 
-            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.ticker(), balanceConfig, fakeBot, interval.getTo());
+            moveToNextMinuteAndApplyBalanceIncrement(botConfig.accountId(), botConfig.figi(), balanceConfig, fakeBot, interval.getTo());
         } while (fakeBot.getCurrentDateTime().isBefore(interval.getTo()));
 
         return createSucceedBackTestResult(botConfig, interval, historicalCandles, fakeBot);
@@ -164,7 +164,7 @@ public class BackTesterImpl implements BackTester {
 
     private void moveToNextMinuteAndApplyBalanceIncrement(
             final String accountId,
-            final String ticker,
+            final String figi,
             final BalanceConfig balanceConfig,
             final FakeBot fakeBot,
             final OffsetDateTime to
@@ -176,7 +176,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final Currency currency = fakeBot.getShare(ticker).currency();
+            final Currency currency = fakeBot.getShare(figi).currency();
             for (OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
@@ -190,12 +190,12 @@ public class BackTesterImpl implements BackTester {
             final FakeBot fakeBot
     ) {
         final String accountId = botConfig.accountId();
-        final String ticker = botConfig.ticker();
+        final String figi = botConfig.figi();
 
         final List<BackTestPosition> positions = getPositions(accountId, fakeBot);
-        final Balances balances = getBalances(accountId, interval, fakeBot, positions, ticker);
+        final Balances balances = getBalances(accountId, interval, fakeBot, positions, figi);
         final Profits profits = getProfits(balances, interval);
-        final List<Operation> operations = fakeBot.getOperations(accountId, interval, ticker);
+        final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
 
         return new BackTestResult(
                 botConfig,
@@ -203,7 +203,7 @@ public class BackTesterImpl implements BackTester {
                 balances,
                 profits,
                 positions,
-                getOperations(operations, ticker),
+                getOperations(operations, figi),
                 candles,
                 null
         );
@@ -244,8 +244,8 @@ public class BackTesterImpl implements BackTester {
     }
 
     private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) {
-        final String ticker = portfolioPosition.ticker();
-        return new BackTestPosition(ticker, fakeBot.getCurrentPrice(ticker), portfolioPosition.quantity());
+        final String figi = portfolioPosition.figi();
+        return new BackTestPosition(figi, fakeBot.getCurrentPrice(figi), portfolioPosition.quantity());
     }
 
     private Balances getBalances(
@@ -253,9 +253,9 @@ public class BackTesterImpl implements BackTester {
             final Interval interval,
             final FakeBot fakeBot,
             final List<BackTestPosition> positions,
-            final String ticker
+            final String figi
     ) {
-        final Currency currency = fakeBot.getShare(ticker).currency();
+        final Currency currency = fakeBot.getShare(figi).currency();
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());
@@ -296,9 +296,9 @@ public class BackTesterImpl implements BackTester {
         return new Profits(absolute, relative, relativeAnnual);
     }
 
-    private List<BackTestOperation> getOperations(final List<Operation> operations, final String ticker) {
+    private List<BackTestOperation> getOperations(final List<Operation> operations, final String figi) {
         return operations.stream()
-                .map(operation -> operationMapper.map(ticker, operation))
+                .map(operation -> operationMapper.map(figi, operation))
                 .toList();
     }
 

@@ -34,11 +34,11 @@ public class RunnableBot extends Bot implements Runnable {
             return;
         }
 
-        final SecurityTradingStatus tradingStatus = extMarketDataService.getTradingStatus(botConfig.ticker());
+        final SecurityTradingStatus tradingStatus = extMarketDataService.getTradingStatus(botConfig.figi());
         if (tradingStatus != SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING) {
             log.debug(
-                    "Trading status fot ticker {} is {}. Expected {}",
-                    botConfig.ticker(), tradingStatus, SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING
+                    "Trading status fot FIGI {} is {}. Expected {}",
+                    botConfig.figi(), tradingStatus, SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING
             );
             return;
         }

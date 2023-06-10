@@ -1,7 +1,6 @@
 package ru.obukhov.trader.market.interfaces;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currency;
@@ -22,20 +21,20 @@ import java.util.stream.Collectors;
  */
 public interface ExtOperationsService {
 
-    List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker);
+    List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi);
 
     List<PortfolioPosition> getPositions(final String accountId);
 
     WithdrawLimits getWithdrawLimits(String accountId);
 
     /**
-     * @return position with given {@code ticker} at given {@code accountId} or null, if such position does not exist.
+     * @return position with given {@code figi} at given {@code accountId} or null, if such position does not exist.
      * If {@code accountId} null, works with default broker account
      */
-    default PortfolioPosition getSecurity(final String accountId, final String ticker) {
+    default PortfolioPosition getSecurity(final String accountId, final String figi) {
         final List<PortfolioPosition> allPositions = getPositions(accountId);
         return allPositions.stream()
-                .filter(position -> ticker.equals(position.ticker()))
+                .filter(position -> figi.equals(position.figi()))
                 .findFirst()
                 .orElse(null);
     }

@@ -20,6 +20,7 @@ public class TestShare1 {
     private static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
+    public static final String UID = "a9eb4238-eba9-488c-b102-b6140fd08e38";
     public static final String FIGI = "BBG000B9XRY4";
     public static final String TICKER = "AAPL";
     public static final int LOT_SIZE = 1;

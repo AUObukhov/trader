@@ -23,7 +23,7 @@ import java.util.Objects;
 public class BalanceConfig {
 
     @NotNull(message = "initial balance is mandatory")
-    @ApiModelProperty(value = "Initial balance before the back test in ticker currency", required = true, position = 1, example = "100000")
+    @ApiModelProperty(value = "Initial balance before the back test", required = true, position = 1, example = "100000")
     private BigDecimal initialBalance;
 
     @Min(value = 1, message = "balanceIncrement must be positive")

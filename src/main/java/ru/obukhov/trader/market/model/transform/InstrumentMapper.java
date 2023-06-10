@@ -20,6 +20,6 @@ public interface InstrumentMapper {
     @Mapping(target = "buyAvailable", source = "buyAvailableFlag")
     @Mapping(target = "sellAvailable", source = "sellAvailableFlag")
     @Mapping(target = "apiTradeAvailable", source = "apiTradeAvailableFlag")
-    Instrument map(final ru.tinkoff.piapi.contract.v1.Instrument source);
+    Instrument map(final ru.tinkoff.piapi.contract.v1.Instrument tinkoffInstrument);
 
 }

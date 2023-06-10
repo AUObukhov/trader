@@ -26,11 +26,11 @@ public class FakeExtOperationsService implements ExtOperationsService {
     private final FakeContext fakeContext;
 
     @Override
-    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker) {
+    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
         Stream<BackTestOperation> operationsStream = fakeContext.getOperations(accountId).stream()
                 .filter(operation -> interval.contains(operation.dateTime()));
-        if (ticker != null) {
-            operationsStream = operationsStream.filter(operation -> ticker.equals(operation.ticker()));
+        if (figi != null) {
+            operationsStream = operationsStream.filter(operation -> figi.equals(operation.figi()));
         }
 
         return operationsStream

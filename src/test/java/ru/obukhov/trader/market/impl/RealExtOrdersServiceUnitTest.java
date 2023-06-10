@@ -31,8 +31,6 @@ class RealExtOrdersServiceUnitTest {
 
     @Mock
     private OrdersService ordersService;
-    @Mock
-    private RealExtInstrumentsService realExtInstrumentsService;
 
     @InjectMocks
     private RealExtOrdersService realExtOrdersService;
@@ -177,10 +175,8 @@ class RealExtOrdersServiceUnitTest {
     void getOrders_filtersOrdersByFigi() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
-        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
         mockOrders(
                 accountId,
                 TestData.createOrderState("order0", figi),
@@ -190,7 +186,7 @@ class RealExtOrdersServiceUnitTest {
                 TestData.createOrderState("order4", figi)
         );
 
-        final List<Order> orders = realExtOrdersService.getOrders(accountId, ticker);
+        final List<Order> orders = realExtOrdersService.getOrders(accountId, figi);
 
         Assertions.assertEquals(3, orders.size());
         Assertions.assertEquals("order0", orders.get(0).orderId());
@@ -201,7 +197,6 @@ class RealExtOrdersServiceUnitTest {
     @Test
     void postOrder() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
 
         final Currency currency = Currency.USD;
@@ -213,8 +208,6 @@ class RealExtOrdersServiceUnitTest {
         final OrderDirection direction = OrderDirection.ORDER_DIRECTION_BUY;
         final OrderType type = OrderType.ORDER_TYPE_MARKET;
         final String orderId = "orderId";
-
-        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
 
         final PostOrderResponse response = new PostOrderResponseBuilder()
                 .setCurrency(currency)
@@ -231,7 +224,7 @@ class RealExtOrdersServiceUnitTest {
         Mockito.when(ordersService.postOrderSync(figi, quantityLots, DecimalUtils.toQuotation(price), direction, accountId, type, orderId))
                 .thenReturn(response);
 
-        final PostOrderResponse result = realExtOrdersService.postOrder(accountId, ticker, quantityLots, price, direction, type, orderId);
+        final PostOrderResponse result = realExtOrdersService.postOrder(accountId, figi, quantityLots, price, direction, type, orderId);
 
         final PostOrderResponse expectedResponse = new PostOrderResponseBuilder()
                 .setCurrency(currency)

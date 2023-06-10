@@ -72,11 +72,11 @@ public abstract class Bot {
     public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
-        final String ticker = botConfig.ticker();
-        final List<Order> orders = ordersService.getOrders(ticker);
+        final String figi = botConfig.figi();
+        final List<Order> orders = ordersService.getOrders(figi);
         if (orders.isEmpty()) {
             final List<Candle> currentCandles = extMarketDataService.getLastCandles(
-                    ticker,
+                    figi,
                     LAST_CANDLES_COUNT,
                     botConfig.candleInterval(),
                     context.getCurrentDateTime()
@@ -84,38 +84,38 @@ public abstract class Bot {
             decisionData.setCurrentCandles(currentCandles);
 
             if (currentCandles.isEmpty()) {
-                log.info("There are no candles by ticker '{}'. Do nothing", ticker);
+                log.info("There are no candles by FIGI '{}'. Do nothing", figi);
             } else if (currentCandles.get(0).getTime().equals(previousStartTime)) {
-                log.debug("Candles scope already processed for ticker '{}'. Do nothing", ticker);
+                log.debug("Candles scope already processed for FIGI '{}'. Do nothing", figi);
             } else {
-                fillDecisionData(botConfig, decisionData, ticker);
+                fillDecisionData(botConfig, decisionData, figi);
                 final Decision decision = strategy.decide(decisionData, strategyCache);
-                performOperation(botConfig.accountId(), ticker, decision);
+                performOperation(botConfig.accountId(), figi, decision);
             }
             return currentCandles;
         } else {
-            log.info("There are not completed orders by ticker '{}'. Do nothing", ticker);
+            log.info("There are not completed orders by FIGI '{}'. Do nothing", figi);
             return Collections.emptyList();
         }
     }
 
-    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String ticker) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+    private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String figi) {
+        final Share share = extInstrumentsService.getShare(figi);
 
         decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency()));
-        decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), ticker));
-        decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), ticker));
+        decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), figi));
+        decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), figi));
         decisionData.setShare(share);
         decisionData.setCommission(botConfig.commission());
     }
 
-    private List<Operation> getLastWeekOperations(final String accountId, final String ticker) {
+    private List<Operation> getLastWeekOperations(final String accountId, final String figi) {
         final OffsetDateTime now = context.getCurrentDateTime();
         final Interval interval = Interval.of(now.minusWeeks(1), now);
-        return extOperationsService.getOperations(accountId, interval, ticker);
+        return extOperationsService.getOperations(accountId, interval, figi);
     }
 
-    private void performOperation(final String accountId, final String ticker, final Decision decision) {
+    private void performOperation(final String accountId, final String figi, final Decision decision) {
         if (decision.getAction() == DecisionAction.WAIT) {
             log.debug("Decision is {}. Do nothing", decision.toPrettyString());
             return;
@@ -126,7 +126,7 @@ public abstract class Bot {
                 : OrderDirection.ORDER_DIRECTION_SELL;
         final PostOrderResponse postOrderResponse = ordersService.postOrder(
                 accountId,
-                ticker,
+                figi,
                 decision.getQuantityLots(),
                 null,
                 direction,

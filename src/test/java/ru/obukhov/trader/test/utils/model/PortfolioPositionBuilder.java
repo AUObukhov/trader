@@ -11,7 +11,6 @@ import ru.tinkoff.piapi.contract.v1.InstrumentType;
 @Accessors(chain = true)
 public class PortfolioPositionBuilder {
     private String figi;
-    private String ticker;
     private InstrumentType instrumentType;
     private double averagePositionPrice = 0;
     private double expectedYield = 0;
@@ -23,7 +22,6 @@ public class PortfolioPositionBuilder {
     public PortfolioPosition build() {
         return new PortfolioPosition(
                 figi,
-                ticker,
                 instrumentType,
                 TestData.createIntegerDecimal(quantityLots * lotSize),
                 TestData.createMoney(currency, averagePositionPrice),

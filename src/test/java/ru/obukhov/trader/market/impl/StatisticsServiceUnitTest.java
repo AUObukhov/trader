@@ -43,7 +43,7 @@ class StatisticsServiceUnitTest {
 
         // arrange
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
@@ -73,11 +73,11 @@ class StatisticsServiceUnitTest {
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+            Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
 
             // act
 
-            GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
+            GetCandlesResponse response = service.getExtendedCandles(figi, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
 
             // assert
 
@@ -92,7 +92,7 @@ class StatisticsServiceUnitTest {
 
         // arrange
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2020, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2020, 2, 1);
@@ -129,11 +129,11 @@ class StatisticsServiceUnitTest {
 
         final OffsetDateTime mockedNow = OffsetDateTime.now();
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(mockedNow)) {
-            Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+            Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
 
             // act
 
-            GetCandlesResponse response = service.getExtendedCandles(ticker, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
+            GetCandlesResponse response = service.getExtendedCandles(figi, interval, candleInterval, movingAverageType, smallWindow, bigWindow);
 
             // assert
 

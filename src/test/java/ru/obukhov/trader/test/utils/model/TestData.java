@@ -19,7 +19,6 @@ import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
-import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
@@ -116,13 +115,15 @@ public class TestData {
             final OffsetDateTime operationDateTime,
             final OperationType operationType,
             final double operationPrice,
-            final long operationQuantity
+            final long operationQuantity,
+            final String figi
     ) {
         return Operation.newBuilder()
                 .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(operationDateTime))
                 .setOperationType(operationType)
                 .setPrice(MONEY_VALUE_MAPPER.doubleToMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
+                .setFigi(figi)
                 .build();
     }
 
@@ -366,13 +367,6 @@ public class TestData {
                 .setPrice(createTinkoffMoneyValue(price, currency))
                 .setQuantity(quantity)
                 .setTradeId(tradeId)
-                .build();
-    }
-
-    public static AssetInstrument createAssetInstrument(final String figi, final String ticker) {
-        return AssetInstrument.newBuilder()
-                .setFigi(figi)
-                .setTicker(ticker)
                 .build();
     }
 

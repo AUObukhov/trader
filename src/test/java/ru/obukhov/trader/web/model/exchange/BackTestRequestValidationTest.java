@@ -64,7 +64,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 null,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -80,7 +80,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 null,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -96,7 +96,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -112,7 +112,7 @@ class BackTestRequestValidationTest {
         final BackTestRequest request = createValidBackTestRequest();
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 null,
@@ -135,7 +135,7 @@ class BackTestRequestValidationTest {
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,

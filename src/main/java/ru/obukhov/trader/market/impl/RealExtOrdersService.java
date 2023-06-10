@@ -25,15 +25,13 @@ public class RealExtOrdersService implements ExtOrdersService {
     private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
 
     private final OrdersService ordersService;
-    private final RealExtInstrumentsService realExtInstrumentsService;
 
     /**
-     * @return returns list of active orders with given {@code ticker} at given {@code accountId}.
+     * @return returns list of active orders with given {@code figi} at given {@code accountId}.
      * If {@code accountId} null, works with default broker account
      */
     @Override
-    public List<Order> getOrders(final String accountId, final String ticker) {
-        final String figi = realExtInstrumentsService.getSingleFigiByTicker(ticker);
+    public List<Order> getOrders(final String accountId, final String figi) {
         return getOrders(accountId).stream()
                 .filter(order -> figi.equals(order.figi()))
                 .toList();
@@ -50,14 +48,13 @@ public class RealExtOrdersService implements ExtOrdersService {
     @Override
     public PostOrderResponse postOrder(
             final String accountId,
-            final String ticker,
+            final String figi,
             final long quantityLots,
             final BigDecimal price,
             final OrderDirection direction,
             final OrderType type,
             final String orderId
     ) {
-        final String figi = realExtInstrumentsService.getSingleFigiByTicker(ticker);
         final Quotation quotationPrice = DecimalUtils.toQuotation(price);
         return ordersService.postOrderSync(figi, quantityLots, quotationPrice, direction, accountId, type, orderId);
     }

@@ -120,7 +120,6 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setFigi(figi1)
-                .setTicker(ticker1)
                 .setInstrumentType(instrumentType1)
                 .setAveragePositionPrice(averagePositionPrice1)
                 .setExpectedYield(expectedYield1)
@@ -131,7 +130,6 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .build();
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
                 .setFigi(figi2)
-                .setTicker(ticker2)
                 .setInstrumentType(instrumentType2)
                 .setAveragePositionPrice(averagePositionPrice2)
                 .setExpectedYield(expectedYield2)
@@ -142,7 +140,6 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .build();
         final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
                 .setFigi(figi3)
-                .setTicker(ticker3)
                 .setInstrumentType(instrumentType3)
                 .setAveragePositionPrice(averagePositionPrice3)
                 .setExpectedYield(expectedYield3)

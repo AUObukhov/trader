@@ -20,9 +20,11 @@ class OperationMapperUnitTest {
 
     @Test
     void mapsOperationToBackTestOperation() {
-        final Operation source = TestData.createOperation(OffsetDateTime.now(), OperationType.OPERATION_TYPE_BUY, 10, 2);
+        final String figi = TestShare1.FIGI;
 
-        final BackTestOperation target = operationMapper.map(TestShare1.TICKER, source);
+        final Operation source = TestData.createOperation(OffsetDateTime.now(), OperationType.OPERATION_TYPE_BUY, 10, 2, figi);
+
+        final BackTestOperation target = operationMapper.map(figi, source);
 
         AssertUtils.assertEquals(source.getDate(), target.dateTime());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.operationType());
@@ -33,7 +35,7 @@ class OperationMapperUnitTest {
     @Test
     void mapsBackTestOperationToOperation() {
         final BackTestOperation source = new BackTestOperation(
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 OffsetDateTime.now(),
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10),

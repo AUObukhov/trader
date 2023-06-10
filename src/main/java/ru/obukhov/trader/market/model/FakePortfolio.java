@@ -24,7 +24,7 @@ public class FakePortfolio {
     private final EnumMap<Currency, FakeBalance> balances = new EnumMap<>(Currency.class);
 
     @NotNull
-    private final Map<String, PortfolioPosition> tickersToPositions = new HashMap<>();
+    private final Map<String, PortfolioPosition> figiesToPositions = new HashMap<>();
 
     @NotNull
     private final Set<BackTestOperation> operations = new HashSet<>();

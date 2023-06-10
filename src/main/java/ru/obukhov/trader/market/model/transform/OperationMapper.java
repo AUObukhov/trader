@@ -12,8 +12,8 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 public interface OperationMapper {
 
     @Mapping(target = "dateTime", source = "operation.date")
-    @Mapping(target = "ticker", source = "ticker")
-    BackTestOperation map(final String ticker, final Operation operation);
+    @Mapping(target = "figi", source = "figi")
+    BackTestOperation map(final String figi, final Operation operation);
 
     @Mapping(target = "date", source = "dateTime")
     @Mapping(target = "quantity", source = "quantity")

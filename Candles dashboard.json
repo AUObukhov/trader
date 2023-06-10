@@ -95,7 +95,7 @@
       },
       "targets": [
         {
-          "data": "{\r\n  \"ticker\": \"$ticker\",\r\n  \"candleInterval\": \"candleInterval\",\r\n  \"movingAverageType\": \"$movingAverageType\",\r\n  \"window1\": $window1,\r\n  \"window2\": $window2\r\n}",
+          "data": "{\r\n  \"figi\": \"$figi\",\r\n  \"candleInterval\": \"candleInterval\",\r\n  \"movingAverageType\": \"$movingAverageType\",\r\n  \"window1\": $window1,\r\n  \"window2\": $window2\r\n}",
           "refId": "A",
           "target": "Extended candles",
           "type": "timeseries"
@@ -120,13 +120,13 @@
         "description": null,
         "error": null,
         "hide": 0,
-        "label": "тикер",
-        "name": "ticker",
+        "label": "FIGI",
+        "name": "figi",
         "options": [
           {
             "selected": true,
-            "text": "BABA",
-            "value": "BABA"
+            "text": "BBG006G2JVL2",
+            "value": "BBG006G2JVL2"
           }
         ],
         "query": "BABA",

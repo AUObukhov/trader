@@ -16,11 +16,11 @@ scheduling:
 
 scheduled-bot:
   bot-configs:
-    - account-id: "2000124699"
-      ticker: FXIT
+    - account-id: 2000124699
+      figi: BBG005HLTYH9
       candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
-      strategy-type: "cross"
+      strategy-type: cross
       strategy-params:
         minimumProfit: 0.1
         movingAverageType: SMA
@@ -29,11 +29,11 @@ scheduled-bot:
         bigWindow: 200
         indexCoefficient: 0.5
         greedy: true
-    - account-id: "2000124698"
-      ticker: FXIT
+    - account-id: 2000124698
+      figi: BBG005HLTYH9
       candle-interval: CANDLE_INTERVAL_5_MIN
       commission: 0.003
-      strategy-type: "conservative"
+      strategy-type: conservative
       strategy-params:
         minimumProfit: 0.1
 
@@ -44,8 +44,6 @@ spring.cache:
     marketCurrencies,
     marketCandles,
     marketInstrument,
-    singleFigiByTicker,
-    figiesByTicker,
     tickerByFigi
   scaffeine.spec: maximumSize=1000,expireAfterAccess=1h
 

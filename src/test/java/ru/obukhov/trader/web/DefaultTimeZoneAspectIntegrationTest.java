@@ -116,7 +116,7 @@ class DefaultTimeZoneAspectIntegrationTest extends ControllerIntegrationTest {
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesRequest getCandlesRequest = new GetCandlesRequest();
-        getCandlesRequest.setTicker(TestShare1.TICKER);
+        getCandlesRequest.setFigi(TestShare1.FIGI);
         getCandlesRequest.setInterval(interval);
         getCandlesRequest.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         getCandlesRequest.setMovingAverageType(MovingAverageType.SIMPLE);

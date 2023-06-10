@@ -43,7 +43,6 @@ class RealExtOperationsServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
 
         final String figi = TestShare1.FIGI;
-        final String ticker = TestShare1.TICKER;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 8, 10, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 8, 10, 19);
@@ -53,11 +52,10 @@ class RealExtOperationsServiceUnitTest {
                 TestData.createOperation(OperationState.OPERATION_STATE_UNSPECIFIED)
         );
 
-        Mockito.when(realExtInstrumentsService.getSingleFigiByTicker(ticker)).thenReturn(figi);
         Mockito.when(operationsService.getAllOperationsSync(accountId, from.toInstant(), to.toInstant(), figi))
                 .thenReturn(operations);
 
-        final List<Operation> result = extOperationsService.getOperations(accountId, Interval.of(from, to), ticker);
+        final List<Operation> result = extOperationsService.getOperations(accountId, Interval.of(from, to), figi);
 
         Assertions.assertEquals(result, operations);
     }
@@ -143,7 +141,7 @@ class RealExtOperationsServiceUnitTest {
         // assert
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setTicker(ticker1)
+                .setFigi(figi1)
                 .setInstrumentType(instrumentType1)
                 .setAveragePositionPrice(averagePositionPrice1)
                 .setExpectedYield(expectedYield1)
@@ -153,7 +151,7 @@ class RealExtOperationsServiceUnitTest {
                 .setLotSize(lotSize1)
                 .build();
         final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setTicker(ticker2)
+                .setFigi(figi2)
                 .setInstrumentType(instrumentType2)
                 .setAveragePositionPrice(averagePositionPrice2)
                 .setExpectedYield(expectedYield2)
@@ -163,7 +161,7 @@ class RealExtOperationsServiceUnitTest {
                 .setLotSize(lotSize2)
                 .build();
         final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
-                .setTicker(ticker3)
+                .setFigi(figi3)
                 .setInstrumentType(instrumentType3)
                 .setAveragePositionPrice(averagePositionPrice3)
                 .setExpectedYield(expectedYield3)

@@ -20,34 +20,19 @@ import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.TestData;
-import ru.obukhov.trader.test.utils.model.bond.TestBond1;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
-import ru.obukhov.trader.test.utils.model.bond.TestBond3;
-import ru.obukhov.trader.test.utils.model.bond.TestBond4;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
 import ru.obukhov.trader.test.utils.model.currency.TestCurrency2;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency3;
-import ru.obukhov.trader.test.utils.model.currency.TestCurrency4;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf2;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf3;
-import ru.obukhov.trader.test.utils.model.etf.TestEtf4;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay1;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay2;
 import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.obukhov.trader.test.utils.model.share.TestShare3;
-import ru.obukhov.trader.test.utils.model.share.TestShare4;
-import ru.obukhov.trader.test.utils.model.share.TestShare5;
-import ru.tinkoff.piapi.contract.v1.Asset;
-import ru.tinkoff.piapi.contract.v1.AssetInstrument;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.List;
 
 @ActiveProfiles("test")
@@ -56,262 +41,6 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Autowired
     private RealExtInstrumentsService realExtInstrumentsService;
-
-    // region getSingleFigiByTicker tests
-
-    @Test
-    @DirtiesContext
-    void getSingleFigiByTicker_returnsFigi_whenAssetAndInstrumentFound() {
-        final String ticker1 = TestShare1.TICKER;
-        final String figi1 = TestShare1.FIGI;
-
-        final String ticker2 = TestShare2.TICKER;
-        final String figi2 = TestShare2.FIGI;
-
-        final String ticker3 = TestShare4.TICKER;
-        final String figi3 = TestShare4.FIGI;
-
-        final String figi4 = TestShare5.FIGI;
-
-        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument1)
-                .build();
-
-        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
-        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument2)
-                .addInstruments(assetInstrument3)
-                .addInstruments(assetInstrument4)
-                .build();
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-
-        final String result = realExtInstrumentsService.getSingleFigiByTicker(ticker2);
-
-        Assertions.assertEquals(figi2, result);
-    }
-
-    @Test
-    @DirtiesContext
-    void getSingleFigiByTicker_returnsCachedValue() {
-        final String ticker1 = TestShare1.TICKER;
-        final String figi1 = TestShare1.FIGI;
-
-        final String ticker2 = TestShare2.TICKER;
-        final String figi2 = TestShare2.FIGI;
-
-        final String ticker3 = TestShare4.TICKER;
-        final String figi3 = TestShare4.FIGI;
-
-        final String figi4 = TestShare5.FIGI;
-
-        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument1)
-                .build();
-
-        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
-        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument2)
-                .addInstruments(assetInstrument3)
-                .addInstruments(assetInstrument4)
-                .build();
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        realExtInstrumentsService.getSingleFigiByTicker(ticker2);
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final String result = realExtInstrumentsService.getSingleFigiByTicker(ticker2);
-
-        Assertions.assertEquals(figi2, result);
-    }
-
-    @Test
-    @DirtiesContext
-    void getSingleFigiByTicker_throwsIllegalArgumentException_whenMultipleInstrumentsFound() {
-        final String ticker1 = TestShare1.TICKER;
-        final String figi1 = TestShare1.FIGI;
-
-        final String ticker2 = TestShare2.TICKER;
-        final String figi2 = TestShare2.FIGI;
-
-        final String ticker3 = TestShare4.TICKER;
-        final String figi3 = TestShare4.FIGI;
-
-        final String figi4 = TestShare5.FIGI;
-
-        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument1)
-                .build();
-
-        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
-        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument2)
-                .addInstruments(assetInstrument3)
-                .addInstruments(assetInstrument4)
-                .build();
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-
-        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker3);
-        final String expectedMessage = "Expected single instrument for ticker '" + ticker3 + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    @DirtiesContext
-    void getSingleFigiByTicker_throwsIllegalArgumentException_whenNoAssets() {
-        final String ticker = TestShare1.TICKER;
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
-
-        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker);
-        final String expectedMessage = "Expected single instrument for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    @DirtiesContext
-    void getSingleFigiByTicker_throwsIllegalArgumentException_whenNoInstrument() {
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
-        final String ticker4 = TestShare4.TICKER;
-
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument11)
-                .build();
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument21)
-                .addInstruments(assetInstrument22)
-                .build();
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-
-        final Executable executable = () -> realExtInstrumentsService.getSingleFigiByTicker(ticker4);
-        final String expectedMessage = "Expected single instrument for ticker '" + ticker4 + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    // endregion
-
-    // region getFigiesByTicker tests
-
-    @Test
-    @DirtiesContext
-    void getFigiesByTicker_returnsFirstFigi_whenAssetAndInstrumentFound() {
-        final String ticker1 = TestShare1.TICKER;
-        final String figi1 = TestShare1.FIGI;
-
-        final String ticker2 = TestShare2.TICKER;
-        final String figi2 = TestShare2.FIGI;
-
-        final String ticker3 = TestShare4.TICKER;
-        final String figi3 = TestShare4.FIGI;
-
-        final String figi4 = TestShare5.FIGI;
-
-        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument1)
-                .build();
-
-        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
-        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument2)
-                .addInstruments(assetInstrument3)
-                .addInstruments(assetInstrument4)
-                .build();
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-
-        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker3);
-
-        final List<String> expectedResult = List.of(figi3, figi4);
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    @DirtiesContext
-    void getFigiesByTicker_returnsCachedValue() {
-        final String ticker1 = TestShare1.TICKER;
-        final String figi1 = TestShare1.FIGI;
-
-        final String ticker2 = TestShare2.TICKER;
-        final String figi2 = TestShare2.FIGI;
-
-        final String ticker3 = TestShare4.TICKER;
-        final String figi3 = TestShare4.FIGI;
-
-        final String figi4 = TestShare5.FIGI;
-
-        final AssetInstrument assetInstrument1 = TestData.createAssetInstrument(figi1, ticker1);
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument1)
-                .build();
-
-        final AssetInstrument assetInstrument2 = TestData.createAssetInstrument(figi2, ticker2);
-        final AssetInstrument assetInstrument3 = TestData.createAssetInstrument(figi3, ticker3);
-        final AssetInstrument assetInstrument4 = TestData.createAssetInstrument(figi4, ticker3);
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument2)
-                .addInstruments(assetInstrument3)
-                .addInstruments(assetInstrument4)
-                .build();
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-        realExtInstrumentsService.getFigiesByTicker(ticker3);
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of());
-        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker3);
-
-        final List<String> expectedResult = List.of(figi3, figi4);
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    @DirtiesContext
-    void getFigiesByTicker_returnsEmptyList_whenNoAssets() {
-        final String ticker = TestShare1.TICKER;
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(Collections.emptyList());
-
-        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    @DirtiesContext
-    void getFigiesByTicker_returnsEmptyList_whenNoInstrument() {
-        final AssetInstrument assetInstrument11 = TestData.createAssetInstrument(TestShare1.FIGI, TestShare1.TICKER);
-        final AssetInstrument assetInstrument21 = TestData.createAssetInstrument(TestShare2.FIGI, TestShare2.TICKER);
-        final AssetInstrument assetInstrument22 = TestData.createAssetInstrument(TestShare3.FIGI, TestShare3.TICKER);
-        final String ticker4 = TestShare4.TICKER;
-
-        final Asset asset1 = Asset.newBuilder()
-                .addInstruments(assetInstrument11)
-                .build();
-        final Asset asset2 = Asset.newBuilder()
-                .addInstruments(assetInstrument21)
-                .addInstruments(assetInstrument22)
-                .build();
-
-        Mockito.when(instrumentsService.getAssetsSync()).thenReturn(List.of(asset1, asset2));
-
-        final List<String> result = realExtInstrumentsService.getFigiesByTicker(ticker4);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    // endregion
 
     // region getTickerByFigi tests
 
@@ -348,7 +77,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String figi = TestShare1.FIGI;
 
         final Executable executable = () -> realExtInstrumentsService.getTickerByFigi(figi);
-        final String expectedMessage = "Not found instrument for figi '" + figi + "'";
+        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -357,484 +86,59 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getExchange tests
 
     @Test
-    void getExchange_returnsExchange_whenShareTicker() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getExchange_returnsExchange() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
-        final String result = realExtInstrumentsService.getExchange(TestShare2.TICKER);
+        final String result = realExtInstrumentsService.getExchange(TestInstrument1.FIGI);
 
-        Assertions.assertEquals(TestShare2.EXCHANGE, result);
+        Assertions.assertEquals(TestInstrument1.EXCHANGE, result);
     }
 
     @Test
-    void getExchange_throwsIllegalArgumentException_whenMultipleSharesFound() {
-        final String ticker = TestShare4.TICKER;
-        Mocker.mockShares(
-                instrumentsService,
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE,
-                TestShare3.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
+    void getExchange_throwIllegalArgumentException_whenNoInstrument() {
+        final String figi = TestInstrument1.FIGI;
 
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
-    }
-
-    @Test
-    void getExchange_returnsExchange_whenCurrencyTicker() {
-        Mocker.mockCurrencies(instrumentsService, TestCurrency1.TINKOFF_CURRENCY, TestCurrency2.TINKOFF_CURRENCY);
-
-        final String result = realExtInstrumentsService.getExchange(TestCurrency2.TICKER);
-
-        Assertions.assertEquals(TestCurrency2.EXCHANGE, result);
-    }
-
-    @Test
-    void getExchange_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
-        final String ticker = TestCurrency3.TICKER;
-
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
-    }
-
-    @Test
-    void getExchange_returnsExchange_whenEtfTicker() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-
-        final String result = realExtInstrumentsService.getExchange(TestEtf3.TICKER);
-
-        Assertions.assertEquals(TestEtf3.EXCHANGE, result);
-    }
-
-    @Test
-    void getExchange_throwsIllegalArgumentException_whenMultipleEtfsFound() {
-        final String ticker = TestEtf3.TICKER;
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
-
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
-    }
-
-    @Test
-    void getExchange_returnsExchange_whenBondTicker() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final String result = realExtInstrumentsService.getExchange(TestBond2.TICKER);
-
-        Assertions.assertEquals(TestBond2.EXCHANGE, result);
-    }
-
-    @Test
-    void getExchange_throwsIllegalArgumentException_whenMultipleBondsFound() {
-        final String ticker = TestBond3.TICKER;
-
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
-    }
-
-    @Test
-    void getExchange_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String ticker = TestShare2.TICKER;
-
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getExchange(ticker), expectedMessage);
-    }
-
-    // endregion
-
-    // region getShares tests
-
-    @Test
-    void getShares_returnsShare_whenSingleShareFound() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final List<Share> result = realExtInstrumentsService.getShares(TestShare2.TICKER);
-
-        final List<Share> expectedShares = List.of(TestShare2.SHARE);
-        Assertions.assertEquals(expectedShares, result);
-    }
-
-    @Test
-    void getShares_returnsShareIgnoreCase_whenSingleShareFound() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final List<Share> result = realExtInstrumentsService.getShares(TestShare2.TICKER.toLowerCase());
-
-        final List<Share> expectedShares = List.of(TestShare2.SHARE);
-        Assertions.assertEquals(expectedShares, result);
-    }
-
-    @Test
-    void getShares_returnsEmptyList_whenNoShares() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final List<Share> result = realExtInstrumentsService.getShares(TestShare4.TICKER);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getShares_returnsMultipleShares_whenMultipleShares() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
-
-        final List<Share> result = realExtInstrumentsService.getShares(TestShare5.TICKER);
-
-        final List<Share> expectedShares = List.of(TestShare4.SHARE, TestShare5.SHARE);
-        Assertions.assertEquals(expectedShares, result);
-    }
-
-    // endregion
-
-    // region getSingleShare tests
-
-    @Test
-    void getSingleShare_returnsShare_whenSingleShareFound() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final Share result = realExtInstrumentsService.getSingleShare(TestShare2.TICKER);
-
-        Assertions.assertEquals(TestShare2.SHARE, result);
-    }
-
-    @Test
-    void getSingleShare_returnsShareIgnoreCase_whenSingleShareFound() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final Share result = realExtInstrumentsService.getSingleShare(TestShare2.TICKER.toLowerCase());
-
-        Assertions.assertEquals(TestShare2.SHARE, result);
-    }
-
-    @Test
-    void getSingleShare_throwsIllegalArgumentException_whenNoShare() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final String ticker = TestShare3.TICKER;
-        final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getSingleShare_throwsIllegalArgumentException_whenMultipleShares() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare4.TINKOFF_SHARE, TestShare5.TINKOFF_SHARE);
-
-        final String ticker = TestShare4.TICKER;
-        final Executable executable = () -> realExtInstrumentsService.getSingleShare(ticker);
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
+        final Executable executable = () -> realExtInstrumentsService.getExchange(figi);
+        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     // endregion
 
-    // region getEtfs tests
-
     @Test
-    void getEtfs_returnsEtf_whenSingleEtfFound() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+    void getShare_returnsShare() {
+        Mocker.mockShare(instrumentsService, TestShare2.TINKOFF_SHARE);
 
-        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
+        final Share result = realExtInstrumentsService.getShare(TestShare2.FIGI);
 
-        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
-        Assertions.assertEquals(expectedEtfs, result);
+        Assertions.assertEquals(TestShare2.SHARE, result);
     }
 
     @Test
-    void getEtfs_returnsEtfIgnoreCase_whenSingleEtfFound() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+    void getEtf_returnsEtf() {
+        Mocker.mockEtf(instrumentsService, TestEtf3.TINKOFF_ETF);
 
-        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER.toLowerCase());
-
-        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF);
-        Assertions.assertEquals(expectedEtfs, result);
-    }
-
-    @Test
-    void getEtfs_returnsEmptyList_whenNoEtfs() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF);
-
-        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getEtfs_returnsMultipleEtfs_whenMultipleEtfs() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
-
-        final List<Etf> result = realExtInstrumentsService.getEtfs(TestEtf3.TICKER);
-
-        final List<Etf> expectedEtfs = List.of(TestEtf3.ETF, TestEtf4.ETF);
-
-        Assertions.assertEquals(expectedEtfs, result);
-    }
-
-    // endregion
-
-    // region getSingleEtf tests
-
-    @Test
-    void getSingleEtf_returnsEtf_whenEtfFound() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-
-        final Etf result = realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER);
+        final Etf result = realExtInstrumentsService.getEtf(TestEtf3.FIGI);
 
         Assertions.assertEquals(TestEtf3.ETF, result);
     }
 
     @Test
-    void getSingleEtf_returnsEtfIgnoreCase_whenEtfFound() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
+    void getBond_returnsBond() {
+        Mocker.mockBond(instrumentsService, TestBond2.TINKOFF_BOND);
 
-        final Etf result = realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER.toLowerCase());
-
-        Assertions.assertEquals(TestEtf3.ETF, result);
-    }
-
-    @Test
-    void getSingleEtf_throwsIllegalArgumentException_whenNoEtfs() {
-        final String ticker = TestEtf2.TICKER;
-
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(ticker), expectedMessage);
-    }
-
-    @Test
-    void getSingleEtf_throwsIllegalArgumentException_whenMultipleEtfs() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_ETF for ticker '" + TestEtf3.TICKER + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleEtf(TestEtf3.TICKER), expectedMessage);
-    }
-
-    // endregion
-
-    // region getBonds tests
-
-    @Test
-    void getBonds_returnsBond_whenSingleBondFound() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond1.TICKER);
-
-        final List<Bond> expectedBonds = List.of(TestBond1.BOND);
-        Assertions.assertEquals(expectedBonds, result);
-    }
-
-    @Test
-    void getBonds_returnsBondIgnoreCase_whenSingleBondFound() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond1.TICKER.toLowerCase());
-
-        final List<Bond> expectedBonds = List.of(TestBond1.BOND);
-        Assertions.assertEquals(expectedBonds, result);
-    }
-
-    @Test
-    void getBonds_returnsEmptyList_whenNoBonds() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond2.TICKER);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getBonds_returnsMultipleBonds_whenMultipleBonds() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final List<Bond> result = realExtInstrumentsService.getBonds(TestBond4.TICKER);
-
-        final List<Bond> expectedBonds = List.of(TestBond3.BOND, TestBond4.BOND);
-
-        Assertions.assertEquals(expectedBonds, result);
-    }
-
-    // endregion
-
-    // region getSingleBond tests
-
-    @Test
-    void getSingleBond_returnsBond_whenBondFound() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final Bond result = realExtInstrumentsService.getSingleBond(TestBond2.TICKER);
+        final Bond result = realExtInstrumentsService.getBond(TestBond2.FIGI);
 
         Assertions.assertEquals(TestBond2.BOND, result);
     }
 
     @Test
-    void getSingleBond_returnsBondIgnoreCase_whenBondFound() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
+    void getCurrency_returnsCurrency() {
+        Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
 
-        final Bond result = realExtInstrumentsService.getSingleBond(TestBond2.TICKER.toLowerCase());
-
-        Assertions.assertEquals(TestBond2.BOND, result);
-    }
-
-    @Test
-    void getSingleBond_throwsIllegalArgumentException_whenNoBonds() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final String ticker = TestBond2.TICKER;
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
-    }
-
-    @Test
-    void getSingleBond_throwsIllegalArgumentException_whenMultipleBonds() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final String ticker = TestBond3.TICKER;
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleBond(ticker), expectedMessage);
-    }
-
-    // endregion
-
-    // region getCurrencies tests
-
-    @Test
-    void getCurrencies_returnsCurrency_whenSingleCurrencyFound() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency1.TICKER);
-
-        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
-        Assertions.assertEquals(expectedCurrencies, result);
-    }
-
-    @Test
-    void getCurrencies_returnsCurrencyIgnoreCase_whenSingleCurrencyFound() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency1.TICKER.toLowerCase());
-
-        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency1.CURRENCY);
-        Assertions.assertEquals(expectedCurrencies, result);
-    }
-
-    @Test
-    void getCurrencies_returnsEmptyList_whenNoCurrencies() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency2.TICKER);
-
-        Assertions.assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void getCurrencies_returnsMultipleCurrencies_whenMultipleCurrencies() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final List<CurrencyInstrument> result = realExtInstrumentsService.getCurrencies(TestCurrency3.TICKER);
-
-        final List<CurrencyInstrument> expectedCurrencies = List.of(TestCurrency3.CURRENCY, TestCurrency4.CURRENCY);
-
-        Assertions.assertEquals(expectedCurrencies, result);
-    }
-
-    // endregion
-
-    // region getSingleCurrency tests
-
-    @Test
-    void getSingleCurrency_returnsCurrency_whenCurrencyFound() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final CurrencyInstrument result = realExtInstrumentsService.getSingleCurrency(TestCurrency2.TICKER);
+        final CurrencyInstrument result = realExtInstrumentsService.getCurrency(TestCurrency2.FIGI);
 
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
-    }
-
-    @Test
-    void getSingleCurrency_returnsCurrencyIgnoreCase_whenCurrencyFound() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final CurrencyInstrument result = realExtInstrumentsService.getSingleCurrency(TestCurrency2.TICKER.toLowerCase());
-
-        Assertions.assertEquals(TestCurrency2.CURRENCY, result);
-    }
-
-    @Test
-    void getSingleCurrency_throwsIllegalArgumentException_whenNoCurrencies() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final String ticker = TestCurrency2.TICKER;
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 0";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
-    }
-
-    @Test
-    void getSingleCurrency_throwsIllegalArgumentException_whenMultipleCurrencies() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final String ticker = TestCurrency3.TICKER;
-
-        final String expectedMessage = "Expected single INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, () -> realExtInstrumentsService.getSingleCurrency(ticker), expectedMessage);
     }
 
     // endregion
@@ -842,133 +146,26 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     // region getTradingDay tests
 
     @Test
-    void getTradingDay_returnsTradingDay_whenShareTicker() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getTradingDay_returnsTradingDay() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        mockTradingSchedule(TestShare2.EXCHANGE, dateTime, dateTime);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, dateTime, dateTime);
 
-        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestShare2.TICKER, dateTime);
+        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestInstrument1.FIGI, dateTime);
 
         Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
-    }
-
-    @Test
-    void getTradingDay_throwsIllegalArgumentException_whenMultipleSharesFound() {
-        final String ticker = TestShare4.TICKER;
-        Mocker.mockShares(
-                instrumentsService,
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE,
-                TestShare3.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingDay_returnsTradingDay_whenCurrencyTicker() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY
-        );
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        mockTradingSchedule(TestCurrency2.EXCHANGE, dateTime, dateTime);
-
-        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestCurrency2.TICKER, dateTime);
-
-        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
-    }
-
-    @Test
-    void getTradingDay_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
-        final String ticker = TestCurrency3.TICKER;
-
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingDay_returnsTradingDay_whenEtfTicker() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        mockTradingSchedule(TestEtf3.EXCHANGE, dateTime, dateTime);
-
-        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestEtf3.TICKER, dateTime);
-
-        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
-    }
-
-    @Test
-    void getTradingDay_throwsIllegalArgumentException_whenMultipleEtfsFound() {
-        final String ticker = TestEtf3.TICKER;
-
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingDay_returnsTradingDay_whenBondTicker() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        mockTradingSchedule(TestBond2.EXCHANGE, dateTime, dateTime);
-
-        final TradingDay tradingDay = realExtInstrumentsService.getTradingDay(TestBond2.TICKER, dateTime);
-
-        Assertions.assertEquals(TestTradingDay1.TRADING_DAY, tradingDay);
-    }
-
-    @Test
-    void getTradingDay_throwsIllegalArgumentException_whenMultipleBondsFound() {
-        final String ticker = TestBond3.TICKER;
-
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
     void getTradingDay_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String ticker = TestShare2.TICKER;
+        final String figi = TestInstrument1.FIGI;
 
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2022, 10, 3, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingDay(ticker, dateTime);
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        final Executable executable = () -> realExtInstrumentsService.getTradingDay(figi, dateTime);
+        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -1061,19 +258,19 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     // endregion
 
-    // region getTradingSchedule with ticker tests
+    // region getTradingScheduleByFigi tests
 
     @Test
-    void getTradingScheduleByTicker_adjustsFromInstant_positiveOffset() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getTradingScheduleByFigi_adjustsFromInstant_positiveOffset() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 1, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
-        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1081,16 +278,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingScheduleByTicker_adjustsFromInstant_negativeOffset() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getTradingScheduleByFigi_adjustsFromInstant_negativeOffset() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 22, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3, offset);
 
-        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1098,16 +295,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingScheduleByTicker_adjustsToInstant_positiveOffset() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getTradingScheduleByFigi_adjustsToInstant_positiveOffset() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 1, offset);
 
-        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1115,32 +312,16 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingScheduleByTicker_adjustsToInstant_negativeOffset() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
+    void getTradingScheduleByFigi_adjustsToInstant_negativeOffset() {
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final ZoneOffset offset = ZoneOffset.ofHours(-3);
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3, offset);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 22, offset);
 
-        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
+        mockTradingSchedule(TestInstrument1.EXCHANGE, from, to);
 
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
-
-        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-
-        Assertions.assertEquals(expectedSchedule, schedule);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_returnsSchedule_whenShareTicker() {
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE, TestShare2.TINKOFF_SHARE);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        mockTradingSchedule(TestShare2.EXCHANGE, from, to);
-
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestShare2.TICKER, Interval.of(from, to));
+        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByFigi(TestInstrument1.FIGI, Interval.of(from, to));
 
         final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
 
@@ -1148,134 +329,14 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleSharesFound() {
-        final String ticker = TestShare4.TICKER;
-        Mocker.mockShares(
-                instrumentsService,
-                TestShare1.TINKOFF_SHARE,
-                TestShare2.TINKOFF_SHARE,
-                TestShare3.TINKOFF_SHARE,
-                TestShare4.TINKOFF_SHARE,
-                TestShare5.TINKOFF_SHARE
-        );
+    void getTradingScheduleByFigi_throwsIllegalArgumentException_whenInstrumentNotFound() {
+        final String figi = TestInstrument1.FIGI;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
 
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_SHARE for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_returnsSchedule_whenCurrencyTicker() {
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY
-        );
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        mockTradingSchedule(TestCurrency2.EXCHANGE, from, to);
-
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestCurrency2.TICKER, Interval.of(from, to));
-
-        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-
-        Assertions.assertEquals(expectedSchedule, schedule);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleCurrenciesFound() {
-        final String ticker = TestCurrency3.TICKER;
-
-        Mocker.mockCurrencies(
-                instrumentsService,
-                TestCurrency1.TINKOFF_CURRENCY,
-                TestCurrency2.TINKOFF_CURRENCY,
-                TestCurrency3.TINKOFF_CURRENCY,
-                TestCurrency4.TINKOFF_CURRENCY
-        );
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_CURRENCY for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_returnsSchedule_whenEtfTicker() {
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf3.TINKOFF_ETF);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        mockTradingSchedule(TestEtf3.EXCHANGE, from, to);
-
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestEtf3.TICKER, Interval.of(from, to));
-
-        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-
-        Assertions.assertEquals(expectedSchedule, schedule);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleEtfsFound() {
-        final String ticker = TestEtf3.TICKER;
-
-        Mocker.mockEtfs(instrumentsService, TestEtf1.TINKOFF_ETF, TestEtf2.TINKOFF_ETF, TestEtf3.TINKOFF_ETF, TestEtf4.TINKOFF_ETF);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_ETF for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_returnsSchedule_whenBondTicker() {
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        mockTradingSchedule(TestBond2.EXCHANGE, from, to);
-
-        final List<TradingDay> schedule = realExtInstrumentsService.getTradingScheduleByTicker(TestBond2.TICKER, Interval.of(from, to));
-
-        final List<TradingDay> expectedSchedule = List.of(TestTradingDay1.TRADING_DAY, TestTradingDay2.TRADING_DAY);
-
-        Assertions.assertEquals(expectedSchedule, schedule);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenMultipleBondsFound() {
-        final String ticker = TestBond3.TICKER;
-
-        Mocker.mockBonds(instrumentsService, TestBond1.TINKOFF_BOND, TestBond2.TINKOFF_BOND, TestBond3.TINKOFF_BOND, TestBond4.TINKOFF_BOND);
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
-        final String expectedMessage = "Expected maximum of one INSTRUMENT_TYPE_BOND for ticker '" + ticker + "'. Found 2";
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
-    }
-
-    @Test
-    void getTradingScheduleByTicker_throwsIllegalArgumentException_whenInstrumentNotFound() {
-        final String ticker = TestShare2.TICKER;
-
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 10, 3, 3);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 10, 7, 3);
-
-        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByTicker(ticker, Interval.of(from, to));
-        final String expectedMessage = "Not found instrument for ticker '" + ticker + "'";
+        final Executable executable = () -> realExtInstrumentsService.getTradingScheduleByFigi(figi, Interval.of(from, to));
+        final String expectedMessage = "Not found instrument for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 

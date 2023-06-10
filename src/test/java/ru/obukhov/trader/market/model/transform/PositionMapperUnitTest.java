@@ -17,7 +17,6 @@ class PositionMapperUnitTest {
 
     @Test
     void map() {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final InstrumentType instrumentType = InstrumentType.INSTRUMENT_TYPE_SHARE;
         final int averagePositionPrice = 110;
@@ -39,11 +38,10 @@ class PositionMapperUnitTest {
         );
         final Position source = Position.fromResponse(portfolioPosition);
 
-        final PortfolioPosition position = mapper.map(ticker, source);
+        final PortfolioPosition position = mapper.map(figi, source);
 
         final PortfolioPosition expectedPosition = new PortfolioPositionBuilder()
                 .setFigi(figi)
-                .setTicker(ticker)
                 .setInstrumentType(instrumentType)
                 .setAveragePositionPrice(averagePositionPrice)
                 .setExpectedYield(expectedYield)

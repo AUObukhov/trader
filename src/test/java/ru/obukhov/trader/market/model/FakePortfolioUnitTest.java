@@ -14,7 +14,7 @@ class FakePortfolioUnitTest {
 
         Assertions.assertEquals(accountId, portfolio.getAccountId());
         Assertions.assertNotNull(portfolio.getBalances());
-        Assertions.assertNotNull(portfolio.getTickersToPositions());
+        Assertions.assertNotNull(portfolio.getFigiesToPositions());
         Assertions.assertNotNull(portfolio.getOperations());
     }
 

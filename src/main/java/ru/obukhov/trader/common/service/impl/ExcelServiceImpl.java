@@ -74,11 +74,11 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Override
-    public void saveCandles(final String ticker, final Interval interval, final GetCandlesResponse response) {
+    public void saveCandles(final String figi, final Interval interval, final GetCandlesResponse response) {
         final ExtendedWorkbook workBook = createWorkBook();
-        createSheet(workBook, ticker, interval, response);
+        createSheet(workBook, figi, interval, response);
 
-        saveToFile(workBook, "Candles for '" + ticker + "'");
+        saveToFile(workBook, "Candles for FIGI '" + figi + "'");
     }
 
     private void saveToFile(final ExtendedWorkbook workBook, final String fileName) {
@@ -131,10 +131,10 @@ public class ExcelServiceImpl implements ExcelService {
         putChartWithOperations(sheet, result.candles(), result.operations());
     }
 
-    private void createSheet(final ExtendedWorkbook workbook, final String ticker, final Interval interval, final GetCandlesResponse response) {
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(ticker);
+    private void createSheet(final ExtendedWorkbook workbook, final String figi, final Interval interval, final GetCandlesResponse response) {
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.createSheet(figi);
 
-        putTicker(sheet, ticker);
+        putFigi(sheet, figi);
         putInterval(sheet, interval);
         putCandles(sheet, response.getCandles());
 
@@ -174,7 +174,7 @@ public class ExcelServiceImpl implements ExcelService {
         labelRow.createUnitedCell("Общая статистика", 2);
 
         putAccountId(sheet, result.botConfig().accountId());
-        putTicker(sheet, result.botConfig().ticker());
+        putFigi(sheet, result.botConfig().figi());
         putInterval(sheet, result.interval());
         putInitialInvestment(sheet, result.balances().initialInvestment());
         putTotalInvestment(sheet, result.balances().totalInvestment());
@@ -193,9 +193,9 @@ public class ExcelServiceImpl implements ExcelService {
         row.createCells("Счёт", accountId);
     }
 
-    private void putTicker(final ExtendedSheet sheet, final String ticker) {
+    private void putFigi(final ExtendedSheet sheet, final String figi) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells("Тикер", ticker);
+        row.createCells("FIGI", figi);
     }
 
     private void putInterval(final ExtendedSheet sheet, final Interval interval) {

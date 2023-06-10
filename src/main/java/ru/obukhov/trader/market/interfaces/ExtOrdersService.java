@@ -10,13 +10,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ExtOrdersService {
-    List<Order> getOrders(String accountId, String ticker);
+    List<Order> getOrders(String accountId, String figi);
 
     List<Order> getOrders(String accountId);
 
     PostOrderResponse postOrder(
             String accountId,
-            String ticker,
+            String figi,
             long quantity,
             BigDecimal price,
             OrderDirection direction,

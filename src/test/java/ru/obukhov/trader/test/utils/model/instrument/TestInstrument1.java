@@ -33,9 +33,9 @@ public class TestInstrument1 {
     public static final BigDecimal D_SHORT_MIN = DecimalUtils.setDefaultScale(1);
     public static final boolean SHORT_ENABLED = false;
     public static final String EXCHANGE = "SPB";
-    public static final String COUNTRY_OF_RISK = "";
-    public static final String COUNTRY_OF_RISK_NAME = "";
-    public static final String INSTRUMENT_TYPE = "";
+    public static final String COUNTRY_OF_RISK = "US";
+    public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
+    public static final String INSTRUMENT_TYPE = "share";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE = true;

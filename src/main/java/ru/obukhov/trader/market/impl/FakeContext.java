@@ -134,20 +134,20 @@ public class FakeContext implements Context {
 
     // region positions
 
-    public void addPosition(final String accountId, final String ticker, PortfolioPosition position) {
-        computeIfAbsentPortfolio(accountId).getTickersToPositions().put(ticker, position);
+    public void addPosition(final String accountId, final String figi, PortfolioPosition position) {
+        computeIfAbsentPortfolio(accountId).getFigiesToPositions().put(figi, position);
     }
 
-    public PortfolioPosition getPosition(final String accountId, final String ticker) {
-        return computeIfAbsentPortfolio(accountId).getTickersToPositions().get(ticker);
+    public PortfolioPosition getPosition(final String accountId, final String figi) {
+        return computeIfAbsentPortfolio(accountId).getFigiesToPositions().get(figi);
     }
 
     public List<PortfolioPosition> getPositions(final String accountId) {
-        return new ArrayList<>(computeIfAbsentPortfolio(accountId).getTickersToPositions().values());
+        return new ArrayList<>(computeIfAbsentPortfolio(accountId).getFigiesToPositions().values());
     }
 
-    public void removePosition(final String accountId, final String ticker) {
-        computeIfAbsentPortfolio(accountId).getTickersToPositions().remove(ticker);
+    public void removePosition(final String accountId, final String figi) {
+        computeIfAbsentPortfolio(accountId).getFigiesToPositions().remove(figi);
     }
 
     // endregion

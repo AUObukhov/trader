@@ -42,7 +42,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
-    void getCandles_returnsBadRequest_whenTickerIsMissing() throws Exception {
+    void getCandles_returnsBadRequest_whenFigiIsMissing() throws Exception {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
@@ -54,7 +54,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         request.setBigWindow(50);
         request.setSaveToFile(true);
 
-        getAndExpectBadRequestError("/trader/statistics/candles", request, "ticker is mandatory");
+        getAndExpectBadRequestError("/trader/statistics/candles", request, "figi is mandatory");
     }
 
     @Test
@@ -62,7 +62,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsBadRequest_whenIntervalIsMissing() throws Exception {
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
         request.setSmallWindow(50);
@@ -80,7 +80,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(Interval.of(from, to));
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
         request.setSmallWindow(50);
@@ -98,7 +98,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setSmallWindow(50);
@@ -116,7 +116,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
@@ -134,7 +134,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.LINEAR_WEIGHTED);
@@ -149,14 +149,12 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCandles_returnsCandles_whenParamsAreValid() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpenPrice(12000)
@@ -196,7 +194,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(candles, shortAverages, longAverages);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(ticker);
+        request.setFigi(figi);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(candleInterval);
         request.setMovingAverageType(MovingAverageType.SIMPLE);
@@ -215,17 +213,15 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     @Test
     @DirtiesContext
     void getCandles_callsSaveToFile_whenSaveToFileTrue() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(ticker);
+        request.setFigi(figi);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(candleInterval);
         request.setMovingAverageType(MovingAverageType.SIMPLE);
@@ -243,23 +239,21 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
+                .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
     }
 
     @Test
     @DirtiesContext
     void getCandles_catchesRuntimeException_whenSaveToFileTrue() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(ticker);
+        request.setFigi(figi);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(candleInterval);
         request.setMovingAverageType(MovingAverageType.SIMPLE);
@@ -275,28 +269,26 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final GetCandlesResponse expectedResponse = new GetCandlesResponse(Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         Mockito.doThrow(new RuntimeException())
                 .when(excelService)
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
+                .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
 
         performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.times(1))
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
+                .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
     }
 
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileFalse() throws Exception {
-        final String ticker = TestShare1.TICKER;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(ticker);
+        request.setFigi(figi);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(candleInterval);
         request.setMovingAverageType(MovingAverageType.SIMPLE);
@@ -314,20 +306,19 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
+                .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
     }
 
     @Test
     @DirtiesContext
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
-        Mocker.mockFigiByTicker(instrumentsService, TestShare1.FIGI, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final String requestString = String.format("""
                 {
-                  "ticker": "%s",
+                  "figi": "%s",
                   "interval": {
                     "from": "2021-03-25T10:00:00+03:00",
                     "to": "2021-03-25T19:00:00+03:00"
@@ -336,7 +327,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                   "movingAverageType": "SMA",
                   "smallWindow": 1,
                   "bigWindow": 2
-                }""", ticker);
+                }""", figi);
 
         final MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.get("/trader/statistics/candles")
@@ -348,7 +339,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         performAndExpectResponse(requestBuilder, expectedResponse);
 
         Mockito.verify(excelService, Mockito.never())
-                .saveCandles(Mockito.eq(ticker), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
+                .saveCandles(Mockito.eq(figi), Mockito.any(Interval.class), Mockito.eq(expectedResponse));
     }
 
     // endregion

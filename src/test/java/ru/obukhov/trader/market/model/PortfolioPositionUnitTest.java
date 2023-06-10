@@ -16,7 +16,7 @@ class PortfolioPositionUnitTest {
     void getCurrency() {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
-                .setTicker(TestShare1.TICKER)
+                .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(5)
@@ -31,7 +31,7 @@ class PortfolioPositionUnitTest {
     @Test
     void getTotalPrice() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
-                .setTicker(TestShare1.TICKER)
+                .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
@@ -47,7 +47,7 @@ class PortfolioPositionUnitTest {
     void addQuantities() {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
-                .setTicker(TestShare1.TICKER)
+                .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(15)
@@ -76,7 +76,7 @@ class PortfolioPositionUnitTest {
     @Test
     void cloneWithNewQuantity() {
         final PortfolioPosition position = new PortfolioPositionBuilder()
-                .setTicker(TestShare1.TICKER)
+                .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
@@ -91,8 +91,7 @@ class PortfolioPositionUnitTest {
         final PortfolioPosition newPosition = position.cloneWithNewQuantity(newQuantity, newQuantityLots);
 
         final PortfolioPosition expectedPosition = new PortfolioPosition(
-                null,
-                position.ticker(),
+                position.figi(),
                 position.instrumentType(),
                 newQuantity,
                 position.averagePositionPrice(),
@@ -108,7 +107,7 @@ class PortfolioPositionUnitTest {
     void cloneWithNewValues() {
         final Currency currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
-                .setTicker(TestShare1.TICKER)
+                .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
                 .setAveragePositionPrice(10)
                 .setExpectedYield(300)
@@ -126,8 +125,7 @@ class PortfolioPositionUnitTest {
         final PortfolioPosition newPosition = position.cloneWithNewValues(newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
 
         final PortfolioPosition expectedPosition = new PortfolioPosition(
-                null,
-                position.ticker(),
+                position.figi(),
                 position.instrumentType(),
                 newQuantity,
                 position.averagePositionPrice(),

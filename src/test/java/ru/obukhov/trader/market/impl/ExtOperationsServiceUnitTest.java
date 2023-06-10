@@ -40,13 +40,13 @@ class ExtOperationsServiceUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String accountId2 = TestData.ACCOUNT_ID2;
 
-        final String ticker1 = TestShare1.TICKER;
-        final String ticker2 = TestShare2.TICKER;
+        final String figi1 = TestShare1.FIGI;
+        final String figi2 = TestShare2.FIGI;
 
-        final PortfolioPosition portfolioPosition1 = new PortfolioPositionBuilder().setTicker(ticker1).setQuantityLots(1).build();
-        final PortfolioPosition portfolioPosition2 = new PortfolioPositionBuilder().setTicker(ticker2).setQuantityLots(2).build();
-        final PortfolioPosition portfolioPosition3 = new PortfolioPositionBuilder().setTicker(ticker1).setQuantityLots(3).build();
-        final PortfolioPosition portfolioPosition4 = new PortfolioPositionBuilder().setTicker(ticker2).setQuantityLots(4).build();
+        final PortfolioPosition portfolioPosition1 = new PortfolioPositionBuilder().setFigi(figi1).setQuantityLots(1).build();
+        final PortfolioPosition portfolioPosition2 = new PortfolioPositionBuilder().setFigi(figi2).setQuantityLots(2).build();
+        final PortfolioPosition portfolioPosition3 = new PortfolioPositionBuilder().setFigi(figi1).setQuantityLots(3).build();
+        final PortfolioPosition portfolioPosition4 = new PortfolioPositionBuilder().setFigi(figi2).setQuantityLots(4).build();
 
         final Map<String, List<PortfolioPosition>> accountsToPositions = Map.of(
                 accountId1, List.of(portfolioPosition1, portfolioPosition2),
@@ -55,10 +55,10 @@ class ExtOperationsServiceUnitTest {
 
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(accountsToPositions, Map.of());
 
-        Assertions.assertEquals(portfolioPosition1, extOperationsService.getSecurity(accountId1, ticker1));
-        Assertions.assertEquals(portfolioPosition2, extOperationsService.getSecurity(accountId1, ticker2));
-        Assertions.assertEquals(portfolioPosition3, extOperationsService.getSecurity(accountId2, ticker1));
-        Assertions.assertEquals(portfolioPosition4, extOperationsService.getSecurity(accountId2, ticker2));
+        Assertions.assertEquals(portfolioPosition1, extOperationsService.getSecurity(accountId1, figi1));
+        Assertions.assertEquals(portfolioPosition2, extOperationsService.getSecurity(accountId1, figi2));
+        Assertions.assertEquals(portfolioPosition3, extOperationsService.getSecurity(accountId2, figi1));
+        Assertions.assertEquals(portfolioPosition4, extOperationsService.getSecurity(accountId2, figi2));
     }
 
     // endregion
@@ -300,7 +300,7 @@ class ExtOperationsServiceUnitTest {
         private final Map<String, WithdrawLimits> withdrawLimits;
 
         @Override
-        public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker) {
+        public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
             return null;
         }
 

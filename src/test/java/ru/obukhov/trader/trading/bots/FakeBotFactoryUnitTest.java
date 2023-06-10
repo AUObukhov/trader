@@ -87,10 +87,10 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource("getData_forCreateBot_movesCurrentDateTimeToCeilingWorkTime")
     void createBot_movesCurrentDateTimeToCeilingWorkTime(final OffsetDateTime currentDateTime, final OffsetDateTime expectedCurrentDateTime) {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -99,7 +99,7 @@ class FakeBotFactoryUnitTest {
 
         final BalanceConfig balanceConfig = new BalanceConfig();
 
-        mockCurrency(ticker, TestShare1.CURRENCY);
+        mockCurrency(figi, TestShare1.CURRENCY);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
         mockFakeContext();
 
@@ -120,11 +120,11 @@ class FakeBotFactoryUnitTest {
     @ParameterizedTest
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
     void createBot_initializesBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final Currency currency = TestShare1.CURRENCY;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -133,7 +133,7 @@ class FakeBotFactoryUnitTest {
 
         final OffsetDateTime currentDateTime = DateTimeTestData.createDateTime(2020, 10, 1);
 
-        mockCurrency(ticker, currency);
+        mockCurrency(figi, currency);
         Mockito.when(strategyFactory.createStrategy(botConfig)).thenReturn(TestData.CONSERVATIVE_STRATEGY);
         mockFakeContext();
 
@@ -144,10 +144,10 @@ class FakeBotFactoryUnitTest {
 
     @Test
     void createBot_throwsIllegalArgumentException_whenShareNotFound() {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -157,14 +157,14 @@ class FakeBotFactoryUnitTest {
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
         final Executable executable = () -> factory.createBot(botConfig, balanceConfig, currentDateTime);
-        final String expectedMessage = "Not found share for ticker '" + ticker + "'";
+        final String expectedMessage = "Not found share for FIGI '" + figi + "'";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockCurrency(final String ticker, final Currency currency) {
-        final Share share = Share.builder().ticker(ticker).currency(currency).build();
-        Mockito.when(extInstrumentsService.getSingleShare(ticker)).thenReturn(share);
+    private void mockCurrency(final String figi, final Currency currency) {
+        final Share share = Share.builder().figi(figi).currency(currency).build();
+        Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
     }
 
     private void mockFakeContext() {

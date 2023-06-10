@@ -59,9 +59,9 @@ public class FakeBotFactory {
             final OffsetDateTime currentDateTime
     ) {
         final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
-        final Share share = extInstrumentsService.getSingleShare(botConfig.ticker());
+        final Share share = extInstrumentsService.getShare(botConfig.figi());
         if (share == null) {
-            throw new IllegalArgumentException("Not found share for ticker '" + botConfig.ticker() + "'");
+            throw new IllegalArgumentException("Not found share for FIGI '" + botConfig.figi() + "'");
         }
         final BigDecimal initialBalance = getInitialBalance(currentDateTime, ceilingWorkTime, balanceConfig);
 

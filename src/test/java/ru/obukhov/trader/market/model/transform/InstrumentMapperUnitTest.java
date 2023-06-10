@@ -12,9 +12,9 @@ class InstrumentMapperUnitTest {
 
     @Test
     void map() {
-        final Instrument result = instrumentMapper.map(TestInstrument1.TINKOFF_INSTRUMENT);
+        final Instrument instrument = instrumentMapper.map(TestInstrument1.TINKOFF_INSTRUMENT);
 
-        Assertions.assertEquals(TestInstrument1.INSTRUMENT, result);
+        Assertions.assertEquals(TestInstrument1.INSTRUMENT, instrument);
     }
 
     @Test

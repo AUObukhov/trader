@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public record BackTestOperation(
-        @JsonIgnore String ticker,
+        @JsonIgnore String figi,
         OffsetDateTime dateTime,
         OperationType operationType,
         BigDecimal price,

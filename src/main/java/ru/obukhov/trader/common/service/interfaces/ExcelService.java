@@ -8,8 +8,8 @@ import java.util.Collection;
 
 public interface ExcelService {
 
-    void saveBackTestResults(Collection<BackTestResult> results);
+    void saveBackTestResults(final Collection<BackTestResult> results);
 
-    void saveCandles(final String ticker, final Interval interval, final GetCandlesResponse response);
+    void saveCandles(final String figi, final Interval interval, final GetCandlesResponse response);
 
 }

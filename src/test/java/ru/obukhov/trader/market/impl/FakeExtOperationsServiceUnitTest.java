@@ -43,7 +43,7 @@ class FakeExtOperationsServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -58,21 +58,21 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity3 = 3L;
 
         final BackTestOperation operation1 = new BackTestOperation(
-                ticker,
+                figi,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
-                ticker,
+                figi,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
-                ticker,
+                figi,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
                 DecimalUtils.setDefaultScale(price3),
@@ -86,29 +86,29 @@ class FakeExtOperationsServiceUnitTest {
 
         // action
 
-        final List<Operation> allOperations = extOperationsService.getOperations(accountId, wholeInterval, ticker);
+        final List<Operation> allOperations = extOperationsService.getOperations(accountId, wholeInterval, figi);
 
         // assert
 
-        final Operation expectedOperation1 = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1);
-        final Operation expectedOperation2 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2);
-        final Operation expectedOperation3 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3);
+        final Operation expectedOperation1 = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi);
+        final Operation expectedOperation2 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi);
+        final Operation expectedOperation3 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi);
 
         AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), allOperations);
 
         final Interval localInterval = Interval.of(dateTime1.plusMinutes(1), dateTime1.plusMinutes(1));
-        final List<Operation> localOperations = extOperationsService.getOperations(accountId, localInterval, ticker);
+        final List<Operation> localOperations = extOperationsService.getOperations(accountId, localInterval, figi);
         AssertUtils.assertEquals(List.of(expectedOperation2), localOperations);
     }
 
     @Test
-    void getOperations_filtersOperationsByTicker_whenTickerIsNotNull() {
+    void getOperations_filtersOperationsByFigi_whenFigiIsNotNull() {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String ticker1 = TestShare1.TICKER;
-        final String ticker2 = TestShare2.TICKER;
+        final String figi1 = TestShare1.FIGI;
+        final String figi2 = TestShare2.FIGI;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
 
@@ -124,21 +124,21 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity3 = 3L;
 
         final BackTestOperation operation1 = new BackTestOperation(
-                ticker1,
+                figi1,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
-                ticker2,
+                figi2,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
-                ticker2,
+                figi2,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
                 DecimalUtils.setDefaultScale(price3),
@@ -151,27 +151,27 @@ class FakeExtOperationsServiceUnitTest {
 
         // action
 
-        final List<Operation> ticker1Operations = extOperationsService.getOperations(accountId, interval, ticker1);
-        final List<Operation> ticker2Operations = extOperationsService.getOperations(accountId, interval, ticker2);
+        final List<Operation> figi1Operations = extOperationsService.getOperations(accountId, interval, figi1);
+        final List<Operation> figi2Operations = extOperationsService.getOperations(accountId, interval, figi2);
 
         // assert
 
-        final Operation expectedTicker1Operation = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1);
-        AssertUtils.assertEquals(List.of(expectedTicker1Operation), ticker1Operations);
+        final Operation expectedFigi1Operation = TestData.createOperation(dateTime1, OperationType.OPERATION_TYPE_BUY, price1, quantity1, figi1);
+        AssertUtils.assertEquals(List.of(expectedFigi1Operation), figi1Operations);
 
-        final Operation expectedTicker2Operation1 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2);
-        final Operation expectedTicker2Operation2 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3);
-        AssertUtils.assertEquals(List.of(expectedTicker2Operation1, expectedTicker2Operation2), ticker2Operations);
+        final Operation expectedFigi2Operation1 = TestData.createOperation(dateTime2, OperationType.OPERATION_TYPE_BUY, price2, quantity2, figi2);
+        final Operation expectedFigi2Operation2 = TestData.createOperation(dateTime3, OperationType.OPERATION_TYPE_SELL, price3, quantity3, figi2);
+        AssertUtils.assertEquals(List.of(expectedFigi2Operation1, expectedFigi2Operation2), figi2Operations);
     }
 
     @Test
-    void getOperations_doesNotFilterOperationsByTicker_whenTickerIsNull() {
+    void getOperations_doesNotFilterOperationsByFigi_whenFigiIsNull() {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String ticker1 = TestShare1.TICKER;
-        final String ticker2 = TestShare2.TICKER;
+        final String figi1 = TestShare1.FIGI;
+        final String figi2 = TestShare2.FIGI;
 
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(1);
@@ -186,21 +186,21 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity3 = 3L;
 
         final BackTestOperation operation1 = new BackTestOperation(
-                ticker1,
+                figi1,
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price1),
                 quantity1
         );
         final BackTestOperation operation2 = new BackTestOperation(
-                ticker2,
+                figi2,
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(price2),
                 quantity2
         );
         final BackTestOperation operation3 = new BackTestOperation(
-                ticker2,
+                figi2,
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
                 DecimalUtils.setDefaultScale(price3),
@@ -221,19 +221,22 @@ class FakeExtOperationsServiceUnitTest {
                 dateTime1,
                 OperationType.OPERATION_TYPE_BUY,
                 price1,
-                quantity1
+                quantity1,
+                figi1
         );
         final Operation expectedOperation2 = TestData.createOperation(
                 dateTime2,
                 OperationType.OPERATION_TYPE_BUY,
                 price2,
-                quantity2
+                quantity2,
+                figi2
         );
         final Operation expectedOperation3 = TestData.createOperation(
                 dateTime3,
                 OperationType.OPERATION_TYPE_SELL,
                 price3,
-                quantity3
+                quantity3,
+                figi2
         );
         AssertUtils.assertEquals(List.of(expectedOperation1, expectedOperation2, expectedOperation3), operations);
     }

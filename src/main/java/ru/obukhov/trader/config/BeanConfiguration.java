@@ -110,11 +110,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtInstrumentsService realExtInstrumentsService(
-            final InstrumentsService instrumentsService,
-            @Lazy final RealExtInstrumentsService realExtInstrumentsService
-    ) {
-        return new RealExtInstrumentsService(instrumentsService, realExtInstrumentsService);
+    public RealExtInstrumentsService realExtInstrumentsService(final InstrumentsService instrumentsService) {
+        return new RealExtInstrumentsService(instrumentsService);
     }
 
     @Bean
@@ -126,8 +123,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService, final RealExtInstrumentsService realExtInstrumentsService) {
-        return new RealExtOrdersService(ordersService, realExtInstrumentsService);
+    public RealExtOrdersService realExtOrdersService(final OrdersService ordersService) {
+        return new RealExtOrdersService(ordersService);
     }
 
     @Bean

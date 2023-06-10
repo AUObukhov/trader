@@ -11,7 +11,6 @@ import java.math.BigDecimal;
  */
 public record PortfolioPosition(
         @NotNull String figi,
-        @NotNull String ticker,
         @NotNull InstrumentType instrumentType,
         @NotNull BigDecimal quantity,
         @NotNull Money averagePositionPrice,
@@ -60,7 +59,6 @@ public record PortfolioPosition(
         final Money newCurrentPrice = Money.of(getCurrency(), newCurrentPriceValue);
         return new PortfolioPosition(
                 figi,
-                ticker,
                 instrumentType,
                 quantity,
                 newAveragePositionPrice,
@@ -82,7 +80,6 @@ public record PortfolioPosition(
         final Money newCurrentPrice = Money.of(getCurrency(), currentPrice);
         return new PortfolioPosition(
                 figi,
-                ticker,
                 instrumentType,
                 quantity,
                 averagePositionPrice,
@@ -98,7 +95,6 @@ public record PortfolioPosition(
     public PortfolioPosition cloneWithNewQuantity(final BigDecimal quantity, final BigDecimal quantityLots) {
         return new PortfolioPosition(
                 figi,
-                ticker,
                 instrumentType,
                 quantity,
                 averagePositionPrice,

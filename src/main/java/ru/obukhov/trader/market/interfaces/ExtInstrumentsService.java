@@ -14,37 +14,25 @@ import java.util.List;
 
 public interface ExtInstrumentsService {
 
-    String getSingleFigiByTicker(final String ticker);
-
-    List<String> getFigiesByTicker(final String ticker);
-
     String getTickerByFigi(final String figi);
 
     String getExchange(final String ticker);
 
     Instrument getInstrument(final String figi);
 
-    List<Share> getShares(final String ticker);
+    Share getShare(final String figi);
 
-    Share getSingleShare(final String ticker);
+    Etf getEtf(final String figi);
 
-    List<Etf> getEtfs(final String ticker);
+    Bond getBond(final String figi);
 
-    Etf getSingleEtf(final String ticker);
+    CurrencyInstrument getCurrency(final String figi);
 
-    List<Bond> getBonds(final String ticker);
-
-    Bond getSingleBond(final String ticker);
-
-    List<CurrencyInstrument> getCurrencies(final String ticker);
-
-    CurrencyInstrument getSingleCurrency(final String ticker);
-
-    TradingDay getTradingDay(final String ticker, final OffsetDateTime dateTime);
+    TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime);
 
     List<TradingDay> getTradingSchedule(final String exchange, final Interval interval);
 
-    List<TradingDay> getTradingScheduleByTicker(final String ticker, final Interval interval);
+    List<TradingDay> getTradingScheduleByFigi(final String figi, final Interval interval);
 
     List<TradingSchedule> getTradingSchedules(final Interval interval);
 

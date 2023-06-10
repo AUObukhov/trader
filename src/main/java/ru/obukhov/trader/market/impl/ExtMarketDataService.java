@@ -56,15 +56,15 @@ public class ExtMarketDataService {
      * @param interval search interval, default {@code interval.from} is first available candle
      * @return sorted by time list of loaded candles
      */
-    public List<Candle> getCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+    public List<Candle> getCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
+        final Share share = extInstrumentsService.getShare(figi);
         final ChronoUnit period = DateUtils.getPeriodByCandleInterval(candleInterval);
 
         final List<Candle> candles = period == ChronoUnit.DAYS
                 ? getAllCandlesByDays(share, interval, candleInterval)
                 : getAllCandlesByYears(share, interval, candleInterval);
 
-        log.info("Loaded {} candles for ticker '{}'", candles.size(), ticker);
+        log.info("Loaded {} candles for FIGI '{}'", candles.size(), figi);
 
         return candles.stream()
                 .sorted(Comparator.comparing(Candle::getTime))
@@ -79,7 +79,7 @@ public class ExtMarketDataService {
         final List<List<Candle>> candles = new ArrayList<>();
         for (int i = subIntervals.size() - 1; i >= 0; i--) {
             final Interval subInterval = subIntervals.get(i);
-            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.ticker(), subInterval.extendToDay(), subInterval, candleInterval);
+            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.figi(), subInterval.extendToDay(), subInterval, candleInterval);
             candles.add(currentCandles);
         }
 
@@ -95,7 +95,7 @@ public class ExtMarketDataService {
         final List<List<Candle>> candles = new ArrayList<>();
         for (int i = subIntervals.size() - 1; i >= 0; i--) {
             final Interval subInterval = subIntervals.get(i);
-            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.ticker(), subInterval.extendToYear(), subInterval, candleInterval);
+            final List<Candle> currentCandles = loadCandlesBetterCacheable(share.figi(), subInterval.extendToYear(), subInterval, candleInterval);
             candles.add(currentCandles);
         }
 
@@ -106,7 +106,7 @@ public class ExtMarketDataService {
     /**
      * Loads candles from often used interval for better benefit from cache hits
      *
-     * @param ticker            ticker of loaded candles
+     * @param figi              FIGI of loaded candles
      * @param loadInterval      often used interval, better be whole day, year, etc.
      * @param effectiveInterval effective interval.
      *                          Must smaller or equal to {@code loadInterval}, otherwise values outside of {@code loadInterval} will be lost
@@ -114,12 +114,12 @@ public class ExtMarketDataService {
      * @return candles from given {@code effectiveInterval}
      */
     private List<Candle> loadCandlesBetterCacheable(
-            final String ticker,
+            final String figi,
             final Interval loadInterval,
             final Interval effectiveInterval,
             final CandleInterval candleInterval
     ) {
-        final List<Candle> candles = self.getMarketCandles(ticker, loadInterval, candleInterval);
+        final List<Candle> candles = self.getMarketCandles(figi, loadInterval, candleInterval);
         return effectiveInterval.equals(loadInterval) ? candles : filterCandles(candles, effectiveInterval);
     }
 
@@ -133,45 +133,45 @@ public class ExtMarketDataService {
     }
 
     /**
-     * Searches last price by {@code ticker}
+     * Searches last price by {@code figi}
      *
      * @return found candle
      * @throws IllegalArgumentException if candle not found
      */
-    public BigDecimal getLastPrice(final String ticker, final OffsetDateTime to) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+    public BigDecimal getLastPrice(final String figi, final OffsetDateTime to) {
+        final Share share = extInstrumentsService.getShare(figi);
 
         final List<Interval> intervals = Interval.of(share.first1MinCandleDate(), to).splitIntoDailyIntervals();
         for (int i = intervals.size() - 1; i >= 0; i--) {
             final Interval interval = intervals.get(i);
-            final List<Candle> candles = loadCandlesBetterCacheable(ticker, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
+            final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
                 return lastCandle.getClosePrice();
             }
         }
 
-        throw new IllegalArgumentException("Not found last candle for ticker '" + ticker + "'");
+        throw new IllegalArgumentException("Not found last candle for FIGI '" + figi + "'");
     }
 
     /**
-     * @return last {@code limit} candles by {@code ticker}.
+     * @return last {@code limit} candles by {@code figi}.
      * Searches from now to past. Stops searching when finds enough candles or when reaches first candle
      */
     public List<Candle> getLastCandles(
-            final String ticker,
+            final String figi,
             final int limit,
             final CandleInterval candleInterval,
             final OffsetDateTime currentDateTime
     ) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+        final Share share = extInstrumentsService.getShare(figi);
         return DateUtils.getPeriodByCandleInterval(candleInterval) == ChronoUnit.DAYS
                 ? getLastCandlesDaily(share, limit, candleInterval, currentDateTime)
                 : getLastCandlesYearly(share, limit, candleInterval, currentDateTime);
     }
 
     /**
-     * @return last {@code limit} candles by {@code ticker}.
+     * @return last {@code limit} candles by given {@code share}.
      * Searches from now to past. Stops searching when finds enough candles or when the total number of candles is less than {@code limit}.
      */
     private List<Candle> getLastCandlesDaily(
@@ -183,13 +183,13 @@ public class ExtMarketDataService {
         final OffsetDateTime from = currentDateTime.truncatedTo(ChronoUnit.DAYS);
         Interval interval = Interval.of(from, currentDateTime);
 
-        List<Candle> currentCandles = getMarketCandles(share.ticker(), interval, candleInterval);
+        List<Candle> currentCandles = getMarketCandles(share.figi(), interval, candleInterval);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
         interval = interval.minusDays(1).extendToDay();
 
         do {
-            currentCandles = self.getMarketCandles(share.ticker(), interval, candleInterval);
+            currentCandles = self.getMarketCandles(share.figi(), interval, candleInterval);
             candles.addAll(currentCandles);
             interval = interval.minusDays(1);
         } while (candles.size() < limit && share.first1MinCandleDate().isBefore(interval.getTo()));
@@ -199,7 +199,7 @@ public class ExtMarketDataService {
     }
 
     /**
-     * @return last {@code limit} candles by {@code ticker}.
+     * @return last {@code limit} candles by given {@code share}.
      * Searches from now to past. Stops searching when finds enough candles or when the total number of candles is less than {@code limit}.
      */
     private List<Candle> getLastCandlesYearly(
@@ -211,13 +211,13 @@ public class ExtMarketDataService {
         final OffsetDateTime from = DateUtils.atStartOfYear(currentDateTime);
         Interval interval = Interval.of(from, currentDateTime);
 
-        List<Candle> currentCandles = getMarketCandles(share.ticker(), interval, candleInterval);
+        List<Candle> currentCandles = getMarketCandles(share.figi(), interval, candleInterval);
         final List<Candle> candles = new ArrayList<>(currentCandles);
 
         interval = interval.minusYears(1).extendToYear();
 
         do {
-            currentCandles = self.getMarketCandles(share.ticker(), interval, candleInterval);
+            currentCandles = self.getMarketCandles(share.figi(), interval, candleInterval);
             candles.addAll(currentCandles);
             interval = interval.minusYears(1);
         } while (candles.size() < limit && !currentCandles.isEmpty());
@@ -227,8 +227,7 @@ public class ExtMarketDataService {
     }
 
     @Cacheable(value = "marketCandles", sync = true)
-    public List<Candle> getMarketCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
-        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
+    public List<Candle> getMarketCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
         final Instant fromInstant = interval.getFrom().toInstant();
         final Instant toInstant = interval.getTo().toInstant();
         final List<Candle> candles = marketDataService.getCandlesSync(figi, fromInstant, toInstant, candleInterval)
@@ -237,13 +236,12 @@ public class ExtMarketDataService {
                 .map(CANDLE_MAPPER::map)
                 .toList();
 
-        log.debug("Loaded {} candles for ticker '{}' in interval {}", candles.size(), ticker, interval);
+        log.debug("Loaded {} candles for FIGI '{}' in interval {}", candles.size(), figi, interval);
         return candles;
     }
 
-    public SecurityTradingStatus getTradingStatus(final String ticker) {
-        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
-        return marketDataService.getTradingStatusSync(figi).getTradingStatus();
+    public SecurityTradingStatus getTradingStatus(final String id) {
+        return marketDataService.getTradingStatusSync(id).getTradingStatus();
     }
 
 }

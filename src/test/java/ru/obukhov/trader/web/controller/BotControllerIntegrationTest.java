@@ -63,7 +63,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(false);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -85,7 +85,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -135,7 +135,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 null,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -157,7 +157,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 StrategyType.CONSERVATIVE,
@@ -179,7 +179,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         request.setSaveToFiles(true);
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 null,
@@ -197,7 +197,6 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
-        final String ticker = TestShare1.TICKER;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
@@ -215,7 +214,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         final BotConfig botConfig1 = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 candleInterval,
                 0.001,
                 StrategyType.CONSERVATIVE,
@@ -233,7 +232,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final BotConfig botConfig2 = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 candleInterval,
                 0.002,
                 StrategyType.CROSS,
@@ -249,8 +248,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        Mocker.mockFigiByTicker(instrumentsService, figi, ticker);
-        Mocker.mockShares(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
@@ -276,7 +274,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1061.21544)
         );
         final BackTestOperation operation = new BackTestOperation(
-                ticker,
+                figi,
                 from,
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10000),
@@ -308,7 +306,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000)
         );
         final BackTestPosition backTestPosition2 = new BackTestPosition(
-                ticker,
+                figi,
                 DecimalUtils.setDefaultScale(100000),
                 DecimalUtils.setDefaultScale(10)
         );

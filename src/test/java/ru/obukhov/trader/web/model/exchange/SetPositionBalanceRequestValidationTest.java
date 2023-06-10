@@ -10,34 +10,34 @@ class SetPositionBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
         AssertUtils.assertNoViolations(request);
     }
 
     @Test
-    void validationFails_whenTickerIsNull() {
+    void validationFails_whenFigiIsNull() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setTicker(null);
+        request.setFigi(null);
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
-        AssertUtils.assertViolation(request, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "figi is mandatory");
     }
 
     @Test
-    void validationFails_whenTickerIsEmpty() {
+    void validationFails_whenFigiIsEmpty() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setTicker(null);
+        request.setFigi(null);
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
-        AssertUtils.assertViolation(request, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "figi is mandatory");
     }
 
     @Test
     void validationFails_whenBalanceIsNull() {
         final SetPositionBalanceRequest request = new SetPositionBalanceRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setBalance(null);
 
         AssertUtils.assertViolation(request, "balance is mandatory");

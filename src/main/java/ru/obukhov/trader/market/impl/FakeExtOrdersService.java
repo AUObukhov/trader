@@ -37,12 +37,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private final double commission;
 
     /**
-     * @return returns list of active orders with given {@code ticker} at given {@code accountId}.
+     * @return returns list of active orders with given {@code figi} at given {@code accountId}.
      * If {@code accountId} null, works with default broker account
      */
     @Override
-    public List<Order> getOrders(final String accountId, final String ticker) {
-        final String figi = extInstrumentsService.getSingleFigiByTicker(ticker);
+    public List<Order> getOrders(final String accountId, final String figi) {
         return getOrders(accountId).stream()
                 .filter(order -> figi.equals(order.figi()))
                 .toList();
@@ -60,25 +59,25 @@ public class FakeExtOrdersService implements ExtOrdersService {
     @Override
     public PostOrderResponse postOrder(
             final String accountId,
-            final String ticker,
+            final String figi,
             final long quantityLots,
             final BigDecimal price,
             final OrderDirection direction,
             final OrderType type,
             final String orderId
     ) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
-        final BigDecimal currentPrice = getCurrentPrice(ticker);
+        final Share share = extInstrumentsService.getShare(figi);
+        final BigDecimal currentPrice = getCurrentPrice(figi);
         final Long quantity = quantityLots * share.lotSize();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
-            buyPosition(accountId, ticker, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
-            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
+            buyPosition(accountId, figi, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
+            addOperation(accountId, figi, currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
-            sellPosition(accountId, ticker, currentPrice, quantity, totalPrice, totalCommissionAmount);
-            addOperation(accountId, ticker, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
+            sellPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
+            addOperation(accountId, figi, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
         return new PostOrderResponseBuilder()
@@ -100,33 +99,32 @@ public class FakeExtOrdersService implements ExtOrdersService {
     }
 
     /**
-     * @return last known price for instrument with given {@code ticker} not after current fake date time
+     * @return last known price for instrument with given {@code figi} not after current fake date time
      */
-    private BigDecimal getCurrentPrice(final String ticker) {
+    private BigDecimal getCurrentPrice(final String figi) {
         final OffsetDateTime currentDateTime = fakeContext.getCurrentDateTime();
-        return extMarketDataService.getLastPrice(ticker, currentDateTime);
+        return extMarketDataService.getLastPrice(figi, currentDateTime);
     }
 
     private void buyPosition(
             final String accountId,
-            final String ticker,
+            final String figi,
             final BigDecimal currentPrice,
             final Long quantity,
             final Long quantityLots,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+        final Share share = extInstrumentsService.getShare(figi);
 
         updateBalance(accountId, share.currency(), totalPrice.negate().subtract(commissionAmount));
 
-        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
+        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, figi);
         PortfolioPosition position;
         if (existingPosition == null) {
             final Money price = Money.of(share.currency(), currentPrice);
             position = new PortfolioPosition(
-                    null,
-                    ticker,
+                    figi,
                     InstrumentType.INSTRUMENT_TYPE_SHARE,
                     BigDecimal.valueOf(quantity),
                     price,
@@ -138,7 +136,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
             position = existingPosition.addQuantities(quantity, quantityLots, totalPrice, currentPrice);
         }
 
-        fakeContext.addPosition(accountId, ticker, position);
+        fakeContext.addPosition(accountId, figi, position);
     }
 
     private void updateBalance(final String accountId, final Currency currency, final BigDecimal increment) {
@@ -150,13 +148,13 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
     private void sellPosition(
             final String accountId,
-            final String ticker,
+            final String figi,
             final BigDecimal currentPrice,
             final Long quantity,
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
-        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, ticker);
+        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, figi);
         final BigDecimal newQuantity = DecimalUtils.subtract(existingPosition.quantity(), quantity).setScale(0, RoundingMode.UNNECESSARY);
         final int compareToZero = newQuantity.compareTo(BigDecimal.ZERO);
         if (compareToZero < 0) {
@@ -164,29 +162,29 @@ public class FakeExtOrdersService implements ExtOrdersService {
             throw new IllegalArgumentException(message);
         }
 
-        final Share share = extInstrumentsService.getSingleShare(ticker);
+        final Share share = extInstrumentsService.getShare(figi);
 
         updateBalance(accountId, share.currency(), totalPrice.subtract(commissionAmount));
         if (compareToZero == 0) {
-            fakeContext.removePosition(accountId, ticker);
+            fakeContext.removePosition(accountId, figi);
         } else {
             final BigDecimal newQuantityLots = newQuantity.divide(BigDecimal.valueOf(share.lotSize()), 0, RoundingMode.UNNECESSARY);
             final BigDecimal newExpectedYield = currentPrice.subtract(existingPosition.averagePositionPrice().value())
                     .multiply(newQuantity);
             final PortfolioPosition newPosition = existingPosition.cloneWithNewValues(newQuantity, newExpectedYield, currentPrice, newQuantityLots);
-            fakeContext.addPosition(accountId, ticker, newPosition);
+            fakeContext.addPosition(accountId, figi, newPosition);
         }
     }
 
     private void addOperation(
             final String accountId,
-            final String ticker,
+            final String figi,
             final BigDecimal price,
             final Long quantity,
             final OperationType operationType
     ) {
         final OffsetDateTime currentDateTime = fakeContext.getCurrentDateTime();
-        final BackTestOperation operation = new BackTestOperation(ticker, currentDateTime, operationType, price, quantity);
+        final BackTestOperation operation = new BackTestOperation(figi, currentDateTime, operationType, price, quantity);
 
         fakeContext.addOperation(accountId, operation);
     }

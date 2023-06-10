@@ -3,11 +3,11 @@ scheduling:
 
 scheduled-bot:
   bot-configs:
-    - account-id: "2000124699"
-      ticker: SBER
+    - account-id: 2000124699
+      id: e6123145-9665-43e0-8413-cd61b8aa9b13
       candle-interval: CANDLE_INTERVAL_1_MIN
       commission: 0.003
-      strategy-type: "cross"
+      strategy-type: cross
       strategy-params:
         minimumProfit: 0.1
         movingAverageType: SMA
@@ -16,8 +16,8 @@ scheduled-bot:
         bigWindow: 200
         indexCoefficient: 0.5
         greedy: true
-    - broker-account-id: "2000124699"
-      ticker: USDRUB
+    - broker-account-id: 2000124699
+      id: USDRUB
       candle-interval: CANDLE_INTERVAL_1_MIN
       commission: 0.003
-      strategy-type: "conservative"
+      strategy-type: conservative

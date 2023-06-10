@@ -20,7 +20,7 @@ class BotConfigValidationTest {
     void validationSucceeds_whenEverythingIsValid() {
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                TestShare1.TICKER,
+                TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 StrategyType.CONSERVATIVE,
@@ -34,7 +34,7 @@ class BotConfigValidationTest {
         return Stream.of(
                 Arguments.of(
                         null,
-                        TestShare1.TICKER,
+                        TestShare1.FIGI,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -48,11 +48,11 @@ class BotConfigValidationTest {
                         0.003,
                         StrategyType.CONSERVATIVE,
                         Collections.emptyMap(),
-                        "ticker is mandatory"
+                        "figi is mandatory"
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.TICKER,
+                        TestShare1.FIGI,
                         null,
                         0.003,
                         StrategyType.CONSERVATIVE,
@@ -61,7 +61,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.TICKER,
+                        TestShare1.FIGI,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         null,
                         StrategyType.CONSERVATIVE,
@@ -70,7 +70,7 @@ class BotConfigValidationTest {
                 ),
                 Arguments.of(
                         TestData.ACCOUNT_ID1,
-                        TestShare1.TICKER,
+                        TestShare1.FIGI,
                         CandleInterval.CANDLE_INTERVAL_1_MIN,
                         0.003,
                         null,
@@ -84,7 +84,7 @@ class BotConfigValidationTest {
     @MethodSource("getData_forViolation")
     void testViolation(
             final String accountId,
-            final String ticker,
+            final String figi,
             final CandleInterval candleInterval,
             final Double commission,
             final StrategyType strategyType,
@@ -93,7 +93,7 @@ class BotConfigValidationTest {
     ) {
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 candleInterval,
                 commission,
                 strategyType,

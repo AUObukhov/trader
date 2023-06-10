@@ -10,6 +10,6 @@ import ru.tinkoff.piapi.core.models.Position;
 @Mapper(uses = {CurrencyMapper.class})
 public interface PositionMapper {
 
-    PortfolioPosition map(final String ticker, final Position source);
+    PortfolioPosition map(final String figi, final Position source);
 
 }

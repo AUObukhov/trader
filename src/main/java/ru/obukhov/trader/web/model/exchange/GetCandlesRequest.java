@@ -11,13 +11,13 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 @Getter
 @Setter
 public class GetCandlesRequest {
-    @NotNull(message = "ticker is mandatory")
+    @NotNull(message = "figi is mandatory")
     @ApiModelProperty(
-            value = "Interval to load candles",
+            value = "Financial Instrument Global Identifier",
             required = true,
             position = 1,
-            example = "FXIT")
-    private String ticker;
+            example = "BBG000B9XRY4")
+    private String figi;
 
     @NotNull(message = "interval is mandatory")
     @ApiModelProperty(

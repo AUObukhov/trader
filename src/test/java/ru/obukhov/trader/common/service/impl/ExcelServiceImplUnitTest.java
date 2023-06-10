@@ -64,11 +64,11 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_savesMultipleResults() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig1 = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_HOUR,
                 0.0,
                 StrategyType.CONSERVATIVE,
@@ -78,7 +78,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig2 = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -88,7 +88,7 @@ class ExcelServiceImplUnitTest {
 
         final BotConfig botConfig3 = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -118,7 +118,7 @@ class ExcelServiceImplUnitTest {
 
             final Iterator<Row> rowIterator = sheet.iterator();
             assertBotConfig(result.botConfig(), rowIterator);
-            assertCommonStatistics(ticker, result, rowIterator);
+            assertCommonStatistics(figi, result, rowIterator);
             assertPositions(result, rowIterator);
             assertOperations(result, rowIterator);
             assertMergedRegions(sheet);
@@ -128,11 +128,11 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsNull() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -155,7 +155,7 @@ class ExcelServiceImplUnitTest {
 
         final Iterator<Row> rowIterator = sheet.iterator();
         assertBotConfig(result.botConfig(), rowIterator);
-        assertCommonStatistics(ticker, result, rowIterator);
+        assertCommonStatistics(figi, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
         assertMergedRegions(sheet);
@@ -164,11 +164,11 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsErrorMessage_whenErrorIsEmpty() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -191,7 +191,7 @@ class ExcelServiceImplUnitTest {
 
         final Iterator<Row> rowIterator = sheet.iterator();
         assertBotConfig(result.botConfig(), rowIterator);
-        assertCommonStatistics(ticker, result, rowIterator);
+        assertCommonStatistics(figi, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
         assertMergedRegions(sheet);
@@ -200,12 +200,12 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_addsErrorMessage_whenErrorIsNotEmpty() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final String error = "error";
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -228,7 +228,7 @@ class ExcelServiceImplUnitTest {
 
         final Iterator<Row> rowIterator = sheet.iterator();
         assertBotConfig(result.botConfig(), rowIterator);
-        assertCommonStatistics(ticker, result, rowIterator);
+        assertCommonStatistics(figi, result, rowIterator);
         AssertUtils.assertRowValues(rowIterator.next(), "Текст ошибки", result.error());
 
         assertPositions(result, rowIterator);
@@ -240,11 +240,11 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreNull() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -267,7 +267,7 @@ class ExcelServiceImplUnitTest {
 
         final Iterator<Row> rowIterator = sheet.iterator();
         assertBotConfig(result.botConfig(), rowIterator);
-        assertCommonStatistics(ticker, result, rowIterator);
+        assertCommonStatistics(figi, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
         assertMergedRegions(sheet);
@@ -277,11 +277,11 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveBackTestResult_skipsChart_whenCandlesAreEmpty() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -304,7 +304,7 @@ class ExcelServiceImplUnitTest {
 
         final Iterator<Row> rowIterator = sheet.iterator();
         assertBotConfig(result.botConfig(), rowIterator);
-        assertCommonStatistics(ticker, result, rowIterator);
+        assertCommonStatistics(figi, result, rowIterator);
         assertPositions(result, rowIterator);
         assertOperations(result, rowIterator);
         assertMergedRegions(sheet);
@@ -316,11 +316,11 @@ class ExcelServiceImplUnitTest {
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
     void saveBackTestResult_catchesIOExceptionOfFileSaving() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.0,
                 StrategyType.CROSS,
@@ -348,11 +348,11 @@ class ExcelServiceImplUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void assertCommonStatistics(String ticker, BackTestResult result, Iterator<Row> rowIterator) {
+    private void assertCommonStatistics(String figi, BackTestResult result, Iterator<Row> rowIterator) {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Общая статистика");
         AssertUtils.assertRowValues(rowIterator.next(), "Счёт", result.botConfig().accountId());
-        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
+        AssertUtils.assertRowValues(rowIterator.next(), "FIGI", figi);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", result.interval().toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next(), "Начальный баланс", result.balances().initialInvestment());
         AssertUtils.assertRowValues(rowIterator.next(), "Вложения", result.balances().totalInvestment());
@@ -398,7 +398,7 @@ class ExcelServiceImplUnitTest {
 
     @Test
     void saveCandles_createsAndSaveWorkbook() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
@@ -406,20 +406,20 @@ class ExcelServiceImplUnitTest {
 
         final GetCandlesResponse response = createGetCandlesResponse();
 
-        excelService.saveCandles(ticker, interval, response);
+        excelService.saveCandles(figi, interval, response);
 
-        final String fileNamePrefix = "Candles for '" + ticker + "'";
+        final String fileNamePrefix = "Candles for FIGI '" + figi + "'";
         Mockito.verify(excelFileService, Mockito.times(1))
                 .saveToFile(workbookArgumentCaptor.capture(), Mockito.startsWith(fileNamePrefix));
 
         final ExtendedWorkbook workbook = workbookArgumentCaptor.getValue();
         Assertions.assertEquals(1, workbook.getNumberOfSheets());
-        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(ticker);
+        final ExtendedSheet sheet = (ExtendedSheet) workbook.getSheet(figi);
 
         Assertions.assertEquals(10, sheet.getRowsCount());
 
         final Iterator<Row> rowIterator = sheet.iterator();
-        AssertUtils.assertRowValues(rowIterator.next(), "Тикер", ticker);
+        AssertUtils.assertRowValues(rowIterator.next(), "FIGI", figi);
         AssertUtils.assertRowValues(rowIterator.next(), "Интервал", interval.toPrettyString());
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Свечи");
@@ -442,7 +442,7 @@ class ExcelServiceImplUnitTest {
     @SuppressWarnings("java:S2699")
         // Tests should include assertions
     void saveCandles_catchesIOExceptionOfFileSaving() throws IOException {
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
@@ -450,12 +450,12 @@ class ExcelServiceImplUnitTest {
 
         final GetCandlesResponse response = createGetCandlesResponse();
 
-        final String fileNamePrefix = "Candles for '" + ticker + "'";
+        final String fileNamePrefix = "Candles for FIGI '" + figi + "'";
         Mockito.doThrow(new IOException())
                 .when(excelFileService)
                 .saveToFile(Mockito.any(Workbook.class), Mockito.startsWith(fileNamePrefix));
 
-        excelService.saveCandles(ticker, interval, response);
+        excelService.saveCandles(figi, interval, response);
     }
 
     private BackTestResult createBackTestResult(final BotConfig botConfig, final String error) {
@@ -471,8 +471,8 @@ class ExcelServiceImplUnitTest {
                 createInterval(),
                 balances,
                 new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
-                createPositions(botConfig.ticker()),
-                createBackTestOperations(botConfig.ticker()),
+                createPositions(botConfig.figi()),
+                createBackTestOperations(botConfig.figi()),
                 createCandles(),
                 error
         );
@@ -491,8 +491,8 @@ class ExcelServiceImplUnitTest {
                 createInterval(),
                 balances,
                 new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
-                createPositions(botConfig.ticker()),
-                createBackTestOperations(botConfig.ticker()),
+                createPositions(botConfig.figi()),
+                createBackTestOperations(botConfig.figi()),
                 candles,
                 null
         );
@@ -511,8 +511,8 @@ class ExcelServiceImplUnitTest {
                 createInterval(),
                 balances,
                 new Profits(BigDecimal.valueOf(300), 0.25, 6.0),
-                createPositions(botConfig.ticker()),
-                createBackTestOperations(botConfig.ticker()),
+                createPositions(botConfig.figi()),
+                createBackTestOperations(botConfig.figi()),
                 createCandles(),
                 null
         );
@@ -524,37 +524,37 @@ class ExcelServiceImplUnitTest {
         return Interval.of(from, to);
     }
 
-    private List<BackTestPosition> createPositions(String ticker) {
+    private List<BackTestPosition> createPositions(String figi) {
         return List.of(
-                new BackTestPosition(ticker, BigDecimal.valueOf(200), BigDecimal.valueOf(3)),
-                new BackTestPosition(ticker, BigDecimal.valueOf(100), BigDecimal.valueOf(2))
+                new BackTestPosition(figi, BigDecimal.valueOf(200), BigDecimal.valueOf(3)),
+                new BackTestPosition(figi, BigDecimal.valueOf(100), BigDecimal.valueOf(2))
         );
     }
 
-    private List<BackTestOperation> createBackTestOperations(String ticker) {
+    private List<BackTestOperation> createBackTestOperations(String figi) {
         BackTestOperation operation1 = new BackTestOperation(
-                ticker,
+                figi,
                 DateTimeTestData.createDateTime(2020, 10, 1, 10),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(150),
                 1L
         );
         BackTestOperation operation2 = new BackTestOperation(
-                ticker,
+                figi,
                 DateTimeTestData.createDateTime(2020, 10, 5, 10, 11),
                 OperationType.OPERATION_TYPE_SELL,
                 BigDecimal.valueOf(180),
                 1L
         );
         BackTestOperation operation3 = new BackTestOperation(
-                ticker,
+                figi,
                 DateTimeTestData.createDateTime(2020, 10, 10, 10, 50),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(160),
                 3L
         );
         BackTestOperation operation4 = new BackTestOperation(
-                ticker,
+                figi,
                 DateTimeTestData.createDateTime(2020, 11, 1, 10),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(120),

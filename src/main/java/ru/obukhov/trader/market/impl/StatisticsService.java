@@ -30,13 +30,13 @@ public class StatisticsService {
     /**
      * Searches candles by conditions and calculates extra data by them
      *
-     * @param ticker         ticker of candles
+     * @param figi           Financial Instrument Global Identifier
      * @param interval       search interval, default {@code interval.from} is start of trading, default {@code interval.to} is now
      * @param candleInterval candle interval
      * @return data structure with list of found candles and extra data
      */
     public GetCandlesResponse getExtendedCandles(
-            final String ticker,
+            final String figi,
             final Interval interval,
             final CandleInterval candleInterval,
             final MovingAverageType movingAverageType,
@@ -44,7 +44,7 @@ public class StatisticsService {
             final int bigWindow
     ) {
         final Interval innerInterval = Interval.of(interval.getFrom(), ObjectUtils.defaultIfNull(interval.getTo(), OffsetDateTime.now()));
-        final List<Candle> candles = extMarketDataService.getCandles(ticker, innerInterval, candleInterval);
+        final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
         final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();

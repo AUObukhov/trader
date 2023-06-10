@@ -58,16 +58,16 @@ class BotUnitTest {
     private TestBot bot;
 
     @Test
-    void processTicker_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
+    void processBotConfig_doesNothing_andReturnsEmptyList_whenThereAreOrders() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final List<Order> orders = List.of(TestData.createOrder());
-        Mockito.when(ordersService.getOrders(ticker)).thenReturn(orders);
+        Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 null,
@@ -83,16 +83,16 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenThereAreUncompletedOrders() {
+    void processBotConfig_doesNoOrder_whenThereAreUncompletedOrders() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
-        Mocker.mockEmptyOrder(ordersService, ticker);
+        Mocker.mockEmptyOrder(ordersService, figi);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 null,
@@ -107,13 +107,13 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenCurrentCandlesIsEmpty() {
+    void processBotConfig_doesNoOrder_whenCurrentCandlesIsEmpty() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 null,
@@ -128,18 +128,18 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
+    void processBotConfig_doesNoOrder_whenFirstOfCurrentCandlesHasPreviousStartTime() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         final OffsetDateTime previousStartTime = OffsetDateTime.now();
         final Candle candle = new Candle().setTime(previousStartTime);
-        mockCandles(ticker, List.of(candle));
+        mockCandles(figi, List.of(candle));
         Mocker.mockCurrentDateTime(context);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 null,
                 null,
@@ -154,14 +154,14 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_doesNoOrder_whenDecisionIsWait() {
+    void processBotConfig_doesNoOrder_whenDecisionIsWait() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare2.TICKER;
+        final String figi = TestShare2.FIGI;
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         final Candle candle = new Candle().setTime(OffsetDateTime.now());
-        mockCandles(ticker, List.of(candle));
+        mockCandles(figi, List.of(candle));
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
@@ -170,7 +170,7 @@ class BotUnitTest {
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 null,
@@ -187,9 +187,9 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
+    void processBotConfig_returnsCandles_andPlacesBuyOrder_whenDecisionIsBuy() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
 
         Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
@@ -198,18 +198,18 @@ class BotUnitTest {
                 .thenReturn(balance);
 
         final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setTicker(ticker)
+                .setFigi(figi)
                 .setQuantityLots(0)
                 .build();
-        Mockito.when(extOperationsService.getSecurity(accountId, ticker))
+        Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(portfolioPosition);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
-        mockCandles(ticker, currentCandles);
+        mockCandles(figi, currentCandles);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
@@ -219,7 +219,7 @@ class BotUnitTest {
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 null,
@@ -233,7 +233,7 @@ class BotUnitTest {
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
                         accountId,
-                        ticker,
+                        figi,
                         decision.getQuantityLots(),
                         null,
                         OrderDirection.ORDER_DIRECTION_BUY,
@@ -243,9 +243,9 @@ class BotUnitTest {
     }
 
     @Test
-    void processTicker_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
+    void processBotConfig_returnsCandles_andPlacesSellOrder_whenDecisionIsSell() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String ticker = TestShare2.TICKER;
+        final String figi = TestShare2.FIGI;
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
@@ -254,18 +254,18 @@ class BotUnitTest {
                 .thenReturn(balance);
 
         final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setTicker(ticker)
+                .setFigi(figi)
                 .setQuantityLots(0)
                 .build();
-        Mockito.when(extOperationsService.getSecurity(accountId, ticker))
+        Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(portfolioPosition);
 
         final List<Operation> operations = List.of(TestData.createOperation());
-        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(ticker)))
+        Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))
                 .thenReturn(operations);
 
         final List<Candle> currentCandles = List.of(new Candle().setTime(OffsetDateTime.now()));
-        mockCandles(ticker, currentCandles);
+        mockCandles(figi, currentCandles);
 
         Mockito.when(context.getCurrentDateTime()).thenReturn(OffsetDateTime.now());
 
@@ -275,7 +275,7 @@ class BotUnitTest {
 
         final BotConfig botConfig = new BotConfig(
                 accountId,
-                ticker,
+                figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
                 0.003,
                 null,
@@ -289,7 +289,7 @@ class BotUnitTest {
         Mockito.verify(ordersService, Mockito.times(1))
                 .postOrder(
                         accountId,
-                        ticker,
+                        figi,
                         decision.getQuantityLots(),
                         null,
                         OrderDirection.ORDER_DIRECTION_SELL,
@@ -298,9 +298,9 @@ class BotUnitTest {
                 );
     }
 
-    private void mockCandles(final String ticker, final List<Candle> candles) {
+    private void mockCandles(final String processBotConfig, final List<Candle> candles) {
         Mockito.when(extMarketDataService.getLastCandles(
-                Mockito.eq(ticker),
+                Mockito.eq(processBotConfig),
                 Mockito.anyInt(),
                 Mockito.any(CandleInterval.class),
                 Mockito.any(OffsetDateTime.class))

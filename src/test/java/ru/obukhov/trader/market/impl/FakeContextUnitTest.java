@@ -409,11 +409,11 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         PortfolioPosition position = new PortfolioPositionBuilder().build();
 
-        fakeContext.addPosition(accountId, ticker, position);
-        PortfolioPosition readPosition = fakeContext.getPosition(accountId, ticker);
+        fakeContext.addPosition(accountId, figi, position);
+        PortfolioPosition readPosition = fakeContext.getPosition(accountId, figi);
 
         Assertions.assertSame(position, readPosition);
     }
@@ -428,13 +428,13 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker1 = TestShare1.TICKER;
-        final String ticker2 = TestShare2.TICKER;
+        final String figi1 = TestShare1.FIGI;
+        final String figi2 = TestShare2.FIGI;
         PortfolioPosition position1 = new PortfolioPositionBuilder().build();
         PortfolioPosition position2 = new PortfolioPositionBuilder().build();
 
-        fakeContext.addPosition(accountId, ticker1, position1);
-        fakeContext.addPosition(accountId, ticker2, position2);
+        fakeContext.addPosition(accountId, figi1, position1);
+        fakeContext.addPosition(accountId, figi2, position2);
 
         List<PortfolioPosition> positions = fakeContext.getPositions(accountId);
 
@@ -452,11 +452,11 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentDateTime, accountId, currency, balance);
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         PortfolioPosition position = new PortfolioPositionBuilder().build();
 
-        fakeContext.addPosition(accountId, ticker, position);
-        fakeContext.removePosition(accountId, ticker);
+        fakeContext.addPosition(accountId, figi, position);
+        fakeContext.removePosition(accountId, figi);
         Assertions.assertTrue(fakeContext.getPositions(accountId).isEmpty());
     }
 

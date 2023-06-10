@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
@@ -23,8 +22,7 @@ public class RealExtOperationsService implements ExtOperationsService {
     private final RealExtInstrumentsService realExtInstrumentsService;
 
     @Override
-    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String ticker) {
-        final String figi = realExtInstrumentsService.getSingleFigiByTicker(ticker);
+    public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi) {
         return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
     }
 

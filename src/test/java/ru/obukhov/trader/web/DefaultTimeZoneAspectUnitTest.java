@@ -92,7 +92,7 @@ class DefaultTimeZoneAspectUnitTest {
 
         final Interval interval = Interval.of(from, to);
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(interval);
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.SIMPLE);

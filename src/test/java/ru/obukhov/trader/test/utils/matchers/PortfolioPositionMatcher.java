@@ -19,7 +19,7 @@ public class PortfolioPositionMatcher implements ArgumentMatcher<PortfolioPositi
 
     @Override
     public boolean matches(final PortfolioPosition position) {
-        return StringUtils.equals(value.ticker(), position.ticker())
+        return StringUtils.equals(value.figi(), position.figi())
                 && value.instrumentType() == position.instrumentType()
                 && DecimalUtils.numbersEqual(value.quantity(), position.quantity())
                 && TestUtils.equals(value.averagePositionPrice(), position.averagePositionPrice())

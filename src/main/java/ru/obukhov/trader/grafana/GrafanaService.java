@@ -56,34 +56,34 @@ public class GrafanaService {
 
     /**
      * @param request params of candles retrieval.
-     *                Must contain single values in targets and keys "ticker" and "candleInterval" in targets[0].data
+     *                Must contain single values in targets and keys "figi" and "candleInterval" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times and open prices
      */
     private List<QueryResult> getCandles(final GetDataRequest request) {
         final Map<String, Object> data = getRequiredTargetData(request);
-        final String ticker = MapUtils.getNotBlankString(data, "ticker");
+        final String figi = MapUtils.getNotBlankString(data, "figi");
         final CandleInterval candleInterval = getRequiredCandleInterval(data);
 
-        final QueryResult queryResult = getCandles(ticker, request.getInterval(), candleInterval);
+        final QueryResult queryResult = getCandles(figi, request.getInterval(), candleInterval);
 
         return List.of(queryResult);
     }
 
     /**
      * @param request params of candles retrieval.
-     *                Must contain single values in targets and keys "ticker" and "candleInterval" in targets[0].data
+     *                Must contain single values in targets and keys "figi" and "candleInterval" in targets[0].data
      * @return list of single {@link QueryResult} containing candles times, open prices and moving average values
      */
     private List<QueryResult> getExtendedCandles(final GetDataRequest request) {
         final Map<String, Object> data = getRequiredTargetData(request);
-        final String ticker = MapUtils.getNotBlankString(data, "ticker");
+        final String figi = MapUtils.getNotBlankString(data, "figi");
         final Interval interval = request.getInterval();
         final CandleInterval candleInterval = getRequiredCandleInterval(data);
         final MovingAverageType movingAverageType = getRequiredMovingAverageType(data);
         final Integer window1 = MapUtils.getRequiredInteger(data, "window1");
         final Integer window2 = MapUtils.getRequiredInteger(data, "window2");
 
-        return getExtendedCandles(ticker, interval, candleInterval, movingAverageType, window1, window2);
+        return getExtendedCandles(figi, interval, candleInterval, movingAverageType, window1, window2);
     }
 
     private Map<String, Object> getRequiredTargetData(final GetDataRequest request) {
@@ -102,13 +102,13 @@ public class GrafanaService {
         return MovingAverageType.from(movingAverageType);
     }
 
-    private QueryResult getCandles(final String ticker, final Interval interval, final CandleInterval candleInterval) {
+    private QueryResult getCandles(final String figi, final Interval interval, final CandleInterval candleInterval) {
         final QueryTableResult queryResult = new QueryTableResult();
         queryResult.setColumns(CANDLES_COLUMNS);
 
         final List<List<Object>> rows = new ArrayList<>();
         final Interval innerInterval = Interval.of(interval.getFrom(), ObjectUtils.defaultIfNull(interval.getTo(), OffsetDateTime.now()));
-        final List<Candle> candles = extMarketDataService.getCandles(ticker, innerInterval, candleInterval);
+        final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
         for (Candle candle : candles) {
             rows.add(List.of(candle.getTime(), candle.getOpenPrice()));
         }
@@ -118,7 +118,7 @@ public class GrafanaService {
     }
 
     private List<QueryResult> getExtendedCandles(
-            final String ticker,
+            final String figi,
             final Interval interval,
             final CandleInterval candleInterval,
             final MovingAverageType movingAverageType,
@@ -126,7 +126,7 @@ public class GrafanaService {
             final Integer window2
     ) {
         final GetCandlesResponse candlesResponse = statisticsService.getExtendedCandles(
-                ticker,
+                figi,
                 interval,
                 candleInterval,
                 movingAverageType,

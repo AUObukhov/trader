@@ -34,7 +34,7 @@ public class StatisticsController {
     })
     public GetCandlesResponse getCandles(@Valid @RequestBody final GetCandlesRequest getCandlesRequest) {
         final GetCandlesResponse response = statisticsService.getExtendedCandles(
-                getCandlesRequest.getTicker(),
+                getCandlesRequest.getFigi(),
                 getCandlesRequest.getInterval(),
                 getCandlesRequest.getCandleInterval(),
                 getCandlesRequest.getMovingAverageType(),
@@ -43,18 +43,18 @@ public class StatisticsController {
         );
 
         if (getCandlesRequest.isSaveToFile()) {
-            saveCandlesSafe(getCandlesRequest.getTicker(), getCandlesRequest.getInterval(), response);
+            saveCandlesSafe(getCandlesRequest.getFigi(), getCandlesRequest.getInterval(), response);
         }
 
         return response;
     }
 
-    private void saveCandlesSafe(final String ticker, final Interval interval, final GetCandlesResponse response) {
+    private void saveCandlesSafe(final String figi, final Interval interval, final GetCandlesResponse response) {
         try {
-            log.debug("Saving candles for ticker {} to file", ticker);
-            excelService.saveCandles(ticker, interval, response);
+            log.debug("Saving candles for FIGI {} to file", figi);
+            excelService.saveCandles(figi, interval, response);
         } catch (RuntimeException exception) {
-            log.error("Failed to save candles for ticker {} to file", ticker, exception);
+            log.error("Failed to save candles for FIGI {} to file", figi, exception);
         }
     }
 

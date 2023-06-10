@@ -145,7 +145,7 @@ public class AssertUtils {
     }
 
     public static void assertEquals(final PortfolioPosition portfolioPosition1, final PortfolioPosition portfolioPosition2) {
-        Assertions.assertEquals(portfolioPosition1.ticker(), portfolioPosition2.ticker());
+        Assertions.assertEquals(portfolioPosition1.figi(), portfolioPosition2.figi());
         Assertions.assertEquals(portfolioPosition1.instrumentType(), portfolioPosition2.instrumentType());
         assertEquals(portfolioPosition1.quantity(), portfolioPosition2.quantity());
         assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
@@ -254,8 +254,8 @@ public class AssertUtils {
                 && Objects.equals(order1.dateTime(), order2.dateTime());
     }
 
-    private static boolean equals(final PortfolioPosition position1, PortfolioPosition position2) {
-        return position1.ticker().equals(position2.ticker())
+    private static boolean equals(final PortfolioPosition position1, final PortfolioPosition position2) {
+        return position1.figi().equals(position2.figi())
                 && position1.instrumentType().equals(position2.instrumentType())
                 && DecimalUtils.numbersEqual(position1.quantity(), position2.quantity())
                 && equals(position1.averagePositionPrice(), position2.averagePositionPrice())
@@ -264,12 +264,12 @@ public class AssertUtils {
                 && DecimalUtils.numbersEqual(position1.quantityLots(), position2.quantityLots());
     }
 
-    private static boolean equals(final Money money1, Money money2) {
+    private static boolean equals(final Money money1, final Money money2) {
         return money1.currency().equals(money2.currency())
                 && DecimalUtils.numbersEqual(money1.value(), money1.value());
     }
 
-    private static String getErrorMessage(Object expectedValue, Object actualValue, int index) {
+    private static String getErrorMessage(final Object expectedValue, final Object actualValue, final int index) {
         return String.format("expected: <%s> at position <%s> but was: <%s>", expectedValue, index, actualValue);
     }
 

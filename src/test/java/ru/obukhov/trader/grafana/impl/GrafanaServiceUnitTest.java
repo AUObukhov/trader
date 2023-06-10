@@ -94,7 +94,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.CANDLES,
                         Map.of("candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
-                        "\"ticker\" must be not blank"
+                        "\"figi\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
@@ -104,52 +104,52 @@ class GrafanaServiceUnitTest {
                                 "window1", 2,
                                 "window2", 5
                         ),
-                        "\"ticker\" must be not blank"
+                        "\"figi\" must be not blank"
                 ),
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", StringUtils.EMPTY, "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
-                        "\"ticker\" must be not blank"
+                        Map.of("figi", StringUtils.EMPTY, "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
+                        "\"figi\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", StringUtils.EMPTY,
+                                "figi", StringUtils.EMPTY,
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
                         ),
-                        "\"ticker\" must be not blank"
+                        "\"figi\" must be not blank"
                 ),
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", "     ", "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
-                        "\"ticker\" must be not blank"
+                        Map.of("figi", "     ", "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name()),
+                        "\"figi\" must be not blank"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", "     ",
+                                "figi", "     ",
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
                         ),
-                        "\"ticker\" must be not blank"
+                        "\"figi\" must be not blank"
                 ),
 
                 Arguments.of(
                         Metric.CANDLES,
-                        Map.of("ticker", TestShare1.TICKER),
+                        Map.of("figi", TestShare1.FIGI),
                         "\"candleInterval\" is mandatory"
                 ),
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", TestShare1.TICKER,
+                                "figi", TestShare1.FIGI,
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2,
                                 "window2", 5
@@ -160,7 +160,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", TestShare1.TICKER,
+                                "figi", TestShare1.FIGI,
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "window1", 2,
                                 "window2", 5
@@ -171,7 +171,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", TestShare1.TICKER,
+                                "figi", TestShare1.FIGI,
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window2", 5
@@ -182,7 +182,7 @@ class GrafanaServiceUnitTest {
                 Arguments.of(
                         Metric.EXTENDED_CANDLES,
                         Map.of(
-                                "ticker", TestShare1.TICKER,
+                                "figi", TestShare1.FIGI,
                                 "candleInterval", CandleInterval.CANDLE_INTERVAL_1_MIN.name(),
                                 "movingAverageType", MovingAverageType.SIMPLE.getValue(),
                                 "window1", 2
@@ -207,9 +207,9 @@ class GrafanaServiceUnitTest {
     void getData_returnsCandles_whenMetricIsCandles_andParamsAreValid() {
         final GetDataRequest request = new GetDataRequest();
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Map<String, Object> data = Map.of("ticker", ticker, "candleInterval", candleInterval.name());
+        final Map<String, Object> data = Map.of("figi", figi, "candleInterval", candleInterval.name());
         final Target target = new Target().setMetric(Metric.CANDLES).setData(data);
         request.setTargets(List.of(target));
 
@@ -228,7 +228,7 @@ class GrafanaServiceUnitTest {
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
 
-        Mockito.when(extMarketDataService.getCandles(ticker, interval, candleInterval)).thenReturn(candles);
+        Mockito.when(extMarketDataService.getCandles(figi, interval, candleInterval)).thenReturn(candles);
 
         try (final MockedStatic<OffsetDateTime> offsetDateTimeStaticMock = Mocker.mockNow(currentDateTime)) {
             final List<QueryResult> results = service.getData(request);
@@ -258,14 +258,14 @@ class GrafanaServiceUnitTest {
 
         final GetDataRequest request = new GetDataRequest();
 
-        final String ticker = TestShare1.TICKER;
+        final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
         final MovingAverageType movingAverageType = MovingAverageType.SIMPLE;
         final Integer window1 = 2;
         final Integer window2 = 5;
 
         final Map<String, Object> data = Map.of(
-                "ticker", ticker,
+                "figi", figi,
                 "candleInterval", candleInterval.name(),
                 "movingAverageType", movingAverageType.getValue(),
                 "window1", window1,
@@ -295,7 +295,7 @@ class GrafanaServiceUnitTest {
         final List<BigDecimal> averages2 = TestData.createBigDecimalsList(80, 540, 535, 55, 45, 30, 50, 545, 530, 45);
         GetCandlesResponse response = new GetCandlesResponse(candles, averages1, averages2);
         Mockito.when(statisticsService.getExtendedCandles(
-                ticker, interval, candleInterval, movingAverageType, window1, window2
+                figi, interval, candleInterval, movingAverageType, window1, window2
         )).thenReturn(response);
 
         // action

@@ -20,11 +20,11 @@ class GetCandlesRequestValidationTest {
     }
 
     @Test
-    void validationFails_whenTickerIsNull() {
+    void validationFails_whenFigiIsNull() {
         final GetCandlesRequest request = createValidGetCandlesRequest();
-        request.setTicker(null);
+        request.setFigi(null);
 
-        AssertUtils.assertViolation(request, "ticker is mandatory");
+        AssertUtils.assertViolation(request, "figi is mandatory");
     }
 
     @Test
@@ -72,7 +72,7 @@ class GetCandlesRequestValidationTest {
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
         final GetCandlesRequest request = new GetCandlesRequest();
-        request.setTicker(TestShare1.TICKER);
+        request.setFigi(TestShare1.FIGI);
         request.setInterval(Interval.of(from, to));
         request.setCandleInterval(CandleInterval.CANDLE_INTERVAL_1_MIN);
         request.setMovingAverageType(MovingAverageType.SIMPLE);

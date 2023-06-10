@@ -1,7 +1,6 @@
 package ru.obukhov.trader.trading.bots;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
@@ -41,12 +40,12 @@ public class FakeBot extends Bot {
         );
     }
 
-    public Share getShare(final String ticker) {
-        return extInstrumentsService.getSingleShare(ticker);
+    public Share getShare(final String figi) {
+        return extInstrumentsService.getShare(figi);
     }
 
-    public List<Operation> getOperations(final String accountId, final Interval interval, @Nullable final String ticker) {
-        return extOperationsService.getOperations(accountId, interval, ticker);
+    public List<Operation> getOperations(final String accountId, final Interval interval, final String figi) {
+        return extOperationsService.getOperations(accountId, interval, figi);
     }
 
     public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
@@ -75,8 +74,8 @@ public class FakeBot extends Bot {
         return getFakeContext().getBalance(accountId, currency);
     }
 
-    public BigDecimal getCurrentPrice(final String ticker) {
-        return extMarketDataService.getLastPrice(ticker, context.getCurrentDateTime());
+    public BigDecimal getCurrentPrice(final String figi) {
+        return extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
     }
 
     private FakeContext getFakeContext() {

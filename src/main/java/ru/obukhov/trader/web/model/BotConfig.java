@@ -12,9 +12,9 @@ public record BotConfig(
         @ApiModelProperty(value = "Account id", position = 1, example = "2000124699")
         String accountId,
 
-        @NotNull(message = "ticker is mandatory")
-        @ApiModelProperty(value = "Ticker", position = 2, example = "FXIT")
-        String ticker,
+        @NotNull(message = "figi is mandatory")
+        @ApiModelProperty(value = "Financial Instrument Global Identifier", position = 2, example = "BBG000B9XRY4")
+        String figi,
 
         @NotNull(message = "candleInterval is mandatory")
         @ApiModelProperty(value = "Candle interval", required = true, position = 3, example = "CANDLE_INTERVAL_1_MIN")

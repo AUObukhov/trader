@@ -29,8 +29,8 @@ public class MarketDataController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public SecurityTradingStatus getTradingStatus(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
-        return extMarketDataService.getTradingStatus(ticker);
+    public SecurityTradingStatus getTradingStatus(@RequestParam @ApiParam(example = "BBG000B9XRY4") final String figi) {
+        return extMarketDataService.getTradingStatus(figi);
     }
 
 }

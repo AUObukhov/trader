@@ -44,92 +44,48 @@ public class InstrumentsController {
         return extInstrumentsService.getInstrument(figi);
     }
 
-    @GetMapping("/shares")
-    @ApiOperation("Get shares info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public List<Share> getShares(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
-        return extInstrumentsService.getShares(ticker);
-    }
-
     @GetMapping("/share")
-    @ApiOperation("Get single share info")
+    @ApiOperation("Get share info")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public Share getSingleShare(@RequestParam @ApiParam(example = "AAPL") final String ticker) {
-        return extInstrumentsService.getSingleShare(ticker);
-    }
-
-    @GetMapping("/etfs")
-    @ApiOperation("Get ETFs info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public List<Etf> getEtfs(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
-        return extInstrumentsService.getEtfs(ticker);
+    public Share getShare(@RequestParam @ApiParam(example = "BBG000B9XRY4") final String figi) {
+        return extInstrumentsService.getShare(figi);
     }
 
     @GetMapping("/etf")
-    @ApiOperation("Get single ETF info")
+    @ApiOperation("Get ETF info")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public Etf getSingleEtf(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
-        return extInstrumentsService.getSingleEtf(ticker);
-    }
-
-    @GetMapping("/bonds")
-    @ApiOperation("Get bonds info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public List<Bond> getBonds(@RequestParam @ApiParam(example = "RU000A1043Z7") final String ticker) {
-        return extInstrumentsService.getBonds(ticker);
+    public Etf getEtf(@RequestParam @ApiParam(example = "BBG005HLSZ23") final String figi) {
+        return extInstrumentsService.getEtf(figi);
     }
 
     @GetMapping("/bond")
-    @ApiOperation("Get single bond info")
+    @ApiOperation("Get bond info")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public Bond getSingleBond(@RequestParam @ApiParam(example = "RU000A0ZYG52") final String ticker) {
-        return extInstrumentsService.getSingleBond(ticker);
-    }
-
-    @GetMapping("/currencies")
-    @ApiOperation("Get currencies info")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request"),
-            @ApiResponse(code = 500, message = "Internal Server Error")
-    })
-    public List<CurrencyInstrument> getCurrencies(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
-        return extInstrumentsService.getCurrencies(ticker);
+    public Bond getBond(@RequestParam @ApiParam(example = "RU000A0ZYG52") final String figi) {
+        return extInstrumentsService.getBond(figi);
     }
 
     @GetMapping("/currency")
-    @ApiOperation("Get single currency info")
+    @ApiOperation("Get currency info")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public CurrencyInstrument getSingleCurrency(@RequestParam @ApiParam(example = "FXIT") final String ticker) {
-        return extInstrumentsService.getSingleCurrency(ticker);
+    public CurrencyInstrument getCurrency(@RequestParam @ApiParam(example = "BBG0013HGFT4") final String figi) {
+        return extInstrumentsService.getCurrency(figi);
     }
 
     @GetMapping("/trading-schedule")

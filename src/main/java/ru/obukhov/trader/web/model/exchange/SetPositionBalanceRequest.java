@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 @Data
 public class SetPositionBalanceRequest {
 
-    @NotEmpty(message = "ticker is mandatory")
-    @ApiModelProperty(example = "FXIT", required = true, position = 1)
-    private String ticker;
+    @NotEmpty(message = "figi is mandatory")
+    @ApiModelProperty(example = "BBG000B9XRY4", required = true, position = 1)
+    private String figi;
 
     @NotNull(message = "balance is mandatory")
     @ApiModelProperty(example = "10000", required = true, position = 2)
