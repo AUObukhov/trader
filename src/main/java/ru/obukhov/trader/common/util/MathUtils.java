@@ -96,4 +96,18 @@ public class MathUtils {
                 .orElse(null);
     }
 
+    /**
+     * @return dividend / divisor rounded up
+     */
+    public static long divideRoundUp(final long dividend, final long divisor) {
+        long quotient = dividend / divisor;
+        final long remainder = dividend % divisor;
+
+        if (remainder != 0 && 2 * Math.abs(remainder) >= Math.abs(divisor)) {
+            quotient += (dividend < 0) != (divisor < 0) ? -1 : 1;
+        }
+
+        return quotient;
+    }
+
 }

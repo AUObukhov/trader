@@ -165,4 +165,32 @@ class MathUtilsUnitTest {
 
     // endregion
 
+    private static Stream<Arguments> getData_for_divideRoundUp() {
+        return Stream.of(
+                Arguments.of(0L, 3L, 0L),
+                Arguments.of(10L, 3L, 3L),
+                Arguments.of(10L, 4L, 3L),
+                Arguments.of(10L, 5L, 2L),
+                Arguments.of(10L, 6L, 2L),
+                Arguments.of(10L, 7L, 1L),
+                Arguments.of(-10L, 3L, -3L),
+                Arguments.of(-10L, 4L, -3L),
+                Arguments.of(-10L, 5L, -2L),
+                Arguments.of(-10L, 6L, -2L),
+                Arguments.of(-10L, 7L, -1L),
+                Arguments.of(-10L, -3L, 3L),
+                Arguments.of(-10L, -4L, 3L),
+                Arguments.of(-10L, -5L, 2L),
+                Arguments.of(-10L, -6L, 2L),
+                Arguments.of(-10L, -7L, 1L)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_for_divideRoundUp")
+    public void divideRoundUp(final long dividend, final long divisor, final long expectedResult) {
+        final long actualResult = MathUtils.divideRoundUp(dividend, divisor);
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
 }
