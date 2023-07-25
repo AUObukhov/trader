@@ -1,92 +1,120 @@
 package ru.obukhov.trader.test.utils.model.bond;
 
-import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Bond;
+import com.google.protobuf.Timestamp;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currency;
-import ru.obukhov.trader.market.model.Sector;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.RealExchange;
+import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 public class TestBond1 extends TestSecurityData {
 
     public static final String FIGI = "BBG00J7HHGH1";
     public static final String TICKER = "RU000A0ZYG52";
-    public static final int LOT_SIZE = 1;
+    public static final String CLASS_CODE = "TQCB";
+    public static final String ISIN = "RU000A0ZYG52";
+    public static final int LOT = 1;
     public static final Currency CURRENCY = Currency.RUB;
+    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2, 0);
+    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2, 0);
+    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0, 300000000);
+    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0, 300000000);
+    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0, 163300000);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0, 140200000);
+    public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Ростелеком выпуск 3";
     public static final String EXCHANGE = "MOEX";
-    public static final OffsetDateTime MATURITY_DATE = DateTimeTestData.createDateTime(2027, 11, 9, 3);
-    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1000);
-    public static final OffsetDateTime STATE_REG_DATE = DateTimeTestData.createDateTime(2017, 11, 16, 3);
-    public static final OffsetDateTime PLACEMENT_DATE = DateTimeTestData.createDateTime(2017, 11, 21, 3);
-    public static final BigDecimal PLACEMENT_PRICE = DecimalUtils.setDefaultScale(1000);
-    public static final BigDecimal ACI_VALUE = DecimalUtils.setDefaultScale(30.800000000);
-    public static final String COUNTRY = "Российская Федерация";
-    public static final Sector SECTOR = Sector.TELECOM;
+    public static final int COUPON_QUANTITY_PER_YEAR = 2;
+    public static final Timestamp MATURITY_DATE = Timestamp.newBuilder().setSeconds(1825718400L).setNanos(0).build();
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency("rub").setUnits(1000).setNano(0).build();
+    public static final MoneyValue INITIAL_NOMINAL = MoneyValue.newBuilder().setCurrency("rub").setUnits(1000).setNano(0).build();
+    public static final Timestamp STATE_REG_DATE = Timestamp.newBuilder().setSeconds(1510790400L).setNanos(0).build();
+    public static final Timestamp PLACEMENT_DATE = Timestamp.newBuilder().setSeconds(1511222400L).setNanos(0).build();
+    public static final MoneyValue PLACEMENT_PRICE = MoneyValue.newBuilder().setCurrency("rub").setUnits(1000).setNano(0).build();
+    public static final MoneyValue ACI_VALUE = MoneyValue.newBuilder().setCurrency("rub").setUnits(17).setNano(900000000).build();
+    public static final String COUNTRY_OF_RISK = "RU";
+    public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
+    public static final String SECTOR = "telecom";
+    public static final String ISSUE_KIND = "documentary";
     public static final long ISSUE_SIZE = 10000000;
     public static final long ISSUE_SIZE_PLAN = 10000000;
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
-    public static final boolean BUY_AVAILABLE = true;
-    public static final boolean SELL_AVAILABLE = true;
-    public static final boolean API_TRADE_AVAILABLE = true;
-    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.01);
-    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 3, 14, 9);
-    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2017, 11, 21, 3);
+    public static final boolean OTC_FLAG = false;
+    public static final boolean BUY_AVAILABLE_FLAG = true;
+    public static final boolean SELL_AVAILABLE_FLAG = true;
+    public static final boolean FLOATING_COUPON_FLAG = false;
+    public static final boolean PERPETUAL_FLAG = false;
+    public static final boolean AMORTIZATION_FLAG = false;
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 10000000);
+    public static final boolean API_TRADE_AVAILABLE_FLAG = true;
+    public static final String UID = "00486cd8-5915-4c0b-8017-b81b9d1805d4";
+    public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
+    public static final String POSITION_UID = "cf3e5dbf-3338-4ee5-96fd-375925e16daa";
+    public static final boolean FOR_IIS_FLAG = true;
+    public static final boolean FOR_QUAL_INVESTOR_FLAG = false;
+    public static final boolean WEEKEND_FLAG = false;
+    public static final boolean BLOCKED_TCA_FLAG = false;
+    public static final boolean SUBORDINATED_FLAG = false;
 
-    public static final ru.tinkoff.piapi.contract.v1.Bond TINKOFF_BOND = ru.tinkoff.piapi.contract.v1.Bond.newBuilder()
-            .setFigi(TestBond1.FIGI)
-            .setTicker(TestBond1.TICKER)
-            .setLot(TestBond1.LOT_SIZE)
-            .setCurrency(TestBond1.CURRENCY.name().toLowerCase())
-            .setName(TestBond1.NAME)
-            .setExchange(TestBond1.EXCHANGE)
-            .setMaturityDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.MATURITY_DATE))
-            .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestBond1.NOMINAL))
-            .setStateRegDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.STATE_REG_DATE))
-            .setPlacementDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.PLACEMENT_DATE))
-            .setPlacementPrice(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestBond1.PLACEMENT_PRICE))
-            .setAciValue(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestBond1.ACI_VALUE))
-            .setCountryOfRiskName(TestBond1.COUNTRY)
-            .setSector(TestBond1.SECTOR.name().toLowerCase())
-            .setIssueSize(TestBond1.ISSUE_SIZE)
-            .setIssueSizePlan(TestBond1.ISSUE_SIZE_PLAN)
-            .setTradingStatus(TestBond1.TRADING_STATUS)
-            .setBuyAvailableFlag(TestBond1.BUY_AVAILABLE)
-            .setSellAvailableFlag(TestBond1.SELL_AVAILABLE)
-            .setApiTradeAvailableFlag(TestBond1.API_TRADE_AVAILABLE)
-            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(TestBond1.MIN_PRICE_INCREMENT))
-            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.FIRST_1_MIN_CANDLE_DATE))
-            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestBond1.FIRST_1_DAY_CANDLE_DATE))
+    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1521007200L).setNanos(0).build();
+    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1511222400L).setNanos(0).build();
+    public static final RiskLevel RISK_LEVEL = RiskLevel.RISK_LEVEL_LOW;
+
+    public static final ru.tinkoff.piapi.contract.v1.Bond BOND = ru.tinkoff.piapi.contract.v1.Bond.newBuilder()
+            .setFigi(FIGI)
+            .setTicker(TICKER)
+            .setClassCode(CLASS_CODE)
+            .setIsin(ISIN)
+            .setLot(LOT)
+            .setCurrency(CURRENCY.name().toLowerCase())
+            .setKlong(KLONG)
+            .setKshort(KSHORT)
+            .setDlong(DLONG)
+            .setDshort(DSHORT)
+            .setDlongMin(DLONG_MIN)
+            .setDshortMin(DSHORT_MIN)
+            .setShortEnabledFlag(SHORT_ENABLED_FLAG)
+            .setName(NAME)
+            .setExchange(EXCHANGE)
+            .setCouponQuantityPerYear(COUPON_QUANTITY_PER_YEAR)
+            .setMaturityDate(MATURITY_DATE)
+            .setNominal(NOMINAL)
+            .setInitialNominal(INITIAL_NOMINAL)
+            .setStateRegDate(STATE_REG_DATE)
+            .setPlacementDate(PLACEMENT_DATE)
+            .setPlacementPrice(PLACEMENT_PRICE)
+            .setAciValue(ACI_VALUE)
+            .setCountryOfRisk(COUNTRY_OF_RISK)
+            .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .setSector(SECTOR)
+            .setIssueKind(ISSUE_KIND)
+            .setIssueSize(ISSUE_SIZE)
+            .setIssueSizePlan(ISSUE_SIZE_PLAN)
+            .setTradingStatus(TRADING_STATUS)
+            .setOtcFlag(OTC_FLAG)
+            .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .setFloatingCouponFlag(FLOATING_COUPON_FLAG)
+            .setPerpetualFlag(PERPETUAL_FLAG)
+            .setAmortizationFlag(AMORTIZATION_FLAG)
+            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .setUid(UID)
+            .setRealExchange(REAL_EXCHANGE)
+            .setPositionUid(POSITION_UID)
+            .setForIisFlag(FOR_IIS_FLAG)
+            .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
+            .setWeekendFlag(WEEKEND_FLAG)
+            .setBlockedTcaFlag(BLOCKED_TCA_FLAG)
+            .setSubordinatedFlag(SUBORDINATED_FLAG)
+            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .setRiskLevel(RISK_LEVEL)
             .build();
 
-    public static final Bond BOND = Bond.builder()
-            .figi(TestBond1.FIGI)
-            .ticker(TestBond1.TICKER)
-            .lotSize(TestBond1.LOT_SIZE)
-            .currency(TestBond1.CURRENCY)
-            .name(TestBond1.NAME)
-            .exchange(TestBond1.EXCHANGE)
-            .maturityDate(TestBond1.MATURITY_DATE)
-            .nominal(TestBond1.NOMINAL)
-            .stateRegDate(TestBond1.STATE_REG_DATE)
-            .placementDate(TestBond1.PLACEMENT_DATE)
-            .placementPrice(TestBond1.PLACEMENT_PRICE)
-            .aciValue(TestBond1.ACI_VALUE)
-            .country(TestBond1.COUNTRY)
-            .sector(TestBond1.SECTOR)
-            .issueSize(TestBond1.ISSUE_SIZE)
-            .issueSizePlan(TestBond1.ISSUE_SIZE_PLAN)
-            .tradingStatus(TestBond1.TRADING_STATUS)
-            .buyAvailable(TestBond1.BUY_AVAILABLE)
-            .sellAvailable(TestBond1.SELL_AVAILABLE)
-            .apiTradeAvailable(TestBond1.API_TRADE_AVAILABLE)
-            .minPriceIncrement(TestBond1.MIN_PRICE_INCREMENT)
-            .first1MinCandleDate(TestBond1.FIRST_1_MIN_CANDLE_DATE)
-            .first1DayCandleDate(TestBond1.FIRST_1_DAY_CANDLE_DATE)
-            .build();
+    public static final String STRING = "{\"figi\":\"BBG00J7HHGH1\",\"ticker\":\"RU000A0ZYG52\",\"classCode\":\"TQCB\",\"isin\":\"RU000A0ZYG52\",\"lot\":1,\"currency\":\"rub\",\"klong\":{\"units\":2,\"nano\":0},\"kshort\":{\"units\":2,\"nano\":0},\"dlong\":{\"units\":0,\"nano\":300000000},\"dshort\":{\"units\":0,\"nano\":300000000},\"dlongMin\":{\"units\":0,\"nano\":163300000},\"dshortMin\":{\"units\":0,\"nano\":140200000},\"shortEnabledFlag\":false,\"name\":\"Ростелеком выпуск 3\",\"exchange\":\"MOEX\",\"couponQuantityPerYear\":2,\"maturityDate\":{\"seconds\":1825718400,\"nanos\":0},\"nominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"initialNominal\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"stateRegDate\":{\"seconds\":1510790400,\"nanos\":0},\"placementDate\":{\"seconds\":1511222400,\"nanos\":0},\"placementPrice\":{\"currency\":\"rub\",\"units\":1000,\"nano\":0},\"aciValue\":{\"currency\":\"rub\",\"units\":17,\"nano\":900000000},\"countryOfRisk\":\"RU\",\"countryOfRiskName\":\"Российская Федерация\",\"sector\":\"telecom\",\"issueKind\":\"documentary\",\"issueSize\":10000000,\"issueSizePlan\":10000000,\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"floatingCouponFlag\":false,\"perpetualFlag\":false,\"amortizationFlag\":false,\"minPriceIncrement\":{\"units\":0,\"nano\":10000000},\"apiTradeAvailableFlag\":true,\"uid\":\"00486cd8-5915-4c0b-8017-b81b9d1805d4\",\"realExchange\":\"REAL_EXCHANGE_MOEX\",\"positionUid\":\"cf3e5dbf-3338-4ee5-96fd-375925e16daa\",\"forIisFlag\":true,\"forQualInvestorFlag\":false,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"subordinatedFlag\":false,\"first1MinCandleDate\":{\"seconds\":1521007200,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":1511222400,\"nanos\":0},\"riskLevel\":\"RISK_LEVEL_LOW\"}";
 
 }

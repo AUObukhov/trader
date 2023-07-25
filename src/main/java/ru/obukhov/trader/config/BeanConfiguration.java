@@ -1,14 +1,20 @@
 package ru.obukhov.trader.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
@@ -27,6 +33,10 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.transform.BondSerializer;
+import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
+import ru.obukhov.trader.market.model.transform.QuotationSerializer;
+import ru.obukhov.trader.market.model.transform.TimestampSerializer;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -37,6 +47,7 @@ import ru.tinkoff.piapi.core.OrdersService;
 import ru.tinkoff.piapi.core.UsersService;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -182,6 +193,21 @@ public class BeanConfiguration {
             trigger.setInitialDelay(schedulingProperties.getDelay());
             taskScheduler.schedule(bot, trigger);
         }
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        final SimpleModule tinkoffModule = new SimpleModule()
+                .addSerializer(new BondSerializer())
+                .addSerializer(new QuotationSerializer())
+                .addSerializer(new TimestampSerializer())
+                .addSerializer(new MoneyValueSerializer());
+        return new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .setDateFormat(new SimpleDateFormat(DateUtils.OFFSET_DATE_TIME_FORMAT))
+                .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false)
+                .registerModule(tinkoffModule);
     }
 
 }
