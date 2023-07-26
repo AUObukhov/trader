@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -74,7 +73,7 @@ class RealExtOperationsServiceUnitTest {
         final int currentPrice1 = 20;
         final int quantityLots1 = 1;
         final int lotSize1 = 10;
-        final Currency currency1 = TestShare1.CURRENCY;
+        final String currency1 = TestShare1.CURRENCY;
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
@@ -84,7 +83,7 @@ class RealExtOperationsServiceUnitTest {
         final int currentPrice2 = 4;
         final int quantityLots2 = 2;
         final int lotSize2 = 10;
-        final Currency currency2 = TestShare2.CURRENCY;
+        final String currency2 = TestShare2.CURRENCY;
 
         final String ticker3 = TestEtf1.TICKER;
         final String figi3 = TestEtf1.FIGI;
@@ -94,7 +93,7 @@ class RealExtOperationsServiceUnitTest {
         final int currentPrice3 = 10;
         final int quantityLots3 = 5;
         final int lotSize3 = 1;
-        final Currency currency3 = TestEtf1.CURRENCY;
+        final String currency3 = TestEtf1.CURRENCY;
 
         final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition1 = TestData.createTinkoffPortfolioPosition(
                 figi1,

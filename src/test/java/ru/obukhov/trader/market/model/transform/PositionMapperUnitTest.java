@@ -24,7 +24,7 @@ class PositionMapperUnitTest {
         final int currentPrice = 120;
         final int quantityLots = 10;
         final int lotSize = 1000;
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB;
 
         final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition = TestData.createTinkoffPortfolioPosition(
                 figi,

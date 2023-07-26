@@ -15,7 +15,7 @@ public record Instrument(
         String classCode,
         String isin,
         int lotSize,
-        Currency currency,
+        String currency,
         BigDecimal kLong,
         BigDecimal kShort,
         BigDecimal dLong,

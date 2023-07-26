@@ -1,6 +1,7 @@
 package ru.obukhov.trader.market.model.transform;
 
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.market.model.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ class MoneyValueSerializerUnitTest extends SerializerAbstractUnitTest<MoneyValue
     @Test
     void test() throws IOException {
         final MoneyValue moneyValue = MoneyValue.newBuilder()
-                .setCurrency("rub")
+                .setCurrency(Currency.RUB)
                 .setUnits(100)
                 .setNano(90000000)
                 .build();

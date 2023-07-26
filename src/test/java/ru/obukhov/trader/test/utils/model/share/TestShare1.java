@@ -24,7 +24,7 @@ public class TestShare1 {
     public static final String FIGI = "BBG000B9XRY4";
     public static final String TICKER = "AAPL";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currency.USD;
     public static final String NAME = "Apple";
     public static final String EXCHANGE = "SPB_MORNING_WEEKEND";
     public static final OffsetDateTime IPO_DATE = DateTimeTestData.createDateTime(1980, 12, 12, 3);
@@ -45,7 +45,7 @@ public class TestShare1 {
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name().toLowerCase())
+            .setCurrency(CURRENCY)
             .setName(NAME)
             .setExchange(EXCHANGE)
             .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(IPO_DATE))

@@ -21,7 +21,7 @@ public class TestEtf2 {
     public static final String FIGI = "BBG005HLSZ23";
     public static final String TICKER = "FXUS";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY = Currency.RUB;
+    public static final String CURRENCY = Currency.RUB;
     public static final String NAME = "FinEx Акции американских компаний";
     public static final String EXCHANGE = "MOEX";
     public static final OffsetDateTime RELEASED_DATE = DateTimeTestData.createDateTime(2013, 10, 31, 3, 0, 0);
@@ -40,7 +40,7 @@ public class TestEtf2 {
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name().toLowerCase())
+            .setCurrency(CURRENCY)
             .setName(NAME)
             .setExchange(EXCHANGE)
             .setReleasedDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(RELEASED_DATE))

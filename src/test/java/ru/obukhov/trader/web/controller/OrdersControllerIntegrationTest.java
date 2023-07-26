@@ -36,7 +36,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
     void getOrders_returnsOrders() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.RUB;
+        final String currency1 = Currency.RUB;
         final List<OrderStage> stages1 = List.of(
                 TestData.createOrderStage(currency1, 100, 1, ""), // todo realistic tradeId
                 TestData.createOrderStage(currency1, 200, 2, "")
@@ -62,7 +62,7 @@ class OrdersControllerIntegrationTest extends ControllerIntegrationTest {
                 dateTime1
         );
 
-        final Currency currency2 = Currency.RUB;
+        final String currency2 = Currency.RUB;
         final List<OrderStage> stages2 = List.of(
                 TestData.createOrderStage(currency2, 100, 1, ""), // todo realistic tradeId
                 TestData.createOrderStage(currency2, 200, 2, "")

@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.util;
 
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.WithdrawLimitsResponse;
 import ru.tinkoff.piapi.core.models.Money;
@@ -28,17 +27,9 @@ public class DataStructsHelper {
                 .build();
     }
 
-    public static MoneyValue createMoneyValue(final Currency currency, final BigDecimal value) {
-        return createMoneyValue(currency.name(), value);
-    }
-
     // endregion
 
     public static Money createMoney(final String currency, final BigDecimal value) {
-        return Money.fromResponse(createMoneyValue(currency, value));
-    }
-
-    public static Money createMoney(final Currency currency, final BigDecimal value) {
         return Money.fromResponse(createMoneyValue(currency, value));
     }
 
@@ -77,9 +68,9 @@ public class DataStructsHelper {
      * @return balance value of first element from given list {@code moneys) where currency equals to given {@code currency}
      * @throws {@link NoSuchElementException} when there is no element with given {@code currency}
      */
-    public static BigDecimal getBalance(final List<Money> moneys, final Currency currency) {
+    public static BigDecimal getBalance(final List<Money> moneys, final String currency) {
         return moneys.stream()
-                .filter(money -> money.getCurrency().equals(currency.name()))
+                .filter(money -> money.getCurrency().equals(currency))
                 .findFirst()
                 .map(Money::getValue)
                 .orElseThrow();

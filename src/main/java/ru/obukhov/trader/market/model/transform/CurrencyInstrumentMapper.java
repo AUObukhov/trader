@@ -8,7 +8,7 @@ import ru.tinkoff.piapi.contract.v1.Currency;
 /**
  * Maps {@link Currency} to {@link CurrencyInstrument}
  */
-@Mapper(uses = {QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class})
+@Mapper(uses = {QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class})
 public interface CurrencyInstrumentMapper {
 
     @Mapping(target = "lotSize", source = "lot")

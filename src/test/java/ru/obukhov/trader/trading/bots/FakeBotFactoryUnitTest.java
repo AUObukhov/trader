@@ -16,7 +16,6 @@ import org.springframework.context.ApplicationContext;
 import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -121,7 +120,7 @@ class FakeBotFactoryUnitTest {
     @MethodSource(value = "getData_forCreateBot_initializesBalance")
     void createBot_initializesBalance(final BalanceConfig balanceConfig, final double expectedBalance) {
         final String figi = TestShare1.FIGI;
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final BotConfig botConfig = new BotConfig(
                 TestData.ACCOUNT_ID1,
                 figi,
@@ -162,7 +161,7 @@ class FakeBotFactoryUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockCurrency(final String figi, final Currency currency) {
+    private void mockCurrency(final String figi, final String currency) {
         final Share share = Share.builder().figi(figi).currency(currency).build();
         Mockito.when(extInstrumentsService.getShare(figi)).thenReturn(share);
     }
@@ -172,14 +171,14 @@ class FakeBotFactoryUnitTest {
                 Mockito.eq("fakeContext"),
                 Mockito.any(MarketProperties.class),
                 Mockito.any(OffsetDateTime.class),
-                Mockito.any(String.class),
-                Mockito.any(Currency.class),
+                Mockito.anyString(),
+                Mockito.anyString(),
                 Mockito.any(BigDecimal.class)
         )).thenAnswer(invocation -> {
             final MarketProperties marketProperties = invocation.getArgument(1);
             final OffsetDateTime currentDateTime = invocation.getArgument(2);
             final String accountId = invocation.getArgument(3);
-            final Currency currency = invocation.getArgument(4);
+            final String currency = invocation.getArgument(4);
             final BigDecimal initialBalance = invocation.getArgument(5);
             return new FakeContext(marketProperties, currentDateTime, accountId, currency, initialBalance);
         });

@@ -19,28 +19,28 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoneyValue_withEnumCurrency() {
-        final Currency currency = Currency.EUR;
+        final String currency = Currency.EUR;
         final long units = 123;
         final int nano = 456;
         final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
 
         final MoneyValue moneyValue = DataStructsHelper.createMoneyValue(currency, value);
 
-        Assertions.assertEquals(currency.name(), moneyValue.getCurrency());
+        Assertions.assertEquals(currency, moneyValue.getCurrency());
         Assertions.assertEquals(units, moneyValue.getUnits());
         Assertions.assertEquals(nano, moneyValue.getNano());
     }
 
     @Test
     void createMoneyValue_withStringCurrency() {
-        final Currency currency = Currency.EUR;
+        final String currency = Currency.EUR;
         final long units = 123;
         final int nano = 456;
         final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
 
         final MoneyValue moneyValue = DataStructsHelper.createMoneyValue(currency, value);
 
-        Assertions.assertEquals(currency.name(), moneyValue.getCurrency());
+        Assertions.assertEquals(currency, moneyValue.getCurrency());
         Assertions.assertEquals(units, moneyValue.getUnits());
         Assertions.assertEquals(nano, moneyValue.getNano());
     }
@@ -51,12 +51,12 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoney() {
-        final Currency currency = Currency.EUR;
+        final String currency = Currency.EUR;
         final BigDecimal value = DecimalUtils.setDefaultScale(123.456);
 
         final Money money = DataStructsHelper.createMoney(currency, value);
 
-        Assertions.assertEquals(currency.name(), money.getCurrency());
+        Assertions.assertEquals(currency, money.getCurrency());
         AssertUtils.assertEquals(value, money.getValue());
     }
 
@@ -68,8 +68,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneys() {
         // arrange
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -105,8 +105,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneysAndBlocked() {
         // arrange
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -149,8 +149,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneysAndBlockedAndBlockedGuarantee() {
         // arrange
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -202,11 +202,11 @@ class DataStructsHelperUnitTest {
 
     @Test
     void getBalance() {
-        final Currency currency1 = Currency.EUR;
+        final String currency1 = Currency.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
-        final Currency currency2 = Currency.USD;
+        final String currency2 = Currency.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
@@ -221,11 +221,11 @@ class DataStructsHelperUnitTest {
 
     @Test
     void getBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final Currency currency1 = Currency.EUR;
+        final String currency1 = Currency.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
-        final Currency currency2 = Currency.USD;
+        final String currency2 = Currency.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 

@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -175,7 +174,7 @@ class RunnableBotUnitTest {
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.any(Currency.class)))
+        Mockito.when(extOperationsService.getAvailableBalance(Mockito.eq(accountId), Mockito.anyString()))
                 .thenThrow(new IllegalArgumentException());
 
         createRunnableBot().run();
@@ -419,7 +418,7 @@ class RunnableBotUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockData(final String accountId, final String figi, final Currency currency) {
+    private void mockData(final String accountId, final String figi, final String currency) {
         final BigDecimal balance = DecimalUtils.setDefaultScale(10000);
         Mockito.when(extOperationsService.getAvailableBalance(accountId, currency))
                 .thenReturn(balance);

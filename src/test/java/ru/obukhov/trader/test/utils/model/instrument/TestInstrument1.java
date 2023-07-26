@@ -24,7 +24,7 @@ public class TestInstrument1 {
     public static final String CLASS_CODE = "SPBXM";
     public static final String ISIN = "US0378331005";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currency.USD;
     public static final BigDecimal K_LONG = DecimalUtils.setDefaultScale(2);
     public static final BigDecimal K_SHORT = DecimalUtils.setDefaultScale(2);
     public static final BigDecimal D_LONG = DecimalUtils.setDefaultScale(1);
@@ -58,7 +58,7 @@ public class TestInstrument1 {
             .setClassCode(CLASS_CODE)
             .setIsin(ISIN)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name())
+            .setCurrency(CURRENCY)
             .setKlong(QUOTATION_MAPPER.fromBigDecimal(K_LONG))
             .setKshort(QUOTATION_MAPPER.fromBigDecimal(K_SHORT))
             .setDlong(QUOTATION_MAPPER.fromBigDecimal(D_LONG))

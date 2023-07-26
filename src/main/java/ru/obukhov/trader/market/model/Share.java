@@ -11,7 +11,7 @@ public record Share(
         String figi,
         String ticker,
         Integer lotSize,
-        Currency currency,
+        String currency,
         String name,
         String exchange,
         OffsetDateTime ipoDate,

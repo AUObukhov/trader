@@ -53,7 +53,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final int currentPrice1 = 20;
         final int quantityLots1 = 1;
         final int lotSize1 = 10;
-        final Currency currency1 = TestShare1.CURRENCY;
+        final String currency1 = TestShare1.CURRENCY;
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
@@ -63,7 +63,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final int currentPrice2 = 4;
         final int quantityLots2 = 2;
         final int lotSize2 = 10;
-        final Currency currency2 = TestShare2.CURRENCY;
+        final String currency2 = TestShare2.CURRENCY;
 
         final String ticker3 = TestShare3.TICKER;
         final String figi3 = TestShare3.FIGI;
@@ -73,7 +73,7 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final int currentPrice3 = 10;
         final int quantityLots3 = 5;
         final int lotSize3 = 1;
-        final Currency currency3 = TestShare3.CURRENCY;
+        final String currency3 = TestShare3.CURRENCY;
 
         Mocker.mockTickerByFigi(instrumentsService, ticker1, figi1);
         Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);
@@ -174,8 +174,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     void getAvailableBalances_withBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -219,8 +219,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     void getAvailableBalances_withoutBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);

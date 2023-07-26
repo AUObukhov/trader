@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.model.transform;
 
 import org.mapstruct.Mapper;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Money;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 
@@ -16,9 +15,8 @@ public interface MoneyMapper {
             return null;
         }
 
-        final Currency currency = Currency.valueOfIgnoreCase(moneyValue.getCurrency());
         final BigDecimal value = DecimalUtils.createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
-        return Money.of(currency, value);
+        return Money.of(moneyValue.getCurrency(), value);
     }
 
     default BigDecimal moneyValueToBigDecimal(final MoneyValue moneyValue) {

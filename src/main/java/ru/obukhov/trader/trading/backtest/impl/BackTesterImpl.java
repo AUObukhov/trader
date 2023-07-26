@@ -15,7 +15,6 @@ import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
@@ -176,7 +175,7 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
-            final Currency currency = fakeBot.getShare(figi).currency();
+            final String currency = fakeBot.getShare(figi).currency();
             for (OffsetDateTime investmentTime : investmentsTimes) {
                 fakeBot.addInvestment(accountId, investmentTime, currency, balanceConfig.getBalanceIncrement());
             }
@@ -255,7 +254,7 @@ public class BackTesterImpl implements BackTester {
             final List<BackTestPosition> positions,
             final String figi
     ) {
-        final Currency currency = fakeBot.getShare(figi).currency();
+        final String currency = fakeBot.getShare(figi).currency();
         final SortedMap<OffsetDateTime, BigDecimal> investments = fakeBot.getInvestments(accountId, currency);
 
         final BigDecimal initialInvestment = investments.get(investments.firstKey());

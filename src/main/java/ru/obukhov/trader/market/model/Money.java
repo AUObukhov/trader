@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import java.math.BigDecimal;
 
 public record Money(
-        @NotNull Currency currency,
+        @NotNull String currency,
         @NotNull BigDecimal value
 ) {
 
-    public static Money of(final Currency currency, BigDecimal value) {
+    public static Money of(final String currency, BigDecimal value) {
         return new Money(currency, value);
     }
 

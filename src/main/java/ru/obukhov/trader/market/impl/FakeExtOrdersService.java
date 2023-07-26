@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -139,7 +138,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
         fakeContext.addPosition(accountId, figi, position);
     }
 
-    private void updateBalance(final String accountId, final Currency currency, final BigDecimal increment) {
+    private void updateBalance(final String accountId, final String currency, final BigDecimal increment) {
         final BigDecimal newBalance = fakeContext.getBalance(accountId, currency).add(increment);
         Assert.isTrue(newBalance.signum() >= 0, "balance can't be negative");
 

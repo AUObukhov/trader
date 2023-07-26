@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -44,7 +43,7 @@ public interface ExtOperationsService {
      * If {@code accountId} null, works with default broker account
      * @throws NoSuchElementException if given {@code currency} not found.
      */
-    default BigDecimal getAvailableBalance(final String accountId, final ru.obukhov.trader.market.model.Currency currency) {
+    default BigDecimal getAvailableBalance(final String accountId, final String currency) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
         final BigDecimal totalBalance = DataStructsHelper.getBalance(withdrawLimits.getMoney(), currency);
         final BigDecimal blockedBalance = DataStructsHelper.getBalance(withdrawLimits.getBlocked(), currency);
@@ -57,23 +56,23 @@ public interface ExtOperationsService {
      */
     default List<Money> getAvailableBalances(final String accountId) {
         final WithdrawLimits withdrawLimits = getWithdrawLimits(accountId);
-        final Map<Currency, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());
-        final Map<Currency, BigDecimal> blockedGuarantee = getBalanceMap(withdrawLimits.getBlockedGuarantee());
+        final Map<String, BigDecimal> blocked = getBalanceMap(withdrawLimits.getBlocked());
+        final Map<String, BigDecimal> blockedGuarantee = getBalanceMap(withdrawLimits.getBlockedGuarantee());
         return withdrawLimits.getMoney().stream()
                 .map(money -> getAvailableMoney(money, blocked, blockedGuarantee))
                 .toList();
     }
 
-    private Map<Currency, BigDecimal> getBalanceMap(final List<Money> moneys) {
-        return moneys.stream().collect(Collectors.toMap(money -> Currency.valueOf(money.getCurrency()), Money::getValue));
+    private Map<String, BigDecimal> getBalanceMap(final List<Money> moneys) {
+        return moneys.stream().collect(Collectors.toMap(Money::getCurrency, Money::getValue));
     }
 
     private Money getAvailableMoney(
             final Money money,
-            final Map<Currency, BigDecimal> blocked,
-            final Map<Currency, BigDecimal> blockedGuarantee
+            final Map<String, BigDecimal> blocked,
+            final Map<String, BigDecimal> blockedGuarantee
     ) {
-        final Currency currency = Currency.valueOf(money.getCurrency());
+        final String currency = money.getCurrency();
         final BigDecimal blockedValue = blocked.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
         final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
         final BigDecimal value = money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);

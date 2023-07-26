@@ -16,7 +16,7 @@ public class PortfolioPositionBuilder {
     private double expectedYield = 0;
     private double currentPrice;
     private double quantityLots = 0;
-    private Currency currency = Currency.RUB;
+    private String currency = Currency.RUB;
     private int lotSize = 1;
 
     public PortfolioPosition build() {

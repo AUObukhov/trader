@@ -14,7 +14,6 @@ import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -308,7 +307,7 @@ class BackTesterImplUnitTest {
 
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
-        final Currency currency1 = TestShare1.CURRENCY;
+        final String currency1 = TestShare1.CURRENCY;
         final Double commission1 = 0.003;
 
         final Map<OffsetDateTime, Double> prices1 = new LinkedHashMap<>();
@@ -336,7 +335,7 @@ class BackTesterImplUnitTest {
 
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
-        final Currency currency2 = TestShare2.CURRENCY;
+        final String currency2 = TestShare2.CURRENCY;
         final Double commission2 = 0.001;
 
         final Map<OffsetDateTime, Double> prices2 = new LinkedHashMap<>();
@@ -1015,7 +1014,7 @@ class BackTesterImplUnitTest {
             final Operation operation
     ) {
         final String figi = share.figi();
-        final Currency currency = share.currency();
+        final String currency = share.currency();
         final int lotSize = share.lotSize();
 
         final BotConfig botConfig = new BotConfig(accountId, figi, null, commission, null, null);
@@ -1077,7 +1076,7 @@ class BackTesterImplUnitTest {
     private void mockInvestments(
             final FakeBot fakeBot,
             final String accountId,
-            final Currency currency,
+            final String currency,
             final OffsetDateTime dateTime,
             final BigDecimal initialInvestment
     ) {

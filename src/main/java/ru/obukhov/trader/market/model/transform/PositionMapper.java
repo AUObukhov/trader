@@ -7,7 +7,7 @@ import ru.tinkoff.piapi.core.models.Position;
 /**
  * Maps {@link ru.tinkoff.piapi.core.models.Position} to {@link ru.obukhov.trader.market.model.PortfolioPosition}
  */
-@Mapper(uses = {CurrencyMapper.class})
+@Mapper
 public interface PositionMapper {
 
     PortfolioPosition map(final String figi, final Position source);

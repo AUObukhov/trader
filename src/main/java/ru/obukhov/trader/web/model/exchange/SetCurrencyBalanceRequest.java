@@ -16,8 +16,8 @@ public class SetCurrencyBalanceRequest {
     private String accountId;
 
     @NotNull(message = "currency is mandatory")
-    @ApiModelProperty(example = "USD", required = true, position = 1)
-    private Currency currency;
+    @ApiModelProperty(example = Currency.USD, required = true, position = 1)
+    private String currency;
 
     @NotNull(message = "balance is mandatory")
     @ApiModelProperty(example = "10000", required = true, position = 2)

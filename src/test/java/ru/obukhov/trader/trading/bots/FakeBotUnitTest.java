@@ -80,7 +80,7 @@ class FakeBotUnitTest {
     @Test
     void getInvestments() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB;
         final SortedMap<OffsetDateTime, BigDecimal> expectedInvestments = new TreeMap<>();
         expectedInvestments.put(OffsetDateTime.now(), DecimalUtils.setDefaultScale(10));
         Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
@@ -93,7 +93,7 @@ class FakeBotUnitTest {
     @Test
     void getBalance() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB;
         final BigDecimal expectedBalance = DecimalUtils.setDefaultScale(10);
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
 

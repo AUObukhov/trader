@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -101,7 +100,7 @@ class FakeExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
         final int lotSize = 10;
         final int quantityLots = 1;
@@ -140,7 +139,7 @@ class FakeExtOrdersServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
         final int lotSize = 10;
         final int quantityLots1 = 2;
@@ -201,7 +200,7 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
         final double initialBalance = 1000000;
         final double balance1 = 989970;
         final double balance2 = 989669.1;
@@ -292,7 +291,7 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
@@ -363,7 +362,7 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
@@ -437,7 +436,7 @@ class FakeExtOrdersServiceUnitTest {
         final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
         final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
 
-        final Currency currency = TestShare2.CURRENCY;
+        final String currency = TestShare2.CURRENCY;
 
         final double initialBalance = 1000000;
         final double balance1 = 979940;
@@ -514,7 +513,7 @@ class FakeExtOrdersServiceUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void mockBalances(final String accountId, final Currency currency, double balance1, double... balances) {
+    private void mockBalances(final String accountId, final String currency, double balance1, double... balances) {
         final BigDecimal[] bigDecimalBalances = Arrays.stream(balances)
                 .mapToObj(BigDecimal::valueOf)
                 .toArray(BigDecimal[]::new);
@@ -537,7 +536,7 @@ class FakeExtOrdersServiceUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void verifyBalanceSet(final String accountId, final Currency currency, final double balance) {
+    private void verifyBalanceSet(final String accountId, final String currency, final double balance) {
         Mockito.verify(fakeContext, Mockito.times(1))
                 .setBalance(Mockito.eq(accountId), Mockito.eq(currency), ArgumentMatchers.argThat(BigDecimalMatcher.of(balance)));
     }

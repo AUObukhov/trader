@@ -18,7 +18,7 @@ public record Order(
         OrderDirection direction,
         BigDecimal initialSecurityPrice,
         BigDecimal serviceCommission,
-        Currency currency,
+        String currency,
         ru.tinkoff.piapi.contract.v1.OrderType type,
         OffsetDateTime dateTime
 ) {

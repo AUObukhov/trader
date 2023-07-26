@@ -218,8 +218,8 @@ class ExtOperationsServiceUnitTest {
         // arrange
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -263,8 +263,8 @@ class ExtOperationsServiceUnitTest {
         // arrange
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.EUR;
-        final Currency currency2 = Currency.USD;
+        final String currency1 = Currency.EUR;
+        final String currency2 = Currency.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);

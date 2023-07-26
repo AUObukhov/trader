@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
@@ -17,7 +16,7 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsSet() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
@@ -56,7 +55,7 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreSimple_andOrderIdIsNotSet() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final double totalPrice = 1000;
         final double totalCommissionAmount = 5;
         final double currentPrice = 100;
@@ -94,7 +93,7 @@ class PostOrderResponseBuilderUnitTest {
 
     @Test
     void test_whenTypesAreComplex() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final BigDecimal totalPrice = DecimalUtils.setDefaultScale(1000);
         final BigDecimal totalCommissionAmount = DecimalUtils.setDefaultScale(5);
         final BigDecimal currentPrice = DecimalUtils.setDefaultScale(100);

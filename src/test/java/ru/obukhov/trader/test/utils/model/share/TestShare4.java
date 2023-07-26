@@ -23,7 +23,7 @@ public class TestShare4 {
     public static final String FIGI = "BBG000G25P51";
     public static final String TICKER = "DIOD";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currency.USD;
     public static final String NAME = "Diodes Inc";
     public static final String EXCHANGE = "SPB";
     public static final long ISSUE_SIZE = 49590347;
@@ -43,7 +43,7 @@ public class TestShare4 {
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name().toLowerCase())
+            .setCurrency(CURRENCY)
             .setName(NAME)
             .setExchange(EXCHANGE)
             .setIssueSize(ISSUE_SIZE)

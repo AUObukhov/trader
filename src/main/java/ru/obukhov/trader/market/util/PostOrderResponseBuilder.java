@@ -4,7 +4,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Tolerate;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
@@ -17,7 +16,7 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class PostOrderResponseBuilder {
 
-    private Currency currency;
+    private String currency;
     private BigDecimal totalOrderAmount;
     private BigDecimal totalCommissionAmount;
     private BigDecimal initialSecurityPrice;
@@ -26,11 +25,6 @@ public class PostOrderResponseBuilder {
     private OrderDirection direction;
     private OrderType type;
     private String orderId;
-
-    @Tolerate
-    public PostOrderResponseBuilder setCurrency(final String currency) {
-        return setCurrency(Currency.valueOfIgnoreCase(currency));
-    }
 
     @Tolerate
     public PostOrderResponseBuilder setTotalOrderAmount(final double totalOrderAmount) {

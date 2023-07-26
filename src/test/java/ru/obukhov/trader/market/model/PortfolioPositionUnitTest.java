@@ -14,7 +14,7 @@ class PortfolioPositionUnitTest {
 
     @Test
     void getCurrency() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
@@ -45,7 +45,7 @@ class PortfolioPositionUnitTest {
 
     @Test
     void addQuantities() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
@@ -105,7 +105,7 @@ class PortfolioPositionUnitTest {
 
     @Test
     void cloneWithNewValues() {
-        final Currency currency = TestShare1.CURRENCY;
+        final String currency = TestShare1.CURRENCY;
         final PortfolioPosition position = new PortfolioPositionBuilder()
                 .setFigi(TestShare1.FIGI)
                 .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)

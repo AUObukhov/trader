@@ -7,7 +7,6 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -62,15 +61,15 @@ public class FakeBot extends Bot {
         return getFakeContext().nextMinute();
     }
 
-    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final Currency currency, final BigDecimal increment) {
+    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
         getFakeContext().addInvestment(accountId, dateTime, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final Currency currency) {
+    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {
         return getFakeContext().getInvestments(accountId, currency);
     }
 
-    public BigDecimal getCurrentBalance(final String accountId, final Currency currency) {
+    public BigDecimal getCurrentBalance(final String accountId, final String currency) {
         return getFakeContext().getBalance(accountId, currency);
     }
 

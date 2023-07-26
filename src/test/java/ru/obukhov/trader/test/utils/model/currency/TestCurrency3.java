@@ -15,7 +15,7 @@ public class TestCurrency3 extends TestSecurityData {
     public static final String FIGI = "BBG000VJ5YR4";
     public static final String TICKER = "GLDRUB_TOM";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY_VALUE = Currency.RUB;
+    public static final String CURRENCY_VALUE = Currency.RUB;
     public static final String NAME = "Золото";
     public static final String EXCHANGE = "FX_MTL";
     public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);
@@ -32,7 +32,7 @@ public class TestCurrency3 extends TestSecurityData {
             .setFigi(TestCurrency3.FIGI)
             .setTicker(TestCurrency3.TICKER)
             .setLot(TestCurrency3.LOT_SIZE)
-            .setCurrency(TestCurrency3.CURRENCY_VALUE.name().toLowerCase())
+            .setCurrency(TestCurrency3.CURRENCY_VALUE)
             .setName(TestCurrency3.NAME)
             .setExchange(TestCurrency3.EXCHANGE)
             .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestCurrency3.NOMINAL))

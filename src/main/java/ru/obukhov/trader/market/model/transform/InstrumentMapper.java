@@ -7,7 +7,7 @@ import ru.obukhov.trader.market.model.Instrument;
 /**
  * Maps {@link ru.tinkoff.piapi.contract.v1.Instrument} to {@link Instrument}
  */
-@Mapper(uses = {QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class, CurrencyMapper.class})
+@Mapper(uses = {QuotationMapper.class, DateTimeMapper.class, MoneyMapper.class})
 public interface InstrumentMapper {
 
     @Mapping(target = "lotSize", source = "lot")

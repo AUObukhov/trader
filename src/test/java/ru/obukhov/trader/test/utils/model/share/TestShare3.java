@@ -23,7 +23,7 @@ public class TestShare3 {
     public static final String FIGI = "BBG006L8G4H1";
     public static final String TICKER = "YNDX";
     public static final int LOT_SIZE = 1;
-    public static final Currency CURRENCY = Currency.RUB;
+    public static final String CURRENCY = Currency.RUB;
     public static final String NAME = "Yandex";
     public static final String EXCHANGE = "MOEX_PLUS";
     public static final OffsetDateTime IPO_DATE = DateTimeTestData.createDateTime(2011, 5, 24, 3);
@@ -44,7 +44,7 @@ public class TestShare3 {
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name().toLowerCase())
+            .setCurrency(CURRENCY)
             .setName(NAME)
             .setExchange(EXCHANGE)
             .setIpoDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(IPO_DATE))

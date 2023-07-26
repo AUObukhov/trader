@@ -32,7 +32,6 @@ import ru.obukhov.trader.market.impl.StatisticsService;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
@@ -105,7 +104,7 @@ public class BeanConfiguration {
             final MarketProperties marketProperties,
             final OffsetDateTime currentDateTime,
             final String accountId,
-            final Currency currency,
+            final String currency,
             final BigDecimal initialBalance
     ) {
         return new FakeContext(marketProperties, currentDateTime, accountId, currency, initialBalance);

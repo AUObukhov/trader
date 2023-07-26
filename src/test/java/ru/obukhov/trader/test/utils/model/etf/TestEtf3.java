@@ -21,7 +21,7 @@ public class TestEtf3 {
     public static final String FIGI = "TECH0A101X68";
     public static final String TICKER = "TECH";
     public static final int LOT_SIZE = 100;
-    public static final Currency CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currency.USD;
     public static final String NAME = "Тинькофф NASDAQ 2";
     public static final String EXCHANGE = "MOEX";
     public static final OffsetDateTime RELEASED_DATE = DateTimeTestData.createDateTime(2020, 7, 13, 3);
@@ -40,7 +40,7 @@ public class TestEtf3 {
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setLot(LOT_SIZE)
-            .setCurrency(CURRENCY.name().toLowerCase())
+            .setCurrency(CURRENCY)
             .setName(NAME)
             .setExchange(EXCHANGE)
             .setReleasedDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(RELEASED_DATE))

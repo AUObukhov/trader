@@ -251,10 +251,10 @@ class FakeExtOperationsServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final Currency currency1 = Currency.USD;
-        final Currency currency2 = Currency.EUR;
+        final String currency1 = Currency.USD;
+        final String currency2 = Currency.EUR;
 
-        final Map<Currency, BigDecimal> balances = Map.of(
+        final Map<String, BigDecimal> balances = Map.of(
                 currency1, DecimalUtils.setDefaultScale(2000),
                 currency2, DecimalUtils.setDefaultScale(4000)
         );
@@ -269,9 +269,9 @@ class FakeExtOperationsServiceUnitTest {
         final List<Money> money = withdrawLimits.getMoney();
         Assertions.assertEquals(2, money.size());
         for (final Money currentMoney : money) {
-            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
+            if (currentMoney.getCurrency().equals(Currency.USD)) {
                 AssertUtils.assertEquals(2000, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR)) {
                 AssertUtils.assertEquals(4000, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
@@ -280,9 +280,9 @@ class FakeExtOperationsServiceUnitTest {
 
         final List<Money> blocked = withdrawLimits.getBlocked();
         for (final Money currentMoney : blocked) {
-            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
+            if (currentMoney.getCurrency().equals(Currency.USD)) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR)) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());
@@ -291,9 +291,9 @@ class FakeExtOperationsServiceUnitTest {
 
         final List<Money> blockedGuarantee = withdrawLimits.getBlockedGuarantee();
         for (final Money currentMoney : blockedGuarantee) {
-            if (currentMoney.getCurrency().equals(Currency.USD.name())) {
+            if (currentMoney.getCurrency().equals(Currency.USD)) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
-            } else if (currentMoney.getCurrency().equals(Currency.EUR.name())) {
+            } else if (currentMoney.getCurrency().equals(Currency.EUR)) {
                 AssertUtils.assertEquals(0, currentMoney.getValue());
             } else {
                 Assertions.fail("Unexpected currency: " + currentMoney.getCurrency());

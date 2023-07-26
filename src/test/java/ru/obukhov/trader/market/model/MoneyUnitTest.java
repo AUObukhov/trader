@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 class MoneyUnitTest {
     @Test
     void of() {
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB;
         final BigDecimal value = DecimalUtils.setDefaultScale(100);
 
         final Money money = Money.of(currency, value);

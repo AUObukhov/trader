@@ -29,7 +29,7 @@ class MoneyMapperUnitTest {
     @Test
     void moneyValueToMoney_whenNotNull() {
         final double value = 100;
-        final Currency currency = Currency.RUB;
+        final String currency = Currency.RUB;
         final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, currency);
 
         final Money money = mapper.moneyValueToMoney(moneyValue);

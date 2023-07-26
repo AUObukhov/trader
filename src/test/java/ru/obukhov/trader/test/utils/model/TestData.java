@@ -93,7 +93,7 @@ public class TestData {
             final long expectedYield,
             final long currentPrice,
             final long quantityLots,
-            final Currency currency
+            final String currency
     ) {
         return ru.tinkoff.piapi.contract.v1.PortfolioPosition.newBuilder()
                 .setFigi(figi)
@@ -216,7 +216,7 @@ public class TestData {
     }
 
     public static OrderState createOrderState(
-            final Currency currency,
+            final String currency,
             final String orderId,
             final OrderExecutionReportStatus executionReportStatus,
             final int lotsRequested,
@@ -249,7 +249,7 @@ public class TestData {
                 .setInitialSecurityPrice(TestData.createTinkoffMoneyValue(initialSecurityPrice, currency))
                 .addAllStages(stages)
                 .setServiceCommission(TestData.createTinkoffMoneyValue(serviceCommission, currency))
-                .setCurrency(currency.name())
+                .setCurrency(currency)
                 .setOrderType(orderType)
                 .setOrderDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(orderDate))
                 .build();
@@ -279,7 +279,7 @@ public class TestData {
     }
 
     public static Order createOrder(
-            final Currency currency,
+            final String currency,
             final String orderId,
             final OrderExecutionReportStatus executionReportStatus,
             final int lotsExecuted,
@@ -328,21 +328,21 @@ public class TestData {
 
     // region MoneyValue creation
 
-    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final double value, final Currency currency) {
+    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final double value, final String currency) {
         return DataStructsHelper.createMoneyValue(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final Currency currency) {
-        return ru.tinkoff.piapi.contract.v1.MoneyValue.newBuilder().setCurrency(currency.name()).build();
+    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final String currency) {
+        return ru.tinkoff.piapi.contract.v1.MoneyValue.newBuilder().setCurrency(currency).build();
     }
 
     // endregion
 
-    public static Money createMoney(final Currency currency, final double value) {
+    public static Money createMoney(final String currency, final double value) {
         return new Money(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final Currency currency, final BigDecimal value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final BigDecimal value) {
         return DataStructsHelper.createMoney(currency, value);
     }
 
@@ -362,7 +362,7 @@ public class TestData {
         return Portfolio.fromResponse(portfolioResponse);
     }
 
-    public static OrderStage createOrderStage(final Currency currency, final double price, final long quantity, final String tradeId) {
+    public static OrderStage createOrderStage(final String currency, final double price, final long quantity, final String tradeId) {
         return OrderStage.newBuilder()
                 .setPrice(createTinkoffMoneyValue(price, currency))
                 .setQuantity(quantity)

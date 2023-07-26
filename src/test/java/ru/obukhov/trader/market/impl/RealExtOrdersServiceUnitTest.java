@@ -43,7 +43,7 @@ class RealExtOrdersServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
 
         // todo realistic data (copy from OrderMapperTest)
-        final Currency currency1 = Currency.EUR;
+        final String currency1 = Currency.EUR;
         final String orderId1 = "orderId1";
         final OrderExecutionReportStatus executionReportStatus1 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
         final int lotsRequested1 = 1;
@@ -84,7 +84,7 @@ class RealExtOrdersServiceUnitTest {
                 orderDate1
         );
 
-        final Currency currency2 = Currency.USD;
+        final String currency2 = Currency.USD;
         final String orderId2 = "orderId2";
         final OrderExecutionReportStatus executionReportStatus2 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_NEW;
         final int lotsRequested2 = 14;
@@ -199,7 +199,7 @@ class RealExtOrdersServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
 
-        final Currency currency = Currency.USD;
+        final String currency = Currency.USD;
         final int totalOrderAmount = 2000;
         final int totalCommissionAmount = 10;
         final int initialSecurityPrice = 20;

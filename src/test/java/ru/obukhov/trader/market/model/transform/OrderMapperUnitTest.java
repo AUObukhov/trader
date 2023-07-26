@@ -24,7 +24,7 @@ class OrderMapperUnitTest {
     @Test
     void map() {
         // todo realistic data
-        final Currency currency = Currency.EUR;
+        final String currency = Currency.EUR;
         final String orderId = "orderId";
         final OrderExecutionReportStatus executionReportStatus = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
         final int lotsRequested = 1;
