@@ -7,18 +7,17 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
-import ru.obukhov.trader.market.model.Etf;
 import ru.obukhov.trader.market.model.Instrument;
 import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.obukhov.trader.market.model.transform.CurrencyInstrumentMapper;
-import ru.obukhov.trader.market.model.transform.EtfMapper;
 import ru.obukhov.trader.market.model.transform.InstrumentMapper;
 import ru.obukhov.trader.market.model.transform.ShareMapper;
 import ru.obukhov.trader.market.model.transform.TradingDayMapper;
 import ru.obukhov.trader.market.model.transform.TradingScheduleMapper;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
 import java.time.Instant;
@@ -29,7 +28,6 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
 
     private static final InstrumentMapper INSTRUMENT_MAPPER = Mappers.getMapper(InstrumentMapper.class);
     private static final ShareMapper SHARE_MAPPER = Mappers.getMapper(ShareMapper.class);
-    private static final EtfMapper ETF_MAPPER = Mappers.getMapper(EtfMapper.class);
     private static final CurrencyInstrumentMapper CURRENCY_INSTRUMENT_MAPPER = Mappers.getMapper(CurrencyInstrumentMapper.class);
     private static final TradingDayMapper TRADING_DAY_MAPPER = Mappers.getMapper(TradingDayMapper.class);
     private static final TradingScheduleMapper TRADING_SCHEDULE_MAPPER = Mappers.getMapper(TradingScheduleMapper.class);
@@ -78,7 +76,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return {@link Etf} corresponding to given {@code figi}
      */
     public Etf getEtf(final String figi) {
-        return ETF_MAPPER.map(instrumentsService.getEtfByFigiSync(figi));
+        return instrumentsService.getEtfByFigiSync(figi);
     }
 
     /**
