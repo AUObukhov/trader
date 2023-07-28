@@ -17,7 +17,6 @@ import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -100,30 +99,6 @@ public class DateUtils {
     public static OffsetDateTime getAverage(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         final Duration halfOfDuration = Duration.between(dateTime1, dateTime2).dividedBy(2);
         return dateTime1.plus(halfOfDuration);
-    }
-
-    /**
-     * Same as {@link OffsetDateTime#plus}, but if result is after {@code maxDateTime}, then returns {@code maxDateTime}
-     */
-    public static OffsetDateTime plusLimited(
-            final OffsetDateTime dateTime,
-            final long amountToAdd,
-            final TemporalUnit temporalUnit,
-            @Nullable final OffsetDateTime maxDateTime
-    ) {
-        return DateUtils.getEarliestDateTime(dateTime.plus(amountToAdd, temporalUnit), maxDateTime);
-    }
-
-    /**
-     * Same as {@link OffsetDateTime#minus}, but if result is before {@code minDateTime}, then returns {@code minDateTime}
-     */
-    public static OffsetDateTime minusLimited(
-            final OffsetDateTime dateTime,
-            final long amountToSubtract,
-            final TemporalUnit temporalUnit,
-            @Nullable final OffsetDateTime minDateTime
-    ) {
-        return DateUtils.getLatestDateTime(dateTime.minus(amountToSubtract, temporalUnit), minDateTime);
     }
 
     /**
