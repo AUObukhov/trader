@@ -140,13 +140,12 @@ public class DateUtils {
     }
 
     /**
-     * Checks if given {@code dateTime} is work time, which means than it is between {@code workStartTime} included and
-     * {@code workStartTime + workTimeDuration} excluded and not at weekend
-     * (except Saturday, when {@code workStartTime + workTimeDuration} is after midnight)
+     * Checks if given {@code dateTime} is work time, which means than it is between {@code workSchedule.startTime} included and
+     * {@code workSchedule.startTime + workSchedule.duration} excluded and not at weekend
+     * (except Saturday, when {@code workSchedule.startTime + workSchedule.duration} is after midnight)
      *
      * @param dateTime checked dateTime
      * @return true if given {@code dateTime} is work time, or else false
-     * @throws IllegalArgumentException when {@code workTimeDuration} is not positive or when it 1 day or longer
      */
     public static boolean isWorkTime(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
         final OffsetTime workEndTime = workSchedule.getEndTime();
