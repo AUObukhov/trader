@@ -339,90 +339,6 @@ class DateUtilsUnitTest {
 
     // endregion
 
-    // region roundUpToDay tests
-
-    @Test
-    void roundUpToDay_doesNotChangesDateTime_whenDateTimeIsStartOfDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2019, 1, 1);
-
-        final OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
-
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2019, 1, 1);
-        Assertions.assertEquals(expected, result);
-    }
-
-    @Test
-    void roundUpToDay_movesDateTimeToNextDay_whenDateTimeIsAfterStartOfDay() {
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 5, 5, 4, 6, 7);
-
-        final OffsetDateTime result = DateUtils.roundUpToDay(dateTime);
-
-        final OffsetDateTime expected = DateTimeTestData.createDateTime(2020, 5, 6);
-        Assertions.assertEquals(expected, result);
-    }
-
-    // endregion
-
-    // region roundDownToYear tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forRoundDownToYear() {
-        return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 1, 1),
-                        DateTimeTestData.createDateTime(2019, 1, 1)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 5, 5, 1),
-                        DateTimeTestData.createDateTime(2019, 1, 1)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 1, 5, 0, 0, 1),
-                        DateTimeTestData.createDateTime(2019, 1, 1)
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forRoundDownToYear")
-    void roundDownToYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
-        final OffsetDateTime result = DateUtils.roundDownToYear(dateTime);
-
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    // endregion
-
-    // region roundUpToYear tests
-
-    @SuppressWarnings("unused")
-    static Stream<Arguments> getData_forRoundUpToYear() {
-        return Stream.of(
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 1, 1),
-                        DateTimeTestData.createDateTime(2019, 1, 1)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 5, 5),
-                        DateTimeTestData.createDateTime(2020, 1, 1)
-                ),
-                Arguments.of(
-                        DateTimeTestData.createDateTime(2019, 1, 5, 0, 0, 1),
-                        DateTimeTestData.createDateTime(2020, 1, 1)
-                )
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getData_forRoundUpToYear")
-    void roundUpToYear(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
-        final OffsetDateTime result = DateUtils.roundUpToYear(dateTime);
-
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    // endregion
-
     // region isWorkTime tests
 
     @SuppressWarnings("unused")
@@ -759,20 +675,6 @@ class DateUtilsUnitTest {
         final OffsetDateTime expected = DateTimeTestData.createEndOfDay(2020, 12, 31);
 
         Assertions.assertEquals(expected, startOfDay);
-    }
-
-    // endregion
-
-    // region withDefaultOffset tests
-
-    @Test
-    void withDefaultOffset() {
-        final ZoneOffset testOffset = DateTimeTestData.getNotDefaultOffset();
-
-        final OffsetDateTime dateTimeWithTestOffset = OffsetDateTime.now().withOffsetSameInstant(testOffset);
-        final OffsetDateTime dateTimeWithDefaultOffset = DateUtils.withDefaultOffset(dateTimeWithTestOffset);
-
-        Assertions.assertEquals(DateUtils.DEFAULT_OFFSET, dateTimeWithDefaultOffset.getOffset());
     }
 
     // endregion

@@ -140,46 +140,6 @@ public class DateUtils {
     }
 
     /**
-     * Moves given {@code dateTime} to start of next day.
-     * If given {@code dateTime} is already start of day, does not change it
-     *
-     * @return moved date
-     */
-    public static OffsetDateTime roundUpToDay(final OffsetDateTime dateTime) {
-        OffsetDateTime date = dateTime.truncatedTo(ChronoUnit.DAYS);
-        if (!date.equals(dateTime)) {
-            date = date.plusDays(1);
-        }
-
-        return date;
-    }
-
-    /**
-     * Moves given {@code dateTime} to start of its year.
-     * If given {@code dateTime} is already start of year, does not change it
-     *
-     * @return moved date
-     */
-    public static OffsetDateTime roundDownToYear(final OffsetDateTime dateTime) {
-        return dateTime.withDayOfYear(1).truncatedTo(ChronoUnit.DAYS);
-    }
-
-    /**
-     * Moves given {@code dateTime} to start of next year.
-     * If given {@code dateTime} is already start of year, not changes it
-     *
-     * @return moved date
-     */
-    public static OffsetDateTime roundUpToYear(final OffsetDateTime dateTime) {
-        OffsetDateTime date = roundDownToYear(dateTime);
-        if (!date.equals(dateTime)) {
-            date = date.plusYears(1);
-        }
-
-        return date;
-    }
-
-    /**
      * Checks if given {@code dateTime} is work time, which means than it is between {@code workStartTime} included and
      * {@code workStartTime + workTimeDuration} excluded and not at weekend
      * (except Saturday, when {@code workStartTime + workTimeDuration} is after midnight)
@@ -265,13 +225,6 @@ public class DateUtils {
                 OffsetTime.MAX.getHour(), OffsetTime.MAX.getMinute(), OffsetTime.MAX.getSecond(),
                 OffsetTime.MAX.getNano(), dateTime.getOffset()
         );
-    }
-
-    /**
-     * @return dateTime equals to given {@code dateTime}, but with system default offset
-     */
-    public static OffsetDateTime withDefaultOffset(final OffsetDateTime dateTime) {
-        return dateTime.withOffsetSameInstant(DateUtils.DEFAULT_OFFSET);
     }
 
     /**
