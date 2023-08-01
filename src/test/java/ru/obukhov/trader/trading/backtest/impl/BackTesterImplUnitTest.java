@@ -13,6 +13,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
+import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
@@ -59,13 +60,15 @@ class BackTesterImplUnitTest {
     @Mock
     private ExcelService excelService;
     @Mock
+    private ExtInstrumentsService extInstrumentsService;
+    @Mock
     private FakeBotFactory fakeBotFactory;
 
     private BackTesterImpl backTester;
 
     @BeforeEach
     void setUp() {
-        backTester = new BackTesterImpl(excelService, fakeBotFactory, BACK_TEST_PROPERTIES);
+        backTester = new BackTesterImpl(excelService, extInstrumentsService, fakeBotFactory, BACK_TEST_PROPERTIES);
     }
 
     @Test
@@ -327,7 +330,7 @@ class BackTesterImplUnitTest {
 
         mockBotCandles(botConfig1, fakeBot1, prices1);
         mockCurrentPrice(fakeBot1, figi1, 500);
-        mockNextMinute(fakeBot1, from);
+        mockPlusMinuteScheduled(fakeBot1, from);
 
         mockInvestments(fakeBot1, accountId1, currency1, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
@@ -355,7 +358,7 @@ class BackTesterImplUnitTest {
 
         mockBotCandles(botConfig2, fakeBot2, prices2);
         mockCurrentPrice(fakeBot2, figi2, 50);
-        mockNextMinute(fakeBot2, from);
+        mockPlusMinuteScheduled(fakeBot2, from);
         mockInvestments(fakeBot2, accountId2, currency2, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot2.getCurrentBalance(accountId2, currency2)).thenReturn(currentBalance2);
         mockPortfolioPosition(fakeBot2, accountId2, figi2, positionLotsCount2);
@@ -1023,7 +1026,7 @@ class BackTesterImplUnitTest {
 
         Mockito.when(fakeBot.getShare(figi)).thenReturn(share);
         mockBotCandles(botConfig, fakeBot, prices);
-        mockNextMinute(fakeBot, interval.getFrom());
+        mockPlusMinuteScheduled(fakeBot, interval.getFrom());
         mockInvestments(fakeBot, accountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
         if (quantityLots != null) {
@@ -1062,10 +1065,10 @@ class BackTesterImplUnitTest {
                 });
     }
 
-    private void mockNextMinute(final FakeBot fakeBot, final OffsetDateTime from) {
+    private void mockPlusMinuteScheduled(final FakeBot fakeBot, final OffsetDateTime from) {
         Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(from);
 
-        Mockito.when(fakeBot.nextMinute()).thenAnswer(invocationOnMock -> {
+        Mockito.when(fakeBot.nextScheduleMinute(Mockito.anyList())).thenAnswer(invocationOnMock -> {
             final OffsetDateTime currentDateTime = fakeBot.getCurrentDateTime();
             final OffsetDateTime nextMinute = currentDateTime.plusMinutes(1);
             Mockito.when(fakeBot.getCurrentDateTime()).thenReturn(nextMinute);

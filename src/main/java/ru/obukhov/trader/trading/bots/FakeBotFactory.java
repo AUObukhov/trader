@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.CronExpression;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.impl.FakeExtOperationsService;
@@ -14,6 +15,7 @@ import ru.obukhov.trader.market.impl.FakeExtOrdersService;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.impl.AbstractTradingStrategy;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -21,12 +23,17 @@ import ru.obukhov.trader.web.model.BotConfig;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FakeBotFactory {
 
-    private final MarketProperties marketProperties;
+    /**
+     * Number of sequential days that are guaranteed to contain at least one trading day whenever they are in the year
+     */
+    private static final int SCHEDULE_INTERVAL_DAYS = 5;
+
     private final TradingStrategyFactory strategyFactory;
     private final ExtMarketDataService extMarketDataService;
     private final ExtInstrumentsService extInstrumentsService;
@@ -53,12 +60,8 @@ public class FakeBotFactory {
         );
     }
 
-    private FakeContext createFakeContext(
-            final BotConfig botConfig,
-            final BalanceConfig balanceConfig,
-            final OffsetDateTime currentDateTime
-    ) {
-        final OffsetDateTime ceilingWorkTime = DateUtils.getCeilingWorkTime(currentDateTime, marketProperties.getWorkSchedule());
+    private FakeContext createFakeContext(final BotConfig botConfig, final BalanceConfig balanceConfig, final OffsetDateTime currentDateTime) {
+        final OffsetDateTime ceilingWorkTime = getCeilingDateTime(botConfig.figi(), currentDateTime);
         final Share share = extInstrumentsService.getShare(botConfig.figi());
         if (share == null) {
             throw new IllegalArgumentException("Not found share for FIGI '" + botConfig.figi() + "'");
@@ -67,12 +70,17 @@ public class FakeBotFactory {
 
         return (FakeContext) applicationContext.getBean(
                 "fakeContext",
-                marketProperties,
                 ceilingWorkTime,
                 botConfig.accountId(),
                 share.currency(),
                 initialBalance
         );
+    }
+
+    private OffsetDateTime getCeilingDateTime(final String figi, final OffsetDateTime currentDateTime) {
+        final Interval interval = Interval.of(currentDateTime, currentDateTime.plusDays(SCHEDULE_INTERVAL_DAYS));
+        final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+        return TradingDayUtils.ceilingScheduleMinute(tradingSchedule, currentDateTime);
     }
 
     private BigDecimal getInitialBalance(

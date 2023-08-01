@@ -1,17 +1,18 @@
 package ru.obukhov.trader.test.utils.model;
 
+import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -33,7 +34,6 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
@@ -168,12 +168,6 @@ public class TestData {
     @SneakyThrows
     public static CronExpression createCronExpression(final String expression) {
         return new CronExpression(expression);
-    }
-
-    public static MarketProperties createMarketProperties() {
-        final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
-        final WorkSchedule workSchedule = new WorkSchedule(workStartTime, Duration.ofHours(9));
-        return new MarketProperties(workSchedule);
     }
 
     // region BalanceConfig creation
@@ -378,4 +372,37 @@ public class TestData {
         return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 
+    public static ru.tinkoff.piapi.contract.v1.TradingDay createTinkoffTradingDay(
+            final boolean isTradingDay,
+            final OffsetDateTime startTime,
+            final OffsetDateTime endTime
+    ) {
+        final Timestamp startTimestamp = DATE_TIME_MAPPER.offsetDateTimeToTimestamp(startTime);
+        return ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
+                .setDate(startTimestamp)
+                .setIsTradingDay(isTradingDay)
+                .setStartTime(startTimestamp)
+                .setEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(endTime))
+                .build();
+    }
+
+    public static TradingDay createTradingDay(final boolean isTradingDay, OffsetDateTime startTime, final OffsetDateTime endTime) {
+        return new TradingDay(startTime, isTradingDay, startTime, endTime, null, null, null, null, null, null, null, null);
+    }
+
+    public static TradingDay createTradingDay(final OffsetDateTime startTime, final OffsetDateTime endTime) {
+        return new TradingDay(startTime, true, startTime, endTime, null, null, null, null, null, null, null, null);
+    }
+
+    public static List<TradingDay> createTradingSchedule(final OffsetDateTime startDateTime, final OffsetTime endTime, final int daysCount) {
+        List<TradingDay> schedule = new ArrayList<>();
+        for (int i = 0; i < daysCount; i++) {
+            final OffsetDateTime currentStartDateTime = startDateTime.plusDays(i);
+            final OffsetDateTime currentEndDateTime = DateUtils.setTime(currentStartDateTime, endTime);
+            final boolean isTradingDay = DateUtils.isWorkDay(currentStartDateTime);
+            schedule.add(createTradingDay(isTradingDay, currentStartDateTime, currentEndDateTime));
+        }
+
+        return schedule;
+    }
 }

@@ -4,14 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.config.model.WorkSchedule;
-import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
@@ -20,10 +19,11 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
+import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.MarketDataService;
 
-import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.List;
@@ -88,12 +88,6 @@ public class Mocker {
         Mockito.when(extInstrumentsService.getShare(share.figi())).thenReturn(share);
     }
 
-    public static void mockWorkSchedule(final MarketProperties marketProperties) {
-        final OffsetTime workStartTime = DateTimeTestData.createTime(10, 0, 0);
-        final WorkSchedule workSchedule = new WorkSchedule(workStartTime, Duration.ofHours(9));
-        Mockito.when(marketProperties.getWorkSchedule()).thenReturn(workSchedule);
-    }
-
     public static void mockTradingStatus(final MarketDataService marketDataService, final String figi, final SecurityTradingStatus status) {
         final GetTradingStatusResponse response = GetTradingStatusResponse.newBuilder()
                 .setTradingStatus(status)
@@ -125,6 +119,59 @@ public class Mocker {
 
     public static void mockBond(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Bond bond) {
         Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond);
+    }
+
+    public static void mockTradingSchedule(
+            final InstrumentsService instrumentsService,
+            final String exchange,
+            final Interval interval,
+            final OffsetTime startTime, final OffsetTime endTime
+    ) {
+        final TradingSchedule.Builder tradingScheduleBuilder = TradingSchedule.newBuilder();
+        interval.splitIntoDailyIntervals().stream()
+                .map(dayInterval -> intervalToTinkoffTradingDay(dayInterval, startTime, endTime))
+                .forEach(tradingScheduleBuilder::addDays);
+
+        Mockito.when(instrumentsService.getTradingScheduleSync(
+                Mockito.eq(exchange),
+                Mockito.any(Instant.class),
+                Mockito.any(Instant.class)
+        )).thenReturn(tradingScheduleBuilder.build());
+    }
+
+    public static void mockTradingSchedule(
+            final ExtInstrumentsService instrumentsService,
+            final String figi,
+            final OffsetTime startTime,
+            final OffsetTime endTime
+    ) {
+        Mockito.when(instrumentsService.getTradingScheduleByFigi(
+                Mockito.eq(figi),
+                Mockito.any(Interval.class)
+        )).thenAnswer(invocation -> {
+            final Interval interval = invocation.getArgument(1);
+            return interval.splitIntoDailyIntervals().stream()
+                    .map(dayInterval -> intervalToTradingDay(dayInterval, startTime, endTime))
+                    .toList();
+        });
+    }
+
+    private static ru.tinkoff.piapi.contract.v1.TradingDay intervalToTinkoffTradingDay(
+            final Interval interval,
+            final OffsetTime startTime,
+            final OffsetTime endTime
+    ) {
+        final OffsetDateTime startDateTime = DateUtils.setTime(interval.getFrom(), startTime);
+        final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
+        final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
+        return TestData.createTinkoffTradingDay(isTradingDay, startDateTime, endDateTime);
+    }
+
+    private static TradingDay intervalToTradingDay(final Interval interval, final OffsetTime startTime, final OffsetTime endTime) {
+        final OffsetDateTime startDateTime = DateUtils.setTime(interval.getFrom(), startTime);
+        final OffsetDateTime endDateTime = DateUtils.setTime(interval.getTo(), endTime);
+        final boolean isTradingDay = DateUtils.isWorkDay(startDateTime);
+        return TestData.createTradingDay(isTradingDay, startDateTime, endDateTime);
     }
 
 }

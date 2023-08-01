@@ -23,6 +23,7 @@ import ru.obukhov.trader.test.utils.TestUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
@@ -38,6 +39,7 @@ import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -199,6 +201,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         final String figi = TestShare1.FIGI;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
+        final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         // building request
@@ -249,6 +252,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         // mocking
 
         Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
         final Candle[] candles = TestUtils.OBJECT_MAPPER.readValue(candlesString, Candle[].class);
@@ -260,9 +264,11 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .add(historicCandles)
                 .mock();
 
-        // building expected response
+        final OffsetTime startTime = DateTimeTestData.createTime(12, 0, 0);
+        final OffsetTime endTime = DateTimeTestData.createTime(20, 0, 0);
+        Mocker.mockTradingSchedule(instrumentsService, TestShare1.EXCHANGE, interval, startTime, endTime);
 
-        final Interval interval = Interval.of(from, to);
+        // building expected response
 
         final BigDecimal initialBalance = DecimalUtils.setDefaultScale(1000);
 

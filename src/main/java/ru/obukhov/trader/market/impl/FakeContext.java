@@ -3,12 +3,12 @@ package ru.obukhov.trader.market.impl;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
+import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 
 import java.math.BigDecimal;
@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FakeContext implements Context {
 
-    private final MarketProperties marketProperties;
-
     @Getter
     @Setter
     private OffsetDateTime currentDateTime;
@@ -37,13 +35,11 @@ public class FakeContext implements Context {
     private final List<FakePortfolio> portfolios;
 
     public FakeContext(
-            final MarketProperties marketProperties,
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
             final BigDecimal initialBalance
     ) {
-        this.marketProperties = marketProperties;
         this.currentDateTime = currentDateTime;
         this.portfolios = new ArrayList<>();
 
@@ -51,15 +47,19 @@ public class FakeContext implements Context {
     }
 
     /**
-     * Changes currentDateTime to the nearest work time after it
+     * Changes {@code currentDateTime} to:<br/>
+     * - {@code nextMinute} if it is inside any tradingDays<br/>
+     * - the first minute of first tradingDays after {@code nextMinute} if it is not inside any of tradingDays<br/>
+     * - null if all tradingDays are before {@code nextMinute}
      *
-     * @return new value of currentDateTime
+     * @param tradingSchedule list of trading days, items must not have intersections, must be sorted is ascending order
+     * @return {@code currentDateTime}
+     * @Terms: nextMinute – {@code currentDateTime} + 1 minute<br/>
+     * tradingDay – item of {@code tradingSchedule} with {@code isTradingDay=true}<br/>
      */
-    public OffsetDateTime nextMinute() {
-        final OffsetDateTime nextWorkMinute = DateUtils.getNextWorkMinute(currentDateTime, marketProperties.getWorkSchedule());
-        currentDateTime = nextWorkMinute;
-
-        return nextWorkMinute;
+    public OffsetDateTime nextScheduleMinute(final List<TradingDay> tradingSchedule) {
+        currentDateTime = TradingDayUtils.nextScheduleMinute(tradingSchedule, currentDateTime);
+        return currentDateTime;
     }
 
     // region balance

@@ -16,7 +16,9 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
@@ -68,11 +70,16 @@ class FakeBotUnitTest {
     }
 
     @Test
-    void nextMinute() {
+    void nextScheduleMinute() {
         final OffsetDateTime expectedNextMinute = OffsetDateTime.now();
-        Mockito.when(fakeContext.nextMinute()).thenReturn(expectedNextMinute);
+        final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
+                DateTimeTestData.createDateTime(2023, 7, 21, 7),
+                DateTimeTestData.createTime(19, 0, 0),
+                5
+        );
+        Mockito.when(fakeContext.nextScheduleMinute(tradingSchedule)).thenReturn(expectedNextMinute);
 
-        final OffsetDateTime nextMinute = fakeBot.nextMinute();
+        final OffsetDateTime nextMinute = fakeBot.nextScheduleMinute(tradingSchedule);
 
         Assertions.assertEquals(expectedNextMinute, nextMinute);
     }

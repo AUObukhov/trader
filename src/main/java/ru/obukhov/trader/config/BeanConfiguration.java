@@ -15,7 +15,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
 import ru.obukhov.trader.common.util.DateUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.config.properties.ScheduledBotsProperties;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.config.properties.TradingProperties;
@@ -102,13 +101,12 @@ public class BeanConfiguration {
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public Context fakeContext(
-            final MarketProperties marketProperties,
             final OffsetDateTime currentDateTime,
             final String accountId,
             final String currency,
             final BigDecimal initialBalance
     ) {
-        return new FakeContext(marketProperties, currentDateTime, accountId, currency, initialBalance);
+        return new FakeContext(currentDateTime, accountId, currency, initialBalance);
     }
 
     @Bean

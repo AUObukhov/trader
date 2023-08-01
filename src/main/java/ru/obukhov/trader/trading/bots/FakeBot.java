@@ -9,6 +9,7 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.Share;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 
@@ -57,8 +58,8 @@ public class FakeBot extends Bot {
         return context.getCurrentDateTime();
     }
 
-    public OffsetDateTime nextMinute() {
-        return getFakeContext().nextMinute();
+    public OffsetDateTime nextScheduleMinute(final List<TradingDay> tradingSchedule) {
+        return getFakeContext().nextScheduleMinute(tradingSchedule);
     }
 
     public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {

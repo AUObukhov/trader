@@ -14,8 +14,10 @@ import ru.obukhov.trader.common.util.ExecutionUtils;
 import ru.obukhov.trader.common.util.FinUtils;
 import ru.obukhov.trader.common.util.MathUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
+import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
@@ -52,11 +54,18 @@ public class BackTesterImpl implements BackTester {
     private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final ExcelService excelService;
+    private final ExtInstrumentsService extInstrumentsService;
     private final FakeBotFactory fakeBotFactory;
     private final ExecutorService executor;
 
-    public BackTesterImpl(final ExcelService excelService, final FakeBotFactory fakeBotFactory, final BackTestProperties backTestProperties) {
+    public BackTesterImpl(
+            final ExcelService excelService,
+            final ExtInstrumentsService extInstrumentsService,
+            final FakeBotFactory fakeBotFactory,
+            final BackTestProperties backTestProperties
+    ) {
         this.excelService = excelService;
+        this.extInstrumentsService = extInstrumentsService;
         this.fakeBotFactory = fakeBotFactory;
         this.executor = Executors.newFixedThreadPool(backTestProperties.getThreadCount());
     }
@@ -169,10 +178,15 @@ public class BackTesterImpl implements BackTester {
             final OffsetDateTime to
     ) {
         if (balanceConfig.getBalanceIncrement() == null) {
-            fakeBot.nextMinute();
+            final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
+            final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            fakeBot.nextScheduleMinute(tradingSchedule);
         } else {
             final OffsetDateTime previousDate = fakeBot.getCurrentDateTime();
-            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextMinute(), to);
+
+            final Interval interval = Interval.of(fakeBot.getCurrentDateTime(), to);
+            final List<TradingDay> tradingSchedule = extInstrumentsService.getTradingScheduleByFigi(figi, interval);
+            final OffsetDateTime nextDate = DateUtils.getEarliestDateTime(fakeBot.nextScheduleMinute(tradingSchedule), to);
 
             final List<OffsetDateTime> investmentsTimes = DateUtils.getCronHitsBetweenDates(balanceConfig.getBalanceIncrementCron(), previousDate, nextDate);
             final String currency = fakeBot.getShare(figi).currency();

@@ -7,11 +7,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.config.properties.MarketProperties;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
@@ -29,8 +28,6 @@ import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class FakeContextUnitTest {
-
-    private static final MarketProperties MARKET_PROPERTIES = TestData.createMarketProperties();
 
     // region constructor tests
 
@@ -60,48 +57,167 @@ class FakeContextUnitTest {
 
     // endregion
 
-    // region nextMinute tests
+    // region nextScheduleMinute tests
 
-    @Test
-    void nextMinute_movesToNextMinute_whenMiddleOfWorkDay() {
-        final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forNextScheduleMinute() {
+        return Stream.of(
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 59, 999999999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 0, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 7, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 14, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59, 59, 999999999)
+                ),
 
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 18, 59),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 19),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 21, 20),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 22, 8, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 23, 13, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 0, 59, 999999999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 7, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 14, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 999999999)
+                ),
 
-        final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 18, 59, 59, 99999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 19),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 24, 20),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 6, 59, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 0, 59, 999999999)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 7, 1)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 10),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 14, 11)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 30),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30)
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 58, 59, 999999999),
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 999999999)
+                ),
 
-        final OffsetDateTime expected = dateTime.plusMinutes(1);
-        Assertions.assertEquals(expected, nextMinuteDateTime);
-        Assertions.assertEquals(expected, fakeContext.getCurrentDateTime());
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 19),
+                        null
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 30),
+                        null
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59, 59, 99999999),
+                        null
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 18, 59),
+                        null
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 25, 20),
+                        null
+                ),
+                Arguments.of(
+                        DateTimeTestData.createDateTime(2023, 7, 26, 7),
+                        null
+                )
+        );
     }
 
-    @Test
-    void nextMinute_movesToStartOfNextDay_whenAtEndOfWorkDay() {
-        final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 18, 59, 59);
+    @ParameterizedTest
+    @MethodSource("getData_forNextScheduleMinute")
+    void nextScheduleMinute(final OffsetDateTime dateTime, final OffsetDateTime expectedResult) {
+        final List<TradingDay> tradingSchedule = TestData.createTradingSchedule(
+                DateTimeTestData.createDateTime(2023, 7, 21, 7),
+                DateTimeTestData.createTime(19, 0, 0),
+                5
+        );
 
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
+        final FakeContext fakeContext = getFakeContext(dateTime, TestData.ACCOUNT_ID1, Currency.USD, DecimalUtils.setDefaultScale(0));
 
-        final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
+        final OffsetDateTime actualResult = fakeContext.nextScheduleMinute(tradingSchedule);
 
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(1), MARKET_PROPERTIES.getWorkSchedule().getStartTime());
-        Assertions.assertEquals(expected, nextMinuteDateTime);
-        Assertions.assertEquals(expected, fakeContext.getCurrentDateTime());
-    }
-
-    @Test
-    void nextMinute_movesToStartOfNextWeek_whenEndOfWorkWeek() {
-        final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 9, 18, 59, 59);
-
-        final FakeContext fakeContext = getFakeContext(dateTime, accountId, Currency.USD, DecimalUtils.setDefaultScale(0));
-
-        final OffsetDateTime nextMinuteDateTime = fakeContext.nextMinute();
-
-        final OffsetDateTime expected = DateUtils.setTime(dateTime.plusDays(3), MARKET_PROPERTIES.getWorkSchedule().getStartTime());
-        Assertions.assertEquals(expected, nextMinuteDateTime);
-        Assertions.assertEquals(expected, fakeContext.getCurrentDateTime());
+        Assertions.assertEquals(expectedResult, actualResult);
     }
 
     // endregion
@@ -467,7 +583,7 @@ class FakeContextUnitTest {
             final String currency,
             final BigDecimal balance
     ) {
-        return new FakeContext(MARKET_PROPERTIES, currentDateTime, accountId, currency, balance);
+        return new FakeContext(currentDateTime, accountId, currency, balance);
     }
 
 }
