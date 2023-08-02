@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import org.quartz.CronExpression;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.config.model.WorkSchedule;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
 import java.time.DayOfWeek;
@@ -137,60 +136,6 @@ public class DateUtils {
      */
     public static boolean isAfter(final OffsetDateTime dateTime1, final OffsetDateTime dateTime2) {
         return dateTime2 == null || dateTime1.isAfter(dateTime2);
-    }
-
-    /**
-     * Checks if given {@code dateTime} is work time, which means than it is between {@code workSchedule.startTime} included and
-     * {@code workSchedule.startTime + workSchedule.duration} excluded and not at weekend
-     * (except Saturday, when {@code workSchedule.startTime + workSchedule.duration} is after midnight)
-     *
-     * @param dateTime checked dateTime
-     * @return true if given {@code dateTime} is work time, or else false
-     */
-    public static boolean isWorkTime(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
-        final OffsetTime workEndTime = workSchedule.getEndTime();
-        final boolean livingAfterMidnight = workSchedule.getStartTime().isAfter(workEndTime);
-        final OffsetTime time = dateTime.toOffsetTime();
-
-        if (!isWorkDay(dateTime)) {
-            return livingAfterMidnight && DayOfWeek.SATURDAY == dateTime.getDayOfWeek() && time.isBefore(workEndTime);
-        }
-
-        if (livingAfterMidnight) {
-            return !time.isBefore(workSchedule.getStartTime()) || time.isBefore(workEndTime);
-        } else {
-            return !time.isBefore(workSchedule.getStartTime()) && time.isBefore(workEndTime);
-        }
-    }
-
-    /**
-     * @return first minute of work time equal to or after given {@code dateTime}
-     */
-    public static OffsetDateTime getCeilingWorkTime(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
-        return isWorkTime(dateTime, workSchedule)
-                ? dateTime
-                : toWorkStartTime(dateTime, workSchedule.getStartTime());
-    }
-
-    /**
-     * @return next minute of work time after {@code dateTime}
-     */
-    public static OffsetDateTime getNextWorkMinute(final OffsetDateTime dateTime, final WorkSchedule workSchedule) {
-        if (isWorkTime(dateTime, workSchedule)) {
-            final OffsetDateTime nextDateTime = dateTime.plusMinutes(1);
-            if (isWorkTime(nextDateTime, workSchedule)) {
-                return nextDateTime;
-            }
-        }
-
-        return toWorkStartTime(dateTime, workSchedule.getStartTime());
-    }
-
-    private static OffsetDateTime toWorkStartTime(final OffsetDateTime dateTime, final OffsetTime workStartTime) {
-        final OffsetDateTime workDay = dateTime.toOffsetTime().isBefore(workStartTime)
-                ? dateTime
-                : getNextWorkDay(dateTime);
-        return setTime(workDay, workStartTime);
     }
 
     /**
