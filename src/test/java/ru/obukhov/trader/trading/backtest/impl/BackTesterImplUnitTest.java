@@ -84,8 +84,8 @@ class BackTesterImplUnitTest {
         final String expectedMessagePattern = String.format("^'from' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 IllegalArgumentException.class,
+                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 expectedMessagePattern
         );
     }
@@ -103,8 +103,8 @@ class BackTesterImplUnitTest {
         final String expectedMessagePattern = String.format("^'to' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
 
         AssertUtils.assertThrowsWithMessagePattern(
-                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 RuntimeException.class,
+                () -> backTester.test(botConfigs, balanceConfig, interval, false),
                 expectedMessagePattern
         );
     }

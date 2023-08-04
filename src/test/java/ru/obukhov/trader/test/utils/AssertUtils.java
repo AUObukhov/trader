@@ -468,8 +468,8 @@ public class AssertUtils {
     }
 
     public static <T extends Throwable> void assertThrowsWithMessagePattern(
-            final Executable executable,
             final Class<T> expectedType,
+            final Executable executable,
             final String expectedMessagePattern
     ) {
         final Throwable throwable = Assertions.assertThrows(expectedType, executable);
