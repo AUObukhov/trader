@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 
 import java.math.BigDecimal;
 
@@ -16,7 +16,7 @@ public class SetCurrencyBalanceRequest {
     private String accountId;
 
     @NotNull(message = "currency is mandatory")
-    @ApiModelProperty(example = Currency.USD, required = true, position = 1)
+    @ApiModelProperty(example = Currencies.USD, required = true, position = 1)
     private String currency;
 
     @NotNull(message = "balance is mandatory")

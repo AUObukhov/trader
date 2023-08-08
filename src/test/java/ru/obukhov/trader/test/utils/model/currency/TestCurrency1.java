@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model.currency;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
@@ -15,7 +15,7 @@ public class TestCurrency1 extends TestSecurityData {
     public static final String FIGI = "BBG0013HGFT4";
     public static final String TICKER = "USD000UTSTOM";
     public static final int LOT_SIZE = 1000;
-    public static final String CURRENCY_VALUE = Currency.RUB;
+    public static final String CURRENCY_VALUE = Currencies.RUB;
     public static final String NAME = "Доллар США";
     public static final String EXCHANGE = "FX";
     public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);

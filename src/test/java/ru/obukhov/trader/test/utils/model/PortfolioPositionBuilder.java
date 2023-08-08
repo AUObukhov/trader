@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 
@@ -16,7 +16,7 @@ public class PortfolioPositionBuilder {
     private double expectedYield = 0;
     private double currentPrice;
     private double quantityLots = 0;
-    private String currency = Currency.RUB;
+    private String currency = Currencies.RUB;
     private int lotSize = 1;
 
     public PortfolioPosition build() {

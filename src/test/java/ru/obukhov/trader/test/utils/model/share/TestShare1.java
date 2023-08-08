@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model.share;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Sector;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -18,7 +18,7 @@ public class TestShare1 {
     public static final String CLASS_CODE = "SPBXM";
     public static final String ISIN = "US0378331005";
     public static final int LOT = 1;
-    public static final String CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currencies.USD;
     public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2L, 0);
     public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2L, 0);
     public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(1L, 0);
@@ -34,7 +34,7 @@ public class TestShare1 {
     public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
     public static final Sector SECTOR = Sector.IT;
     public static final long ISSUE_SIZE_PLAN = 50400000000L;
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currency.USD).setUnits(0L).setNano(10000).build();
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(0L).setNano(10000).build();
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;

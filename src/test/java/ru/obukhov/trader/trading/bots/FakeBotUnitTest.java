@@ -15,7 +15,7 @@ import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
@@ -88,7 +88,7 @@ class FakeBotUnitTest {
     @Test
     void getInvestments() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String currency = Currency.RUB;
+        final String currency = Currencies.RUB;
         final SortedMap<Timestamp, BigDecimal> expectedInvestments = new TreeMap<>(TimestampUtils::compare);
         expectedInvestments.put(TimestampUtils.now(), DecimalUtils.setDefaultScale(10));
         Mockito.when(fakeContext.getInvestments(accountId, currency)).thenReturn(expectedInvestments);
@@ -101,7 +101,7 @@ class FakeBotUnitTest {
     @Test
     void getBalance() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final String currency = Currency.RUB;
+        final String currency = Currencies.RUB;
         final BigDecimal expectedBalance = DecimalUtils.setDefaultScale(10);
         Mockito.when(fakeContext.getBalance(accountId, currency)).thenReturn(expectedBalance);
 

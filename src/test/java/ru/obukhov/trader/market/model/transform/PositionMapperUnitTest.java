@@ -2,7 +2,7 @@ package ru.obukhov.trader.market.model.transform;
 
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
@@ -24,7 +24,7 @@ class PositionMapperUnitTest {
         final int currentPrice = 120;
         final int quantityLots = 10;
         final int lotSize = 1000;
-        final String currency = Currency.RUB;
+        final String currency = Currencies.RUB;
 
         final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition = TestData.createTinkoffPortfolioPosition(
                 figi,

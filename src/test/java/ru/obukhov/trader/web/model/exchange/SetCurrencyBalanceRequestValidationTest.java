@@ -2,7 +2,7 @@ package ru.obukhov.trader.web.model.exchange;
 
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 class SetCurrencyBalanceRequestValidationTest {
@@ -10,7 +10,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationSucceeds_whenEverythingIsValid() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(Currencies.RUB);
         request.setBalance(DecimalUtils.setDefaultScale(10));
 
         AssertUtils.assertNoViolations(request);
@@ -28,7 +28,7 @@ class SetCurrencyBalanceRequestValidationTest {
     @Test
     void validationFails_whenBalanceIsNull() {
         final SetCurrencyBalanceRequest request = new SetCurrencyBalanceRequest();
-        request.setCurrency(Currency.RUB);
+        request.setCurrency(Currencies.RUB);
         request.setBalance(null);
 
         AssertUtils.assertViolation(request, "balance is mandatory");

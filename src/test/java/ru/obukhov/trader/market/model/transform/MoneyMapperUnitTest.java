@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -29,7 +29,7 @@ class MoneyMapperUnitTest {
     @Test
     void moneyValueToMoney_whenNotNull() {
         final double value = 100;
-        final String currency = Currency.RUB;
+        final String currency = Currencies.RUB;
         final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, currency);
 
         final Money money = mapper.moneyValueToMoney(moneyValue);
@@ -52,7 +52,7 @@ class MoneyMapperUnitTest {
     @Test
     void moneyValueToBigDecimal_whenNotNull() {
         final double value = 100;
-        final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, Currency.RUB);
+        final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, Currencies.RUB);
 
         final BigDecimal bigDecimal = mapper.moneyValueToBigDecimal(moneyValue);
 

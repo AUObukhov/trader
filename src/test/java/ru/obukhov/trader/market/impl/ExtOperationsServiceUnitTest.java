@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -79,14 +79,14 @@ class ExtOperationsServiceUnitTest {
         final int eurBalance2 = 23;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createTinkoffMoneyValue(usdBalance1, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createTinkoffMoneyValue(eurBalance1, Currency.EUR)
+                TestData.createTinkoffMoneyValue(usdBalance1, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(eurBalance1, Currencies.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createTinkoffMoneyValue(usdBalance2, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createTinkoffMoneyValue(eurBalance2, Currency.EUR)
+                TestData.createTinkoffMoneyValue(usdBalance2, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(eurBalance2, Currencies.EUR)
         );
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1);
@@ -98,12 +98,12 @@ class ExtOperationsServiceUnitTest {
         );
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        AssertUtils.assertEquals(usdBalance1, extOperationsService.getAvailableBalance(accountId1, Currency.USD));
-        AssertUtils.assertEquals(rubBalance1, extOperationsService.getAvailableBalance(accountId1, Currency.RUB));
-        AssertUtils.assertEquals(eurBalance1, extOperationsService.getAvailableBalance(accountId1, Currency.EUR));
-        AssertUtils.assertEquals(usdBalance2, extOperationsService.getAvailableBalance(accountId2, Currency.USD));
-        AssertUtils.assertEquals(rubBalance2, extOperationsService.getAvailableBalance(accountId2, Currency.RUB));
-        AssertUtils.assertEquals(eurBalance2, extOperationsService.getAvailableBalance(accountId2, Currency.EUR));
+        AssertUtils.assertEquals(usdBalance1, extOperationsService.getAvailableBalance(accountId1, Currencies.USD));
+        AssertUtils.assertEquals(rubBalance1, extOperationsService.getAvailableBalance(accountId1, Currencies.RUB));
+        AssertUtils.assertEquals(eurBalance1, extOperationsService.getAvailableBalance(accountId1, Currencies.EUR));
+        AssertUtils.assertEquals(usdBalance2, extOperationsService.getAvailableBalance(accountId2, Currencies.USD));
+        AssertUtils.assertEquals(rubBalance2, extOperationsService.getAvailableBalance(accountId2, Currencies.RUB));
+        AssertUtils.assertEquals(eurBalance2, extOperationsService.getAvailableBalance(accountId2, Currencies.EUR));
     }
 
     @Test
@@ -118,18 +118,18 @@ class ExtOperationsServiceUnitTest {
         final long rubBlocked2 = 200;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createTinkoffMoneyValue(100, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createTinkoffMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(10, Currencies.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createTinkoffMoneyValue(100, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createTinkoffMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(10, Currencies.EUR)
         );
 
-        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currency.RUB));
-        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currency.RUB));
+        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currencies.RUB));
+        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currencies.RUB));
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1);
         final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2);
@@ -141,8 +141,8 @@ class ExtOperationsServiceUnitTest {
 
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currency.RUB);
-        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currency.RUB);
+        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2, balance2);
@@ -162,21 +162,21 @@ class ExtOperationsServiceUnitTest {
         final long rubGuaranteeBlocked2 = 20;
 
         final List<MoneyValue> moneys1 = List.of(
-                TestData.createTinkoffMoneyValue(100, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance1, Currency.RUB),
-                TestData.createTinkoffMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance1, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(10, Currencies.EUR)
         );
         final List<MoneyValue> moneys2 = List.of(
-                TestData.createTinkoffMoneyValue(100, Currency.USD),
-                TestData.createTinkoffMoneyValue(rubBalance2, Currency.RUB),
-                TestData.createTinkoffMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currencies.USD),
+                TestData.createTinkoffMoneyValue(rubBalance2, Currencies.RUB),
+                TestData.createTinkoffMoneyValue(10, Currencies.EUR)
         );
 
-        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currency.RUB));
-        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currency.RUB));
+        final List<MoneyValue> blocked1 = List.of(TestData.createTinkoffMoneyValue(rubBlocked1, Currencies.RUB));
+        final List<MoneyValue> blocked2 = List.of(TestData.createTinkoffMoneyValue(rubBlocked2, Currencies.RUB));
 
-        final List<MoneyValue> blockedGuarantee1 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked1, Currency.RUB));
-        final List<MoneyValue> blockedGuarantee2 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked2, Currency.RUB));
+        final List<MoneyValue> blockedGuarantee1 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked1, Currencies.RUB));
+        final List<MoneyValue> blockedGuarantee2 = List.of(TestData.createTinkoffMoneyValue(rubGuaranteeBlocked2, Currencies.RUB));
 
         final WithdrawLimits withdrawLimits1 = DataStructsHelper.createWithdrawLimits(moneys1, blocked1, blockedGuarantee1);
         final WithdrawLimits withdrawLimits2 = DataStructsHelper.createWithdrawLimits(moneys2, blocked2, blockedGuarantee2);
@@ -187,8 +187,8 @@ class ExtOperationsServiceUnitTest {
         );
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), accountToWithdrawLimits);
 
-        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currency.RUB);
-        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currency.RUB);
+        final BigDecimal balance1 = extOperationsService.getAvailableBalance(accountId1, Currencies.RUB);
+        final BigDecimal balance2 = extOperationsService.getAvailableBalance(accountId2, Currencies.RUB);
 
         AssertUtils.assertEquals(rubBalance1 - rubBlocked1 - rubGuaranteeBlocked1, balance1);
         AssertUtils.assertEquals(rubBalance2 - rubBlocked2 - rubGuaranteeBlocked2, balance2);
@@ -199,13 +199,13 @@ class ExtOperationsServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
 
         final List<MoneyValue> moneys = List.of(
-                TestData.createTinkoffMoneyValue(100, Currency.USD),
-                TestData.createTinkoffMoneyValue(10, Currency.EUR)
+                TestData.createTinkoffMoneyValue(100, Currencies.USD),
+                TestData.createTinkoffMoneyValue(10, Currencies.EUR)
         );
         final WithdrawLimits withdrawLimits = DataStructsHelper.createWithdrawLimits(moneys);
         final TestExtOperationsService extOperationsService = new TestExtOperationsService(Map.of(), Map.of(accountId, withdrawLimits));
 
-        final Executable executable = () -> extOperationsService.getAvailableBalance(accountId, Currency.RUB);
+        final Executable executable = () -> extOperationsService.getAvailableBalance(accountId, Currencies.RUB);
         AssertUtils.assertThrowsWithMessage(NoSuchElementException.class, executable, "No value present");
     }
 
@@ -218,8 +218,8 @@ class ExtOperationsServiceUnitTest {
         // arrange
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -263,8 +263,8 @@ class ExtOperationsServiceUnitTest {
         // arrange
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);

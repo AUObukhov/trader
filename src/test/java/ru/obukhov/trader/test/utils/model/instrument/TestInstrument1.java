@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model.instrument;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -17,7 +17,7 @@ public class TestInstrument1 {
     public static final String CLASS_CODE = "SPBXM";
     public static final String ISIN = "US0378331005";
     public static final int LOT_SIZE = 1;
-    public static final String CURRENCY = Currency.USD;
+    public static final String CURRENCY = Currencies.USD;
     public static final Quotation K_LONG = QuotationUtils.newNormalizedQuotation(2, 0);
     public static final Quotation K_SHORT = QuotationUtils.newNormalizedQuotation(2, 0);
     public static final Quotation D_LONG = QuotationUtils.newNormalizedQuotation(1, 0);

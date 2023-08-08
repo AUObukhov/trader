@@ -6,7 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
@@ -174,8 +174,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     void getAvailableBalances_withBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -219,8 +219,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
     void getAvailableBalances_withoutBlockedValues() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);

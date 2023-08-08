@@ -9,7 +9,7 @@ import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -344,11 +344,11 @@ public class TestData {
 
     public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
-                .setTotalAmountShares(createTinkoffMoneyValue(Currency.RUB))
-                .setTotalAmountBonds(createTinkoffMoneyValue(Currency.RUB))
-                .setTotalAmountEtf(createTinkoffMoneyValue(Currency.RUB))
-                .setTotalAmountCurrencies(createTinkoffMoneyValue(Currency.RUB))
-                .setTotalAmountFutures(createTinkoffMoneyValue(Currency.RUB))
+                .setTotalAmountShares(createTinkoffMoneyValue(Currencies.RUB))
+                .setTotalAmountBonds(createTinkoffMoneyValue(Currencies.RUB))
+                .setTotalAmountEtf(createTinkoffMoneyValue(Currencies.RUB))
+                .setTotalAmountCurrencies(createTinkoffMoneyValue(Currencies.RUB))
+                .setTotalAmountFutures(createTinkoffMoneyValue(Currencies.RUB))
                 .setExpectedYield(createQuotation());
         for (final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition : portfolioPositions) {
             builder.addPositions(portfolioPosition);

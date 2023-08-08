@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.core.models.Money;
@@ -19,7 +19,7 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoneyValue_withEnumCurrency() {
-        final String currency = Currency.EUR;
+        final String currency = Currencies.EUR;
         final long units = 123;
         final int nano = 456;
         final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
@@ -33,7 +33,7 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoneyValue_withStringCurrency() {
-        final String currency = Currency.EUR;
+        final String currency = Currencies.EUR;
         final long units = 123;
         final int nano = 456;
         final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
@@ -51,7 +51,7 @@ class DataStructsHelperUnitTest {
 
     @Test
     void createMoney() {
-        final String currency = Currency.EUR;
+        final String currency = Currencies.EUR;
         final BigDecimal value = DecimalUtils.setDefaultScale(123.456);
 
         final Money money = DataStructsHelper.createMoney(currency, value);
@@ -68,8 +68,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneys() {
         // arrange
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -105,8 +105,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneysAndBlocked() {
         // arrange
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -149,8 +149,8 @@ class DataStructsHelperUnitTest {
     void createWithdrawLimits_withMoneysAndBlockedAndBlockedGuarantee() {
         // arrange
 
-        final String currency1 = Currency.EUR;
-        final String currency2 = Currency.USD;
+        final String currency1 = Currencies.EUR;
+        final String currency2 = Currencies.USD;
 
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final BigDecimal value2 = DecimalUtils.setDefaultScale(789.012);
@@ -202,11 +202,11 @@ class DataStructsHelperUnitTest {
 
     @Test
     void getBalance() {
-        final String currency1 = Currency.EUR;
+        final String currency1 = Currencies.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
-        final String currency2 = Currency.USD;
+        final String currency2 = Currencies.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
@@ -221,17 +221,17 @@ class DataStructsHelperUnitTest {
 
     @Test
     void getBalance_throwsNoSuchElementException_whenNoCurrency() {
-        final String currency1 = Currency.EUR;
+        final String currency1 = Currencies.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
         final Money money1 = DataStructsHelper.createMoney(currency1, value1);
 
-        final String currency2 = Currency.USD;
+        final String currency2 = Currencies.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
         final Money money2 = DataStructsHelper.createMoney(currency2, value2);
 
         final List<Money> moneys = List.of(money1, money2);
 
-        Assertions.assertThrows(NoSuchElementException.class, () -> DataStructsHelper.getBalance(moneys, Currency.RUB));
+        Assertions.assertThrows(NoSuchElementException.class, () -> DataStructsHelper.getBalance(moneys, Currencies.RUB));
     }
 
     // endregion

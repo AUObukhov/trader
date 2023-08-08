@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model.transform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -24,7 +24,7 @@ class OrderMapperUnitTest {
     @Test
     void map() {
         // todo realistic data
-        final String currency = Currency.EUR;
+        final String currency = Currencies.EUR;
         final String orderId = "orderId";
         final OrderExecutionReportStatus executionReportStatus = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
         final int lotsRequested = 1;

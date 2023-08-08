@@ -2,7 +2,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -17,7 +17,7 @@ public class TestBond1 extends TestSecurityData {
     public static final String CLASS_CODE = "TQCB";
     public static final String ISIN = "RU000A0ZYG52";
     public static final int LOT = 1;
-    public static final String CURRENCY = Currency.RUB;
+    public static final String CURRENCY = Currencies.RUB;
     public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2, 0);
     public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2, 0);
     public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0, 300000000);
@@ -29,12 +29,12 @@ public class TestBond1 extends TestSecurityData {
     public static final String EXCHANGE = "MOEX";
     public static final int COUPON_QUANTITY_PER_YEAR = 2;
     public static final Timestamp MATURITY_DATE = Timestamp.newBuilder().setSeconds(1825718400L).setNanos(0).build();
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currency.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue INITIAL_NOMINAL = MoneyValue.newBuilder().setCurrency(Currency.RUB).setUnits(1000).setNano(0).build();
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
+    public static final MoneyValue INITIAL_NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
     public static final Timestamp STATE_REG_DATE = Timestamp.newBuilder().setSeconds(1510790400L).setNanos(0).build();
     public static final Timestamp PLACEMENT_DATE = Timestamp.newBuilder().setSeconds(1511222400L).setNanos(0).build();
-    public static final MoneyValue PLACEMENT_PRICE = MoneyValue.newBuilder().setCurrency(Currency.RUB).setUnits(1000).setNano(0).build();
-    public static final MoneyValue ACI_VALUE = MoneyValue.newBuilder().setCurrency(Currency.RUB).setUnits(17).setNano(900000000).build();
+    public static final MoneyValue PLACEMENT_PRICE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(1000).setNano(0).build();
+    public static final MoneyValue ACI_VALUE = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(17).setNano(900000000).build();
     public static final String COUNTRY_OF_RISK = "RU";
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
     public static final String SECTOR = "telecom";

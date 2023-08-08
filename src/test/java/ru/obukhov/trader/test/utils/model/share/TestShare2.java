@@ -3,7 +3,7 @@ package ru.obukhov.trader.test.utils.model.share;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Currency;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.Sector;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -18,7 +18,7 @@ public class TestShare2 {
     public static final String CLASS_CODE = "TQBR";
     public static final String ISIN = "RU0009029540";
     public static final int LOT = 10;
-    public static final String CURRENCY = Currency.RUB;
+    public static final String CURRENCY = Currencies.RUB;
     public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2L, 0);
     public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2L, 0);
     public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 200000000);
@@ -34,7 +34,7 @@ public class TestShare2 {
     public static final String COUNTRY_OF_RISK_NAME = "Российская Федерация";
     public static final Sector SECTOR = Sector.FINANCIAL;
     public static final long ISSUE_SIZE_PLAN = 21586948000L;
-    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currency.RUB).setUnits(3).build();
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.RUB).setUnits(3).build();
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
     public static final boolean OTC_FLAG = false;
     public static final boolean BUY_AVAILABLE_FLAG = true;
