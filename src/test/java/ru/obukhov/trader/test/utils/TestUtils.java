@@ -8,6 +8,7 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
+import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
 import ru.obukhov.trader.market.model.transform.ShareSerializer;
@@ -21,6 +22,7 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
+            .addSerializer(new InstrumentSerializer())
             .addSerializer(new ShareSerializer())
             .addSerializer(new BondSerializer())
             .addSerializer(new TradingDaySerializer())
