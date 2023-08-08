@@ -8,11 +8,11 @@ import java.io.IOException;
 
 class EtfSerializerUnitTest extends SerializerAbstractUnitTest<Etf> {
 
-    private final EtfSerializer EtfSerializer = new EtfSerializer();
+    private final EtfSerializer etfSerializer = new EtfSerializer();
 
     @Test
     void test() throws IOException {
-        test(EtfSerializer, TestEtf1.ETF, TestEtf1.STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
+        test(etfSerializer, TestEtf1.ETF, TestEtf1.STRING, new QuotationSerializer(), new MoneyValueSerializer(), new TimestampSerializer());
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
@@ -17,19 +19,17 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.matchers.PortfolioPositionMatcher;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
-import ru.obukhov.trader.test.utils.model.share.TestShare5;
+import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -81,13 +81,13 @@ class FakeExtOrdersServiceUnitTest {
     @Test
     void postOrder_buy_throwsIllegalArgumentException_whenNotEnoughBalance() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final Timestamp timestamp = TimestampUtils.newTimestamp(2020, 10, 5, 12);
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp);
         mockBalances(accountId, TestShare1.CURRENCY, 1000);
         Mocker.mockShare(extInstrumentsService, TestShare1.SHARE);
 
-        final Executable executable = () -> postOrder(accountId, TestShare1.FIGI, 2, OrderDirection.ORDER_DIRECTION_BUY, dateTime, 500);
+        final Executable executable = () -> postOrder(accountId, TestShare1.FIGI, 2, OrderDirection.ORDER_DIRECTION_BUY, timestamp, 500);
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "balance can't be negative");
 
         Mockito.verify(fakeContext, Mockito.never())
@@ -99,7 +99,7 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime = DateTimeTestData.createDateTime(2020, 10, 5, 12);
+        final Timestamp timestamp = TimestampUtils.newTimestamp(2020, 10, 5, 12);
         final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
         final int lotSize = 10;
@@ -108,14 +108,14 @@ class FakeExtOrdersServiceUnitTest {
         final double balance1 = 1000000;
         final double balance2 = balance1 - currentPrice * lotSize * quantityLots * COMMISSION_COEF;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp);
         mockBalances(accountId, currency, balance1);
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
         // action
 
-        postOrder(accountId, figi, quantityLots, OrderDirection.ORDER_DIRECTION_BUY, dateTime, currentPrice);
+        postOrder(accountId, figi, quantityLots, OrderDirection.ORDER_DIRECTION_BUY, timestamp, currentPrice);
 
         // assert
 
@@ -137,8 +137,8 @@ class FakeExtOrdersServiceUnitTest {
         // arrange
 
         final String accountId = TestData.ACCOUNT_ID1;
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
+        final Timestamp timestamp1 = TimestampUtils.newTimestamp(2020, 10, 5, 12);
+        final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
         final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
         final int lotSize = 10;
@@ -150,7 +150,7 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = balance1 - price1 * lotSize * quantityLots1 * COMMISSION_COEF;
         final double balance3 = balance2 - price2 * lotSize * quantityLots2 * COMMISSION_COEF;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2);
         mockBalances(accountId, currency, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
@@ -179,8 +179,8 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
+        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
 
         // assert
 
@@ -196,9 +196,9 @@ class FakeExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
+        final Timestamp timestamp1 = TimestampUtils.newTimestamp(2020, 10, 5, 12);
+        final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
+        final Timestamp timestamp3 = TimestampUtils.plusMinutes(timestamp1, 10);
 
         final String currency = TestShare2.CURRENCY;
         final double initialBalance = 1000000;
@@ -208,11 +208,11 @@ class FakeExtOrdersServiceUnitTest {
 
         final String figi1 = TestShare2.FIGI;
         final String figi2 = TestShare3.FIGI;
-        final String figi3 = TestShare5.FIGI;
+        final String figi3 = TestShare4.FIGI;
 
-        final int lotSize1 = TestShare2.LOT_SIZE;
-        final int lotSize2 = TestShare3.LOT_SIZE;
-        final int lotSize3 = TestShare5.LOT_SIZE;
+        final int lotSize1 = TestShare2.LOT;
+        final int lotSize2 = TestShare3.LOT;
+        final int lotSize3 = TestShare4.LOT;
 
         final double price1 = 1000;
         final double price2 = 100;
@@ -222,12 +222,12 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 3;
         final int quantityLots3 = 1;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
 
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
         Mocker.mockShare(extInstrumentsService, TestShare3.SHARE);
-        Mocker.mockShare(extInstrumentsService, TestShare5.SHARE);
+        Mocker.mockShare(extInstrumentsService, TestShare4.SHARE);
 
         final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
                 .setFigi(figi1)
@@ -266,9 +266,9 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi1, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
-        postOrder(accountId, figi2, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
-        postOrder(accountId, figi3, quantityLots3, OrderDirection.ORDER_DIRECTION_BUY, dateTime3, price3);
+        postOrder(accountId, figi1, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi2, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi3, quantityLots3, OrderDirection.ORDER_DIRECTION_BUY, timestamp3, price3);
 
         // assert
 
@@ -287,9 +287,9 @@ class FakeExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
+        final Timestamp timestamp1 = TimestampUtils.newTimestamp(2020, 10, 5, 12);
+        final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
+        final Timestamp timestamp3 = TimestampUtils.plusMinutes(timestamp1, 10);
 
         final String currency = TestShare2.CURRENCY;
 
@@ -298,7 +298,7 @@ class FakeExtOrdersServiceUnitTest {
         final double balance2 = 939820;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT_SIZE;
+        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -308,7 +308,7 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 4;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
@@ -339,9 +339,9 @@ class FakeExtOrdersServiceUnitTest {
 
         // action & assert
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
-        final Executable sellExecutable = () -> postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, dateTime3, price3);
+        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        final Executable sellExecutable = () -> postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
         final String expectedMessage = "quantity 40 can't be greater than existing position's quantity 30";
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, sellExecutable, expectedMessage);
 
@@ -358,9 +358,9 @@ class FakeExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
+        final Timestamp timestamp1 = TimestampUtils.newTimestamp(2020, 10, 5, 12);
+        final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
+        final Timestamp timestamp3 = TimestampUtils.plusMinutes(timestamp1, 10);
 
         final String currency = TestShare2.CURRENCY;
 
@@ -370,7 +370,7 @@ class FakeExtOrdersServiceUnitTest {
         final double balance3 = 1029550;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT_SIZE;
+        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -380,7 +380,7 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 3;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
@@ -411,9 +411,9 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
-        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, dateTime3, price3);
+        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
 
         // assert
 
@@ -432,9 +432,9 @@ class FakeExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final OffsetDateTime dateTime1 = DateTimeTestData.createDateTime(2020, 10, 5, 12);
-        final OffsetDateTime dateTime2 = dateTime1.plusMinutes(5);
-        final OffsetDateTime dateTime3 = dateTime1.plusMinutes(10);
+        final Timestamp timestamp1 = TimestampUtils.newTimestamp(2020, 10, 5, 12);
+        final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
+        final Timestamp timestamp3 = TimestampUtils.plusMinutes(timestamp1, 10);
 
         final String currency = TestShare2.CURRENCY;
 
@@ -444,7 +444,7 @@ class FakeExtOrdersServiceUnitTest {
         final double balance3 = 969730;
 
         final String figi = TestShare2.FIGI;
-        final int lotSize = TestShare2.LOT_SIZE;
+        final int lotSize = TestShare2.LOT;
 
         final double price1 = 1000;
         final double price2 = 4000;
@@ -454,7 +454,7 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 1;
 
-        Mockito.when(fakeContext.getCurrentDateTime()).thenReturn(dateTime1, dateTime1, dateTime2, dateTime2, dateTime3, dateTime3);
+        Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
@@ -497,9 +497,9 @@ class FakeExtOrdersServiceUnitTest {
 
         // action
 
-        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, dateTime1, price1);
-        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, dateTime2, price2);
-        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, dateTime3, price3);
+        postOrder(accountId, figi, quantityLots1, OrderDirection.ORDER_DIRECTION_BUY, timestamp1, price1);
+        postOrder(accountId, figi, quantityLots2, OrderDirection.ORDER_DIRECTION_BUY, timestamp2, price2);
+        postOrder(accountId, figi, quantityLots3, OrderDirection.ORDER_DIRECTION_SELL, timestamp3, price3);
 
         // assert
 
@@ -526,10 +526,10 @@ class FakeExtOrdersServiceUnitTest {
             final String figi,
             final int quantityLots,
             final OrderDirection direction,
-            final OffsetDateTime dateTime,
+            final Timestamp timestamp,
             final double price
     ) {
-        Mockito.when(extMarketDataService.getLastPrice(figi, dateTime))
+        Mockito.when(extMarketDataService.getLastPrice(figi, timestamp))
                 .thenReturn(DecimalUtils.setDefaultScale(price));
 
         fakeExtOrdersService.postOrder(accountId, figi, quantityLots, null, direction, OrderType.ORDER_TYPE_MARKET, null);

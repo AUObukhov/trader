@@ -20,7 +20,6 @@ public class TimestampSerializer extends JsonSerializer<Timestamp> {
         jgen.writeStartObject();
         jgen.writeNumberField("seconds", value.getSeconds());
         jgen.writeNumberField("nanos", value.getNanos());
-
         jgen.writeEndObject();
     }
 

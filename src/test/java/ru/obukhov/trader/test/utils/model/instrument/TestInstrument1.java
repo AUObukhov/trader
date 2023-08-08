@@ -1,22 +1,21 @@
 package ru.obukhov.trader.test.utils.model.instrument;
 
+import com.google.protobuf.Timestamp;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Instrument;
-import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
+import ru.obukhov.trader.test.utils.model.currency.TestCurrency1;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 public class TestInstrument1 {
 
-    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     public static final String FIGI = "BBG000B9XRY4";
@@ -50,8 +49,8 @@ public class TestInstrument1 {
     public static final boolean AVAILABLE_ON_WEEKEND = false;
     public static final boolean BLOCKED_TCA = false;
     public static final ru.tinkoff.piapi.contract.v1.InstrumentType INSTRUMENT_KIND = InstrumentType.INSTRUMENT_TYPE_SHARE;
-    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 1, 23, 10, 34);
-    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2013, 9, 12, 3);
+    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(2018, 1, 23, 10, 34);
+    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(2013, 9, 12, 3);
     public static final ru.tinkoff.piapi.contract.v1.Instrument TINKOFF_INSTRUMENT = ru.tinkoff.piapi.contract.v1.Instrument.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
@@ -84,8 +83,8 @@ public class TestInstrument1 {
             .setWeekendFlag(AVAILABLE_ON_WEEKEND)
             .setBlockedTcaFlag(BLOCKED_TCA)
             .setInstrumentKind(INSTRUMENT_KIND)
-            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_MIN_CANDLE_DATE))
-            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(FIRST_1_DAY_CANDLE_DATE))
+            .setFirst1MinCandleDate(TestCurrency1.FIRST_1_MIN_CANDLE_DATE)
+            .setFirst1DayCandleDate(TestCurrency1.FIRST_1_DAY_CANDLE_DATE)
             .build();
 
     public static final Instrument INSTRUMENT = Instrument.builder()
@@ -120,7 +119,7 @@ public class TestInstrument1 {
             .availableOnWeekend(AVAILABLE_ON_WEEKEND)
             .blockedTca(BLOCKED_TCA)
             .instrumentKind(INSTRUMENT_KIND)
-            .first1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
-            .first1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
+            .first1MinCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_MIN_CANDLE_DATE))
+            .first1DayCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_DAY_CANDLE_DATE))
             .build();
 }

@@ -1,15 +1,15 @@
 package ru.obukhov.trader.market.interfaces;
 
+import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.market.model.Instrument;
-import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.market.model.TradingDay;
-import ru.obukhov.trader.market.model.TradingSchedule;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Etf;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.contract.v1.TradingSchedule;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface ExtInstrumentsService {
@@ -28,7 +28,7 @@ public interface ExtInstrumentsService {
 
     CurrencyInstrument getCurrency(final String figi);
 
-    TradingDay getTradingDay(final String figi, final OffsetDateTime dateTime);
+    TradingDay getTradingDay(final String figi, final Timestamp timestamp);
 
     List<TradingDay> getTradingSchedule(final String exchange, final Interval interval);
 

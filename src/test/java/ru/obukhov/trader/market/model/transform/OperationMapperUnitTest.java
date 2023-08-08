@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -12,7 +13,6 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 class OperationMapperUnitTest {
 
@@ -22,11 +22,11 @@ class OperationMapperUnitTest {
     void mapsOperationToBackTestOperation() {
         final String figi = TestShare1.FIGI;
 
-        final Operation source = TestData.createOperation(OffsetDateTime.now(), OperationType.OPERATION_TYPE_BUY, 10, 2, figi);
+        final Operation source = TestData.createOperation(TimestampUtils.now(), OperationType.OPERATION_TYPE_BUY, 10, 2, figi);
 
         final BackTestOperation target = operationMapper.map(figi, source);
 
-        AssertUtils.assertEquals(source.getDate(), target.dateTime());
+        Assertions.assertEquals(source.getDate(), target.timestamp());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.operationType());
         AssertUtils.assertEquals(source.getPrice(), target.price());
         AssertUtils.assertEquals(source.getQuantity(), target.quantity());
@@ -36,7 +36,7 @@ class OperationMapperUnitTest {
     void mapsBackTestOperationToOperation() {
         final BackTestOperation source = new BackTestOperation(
                 TestShare1.FIGI,
-                OffsetDateTime.now(),
+                TimestampUtils.now(),
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10),
                 2L
@@ -44,7 +44,7 @@ class OperationMapperUnitTest {
 
         final Operation target = operationMapper.map(source);
 
-        AssertUtils.assertEquals(source.dateTime(), target.getDate());
+        Assertions.assertEquals(source.timestamp(), target.getDate());
         Assertions.assertEquals(OperationType.OPERATION_TYPE_BUY, target.getOperationType());
         AssertUtils.assertEquals(source.price(), target.getPrice());
         AssertUtils.assertEquals(source.quantity(), BigDecimal.valueOf(target.getQuantity()));

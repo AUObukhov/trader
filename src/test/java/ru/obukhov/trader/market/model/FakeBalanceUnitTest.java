@@ -1,11 +1,12 @@
 package ru.obukhov.trader.market.model;
 
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 class FakeBalanceUnitTest {
 
@@ -24,9 +25,9 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = BigDecimal.valueOf(20);
         final BigDecimal amount2 = BigDecimal.valueOf(50);
         final BigDecimal amount3 = BigDecimal.valueOf(40);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
-        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
-        final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
+        final Timestamp investment1DateTime = TimestampUtils.now();
+        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
+        final Timestamp investment3DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
 
         final FakeBalance fakeBalance = new FakeBalance();
 
@@ -46,9 +47,9 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = BigDecimal.valueOf(20);
         final BigDecimal amount2 = BigDecimal.valueOf(-50);
         final BigDecimal amount3 = BigDecimal.valueOf(10);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
-        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
-        final OffsetDateTime investment3DateTime = investment1DateTime.plusHours(1);
+        final Timestamp investment1DateTime = TimestampUtils.now();
+        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
+        final Timestamp investment3DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
 
         final FakeBalance fakeBalance = new FakeBalance();
 
@@ -68,9 +69,9 @@ class FakeBalanceUnitTest {
         final BigDecimal amount1 = BigDecimal.valueOf(20);
         final BigDecimal amount2 = BigDecimal.ZERO;
         final BigDecimal amount3 = BigDecimal.valueOf(10);
-        final OffsetDateTime investment1DateTime = OffsetDateTime.now();
-        final OffsetDateTime investment2DateTime = investment1DateTime.plusHours(1);
-        final OffsetDateTime investment3DateTime = investment1DateTime;
+        final Timestamp investment1DateTime = TimestampUtils.now();
+        final Timestamp investment2DateTime = TimestampUtils.plusHours(investment1DateTime, 1);
+        final Timestamp investment3DateTime = investment1DateTime;
 
         final FakeBalance fakeBalance = new FakeBalance();
 

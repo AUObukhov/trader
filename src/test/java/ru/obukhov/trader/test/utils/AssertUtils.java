@@ -31,10 +31,10 @@ import ru.obukhov.trader.common.model.poi.ColorMapper;
 import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 
 import java.awt.Color;
@@ -58,7 +58,6 @@ public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
     private static final MoneyMapper MONEY_MAPPER = Mappers.getMapper(MoneyMapper.class);
-    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     // region assertEquals
 
@@ -123,7 +122,7 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final Money expected, final Money actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || actual.currency() != expected.currency()) {
+        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || !actual.currency().equals(expected.currency())) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -131,16 +130,21 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DATE_TIME_MAPPER.timestampToOffsetDateTime(expected).equals(actual)) {
-            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        } else {
+            final OffsetDateTime expectedDateTime = TimestampUtils.toOffsetDateTime(expected);
+            if (!expectedDateTime.equals(actual)) {
+                Assertions.fail(String.format("expected: <%s> but was: <%s>", expectedDateTime, actual));
+            }
         }
     }
 
     public static void assertEquals(@Nullable final OffsetDateTime expected, @Nullable final Timestamp actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DATE_TIME_MAPPER.offsetDateTimeToTimestamp(expected).equals(actual)) {
-            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        } else {
+            if (!TimestampUtils.newTimestamp(expected).equals(actual)) {
+                Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+            }
         }
     }
 
@@ -349,6 +353,8 @@ public class AssertUtils {
                     assetCellValue(cell, localDateTimeValue);
                 } else if (value instanceof OffsetDateTime offsetDateTimeValue) {
                     assertCellValue(cell, offsetDateTimeValue);
+                } else if (value instanceof Timestamp timestamp) {
+                    assertCellValue(cell, timestamp);
                 } else {
                     throw new IllegalArgumentException("Unexpected value " + value);
                 }
@@ -401,6 +407,11 @@ public class AssertUtils {
 
     public static void assertCellValue(final Cell cell, final OffsetDateTime value) {
         final Date expectedValue = Date.from(value.toInstant());
+        Assertions.assertEquals(expectedValue, cell.getDateCellValue());
+    }
+
+    public static void assertCellValue(final Cell cell, final Timestamp value) {
+        final Date expectedValue = TimestampUtils.toDate(value);
         Assertions.assertEquals(expectedValue, cell.getDateCellValue());
     }
 

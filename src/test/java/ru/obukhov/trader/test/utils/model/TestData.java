@@ -3,16 +3,16 @@ package ru.obukhov.trader.test.utils.model;
 import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
-import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -30,6 +30,8 @@ import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Portfolio;
 
 import java.math.BigDecimal;
@@ -67,7 +69,7 @@ public class TestData {
                 .build();
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
-        decisionData.setShare(Share.builder().lotSize(lotSize).build());
+        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
 
         return decisionData;
     }
@@ -77,7 +79,7 @@ public class TestData {
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
-        decisionData.setShare(Share.builder().lotSize(lotSize).build());
+        decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
         decisionData.setCommission(commission);
 
         return decisionData;
@@ -112,14 +114,14 @@ public class TestData {
     // region Operation
 
     public static Operation createOperation(
-            final OffsetDateTime operationDateTime,
+            final Timestamp operationTimestamp,
             final OperationType operationType,
             final double operationPrice,
             final long operationQuantity,
             final String figi
     ) {
         return Operation.newBuilder()
-                .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(operationDateTime))
+                .setDate(operationTimestamp)
                 .setOperationType(operationType)
                 .setPrice(MONEY_VALUE_MAPPER.doubleToMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
@@ -372,37 +374,43 @@ public class TestData {
         return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 
-    public static ru.tinkoff.piapi.contract.v1.TradingDay createTinkoffTradingDay(
-            final boolean isTradingDay,
-            final OffsetDateTime startTime,
-            final OffsetDateTime endTime
-    ) {
-        final Timestamp startTimestamp = DATE_TIME_MAPPER.offsetDateTimeToTimestamp(startTime);
-        return ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
-                .setDate(startTimestamp)
+    public static TradingDay createTradingDay(final boolean isTradingDay, Timestamp startTimestamp, final Timestamp endTimestamp) {
+        return TradingDay.newBuilder()
+                .setDate(TimestampUtils.toStartOfDay(startTimestamp))
                 .setIsTradingDay(isTradingDay)
                 .setStartTime(startTimestamp)
-                .setEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(endTime))
+                .setEndTime(endTimestamp)
                 .build();
     }
 
-    public static TradingDay createTradingDay(final boolean isTradingDay, OffsetDateTime startTime, final OffsetDateTime endTime) {
-        return new TradingDay(startTime, isTradingDay, startTime, endTime, null, null, null, null, null, null, null, null);
+    public static TradingDay createTradingDay(final Timestamp startTimestamp, final Timestamp endTimestamp) {
+        return TradingDay.newBuilder()
+                .setDate(startTimestamp)
+                .setIsTradingDay(true)
+                .setStartTime(startTimestamp)
+                .setEndTime(endTimestamp)
+                .build();
     }
 
-    public static TradingDay createTradingDay(final OffsetDateTime startTime, final OffsetDateTime endTime) {
-        return new TradingDay(startTime, true, startTime, endTime, null, null, null, null, null, null, null, null);
-    }
-
-    public static List<TradingDay> createTradingSchedule(final OffsetDateTime startDateTime, final OffsetTime endTime, final int daysCount) {
+    public static List<TradingDay> createTradingSchedule(final Timestamp startTimestamp, final OffsetTime endTime, final int daysCount) {
         List<TradingDay> schedule = new ArrayList<>();
         for (int i = 0; i < daysCount; i++) {
-            final OffsetDateTime currentStartDateTime = startDateTime.plusDays(i);
-            final OffsetDateTime currentEndDateTime = DateUtils.setTime(currentStartDateTime, endTime);
-            final boolean isTradingDay = DateUtils.isWorkDay(currentStartDateTime);
+            final Timestamp currentStartDateTime = TimestampUtils.plusDays(startTimestamp, i);
+            final Timestamp currentEndDateTime = TimestampUtils.setTime(currentStartDateTime, endTime);
+            final boolean isTradingDay = TimestampUtils.isWorkDay(currentStartDateTime);
             schedule.add(createTradingDay(isTradingDay, currentStartDateTime, currentEndDateTime));
         }
 
         return schedule;
     }
+
+    /**
+     * @return new Interval with {@code from} is start of given date and {@code to} is end of given date
+     */
+    public static Interval createIntervalOfDay(@NotNull final Timestamp timestamp) {
+        final Timestamp from = TimestampUtils.toStartOfDay(timestamp);
+        final Timestamp to = TimestampUtils.toEndOfDay(from);
+        return Interval.of(from, to);
+    }
+
 }

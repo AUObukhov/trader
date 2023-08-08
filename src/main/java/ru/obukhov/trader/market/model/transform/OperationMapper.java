@@ -11,11 +11,11 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 @Mapper(uses = {DateTimeMapper.class, MoneyMapper.class})
 public interface OperationMapper {
 
-    @Mapping(target = "dateTime", source = "operation.date")
+    @Mapping(target = "timestamp", source = "operation.date")
     @Mapping(target = "figi", source = "figi")
     BackTestOperation map(final String figi, final Operation operation);
 
-    @Mapping(target = "date", source = "dateTime")
+    @Mapping(target = "date", source = "timestamp")
     @Mapping(target = "quantity", source = "quantity")
     Operation map(final BackTestOperation source);
 

@@ -1,12 +1,11 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.protobuf.Timestamp;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -40,25 +39,25 @@ public class MathUtils {
     /**
      * Calculates weighted average of given amounts.<br/>
      * Weight is count of milliseconds every amount was actual.
-     * Every amount is actual from its begin dateTime inclusive to begin dateTime of next amount exclusive.
-     * The last amount is actual until given {@code endDateTime}
+     * Every amount is actual since its timestamp inclusive until timestamp of next amount exclusive.
+     * The last amount is actual until given {@code endTimestamp}
      *
-     * @param dateTimesToAmounts begin dateTimes and corresponding amounts
-     * @param endDateTime        end dateTime of last amount from given {@code dateTimesToAmounts}.
-     *                           Can't be before any of dateTime in {@code dateTimesToAmounts}
-     * @return weighted average or zero if given {@code dateTimesToAmounts} is empty
+     * @param timestampsToAmounts begin dateTimes and corresponding amounts
+     * @param endTimestamp        end timestamp of last amount from given {@code timestampsToAmounts}.
+     *                            Can't be before any of timestamp in {@code timestampsToAmounts}
+     * @return weighted average or zero if given {@code timestampsToAmounts} is empty
      */
-    public static BigDecimal getWeightedAverage(final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts, final OffsetDateTime endDateTime) {
-        final Map<Long, BigDecimal> weightedAmounts = dateTimesToAmounts.entrySet().stream()
-                .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endDateTime), Map.Entry::getValue));
+    public static BigDecimal getWeightedAverage(final Map<Timestamp, BigDecimal> timestampsToAmounts, final Timestamp endTimestamp) {
+        final Map<Long, BigDecimal> weightedAmounts = timestampsToAmounts.entrySet().stream()
+                .collect(Collectors.toMap(entry -> getWeight(entry.getKey(), endTimestamp), Map.Entry::getValue));
 
         return getWeightedAverage(weightedAmounts);
     }
 
-    private static long getWeight(final OffsetDateTime dateTime, final OffsetDateTime endDateTime) {
-        Assert.isTrue(!endDateTime.isBefore(dateTime), "All dateTimes must be before endDateTime");
+    private static long getWeight(final Timestamp timestamp, final Timestamp endTimestamp) {
+        Assert.isTrue(!TimestampUtils.isBefore(endTimestamp, timestamp), "All timestamps must be before endTimestamp");
 
-        return Duration.between(dateTime, endDateTime).toMillis();
+        return TimestampUtils.toDuration(timestamp, endTimestamp).toMillis();
     }
 
     private static BigDecimal getWeightedAverage(final Map<Long, BigDecimal> weightedAmounts) {

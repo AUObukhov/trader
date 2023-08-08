@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.util;
 
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -7,11 +8,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -78,47 +77,47 @@ class MathUtilsUnitTest {
 
     @Test
     void getWeightedAverage_throwsIllegalArgumentException_whenThereIsDateTimeAfterEndDateTime() {
-        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        final Map<Timestamp, BigDecimal> timestampsToAmounts = new HashMap<>();
+        Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1);
         BigDecimal amount = DecimalUtils.setDefaultScale(10000);
-        dateTimesToAmounts.put(dateTime, amount);
+        timestampsToAmounts.put(timestamp, amount);
         for (int i = 0; i < 24; i++) {
-            dateTime = dateTime.plusDays(1);
+            timestamp = TimestampUtils.plusDays(timestamp, 1);
             amount = amount.add(DecimalUtils.setDefaultScale(1000));
-            dateTimesToAmounts.put(dateTime, amount);
+            timestampsToAmounts.put(timestamp, amount);
         }
 
-        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 24);
+        final Timestamp endTimestamp = TimestampUtils.newTimestamp(2021, 1, 24);
 
-        final Executable executable = () -> MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
-        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "All dateTimes must be before endDateTime");
+        final Executable executable = () -> MathUtils.getWeightedAverage(timestampsToAmounts, endTimestamp);
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, "All timestamps must be before endTimestamp");
     }
 
     @Test
     void getWeightedAverage_returnsZero_whenCollectionIsEmpty() {
-        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 3, 10, 11, 12, 13);
+        final Map<Timestamp, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        final Timestamp endTimestamp = TimestampUtils.newTimestamp(2021, 3, 10, 11, 12, 13);
 
-        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTimestamp);
 
         AssertUtils.assertEquals(0, weightedAverage);
     }
 
     @Test
     void getWeightedAverage_returnsProperValue_whenCollectionIsNotEmpty() {
-        final Map<OffsetDateTime, BigDecimal> dateTimesToAmounts = new HashMap<>();
-        OffsetDateTime dateTime = DateTimeTestData.createDateTime(2021, 1, 1);
+        final Map<Timestamp, BigDecimal> dateTimesToAmounts = new HashMap<>();
+        Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1);
         BigDecimal amount = DecimalUtils.setDefaultScale(10000);
-        dateTimesToAmounts.put(dateTime, amount);
+        dateTimesToAmounts.put(timestamp, amount);
         for (int i = 0; i < 24; i++) {
-            dateTime = dateTime.plusDays(1);
+            timestamp = TimestampUtils.plusDays(timestamp, 1);
             amount = amount.add(DecimalUtils.setDefaultScale(1000));
-            dateTimesToAmounts.put(dateTime, amount);
+            dateTimesToAmounts.put(timestamp, amount);
         }
 
-        final OffsetDateTime endTime = DateTimeTestData.createDateTime(2021, 1, 25);
+        final Timestamp endTimestamp = TimestampUtils.newTimestamp(2021, 1, 25);
 
-        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTime);
+        final BigDecimal weightedAverage = MathUtils.getWeightedAverage(dateTimesToAmounts, endTimestamp);
 
         AssertUtils.assertEquals(17666.666666667, weightedAverage);
     }

@@ -1,5 +1,6 @@
 package ru.obukhov.trader.trading.bots;
 
+import com.google.protobuf.Timestamp;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
@@ -8,13 +9,12 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.Share;
-import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.contract.v1.TradingDay;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.SortedMap;
 
@@ -54,19 +54,19 @@ public class FakeBot extends Bot {
 
     // region FakeContext proxy
 
-    public OffsetDateTime getCurrentDateTime() {
-        return context.getCurrentDateTime();
+    public Timestamp getCurrentTimestamp() {
+        return context.getCurrentTimestamp();
     }
 
-    public OffsetDateTime nextScheduleMinute(final List<TradingDay> tradingSchedule) {
+    public Timestamp nextScheduleMinute(final List<TradingDay> tradingSchedule) {
         return getFakeContext().nextScheduleMinute(tradingSchedule);
     }
 
-    public void addInvestment(final String accountId, final OffsetDateTime dateTime, final String currency, final BigDecimal increment) {
-        getFakeContext().addInvestment(accountId, dateTime, currency, increment);
+    public void addInvestment(final String accountId, final Timestamp timestamp, final String currency, final BigDecimal increment) {
+        getFakeContext().addInvestment(accountId, timestamp, currency, increment);
     }
 
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {
+    public SortedMap<Timestamp, BigDecimal> getInvestments(final String accountId, final String currency) {
         return getFakeContext().getInvestments(accountId, currency);
     }
 
@@ -75,7 +75,7 @@ public class FakeBot extends Bot {
     }
 
     public BigDecimal getCurrentPrice(final String figi) {
-        return extMarketDataService.getLastPrice(figi, context.getCurrentDateTime());
+        return extMarketDataService.getLastPrice(figi, context.getCurrentTimestamp());
     }
 
     private FakeContext getFakeContext() {

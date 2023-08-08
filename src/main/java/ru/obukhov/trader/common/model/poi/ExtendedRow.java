@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.model.poi;
 
+import com.google.protobuf.Timestamp;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -9,6 +10,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.util.TimestampUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -122,6 +124,10 @@ public class ExtendedRow implements Row {
      * style from workbook named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME}.
      * * If such a style does not exist yet, then it is pre-created.<br/>
      * <p>
+     * {@link Timestamp}: Created cell gets {@link CellType#STRING} type and
+     * style from workbook named {@value ExtendedWorkbook.CellStylesNames#DATE_TIME}.
+     * * If such a style does not exist yet, then it is pre-created.<br/>
+     * <p>
      * {@link Boolean}: Created cell gets {@link CellType#BOOLEAN} type and
      * style from workbook named {@value ExtendedWorkbook.CellStylesNames#BOOLEAN}.
      * If such a style does not exist yet, then it is pre-created.<br/>
@@ -150,6 +156,8 @@ public class ExtendedRow implements Row {
             return createCell(column, offsetDateTimeValue);
         } else if (value instanceof Boolean booleanValue) {
             return createCell(column, booleanValue);
+        } else if (value instanceof Timestamp timestamp) {
+            return createCell(column, TimestampUtils.toOffsetDateTime(timestamp));
         } else {
             throw new IllegalArgumentException("Unexpected type of value: " + value.getClass());
         }

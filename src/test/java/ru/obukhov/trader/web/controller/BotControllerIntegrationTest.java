@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.SchedulingProperties;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
@@ -251,7 +252,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
 
         // mocking
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
         Mocker.mockInstrument(instrumentsService, TestInstrument1.TINKOFF_INSTRUMENT);
 
         final String candlesString = ResourceUtils.getTestDataAsString("candles.json");
@@ -281,7 +282,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
         );
         final BackTestOperation operation = new BackTestOperation(
                 figi,
-                from,
+                TimestampUtils.newTimestamp(from),
                 OperationType.OPERATION_TYPE_BUY,
                 DecimalUtils.setDefaultScale(10000),
                 1L
@@ -291,7 +292,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClosePrice(20000)
                 .setHighestPrice(30000)
                 .setLowestPrice(5000)
-                .setTime(from)
+                .setTime(TimestampUtils.newTimestamp(from))
                 .build();
         final BackTestResult backTestResult1 = new BackTestResult(
                 botConfig1,

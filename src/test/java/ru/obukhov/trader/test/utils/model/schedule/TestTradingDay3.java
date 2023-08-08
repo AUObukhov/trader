@@ -1,56 +1,53 @@
 package ru.obukhov.trader.test.utils.model.schedule;
 
-import org.mapstruct.factory.Mappers;
-import ru.obukhov.trader.market.model.TradingDay;
-import ru.obukhov.trader.market.model.transform.DateTimeMapper;
-
-import java.time.OffsetDateTime;
+import com.google.protobuf.Timestamp;
+import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.tinkoff.piapi.contract.v1.TradingDay;
 
 public class TestTradingDay3 {
 
-    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
-
-    public static final OffsetDateTime DATE = TestTradingDay2.DATE.plusDays(1);
+    public static final Timestamp DATE = TimestampUtils.plusDays(TestTradingDay2.DATE, 1);
     public static final boolean IS_TRADING_DAY = TestTradingDay1.IS_TRADING_DAY;
-    public static final OffsetDateTime START_TIME = TestTradingDay2.START_TIME.plusDays(1);
-    public static final OffsetDateTime END_TIME = TestTradingDay2.END_TIME.plusDays(1);
-    public static final OffsetDateTime CLOSING_AUCTION_END_TIME = TestTradingDay2.CLOSING_AUCTION_END_TIME.plusDays(1);
-    public static final OffsetDateTime EVENING_OPENING_AUCTION_START_TIME = TestTradingDay2.EVENING_OPENING_AUCTION_START_TIME.plusDays(1);
-    public static final OffsetDateTime EVENING_START_TIME = TestTradingDay2.EVENING_START_TIME.plusDays(1);
-    public static final OffsetDateTime EVENING_END_TIME = TestTradingDay2.EVENING_END_TIME.plusDays(1);
-    public static final OffsetDateTime CLEARING_START_TIME = TestTradingDay2.CLEARING_START_TIME.plusDays(1);
-    public static final OffsetDateTime CLEARING_END_TIME = TestTradingDay2.CLEARING_END_TIME.plusDays(1);
-    public static final OffsetDateTime PREMARKET_START_TIME = TestTradingDay2.PREMARKET_START_TIME.plusDays(1);
-    public static final OffsetDateTime PREMARKET_END_TIME = TestTradingDay2.PREMARKET_END_TIME.plusDays(1);
+    public static final Timestamp START_TIME = TimestampUtils.plusDays(TestTradingDay2.START_TIME, 1);
+    public static final Timestamp END_TIME = TimestampUtils.plusDays(TestTradingDay2.END_TIME, 1);
+    public static final Timestamp OPENING_AUCTION_START_TIME = TimestampUtils.plusDays(TestTradingDay2.OPENING_AUCTION_START_TIME, 1);
+    public static final Timestamp CLOSING_AUCTION_END_TIME = TimestampUtils.plusDays(TestTradingDay2.CLOSING_AUCTION_END_TIME, 1);
+    public static final Timestamp EVENING_OPENING_AUCTION_START_TIME = TimestampUtils.plusDays(TestTradingDay2.EVENING_OPENING_AUCTION_START_TIME, 1);
+    public static final Timestamp EVENING_START_TIME = TimestampUtils.plusDays(TestTradingDay2.EVENING_START_TIME, 1);
+    public static final Timestamp EVENING_END_TIME = TimestampUtils.plusDays(TestTradingDay2.EVENING_END_TIME, 1);
+    public static final Timestamp CLEARING_START_TIME = TimestampUtils.plusDays(TestTradingDay2.CLEARING_START_TIME, 1);
+    public static final Timestamp CLEARING_END_TIME = TimestampUtils.plusDays(TestTradingDay2.CLEARING_END_TIME, 1);
+    public static final Timestamp PREMARKET_START_TIME = TimestampUtils.plusDays(TestTradingDay2.PREMARKET_START_TIME, 1);
+    public static final Timestamp PREMARKET_END_TIME = TimestampUtils.plusDays(TestTradingDay2.PREMARKET_END_TIME, 1);
 
-    public static final ru.tinkoff.piapi.contract.v1.TradingDay TINKOFF_TRADING_DAY = ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
-            .setDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(DATE))
+    public static final TradingDay TRADING_DAY = ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
+            .setDate(DATE)
             .setIsTradingDay(IS_TRADING_DAY)
-            .setStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(START_TIME))
-            .setEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(END_TIME))
-            .setClosingAuctionEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(CLOSING_AUCTION_END_TIME))
-            .setEveningOpeningAuctionStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(EVENING_OPENING_AUCTION_START_TIME))
-            .setEveningStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(EVENING_START_TIME))
-            .setEveningEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(EVENING_END_TIME))
-            .setClearingStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(CLEARING_START_TIME))
-            .setClearingEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(CLEARING_END_TIME))
-            .setPremarketStartTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(PREMARKET_START_TIME))
-            .setPremarketEndTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(PREMARKET_END_TIME))
+            .setStartTime(START_TIME)
+            .setEndTime(END_TIME)
+            .setOpeningAuctionStartTime(OPENING_AUCTION_START_TIME)
+            .setClosingAuctionEndTime(CLOSING_AUCTION_END_TIME)
+            .setEveningOpeningAuctionStartTime(EVENING_OPENING_AUCTION_START_TIME)
+            .setEveningStartTime(EVENING_START_TIME)
+            .setEveningEndTime(EVENING_END_TIME)
+            .setClearingStartTime(CLEARING_START_TIME)
+            .setClearingEndTime(CLEARING_END_TIME)
+            .setPremarketStartTime(PREMARKET_START_TIME)
+            .setPremarketEndTime(PREMARKET_END_TIME)
             .build();
 
-    public static final TradingDay TRADING_DAY = new TradingDay(
-            DATE,
-            IS_TRADING_DAY,
-            START_TIME,
-            END_TIME,
-            CLOSING_AUCTION_END_TIME,
-            EVENING_OPENING_AUCTION_START_TIME,
-            EVENING_START_TIME,
-            EVENING_END_TIME,
-            CLEARING_START_TIME,
-            CLEARING_END_TIME,
-            PREMARKET_START_TIME,
-            PREMARKET_END_TIME
-    );
+    public static final String JSON_STRING = "{\"date\":{\"seconds\":1664928000,\"nanos\":0}," +
+            "\"isTradingDay\":true," +
+            "\"startTime\":{\"seconds\":1665007200,\"nanos\":0}," +
+            "\"endTime\":{\"seconds\":1665090000,\"nanos\":0}," +
+            "\"openingAuctionStartTime\":{\"seconds\":1665039000,\"nanos\":0}," +
+            "\"closingAuctionEndTime\":{\"seconds\":1665071400,\"nanos\":0}," +
+            "\"eveningOpeningAuctionStartTime\":{\"seconds\":1664985600,\"nanos\":0}," +
+            "\"eveningStartTime\":{\"seconds\":1664985900,\"nanos\":0}," +
+            "\"eveningEndTime\":{\"seconds\":1665003000,\"nanos\":0}," +
+            "\"clearingStartTime\":{\"seconds\":1665003600,\"nanos\":0}," +
+            "\"clearingEndTime\":{\"seconds\":1665007200,\"nanos\":0}," +
+            "\"premarketStartTime\":{\"seconds\":1664942400,\"nanos\":0}," +
+            "\"premarketEndTime\":{\"seconds\":1664952600,\"nanos\":0}}";
 
 }

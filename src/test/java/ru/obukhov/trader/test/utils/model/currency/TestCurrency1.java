@@ -1,14 +1,14 @@
 package ru.obukhov.trader.test.utils.model.currency;
 
+import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currency;
 import ru.obukhov.trader.market.model.CurrencyInstrument;
-import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 
 public class TestCurrency1 extends TestSecurityData {
 
@@ -25,8 +25,8 @@ public class TestCurrency1 extends TestSecurityData {
     public static final boolean SELL_AVAILABLE = true;
     public static final boolean API_TRADE_AVAILABLE = true;
     public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.0025);
-    public static final OffsetDateTime FIRST_1_MIN_CANDLE_DATE = DateTimeTestData.createDateTime(2018, 3, 7, 19, 16);
-    public static final OffsetDateTime FIRST_1_DAY_CANDLE_DATE = DateTimeTestData.createDateTime(2000, 5, 16, 3);
+    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(2018, 3, 7, 19, 16);
+    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(2000, 5, 16, 3);
 
     public static final ru.tinkoff.piapi.contract.v1.Currency TINKOFF_CURRENCY = ru.tinkoff.piapi.contract.v1.Currency.newBuilder()
             .setFigi(TestCurrency1.FIGI)
@@ -42,8 +42,8 @@ public class TestCurrency1 extends TestSecurityData {
             .setSellAvailableFlag(TestCurrency1.SELL_AVAILABLE)
             .setApiTradeAvailableFlag(TestCurrency1.API_TRADE_AVAILABLE)
             .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(TestCurrency1.MIN_PRICE_INCREMENT))
-            .setFirst1MinCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestCurrency1.FIRST_1_MIN_CANDLE_DATE))
-            .setFirst1DayCandleDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(TestCurrency1.FIRST_1_DAY_CANDLE_DATE))
+            .setFirst1MinCandleDate(TestCurrency1.FIRST_1_MIN_CANDLE_DATE)
+            .setFirst1DayCandleDate(TestCurrency1.FIRST_1_DAY_CANDLE_DATE)
             .build();
 
     public static final CurrencyInstrument CURRENCY = CurrencyInstrument.builder()
@@ -60,8 +60,8 @@ public class TestCurrency1 extends TestSecurityData {
             .sellAvailable(TestCurrency1.SELL_AVAILABLE)
             .apiTradeAvailable(TestCurrency1.API_TRADE_AVAILABLE)
             .minPriceIncrement(TestCurrency1.MIN_PRICE_INCREMENT)
-            .first1MinCandleDate(TestCurrency1.FIRST_1_MIN_CANDLE_DATE)
-            .first1DayCandleDate(TestCurrency1.FIRST_1_DAY_CANDLE_DATE)
+            .first1MinCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_MIN_CANDLE_DATE))
+            .first1DayCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_DAY_CANDLE_DATE))
             .build();
 
 }

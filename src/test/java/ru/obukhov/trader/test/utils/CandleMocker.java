@@ -1,5 +1,6 @@
 package ru.obukhov.trader.test.utils;
 
+import com.google.protobuf.Timestamp;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -11,7 +12,6 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class CandleMocker {
         this.candles = new ArrayList<>();
     }
 
-    public CandleMocker add(@NotNull final Integer closePrice, @NotNull final OffsetDateTime time) {
+    public CandleMocker add(@NotNull final Integer closePrice, @NotNull final Timestamp time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
                 .setClosePrice(closePrice)
                 .setTime(time)

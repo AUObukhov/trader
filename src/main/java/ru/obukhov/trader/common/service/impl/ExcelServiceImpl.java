@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.service.impl;
 
+import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,6 +26,7 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
@@ -39,7 +41,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -284,7 +285,7 @@ public class ExcelServiceImpl implements ExcelService {
             for (final BackTestOperation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(
-                        operation.dateTime(),
+                        operation.timestamp(),
                         operation.operationType().name(),
                         operation.price(),
                         operation.quantity()
@@ -334,7 +335,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private void addCandles(final ExtendedChartData chartData, final GetCandlesResponse response) {
-        final List<OffsetDateTime> times = response.getCandles().stream()
+        final List<Timestamp> times = response.getCandles().stream()
                 .map(Candle::getTime)
                 .toList();
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
@@ -355,10 +356,10 @@ public class ExcelServiceImpl implements ExcelService {
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
         for (final BackTestOperation operation : operations) {
-            final OffsetDateTime operationDateTime = operation.dateTime();
+            final Timestamp operationTimestamp = operation.timestamp();
             final Candle keyCandle = new Candle();
-            keyCandle.setTime(operationDateTime);
-            int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime));
+            keyCandle.setTime(operationTimestamp);
+            int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime, TimestampUtils::compare));
             if (index < 0) {
                 index = -index - 1;
                 CollectionsUtils.insertInterpolated(innerCandles, index, Candle::createAverage);
@@ -374,8 +375,9 @@ public class ExcelServiceImpl implements ExcelService {
         chartData.stretchChart();
     }
 
-    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<OffsetDateTime> times) {
+    private XDDFCategoryDataSource getTimesCategoryDataSourceFromTimes(final List<Timestamp> times) {
         final String[] timesArray = times.stream()
+                .map(TimestampUtils::toOffsetDateTime)
                 .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(timesArray);
@@ -384,6 +386,7 @@ public class ExcelServiceImpl implements ExcelService {
     private XDDFCategoryDataSource getTimesCategoryDataSourceFromCandles(final List<Candle> innerCandles) {
         final String[] times = innerCandles.stream()
                 .map(Candle::getTime)
+                .map(TimestampUtils::toOffsetDateTime)
                 .map(DateUtils.DATE_TIME_FORMATTER::format)
                 .toArray(String[]::new);
         return XDDFDataSourcesFactory.fromArray(times);

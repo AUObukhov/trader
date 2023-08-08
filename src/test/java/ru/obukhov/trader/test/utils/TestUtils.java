@@ -10,7 +10,10 @@ import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
+import ru.obukhov.trader.market.model.transform.ShareSerializer;
 import ru.obukhov.trader.market.model.transform.TimestampSerializer;
+import ru.obukhov.trader.market.model.transform.TradingDaySerializer;
+import ru.obukhov.trader.market.model.transform.TradingScheduleSerializer;
 import ru.obukhov.trader.test.utils.model.transform.CronExpressionSerializer;
 
 import java.text.SimpleDateFormat;
@@ -18,7 +21,10 @@ import java.text.SimpleDateFormat;
 public class TestUtils {
 
     private static final SimpleModule TINKOFF_MODULE = new SimpleModule()
+            .addSerializer(new ShareSerializer())
             .addSerializer(new BondSerializer())
+            .addSerializer(new TradingDaySerializer())
+            .addSerializer(new TradingScheduleSerializer())
             .addSerializer(new QuotationSerializer())
             .addSerializer(new TimestampSerializer())
             .addSerializer(new MoneyValueSerializer());
@@ -31,7 +37,7 @@ public class TestUtils {
             .registerModule(new SimpleModule().addSerializer(new CronExpressionSerializer()));
 
     public static boolean equals(final Money money1, final Money money2) {
-        return money1.currency() == money2.currency()
+        return money1.currency().equals(money2.currency())
                 && DecimalUtils.numbersEqual(money1.value(), money2.value());
     }
 

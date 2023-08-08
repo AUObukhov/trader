@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.PositionMapper;
@@ -11,6 +12,7 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
+import java.time.Instant;
 import java.util.List;
 
 @AllArgsConstructor
@@ -23,7 +25,9 @@ public class RealExtOperationsService implements ExtOperationsService {
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi) {
-        return operationsService.getAllOperationsSync(accountId, interval.getFrom().toInstant(), interval.getTo().toInstant(), figi);
+        final Instant from = TimestampUtils.toInstant(interval.getFrom());
+        final Instant to = TimestampUtils.toInstant(interval.getTo());
+        return operationsService.getAllOperationsSync(accountId, from, to, figi);
     }
 
     @Override

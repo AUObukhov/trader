@@ -1,21 +1,16 @@
 package ru.obukhov.trader.test.utils.model;
 
-import org.mapstruct.factory.Mappers;
+import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
-import java.time.OffsetDateTime;
-
 public class HistoricCandleBuilder {
-
-    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
 
     private Double openPrice;
     private Double closePrice;
     private Double highestPrice;
     private Double lowestPrice;
-    private OffsetDateTime time;
+    private Timestamp time;
     private Boolean isComplete;
 
     public HistoricCandleBuilder setOpenPrice(final double openPrice) {
@@ -38,7 +33,7 @@ public class HistoricCandleBuilder {
         return this;
     }
 
-    public HistoricCandleBuilder setTime(final OffsetDateTime time) {
+    public HistoricCandleBuilder setTime(final Timestamp time) {
         this.time = time;
         return this;
     }
@@ -68,7 +63,7 @@ public class HistoricCandleBuilder {
         }
 
         if (time != null) {
-            builder.setTime(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(time));
+            builder.setTime(time);
         }
 
         if (isComplete != null) {

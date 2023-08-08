@@ -27,14 +27,18 @@ import java.util.stream.Stream;
 
 class TimestampUtilsUnitTest {
 
+    private static final String DATE_TIME_REGEX_PATTERN = "[\\d\\-\\+\\.:T]+";
+
     // region newTimestamp tests
 
     @ParameterizedTest
     @CsvSource(value = {
+            "-62135596800, 0",
             "0, 0",
             "0, 10",
             "11, 0",
             "12, 13",
+            "253402300799, 999999999"
     })
     void newTimestamp_fromSecondsAndNanos(final long seconds, final int nanos) {
         final Timestamp actualResult = TimestampUtils.newTimestamp(seconds, nanos);
@@ -43,11 +47,35 @@ class TimestampUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {0L, 167L})
+    @ValueSource(longs = {-62135596801L, 253402300800L})
+    void newTimestamp_fromSecondsAndNanos_throwsIllegalArgumentException_whenSecondsOutOfRange(final long seconds) {
+        final Executable executable = () -> TimestampUtils.newTimestamp(seconds, 1);
+        final String expectedMessage = "seconds must be from 0001-01-01T00:00:00Z (-62135596800) to 9999-12-31T23:59:59Z (253402300799) inclusive";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 1000_000_000})
+    void newTimestamp_fromSecondsAndNanos_throwsIllegalArgumentException_whenNanosOutOfRange(final int nanos) {
+        final Executable executable = () -> TimestampUtils.newTimestamp(1, nanos);
+        final String expectedMessage = "nanos must be from 0 to 999999999 inclusive";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-62135596800L, 0L, 167L, 253402300799L})
     void newTimestamp_fromSeconds(final long seconds) {
         final Timestamp actualResult = TimestampUtils.newTimestamp(seconds);
         Assertions.assertEquals(seconds, actualResult.getSeconds());
         Assertions.assertEquals(0, actualResult.getNanos());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-62135596801L, 253402300800L})
+    void newTimestamp_fromSeconds_throwsIllegalArgumentException_whenSecondsOutOfRange(final long seconds) {
+        final Executable executable = () -> TimestampUtils.newTimestamp(seconds);
+        final String expectedMessage = "seconds must be from 0001-01-01T00:00:00Z (-62135596800) to 9999-12-31T23:59:59Z (253402300799) inclusive";
+        AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
     @Test
@@ -67,6 +95,22 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
+    void newTimestamp_fromYearMonthDayOfMonthHourMinute() {
+        final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 4, 5);
+
+        Assertions.assertEquals(1651539900L, actualResult.getSeconds());
+        Assertions.assertEquals(0, actualResult.getNanos());
+    }
+
+    @Test
+    void newTimestamp_fromYearMonthDayOfMonthHourMinuteOffset() {
+        final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 4, ZoneOffset.ofHours(5));
+
+        Assertions.assertEquals(1651532400L, actualResult.getSeconds());
+        Assertions.assertEquals(0, actualResult.getNanos());
+    }
+
+    @Test
     void newTimestamp_fromYearMonthDayOfMonthHourMinuteSecond() {
         final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 4, 5, 6);
 
@@ -75,10 +119,18 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
-    void newTimestamp_fromDateTimeUnits() {
+    void newTimestamp_fromYearMonthDayOfMonthHourMinuteSecondNanoOfSecond() {
         final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 10, 20, 30, 123);
 
         Assertions.assertEquals(1651562430L, actualResult.getSeconds());
+        Assertions.assertEquals(123, actualResult.getNanos());
+    }
+
+    @Test
+    void newTimestamp_fromDateTimeUnits() {
+        final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 10, 20, 30, 123, ZoneOffset.ofHours(6));
+
+        Assertions.assertEquals(1651551630L, actualResult.getSeconds());
         Assertions.assertEquals(123, actualResult.getNanos());
     }
 
@@ -88,7 +140,7 @@ class TimestampUtilsUnitTest {
 
         final Timestamp actualResult = TimestampUtils.newTimestamp(dateTime);
 
-        Assertions.assertEquals(1651562430, actualResult.getSeconds());
+        Assertions.assertEquals(1651562430L, actualResult.getSeconds());
         Assertions.assertEquals(123, actualResult.getNanos());
     }
 
@@ -103,7 +155,47 @@ class TimestampUtilsUnitTest {
         Assertions.assertEquals(1633943594L, timestamp.getSeconds());
     }
 
+    @Test
+    void newTimestamp_fromString() {
+        final String string = "2022-05-03T10:20:30.000000123+03:00";
+
+        final Timestamp timestamp = TimestampUtils.newTimestamp(string);
+
+        Assertions.assertEquals(1651562430L, timestamp.getSeconds());
+        Assertions.assertEquals(123, timestamp.getNanos());
+    }
+
+    @Test
+    void nowIfNull_whenNull() {
+        final Timestamp timestamp = TimestampUtils.now();
+
+        final Timestamp result = TimestampUtils.nowIfNull(null);
+
+        Assertions.assertTrue(TimestampUtils.compare(result, timestamp) >= 0);
+    }
+
+    @Test
+    void nowIfNull_whenNotNull() {
+        final Timestamp timestamp = TimestampUtils.newTimestamp(2022, 5, 3, 10, 20, 30, 123);
+
+        final Timestamp result = TimestampUtils.nowIfNull(timestamp);
+
+        Assertions.assertEquals(timestamp, result);
+    }
+
+
     // endregion
+
+    @Test
+    void toInstant() {
+        final Timestamp timestamp = TimestampUtils.newTimestamp(1651562430, 123);
+
+        final Instant instant = TimestampUtils.toInstant(timestamp);
+
+        final Instant expectedInstant = DateTimeTestData.createDateTime(2022, 5, 3, 10, 20, 30, 123)
+                .toInstant();
+        Assertions.assertEquals(expectedInstant, instant);
+    }
 
     @Test
     void toOffsetDateTime() {
@@ -148,6 +240,129 @@ class TimestampUtilsUnitTest {
         Assertions.assertEquals(hour, calendar.get(Calendar.HOUR_OF_DAY));
         Assertions.assertEquals(minute, calendar.get(Calendar.MINUTE));
         Assertions.assertEquals(second, calendar.get(Calendar.SECOND));
+    }
+
+    // endregion
+
+    // region toDuration tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forToDuration() {
+        return Stream.of(
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 40),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 40),
+                        0L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 40),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 41),
+                        1L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 31),
+                        1000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 21),
+                        60000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 11),
+                        3600000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5),
+                        TimestampUtils.newTimestamp(2020, 10, 6),
+                        86400000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 1),
+                        TimestampUtils.newTimestamp(2020, 11, 1),
+                        2678400000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 1, 1),
+                        TimestampUtils.newTimestamp(2021, 1, 1),
+                        31622400000000000L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2019, 10, 5, 10, 20, 30, 40),
+                        TimestampUtils.newTimestamp(2020, 11, 6, 11, 21, 31, 41),
+                        34390861000000001L
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 40),
+                        TimestampUtils.newTimestamp(2021, 11, 6, 11, 21, 31, 41),
+                        34304461000000001L
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forToDuration")
+    void toDuration(final Timestamp from, final Timestamp to, final long expectedNanosOfDuration) {
+        final Duration duration = TimestampUtils.toDuration(from, to);
+        final Duration reverseDuration = TimestampUtils.toDuration(to, from);
+
+        Assertions.assertEquals(expectedNanosOfDuration, duration.toNanos());
+        Assertions.assertEquals(-expectedNanosOfDuration, reverseDuration.toNanos());
+    }
+
+    // endregion
+
+    @Test
+    void toOffsetDateTimeString() {
+        final Timestamp timestamp = TimestampUtils.newTimestamp(2020, 10, 5, 10, 20, 30, 40);
+        final String string = TimestampUtils.toOffsetDateTimeString(timestamp);
+
+        Assertions.assertEquals("2020-10-05T10:20:30.00000004+03:00", string);
+    }
+
+    // region compare tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forCompare() {
+        return Stream.of(
+                Arguments.of(
+                        TimestampUtils.newTimestamp(0, 0),
+                        TimestampUtils.newTimestamp(0, 0),
+                        0
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30, 1234567),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30, 1234567),
+                        0
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30, 1234567),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30, 1234566),
+                        1
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 29),
+                        1
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 30),
+                        TimestampUtils.newTimestamp(2020, 10, 5, 1, 10, 29, 999_999_999),
+                        1
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCompare")
+    void compare(final Timestamp left, final Timestamp right, final int expectedResult) {
+        final int actualResult = TimestampUtils.compare(left, right);
+        final int reversedResult = TimestampUtils.compare(right, left);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+        Assertions.assertEquals(-expectedResult, reversedResult);
     }
 
     // endregion
@@ -248,10 +463,10 @@ class TimestampUtilsUnitTest {
 
     // endregion
 
-    // region assertNotFuture tests
+    // region assertNotFuture with now tests
 
     @Test
-    void assertNotFuture_throwsException_whenTimestampIsInFuture() {
+    void assertNotFuture_withNow_throwsException_whenTimestampIsInFuture() {
         final Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1, 10, 0, 1);
         final Timestamp now = TimestampUtils.newTimestamp(2021, 1, 1, 10);
 
@@ -261,7 +476,7 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
-    void assertNotFuture_notThrowsException_whenTimestampIsInPast() {
+    void assertNotFuture_withNow_notThrowsException_whenTimestampIsInPast() {
         final Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1, 10);
         final Timestamp now = TimestampUtils.newTimestamp(2021, 1, 1, 10, 0, 1);
 
@@ -269,11 +484,32 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
-    void assertNotFuture_notThrowsException_whenTimestampIsEqualToNow() {
+    void assertNotFuture_withNow_notThrowsException_whenTimestampIsEqualToNow() {
         final Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1, 10);
         final Timestamp now = TimestampUtils.newTimestamp(2021, 1, 1, 10);
 
         TimestampUtils.assertNotFuture(timestamp, now, "name");
+    }
+
+    // endregion
+
+    // region assertNotFuture without now tests
+
+    @Test
+    void assertNotFuture_withoutNow_throwsException_whenTimestampIsInFuture() {
+        final Timestamp timestamp = TimestampUtils.plusHours(TimestampUtils.now(), 2);
+
+        final Executable executable = () -> TimestampUtils.assertNotFuture(timestamp, "name");
+        final String expectedMessagePattern = String.format("^'name' \\(%1$s\\) can't be in future. Now is %1$s$", DATE_TIME_REGEX_PATTERN);
+
+        AssertUtils.assertThrowsWithMessagePattern(IllegalArgumentException.class, executable, expectedMessagePattern);
+    }
+
+    @Test
+    void assertNotFuture_withoutNow_notThrowsException_whenTimestampIsInPast() {
+        final Timestamp timestamp = TimestampUtils.newTimestamp(2021, 1, 1, 10);
+
+        TimestampUtils.assertNotFuture(timestamp, "name");
     }
 
     // endregion
@@ -304,7 +540,10 @@ class TimestampUtilsUnitTest {
         final CronExpression cronExpression = new CronExpression(expression);
 
         final Executable executable = () -> TimestampUtils.getCronHitsBetweenDates(cronExpression, from, to);
-        final String expectedMessage = String.format("from [%s] must be before to [%s]", from, to);
+        final String expectedMessage = String.format(
+                "from [%s] must be before to [%s]",
+                TimestampUtils.toOffsetDateTimeString(from), TimestampUtils.toOffsetDateTimeString(to)
+        );
         AssertUtils.assertThrowsWithMessage(IllegalArgumentException.class, executable, expectedMessage);
     }
 
@@ -910,37 +1149,37 @@ class TimestampUtilsUnitTest {
         return Stream.of(
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 1, 24, 1, 2, 3, 4),
-                        0L,
+                        0,
                         TimestampUtils.newTimestamp(2020, 1, 24, 1, 2, 3, 4)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 2, 28, 5, 6, 7, 8),
-                        1L,
+                        1,
                         TimestampUtils.newTimestamp(2020, 2, 29, 5, 6, 7, 8)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 2, 28, 9, 10, 11, 12),
-                        2L,
+                        2,
                         TimestampUtils.newTimestamp(2020, 3, 1, 9, 10, 11, 12)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 1, 24, 13, 14, 15, 16),
-                        400L,
+                        400,
                         TimestampUtils.newTimestamp(2021, 2, 27, 13, 14, 15, 16)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 2, 29, 17, 18, 19, 20),
-                        -1L,
+                        -1,
                         TimestampUtils.newTimestamp(2020, 2, 28, 17, 18, 19, 20)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 3, 1, 21, 22, 23, 24),
-                        -2L,
+                        -2,
                         TimestampUtils.newTimestamp(2020, 2, 28, 21, 22, 23, 24)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 3, 24, 2, 25, 26, 27),
-                        -400L,
+                        -400,
                         TimestampUtils.newTimestamp(2019, 2, 18, 2, 25, 26, 27)
                 )
         );
@@ -948,8 +1187,61 @@ class TimestampUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forPlusDays")
-    void plusDays(final Timestamp timestamp, final long amountToAdd, final Timestamp expectedResult) {
+    void plusDays(final Timestamp timestamp, final int amountToAdd, final Timestamp expectedResult) {
         final Timestamp actualResult = TimestampUtils.plusDays(timestamp, amountToAdd);
+
+        Assertions.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
+
+    // region plusWeeks tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forPlusWeeks() {
+        return Stream.of(
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 1, 24, 1, 2, 3, 4),
+                        0,
+                        TimestampUtils.newTimestamp(2020, 1, 24, 1, 2, 3, 4)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 2, 28, 5, 6, 7, 8),
+                        1,
+                        TimestampUtils.newTimestamp(2020, 3, 6, 5, 6, 7, 8)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 2, 28, 9, 10, 11, 12),
+                        2,
+                        TimestampUtils.newTimestamp(2020, 3, 13, 9, 10, 11, 12)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 1, 24, 13, 14, 15, 16),
+                        400,
+                        TimestampUtils.newTimestamp(2027, 9, 24, 13, 14, 15, 16)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 2, 29, 17, 18, 19, 20),
+                        -1,
+                        TimestampUtils.newTimestamp(2020, 2, 22, 17, 18, 19, 20)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 3, 1, 21, 22, 23, 24),
+                        -2,
+                        TimestampUtils.newTimestamp(2020, 2, 16, 21, 22, 23, 24)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 3, 24, 2, 25, 26, 27),
+                        -400,
+                        TimestampUtils.newTimestamp(2012, 7, 24, 2, 25, 26, 27)
+                )
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forPlusWeeks")
+    void plusWeeks(final Timestamp timestamp, final int amountToAdd, final Timestamp expectedResult) {
+        final Timestamp actualResult = TimestampUtils.plusWeeks(timestamp, amountToAdd);
 
         Assertions.assertEquals(expectedResult, actualResult);
     }
@@ -1001,7 +1293,7 @@ class TimestampUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forPlusYears")
-    void plusYears(final Timestamp timestamp, final long amountToAdd, final Timestamp expectedResult) {
+    void plusYears(final Timestamp timestamp, final int amountToAdd, final Timestamp expectedResult) {
         final Timestamp actualResult = TimestampUtils.plusYears(timestamp, amountToAdd);
 
         Assertions.assertEquals(expectedResult, actualResult);
@@ -1015,14 +1307,29 @@ class TimestampUtilsUnitTest {
     static Stream<Arguments> getData_forSetTime() {
         return Stream.of(
                 Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 1, 1),
+                        OffsetTime.of(7, 0, 0, 0, DateUtils.DEFAULT_OFFSET),
+                        TimestampUtils.newTimestamp(2020, 1, 1, 7)
+                ),
+                Arguments.of(
                         TimestampUtils.newTimestamp(2020, 1, 1, 10, 30, 45, 400),
                         OffsetTime.of(11, 12, 13, 14, ZoneOffset.UTC),
                         TimestampUtils.newTimestamp(2020, 1, 1, 14, 12, 13, 14)
                 ),
                 Arguments.of(
                         TimestampUtils.newTimestamp(2020, 1, 1, 10, 30, 45, 400),
-                        OffsetTime.of(11, 12, 13, 14, ZoneOffset.ofHours(3)),
-                        TimestampUtils.newTimestamp(2020, 1, 1, 17, 12, 13, 14)
+                        OffsetTime.of(11, 12, 13, 14, ZoneOffset.ofHours(-4)),
+                        TimestampUtils.newTimestamp(2020, 1, 1, 18, 12, 13, 14)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2023, 7, 21, 7),
+                        OffsetTime.of(19, 0, 0, 0, DateUtils.DEFAULT_OFFSET),
+                        TimestampUtils.newTimestamp(2023, 7, 21, 19)
+                ),
+                Arguments.of(
+                        TimestampUtils.newTimestamp(2020, 1, 1, 23, 59, 59, 999999999),
+                        OffsetTime.of(7, 0, 0, 0, DateUtils.DEFAULT_OFFSET),
+                        TimestampUtils.newTimestamp(2020, 1, 1, 7)
                 )
         );
     }

@@ -1,5 +1,6 @@
 package ru.obukhov.trader.common.service.impl;
 
+import com.google.protobuf.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,6 +21,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
@@ -381,7 +383,7 @@ class ExcelServiceImplUnitTest {
         for (final BackTestOperation operation : result.operations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
-                    operation.dateTime(),
+                    operation.timestamp(),
                     operation.operationType().name(),
                     operation.price(),
                     operation.quantity()
@@ -400,8 +402,8 @@ class ExcelServiceImplUnitTest {
     void saveCandles_createsAndSaveWorkbook() throws IOException {
         final String figi = TestShare1.FIGI;
 
-        final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 1, 1);
-        final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 2, 1);
+        final Timestamp from = TimestampUtils.newTimestamp(2021, 1, 1);
+        final Timestamp to = TimestampUtils.newTimestamp(2021, 2, 1);
         final Interval interval = Interval.of(from, to);
 
         final GetCandlesResponse response = createGetCandlesResponse();
@@ -534,28 +536,28 @@ class ExcelServiceImplUnitTest {
     private List<BackTestOperation> createBackTestOperations(String figi) {
         BackTestOperation operation1 = new BackTestOperation(
                 figi,
-                DateTimeTestData.createDateTime(2020, 10, 1, 10),
+                TimestampUtils.newTimestamp(2020, 10, 1, 10),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(150),
                 1L
         );
         BackTestOperation operation2 = new BackTestOperation(
                 figi,
-                DateTimeTestData.createDateTime(2020, 10, 5, 10, 11),
+                TimestampUtils.newTimestamp(2020, 10, 5, 10, 11),
                 OperationType.OPERATION_TYPE_SELL,
                 BigDecimal.valueOf(180),
                 1L
         );
         BackTestOperation operation3 = new BackTestOperation(
                 figi,
-                DateTimeTestData.createDateTime(2020, 10, 10, 10, 50),
+                TimestampUtils.newTimestamp(2020, 10, 10, 10, 50),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(160),
                 3L
         );
         BackTestOperation operation4 = new BackTestOperation(
                 figi,
-                DateTimeTestData.createDateTime(2020, 11, 1, 10),
+                TimestampUtils.newTimestamp(2020, 11, 1, 10),
                 OperationType.OPERATION_TYPE_BUY,
                 BigDecimal.valueOf(120),
                 2L
@@ -567,23 +569,23 @@ class ExcelServiceImplUnitTest {
     private List<Candle> createCandles() {
         final Candle candle1 = new CandleBuilder()
                 .setOpenPrice(150)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 10))
+                .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 10))
                 .build();
         final Candle candle2 = new CandleBuilder()
                 .setOpenPrice(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 1, 11))
+                .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 11))
                 .build();
         final Candle candle3 = new CandleBuilder()
                 .setOpenPrice(180)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 5, 10, 11))
+                .setTime(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
                 .build();
         final Candle candle4 = new CandleBuilder()
                 .setOpenPrice(160)
-                .setTime(DateTimeTestData.createDateTime(2020, 10, 10, 10, 50))
+                .setTime(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
                 .build();
         final Candle candle5 = new CandleBuilder()
                 .setOpenPrice(120)
-                .setTime(DateTimeTestData.createDateTime(2020, 11, 1, 10))
+                .setTime(TimestampUtils.newTimestamp(2020, 11, 1, 10))
                 .build();
 
         return List.of(candle1, candle2, candle3, candle4, candle5);

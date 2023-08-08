@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.MovingAverageType;
 import ru.obukhov.trader.market.model.transform.CandleMapper;
@@ -154,14 +155,14 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
                 .setOpenPrice(12000)
                 .setClosePrice(8000)
                 .setHighestPrice(15000)
                 .setLowestPrice(6000)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10))
+                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10))
                 .setIsComplete(true)
                 .build();
 
@@ -170,7 +171,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClosePrice(800)
                 .setHighestPrice(1500)
                 .setLowestPrice(600)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 1))
+                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 1))
                 .setIsComplete(true)
                 .build();
 
@@ -179,7 +180,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
                 .setClosePrice(80)
                 .setHighestPrice(150)
                 .setLowestPrice(60)
-                .setTime(DateTimeTestData.createDateTime(2021, 3, 25, 10, 2))
+                .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 2))
                 .setIsComplete(true)
                 .build();
 
@@ -218,7 +219,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -250,7 +251,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -285,7 +286,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         final OffsetDateTime from = DateTimeTestData.createDateTime(2021, 3, 25, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2021, 3, 25, 19);
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final GetCandlesRequest request = new GetCandlesRequest();
         request.setFigi(figi);
@@ -314,7 +315,7 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
     void getCandles_doesNotCallSaveToFile_whenSaveToFileIsMissing() throws Exception {
         final String figi = TestShare1.FIGI;
 
-        Mocker.mockShare(instrumentsService, TestShare1.TINKOFF_SHARE);
+        Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final String requestString = String.format("""
                 {

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
@@ -28,13 +29,13 @@ public class FakeExtOperationsService implements ExtOperationsService {
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
         Stream<BackTestOperation> operationsStream = fakeContext.getOperations(accountId).stream()
-                .filter(operation -> interval.contains(operation.dateTime()));
+                .filter(operation -> interval.contains(operation.timestamp()));
         if (figi != null) {
             operationsStream = operationsStream.filter(operation -> figi.equals(operation.figi()));
         }
 
         return operationsStream
-                .sorted(Comparator.comparing(operation -> operation.dateTime().toInstant()))
+                .sorted(Comparator.comparing(operation -> TimestampUtils.toInstant(operation.timestamp())))
                 .map(OPERATION_MAPPER::map)
                 .toList();
     }

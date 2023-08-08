@@ -1,5 +1,6 @@
 package ru.obukhov.trader.market.impl;
 
+import com.google.protobuf.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +9,10 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
 import ru.obukhov.trader.market.model.PortfolioPosition;
-import ru.obukhov.trader.market.model.TradingDay;
 import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.contract.v1.TradingDay;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,36 +30,36 @@ public class FakeContext implements Context {
 
     @Getter
     @Setter
-    private OffsetDateTime currentDateTime;
+    private Timestamp currentTimestamp;
 
     private final List<FakePortfolio> portfolios;
 
     public FakeContext(
-            final OffsetDateTime currentDateTime,
+            final Timestamp currentTimestamp,
             final String accountId,
             final String currency,
             final BigDecimal initialBalance
     ) {
-        this.currentDateTime = currentDateTime;
+        this.currentTimestamp = currentTimestamp;
         this.portfolios = new ArrayList<>();
 
         addInvestment(accountId, currency, initialBalance);
     }
 
     /**
-     * Changes {@code currentDateTime} to:<br/>
+     * Changes {@code currentTimestamp} to:<br/>
      * - {@code nextMinute} if it is inside any tradingDays<br/>
      * - the first minute of first tradingDays after {@code nextMinute} if it is not inside any of tradingDays<br/>
      * - null if all tradingDays are before {@code nextMinute}
      *
      * @param tradingSchedule list of trading days, items must not have intersections, must be sorted is ascending order
-     * @return {@code currentDateTime}
-     * @Terms: nextMinute – {@code currentDateTime} + 1 minute<br/>
+     * @return {@code currentTimestamp}
+     * @Terms: nextMinute – {@code currentTimestamp} + 1 minute<br/>
      * tradingDay – item of {@code tradingSchedule} with {@code isTradingDay=true}<br/>
      */
-    public OffsetDateTime nextScheduleMinute(final List<TradingDay> tradingSchedule) {
-        currentDateTime = TradingDayUtils.nextScheduleMinute(tradingSchedule, currentDateTime);
-        return currentDateTime;
+    public Timestamp nextScheduleMinute(final List<TradingDay> tradingSchedule) {
+        currentTimestamp = TradingDayUtils.nextScheduleMinute(tradingSchedule, currentTimestamp);
+        return currentTimestamp;
     }
 
     // region balance
@@ -92,28 +92,28 @@ public class FakeContext implements Context {
     // region investments
 
     /**
-     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current dateTime
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with current timestamp
      */
     public void addInvestment(final String accountId, final String currency, final BigDecimal amount) {
-        computeIfAbsentBalance(accountId, currency).addInvestment(currentDateTime, amount);
+        computeIfAbsentBalance(accountId, currency).addInvestment(currentTimestamp, amount);
     }
 
     /**
-     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code dateTime}
+     * Adds given {@code amount} to balance of given {@code currency} and record to history of investments with given {@code timestamp}
      */
     public void addInvestment(
             final String accountId,
-            final OffsetDateTime dateTime,
+            final Timestamp timestamp,
             final String currency,
             final BigDecimal amount
     ) {
-        computeIfAbsentBalance(accountId, currency).addInvestment(dateTime, amount);
+        computeIfAbsentBalance(accountId, currency).addInvestment(timestamp, amount);
     }
 
     /**
-     * @return all investments of given {@code currency} and at given {@code accountId} by dateTime in ascending order
+     * @return all investments of given {@code currency} and at given {@code accountId} by timestamp in ascending order
      */
-    public SortedMap<OffsetDateTime, BigDecimal> getInvestments(final String accountId, final String currency) {
+    public SortedMap<Timestamp, BigDecimal> getInvestments(final String accountId, final String currency) {
         return computeIfAbsentBalance(accountId, currency).getInvestments();
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.protobuf.Timestamp;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,10 @@ import ru.obukhov.trader.market.model.transform.BondSerializer;
 import ru.obukhov.trader.market.model.transform.EtfSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.QuotationSerializer;
+import ru.obukhov.trader.market.model.transform.ShareSerializer;
 import ru.obukhov.trader.market.model.transform.TimestampSerializer;
+import ru.obukhov.trader.market.model.transform.TradingDaySerializer;
+import ru.obukhov.trader.market.model.transform.TradingScheduleSerializer;
 import ru.obukhov.trader.trading.bots.RunnableBot;
 import ru.obukhov.trader.trading.strategy.impl.TradingStrategyFactory;
 import ru.tinkoff.piapi.core.InstrumentsService;
@@ -47,7 +51,6 @@ import ru.tinkoff.piapi.core.UsersService;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -101,12 +104,12 @@ public class BeanConfiguration {
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public Context fakeContext(
-            final OffsetDateTime currentDateTime,
+            final Timestamp currentTimestamp,
             final String accountId,
             final String currency,
             final BigDecimal initialBalance
     ) {
-        return new FakeContext(currentDateTime, accountId, currency, initialBalance);
+        return new FakeContext(currentTimestamp, accountId, currency, initialBalance);
     }
 
     @Bean
@@ -197,8 +200,11 @@ public class BeanConfiguration {
     @Primary
     public ObjectMapper objectMapper() {
         final SimpleModule tinkoffModule = new SimpleModule()
+                .addSerializer(new ShareSerializer())
                 .addSerializer(new BondSerializer())
                 .addSerializer(new EtfSerializer())
+                .addSerializer(new TradingScheduleSerializer())
+                .addSerializer(new TradingDaySerializer())
                 .addSerializer(new QuotationSerializer())
                 .addSerializer(new TimestampSerializer())
                 .addSerializer(new MoneyValueSerializer());

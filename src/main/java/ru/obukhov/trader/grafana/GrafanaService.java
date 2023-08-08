@@ -1,10 +1,10 @@
 package ru.obukhov.trader.grafana;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.MapUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.grafana.model.Column;
 import ru.obukhov.trader.grafana.model.ColumnType;
 import ru.obukhov.trader.grafana.model.GetDataRequest;
@@ -107,10 +107,11 @@ public class GrafanaService {
         queryResult.setColumns(CANDLES_COLUMNS);
 
         final List<List<Object>> rows = new ArrayList<>();
-        final Interval innerInterval = Interval.of(interval.getFrom(), ObjectUtils.defaultIfNull(interval.getTo(), OffsetDateTime.now()));
+        final Interval innerInterval = Interval.of(interval.getFrom(), TimestampUtils.nowIfNull(interval.getTo()));
         final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
         for (Candle candle : candles) {
-            rows.add(List.of(candle.getTime(), candle.getOpenPrice()));
+            final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
+            rows.add(List.of(dateTime, candle.getOpenPrice()));
         }
         queryResult.setRows(rows);
 
@@ -140,9 +141,10 @@ public class GrafanaService {
         final List<List<Object>> valuesAndAveragesRows = new ArrayList<>();
         for (int i = 0; i < candlesResponse.getCandles().size(); i++) {
             final Candle candle = candlesResponse.getCandles().get(i);
+            final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
             final BigDecimal average1 = candlesResponse.getAverages1().get(i);
             final BigDecimal average2 = candlesResponse.getAverages2().get(i);
-            valuesAndAveragesRows.add(List.of(candle.getTime(), candle.getOpenPrice(), average1, average2));
+            valuesAndAveragesRows.add(List.of(dateTime, candle.getOpenPrice(), average1, average2));
         }
         valuesAndAveragesResult.setRows(valuesAndAveragesRows);
 

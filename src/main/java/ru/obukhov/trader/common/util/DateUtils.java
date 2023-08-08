@@ -37,8 +37,8 @@ public class DateUtils {
      * @return Interval with given {@code from} and {@code to}, but with offset {@link DateUtils#DEFAULT_OFFSET}
      */
     public static Interval getIntervalWithDefaultOffsets(@Nullable final OffsetDateTime from, @Nullable final OffsetDateTime to) {
-        final OffsetDateTime innerFrom = from == null ? null : DateUtils.setDefaultOffsetSameInstant(from);
-        final OffsetDateTime innerTo = to == null ? null : DateUtils.setDefaultOffsetSameInstant(to);
+        final Timestamp innerFrom = from == null ? null : TimestampUtils.newTimestamp(DateUtils.setDefaultOffsetSameInstant(from));
+        final Timestamp innerTo = to == null ? null : TimestampUtils.newTimestamp(DateUtils.setDefaultOffsetSameInstant(to));
 
         return Interval.of(innerFrom, innerTo);
     }

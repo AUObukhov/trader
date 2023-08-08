@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.UserAccount;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -34,9 +35,9 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         final AccountType accountType1 = AccountType.ACCOUNT_TYPE_TINKOFF_IIS;
         final String name1 = "ИИС";
         final AccountStatus accountStatus1 = AccountStatus.ACCOUNT_STATUS_OPEN;
-        final Timestamp openedDate1 = DateTimeTestData.createTimestamp(1562889600);
+        final Timestamp openedTimestamp1 = TimestampUtils.newTimestamp(1562889600);
         final OffsetDateTime openedDateTime1 = DateTimeTestData.createDateTime(2019, 7, 12, 3, ZoneOffset.ofHours(3));
-        final Timestamp closedDate1 = DateTimeTestData.createTimestamp(-10800);
+        final Timestamp closedTimestamp1 = TimestampUtils.newTimestamp(-10800);
         final OffsetDateTime closedDateTime1 = DateTimeTestData.createDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
         final AccessLevel accessLevel1 = AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS;
 
@@ -45,8 +46,8 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
                 .setType(accountType1)
                 .setName(name1)
                 .setStatus(accountStatus1)
-                .setOpenedDate(openedDate1)
-                .setClosedDate(closedDate1)
+                .setOpenedDate(openedTimestamp1)
+                .setClosedDate(closedTimestamp1)
                 .setAccessLevel(accessLevel1)
                 .build();
 
@@ -54,9 +55,9 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
         final AccountType accountType2 = AccountType.ACCOUNT_TYPE_TINKOFF;
         final String name2 = "Брокерский счёт";
         final AccountStatus accountStatus2 = AccountStatus.ACCOUNT_STATUS_OPEN;
-        final Timestamp openedDate2 = DateTimeTestData.createTimestamp(1527206400);
+        final Timestamp openedTimestamp2 = TimestampUtils.newTimestamp(1527206400);
         final OffsetDateTime openedDateTime2 = DateTimeTestData.createDateTime(2018, 5, 25, 3, ZoneOffset.ofHours(3));
-        final Timestamp closedDate2 = DateTimeTestData.createTimestamp(-10800);
+        final Timestamp closedTimestamp2 = TimestampUtils.newTimestamp(-10800);
         final OffsetDateTime closedDateTime2 = DateTimeTestData.createDateTime(1970, 1, 1, ZoneOffset.ofHours(3));
         final AccessLevel accessLevel2 = AccessLevel.ACCOUNT_ACCESS_LEVEL_FULL_ACCESS;
 
@@ -65,8 +66,8 @@ class UserControllerIntegrationTest extends ControllerIntegrationTest {
                 .setType(accountType2)
                 .setName(name2)
                 .setStatus(accountStatus2)
-                .setOpenedDate(openedDate2)
-                .setClosedDate(closedDate2)
+                .setOpenedDate(openedTimestamp2)
+                .setClosedDate(closedTimestamp2)
                 .setAccessLevel(accessLevel2)
                 .build();
 

@@ -1,8 +1,10 @@
 package ru.obukhov.trader.trading.bots;
 
+import com.google.protobuf.Timestamp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.obukhov.trader.common.model.Interval;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.ExtMarketDataService;
 import ru.obukhov.trader.market.impl.ServicesContainer;
 import ru.obukhov.trader.market.interfaces.Context;
@@ -11,7 +13,6 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.Share;
 import ru.obukhov.trader.trading.model.Decision;
 import ru.obukhov.trader.trading.model.DecisionAction;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -22,8 +23,8 @@ import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
+import ru.tinkoff.piapi.contract.v1.Share;
 
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,11 +66,11 @@ public abstract class Bot {
      * Perform one trading step
      *
      * @param botConfig         bot configuration
-     * @param previousStartTime dateTime of previous call of the method. Null for the first call.
+     * @param previousStartTime timestamp of previous call of the method. Null for the first call.
      *                          Used to prevent repeated processing when no new candle
      * @return list of last candles
      */
-    public List<Candle> processBotConfig(final BotConfig botConfig, final OffsetDateTime previousStartTime) {
+    public List<Candle> processBotConfig(final BotConfig botConfig, final Timestamp previousStartTime) {
         final DecisionData decisionData = new DecisionData();
 
         final String figi = botConfig.figi();
@@ -79,7 +80,7 @@ public abstract class Bot {
                     figi,
                     LAST_CANDLES_COUNT,
                     botConfig.candleInterval(),
-                    context.getCurrentDateTime()
+                    context.getCurrentTimestamp()
             );
             decisionData.setCurrentCandles(currentCandles);
 
@@ -102,7 +103,7 @@ public abstract class Bot {
     private void fillDecisionData(final BotConfig botConfig, final DecisionData decisionData, final String figi) {
         final Share share = extInstrumentsService.getShare(figi);
 
-        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.currency()));
+        decisionData.setBalance(extOperationsService.getAvailableBalance(botConfig.accountId(), share.getCurrency()));
         decisionData.setPosition(extOperationsService.getSecurity(botConfig.accountId(), figi));
         decisionData.setLastOperations(getLastWeekOperations(botConfig.accountId(), figi));
         decisionData.setShare(share);
@@ -110,8 +111,8 @@ public abstract class Bot {
     }
 
     private List<Operation> getLastWeekOperations(final String accountId, final String figi) {
-        final OffsetDateTime now = context.getCurrentDateTime();
-        final Interval interval = Interval.of(now.minusWeeks(1), now);
+        final Timestamp now = context.getCurrentTimestamp();
+        final Interval interval = Interval.of(TimestampUtils.plusWeeks(now, -1), now);
         return extOperationsService.getOperations(accountId, interval, figi);
     }
 
