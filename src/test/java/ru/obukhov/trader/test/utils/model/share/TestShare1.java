@@ -4,7 +4,6 @@ import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Sector;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
@@ -32,7 +31,7 @@ public class TestShare1 {
     public static final long ISSUE_SIZE = 16530166000L;
     public static final String COUNTRY_OF_RISK = "US";
     public static final String COUNTRY_OF_RISK_NAME = "Соединенные Штаты Америки";
-    public static final Sector SECTOR = Sector.IT;
+    public static final String SECTOR = "it";
     public static final long ISSUE_SIZE_PLAN = 50400000000L;
     public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(0L).setNano(10000).build();
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
@@ -73,7 +72,7 @@ public class TestShare1 {
             .setIssueSize(ISSUE_SIZE)
             .setCountryOfRisk(COUNTRY_OF_RISK)
             .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
-            .setSector(SECTOR.name().toLowerCase())
+            .setSector(SECTOR)
             .setIssueSizePlan(ISSUE_SIZE_PLAN)
             .setNominal(NOMINAL)
             .setTradingStatus(TRADING_STATUS)
