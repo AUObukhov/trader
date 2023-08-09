@@ -18,10 +18,8 @@ import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -35,6 +33,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -198,10 +197,11 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
-        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
+        final Position portfolioPosition = Position.builder()
+                .figi(figi)
+                .quantityLots(DecimalUtils.setDefaultScale(0))
                 .build();
+
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(portfolioPosition);
 
@@ -254,12 +254,12 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
-        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
+        final Position position = Position.builder()
+                .figi(figi)
+                .quantityLots(DecimalUtils.setDefaultScale(0))
                 .build();
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
-                .thenReturn(portfolioPosition);
+                .thenReturn(position);
 
         final List<Operation> operations = List.of(TestData.createOperation());
         Mockito.when(extOperationsService.getOperations(Mockito.eq(accountId), Mockito.any(Interval.class), Mockito.eq(figi)))

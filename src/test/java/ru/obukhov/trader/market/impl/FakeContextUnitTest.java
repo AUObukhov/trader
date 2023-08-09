@@ -11,15 +11,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -528,10 +527,10 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
-        PortfolioPosition position = new PortfolioPositionBuilder().build();
+        Position position = Position.builder().build();
 
         fakeContext.addPosition(accountId, figi, position);
-        PortfolioPosition readPosition = fakeContext.getPosition(accountId, figi);
+        Position readPosition = fakeContext.getPosition(accountId, figi);
 
         Assertions.assertSame(position, readPosition);
     }
@@ -548,13 +547,13 @@ class FakeContextUnitTest {
 
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
-        PortfolioPosition position1 = new PortfolioPositionBuilder().build();
-        PortfolioPosition position2 = new PortfolioPositionBuilder().build();
+        Position position1 = Position.builder().build();
+        Position position2 = Position.builder().build();
 
         fakeContext.addPosition(accountId, figi1, position1);
         fakeContext.addPosition(accountId, figi2, position2);
 
-        List<PortfolioPosition> positions = fakeContext.getPositions(accountId);
+        List<Position> positions = fakeContext.getPositions(accountId);
 
         Assertions.assertTrue(positions.contains(position1));
         Assertions.assertTrue(positions.contains(position2));
@@ -571,7 +570,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
-        PortfolioPosition position = new PortfolioPositionBuilder().build();
+        Position position = Position.builder().build();
 
         fakeContext.addPosition(accountId, figi, position);
         fakeContext.removePosition(accountId, figi);

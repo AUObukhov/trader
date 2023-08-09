@@ -15,10 +15,8 @@ import java.util.NoSuchElementException;
 
 class DataStructsHelperUnitTest {
 
-    // region createMoneyValue tests
-
     @Test
-    void createMoneyValue_withEnumCurrency() {
+    void createMoneyValue() {
         final String currency = Currencies.EUR;
         final long units = 123;
         final int nano = 456;
@@ -30,24 +28,6 @@ class DataStructsHelperUnitTest {
         Assertions.assertEquals(units, moneyValue.getUnits());
         Assertions.assertEquals(nano, moneyValue.getNano());
     }
-
-    @Test
-    void createMoneyValue_withStringCurrency() {
-        final String currency = Currencies.EUR;
-        final long units = 123;
-        final int nano = 456;
-        final BigDecimal value = DecimalUtils.createBigDecimal(units, nano);
-
-        final MoneyValue moneyValue = DataStructsHelper.createMoneyValue(currency, value);
-
-        Assertions.assertEquals(currency, moneyValue.getCurrency());
-        Assertions.assertEquals(units, moneyValue.getUnits());
-        Assertions.assertEquals(nano, moneyValue.getNano());
-    }
-
-    // endregion
-
-    // region createMoney tests
 
     @Test
     void createMoney() {
@@ -59,8 +39,6 @@ class DataStructsHelperUnitTest {
         Assertions.assertEquals(currency, money.getCurrency());
         AssertUtils.assertEquals(value, money.getValue());
     }
-
-    // endregion
 
     // region createWithdrawLimits tests
 

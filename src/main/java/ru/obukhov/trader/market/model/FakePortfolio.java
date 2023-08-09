@@ -4,6 +4,7 @@ import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class FakePortfolio {
     private final Map<String, FakeBalance> balances = new HashMap<>();
 
     @NotNull
-    private final Map<String, PortfolioPosition> figiesToPositions = new HashMap<>();
+    private final Map<String, Position> figiesToPositions = new HashMap<>();
 
     @NotNull
     private final Set<BackTestOperation> operations = new HashSet<>();

@@ -7,12 +7,12 @@ import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public class FakeExtOperationsService implements ExtOperationsService {
     }
 
     @Override
-    public List<PortfolioPosition> getPositions(final String accountId) {
+    public List<Position> getPositions(final String accountId) {
         return fakeContext.getPositions(accountId);
     }
 

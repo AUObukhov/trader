@@ -12,16 +12,15 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.math.BigDecimal;
@@ -43,12 +42,12 @@ class ExtOperationsServiceUnitTest {
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
 
-        final PortfolioPosition portfolioPosition1 = new PortfolioPositionBuilder().setFigi(figi1).setQuantityLots(1).build();
-        final PortfolioPosition portfolioPosition2 = new PortfolioPositionBuilder().setFigi(figi2).setQuantityLots(2).build();
-        final PortfolioPosition portfolioPosition3 = new PortfolioPositionBuilder().setFigi(figi1).setQuantityLots(3).build();
-        final PortfolioPosition portfolioPosition4 = new PortfolioPositionBuilder().setFigi(figi2).setQuantityLots(4).build();
+        final Position portfolioPosition1 = Position.builder().figi(figi1).quantityLots(BigDecimal.valueOf(1)).build();
+        final Position portfolioPosition2 = Position.builder().figi(figi2).quantityLots(BigDecimal.valueOf(2)).build();
+        final Position portfolioPosition3 = Position.builder().figi(figi1).quantityLots(BigDecimal.valueOf(3)).build();
+        final Position portfolioPosition4 = Position.builder().figi(figi2).quantityLots(BigDecimal.valueOf(4)).build();
 
-        final Map<String, List<PortfolioPosition>> accountsToPositions = Map.of(
+        final Map<String, List<Position>> accountsToPositions = Map.of(
                 accountId1, List.of(portfolioPosition1, portfolioPosition2),
                 accountId2, List.of(portfolioPosition3, portfolioPosition4)
         );
@@ -251,8 +250,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = TestData.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
-        final Money money2 = TestData.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);
@@ -285,8 +284,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = TestData.createMoney(currency1, value1);
-        final Money money2 = TestData.createMoney(currency2, value2);
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);
@@ -296,7 +295,7 @@ class ExtOperationsServiceUnitTest {
 
     @AllArgsConstructor
     private static class TestExtOperationsService implements ExtOperationsService {
-        private final Map<String, List<PortfolioPosition>> portfolioPositions;
+        private final Map<String, List<Position>> portfolioPositions;
         private final Map<String, WithdrawLimits> withdrawLimits;
 
         @Override
@@ -305,7 +304,7 @@ class ExtOperationsServiceUnitTest {
         }
 
         @Override
-        public List<PortfolioPosition> getPositions(final String accountId) {
+        public List<Position> getPositions(final String accountId) {
             return portfolioPositions.get(accountId);
         }
 

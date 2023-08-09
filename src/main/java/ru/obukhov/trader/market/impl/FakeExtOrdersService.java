@@ -7,9 +7,9 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -18,6 +18,8 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -118,21 +120,21 @@ public class FakeExtOrdersService implements ExtOrdersService {
 
         updateBalance(accountId, share.getCurrency(), totalPrice.negate().subtract(commissionAmount));
 
-        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, figi);
-        PortfolioPosition position;
+        final Position existingPosition = fakeContext.getPosition(accountId, figi);
+        Position position;
         if (existingPosition == null) {
-            final Money price = Money.of(share.getCurrency(), currentPrice);
-            position = new PortfolioPosition(
-                    figi,
-                    InstrumentType.INSTRUMENT_TYPE_SHARE,
-                    BigDecimal.valueOf(quantity),
-                    price,
-                    DecimalUtils.setDefaultScale(0),
-                    price,
-                    BigDecimal.valueOf(quantityLots)
-            );
+            final Money price = DataStructsHelper.createMoney(share.getCurrency(), currentPrice);
+            position = Position.builder()
+                    .figi(figi)
+                    .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                    .averagePositionPrice(price)
+                    .expectedYield(DecimalUtils.setDefaultScale(0))
+                    .currentPrice(price)
+                    .quantity(DecimalUtils.setDefaultScale(quantity))
+                    .quantityLots(DecimalUtils.setDefaultScale(quantityLots))
+                    .build();
         } else {
-            position = existingPosition.addQuantities(quantity, quantityLots, totalPrice, currentPrice);
+            position = PositionUtils.addQuantities(existingPosition, quantity, quantityLots, totalPrice, currentPrice);
         }
 
         fakeContext.addPosition(accountId, figi, position);
@@ -153,11 +155,11 @@ public class FakeExtOrdersService implements ExtOrdersService {
             final BigDecimal totalPrice,
             final BigDecimal commissionAmount
     ) {
-        final PortfolioPosition existingPosition = fakeContext.getPosition(accountId, figi);
-        final BigDecimal newQuantity = DecimalUtils.subtract(existingPosition.quantity(), quantity).setScale(0, RoundingMode.UNNECESSARY);
+        final Position existingPosition = fakeContext.getPosition(accountId, figi);
+        final BigDecimal newQuantity = DecimalUtils.subtract(existingPosition.getQuantity(), quantity).setScale(0, RoundingMode.UNNECESSARY);
         final int compareToZero = newQuantity.compareTo(BigDecimal.ZERO);
         if (compareToZero < 0) {
-            final String message = "quantity " + quantity + " can't be greater than existing position's quantity " + existingPosition.quantity();
+            final String message = "quantity " + quantity + " can't be greater than existing position's quantity " + existingPosition.getQuantity();
             throw new IllegalArgumentException(message);
         }
 
@@ -168,9 +170,9 @@ public class FakeExtOrdersService implements ExtOrdersService {
             fakeContext.removePosition(accountId, figi);
         } else {
             final BigDecimal newQuantityLots = newQuantity.divide(BigDecimal.valueOf(share.getLot()), 0, RoundingMode.UNNECESSARY);
-            final BigDecimal newExpectedYield = currentPrice.subtract(existingPosition.averagePositionPrice().value())
+            final BigDecimal newExpectedYield = currentPrice.subtract(existingPosition.getAveragePositionPrice().getValue())
                     .multiply(newQuantity);
-            final PortfolioPosition newPosition = existingPosition.cloneWithNewValues(newQuantity, newExpectedYield, currentPrice, newQuantityLots);
+            final Position newPosition = PositionUtils.cloneWithNewValues(existingPosition, newQuantity, newExpectedYield, currentPrice, newQuantityLots);
             fakeContext.addPosition(accountId, figi, newPosition);
         }
     }

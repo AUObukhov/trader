@@ -16,7 +16,6 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -25,6 +24,7 @@ import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -126,10 +126,10 @@ class FakeBotUnitTest {
     @Test
     void getPortfolioPositions() {
         final String accountId = TestData.ACCOUNT_ID1;
-        final List<PortfolioPosition> expectedPositions = new ArrayList<>();
+        final List<Position> expectedPositions = new ArrayList<>();
         Mockito.when(extOperationsService.getPositions(accountId)).thenReturn(expectedPositions);
 
-        final List<PortfolioPosition> positions = fakeBot.getPortfolioPositions(accountId);
+        final List<Position> positions = fakeBot.getPortfolioPositions(accountId);
 
         AssertUtils.assertEquals(expectedPositions, positions);
     }

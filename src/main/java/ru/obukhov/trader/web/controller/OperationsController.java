@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class OperationsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<PortfolioPosition> getPositions(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
+    public List<Position> getPositions(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
         return extOperationsService.getPositions(accountId);
     }
 

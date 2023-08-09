@@ -8,11 +8,11 @@ import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.strategy.interfaces.TradingStrategy;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,7 +48,7 @@ public class FakeBot extends Bot {
         return extOperationsService.getOperations(accountId, interval, figi);
     }
 
-    public List<PortfolioPosition> getPortfolioPositions(final String accountId) {
+    public List<Position> getPortfolioPositions(final String accountId) {
         return extOperationsService.getPositions(accountId);
     }
 

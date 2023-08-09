@@ -17,7 +17,6 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
@@ -31,6 +30,7 @@ import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -248,17 +248,17 @@ public class BackTesterImpl implements BackTester {
     }
 
     private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) {
-        List<PortfolioPosition> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
-        List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
-        for (PortfolioPosition portfolioPosition : portfolioPositions) {
-            backTestPositions.add(createBackTestPosition(portfolioPosition, fakeBot));
+        final List<Position> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
+        final List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
+        for (final Position position : portfolioPositions) {
+            backTestPositions.add(createBackTestPosition(position, fakeBot));
         }
         return backTestPositions;
     }
 
-    private BackTestPosition createBackTestPosition(final PortfolioPosition portfolioPosition, final FakeBot fakeBot) {
-        final String figi = portfolioPosition.figi();
-        return new BackTestPosition(figi, fakeBot.getCurrentPrice(figi), portfolioPosition.quantity());
+    private BackTestPosition createBackTestPosition(final Position portfolioPosition, final FakeBot fakeBot) {
+        final String figi = portfolioPosition.getFigi();
+        return new BackTestPosition(figi, fakeBot.getCurrentPrice(figi), portfolioPosition.getQuantity());
     }
 
     private Balances getBalances(

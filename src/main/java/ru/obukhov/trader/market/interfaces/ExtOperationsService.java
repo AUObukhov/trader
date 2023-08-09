@@ -3,10 +3,10 @@ package ru.obukhov.trader.market.interfaces;
 import org.jetbrains.annotations.NotNull;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ public interface ExtOperationsService {
 
     List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @NotNull final String figi);
 
-    List<PortfolioPosition> getPositions(final String accountId);
+    List<Position> getPositions(final String accountId);
 
     WithdrawLimits getWithdrawLimits(String accountId);
 
@@ -30,10 +30,10 @@ public interface ExtOperationsService {
      * @return position with given {@code figi} at given {@code accountId} or null, if such position does not exist.
      * If {@code accountId} null, works with default broker account
      */
-    default PortfolioPosition getSecurity(final String accountId, final String figi) {
-        final List<PortfolioPosition> allPositions = getPositions(accountId);
+    default Position getSecurity(final String accountId, final String figi) {
+        final List<Position> allPositions = getPositions(accountId);
         return allPositions.stream()
-                .filter(position -> figi.equals(position.figi()))
+                .filter(position -> figi.equals(position.getFigi()))
                 .findFirst()
                 .orElse(null);
     }

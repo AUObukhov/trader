@@ -8,9 +8,9 @@ import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -133,15 +133,15 @@ public class FakeContext implements Context {
 
     // region positions
 
-    public void addPosition(final String accountId, final String figi, PortfolioPosition position) {
+    public void addPosition(final String accountId, final String figi, final Position position) {
         computeIfAbsentPortfolio(accountId).getFigiesToPositions().put(figi, position);
     }
 
-    public PortfolioPosition getPosition(final String accountId, final String figi) {
+    public Position getPosition(final String accountId, final String figi) {
         return computeIfAbsentPortfolio(accountId).getFigiesToPositions().get(figi);
     }
 
-    public List<PortfolioPosition> getPositions(final String accountId) {
+    public List<Position> getPositions(final String accountId) {
         return new ArrayList<>(computeIfAbsentPortfolio(accountId).getFigiesToPositions().values());
     }
 

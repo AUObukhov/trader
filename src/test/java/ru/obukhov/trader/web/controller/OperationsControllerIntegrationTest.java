@@ -7,18 +7,18 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.test.utils.model.share.TestShare3;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
+import ru.tinkoff.piapi.core.models.Position;
 import ru.tinkoff.piapi.core.models.WithdrawLimits;
 
 import java.math.BigDecimal;
@@ -48,61 +48,61 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
         final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
         final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
+        final int quantity1 = 10;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
         final int quantityLots1 = 1;
-        final int lotSize1 = 10;
         final String currency1 = TestShare1.CURRENCY;
 
         final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
         final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
+        final int quantity2 = 20;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
         final int quantityLots2 = 2;
-        final int lotSize2 = 10;
         final String currency2 = TestShare2.CURRENCY;
 
         final String ticker3 = TestShare3.TICKER;
         final String figi3 = TestShare3.FIGI;
         final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
+        final int quantity3 = 5;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;
         final int quantityLots3 = 5;
-        final int lotSize3 = 1;
         final String currency3 = TestShare3.CURRENCY;
 
         Mocker.mockTickerByFigi(instrumentsService, ticker1, figi1);
         Mocker.mockTickerByFigi(instrumentsService, ticker2, figi2);
         Mocker.mockTickerByFigi(instrumentsService, ticker3, figi3);
 
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition1 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition tinkoffPosition1 = TestData.createPortfolioPosition(
                 figi1,
                 instrumentType1,
-                quantityLots1 * lotSize1,
+                quantity1,
                 averagePositionPrice1,
                 expectedYield1,
                 currentPrice1,
                 quantityLots1,
                 currency1
         );
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition2 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition tinkoffPosition2 = TestData.createPortfolioPosition(
                 figi2,
                 instrumentType2,
-                quantityLots2 * lotSize2,
+                quantity2,
                 averagePositionPrice2,
                 expectedYield2,
                 currentPrice2,
                 quantityLots2,
                 currency2
         );
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition3 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition tinkoffPosition3 = TestData.createPortfolioPosition(
                 figi3,
                 instrumentType3,
-                quantityLots3 * lotSize3,
+                quantity3,
                 averagePositionPrice3,
                 expectedYield3,
                 currentPrice3,
@@ -118,40 +118,54 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi1)
-                .setInstrumentType(instrumentType1)
-                .setAveragePositionPrice(averagePositionPrice1)
-                .setExpectedYield(expectedYield1)
-                .setCurrentPrice(currentPrice1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency1)
-                .setLotSize(lotSize1)
-                .build();
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi2)
-                .setInstrumentType(instrumentType2)
-                .setAveragePositionPrice(averagePositionPrice2)
-                .setExpectedYield(expectedYield2)
-                .setCurrentPrice(currentPrice2)
-                .setQuantityLots(quantityLots2)
-                .setCurrency(currency2)
-                .setLotSize(lotSize2)
-                .build();
-        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
-                .setFigi(figi3)
-                .setInstrumentType(instrumentType3)
-                .setAveragePositionPrice(averagePositionPrice3)
-                .setExpectedYield(expectedYield3)
-                .setCurrentPrice(currentPrice3)
-                .setQuantityLots(quantityLots3)
-                .setCurrency(currency3)
-                .setLotSize(lotSize3)
+        final Money averagePositionPrice1Money = TestData.createMoney(currency1, averagePositionPrice1);
+        final Money currentPrice1Money = TestData.createMoney(currency1, currentPrice1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi1)
+                .instrumentType(instrumentType1.toString())
+                .quantity(DecimalUtils.setDefaultScale(quantity1))
+                .averagePositionPrice(averagePositionPrice1Money)
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield1))
+                .currentNkd(TestData.createMoney(currency1, 0))
+                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
+                .currentPrice(currentPrice1Money)
+                .averagePositionPriceFifo(TestData.createMoney(currency1, 0))
+                .quantityLots(DecimalUtils.setDefaultScale(quantityLots1))
                 .build();
 
-        final List<PortfolioPosition> portfolioPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
+        final Money averagePositionPrice2Money = TestData.createMoney(currency2, averagePositionPrice2);
+        final Money currentPrice2Money = TestData.createMoney(currency2, currentPrice2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi2)
+                .instrumentType(instrumentType2.toString())
+                .quantity(DecimalUtils.setDefaultScale(quantity2))
+                .averagePositionPrice(averagePositionPrice2Money)
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield2))
+                .currentNkd(TestData.createMoney(currency2, 0))
+                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
+                .currentPrice(currentPrice2Money)
+                .averagePositionPriceFifo(TestData.createMoney(currency2, 0))
+                .quantityLots(DecimalUtils.setDefaultScale(quantityLots2))
+                .build();
 
-        performAndExpectResponse(requestBuilder, portfolioPositions);
+        final Money averagePositionPrice3Money = TestData.createMoney(currency3, averagePositionPrice3);
+        final Money currentPrice3Money = TestData.createMoney(currency3, currentPrice3);
+        final Position expectedPosition3 = Position.builder()
+                .figi(figi3)
+                .instrumentType(instrumentType3.toString())
+                .quantity(DecimalUtils.setDefaultScale(quantity3))
+                .averagePositionPrice(averagePositionPrice3Money)
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield3))
+                .currentNkd(TestData.createMoney(currency3, 0))
+                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
+                .currentPrice(currentPrice3Money)
+                .averagePositionPriceFifo(TestData.createMoney(currency3, 0))
+                .quantityLots(DecimalUtils.setDefaultScale(quantityLots3))
+                .build();
+
+        final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
+
+        performAndExpectResponse(requestBuilder, expectedPositions);
     }
 
     // region getAvailableBalances tests
@@ -206,8 +220,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = TestData.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
-        final Money money2 = TestData.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
         final List<Money> expectedBalances = List.of(money1, money2);
 
         performAndExpectResponse(requestBuilder, expectedBalances);
@@ -240,8 +254,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = TestData.createMoney(currency1, value1);
-        final Money money2 = TestData.createMoney(currency2, value2);
+        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         performAndExpectResponse(requestBuilder, expectedBalances);

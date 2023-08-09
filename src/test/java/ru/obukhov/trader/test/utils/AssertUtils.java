@@ -34,8 +34,9 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
+import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.awt.Color;
 import java.lang.reflect.Method;
@@ -127,6 +128,14 @@ public class AssertUtils {
         }
     }
 
+    public static void assertEquals(@Nullable final ru.tinkoff.piapi.core.models.Money expected, final ru.tinkoff.piapi.core.models.Money actual) {
+        if (expected == null) {
+            Assertions.assertNull(actual);
+        } else if (!DecimalUtils.numbersEqual(actual.getValue(), expected.getValue()) || !actual.getCurrency().equals(expected.getCurrency())) {
+            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
+        }
+    }
+
     public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
@@ -148,14 +157,17 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(final PortfolioPosition portfolioPosition1, final PortfolioPosition portfolioPosition2) {
-        Assertions.assertEquals(portfolioPosition1.figi(), portfolioPosition2.figi());
-        Assertions.assertEquals(portfolioPosition1.instrumentType(), portfolioPosition2.instrumentType());
-        assertEquals(portfolioPosition1.quantity(), portfolioPosition2.quantity());
-        assertEquals(portfolioPosition1.averagePositionPrice(), portfolioPosition2.averagePositionPrice());
-        assertEquals(portfolioPosition1.expectedYield(), portfolioPosition2.expectedYield());
-        assertEquals(portfolioPosition1.currentPrice(), portfolioPosition2.currentPrice());
-        assertEquals(portfolioPosition1.quantityLots(), portfolioPosition2.quantityLots());
+    public static void assertEquals(final Position position1, final Position position2) {
+        Assertions.assertEquals(position1.getFigi(), position2.getFigi());
+        Assertions.assertEquals(position1.getInstrumentType(), position2.getInstrumentType());
+        assertEquals(position1.getQuantity(), position2.getQuantity());
+        assertEquals(position1.getAveragePositionPrice(), position2.getAveragePositionPrice());
+        assertEquals(position1.getExpectedYield(), position2.getExpectedYield());
+        assertEquals(position1.getCurrentNkd(), position2.getCurrentNkd());
+        assertEquals(position1.getAveragePositionPricePt(), position2.getAveragePositionPricePt());
+        assertEquals(position1.getCurrentPrice(), position2.getCurrentPrice());
+        assertEquals(position1.getAveragePositionPriceFifo(), position2.getAveragePositionPriceFifo());
+        assertEquals(position1.getQuantityLots(), position2.getQuantityLots());
     }
 
     public static void assertEquals(final byte[] expected, final byte[] actual) {
@@ -211,7 +223,7 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
-            } else if (expectedValue instanceof PortfolioPosition expectedPosition && actualValue instanceof PortfolioPosition actualPosition) {
+            } else if (expectedValue instanceof Position expectedPosition && actualValue instanceof Position actualPosition) {
                 if (!equals(expectedPosition, actualPosition)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
@@ -223,9 +235,8 @@ public class AssertUtils {
             index++;
         }
 
-        final String message = messageBuilder.toString();
-        if (!message.isEmpty()) {
-            Assertions.fail(message);
+        if (!messageBuilder.isEmpty()) {
+            Assertions.fail(messageBuilder.toString());
         }
     }
 
@@ -237,11 +248,12 @@ public class AssertUtils {
     }
 
     public static boolean equals(final ru.tinkoff.piapi.core.models.Money money1, final ru.tinkoff.piapi.core.models.Money money2) {
-        return money1.getCurrency().equals(money2.getCurrency())
-                && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
+        return money1 == money2
+                || money1 != null && money2 != null
+                && money1.getCurrency().equals(money2.getCurrency()) && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
     }
 
-    public static boolean equals(final Order order1, final Order order2) {
+    private static boolean equals(final Order order1, final Order order2) {
         return Objects.equals(order1.orderId(), order2.orderId())
                 && Objects.equals(order1.executionReportStatus(), order2.executionReportStatus())
                 && Objects.equals(order1.quantityLots(), order2.quantityLots())
@@ -258,19 +270,8 @@ public class AssertUtils {
                 && Objects.equals(order1.dateTime(), order2.dateTime());
     }
 
-    private static boolean equals(final PortfolioPosition position1, final PortfolioPosition position2) {
-        return position1.figi().equals(position2.figi())
-                && position1.instrumentType().equals(position2.instrumentType())
-                && DecimalUtils.numbersEqual(position1.quantity(), position2.quantity())
-                && equals(position1.averagePositionPrice(), position2.averagePositionPrice())
-                && DecimalUtils.numbersEqual(position1.expectedYield(), position2.expectedYield())
-                && equals(position1.currentPrice(), position2.currentPrice())
-                && DecimalUtils.numbersEqual(position1.quantityLots(), position2.quantityLots());
-    }
-
-    private static boolean equals(final Money money1, final Money money2) {
-        return money1.currency().equals(money2.currency())
-                && DecimalUtils.numbersEqual(money1.value(), money1.value());
+    private static boolean equals(final Position position1, final Position position2) {
+        return PositionMatcher.of(position1).matches(position2);
     }
 
     private static String getErrorMessage(final Object expectedValue, final Object actualValue, final int index) {

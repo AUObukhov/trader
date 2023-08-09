@@ -8,10 +8,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.model.PortfolioPosition;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.etf.TestEtf1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -19,9 +18,12 @@ import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
+import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
 import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.models.Portfolio;
+import ru.tinkoff.piapi.core.models.Position;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -29,10 +31,7 @@ import java.util.List;
 class RealExtOperationsServiceUnitTest {
 
     @Mock
-    private RealExtInstrumentsService realExtInstrumentsService;
-    @Mock
     private OperationsService operationsService;
-
 
     @InjectMocks
     private RealExtOperationsService extOperationsService;
@@ -65,60 +64,57 @@ class RealExtOperationsServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        final String ticker1 = TestShare1.TICKER;
         final String figi1 = TestShare1.FIGI;
         final InstrumentType instrumentType1 = InstrumentType.INSTRUMENT_TYPE_SHARE;
+        final int quantity1 = 10;
         final int averagePositionPrice1 = 15;
         final int expectedYield1 = 50;
         final int currentPrice1 = 20;
         final int quantityLots1 = 1;
-        final int lotSize1 = 10;
         final String currency1 = TestShare1.CURRENCY;
 
-        final String ticker2 = TestShare2.TICKER;
         final String figi2 = TestShare2.FIGI;
         final InstrumentType instrumentType2 = InstrumentType.INSTRUMENT_TYPE_SHARE;
+        final int quantity2 = 20;
         final int averagePositionPrice2 = 1;
         final int expectedYield2 = 60;
         final int currentPrice2 = 4;
         final int quantityLots2 = 2;
-        final int lotSize2 = 10;
         final String currency2 = TestShare2.CURRENCY;
 
-        final String ticker3 = TestEtf1.TICKER;
         final String figi3 = TestEtf1.FIGI;
         final InstrumentType instrumentType3 = InstrumentType.INSTRUMENT_TYPE_ETF;
+        final int quantity3 = 5;
         final int averagePositionPrice3 = 15;
         final int expectedYield3 = -25;
         final int currentPrice3 = 10;
         final int quantityLots3 = 5;
-        final int lotSize3 = 1;
         final String currency3 = TestEtf1.CURRENCY;
 
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition1 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition portfolioPosition1 = TestData.createPortfolioPosition(
                 figi1,
                 instrumentType1,
-                quantityLots1 * lotSize1,
+                quantity1,
                 averagePositionPrice1,
                 expectedYield1,
                 currentPrice1,
                 quantityLots1,
                 currency1
         );
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition2 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition portfolioPosition2 = TestData.createPortfolioPosition(
                 figi2,
                 instrumentType2,
-                quantityLots2 * lotSize2,
+                quantity2,
                 averagePositionPrice2,
                 expectedYield2,
                 currentPrice2,
                 quantityLots2,
                 currency2
         );
-        final ru.tinkoff.piapi.contract.v1.PortfolioPosition tinkoffPosition3 = TestData.createTinkoffPortfolioPosition(
+        final PortfolioPosition portfolioPosition3 = TestData.createPortfolioPosition(
                 figi3,
                 instrumentType3,
-                quantityLots3 * lotSize3,
+                quantity3,
                 averagePositionPrice3,
                 expectedYield3,
                 currentPrice3,
@@ -126,51 +122,53 @@ class RealExtOperationsServiceUnitTest {
                 currency3
         );
 
-        final Portfolio portfolio = TestData.createPortfolio(tinkoffPosition1, tinkoffPosition2, tinkoffPosition3);
+        final Portfolio portfolio = TestData.createPortfolio(portfolioPosition1, portfolioPosition2, portfolioPosition3);
         Mockito.when(operationsService.getPortfolioSync(accountId)).thenReturn(portfolio);
-
-        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi1)).thenReturn(ticker1);
-        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi2)).thenReturn(ticker2);
-        Mockito.when(realExtInstrumentsService.getTickerByFigi(figi3)).thenReturn(ticker3);
 
         // action
 
-        final List<PortfolioPosition> positions = extOperationsService.getPositions(accountId);
+        final List<Position> positions = extOperationsService.getPositions(accountId);
 
         // assert
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi1)
-                .setInstrumentType(instrumentType1)
-                .setAveragePositionPrice(averagePositionPrice1)
-                .setExpectedYield(expectedYield1)
-                .setCurrentPrice(currentPrice1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency1)
-                .setLotSize(lotSize1)
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi1)
+                .instrumentType(instrumentType1.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(TestData.createMoney(currency1, averagePositionPrice1))
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield1))
+                .currentNkd(TestData.createMoney(currency1, 0))
+                .averagePositionPricePt(BigDecimal.ZERO)
+                .currentPrice(TestData.createMoney(currency1, currentPrice1))
+                .averagePositionPriceFifo(TestData.createMoney(currency1, 0))
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi2)
-                .setInstrumentType(instrumentType2)
-                .setAveragePositionPrice(averagePositionPrice2)
-                .setExpectedYield(expectedYield2)
-                .setCurrentPrice(currentPrice2)
-                .setQuantityLots(quantityLots2)
-                .setCurrency(currency2)
-                .setLotSize(lotSize2)
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi2)
+                .instrumentType(instrumentType2.toString())
+                .quantity(BigDecimal.valueOf(quantity2))
+                .averagePositionPrice(TestData.createMoney(currency2, averagePositionPrice2))
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield2))
+                .currentNkd(TestData.createMoney(currency2, 0))
+                .averagePositionPricePt(BigDecimal.ZERO)
+                .currentPrice(TestData.createMoney(currency2, currentPrice2))
+                .averagePositionPriceFifo(TestData.createMoney(currency2, 0))
+                .quantityLots(BigDecimal.valueOf(quantityLots2))
                 .build();
-        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
-                .setFigi(figi3)
-                .setInstrumentType(instrumentType3)
-                .setAveragePositionPrice(averagePositionPrice3)
-                .setExpectedYield(expectedYield3)
-                .setCurrentPrice(currentPrice3)
-                .setQuantityLots(quantityLots3)
-                .setCurrency(currency3)
-                .setLotSize(lotSize3)
+        final Position expectedPosition3 = Position.builder()
+                .figi(figi3)
+                .instrumentType(instrumentType3.toString())
+                .quantity(BigDecimal.valueOf(quantity3))
+                .averagePositionPrice(TestData.createMoney(currency3, averagePositionPrice3))
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield3))
+                .currentNkd(TestData.createMoney(currency3, 0))
+                .averagePositionPricePt(BigDecimal.ZERO)
+                .currentPrice(TestData.createMoney(currency3, currentPrice3))
+                .averagePositionPriceFifo(TestData.createMoney(currency3, 0))
+                .quantityLots(BigDecimal.valueOf(quantityLots3))
                 .build();
 
-        final List<PortfolioPosition> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
+        final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
 
         AssertUtils.assertEquals(expectedPositions, positions);
     }

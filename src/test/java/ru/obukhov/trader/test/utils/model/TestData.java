@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model;
 import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -10,9 +11,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Money;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
@@ -28,14 +27,16 @@ import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
 import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
@@ -63,10 +64,11 @@ public class TestData {
             final double currentPrice
     ) {
         final DecisionData decisionData = new DecisionData();
-        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setQuantityLots(positionLotsCount)
-                .setAveragePositionPrice(averagePositionPrice)
+        final Position portfolioPosition = Position.builder()
+                .averagePositionPrice(TestData.createMoney(averagePositionPrice))
+                .quantityLots(BigDecimal.valueOf(positionLotsCount))
                 .build();
+
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
@@ -87,7 +89,7 @@ public class TestData {
 
     // endregion
 
-    public static ru.tinkoff.piapi.contract.v1.PortfolioPosition createTinkoffPortfolioPosition(
+    public static PortfolioPosition createPortfolioPosition(
             final String figi,
             final InstrumentType instrumentType,
             final long quantity,
@@ -97,7 +99,7 @@ public class TestData {
             final long quantityLots,
             final String currency
     ) {
-        return ru.tinkoff.piapi.contract.v1.PortfolioPosition.newBuilder()
+        return PortfolioPosition.newBuilder()
                 .setFigi(figi)
                 .setInstrumentType(instrumentType.name())
                 .setQuantity(createQuotation(quantity))
@@ -334,13 +336,25 @@ public class TestData {
 
     // endregion
 
-    public static Money createMoney(final String currency, final double value) {
-        return new Money(currency, DecimalUtils.setDefaultScale(value));
+    // region
+
+    public static Money createMoney(final String currency, final int value) {
+        return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final BigDecimal value) {
-        return DataStructsHelper.createMoney(currency, value);
+    public static Money createMoney(final String currency, final double value) {
+        return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
+
+    public static Money createMoney(final int value) {
+        return createMoney(StringUtils.EMPTY, value);
+    }
+
+    public static Money createMoney(final double value) {
+        return createMoney(StringUtils.EMPTY, value);
+    }
+
+    // endregion
 
     public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
@@ -364,14 +378,6 @@ public class TestData {
                 .setQuantity(quantity)
                 .setTradeId(tradeId)
                 .build();
-    }
-
-    /**
-     * @return BigDecimal equal to given {@code value} with zero scale
-     * @throws ArithmeticException if given {@code value} is not integer
-     */
-    public static BigDecimal createIntegerDecimal(final double value) {
-        return BigDecimal.valueOf(value).setScale(0, RoundingMode.UNNECESSARY);
     }
 
     public static TradingDay createTradingDay(final boolean isTradingDay, Timestamp startTimestamp, final Timestamp endTimestamp) {

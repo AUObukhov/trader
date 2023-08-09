@@ -17,12 +17,10 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -38,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.Share;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -334,7 +333,7 @@ class BackTesterImplUnitTest {
 
         mockInvestments(fakeBot1, accountId1, currency1, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
-        mockPortfolioPosition(fakeBot1, accountId1, figi1, positionLotsCount1);
+        mockPortfolioPosition(fakeBot1, accountId1, figi1, 1, positionLotsCount1);
 
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
@@ -361,7 +360,7 @@ class BackTesterImplUnitTest {
         mockPlusMinuteScheduled(fakeBot2, from);
         mockInvestments(fakeBot2, accountId2, currency2, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot2.getCurrentBalance(accountId2, currency2)).thenReturn(currentBalance2);
-        mockPortfolioPosition(fakeBot2, accountId2, figi2, positionLotsCount2);
+        mockPortfolioPosition(fakeBot2, accountId2, figi2, 1, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
 
@@ -1028,7 +1027,6 @@ class BackTesterImplUnitTest {
     ) {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
-        final int lotSize = share.getLot();
 
         final BotConfig botConfig = new BotConfig(accountId, figi, null, commission, null, null);
 
@@ -1040,7 +1038,8 @@ class BackTesterImplUnitTest {
         mockInvestments(fakeBot, accountId, currency, interval.getFrom(), balanceConfig.getInitialBalance());
         Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
         if (quantityLots != null) {
-            mockPortfolioPosition(fakeBot, accountId, figi, quantityLots, lotSize);
+            final int quantity = share.getLot() * quantityLots;
+            mockPortfolioPosition(fakeBot, accountId, figi, quantity, quantityLots);
             mockCurrentPrice(fakeBot, figi, currentPrice);
         }
         if (operation != null) {
@@ -1098,28 +1097,19 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot.getInvestments(accountId, currency)).thenReturn(investments);
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private void mockPortfolioPosition(final FakeBot fakeBot, final String accountId, final String figi, final int quantityLots) {
-        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(quantityLots)
-                .build();
-        Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
-    }
-
     private void mockPortfolioPosition(
             final FakeBot fakeBot,
             final String accountId,
             final String figi,
-            final int quantityLots,
-            final int lotSize
+            final int quantity,
+            final int quantityLots
     ) {
-        final PortfolioPosition portfolioPosition = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setQuantityLots(0)
-                .setQuantityLots(quantityLots)
-                .setLotSize(lotSize)
+        final Position portfolioPosition = Position.builder()
+                .figi(figi)
+                .quantity(BigDecimal.valueOf(quantity))
+                .quantityLots(BigDecimal.valueOf(quantityLots))
                 .build();
+
         Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));
     }
 

@@ -14,12 +14,10 @@ import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.PortfolioPosition;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
-import ru.obukhov.trader.test.utils.matchers.PortfolioPositionMatcher;
-import ru.obukhov.trader.test.utils.model.PortfolioPositionBuilder;
+import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
@@ -28,6 +26,8 @@ import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderType;
+import ru.tinkoff.piapi.core.models.Money;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -102,11 +102,11 @@ class FakeExtOrdersServiceUnitTest {
         final Timestamp timestamp = TimestampUtils.newTimestamp(2020, 10, 5, 12);
         final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
-        final int lotSize = 10;
+        final int quantity = 10;
         final int quantityLots = 1;
         final double currentPrice = 1000;
         final double balance1 = 1000000;
-        final double balance2 = balance1 - currentPrice * lotSize * quantityLots * COMMISSION_COEF;
+        final double balance2 = balance1 - currentPrice * quantity * COMMISSION_COEF;
 
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp);
         mockBalances(accountId, currency, balance1);
@@ -120,14 +120,15 @@ class FakeExtOrdersServiceUnitTest {
         // assert
 
         verifyBalanceSet(accountId, currency, balance2);
-        final PortfolioPosition expectedPosition = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(currentPrice)
-                .setExpectedYield(0)
-                .setCurrentPrice(currentPrice)
-                .setQuantityLots(quantityLots)
-                .setLotSize(lotSize)
+        final Money price = TestData.createMoney(currency, currentPrice);
+        final Position expectedPosition = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity))
+                .averagePositionPrice(price)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price)
+                .quantityLots(BigDecimal.valueOf(quantityLots))
                 .build();
         verifyPositionAdded(accountId, figi, expectedPosition);
     }
@@ -141,38 +142,47 @@ class FakeExtOrdersServiceUnitTest {
         final Timestamp timestamp2 = TimestampUtils.plusMinutes(timestamp1, 5);
         final String currency = TestShare2.CURRENCY;
         final String figi = TestShare2.FIGI;
-        final int lotSize = 10;
+        final int quantity1 = 20;
+        final int quantity2 = 10;
         final int quantityLots1 = 2;
         final int quantityLots2 = 1;
         final double price1 = 1000;
         final double price2 = 4000;
         final double balance1 = 1000000;
-        final double balance2 = balance1 - price1 * lotSize * quantityLots1 * COMMISSION_COEF;
-        final double balance3 = balance2 - price2 * lotSize * quantityLots2 * COMMISSION_COEF;
+        final double balance2 = balance1 - price1 * quantity1 * COMMISSION_COEF;
+        final double balance3 = balance2 - price2 * quantity2 * COMMISSION_COEF;
 
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2);
         mockBalances(accountId, currency, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price1)
-                .setExpectedYield(0)
-                .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
-                .setLotSize(lotSize)
+        final Money price1Money = TestData.createMoney(currency, price1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(price1Money)
+                .expectedYield(BigDecimal.ZERO)
+                .currentPrice(price1Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
-        final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
-        final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(expectedAveragePositionPrice)
-                .setExpectedYield(expectedExpectedYield)
-                .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
-                .setLotSize(lotSize)
+
+        final BigDecimal expectedQuantity = BigDecimal.valueOf(quantity1 + quantity2);
+        final Money expectedAveragePositionPrice = TestData.createMoney(
+                currency,
+                (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2)
+        );
+        final double expectedYield = quantity1 * (price2 - price1);
+        final Money price2Money = TestData.createMoney(currency, price2);
+        final BigDecimal expectedQuantityLots = BigDecimal.valueOf(quantityLots1 + quantityLots2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(expectedQuantity)
+                .averagePositionPrice(expectedAveragePositionPrice)
+                .expectedYield(DecimalUtils.setDefaultScale(expectedYield))
+                .currentPrice(price2Money)
+                .quantityLots(expectedQuantityLots)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1);
@@ -210,13 +220,13 @@ class FakeExtOrdersServiceUnitTest {
         final String figi2 = TestShare3.FIGI;
         final String figi3 = TestShare4.FIGI;
 
-        final int lotSize1 = TestShare2.LOT;
-        final int lotSize2 = TestShare3.LOT;
-        final int lotSize3 = TestShare4.LOT;
-
         final double price1 = 1000;
         final double price2 = 100;
         final double price3 = 500;
+
+        final int quantity1 = 10;
+        final int quantity2 = 3;
+        final int quantity3 = 100;
 
         final int quantityLots1 = 1;
         final int quantityLots2 = 3;
@@ -229,35 +239,37 @@ class FakeExtOrdersServiceUnitTest {
         Mocker.mockShare(extInstrumentsService, TestShare3.SHARE);
         Mocker.mockShare(extInstrumentsService, TestShare4.SHARE);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi1)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price1)
-                .setExpectedYield(0)
-                .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency)
-                .setLotSize(lotSize1)
+        final Money price1Money = TestData.createMoney(currency, price1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi1)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(price1Money)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price1Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi2)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price2)
-                .setExpectedYield(0)
-                .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots2)
-                .setCurrency(currency)
-                .setLotSize(lotSize2)
+
+        final Money price2Money = TestData.createMoney(currency, price2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi2)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity2))
+                .averagePositionPrice(price2Money)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price2Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots2))
                 .build();
-        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
-                .setFigi(figi3)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price3)
-                .setExpectedYield(0)
-                .setCurrentPrice(price3)
-                .setQuantityLots(quantityLots3)
-                .setCurrency(currency)
-                .setLotSize(lotSize3)
+
+        final Money price3Money = TestData.createMoney(currency, price3);
+        final Position expectedPosition3 = Position.builder()
+                .figi(figi3)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity3))
+                .averagePositionPrice(price3Money)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price3Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots3))
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi1)).thenReturn(null, expectedPosition1);
@@ -308,31 +320,40 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 4;
 
+        final int quantity1 = quantityLots1 * lotSize;
+        final int quantity2 = quantityLots2 * lotSize;
+
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price1)
-                .setExpectedYield(0)
-                .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+        final Money price1Money = TestData.createMoney(currency, price1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(price1Money)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price1Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
-        final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
-        final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(expectedAveragePositionPrice)
-                .setExpectedYield(expectedExpectedYield)
-                .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+
+        final BigDecimal expectedQuantity = BigDecimal.valueOf(quantity1 + quantity2);
+        final Money expectedAveragePositionPrice = TestData.createMoney(
+                currency,
+                (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2)
+        );
+        final BigDecimal expectedYield = DecimalUtils.setDefaultScale(quantity1 * (price2 - price1));
+        final Money price2Money = TestData.createMoney(currency, price2);
+        final BigDecimal expectedQuantityLots = BigDecimal.valueOf(quantityLots1 + quantityLots2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(expectedQuantity)
+                .averagePositionPrice(expectedAveragePositionPrice)
+                .expectedYield(expectedYield)
+                .currentPrice(price2Money)
+                .quantityLots(expectedQuantityLots)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2);
@@ -380,31 +401,40 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 3;
 
+        final int quantity1 = quantityLots1 * lotSize;
+        final int quantity2 = quantityLots2 * lotSize;
+
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price1)
-                .setExpectedYield(0)
-                .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+        final Money price1Money = TestData.createMoney(currency, price1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(price1Money)
+                .expectedYield(DecimalUtils.setDefaultScale(0))
+                .currentPrice(price1Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
-        final double expectedAveragePositionPrice = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
-        final double expectedExpectedYield = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(expectedAveragePositionPrice)
-                .setExpectedYield(expectedExpectedYield)
-                .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+
+        final BigDecimal expectedQuantity = BigDecimal.valueOf(quantity1 + quantity2);
+        final Money expectedAveragePositionPrice = TestData.createMoney(
+                currency,
+                (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2)
+        );
+        final BigDecimal expectedYield = DecimalUtils.setDefaultScale(quantity1 * (price2 - price1));
+        final Money price2Money = TestData.createMoney(currency, price2);
+        final BigDecimal expectedQuantityLots = BigDecimal.valueOf(quantityLots1 + quantityLots2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(expectedQuantity)
+                .averagePositionPrice(expectedAveragePositionPrice)
+                .expectedYield(expectedYield)
+                .currentPrice(price2Money)
+                .quantityLots(expectedQuantityLots)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2);
@@ -454,43 +484,55 @@ class FakeExtOrdersServiceUnitTest {
         final int quantityLots2 = 1;
         final int quantityLots3 = 1;
 
+        final int quantity1 = quantityLots1 * lotSize;
+        final int quantity2 = quantityLots2 * lotSize;
+        final int quantity3 = quantityLots3 * lotSize;
+
         Mockito.when(fakeContext.getCurrentTimestamp()).thenReturn(timestamp1, timestamp1, timestamp2, timestamp2, timestamp3, timestamp3);
         mockBalances(accountId, currency, initialBalance, balance1, balance2);
         Mocker.mockShare(extInstrumentsService, TestShare2.SHARE);
 
-        final PortfolioPosition expectedPosition1 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(price1)
-                .setExpectedYield(0)
-                .setCurrentPrice(price1)
-                .setQuantityLots(quantityLots1)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
-                .build();
-        final double expectedAveragePositionPrice2 = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
-        final double expectedExpectedYield2 = quantityLots1 * (price2 - price1) * lotSize;
-        final PortfolioPosition expectedPosition2 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(expectedAveragePositionPrice2)
-                .setExpectedYield(expectedExpectedYield2)
-                .setCurrentPrice(price2)
-                .setQuantityLots(quantityLots1 + quantityLots2)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+        final Money price1Money = TestData.createMoney(currency, price1);
+        final Position expectedPosition1 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(BigDecimal.valueOf(quantity1))
+                .averagePositionPrice(price1Money)
+                .expectedYield(BigDecimal.ZERO)
+                .currentPrice(price1Money)
+                .quantityLots(BigDecimal.valueOf(quantityLots1))
                 .build();
 
-        final double expectedExpectedYield3 = (price3 - expectedAveragePositionPrice2) * (quantityLots1 + quantityLots2 - quantityLots3) * lotSize;
-        final PortfolioPosition expectedPosition3 = new PortfolioPositionBuilder()
-                .setFigi(figi)
-                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
-                .setAveragePositionPrice(expectedAveragePositionPrice2)
-                .setExpectedYield(expectedExpectedYield3)
-                .setCurrentPrice(price3)
-                .setQuantityLots(quantityLots1 + quantityLots2 - quantityLots3)
-                .setCurrency(currency)
-                .setLotSize(lotSize)
+        final BigDecimal expectedQuantity2 = BigDecimal.valueOf(quantity1 + quantity2);
+        final double expectedAveragePositionPrice2Value = (price1 * quantityLots1 + price2 * quantityLots2) / (quantityLots1 + quantityLots2);
+        final Money expectedAveragePositionPrice2 = TestData.createMoney(currency, expectedAveragePositionPrice2Value);
+        final BigDecimal expectedYield2 = DecimalUtils.setDefaultScale(quantity1 * (price2 - price1));
+        final Money price2Money = TestData.createMoney(currency, price2);
+        final BigDecimal expectedQuantityLots2 = BigDecimal.valueOf(quantityLots1 + quantityLots2);
+        final Position expectedPosition2 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(expectedQuantity2)
+                .averagePositionPrice(expectedAveragePositionPrice2)
+                .expectedYield(expectedYield2)
+                .currentPrice(price2Money)
+                .quantityLots(expectedQuantityLots2)
+                .build();
+
+        final BigDecimal expectedQuantity3 = BigDecimal.valueOf(quantity1 + quantity2 - quantity3);
+        final BigDecimal expectedYield3 = DecimalUtils.setDefaultScale(
+                (price3 - expectedAveragePositionPrice2Value) * (quantityLots1 + quantityLots2 - quantityLots3) * lotSize
+        );
+        final Money price3Money = TestData.createMoney(currency, price3);
+        final BigDecimal expectedQuantityLots3 = BigDecimal.valueOf(quantityLots1 + quantityLots2 - quantityLots3);
+        final Position expectedPosition3 = Position.builder()
+                .figi(figi)
+                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .quantity(expectedQuantity3)
+                .averagePositionPrice(expectedAveragePositionPrice2)
+                .expectedYield(expectedYield3)
+                .currentPrice(price3Money)
+                .quantityLots(expectedQuantityLots3)
                 .build();
 
         Mockito.when(fakeContext.getPosition(accountId, figi)).thenReturn(null, expectedPosition1, expectedPosition2, expectedPosition3);
@@ -542,9 +584,9 @@ class FakeExtOrdersServiceUnitTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private void verifyPositionAdded(final String accountId, final String figi, final PortfolioPosition position) {
+    private void verifyPositionAdded(final String accountId, final String figi, final Position position) {
         Mockito.verify(fakeContext, Mockito.times(1))
-                .addPosition(Mockito.eq(accountId), Mockito.eq(figi), ArgumentMatchers.argThat(PortfolioPositionMatcher.of(position)));
+                .addPosition(Mockito.eq(accountId), Mockito.eq(figi), ArgumentMatchers.argThat(PositionMatcher.of(position)));
     }
 
     // endregion

@@ -128,11 +128,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public ExtOperationsService realExtOperationsService(
-            final OperationsService operationsService,
-            final RealExtInstrumentsService realExtInstrumentsService
-    ) {
-        return new RealExtOperationsService(operationsService, realExtInstrumentsService);
+    public ExtOperationsService realExtOperationsService(final OperationsService operationsService) {
+        return new RealExtOperationsService(operationsService);
     }
 
     @Bean
