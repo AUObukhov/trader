@@ -206,7 +206,7 @@ public class AssertUtils {
         while (expectedIterator.hasNext()) {
             final Object expectedValue = expectedIterator.next();
             final Object actualValue = actualIterator.next();
-            if (expectedValue instanceof Collection expectedCollection && actualValue instanceof Collection actualCollection) {
+            if (expectedValue instanceof Collection<?> expectedCollection && actualValue instanceof Collection<?> actualCollection) {
                 assertEquals(expectedCollection, actualCollection);
             } else if (expectedValue instanceof BigDecimal expectedBigDecimal && actualValue instanceof BigDecimal actualBigDecimal) {
                 if (!DecimalUtils.numbersEqual(actualBigDecimal, expectedBigDecimal)) {
