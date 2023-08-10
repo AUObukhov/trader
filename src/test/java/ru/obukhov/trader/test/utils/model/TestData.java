@@ -28,7 +28,6 @@ import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -245,19 +244,19 @@ public class TestData {
 
     // region Money creation
 
-    public static Money createMoney(final String currency, final int value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final int value) {
         return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static Money createMoney(final String currency, final double value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final double value) {
         return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static Money createMoney(final int value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final int value) {
         return createMoney(StringUtils.EMPTY, value);
     }
 
-    public static Money createMoney(final double value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final double value) {
         return createMoney(StringUtils.EMPTY, value);
     }
 

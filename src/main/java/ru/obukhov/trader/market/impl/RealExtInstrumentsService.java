@@ -1,15 +1,13 @@
 package ru.obukhov.trader.market.impl;
 
 import com.google.protobuf.Timestamp;
-import org.mapstruct.factory.Mappers;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
-import ru.obukhov.trader.market.model.transform.CurrencyInstrumentMapper;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -21,8 +19,6 @@ import java.time.Instant;
 import java.util.List;
 
 public class RealExtInstrumentsService implements ExtInstrumentsService {
-
-    private static final CurrencyInstrumentMapper CURRENCY_INSTRUMENT_MAPPER = Mappers.getMapper(CurrencyInstrumentMapper.class);
 
     private final InstrumentsService instrumentsService;
 
@@ -79,10 +75,10 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
     }
 
     /**
-     * @return {@link CurrencyInstrument} corresponding to given {@code figi}
+     * @return {@link Currency} corresponding to given {@code figi}
      */
-    public CurrencyInstrument getCurrency(final String figi) {
-        return CURRENCY_INSTRUMENT_MAPPER.map(instrumentsService.getCurrencyByFigiSync(figi));
+    public Currency getCurrency(final String figi) {
+        return instrumentsService.getCurrencyByFigiSync(figi);
 
     }
 

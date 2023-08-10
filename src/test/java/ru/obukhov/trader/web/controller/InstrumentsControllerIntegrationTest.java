@@ -155,7 +155,7 @@ class InstrumentsControllerIntegrationTest extends ControllerIntegrationTest {
     @SuppressWarnings("java:S2699")
         // Sonar warning "Tests should include assertions"
     void getCurrency_returnsCurrency() throws Exception {
-        Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
+        Mocker.mockCurrency(instrumentsService, TestCurrency2.CURRENCY);
 
         final MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/trader/instruments/currency")

@@ -1,59 +1,82 @@
 package ru.obukhov.trader.test.utils.model.currency;
 
-import ru.obukhov.trader.common.util.DecimalUtils;
+import com.google.protobuf.Timestamp;
+import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
+import ru.tinkoff.piapi.contract.v1.Currency;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-
-import java.math.BigDecimal;
 
 public class TestCurrency2 extends TestSecurityData {
 
     public static final String FIGI = "RUB000UTSTOM";
     public static final String TICKER = "RUB000UTSTOM";
-    public static final int LOT_SIZE = 1;
+    public static final String CLASS_CODE = "CETS";
+    public static final String ISIN = "";
+    public static final int LOT = 1000;
     public static final String CURRENCY_VALUE = Currencies.RUB;
+    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0L, 0);
+    public static final boolean SHORT_ENABLED_FLAG = false;
     public static final String NAME = "Российский рубль";
     public static final String EXCHANGE = "FX";
-    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);
-    public static final String COUNTRY = "";
-    public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
-    public static final boolean BUY_AVAILABLE = true;
-    public static final boolean SELL_AVAILABLE = true;
-    public static final boolean API_TRADE_AVAILABLE = false;
-    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.0025);
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(1L).build();
+    public static final String COUNTRY_OF_RISK = "";
+    public static final String COUNTRY_OF_RISK_NAME = "";
+    public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NOT_AVAILABLE_FOR_TRADING;
+    public static final boolean BUY_AVAILABLE_FLAG = false;
+    public static final boolean SELL_AVAILABLE_FLAG = false;
+    public static final String ISO_CURRENCY_NAME = "rub";
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 2500000);
+    public static final boolean API_TRADE_AVAILABLE_FLAG = false;
+    public static final String UID = "a92e2e25-a698-45cc-a781-167cf465257c";
+    public static final String REAL_EXCHANGE = "REAL_EXCHANGE_MOEX";
+    public static final String POSITION_UID = "33e24a92-aab0-409c-88b8-f2d57415b920";
+    public static final boolean FOR_IIS_FLAG = true;
+    public static final boolean FOR_QUAL_INVESTOR_FLAG = false;
+    public static final boolean WEEKEND_FLAG = false;
+    public static final boolean BLOCKED_TCA_FLAG = false;
+    public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(0, 0);
+    public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(0, 0);
 
-    public static final ru.tinkoff.piapi.contract.v1.Currency TINKOFF_CURRENCY = ru.tinkoff.piapi.contract.v1.Currency.newBuilder()
-            .setFigi(TestCurrency2.FIGI)
-            .setTicker(TestCurrency2.TICKER)
-            .setLot(TestCurrency2.LOT_SIZE)
-            .setCurrency(TestCurrency2.CURRENCY_VALUE)
-            .setName(TestCurrency2.NAME)
-            .setExchange(TestCurrency2.EXCHANGE)
-            .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestCurrency2.NOMINAL))
-            .setCountryOfRiskName(TestCurrency2.COUNTRY)
-            .setTradingStatus(TestCurrency2.TRADING_STATUS)
-            .setBuyAvailableFlag(TestCurrency2.BUY_AVAILABLE)
-            .setSellAvailableFlag(TestCurrency2.SELL_AVAILABLE)
-            .setApiTradeAvailableFlag(TestCurrency2.API_TRADE_AVAILABLE)
-            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(TestCurrency2.MIN_PRICE_INCREMENT))
-            .build();
-
-    public static final CurrencyInstrument CURRENCY = CurrencyInstrument.builder()
-            .figi(TestCurrency2.FIGI)
-            .ticker(TestCurrency2.TICKER)
-            .lotSize(TestCurrency2.LOT_SIZE)
-            .currency(TestCurrency2.CURRENCY_VALUE)
-            .name(TestCurrency2.NAME)
-            .exchange(TestCurrency2.EXCHANGE)
-            .nominal(TestCurrency2.NOMINAL)
-            .country(TestCurrency2.COUNTRY)
-            .tradingStatus(TestCurrency2.TRADING_STATUS)
-            .buyAvailable(TestCurrency2.BUY_AVAILABLE)
-            .sellAvailable(TestCurrency2.SELL_AVAILABLE)
-            .apiTradeAvailable(TestCurrency2.API_TRADE_AVAILABLE)
-            .minPriceIncrement(TestCurrency2.MIN_PRICE_INCREMENT)
+    public static final Currency CURRENCY = Currency.newBuilder()
+            .setFigi(FIGI)
+            .setTicker(TICKER)
+            .setClassCode(CLASS_CODE)
+            .setIsin(ISIN)
+            .setLot(LOT)
+            .setCurrency(CURRENCY_VALUE)
+            .setKlong(KLONG)
+            .setKshort(KSHORT)
+            .setDlong(DLONG)
+            .setDshort(DSHORT)
+            .setDlongMin(DLONG_MIN)
+            .setDshortMin(DSHORT_MIN)
+            .setShortEnabledFlag(SHORT_ENABLED_FLAG)
+            .setName(NAME)
+            .setExchange(EXCHANGE)
+            .setNominal(NOMINAL)
+            .setCountryOfRiskName(COUNTRY_OF_RISK)
+            .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .setTradingStatus(TRADING_STATUS)
+            .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .setIsoCurrencyName(ISO_CURRENCY_NAME)
+            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .setForIisFlag(FOR_IIS_FLAG)
+            .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
+            .setWeekendFlag(WEEKEND_FLAG)
+            .setBlockedTcaFlag(BLOCKED_TCA_FLAG)
+            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
             .build();
 
 }

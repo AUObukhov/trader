@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
+import ru.obukhov.trader.market.model.transform.CurrencySerializer;
 import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
 import ru.obukhov.trader.market.model.transform.OrderStageSerializer;
@@ -28,6 +29,7 @@ public class TestUtils {
             // todo etfSerializer????
             .addSerializer(new OrderStateSerializer())
             .addSerializer(new OrderStageSerializer())
+            .addSerializer(new CurrencySerializer())
             .addSerializer(new TradingDaySerializer())
             .addSerializer(new TradingScheduleSerializer())
             .addSerializer(new QuotationSerializer())

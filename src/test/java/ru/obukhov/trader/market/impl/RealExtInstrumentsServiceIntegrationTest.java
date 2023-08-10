@@ -12,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.obukhov.trader.IntegrationTest;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.bond.TestBond2;
@@ -25,6 +24,7 @@ import ru.obukhov.trader.test.utils.model.schedule.TestTradingDay3;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
@@ -133,9 +133,9 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getCurrency_returnsCurrency() {
-        Mocker.mockCurrency(instrumentsService, TestCurrency2.TINKOFF_CURRENCY);
+        Mocker.mockCurrency(instrumentsService, TestCurrency2.CURRENCY);
 
-        final CurrencyInstrument result = realExtInstrumentsService.getCurrency(TestCurrency2.FIGI);
+        final Currency result = realExtInstrumentsService.getCurrency(TestCurrency2.FIGI);
 
         Assertions.assertEquals(TestCurrency2.CURRENCY, result);
     }

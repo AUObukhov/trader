@@ -1,67 +1,88 @@
 package ru.obukhov.trader.test.utils.model.currency;
 
 import com.google.protobuf.Timestamp;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.obukhov.trader.test.utils.model.TestSecurityData;
+import ru.tinkoff.piapi.contract.v1.Currency;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
-
-import java.math.BigDecimal;
 
 public class TestCurrency1 extends TestSecurityData {
 
     public static final String FIGI = "BBG0013HGFT4";
     public static final String TICKER = "USD000UTSTOM";
-    public static final int LOT_SIZE = 1000;
+    public static final String CLASS_CODE = "CETS";
+    public static final String ISIN = "";
+    public static final int LOT = 1000;
     public static final String CURRENCY_VALUE = Currencies.RUB;
+    public static final Quotation KLONG = QuotationUtils.newNormalizedQuotation(2L, 0);
+    public static final Quotation KSHORT = QuotationUtils.newNormalizedQuotation(2L, 0);
+    public static final Quotation DLONG = QuotationUtils.newNormalizedQuotation(0L, 500000000);
+    public static final Quotation DSHORT = QuotationUtils.newNormalizedQuotation(0L, 500000000);
+    public static final Quotation DLONG_MIN = QuotationUtils.newNormalizedQuotation(0L, 292900000);
+    public static final Quotation DSHORT_MIN = QuotationUtils.newNormalizedQuotation(0L, 224700000);
+    public static final boolean SHORT_ENABLED_FLAG = true;
     public static final String NAME = "Доллар США";
     public static final String EXCHANGE = "FX";
-    public static final BigDecimal NOMINAL = DecimalUtils.setDefaultScale(1);
-    public static final String COUNTRY = "";
+    public static final MoneyValue NOMINAL = MoneyValue.newBuilder().setCurrency(Currencies.USD).setUnits(1L).build();
+    public static final String COUNTRY_OF_RISK = "";
+    public static final String COUNTRY_OF_RISK_NAME = "";
     public static final SecurityTradingStatus TRADING_STATUS = SecurityTradingStatus.SECURITY_TRADING_STATUS_NORMAL_TRADING;
-    public static final boolean BUY_AVAILABLE = true;
-    public static final boolean SELL_AVAILABLE = true;
-    public static final boolean API_TRADE_AVAILABLE = true;
-    public static final BigDecimal MIN_PRICE_INCREMENT = DecimalUtils.setDefaultScale(0.0025);
+    public static final boolean BUY_AVAILABLE_FLAG = true;
+    public static final boolean SELL_AVAILABLE_FLAG = true;
+    public static final String ISO_CURRENCY_NAME = "usd";
+    public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 2500000);
+    public static final boolean API_TRADE_AVAILABLE_FLAG = true;
+    public static final String UID = "a22a1263-8e1b-4546-a1aa-416463f104d3";
+    public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
+    public static final String POSITION_UID = "6e97aa9b-50b6-4738-bce7-17313f2b2cc2";
+    public static final boolean FOR_IIS_FLAG = true;
+    public static final boolean FOR_QUAL_INVESTOR_FLAG = false;
+    public static final boolean WEEKEND_FLAG = false;
+    public static final boolean BLOCKED_TCA_FLAG = false;
     public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(2018, 3, 7, 19, 16);
     public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(2000, 5, 16, 3);
 
-    public static final ru.tinkoff.piapi.contract.v1.Currency TINKOFF_CURRENCY = ru.tinkoff.piapi.contract.v1.Currency.newBuilder()
-            .setFigi(TestCurrency1.FIGI)
-            .setTicker(TestCurrency1.TICKER)
-            .setLot(TestCurrency1.LOT_SIZE)
-            .setCurrency(TestCurrency1.CURRENCY_VALUE)
-            .setName(TestCurrency1.NAME)
-            .setExchange(TestCurrency1.EXCHANGE)
-            .setNominal(MONEY_VALUE_MAPPER.bigDecimalToMoneyValue(TestCurrency1.NOMINAL))
-            .setCountryOfRiskName(TestCurrency1.COUNTRY)
-            .setTradingStatus(TestCurrency1.TRADING_STATUS)
-            .setBuyAvailableFlag(TestCurrency1.BUY_AVAILABLE)
-            .setSellAvailableFlag(TestCurrency1.SELL_AVAILABLE)
-            .setApiTradeAvailableFlag(TestCurrency1.API_TRADE_AVAILABLE)
-            .setMinPriceIncrement(QUOTATION_MAPPER.fromBigDecimal(TestCurrency1.MIN_PRICE_INCREMENT))
-            .setFirst1MinCandleDate(TestCurrency1.FIRST_1_MIN_CANDLE_DATE)
-            .setFirst1DayCandleDate(TestCurrency1.FIRST_1_DAY_CANDLE_DATE)
+    public static final Currency CURRENCY = Currency.newBuilder()
+            .setFigi(FIGI)
+            .setTicker(TICKER)
+            .setClassCode(CLASS_CODE)
+            .setIsin(ISIN)
+            .setLot(LOT)
+            .setCurrency(CURRENCY_VALUE)
+            .setKlong(KLONG)
+            .setKshort(KSHORT)
+            .setDlong(DLONG)
+            .setDshort(DSHORT)
+            .setDlongMin(DLONG_MIN)
+            .setDshortMin(DSHORT_MIN)
+            .setShortEnabledFlag(SHORT_ENABLED_FLAG)
+            .setName(NAME)
+            .setExchange(EXCHANGE)
+            .setNominal(NOMINAL)
+            .setCountryOfRiskName(COUNTRY_OF_RISK)
+            .setCountryOfRiskName(COUNTRY_OF_RISK_NAME)
+            .setTradingStatus(TRADING_STATUS)
+            .setBuyAvailableFlag(BUY_AVAILABLE_FLAG)
+            .setSellAvailableFlag(SELL_AVAILABLE_FLAG)
+            .setIsoCurrencyName(ISO_CURRENCY_NAME)
+            .setMinPriceIncrement(MIN_PRICE_INCREMENT)
+            .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .setUid(UID)
+            .setRealExchange(REAL_EXCHANGE)
+            .setPositionUid(POSITION_UID)
+            .setForIisFlag(FOR_IIS_FLAG)
+            .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
+            .setWeekendFlag(WEEKEND_FLAG)
+            .setBlockedTcaFlag(BLOCKED_TCA_FLAG)
+            .setFirst1MinCandleDate(FIRST_1_MIN_CANDLE_DATE)
+            .setFirst1DayCandleDate(FIRST_1_DAY_CANDLE_DATE)
             .build();
 
-    public static final CurrencyInstrument CURRENCY = CurrencyInstrument.builder()
-            .figi(TestCurrency1.FIGI)
-            .ticker(TestCurrency1.TICKER)
-            .lotSize(TestCurrency1.LOT_SIZE)
-            .currency(TestCurrency1.CURRENCY_VALUE)
-            .name(TestCurrency1.NAME)
-            .exchange(TestCurrency1.EXCHANGE)
-            .nominal(TestCurrency1.NOMINAL)
-            .country(TestCurrency1.COUNTRY)
-            .tradingStatus(TestCurrency1.TRADING_STATUS)
-            .buyAvailable(TestCurrency1.BUY_AVAILABLE)
-            .sellAvailable(TestCurrency1.SELL_AVAILABLE)
-            .apiTradeAvailable(TestCurrency1.API_TRADE_AVAILABLE)
-            .minPriceIncrement(TestCurrency1.MIN_PRICE_INCREMENT)
-            .first1MinCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_MIN_CANDLE_DATE))
-            .first1DayCandleDate(TimestampUtils.toOffsetDateTime(TestCurrency1.FIRST_1_DAY_CANDLE_DATE))
-            .build();
+    public static final String JSON_STRING = "{\"figi\":\"BBG0013HGFT4\",\"ticker\":\"USD000UTSTOM\",\"classCode\":\"CETS\",\"isin\":\"\",\"lot\":1000,\"currency\":\"rub\",\"klong\":{\"units\":2,\"nano\":0},\"kshort\":{\"units\":2,\"nano\":0},\"dlong\":{\"units\":0,\"nano\":500000000},\"dshort\":{\"units\":0,\"nano\":500000000},\"dlongMin\":{\"units\":0,\"nano\":292900000},\"dshortMin\":{\"units\":0,\"nano\":224700000},\"shortEnabledFlag\":true,\"name\":\"Доллар США\",\"exchange\":\"FX\",\"nominal\":{\"currency\":\"usd\",\"units\":1,\"nano\":0},\"countryOfRisk\":\"\",\"countryOfRiskName\":\"\",\"tradingStatus\":\"SECURITY_TRADING_STATUS_NORMAL_TRADING\",\"otcFlag\":false,\"buyAvailableFlag\":true,\"sellAvailableFlag\":true,\"isoCurrencyName\":\"usd\",\"minPriceIncrement\":{\"units\":0,\"nano\":2500000},\"apiTradeAvailableFlag\":true,\"uid\":\"a22a1263-8e1b-4546-a1aa-416463f104d3\",\"realExchange\":\"REAL_EXCHANGE_MOEX\",\"positionUid\":\"6e97aa9b-50b6-4738-bce7-17313f2b2cc2\",\"forIisFlag\":true,\"forQualInvestorFlag\":false,\"weekendFlag\":false,\"blockedTcaFlag\":false,\"first1MinCandleDate\":{\"seconds\":1520439360,\"nanos\":0},\"first1DayCandleDate\":{\"seconds\":958435200,\"nanos\":0}}";
 
 }

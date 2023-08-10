@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -84,7 +84,7 @@ public class InstrumentsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public CurrencyInstrument getCurrency(@RequestParam @ApiParam(example = "BBG0013HGFT4") final String figi) {
+    public Currency getCurrency(@RequestParam @ApiParam(example = "BBG0013HGFT4") final String figi) {
         return extInstrumentsService.getCurrency(figi);
     }
 

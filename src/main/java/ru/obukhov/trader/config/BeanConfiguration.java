@@ -33,6 +33,7 @@ import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.transform.BondSerializer;
+import ru.obukhov.trader.market.model.transform.CurrencySerializer;
 import ru.obukhov.trader.market.model.transform.EtfSerializer;
 import ru.obukhov.trader.market.model.transform.InstrumentSerializer;
 import ru.obukhov.trader.market.model.transform.MoneyValueSerializer;
@@ -206,6 +207,7 @@ public class BeanConfiguration {
                 .addSerializer(new EtfSerializer())
                 .addSerializer(new OrderStateSerializer())
                 .addSerializer(new OrderStageSerializer())
+                .addSerializer(new CurrencySerializer())
                 .addSerializer(new TradingScheduleSerializer())
                 .addSerializer(new TradingDaySerializer())
                 .addSerializer(new QuotationSerializer())

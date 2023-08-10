@@ -2,8 +2,8 @@ package ru.obukhov.trader.market.interfaces;
 
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.market.model.CurrencyInstrument;
 import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -26,7 +26,7 @@ public interface ExtInstrumentsService {
 
     Bond getBond(final String figi);
 
-    CurrencyInstrument getCurrency(final String figi);
+    Currency getCurrency(final String figi);
 
     TradingDay getTradingDay(final String figi, final Timestamp timestamp);
 
