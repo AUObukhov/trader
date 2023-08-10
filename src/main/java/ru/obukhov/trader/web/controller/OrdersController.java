@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.obukhov.trader.market.impl.RealExtOrdersService;
-import ru.obukhov.trader.market.model.Order;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class OrdersController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 500, message = "Internal Server Error")
     })
-    public List<Order> getOrders(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
+    public List<OrderState> getOrders(@RequestParam @ApiParam(example = "2008941383") final String accountId) {
         return ordersService.getOrders(accountId);
     }
 

@@ -9,13 +9,13 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -33,7 +33,7 @@ import java.util.List;
 public class Mocker {
 
     public static void mockEmptyOrder(final ExtOrdersService ordersService, final String figi) {
-        final Order order = TestData.createOrder();
+        final OrderState order = OrderState.newBuilder().build();
         Mockito.when(ordersService.getOrders(figi)).thenReturn(List.of(order));
     }
 
@@ -43,7 +43,7 @@ public class Mocker {
         return offsetDateTimeStaticMock;
     }
 
-    public static Timestamp mockCurrentCurrentTimestamp(final Context context) {
+    public static Timestamp mockCurrentTimestamp(final Context context) {
         final Timestamp currentTimestamp = TimestampUtils.now();
         Mockito.when(context.getCurrentTimestamp()).thenReturn(currentTimestamp);
         return currentTimestamp;

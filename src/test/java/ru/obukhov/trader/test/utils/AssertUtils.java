@@ -33,9 +33,10 @@ import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Money;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.awt.Color;
@@ -218,8 +219,8 @@ public class AssertUtils {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
-            } else if (expectedValue instanceof Order expectedOrder && actualValue instanceof Order actualOrder) {
-                if (!equals(expectedOrder, actualOrder)) {
+            } else if (expectedValue instanceof OrderState expectedOrderState && actualValue instanceof OrderState actualOrderState) {
+                if (!equals(expectedOrderState, actualOrderState)) {
                     messageBuilder.append(getErrorMessage(expectedValue, actualValue, index))
                             .append(System.lineSeparator());
                 }
@@ -253,21 +254,34 @@ public class AssertUtils {
                 && money1.getCurrency().equals(money2.getCurrency()) && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
     }
 
-    private static boolean equals(final Order order1, final Order order2) {
-        return Objects.equals(order1.orderId(), order2.orderId())
-                && Objects.equals(order1.executionReportStatus(), order2.executionReportStatus())
-                && Objects.equals(order1.quantityLots(), order2.quantityLots())
-                && DecimalUtils.numbersEqual(order1.initialOrderPrice(), order2.initialOrderPrice())
-                && DecimalUtils.numbersEqual(order1.totalOrderAmount(), order2.totalOrderAmount())
-                && DecimalUtils.numbersEqual(order1.averagePositionPrice(), order2.averagePositionPrice())
-                && DecimalUtils.numbersEqual(order1.commission(), order2.commission())
-                && Objects.equals(order1.figi(), order2.figi())
-                && Objects.equals(order1.direction(), order2.direction())
-                && DecimalUtils.numbersEqual(order1.initialSecurityPrice(), order2.initialSecurityPrice())
-                && DecimalUtils.numbersEqual(order1.serviceCommission(), order2.serviceCommission())
-                && Objects.equals(order1.currency(), order2.currency())
-                && Objects.equals(order1.type(), order2.type())
-                && Objects.equals(order1.dateTime(), order2.dateTime());
+    public static boolean equals(final MoneyValue money1, final MoneyValue money2) {
+        return money1 == money2
+                || money1 != null && money2 != null
+                && money1.getCurrency().equals(money2.getCurrency())
+                && money1.getUnits() == money2.getUnits()
+                && money1.getNano() == money2.getNano();
+    }
+
+    private static boolean equals(final OrderState state1, final OrderState state2) {
+        return Objects.equals(state1.getOrderId(), state2.getOrderId())
+                && state1.getExecutionReportStatus() == state2.getExecutionReportStatus()
+                && state1.getLotsRequested() == state2.getLotsRequested()
+                && state1.getLotsExecuted() == state2.getLotsExecuted()
+                && equals(state1.getInitialOrderPrice(), state2.getInitialOrderPrice())
+                && equals(state1.getExecutedOrderPrice(), state2.getExecutedOrderPrice())
+                && equals(state1.getTotalOrderAmount(), state2.getTotalOrderAmount())
+                && equals(state1.getAveragePositionPrice(), state2.getAveragePositionPrice())
+                && equals(state1.getInitialCommission(), state2.getInitialCommission())
+                && equals(state1.getExecutedCommission(), state2.getExecutedCommission())
+                && Objects.equals(state1.getFigi(), state2.getFigi())
+                && state1.getDirection() == state2.getDirection()
+                && equals(state1.getInitialSecurityPrice(), state2.getInitialSecurityPrice())
+                && Objects.equals(state1.getStagesList(), state2.getStagesList())
+                && equals(state1.getServiceCommission(), state2.getServiceCommission())
+                && Objects.equals(state1.getCurrency(), state2.getCurrency())
+                && state1.getOrderType() == state2.getOrderType()
+                && Objects.equals(state1.getOrderDate(), state2.getOrderDate())
+                && Objects.equals(state1.getInstrumentUid(), state2.getInstrumentUid());
     }
 
     private static boolean equals(final Position position1, final Position position2) {

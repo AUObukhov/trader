@@ -7,7 +7,6 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.model.PositionUtils;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
@@ -15,6 +14,7 @@ import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
@@ -42,9 +42,9 @@ public class FakeExtOrdersService implements ExtOrdersService {
      * If {@code accountId} null, works with default broker account
      */
     @Override
-    public List<Order> getOrders(final String accountId, final String figi) {
+    public List<OrderState> getOrders(final String accountId, final String figi) {
         return getOrders(accountId).stream()
-                .filter(order -> figi.equals(order.figi()))
+                .filter(order -> figi.equals(order.getFigi()))
                 .toList();
     }
 
@@ -53,7 +53,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
      * If {@code accountId} null, works with default broker account
      */
     @Override
-    public List<Order> getOrders(final String accountId) {
+    public List<OrderState> getOrders(final String accountId) {
         return Collections.emptyList();
     }
 

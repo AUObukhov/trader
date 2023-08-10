@@ -17,10 +17,10 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.model.Decision;
@@ -32,6 +32,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -62,7 +63,7 @@ class BotUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
 
-        final List<Order> orders = List.of(TestData.createOrder());
+        final List<OrderState> orders = List.of(TestOrderState1.ORDER_STATE);
         Mockito.when(ordersService.getOrders(figi)).thenReturn(orders);
 
         final BotConfig botConfig = new BotConfig(
@@ -135,7 +136,7 @@ class BotUnitTest {
         final Timestamp previousStartTime = TimestampUtils.now();
         final Candle candle = new Candle().setTime(previousStartTime);
         mockCandles(figi, List.of(candle));
-        Mocker.mockCurrentCurrentTimestamp(context);
+        Mocker.mockCurrentTimestamp(context);
 
         final BotConfig botConfig = new BotConfig(
                 accountId,

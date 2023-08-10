@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
@@ -25,6 +24,7 @@ import ru.obukhov.trader.test.utils.model.share.TestShare3;
 import ru.obukhov.trader.test.utils.model.share.TestShare4;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
@@ -59,7 +59,7 @@ class FakeExtOrdersServiceUnitTest {
     void getOrders_byAccountId_returnsEmptyList() {
         final String accountId = TestData.ACCOUNT_ID1;
 
-        List<Order> orders = fakeExtOrdersService.getOrders(accountId);
+        List<OrderState> orders = fakeExtOrdersService.getOrders(accountId);
 
         Assertions.assertTrue(orders.isEmpty());
     }
@@ -69,7 +69,7 @@ class FakeExtOrdersServiceUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
 
-        List<Order> orders = fakeExtOrdersService.getOrders(accountId, figi);
+        List<OrderState> orders = fakeExtOrdersService.getOrders(accountId, figi);
 
         Assertions.assertTrue(orders.isEmpty());
     }

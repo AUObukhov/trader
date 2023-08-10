@@ -2,12 +2,10 @@ package ru.obukhov.trader.market.impl;
 
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
-import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.transform.OrderMapper;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
@@ -22,8 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class RealExtOrdersService implements ExtOrdersService {
 
-    private static final OrderMapper ORDER_MAPPER = Mappers.getMapper(OrderMapper.class);
-
     private final OrdersService ordersService;
 
     /**
@@ -31,9 +27,9 @@ public class RealExtOrdersService implements ExtOrdersService {
      * If {@code accountId} null, works with default broker account
      */
     @Override
-    public List<Order> getOrders(final String accountId, final String figi) {
+    public List<OrderState> getOrders(final String accountId, final String figi) {
         return getOrders(accountId).stream()
-                .filter(order -> figi.equals(order.figi()))
+                .filter(order -> figi.equals(order.getFigi()))
                 .toList();
     }
 
@@ -41,8 +37,8 @@ public class RealExtOrdersService implements ExtOrdersService {
      * @return returns list of active orders at given {@code accountId}
      */
     @Override
-    public List<Order> getOrders(final String accountId) {
-        return ordersService.getOrdersSync(accountId).stream().map(ORDER_MAPPER::map).toList();
+    public List<OrderState> getOrders(final String accountId) {
+        return ordersService.getOrdersSync(accountId);
     }
 
     @Override

@@ -9,21 +9,19 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Order;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState1;
+import ru.obukhov.trader.test.utils.model.orderstate.TestOrderState2;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
-import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.core.OrdersService;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,133 +40,16 @@ class RealExtOrdersServiceUnitTest {
 
         final String accountId = TestData.ACCOUNT_ID1;
 
-        // todo realistic data (copy from OrderMapperTest)
-        final String currency1 = Currencies.EUR;
-        final String orderId1 = "orderId1";
-        final OrderExecutionReportStatus executionReportStatus1 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_FILL;
-        final int lotsRequested1 = 1;
-        final int lotsExecuted1 = 2;
-        final double initialOrderPrice1 = 3;
-        final double totalOrderAmount1 = 4;
-        final double averagePositionPrice1 = 5;
-        final double initialCommission1 = 6;
-        final double executedCommission1 = 7;
-        final String figi1 = "figi1";
-        final OrderDirection orderDirection1 = OrderDirection.ORDER_DIRECTION_BUY;
-        final double initialSecurityPrice1 = 8;
-        final List<OrderStage> stages1 = List.of(
-                TestData.createOrderStage(currency1, 9, 10, "tradeId1"),
-                TestData.createOrderStage(currency1, 11, 12, "tradeId1")
-        );
-        final double serviceCommission1 = 13;
-        final ru.tinkoff.piapi.contract.v1.OrderType orderType1 = OrderType.ORDER_TYPE_MARKET;
-        final OffsetDateTime orderDate1 = OffsetDateTime.now();
-
-        final OrderState orderState1 = TestData.createOrderState(
-                currency1,
-                orderId1,
-                executionReportStatus1,
-                lotsRequested1,
-                lotsExecuted1,
-                initialOrderPrice1,
-                totalOrderAmount1,
-                averagePositionPrice1,
-                initialCommission1,
-                executedCommission1,
-                figi1,
-                orderDirection1,
-                initialSecurityPrice1,
-                stages1,
-                serviceCommission1,
-                orderType1,
-                orderDate1
-        );
-
-        final String currency2 = Currencies.USD;
-        final String orderId2 = "orderId2";
-        final OrderExecutionReportStatus executionReportStatus2 = OrderExecutionReportStatus.EXECUTION_REPORT_STATUS_NEW;
-        final int lotsRequested2 = 14;
-        final int lotsExecuted2 = 15;
-        final double initialOrderPrice2 = 16;
-        final double totalOrderAmount2 = 17;
-        final double averagePositionPrice2 = 18;
-        final double initialCommission2 = 19;
-        final double executedCommission2 = 20;
-        final String figi2 = "figi2";
-        final OrderDirection orderDirection2 = OrderDirection.ORDER_DIRECTION_SELL;
-        final double initialSecurityPrice2 = 21;
-        final List<OrderStage> stages2 = List.of(
-                TestData.createOrderStage(currency2, 22, 23, "tradeId2"),
-                TestData.createOrderStage(currency2, 24, 25, "tradeId2")
-        );
-        final double serviceCommission2 = 26;
-        final ru.tinkoff.piapi.contract.v1.OrderType orderType2 = OrderType.ORDER_TYPE_LIMIT;
-        final OffsetDateTime orderDate2 = OffsetDateTime.now();
-
-        final OrderState orderState2 = TestData.createOrderState(
-                currency2,
-                orderId2,
-                executionReportStatus2,
-                lotsRequested2,
-                lotsExecuted2,
-                initialOrderPrice2,
-                totalOrderAmount2,
-                averagePositionPrice2,
-                initialCommission2,
-                executedCommission2,
-                figi2,
-                orderDirection2,
-                initialSecurityPrice2,
-                stages2,
-                serviceCommission2,
-                orderType2,
-                orderDate2
-        );
-
-        final List<OrderState> orderStates = List.of(orderState1, orderState2);
+        final List<OrderState> orderStates = List.of(TestOrderState1.ORDER_STATE, TestOrderState2.ORDER_STATE);
         Mockito.when(ordersService.getOrdersSync(accountId)).thenReturn(orderStates);
 
         // action
 
-        final List<Order> result = realExtOrdersService.getOrders(accountId);
+        final List<OrderState> result = realExtOrdersService.getOrders(accountId);
 
         // assert
 
-        final Order order1 = TestData.createOrder(
-                currency1,
-                orderId1,
-                executionReportStatus1,
-                lotsExecuted1,
-                initialOrderPrice1,
-                totalOrderAmount1,
-                averagePositionPrice1,
-                executedCommission1,
-                figi1,
-                orderDirection1,
-                initialSecurityPrice1,
-                serviceCommission1,
-                orderType1,
-                orderDate1
-        );
-        final Order order2 = TestData.createOrder(
-                currency2,
-                orderId2,
-                executionReportStatus2,
-                lotsExecuted2,
-                initialOrderPrice2,
-                totalOrderAmount2,
-                averagePositionPrice2,
-                executedCommission2,
-                figi2,
-                orderDirection2,
-                initialSecurityPrice2,
-                serviceCommission2,
-                orderType2,
-                orderDate2
-        );
-        final List<Order> expectedResult = List.of(order1, order2);
-
-        AssertUtils.assertEquals(expectedResult, result);
+        AssertUtils.assertEquals(orderStates, result);
     }
 
     @Test
@@ -186,12 +67,12 @@ class RealExtOrdersServiceUnitTest {
                 TestData.createOrderState("order4", figi)
         );
 
-        final List<Order> orders = realExtOrdersService.getOrders(accountId, figi);
+        final List<OrderState> orders = realExtOrdersService.getOrders(accountId, figi);
 
         Assertions.assertEquals(3, orders.size());
-        Assertions.assertEquals("order0", orders.get(0).orderId());
-        Assertions.assertEquals("order1", orders.get(1).orderId());
-        Assertions.assertEquals("order4", orders.get(2).orderId());
+        Assertions.assertEquals("order0", orders.get(0).getOrderId());
+        Assertions.assertEquals("order1", orders.get(1).getOrderId());
+        Assertions.assertEquals("order4", orders.get(2).getOrderId());
     }
 
     @Test

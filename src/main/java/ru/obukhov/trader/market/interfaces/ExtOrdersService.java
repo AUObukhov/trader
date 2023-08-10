@@ -1,8 +1,8 @@
 package ru.obukhov.trader.market.interfaces;
 
 import org.jetbrains.annotations.NotNull;
-import ru.obukhov.trader.market.model.Order;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
+import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 
@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ExtOrdersService {
-    List<Order> getOrders(String accountId, String figi);
+    List<OrderState> getOrders(String accountId, String figi);
 
-    List<Order> getOrders(String accountId);
+    List<OrderState> getOrders(String accountId);
 
     PostOrderResponse postOrder(
             String accountId,

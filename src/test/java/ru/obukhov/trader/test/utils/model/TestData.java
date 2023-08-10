@@ -11,8 +11,6 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.market.model.Order;
-import ru.obukhov.trader.market.model.transform.DateTimeMapper;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -20,12 +18,10 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.trading.strategy.impl.ConservativeStrategy;
 import ru.obukhov.trader.web.model.BalanceConfig;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationState;
 import ru.tinkoff.piapi.contract.v1.OperationType;
-import ru.tinkoff.piapi.contract.v1.OrderDirection;
-import ru.tinkoff.piapi.contract.v1.OrderExecutionReportStatus;
-import ru.tinkoff.piapi.contract.v1.OrderStage;
 import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.PortfolioPosition;
 import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
@@ -37,7 +33,6 @@ import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +43,6 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestData {
 
-    private static final DateTimeMapper DATE_TIME_MAPPER = Mappers.getMapper(DateTimeMapper.class);
     private static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
@@ -103,12 +97,12 @@ public class TestData {
                 .setFigi(figi)
                 .setInstrumentType(instrumentType.name())
                 .setQuantity(createQuotation(quantity))
-                .setAveragePositionPrice(createTinkoffMoneyValue(averagePositionPrice, currency))
+                .setAveragePositionPrice(createMoneyValue(averagePositionPrice, currency))
                 .setExpectedYield(createQuotation(expectedYield))
-                .setCurrentNkd(createTinkoffMoneyValue(currency))
+                .setCurrentNkd(createMoneyValue(currency))
                 .setAveragePositionPricePt(createQuotation())
-                .setCurrentPrice(createTinkoffMoneyValue(currentPrice, currency))
-                .setAveragePositionPriceFifo(createTinkoffMoneyValue(currency))
+                .setCurrentPrice(createMoneyValue(currentPrice, currency))
+                .setAveragePositionPriceFifo(createMoneyValue(currency))
                 .setQuantityLots(createQuotation(quantityLots))
                 .build();
     }
@@ -213,102 +207,7 @@ public class TestData {
                 .build();
     }
 
-    public static OrderState createOrderState(
-            final String currency,
-            final String orderId,
-            final OrderExecutionReportStatus executionReportStatus,
-            final int lotsRequested,
-            final int lotsExecuted,
-            final double initialOrderPrice,
-            final double totalOrderAmount,
-            final double averagePositionPrice,
-            final double initialCommission,
-            final double executedCommission,
-            final String figi,
-            final OrderDirection orderDirection,
-            final double initialSecurityPrice,
-            final List<OrderStage> stages,
-            final double serviceCommission,
-            final ru.tinkoff.piapi.contract.v1.OrderType orderType,
-            final OffsetDateTime orderDate
-    ) {
-        return OrderState.newBuilder()
-                .setOrderId(orderId)
-                .setExecutionReportStatus(executionReportStatus)
-                .setLotsRequested(lotsRequested)
-                .setLotsExecuted(lotsExecuted)
-                .setInitialOrderPrice(TestData.createTinkoffMoneyValue(initialOrderPrice, currency))
-                .setTotalOrderAmount(TestData.createTinkoffMoneyValue(totalOrderAmount, currency))
-                .setAveragePositionPrice(TestData.createTinkoffMoneyValue(averagePositionPrice, currency))
-                .setInitialCommission(TestData.createTinkoffMoneyValue(initialCommission, currency))
-                .setExecutedCommission(TestData.createTinkoffMoneyValue(executedCommission, currency))
-                .setFigi(figi)
-                .setDirection(orderDirection)
-                .setInitialSecurityPrice(TestData.createTinkoffMoneyValue(initialSecurityPrice, currency))
-                .addAllStages(stages)
-                .setServiceCommission(TestData.createTinkoffMoneyValue(serviceCommission, currency))
-                .setCurrency(currency)
-                .setOrderType(orderType)
-                .setOrderDate(DATE_TIME_MAPPER.offsetDateTimeToTimestamp(orderDate))
-                .build();
-    }
 
-    // endregion
-
-    // region Order creation
-
-    public static Order createOrder() {
-        return new Order(
-                null,
-                null,
-                0,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
-    public static Order createOrder(
-            final String currency,
-            final String orderId,
-            final OrderExecutionReportStatus executionReportStatus,
-            final int lotsExecuted,
-            final double initialOrderPrice,
-            final double totalOrderAmount,
-            final double averagePositionPrice,
-            final double executedCommission,
-            final String figi,
-            final OrderDirection orderDirection,
-            final double initialSecurityPrice,
-            final double serviceCommission,
-            final ru.tinkoff.piapi.contract.v1.OrderType orderType,
-            final OffsetDateTime orderDate
-    ) {
-        return new Order(
-                orderId,
-                executionReportStatus,
-                lotsExecuted,
-                DecimalUtils.setDefaultScale(initialOrderPrice),
-                BigDecimal.valueOf(totalOrderAmount),
-                DecimalUtils.setDefaultScale(averagePositionPrice),
-                DecimalUtils.setDefaultScale(executedCommission),
-                figi,
-                orderDirection,
-                DecimalUtils.setDefaultScale(initialSecurityPrice),
-                DecimalUtils.setDefaultScale(serviceCommission),
-                currency,
-                orderType,
-                orderDate
-        );
-    }
 
     // endregion
 
@@ -326,17 +225,25 @@ public class TestData {
 
     // region MoneyValue creation
 
-    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final double value, final String currency) {
+    public static MoneyValue createMoneyValue(final String currency) {
+        return MoneyValue.newBuilder().setCurrency(currency).build();
+    }
+
+    public static MoneyValue createMoneyValue(final double value, final String currency) {
         return DataStructsHelper.createMoneyValue(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static ru.tinkoff.piapi.contract.v1.MoneyValue createTinkoffMoneyValue(final String currency) {
-        return ru.tinkoff.piapi.contract.v1.MoneyValue.newBuilder().setCurrency(currency).build();
+    public static MoneyValue createMoneyValue(final long units, final int nano, final String currency) {
+        return MoneyValue.newBuilder()
+                .setCurrency(currency)
+                .setUnits(units)
+                .setNano(nano)
+                .build();
     }
 
     // endregion
 
-    // region
+    // region Money creation
 
     public static Money createMoney(final String currency, final int value) {
         return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
@@ -358,11 +265,11 @@ public class TestData {
 
     public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
-                .setTotalAmountShares(createTinkoffMoneyValue(Currencies.RUB))
-                .setTotalAmountBonds(createTinkoffMoneyValue(Currencies.RUB))
-                .setTotalAmountEtf(createTinkoffMoneyValue(Currencies.RUB))
-                .setTotalAmountCurrencies(createTinkoffMoneyValue(Currencies.RUB))
-                .setTotalAmountFutures(createTinkoffMoneyValue(Currencies.RUB))
+                .setTotalAmountShares(createMoneyValue(Currencies.RUB))
+                .setTotalAmountBonds(createMoneyValue(Currencies.RUB))
+                .setTotalAmountEtf(createMoneyValue(Currencies.RUB))
+                .setTotalAmountCurrencies(createMoneyValue(Currencies.RUB))
+                .setTotalAmountFutures(createMoneyValue(Currencies.RUB))
                 .setExpectedYield(createQuotation());
         for (final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition : portfolioPositions) {
             builder.addPositions(portfolioPosition);
@@ -370,14 +277,6 @@ public class TestData {
 
         final PortfolioResponse portfolioResponse = builder.build();
         return Portfolio.fromResponse(portfolioResponse);
-    }
-
-    public static OrderStage createOrderStage(final String currency, final double price, final long quantity, final String tradeId) {
-        return OrderStage.newBuilder()
-                .setPrice(createTinkoffMoneyValue(price, currency))
-                .setQuantity(quantity)
-                .setTradeId(tradeId)
-                .build();
     }
 
     public static TradingDay createTradingDay(final boolean isTradingDay, Timestamp startTimestamp, final Timestamp endTimestamp) {

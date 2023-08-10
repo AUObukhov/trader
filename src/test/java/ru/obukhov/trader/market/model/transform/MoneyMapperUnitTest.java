@@ -30,7 +30,7 @@ class MoneyMapperUnitTest {
     void moneyValueToMoney_whenNotNull() {
         final double value = 100;
         final String currency = Currencies.RUB;
-        final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, currency);
+        final MoneyValue moneyValue = TestData.createMoneyValue(value, currency);
 
         final Money money = mapper.moneyValueToMoney(moneyValue);
 
@@ -52,7 +52,7 @@ class MoneyMapperUnitTest {
     @Test
     void moneyValueToBigDecimal_whenNotNull() {
         final double value = 100;
-        final MoneyValue moneyValue = TestData.createTinkoffMoneyValue(value, Currencies.RUB);
+        final MoneyValue moneyValue = TestData.createMoneyValue(value, Currencies.RUB);
 
         final BigDecimal bigDecimal = mapper.moneyValueToBigDecimal(moneyValue);
 
