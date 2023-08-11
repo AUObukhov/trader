@@ -197,18 +197,12 @@ public class TestData {
 
     // endregion
 
-    // region OrderState creation
-
     public static OrderState createOrderState(final String orderId, final String figi) {
         return OrderState.newBuilder()
                 .setOrderId(orderId)
                 .setFigi(figi)
                 .build();
     }
-
-
-
-    // endregion
 
     // region Quotation creation
 
