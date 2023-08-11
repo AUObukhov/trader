@@ -26,15 +26,16 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.service.interfaces.ExcelService;
 import ru.obukhov.trader.common.util.CollectionsUtils;
 import ru.obukhov.trader.common.util.DateUtils;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.awt.Color;
@@ -273,7 +274,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putOperations(final ExtendedSheet sheet, final List<BackTestOperation> operations) {
+    private void putOperations(final ExtendedSheet sheet, final List<Operation> operations) {
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(operations)) {
@@ -282,13 +283,13 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Операции", 6);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Дата и время", "Тип операции", "Цена", "Количество");
-            for (final BackTestOperation operation : operations) {
+            for (final Operation operation : operations) {
                 final ExtendedRow row = sheet.addRow();
                 row.createCells(
-                        operation.timestamp(),
-                        operation.operationType().name(),
-                        operation.price(),
-                        operation.quantity()
+                        operation.getDate(),
+                        operation.getOperationType().name(),
+                        operation.getPrice(),
+                        operation.getQuantity()
                 );
             }
         }
@@ -316,7 +317,7 @@ public class ExcelServiceImpl implements ExcelService {
         chart.plot(chartData);
     }
 
-    private void putChartWithOperations(final ExtendedSheet sheet, final List<Candle> candles, final List<BackTestOperation> operations) {
+    private void putChartWithOperations(final ExtendedSheet sheet, final List<Candle> candles, final List<Operation> operations) {
         if (CollectionUtils.isNotEmpty(candles)) {
             final ExtendedChart chart = createChart(sheet);
             final ExtendedChartData chartData =
@@ -349,14 +350,14 @@ public class ExcelServiceImpl implements ExcelService {
     private void addCandlesAndPricesAndOperations(
             final ExtendedChartData chartData,
             final List<Candle> candles,
-            final List<BackTestOperation> operations
+            final List<Operation> operations
     ) {
         final List<Candle> innerCandles = new ArrayList<>(candles);
 
         // interpolating candles and computing operationsIndices for future processing
         final List<Integer> operationsIndices = new ArrayList<>();
-        for (final BackTestOperation operation : operations) {
-            final Timestamp operationTimestamp = operation.timestamp();
+        for (final Operation operation : operations) {
+            final Timestamp operationTimestamp = operation.getDate();
             final Candle keyCandle = new Candle();
             keyCandle.setTime(operationTimestamp);
             int index = Collections.binarySearch(innerCandles, keyCandle, Comparator.comparing(Candle::getTime, TimestampUtils::compare));
@@ -415,7 +416,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void addOperations(
             final ExtendedChartData chartData,
             final XDDFCategoryDataSource timesDataSource,
-            final List<BackTestOperation> operations,
+            final List<Operation> operations,
             final List<Integer> operationsIndices
     ) {
 
@@ -424,13 +425,13 @@ public class ExcelServiceImpl implements ExcelService {
         boolean buyOperationsExist = false;
         boolean sellOperationsExist = false;
         for (int i = 0; i < operations.size(); i++) {
-            final BackTestOperation operation = operations.get(i);
+            final Operation operation = operations.get(i);
             final int index = operationsIndices.get(i);
-            if (operation.operationType() == OperationType.OPERATION_TYPE_BUY) {
-                buyOperationsPrices[index] = operation.price();
+            if (operation.getOperationType() == OperationType.OPERATION_TYPE_BUY) {
+                buyOperationsPrices[index] = DecimalUtils.createBigDecimal(operation.getPrice());
                 buyOperationsExist = true;
             } else {
-                sellOperationsPrices[index] = operation.price();
+                sellOperationsPrices[index] = DecimalUtils.createBigDecimal(operation.getPrice());
                 sellOperationsExist = true;
             }
         }

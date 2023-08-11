@@ -3,6 +3,7 @@ package ru.obukhov.trader.common.util;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
@@ -32,6 +33,10 @@ public class DecimalUtils {
         return units == 0 && nano == 0
                 ? BigDecimal.valueOf(0, DecimalUtils.DEFAULT_SCALE)
                 : BigDecimal.valueOf(units).add(BigDecimal.valueOf(nano, DecimalUtils.DEFAULT_SCALE));
+    }
+
+    public static BigDecimal createBigDecimal(final MoneyValue moneyValue) {
+        return createBigDecimal(moneyValue.getUnits(), moneyValue.getNano());
     }
 
     /**

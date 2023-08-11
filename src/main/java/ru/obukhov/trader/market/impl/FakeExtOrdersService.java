@@ -9,9 +9,10 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.PositionUtils;
+import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.contract.v1.OrderDirection;
 import ru.tinkoff.piapi.contract.v1.OrderState;
@@ -68,16 +69,16 @@ public class FakeExtOrdersService implements ExtOrdersService {
     ) {
         final Share share = extInstrumentsService.getShare(figi);
         final BigDecimal currentPrice = getCurrentPrice(figi);
-        final Long quantity = quantityLots * share.getLot();
+        final long quantity = quantityLots * share.getLot();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
         final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
             buyPosition(accountId, figi, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);
-            addOperation(accountId, figi, currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
+            addOperation(accountId, figi, share.getCurrency(), currentPrice, quantity, OperationType.OPERATION_TYPE_BUY);
         } else {
             sellPosition(accountId, figi, currentPrice, quantity, totalPrice, totalCommissionAmount);
-            addOperation(accountId, figi, currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
+            addOperation(accountId, figi, share.getCurrency(), currentPrice, quantity, OperationType.OPERATION_TYPE_SELL);
         }
 
         return new PostOrderResponseBuilder()
@@ -179,12 +180,19 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private void addOperation(
             final String accountId,
             final String figi,
+            final String currency,
             final BigDecimal price,
-            final Long quantity,
+            final long quantity,
             final OperationType operationType
     ) {
         final Timestamp currentTimestamp = fakeContext.getCurrentTimestamp();
-        final BackTestOperation operation = new BackTestOperation(figi, currentTimestamp, operationType, price, quantity);
+        final Operation operation = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(currentTimestamp)
+                .setOperationType(operationType)
+                .setPrice(DataStructsHelper.createMoneyValue(currency, price))
+                .setQuantity(quantity)
+                .build();
 
         fakeContext.addOperation(accountId, operation);
     }

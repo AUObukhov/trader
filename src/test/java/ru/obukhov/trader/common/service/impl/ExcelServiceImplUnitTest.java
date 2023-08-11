@@ -21,6 +21,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.model.poi.ExtendedSheet;
 import ru.obukhov.trader.common.model.poi.ExtendedWorkbook;
 import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.test.utils.AssertUtils;
@@ -28,7 +29,6 @@ import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -37,6 +37,7 @@ import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.io.IOException;
@@ -380,13 +381,13 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next(), "Операции");
         AssertUtils.assertRowValues(rowIterator.next(), "Дата и время", "Тип операции", "Цена", "Количество");
 
-        for (final BackTestOperation operation : result.operations()) {
+        for (final Operation operation : result.operations()) {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
-                    operation.timestamp(),
-                    operation.operationType().name(),
-                    operation.price(),
-                    operation.quantity()
+                    operation.getDate(),
+                    operation.getOperationType().name(),
+                    DecimalUtils.createBigDecimal(operation.getPrice()).doubleValue(),
+                    operation.getQuantity()
             );
         }
     }
@@ -533,35 +534,35 @@ class ExcelServiceImplUnitTest {
         );
     }
 
-    private List<BackTestOperation> createBackTestOperations(String figi) {
-        BackTestOperation operation1 = new BackTestOperation(
-                figi,
-                TimestampUtils.newTimestamp(2020, 10, 1, 10),
-                OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(150),
-                1L
-        );
-        BackTestOperation operation2 = new BackTestOperation(
-                figi,
-                TimestampUtils.newTimestamp(2020, 10, 5, 10, 11),
-                OperationType.OPERATION_TYPE_SELL,
-                BigDecimal.valueOf(180),
-                1L
-        );
-        BackTestOperation operation3 = new BackTestOperation(
-                figi,
-                TimestampUtils.newTimestamp(2020, 10, 10, 10, 50),
-                OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(160),
-                3L
-        );
-        BackTestOperation operation4 = new BackTestOperation(
-                figi,
-                TimestampUtils.newTimestamp(2020, 11, 1, 10),
-                OperationType.OPERATION_TYPE_BUY,
-                BigDecimal.valueOf(120),
-                2L
-        );
+    private List<Operation> createBackTestOperations(String figi) {
+        Operation operation1 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(TimestampUtils.newTimestamp(2020, 10, 1, 10))
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(150, ""))
+                .setQuantity(1L)
+                .build();
+        Operation operation2 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
+                .setOperationType(OperationType.OPERATION_TYPE_SELL)
+                .setPrice(TestData.createMoneyValue(180, ""))
+                .setQuantity(1L)
+                .build();
+        Operation operation3 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(160, ""))
+                .setQuantity(3L)
+                .build();
+        Operation operation4 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(TimestampUtils.newTimestamp(2020, 11, 1, 10))
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(120, ""))
+                .setQuantity(2L)
+                .build();
 
         return List.of(operation1, operation2, operation3, operation4);
     }

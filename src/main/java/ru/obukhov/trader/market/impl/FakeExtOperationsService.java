@@ -3,13 +3,10 @@ package ru.obukhov.trader.market.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
-import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
@@ -22,21 +19,18 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class FakeExtOperationsService implements ExtOperationsService {
 
-    private static final OperationMapper OPERATION_MAPPER = Mappers.getMapper(OperationMapper.class);
-
     private final FakeContext fakeContext;
 
     @Override
     public List<Operation> getOperations(final String accountId, @NotNull final Interval interval, @Nullable final String figi) {
-        Stream<BackTestOperation> operationsStream = fakeContext.getOperations(accountId).stream()
-                .filter(operation -> interval.contains(operation.timestamp()));
+        Stream<Operation> operationsStream = fakeContext.getOperations(accountId).stream()
+                .filter(operation -> interval.contains(operation.getDate()));
         if (figi != null) {
-            operationsStream = operationsStream.filter(operation -> figi.equals(operation.figi()));
+            operationsStream = operationsStream.filter(operation -> figi.equals(operation.getFigi()));
         }
 
         return operationsStream
-                .sorted(Comparator.comparing(operation -> TimestampUtils.toInstant(operation.timestamp())))
-                .map(OPERATION_MAPPER::map)
+                .sorted(Comparator.comparing(operation -> TimestampUtils.toInstant(operation.getDate())))
                 .toList();
     }
 

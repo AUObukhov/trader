@@ -26,7 +26,6 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -36,6 +35,7 @@ import ru.obukhov.trader.web.model.BotConfig;
 import ru.obukhov.trader.web.model.exchange.BackTestRequest;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 
 import java.math.BigDecimal;
@@ -200,6 +200,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
     void backTest_returnsBackTestResults_whenRequestIsValid() throws Exception {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
+        final String currency = TestShare1.CURRENCY;
         final OffsetDateTime from = DateTimeTestData.createDateTime(2022, 1, 1, 10);
         final OffsetDateTime to = DateTimeTestData.createDateTime(2022, 2, 1);
         final Interval interval = Interval.of(from, to);
@@ -280,13 +281,13 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(54.49544),
                 DecimalUtils.setDefaultScale(1061.21544)
         );
-        final BackTestOperation operation = new BackTestOperation(
-                figi,
-                TimestampUtils.newTimestamp(from),
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(10000),
-                1L
-        );
+        final Operation operation = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(TimestampUtils.newTimestamp(from))
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(10000, currency))
+                .setQuantity(1L)
+                .build();
         final Candle candle = new CandleBuilder()
                 .setOpenPrice(10000)
                 .setClosePrice(20000)

@@ -16,7 +16,6 @@ import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
 import ru.tinkoff.piapi.core.models.Money;
@@ -57,27 +56,27 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity2 = 2L;
         final long quantity3 = 3L;
 
-        final BackTestOperation operation1 = new BackTestOperation(
-                figi,
-                timestamp1,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price1),
-                quantity1
-        );
-        final BackTestOperation operation2 = new BackTestOperation(
-                figi,
-                timestamp2,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price2),
-                quantity2
-        );
-        final BackTestOperation operation3 = new BackTestOperation(
-                figi,
-                timestamp3,
-                OperationType.OPERATION_TYPE_SELL,
-                DecimalUtils.setDefaultScale(price3),
-                quantity3
-        );
+        final Operation operation1 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(timestamp1)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setQuantity(quantity1)
+                .build();
+        final Operation operation2 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(timestamp2)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setQuantity(quantity2)
+                .build();
+        final Operation operation3 = Operation.newBuilder()
+                .setFigi(figi)
+                .setDate(timestamp3)
+                .setOperationType(OperationType.OPERATION_TYPE_SELL)
+                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setQuantity(quantity3)
+                .build();
 
         Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 
@@ -122,27 +121,27 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity2 = 2L;
         final long quantity3 = 3L;
 
-        final BackTestOperation operation1 = new BackTestOperation(
-                figi1,
-                timestamp1,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price1),
-                quantity1
-        );
-        final BackTestOperation operation2 = new BackTestOperation(
-                figi2,
-                timestamp2,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price2),
-                quantity2
-        );
-        final BackTestOperation operation3 = new BackTestOperation(
-                figi2,
-                timestamp3,
-                OperationType.OPERATION_TYPE_SELL,
-                DecimalUtils.setDefaultScale(price3),
-                quantity3
-        );
+        final Operation operation1 = Operation.newBuilder()
+                .setFigi(figi1)
+                .setDate(timestamp1)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setQuantity(quantity1)
+                .build();
+        final Operation operation2 = Operation.newBuilder()
+                .setFigi(figi2)
+                .setDate(timestamp2)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setQuantity(quantity2)
+                .build();
+        final Operation operation3 = Operation.newBuilder()
+                .setFigi(figi2)
+                .setDate(timestamp3)
+                .setOperationType(OperationType.OPERATION_TYPE_SELL)
+                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setQuantity(quantity3)
+                .build();
 
         Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 
@@ -184,27 +183,27 @@ class FakeExtOperationsServiceUnitTest {
         final long quantity2 = 2L;
         final long quantity3 = 3L;
 
-        final BackTestOperation operation1 = new BackTestOperation(
-                figi1,
-                timestamp1,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price1),
-                quantity1
-        );
-        final BackTestOperation operation2 = new BackTestOperation(
-                figi2,
-                timestamp2,
-                OperationType.OPERATION_TYPE_BUY,
-                DecimalUtils.setDefaultScale(price2),
-                quantity2
-        );
-        final BackTestOperation operation3 = new BackTestOperation(
-                figi2,
-                timestamp3,
-                OperationType.OPERATION_TYPE_SELL,
-                DecimalUtils.setDefaultScale(price3),
-                quantity3
-        );
+        final Operation operation1 = Operation.newBuilder()
+                .setFigi(figi1)
+                .setDate(timestamp1)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price1, ""))
+                .setQuantity(quantity1)
+                .build();
+        final Operation operation2 = Operation.newBuilder()
+                .setFigi(figi2)
+                .setDate(timestamp2)
+                .setOperationType(OperationType.OPERATION_TYPE_BUY)
+                .setPrice(TestData.createMoneyValue(price2, ""))
+                .setQuantity(quantity2)
+                .build();
+        final Operation operation3 = Operation.newBuilder()
+                .setFigi(figi2)
+                .setDate(timestamp3)
+                .setOperationType(OperationType.OPERATION_TYPE_SELL)
+                .setPrice(TestData.createMoneyValue(price3, ""))
+                .setQuantity(quantity3)
+                .build();
 
         Mockito.when(fakeContext.getOperations(accountId)).thenReturn(Set.of(operation1, operation2, operation3));
 

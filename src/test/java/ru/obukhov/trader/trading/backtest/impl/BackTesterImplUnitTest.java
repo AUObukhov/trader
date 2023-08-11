@@ -27,7 +27,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -334,7 +333,7 @@ class BackTesterImplUnitTest {
 
         mockInvestments(fakeBot1, accountId1, currency1, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot1.getCurrentBalance(accountId1, currency1)).thenReturn(currentBalance1);
-        mockPortfolioPosition(fakeBot1, accountId1, figi1, 1, positionLotsCount1);
+        mockPortfolioPosition(fakeBot1, accountId1, figi1, 500, 1, positionLotsCount1);
 
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
@@ -361,7 +360,7 @@ class BackTesterImplUnitTest {
         mockPlusMinuteScheduled(fakeBot2, from);
         mockInvestments(fakeBot2, accountId2, currency2, from, balanceConfig.getInitialBalance());
         Mockito.when(fakeBot2.getCurrentBalance(accountId2, currency2)).thenReturn(currentBalance2);
-        mockPortfolioPosition(fakeBot2, accountId2, figi2, 1, positionLotsCount2);
+        mockPortfolioPosition(fakeBot2, accountId2, figi2, 50, 1, positionLotsCount2);
 
         final List<BotConfig> botConfigs = List.of(botConfig1, botConfig2);
 
@@ -556,15 +555,15 @@ class BackTesterImplUnitTest {
     ) {
         Assertions.assertNull(backTestResult.error());
 
-        final List<BackTestOperation> resultOperations = backTestResult.operations();
+        final List<Operation> resultOperations = backTestResult.operations();
         Assertions.assertEquals(1, resultOperations.size());
 
-        final BackTestOperation backTestOperation = resultOperations.get(0);
-        Assertions.assertEquals(expectedFigi, backTestOperation.figi());
-        Assertions.assertEquals(expectedTimestamp, backTestOperation.timestamp());
-        Assertions.assertEquals(expectedOperationType, backTestOperation.operationType());
-        AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.price());
-        AssertUtils.assertEquals(expectedOperationQuantity, backTestOperation.quantity());
+        final Operation backTestOperation = resultOperations.get(0);
+        Assertions.assertEquals(expectedFigi, backTestOperation.getFigi());
+        Assertions.assertEquals(expectedTimestamp, backTestOperation.getDate());
+        Assertions.assertEquals(expectedOperationType, backTestOperation.getOperationType());
+        AssertUtils.assertEquals(expectedOperationPrice, backTestOperation.getPrice());
+        AssertUtils.assertEquals(expectedOperationQuantity, backTestOperation.getQuantity());
     }
 
     @Test
@@ -1040,7 +1039,7 @@ class BackTesterImplUnitTest {
         Mockito.when(fakeBot.getCurrentBalance(accountId, currency)).thenReturn(currentBalance);
         if (quantityLots != null) {
             final int quantity = share.getLot() * quantityLots;
-            mockPortfolioPosition(fakeBot, accountId, figi, quantity, quantityLots);
+            mockPortfolioPosition(fakeBot, accountId, figi, currentPrice, quantity, quantityLots);
             mockCurrentPrice(fakeBot, figi, currentPrice);
         }
         if (operation != null) {
@@ -1102,12 +1101,14 @@ class BackTesterImplUnitTest {
             final FakeBot fakeBot,
             final String accountId,
             final String figi,
+            final double currentPrice,
             final int quantity,
             final int quantityLots
     ) {
         final Position portfolioPosition = new PositionBuilder()
                 .setFigi(figi)
                 .setQuantity(quantity)
+                .setCurrentPrice(currentPrice)
                 .setQuantityLots(quantityLots)
                 .build();
 

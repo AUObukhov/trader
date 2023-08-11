@@ -17,7 +17,7 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
-import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -504,15 +504,12 @@ class FakeContextUnitTest {
 
         final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
 
-        final BackTestOperation operation = new BackTestOperation(null,
-                TimestampUtils.newTimestamp(2021, 1, 1, 10),
-                null,
-                null,
-                null
-        );
+        final Operation operation = Operation.newBuilder()
+                .setDate(TimestampUtils.newTimestamp(2021, 1, 1, 10))
+                .build();
         fakeContext.addOperation(accountId, operation);
 
-        final Set<BackTestOperation> operations = fakeContext.getOperations(accountId);
+        final Set<Operation> operations = fakeContext.getOperations(accountId);
         Assertions.assertEquals(1, operations.size());
         Assertions.assertSame(operation, operations.iterator().next());
     }

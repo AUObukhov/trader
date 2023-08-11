@@ -3,7 +3,7 @@ package ru.obukhov.trader.market.model;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.util.HashMap;
@@ -27,6 +27,6 @@ public class FakePortfolio {
     private final Map<String, Position> figiesToPositions = new HashMap<>();
 
     @NotNull
-    private final Set<BackTestOperation> operations = new HashSet<>();
+    private final Set<Operation> operations = new HashSet<>();
 
 }

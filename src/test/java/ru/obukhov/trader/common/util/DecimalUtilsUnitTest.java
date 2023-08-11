@@ -6,7 +6,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.test.utils.AssertUtils;
+import ru.obukhov.trader.test.utils.model.TestData;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
@@ -30,8 +33,18 @@ class DecimalUtilsUnitTest {
 
     @ParameterizedTest
     @MethodSource("getData_forCreateBigDecimal")
-    void createBigDecimal(final long units, final int nanos, final double expectedResult) {
+    void createBigDecimal_fromUnitsAndNanos(final long units, final int nanos, final double expectedResult) {
         final BigDecimal result = DecimalUtils.createBigDecimal(units, nanos);
+
+        AssertUtils.assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getData_forCreateBigDecimal")
+    void createBigDecimal_fromMoneyValue(final long units, final int nanos, final double expectedResult) {
+        final MoneyValue moneyValue = TestData.createMoneyValue(units, nanos, Currencies.RUB);
+
+        final BigDecimal result = DecimalUtils.createBigDecimal(moneyValue);
 
         AssertUtils.assertEquals(expectedResult, result);
     }

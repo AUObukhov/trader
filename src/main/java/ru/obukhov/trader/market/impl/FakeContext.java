@@ -8,7 +8,7 @@ import ru.obukhov.trader.common.util.TradingDayUtils;
 import ru.obukhov.trader.market.interfaces.Context;
 import ru.obukhov.trader.market.model.FakeBalance;
 import ru.obukhov.trader.market.model.FakePortfolio;
-import ru.obukhov.trader.trading.model.BackTestOperation;
+import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -121,11 +121,11 @@ public class FakeContext implements Context {
 
     // region operations
 
-    public void addOperation(final String accountId, final BackTestOperation operation) {
+    public void addOperation(final String accountId, final Operation operation) {
         computeIfAbsentPortfolio(accountId).getOperations().add(operation);
     }
 
-    public Set<BackTestOperation> getOperations(final String accountId) {
+    public Set<Operation> getOperations(final String accountId) {
         return new HashSet<>(computeIfAbsentPortfolio(accountId).getOperations());
     }
 

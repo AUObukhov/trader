@@ -10,7 +10,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
+import ru.tinkoff.piapi.contract.v1.MoneyValue;
+import ru.tinkoff.piapi.core.models.Money;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -142,6 +145,10 @@ public class ExtendedRow implements Row {
             return (ExtendedCell) createCell(column);
         } else if (value instanceof String stringValue) {
             return createCell(column, stringValue);
+        } else if (value instanceof Money money) {
+            return createCell(column, money);
+        } else if (value instanceof MoneyValue moneyValue) {
+            return createCell(column, moneyValue);
         } else if (value instanceof BigDecimal bigDecimalValue) {
             return createCell(column, bigDecimalValue);
         } else if (value instanceof Double doubleValue) {
@@ -189,6 +196,30 @@ public class ExtendedRow implements Row {
     public ExtendedCell createCell(final int column, final BigDecimal value) {
         final Double doubleValue = value == null ? null : value.doubleValue();
         return createCell(column, doubleValue);
+    }
+
+    /**
+     * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(final int column, final Money value) {
+        final BigDecimal bigDecimalValue = value == null ? null : value.getValue();
+        return createCell(column, bigDecimalValue);
+    }
+
+    /**
+     * Create numeric cell with given {@code value} in given {@code column}.<br/>
+     * Created cell gets cellStyle named {@value ExtendedWorkbook.CellStylesNames#NUMERIC} from workbook.
+     * If such a style does not exist yet, then it is pre-created.
+     *
+     * @return created cell
+     */
+    public ExtendedCell createCell(final int column, final MoneyValue value) {
+        final BigDecimal bigDecimalValue = value == null ? null : DecimalUtils.createBigDecimal(value);
+        return createCell(column, bigDecimalValue);
     }
 
     /**

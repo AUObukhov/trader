@@ -3,7 +3,6 @@ package ru.obukhov.trader.trading.backtest.impl;
 import com.google.protobuf.Timestamp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.obukhov.trader.common.model.ExecutionResult;
@@ -17,11 +16,9 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.market.model.transform.OperationMapper;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
-import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
@@ -50,8 +47,6 @@ import java.util.concurrent.Executors;
 @Slf4j
 @Service
 public class BackTesterImpl implements BackTester {
-
-    private final OperationMapper operationMapper = Mappers.getMapper(OperationMapper.class);
 
     private final ExcelService excelService;
     private final ExtInstrumentsService extInstrumentsService;
@@ -216,7 +211,7 @@ public class BackTesterImpl implements BackTester {
                 balances,
                 profits,
                 positions,
-                getOperations(operations, figi),
+                operations,
                 candles,
                 null
         );
@@ -307,12 +302,6 @@ public class BackTesterImpl implements BackTester {
         final double relative = FinUtils.getRelativeProfit(balances.weightedAverageInvestment(), absolute);
         final double relativeAnnual = FinUtils.getAverageAnnualReturn(interval.toDays(), relative);
         return new Profits(absolute, relative, relativeAnnual);
-    }
-
-    private List<BackTestOperation> getOperations(final List<Operation> operations, final String figi) {
-        return operations.stream()
-                .map(operation -> operationMapper.map(figi, operation))
-                .toList();
     }
 
     private void saveBackTestResultsSafe(final List<BackTestResult> backTestResults) {
