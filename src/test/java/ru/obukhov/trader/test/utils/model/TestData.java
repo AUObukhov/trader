@@ -244,20 +244,20 @@ public class TestData {
 
     // region Money creation
 
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final int value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final int value, final String currency) {
         return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
 
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final String currency, final double value) {
+    public static ru.tinkoff.piapi.core.models.Money createMoney(final double value, final String currency) {
         return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
     }
 
     public static ru.tinkoff.piapi.core.models.Money createMoney(final int value) {
-        return createMoney(StringUtils.EMPTY, value);
+        return createMoney(value, StringUtils.EMPTY);
     }
 
     public static ru.tinkoff.piapi.core.models.Money createMoney(final double value) {
-        return createMoney(StringUtils.EMPTY, value);
+        return createMoney(value, StringUtils.EMPTY);
     }
 
     // endregion

@@ -118,48 +118,48 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money averagePositionPrice1Money = TestData.createMoney(currency1, averagePositionPrice1);
-        final Money currentPrice1Money = TestData.createMoney(currency1, currentPrice1);
+        final Money averagePositionPrice1Money = TestData.createMoney(averagePositionPrice1, currency1);
+        final Money currentPrice1Money = TestData.createMoney(currentPrice1, currency1);
         final Position expectedPosition1 = Position.builder()
                 .figi(figi1)
                 .instrumentType(instrumentType1.toString())
                 .quantity(DecimalUtils.setDefaultScale(quantity1))
                 .averagePositionPrice(averagePositionPrice1Money)
                 .expectedYield(DecimalUtils.setDefaultScale(expectedYield1))
-                .currentNkd(TestData.createMoney(currency1, 0))
+                .currentNkd(TestData.createMoney(0, currency1))
                 .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
                 .currentPrice(currentPrice1Money)
-                .averagePositionPriceFifo(TestData.createMoney(currency1, 0))
+                .averagePositionPriceFifo(TestData.createMoney(0, currency1))
                 .quantityLots(DecimalUtils.setDefaultScale(quantityLots1))
                 .build();
 
-        final Money averagePositionPrice2Money = TestData.createMoney(currency2, averagePositionPrice2);
-        final Money currentPrice2Money = TestData.createMoney(currency2, currentPrice2);
+        final Money averagePositionPrice2Money = TestData.createMoney(averagePositionPrice2, currency2);
+        final Money currentPrice2Money = TestData.createMoney(currentPrice2, currency2);
         final Position expectedPosition2 = Position.builder()
                 .figi(figi2)
                 .instrumentType(instrumentType2.toString())
                 .quantity(DecimalUtils.setDefaultScale(quantity2))
                 .averagePositionPrice(averagePositionPrice2Money)
                 .expectedYield(DecimalUtils.setDefaultScale(expectedYield2))
-                .currentNkd(TestData.createMoney(currency2, 0))
+                .currentNkd(TestData.createMoney(0, currency2))
                 .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
                 .currentPrice(currentPrice2Money)
-                .averagePositionPriceFifo(TestData.createMoney(currency2, 0))
+                .averagePositionPriceFifo(TestData.createMoney(0, currency2))
                 .quantityLots(DecimalUtils.setDefaultScale(quantityLots2))
                 .build();
 
-        final Money averagePositionPrice3Money = TestData.createMoney(currency3, averagePositionPrice3);
-        final Money currentPrice3Money = TestData.createMoney(currency3, currentPrice3);
+        final Money averagePositionPrice3Money = TestData.createMoney(averagePositionPrice3, currency3);
+        final Money currentPrice3Money = TestData.createMoney(currentPrice3, currency3);
         final Position expectedPosition3 = Position.builder()
                 .figi(figi3)
                 .instrumentType(instrumentType3.toString())
                 .quantity(DecimalUtils.setDefaultScale(quantity3))
                 .averagePositionPrice(averagePositionPrice3Money)
                 .expectedYield(DecimalUtils.setDefaultScale(expectedYield3))
-                .currentNkd(TestData.createMoney(currency3, 0))
+                .currentNkd(TestData.createMoney(0, currency3))
                 .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
                 .currentPrice(currentPrice3Money)
-                .averagePositionPriceFifo(TestData.createMoney(currency3, 0))
+                .averagePositionPriceFifo(TestData.createMoney(0, currency3))
                 .quantityLots(DecimalUtils.setDefaultScale(quantityLots3))
                 .build();
 

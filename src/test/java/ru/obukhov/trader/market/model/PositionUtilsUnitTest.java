@@ -21,9 +21,9 @@ class PositionUtilsUnitTest {
                 .figi(TestShare1.FIGI)
                 .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
                 .quantity(DecimalUtils.setDefaultScale(1))
-                .averagePositionPrice(TestData.createMoney(currency, 10))
+                .averagePositionPrice(TestData.createMoney(10, currency))
                 .expectedYield(DecimalUtils.setDefaultScale(5))
-                .currentPrice(TestData.createMoney(currency, 15))
+                .currentPrice(TestData.createMoney(15, currency))
                 .build();
         Assertions.assertEquals(currency, PositionUtils.getCurrency(position));
     }
@@ -34,9 +34,9 @@ class PositionUtilsUnitTest {
                 .figi(TestShare1.FIGI)
                 .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
                 .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(TestShare1.CURRENCY, 10))
+                .averagePositionPrice(TestData.createMoney(10, TestShare1.CURRENCY))
                 .expectedYield(DecimalUtils.setDefaultScale(15))
-                .currentPrice(TestData.createMoney(TestShare1.CURRENCY, 15))
+                .currentPrice(TestData.createMoney(15, TestShare1.CURRENCY))
                 .build();
         AssertUtils.assertEquals(30, PositionUtils.getTotalPrice(position));
     }
@@ -48,9 +48,9 @@ class PositionUtilsUnitTest {
                 .figi(TestShare1.FIGI)
                 .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
                 .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(currency, 10))
+                .averagePositionPrice(TestData.createMoney(10, currency))
                 .expectedYield(DecimalUtils.setDefaultScale(15))
-                .currentPrice(TestData.createMoney(currency, 20))
+                .currentPrice(TestData.createMoney(20, currency))
                 .quantityLots(DecimalUtils.setDefaultScale(3))
                 .build();
         final Position newPosition = PositionUtils.addQuantities(
@@ -78,9 +78,9 @@ class PositionUtilsUnitTest {
                 .figi(TestShare1.FIGI)
                 .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
                 .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(currency, 10))
+                .averagePositionPrice(TestData.createMoney(10, currency))
                 .expectedYield(DecimalUtils.setDefaultScale(300))
-                .currentPrice(TestData.createMoney(currency, 20))
+                .currentPrice(TestData.createMoney(20, currency))
                 .quantityLots(DecimalUtils.setDefaultScale(4))
                 .build();
 
@@ -109,9 +109,9 @@ class PositionUtilsUnitTest {
                 .figi(TestShare1.FIGI)
                 .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
                 .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(currency, 10))
+                .averagePositionPrice(TestData.createMoney(10, currency))
                 .expectedYield(DecimalUtils.setDefaultScale(300))
-                .currentPrice(TestData.createMoney(currency, 20))
+                .currentPrice(TestData.createMoney(20, currency))
                 .quantityLots(DecimalUtils.setDefaultScale(4))
                 .build();
 
