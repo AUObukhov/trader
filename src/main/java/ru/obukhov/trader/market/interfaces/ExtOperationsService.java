@@ -76,7 +76,7 @@ public interface ExtOperationsService {
         final BigDecimal blockedValue = blocked.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
         final BigDecimal blockedGuaranteeValue = blockedGuarantee.getOrDefault(currency, DecimalUtils.setDefaultScale(0));
         final BigDecimal value = money.getValue().subtract(blockedValue).subtract(blockedGuaranteeValue);
-        return DataStructsHelper.createMoney(money.getCurrency(), value);
+        return DataStructsHelper.createMoney(value, money.getCurrency());
     }
 
 }

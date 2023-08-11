@@ -3,7 +3,6 @@ package ru.obukhov.trader.market.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
@@ -17,26 +16,28 @@ class PositionUtilsUnitTest {
     @Test
     void getCurrency() {
         final String currency = TestShare1.CURRENCY;
-        final Position position = Position.builder()
-                .figi(TestShare1.FIGI)
-                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                .quantity(DecimalUtils.setDefaultScale(1))
-                .averagePositionPrice(TestData.createMoney(10, currency))
-                .expectedYield(DecimalUtils.setDefaultScale(5))
-                .currentPrice(TestData.createMoney(15, currency))
+        final Position position = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(TestShare1.FIGI)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setQuantity(1)
+                .setAveragePositionPrice(10)
+                .setExpectedYield(5)
+                .setCurrentPrice(15)
                 .build();
         Assertions.assertEquals(currency, PositionUtils.getCurrency(position));
     }
 
     @Test
     void getTotalPrice() {
-        final Position position = Position.builder()
-                .figi(TestShare1.FIGI)
-                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(10, TestShare1.CURRENCY))
-                .expectedYield(DecimalUtils.setDefaultScale(15))
-                .currentPrice(TestData.createMoney(15, TestShare1.CURRENCY))
+        final Position position = new PositionBuilder()
+                .setCurrency(TestShare1.CURRENCY)
+                .setFigi(TestShare1.FIGI)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setQuantity(3)
+                .setAveragePositionPrice(10)
+                .setExpectedYield(15)
+                .setCurrentPrice(15)
                 .build();
         AssertUtils.assertEquals(30, PositionUtils.getTotalPrice(position));
     }
@@ -44,14 +45,15 @@ class PositionUtilsUnitTest {
     @Test
     void addQuantities() {
         final String currency = TestShare1.CURRENCY;
-        final Position position = Position.builder()
-                .figi(TestShare1.FIGI)
-                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(10, currency))
-                .expectedYield(DecimalUtils.setDefaultScale(15))
-                .currentPrice(TestData.createMoney(20, currency))
-                .quantityLots(DecimalUtils.setDefaultScale(3))
+        final Position position = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(TestShare1.FIGI)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setQuantity(3)
+                .setAveragePositionPrice(10)
+                .setExpectedYield(15)
+                .setCurrentPrice(20)
+                .setQuantityLots(3)
                 .build();
         final Position newPosition = PositionUtils.addQuantities(
                 position,
@@ -74,14 +76,15 @@ class PositionUtilsUnitTest {
     @Test
     void cloneWithNewQuantity() {
         final String currency = TestShare1.CURRENCY;
-        final Position position = Position.builder()
-                .figi(TestShare1.FIGI)
-                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(10, currency))
-                .expectedYield(DecimalUtils.setDefaultScale(300))
-                .currentPrice(TestData.createMoney(20, currency))
-                .quantityLots(DecimalUtils.setDefaultScale(4))
+        final Position position = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(TestShare1.FIGI)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                .setQuantity(3)
+                .setAveragePositionPrice(10)
+                .setExpectedYield(300)
+                .setCurrentPrice(20)
+                .setQuantityLots(4)
                 .build();
 
         final BigDecimal newQuantity = DecimalUtils.setDefaultScale(20);
@@ -89,14 +92,15 @@ class PositionUtilsUnitTest {
 
         final Position newPosition = PositionUtils.cloneWithNewQuantity(position, newQuantity, newQuantityLots);
 
-        final Position expectedPosition = Position.builder()
-                .figi(position.getFigi())
-                .instrumentType(position.getInstrumentType())
-                .quantity(newQuantity)
-                .averagePositionPrice(position.getAveragePositionPrice())
-                .expectedYield(position.getExpectedYield())
-                .currentPrice(position.getCurrentPrice())
-                .quantityLots(newQuantityLots)
+        final Position expectedPosition = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(newQuantity)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setExpectedYield(position.getExpectedYield())
+                .setCurrentPrice(position.getCurrentPrice())
+                .setQuantityLots(newQuantityLots)
                 .build();
 
         AssertUtils.assertEquals(expectedPosition, newPosition);
@@ -105,14 +109,15 @@ class PositionUtilsUnitTest {
     @Test
     void cloneWithNewValues() {
         final String currency = TestShare1.CURRENCY;
-        final Position position = Position.builder()
-                .figi(TestShare1.FIGI)
-                .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                .quantity(DecimalUtils.setDefaultScale(3))
-                .averagePositionPrice(TestData.createMoney(10, currency))
-                .expectedYield(DecimalUtils.setDefaultScale(300))
-                .currentPrice(TestData.createMoney(20, currency))
-                .quantityLots(DecimalUtils.setDefaultScale(4))
+        final Position position = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(TestShare1.FIGI)
+                .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
+                .setQuantity(DecimalUtils.setDefaultScale(3))
+                .setAveragePositionPrice(TestData.createMoney(10, currency))
+                .setExpectedYield(DecimalUtils.setDefaultScale(300))
+                .setCurrentPrice(TestData.createMoney(20, currency))
+                .setQuantityLots(DecimalUtils.setDefaultScale(4))
                 .build();
 
         final BigDecimal newQuantity = DecimalUtils.setDefaultScale(20);
@@ -122,14 +127,15 @@ class PositionUtilsUnitTest {
 
         final Position newPosition = PositionUtils.cloneWithNewValues(position, newQuantity, newExpectedYield, newCurrentPrice, newQuantityLots);
 
-        final Position expectedPosition = Position.builder()
-                .figi(position.getFigi())
-                .instrumentType(position.getInstrumentType())
-                .quantity(newQuantity)
-                .averagePositionPrice(position.getAveragePositionPrice())
-                .expectedYield(newExpectedYield)
-                .currentPrice(DataStructsHelper.createMoney(currency, newCurrentPrice))
-                .quantityLots(newQuantityLots)
+        final Position expectedPosition = new PositionBuilder()
+                .setCurrency(currency)
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(newQuantity)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setExpectedYield(newExpectedYield)
+                .setCurrentPrice(newCurrentPrice)
+                .setQuantityLots(newQuantityLots)
                 .build();
 
         AssertUtils.assertEquals(expectedPosition, newPosition);

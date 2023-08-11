@@ -17,6 +17,7 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.matchers.BigDecimalMatcher;
@@ -1104,10 +1105,10 @@ class BackTesterImplUnitTest {
             final int quantity,
             final int quantityLots
     ) {
-        final Position portfolioPosition = Position.builder()
-                .figi(figi)
-                .quantity(BigDecimal.valueOf(quantity))
-                .quantityLots(BigDecimal.valueOf(quantityLots))
+        final Position portfolioPosition = new PositionBuilder()
+                .setFigi(figi)
+                .setQuantity(quantity)
+                .setQuantityLots(quantityLots)
                 .build();
 
         Mockito.when(fakeBot.getPortfolioPositions(accountId)).thenReturn(List.of(portfolioPosition));

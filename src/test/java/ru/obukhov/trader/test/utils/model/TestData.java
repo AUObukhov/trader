@@ -3,7 +3,6 @@ package ru.obukhov.trader.test.utils.model;
 import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
@@ -11,6 +10,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
@@ -28,6 +28,7 @@ import ru.tinkoff.piapi.contract.v1.PortfolioResponse;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.TradingDay;
+import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
@@ -57,9 +58,9 @@ public class TestData {
             final double currentPrice
     ) {
         final DecisionData decisionData = new DecisionData();
-        final Position portfolioPosition = Position.builder()
-                .averagePositionPrice(TestData.createMoney(averagePositionPrice))
-                .quantityLots(BigDecimal.valueOf(positionLotsCount))
+        final Position portfolioPosition = new PositionBuilder()
+                .setAveragePositionPrice(averagePositionPrice)
+                .setQuantityLots(positionLotsCount)
                 .build();
 
         decisionData.setPosition(portfolioPosition);
@@ -236,25 +237,9 @@ public class TestData {
 
     // endregion
 
-    // region Money creation
-
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final int value, final String currency) {
-        return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
+    public static Money createMoney(final int value, final String currency) {
+        return DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(value), currency);
     }
-
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final double value, final String currency) {
-        return DataStructsHelper.createMoney(currency, DecimalUtils.setDefaultScale(value));
-    }
-
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final int value) {
-        return createMoney(value, StringUtils.EMPTY);
-    }
-
-    public static ru.tinkoff.piapi.core.models.Money createMoney(final double value) {
-        return createMoney(value, StringUtils.EMPTY);
-    }
-
-    // endregion
 
     public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()

@@ -17,6 +17,7 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -198,9 +199,9 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare1.CURRENCY))
                 .thenReturn(balance);
 
-        final Position portfolioPosition = Position.builder()
-                .figi(figi)
-                .quantityLots(DecimalUtils.setDefaultScale(0))
+        final Position portfolioPosition = new PositionBuilder()
+                .setFigi(figi)
+                .setQuantityLots(0)
                 .build();
 
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
@@ -255,9 +256,9 @@ class BotUnitTest {
         Mockito.when(extOperationsService.getAvailableBalance(accountId, TestShare2.CURRENCY))
                 .thenReturn(balance);
 
-        final Position position = Position.builder()
-                .figi(figi)
-                .quantityLots(DecimalUtils.setDefaultScale(0))
+        final Position position = new PositionBuilder()
+                .setFigi(figi)
+                .setQuantityLots(0)
                 .build();
         Mockito.when(extOperationsService.getSecurity(accountId, figi))
                 .thenReturn(position);

@@ -3,11 +3,11 @@ package ru.obukhov.trader.trading.model;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,12 +16,14 @@ class DecisionDataUnitTest {
 
     @Test
     void getQuantityLots() {
-        final BigDecimal quantityLots = BigDecimal.valueOf(30);
+        final long quantityLots = 30;
 
-        final Position portfolioPosition = Position.builder().quantityLots(quantityLots).build();
+        final Position portfolioPosition = new PositionBuilder()
+                .setQuantityLots(quantityLots)
+                .build();
         final DecisionData decisionData = new DecisionData().setPosition(portfolioPosition);
 
-        AssertUtils.assertEquals(quantityLots.longValue(), decisionData.getQuantityLots());
+        AssertUtils.assertEquals(quantityLots, decisionData.getQuantityLots());
 
     }
 

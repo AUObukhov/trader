@@ -7,6 +7,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.Mocker;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -118,49 +119,44 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money averagePositionPrice1Money = TestData.createMoney(averagePositionPrice1, currency1);
-        final Money currentPrice1Money = TestData.createMoney(currentPrice1, currency1);
-        final Position expectedPosition1 = Position.builder()
-                .figi(figi1)
-                .instrumentType(instrumentType1.toString())
-                .quantity(DecimalUtils.setDefaultScale(quantity1))
-                .averagePositionPrice(averagePositionPrice1Money)
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield1))
-                .currentNkd(TestData.createMoney(0, currency1))
-                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
-                .currentPrice(currentPrice1Money)
-                .averagePositionPriceFifo(TestData.createMoney(0, currency1))
-                .quantityLots(DecimalUtils.setDefaultScale(quantityLots1))
+        final Position expectedPosition1 = new PositionBuilder()
+                .setCurrency(currency1)
+                .setFigi(figi1)
+                .setInstrumentType(instrumentType1)
+                .setQuantity(quantity1)
+                .setAveragePositionPrice(averagePositionPrice1)
+                .setExpectedYield(expectedYield1)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice1)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots1)
                 .build();
-
-        final Money averagePositionPrice2Money = TestData.createMoney(averagePositionPrice2, currency2);
-        final Money currentPrice2Money = TestData.createMoney(currentPrice2, currency2);
-        final Position expectedPosition2 = Position.builder()
-                .figi(figi2)
-                .instrumentType(instrumentType2.toString())
-                .quantity(DecimalUtils.setDefaultScale(quantity2))
-                .averagePositionPrice(averagePositionPrice2Money)
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield2))
-                .currentNkd(TestData.createMoney(0, currency2))
-                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
-                .currentPrice(currentPrice2Money)
-                .averagePositionPriceFifo(TestData.createMoney(0, currency2))
-                .quantityLots(DecimalUtils.setDefaultScale(quantityLots2))
+        final Position expectedPosition2 = new PositionBuilder()
+                .setCurrency(currency2)
+                .setFigi(figi2)
+                .setInstrumentType(instrumentType2)
+                .setQuantity(quantity2)
+                .setAveragePositionPrice(averagePositionPrice2)
+                .setExpectedYield(expectedYield2)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice2)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots2)
                 .build();
-
-        final Money averagePositionPrice3Money = TestData.createMoney(averagePositionPrice3, currency3);
-        final Money currentPrice3Money = TestData.createMoney(currentPrice3, currency3);
-        final Position expectedPosition3 = Position.builder()
-                .figi(figi3)
-                .instrumentType(instrumentType3.toString())
-                .quantity(DecimalUtils.setDefaultScale(quantity3))
-                .averagePositionPrice(averagePositionPrice3Money)
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield3))
-                .currentNkd(TestData.createMoney(0, currency3))
-                .averagePositionPricePt(DecimalUtils.setDefaultScale(0))
-                .currentPrice(currentPrice3Money)
-                .averagePositionPriceFifo(TestData.createMoney(0, currency3))
-                .quantityLots(DecimalUtils.setDefaultScale(quantityLots3))
+        final Position expectedPosition3 = new PositionBuilder()
+                .setCurrency(currency3)
+                .setFigi(figi3)
+                .setInstrumentType(instrumentType3)
+                .setQuantity(quantity3)
+                .setAveragePositionPrice(averagePositionPrice3)
+                .setExpectedYield(expectedYield3)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice3)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots3)
                 .build();
 
         final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);
@@ -220,8 +216,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
+        final Money money1 = DataStructsHelper.createMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
+        final Money money2 = DataStructsHelper.createMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         performAndExpectResponse(requestBuilder, expectedBalances);
@@ -254,8 +250,8 @@ class OperationsControllerIntegrationTest extends ControllerIntegrationTest {
                 .param("accountId", accountId)
                 .contentType(MediaType.APPLICATION_JSON);
 
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money money1 = DataStructsHelper.createMoney(value1, currency1);
+        final Money money2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         performAndExpectResponse(requestBuilder, expectedBalances);

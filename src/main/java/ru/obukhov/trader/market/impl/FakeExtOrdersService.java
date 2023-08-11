@@ -7,8 +7,8 @@ import org.springframework.util.Assert;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.model.PositionUtils;
-import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.market.util.PostOrderResponseBuilder;
 import ru.obukhov.trader.trading.model.BackTestOperation;
 import ru.tinkoff.piapi.contract.v1.InstrumentType;
@@ -18,7 +18,6 @@ import ru.tinkoff.piapi.contract.v1.OrderState;
 import ru.tinkoff.piapi.contract.v1.OrderType;
 import ru.tinkoff.piapi.contract.v1.PostOrderResponse;
 import ru.tinkoff.piapi.contract.v1.Share;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -123,15 +122,15 @@ public class FakeExtOrdersService implements ExtOrdersService {
         final Position existingPosition = fakeContext.getPosition(accountId, figi);
         Position position;
         if (existingPosition == null) {
-            final Money price = DataStructsHelper.createMoney(share.getCurrency(), currentPrice);
-            position = Position.builder()
-                    .figi(figi)
-                    .instrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE.toString())
-                    .averagePositionPrice(price)
-                    .expectedYield(DecimalUtils.setDefaultScale(0))
-                    .currentPrice(price)
-                    .quantity(DecimalUtils.setDefaultScale(quantity))
-                    .quantityLots(DecimalUtils.setDefaultScale(quantityLots))
+            position = new PositionBuilder()
+                    .setCurrency(share.getCurrency())
+                    .setFigi(figi)
+                    .setInstrumentType(InstrumentType.INSTRUMENT_TYPE_SHARE)
+                    .setAveragePositionPrice(currentPrice)
+                    .setExpectedYield(0)
+                    .setCurrentPrice(currentPrice)
+                    .setQuantity(quantity)
+                    .setQuantityLots(quantityLots)
                     .build();
         } else {
             position = PositionUtils.addQuantities(existingPosition, quantity, quantityLots, totalPrice, currentPrice);

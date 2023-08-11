@@ -34,7 +34,7 @@ class DataStructsHelperUnitTest {
         final String currency = Currencies.EUR;
         final BigDecimal value = DecimalUtils.setDefaultScale(123.456);
 
-        final Money money = DataStructsHelper.createMoney(currency, value);
+        final Money money = DataStructsHelper.createMoney(value, currency);
 
         Assertions.assertEquals(currency, money.getCurrency());
         AssertUtils.assertEquals(value, money.getValue());
@@ -62,21 +62,21 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(value1, currency1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency1);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency1);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency2);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
-        Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
-        Assertions.assertEquals(expectedBlocked, withdrawLimits.getBlocked());
-        Assertions.assertEquals(expectedBlockedGuarantee, withdrawLimits.getBlockedGuarantee());
+        AssertUtils.assertEquals(expectedMoneys, withdrawLimits.getMoney());
+        AssertUtils.assertEquals(expectedBlocked, withdrawLimits.getBlocked());
+        AssertUtils.assertEquals(expectedBlockedGuarantee, withdrawLimits.getBlockedGuarantee());
     }
 
     @Test
@@ -106,21 +106,21 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(value1, currency1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, blockedValue1);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, blockedValue2);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(blockedValue1, currency1);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(blockedValue2, currency2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, DecimalUtils.setDefaultScale(0));
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, DecimalUtils.setDefaultScale(0));
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency1);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(0), currency2);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
-        Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
-        Assertions.assertEquals(expectedBlocked, withdrawLimits.getBlocked());
-        Assertions.assertEquals(expectedBlockedGuarantee, withdrawLimits.getBlockedGuarantee());
+        AssertUtils.assertEquals(expectedMoneys, withdrawLimits.getMoney());
+        AssertUtils.assertEquals(expectedBlocked, withdrawLimits.getBlocked());
+        AssertUtils.assertEquals(expectedBlockedGuarantee, withdrawLimits.getBlockedGuarantee());
     }
 
     @Test
@@ -157,16 +157,16 @@ class DataStructsHelperUnitTest {
 
         // assert
 
-        final Money expectedMoney1 = DataStructsHelper.createMoney(currency1, value1);
-        final Money expectedMoney2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money expectedMoney1 = DataStructsHelper.createMoney(value1, currency1);
+        final Money expectedMoney2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedMoneys = List.of(expectedMoney1, expectedMoney2);
 
-        final Money expectedBlocked1 = DataStructsHelper.createMoney(currency1, blockedValue1);
-        final Money expectedBlocked2 = DataStructsHelper.createMoney(currency2, blockedValue2);
+        final Money expectedBlocked1 = DataStructsHelper.createMoney(blockedValue1, currency1);
+        final Money expectedBlocked2 = DataStructsHelper.createMoney(blockedValue2, currency2);
         final List<Money> expectedBlocked = List.of(expectedBlocked1, expectedBlocked2);
 
-        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(currency1, blockedGuaranteeValue1);
-        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(currency2, blockedGuaranteeValue2);
+        final Money expectedBlockedGuarantee1 = DataStructsHelper.createMoney(blockedGuaranteeValue1, currency1);
+        final Money expectedBlockedGuarantee2 = DataStructsHelper.createMoney(blockedGuaranteeValue2, currency2);
         final List<Money> expectedBlockedGuarantee = List.of(expectedBlockedGuarantee1, expectedBlockedGuarantee2);
 
         Assertions.assertEquals(expectedMoneys, withdrawLimits.getMoney());
@@ -182,11 +182,11 @@ class DataStructsHelperUnitTest {
     void getBalance() {
         final String currency1 = Currencies.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money money1 = DataStructsHelper.createMoney(value1, currency1);
 
         final String currency2 = Currencies.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money money2 = DataStructsHelper.createMoney(value2, currency2);
 
         final List<Money> moneys = List.of(money1, money2);
 
@@ -201,11 +201,11 @@ class DataStructsHelperUnitTest {
     void getBalance_throwsNoSuchElementException_whenNoCurrency() {
         final String currency1 = Currencies.EUR;
         final BigDecimal value1 = DecimalUtils.setDefaultScale(123.456);
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
+        final Money money1 = DataStructsHelper.createMoney(value1, currency1);
 
         final String currency2 = Currencies.USD;
         final BigDecimal value2 = DecimalUtils.setDefaultScale(78.9);
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money money2 = DataStructsHelper.createMoney(value2, currency2);
 
         final List<Money> moneys = List.of(money1, money2);
 

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.model.Interval;
-import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -23,7 +23,6 @@ import ru.tinkoff.piapi.core.OperationsService;
 import ru.tinkoff.piapi.core.models.Portfolio;
 import ru.tinkoff.piapi.core.models.Position;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -131,41 +130,44 @@ class RealExtOperationsServiceUnitTest {
 
         // assert
 
-        final Position expectedPosition1 = Position.builder()
-                .figi(figi1)
-                .instrumentType(instrumentType1.toString())
-                .quantity(BigDecimal.valueOf(quantity1))
-                .averagePositionPrice(TestData.createMoney(averagePositionPrice1, currency1))
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield1))
-                .currentNkd(TestData.createMoney(0, currency1))
-                .averagePositionPricePt(BigDecimal.ZERO)
-                .currentPrice(TestData.createMoney(currentPrice1, currency1))
-                .averagePositionPriceFifo(TestData.createMoney(0, currency1))
-                .quantityLots(BigDecimal.valueOf(quantityLots1))
+        final Position expectedPosition1 = new PositionBuilder()
+                .setCurrency(currency1)
+                .setFigi(figi1)
+                .setInstrumentType(instrumentType1)
+                .setQuantity(quantity1)
+                .setAveragePositionPrice(averagePositionPrice1)
+                .setExpectedYield(expectedYield1)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice1)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots1)
                 .build();
-        final Position expectedPosition2 = Position.builder()
-                .figi(figi2)
-                .instrumentType(instrumentType2.toString())
-                .quantity(BigDecimal.valueOf(quantity2))
-                .averagePositionPrice(TestData.createMoney(averagePositionPrice2, currency2))
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield2))
-                .currentNkd(TestData.createMoney(0, currency2))
-                .averagePositionPricePt(BigDecimal.ZERO)
-                .currentPrice(TestData.createMoney(currentPrice2, currency2))
-                .averagePositionPriceFifo(TestData.createMoney(0, currency2))
-                .quantityLots(BigDecimal.valueOf(quantityLots2))
+        final Position expectedPosition2 = new PositionBuilder()
+                .setCurrency(currency2)
+                .setFigi(figi2)
+                .setInstrumentType(instrumentType2)
+                .setQuantity(quantity2)
+                .setAveragePositionPrice(averagePositionPrice2)
+                .setExpectedYield(expectedYield2)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice2)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots2)
                 .build();
-        final Position expectedPosition3 = Position.builder()
-                .figi(figi3)
-                .instrumentType(instrumentType3.toString())
-                .quantity(BigDecimal.valueOf(quantity3))
-                .averagePositionPrice(TestData.createMoney(averagePositionPrice3, currency3))
-                .expectedYield(DecimalUtils.setDefaultScale(expectedYield3))
-                .currentNkd(TestData.createMoney(0, currency3))
-                .averagePositionPricePt(BigDecimal.ZERO)
-                .currentPrice(TestData.createMoney(currentPrice3, currency3))
-                .averagePositionPriceFifo(TestData.createMoney(0, currency3))
-                .quantityLots(BigDecimal.valueOf(quantityLots3))
+        final Position expectedPosition3 = new PositionBuilder()
+                .setCurrency(currency3)
+                .setFigi(figi3)
+                .setInstrumentType(instrumentType3)
+                .setQuantity(quantity3)
+                .setAveragePositionPrice(averagePositionPrice3)
+                .setExpectedYield(expectedYield3)
+                .setCurrentNkd(0)
+                .setAveragePositionPricePt(0)
+                .setCurrentPrice(currentPrice3)
+                .setAveragePositionPriceFifo(0)
+                .setQuantityLots(quantityLots3)
                 .build();
 
         final List<Position> expectedPositions = List.of(expectedPosition1, expectedPosition2, expectedPosition3);

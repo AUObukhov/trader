@@ -29,8 +29,11 @@ public class DataStructsHelper {
 
     // endregion
 
-    public static Money createMoney(final String currency, final BigDecimal value) {
-        return Money.fromResponse(createMoneyValue(currency, value));
+    public static Money createMoney(final BigDecimal value, final String currency) {
+        return Money.builder()
+                .currency(currency)
+                .value(value)
+                .build();
     }
 
     // region createWithdrawLimits

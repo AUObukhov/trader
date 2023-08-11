@@ -12,6 +12,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.market.interfaces.ExtOperationsService;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -42,10 +43,10 @@ class ExtOperationsServiceUnitTest {
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
 
-        final Position portfolioPosition1 = Position.builder().figi(figi1).quantityLots(BigDecimal.valueOf(1)).build();
-        final Position portfolioPosition2 = Position.builder().figi(figi2).quantityLots(BigDecimal.valueOf(2)).build();
-        final Position portfolioPosition3 = Position.builder().figi(figi1).quantityLots(BigDecimal.valueOf(3)).build();
-        final Position portfolioPosition4 = Position.builder().figi(figi2).quantityLots(BigDecimal.valueOf(4)).build();
+        final Position portfolioPosition1 = new PositionBuilder().setFigi(figi1).setQuantityLots(1).build();
+        final Position portfolioPosition2 = new PositionBuilder().setFigi(figi2).setQuantityLots(2).build();
+        final Position portfolioPosition3 = new PositionBuilder().setFigi(figi1).setQuantityLots(3).build();
+        final Position portfolioPosition4 = new PositionBuilder().setFigi(figi2).setQuantityLots(4).build();
 
         final Map<String, List<Position>> accountsToPositions = Map.of(
                 accountId1, List.of(portfolioPosition1, portfolioPosition2),
@@ -250,8 +251,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1));
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2));
+        final Money money1 = DataStructsHelper.createMoney(value1.subtract(blockedValue1).subtract(blockedGuaranteeValue1), currency1);
+        final Money money2 = DataStructsHelper.createMoney(value2.subtract(blockedValue2).subtract(blockedGuaranteeValue2), currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);
@@ -284,8 +285,8 @@ class ExtOperationsServiceUnitTest {
 
         // assert
 
-        final Money money1 = DataStructsHelper.createMoney(currency1, value1);
-        final Money money2 = DataStructsHelper.createMoney(currency2, value2);
+        final Money money1 = DataStructsHelper.createMoney(value1, currency1);
+        final Money money2 = DataStructsHelper.createMoney(value2, currency2);
         final List<Money> expectedBalances = List.of(money1, money2);
 
         AssertUtils.assertEquals(expectedBalances, balances);

@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
@@ -527,7 +528,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
-        Position position = Position.builder().build();
+        final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);
         Position readPosition = fakeContext.getPosition(accountId, figi);
@@ -547,8 +548,8 @@ class FakeContextUnitTest {
 
         final String figi1 = TestShare1.FIGI;
         final String figi2 = TestShare2.FIGI;
-        Position position1 = Position.builder().build();
-        Position position2 = Position.builder().build();
+        final Position position1 = new PositionBuilder().build();
+        final Position position2 = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi1, position1);
         fakeContext.addPosition(accountId, figi2, position2);
@@ -570,7 +571,7 @@ class FakeContextUnitTest {
         final FakeContext fakeContext = getFakeContext(currentTimestamp, accountId, currency, balance);
 
         final String figi = TestShare1.FIGI;
-        Position position = Position.builder().build();
+        final Position position = new PositionBuilder().build();
 
         fakeContext.addPosition(accountId, figi, position);
         fakeContext.removePosition(accountId, figi);

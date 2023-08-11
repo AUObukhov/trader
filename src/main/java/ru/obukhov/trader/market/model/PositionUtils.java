@@ -2,7 +2,6 @@ package ru.obukhov.trader.market.model;
 
 import lombok.experimental.UtilityClass;
 import ru.obukhov.trader.common.util.DecimalUtils;
-import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
@@ -37,34 +36,15 @@ public class PositionUtils {
         final BigDecimal newAveragePositionPriceValue = DecimalUtils.divide(newTotalPrice, newQuantity);
         final BigDecimal newExpectedYield = newCurrentPrice.subtract(newAveragePositionPriceValue).multiply(newQuantity);
         final BigDecimal newQuantityLots = DecimalUtils.add(position.getQuantityLots(), additionalQuantityLots);
-        return cloneWithNewValues(position, newQuantity, newAveragePositionPriceValue, newExpectedYield, newCurrentPrice, newQuantityLots);
-    }
-
-    private Position cloneWithNewValues(
-            final Position position,
-            final BigDecimal quantity,
-            final BigDecimal averagePositionPriceValue,
-            final BigDecimal newExpectedYield,
-            final BigDecimal newCurrentPriceValue,
-            final BigDecimal quantityLots
-    ) {
-        final String currency = getCurrency(position);
-        final Money newAveragePositionPrice = Money.builder()
-                .currency(currency)
-                .value(averagePositionPriceValue)
-                .build();
-        final Money newCurrentPrice = Money.builder()
-                .currency(currency)
-                .value(newCurrentPriceValue)
-                .build();
-        return Position.builder()
-                .figi(position.getFigi())
-                .instrumentType(position.getInstrumentType())
-                .quantity(quantity)
-                .averagePositionPrice(newAveragePositionPrice)
-                .expectedYield(newExpectedYield)
-                .currentPrice(newCurrentPrice)
-                .quantityLots(quantityLots)
+        return new PositionBuilder()
+                .setCurrency(getCurrency(position))
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(newQuantity)
+                .setAveragePositionPrice(newAveragePositionPriceValue)
+                .setExpectedYield(newExpectedYield)
+                .setCurrentPrice(newCurrentPrice)
+                .setQuantityLots(newQuantityLots)
                 .build();
     }
 
@@ -74,22 +54,19 @@ public class PositionUtils {
     public Position cloneWithNewValues(
             final Position position,
             final BigDecimal quantity,
-            final BigDecimal newExpectedYield,
+            final BigDecimal expectedYield,
             final BigDecimal currentPrice,
             final BigDecimal quantityLots
     ) {
-        final Money newCurrentPrice = Money.builder()
-                .currency(getCurrency(position))
-                .value(currentPrice)
-                .build();
-        return Position.builder()
-                .figi(position.getFigi())
-                .instrumentType(position.getInstrumentType())
-                .quantity(quantity)
-                .averagePositionPrice(position.getAveragePositionPrice())
-                .expectedYield(newExpectedYield)
-                .currentPrice(newCurrentPrice)
-                .quantityLots(quantityLots)
+        return new PositionBuilder()
+                .setCurrency(getCurrency(position))
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(quantity)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setExpectedYield(expectedYield)
+                .setCurrentPrice(currentPrice)
+                .setQuantityLots(quantityLots)
                 .build();
     }
 
@@ -97,14 +74,15 @@ public class PositionUtils {
      * @return equal position, but with updated quantity and quantityLots
      */
     public Position cloneWithNewQuantity(final Position position, final BigDecimal quantity, final BigDecimal quantityLots) {
-        return Position.builder()
-                .figi(position.getFigi())
-                .instrumentType(position.getInstrumentType())
-                .quantity(quantity)
-                .averagePositionPrice(position.getAveragePositionPrice())
-                .expectedYield(position.getExpectedYield())
-                .currentPrice(position.getCurrentPrice())
-                .quantityLots(quantityLots)
+        return new PositionBuilder()
+                .setCurrency(getCurrency(position))
+                .setFigi(position.getFigi())
+                .setInstrumentType(position.getInstrumentType())
+                .setQuantity(quantity)
+                .setAveragePositionPrice(position.getAveragePositionPrice())
+                .setExpectedYield(position.getExpectedYield())
+                .setCurrentPrice(position.getCurrentPrice())
+                .setQuantityLots(quantityLots)
                 .build();
     }
 
