@@ -7,6 +7,7 @@ import ru.obukhov.trader.market.model.Currencies;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
+import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
 public class TestCurrency2 {
@@ -36,7 +37,7 @@ public class TestCurrency2 {
     public static final Quotation MIN_PRICE_INCREMENT = QuotationUtils.newNormalizedQuotation(0, 2500000);
     public static final boolean API_TRADE_AVAILABLE_FLAG = false;
     public static final String UID = "a92e2e25-a698-45cc-a781-167cf465257c";
-    public static final String REAL_EXCHANGE = "REAL_EXCHANGE_MOEX";
+    public static final RealExchange REAL_EXCHANGE = RealExchange.REAL_EXCHANGE_MOEX;
     public static final String POSITION_UID = "33e24a92-aab0-409c-88b8-f2d57415b920";
     public static final boolean FOR_IIS_FLAG = true;
     public static final boolean FOR_QUAL_INVESTOR_FLAG = false;
@@ -70,6 +71,9 @@ public class TestCurrency2 {
             .setIsoCurrencyName(ISO_CURRENCY_NAME)
             .setMinPriceIncrement(MIN_PRICE_INCREMENT)
             .setApiTradeAvailableFlag(API_TRADE_AVAILABLE_FLAG)
+            .setUid(UID)
+            .setRealExchange(REAL_EXCHANGE)
+            .setPositionUid(POSITION_UID)
             .setForIisFlag(FOR_IIS_FLAG)
             .setForQualInvestorFlag(FOR_QUAL_INVESTOR_FLAG)
             .setWeekendFlag(WEEKEND_FLAG)
