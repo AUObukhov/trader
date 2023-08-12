@@ -60,51 +60,27 @@ public class TimestampUtils {
         return Timestamp.newBuilder().setSeconds(seconds).setNanos(nanos).build();
     }
 
-    public static Timestamp newTimestamp(
-            final int year,
-            final int month,
-            final int dayOfMonth
-    ) {
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth) {
         return newTimestamp(year, month, dayOfMonth, 0, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
     }
 
-    public static Timestamp newTimestamp(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour
-    ) {
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth, final int hour) {
         return newTimestamp(year, month, dayOfMonth, hour, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
     }
 
-    public static Timestamp newTimestamp(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final int minute
-    ) {
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth, final int hour, final int minute) {
         return newTimestamp(year, month, dayOfMonth, hour, minute, 0, 0, DateUtils.DEFAULT_OFFSET);
     }
 
-    public static Timestamp newTimestamp(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final ZoneOffset offset
-    ) {
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth, final int hour, final ZoneOffset offset) {
         return newTimestamp(year, month, dayOfMonth, hour, 0, 0, 0, offset);
     }
 
-    public static Timestamp newTimestamp(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final int minute,
-            final int second
-    ) {
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth, final ZoneOffset offset) {
+        return newTimestamp(year, month, dayOfMonth, 0, 0, 0, 0, offset);
+    }
+
+    public static Timestamp newTimestamp(final int year, final int month, final int dayOfMonth, final int hour, final int minute, final int second) {
         return newTimestamp(year, month, dayOfMonth, hour, minute, second, 0, DateUtils.DEFAULT_OFFSET);
     }
 

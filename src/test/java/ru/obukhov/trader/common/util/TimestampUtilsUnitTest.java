@@ -103,10 +103,18 @@ class TimestampUtilsUnitTest {
     }
 
     @Test
-    void newTimestamp_fromYearMonthDayOfMonthHourMinuteOffset() {
+    void newTimestamp_fromYearMonthDayOfMonthHourOffset() {
         final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, 4, ZoneOffset.ofHours(5));
 
         Assertions.assertEquals(1651532400L, actualResult.getSeconds());
+        Assertions.assertEquals(0, actualResult.getNanos());
+    }
+
+    @Test
+    void newTimestamp_fromYearMonthDayOfMonthOffset() {
+        final Timestamp actualResult = TimestampUtils.newTimestamp(2022, 5, 3, ZoneOffset.ofHours(5));
+
+        Assertions.assertEquals(1651518000L, actualResult.getSeconds());
         Assertions.assertEquals(0, actualResult.getNanos());
     }
 
