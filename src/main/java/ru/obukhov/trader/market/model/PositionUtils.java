@@ -43,7 +43,10 @@ public class PositionUtils {
                 .setQuantity(newQuantity)
                 .setAveragePositionPrice(newAveragePositionPriceValue)
                 .setExpectedYield(newExpectedYield)
+                .setCurrentNkd(position.getCurrentNkd())
+                .setAveragePositionPricePt(position.getAveragePositionPricePt())
                 .setCurrentPrice(newCurrentPrice)
+                .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
                 .setQuantityLots(newQuantityLots)
                 .build();
     }
@@ -65,7 +68,10 @@ public class PositionUtils {
                 .setQuantity(quantity)
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(expectedYield)
+                .setCurrentNkd(position.getCurrentNkd())
+                .setAveragePositionPricePt(position.getAveragePositionPricePt())
                 .setCurrentPrice(currentPrice)
+                .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
                 .setQuantityLots(quantityLots)
                 .build();
     }
@@ -81,7 +87,10 @@ public class PositionUtils {
                 .setQuantity(quantity)
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(position.getExpectedYield())
+                .setCurrentNkd(position.getCurrentNkd())
+                .setAveragePositionPricePt(position.getAveragePositionPricePt())
                 .setCurrentPrice(position.getCurrentPrice())
+                .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
                 .setQuantityLots(quantityLots)
                 .build();
     }
