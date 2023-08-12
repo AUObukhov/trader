@@ -50,7 +50,8 @@ class FakeExtOrdersServiceUnitTest {
 
     @BeforeEach
     void setUp() {
-        fakeExtOrdersService = new FakeExtOrdersService(fakeContext, extInstrumentsService, extMarketDataService, COMMISSION);
+        final BigDecimal bigDecimalCommission = DecimalUtils.setDefaultScale(COMMISSION);
+        fakeExtOrdersService = new FakeExtOrdersService(fakeContext, extInstrumentsService, extMarketDataService, bigDecimalCommission);
     }
 
     // region getOrders tests

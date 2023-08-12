@@ -35,7 +35,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
     private final FakeContext fakeContext;
     private final ExtInstrumentsService extInstrumentsService;
     private final ExtMarketDataService extMarketDataService;
-    private final double commission;
+    private final BigDecimal commission;
 
     /**
      * @return returns list of active orders with given {@code figi} at given {@code accountId}.
@@ -71,7 +71,7 @@ public class FakeExtOrdersService implements ExtOrdersService {
         final BigDecimal currentPrice = getCurrentPrice(figi);
         final long quantity = quantityLots * share.getLot();
         final BigDecimal totalPrice = DecimalUtils.multiply(currentPrice, quantity);
-        final BigDecimal totalCommissionAmount = DecimalUtils.getFraction(totalPrice, commission);
+        final BigDecimal totalCommissionAmount = totalPrice.multiply(commission);
 
         if (direction == OrderDirection.ORDER_DIRECTION_BUY) {
             buyPosition(accountId, figi, currentPrice, quantity, quantityLots, totalPrice, totalCommissionAmount);

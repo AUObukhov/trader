@@ -66,7 +66,7 @@ class BackTestRequestValidationTest {
                 null,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );
@@ -82,7 +82,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 null,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );
@@ -114,7 +114,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -137,7 +137,7 @@ class BackTestRequestValidationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 null
         );

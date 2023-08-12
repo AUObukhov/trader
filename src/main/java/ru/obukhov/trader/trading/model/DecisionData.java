@@ -20,7 +20,7 @@ public class DecisionData {
     private List<Candle> currentCandles;
     private List<Operation> lastOperations;
     private Share share;
-    private double commission;
+    private BigDecimal commission;
 
     public Long getQuantityLots() {
         return position.getQuantityLots().longValueExact();

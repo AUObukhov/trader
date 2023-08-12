@@ -74,7 +74,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_HOUR,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -84,7 +84,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -94,7 +94,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01, "indexCoefficient", 0.5)
         );
@@ -138,7 +138,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -174,7 +174,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -211,7 +211,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -250,7 +250,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -287,7 +287,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Map.of("minimumProfit", 0.01)
         );
@@ -326,7 +326,7 @@ class ExcelServiceImplUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CROSS,
                 Collections.emptyMap()
         );

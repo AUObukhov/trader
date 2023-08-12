@@ -132,7 +132,7 @@ class BackTesterImplUnitTest {
         final String accountId = TestData.ACCOUNT_ID1;
         final String figi = TestShare1.FIGI;
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Double commission = 0.003;
+        final BigDecimal commission = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType = StrategyType.CONSERVATIVE;
         final BotConfig botConfig = new BotConfig(accountId, figi, candleInterval, commission, strategyType, Collections.emptyMap());
 
@@ -168,7 +168,7 @@ class BackTesterImplUnitTest {
 
         final String expectedErrorPattern = String.format(
                 Locale.US,
-                "^Back test for 'BotConfig\\[accountId=%s, figi=%s, candleInterval=%s, commission=%.3f, strategyType=%s, " +
+                "^Back test for 'BotConfig\\[accountId=%s, figi=%s, candleInterval=%s, commission=%.9f, strategyType=%s, " +
                         "strategyParams=\\{\\}\\]' failed within 00:00:00.\\d\\d\\d with error: %s$",
                 accountId, figi, candleInterval, commission, strategyType, exceptionMessage
         );
@@ -309,7 +309,7 @@ class BackTesterImplUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
         final String currency1 = TestShare1.CURRENCY;
-        final Double commission1 = 0.003;
+        final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
 
         final Map<Timestamp, Double> prices1 = new LinkedHashMap<>();
         prices1.put(TimestampUtils.plusMinutes(from, 10), 100.0);
@@ -337,7 +337,7 @@ class BackTesterImplUnitTest {
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
         final String currency2 = TestShare2.CURRENCY;
-        final Double commission2 = 0.001;
+        final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
 
         final Map<Timestamp, Double> prices2 = new LinkedHashMap<>();
         prices2.put(TimestampUtils.plusMinutes(from, 100), 10.0);
@@ -896,7 +896,7 @@ class BackTesterImplUnitTest {
         final String accountId1 = TestData.ACCOUNT_ID1;
         final String figi1 = TestShare1.FIGI;
         final CandleInterval candleInterval1 = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Double commission1 = 0.003;
+        final BigDecimal commission1 = DecimalUtils.setDefaultScale(0.003);
         final StrategyType strategyType1 = StrategyType.CONSERVATIVE;
 
         final BotConfig botConfig1 = new BotConfig(accountId1, figi1, candleInterval1, commission1, strategyType1, Collections.emptyMap());
@@ -910,7 +910,7 @@ class BackTesterImplUnitTest {
         final String accountId2 = TestData.ACCOUNT_ID2;
         final String figi2 = TestShare2.FIGI;
         final CandleInterval candleInterval2 = CandleInterval.CANDLE_INTERVAL_1_MIN;
-        final Double commission2 = 0.001;
+        final BigDecimal commission2 = DecimalUtils.setDefaultScale(0.001);
         final StrategyType strategyType2 = StrategyType.CROSS;
 
         final BotConfig botConfig2 = new BotConfig(accountId2, figi2, candleInterval2, commission2, strategyType2, Collections.emptyMap());
@@ -1027,7 +1027,7 @@ class BackTesterImplUnitTest {
         final String figi = share.getFigi();
         final String currency = share.getCurrency();
 
-        final BotConfig botConfig = new BotConfig(accountId, figi, null, commission, null, null);
+        final BotConfig botConfig = new BotConfig(accountId, figi, null, DecimalUtils.setDefaultScale(commission), null, null);
 
         final FakeBot fakeBot = mockFakeBot(botConfig, balanceConfig, interval.getFrom());
 

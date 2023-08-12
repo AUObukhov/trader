@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.impl.FakeContext;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
@@ -87,7 +88,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -122,7 +123,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );
@@ -146,7 +147,7 @@ class FakeBotFactoryUnitTest {
                 TestData.ACCOUNT_ID1,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 StrategyType.CONSERVATIVE,
                 Collections.emptyMap()
         );

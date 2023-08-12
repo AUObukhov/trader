@@ -68,7 +68,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -90,7 +90,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -140,7 +140,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 null,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 StrategyType.CONSERVATIVE,
                 Map.of("minimumProfit", 0.01)
         );
@@ -184,7 +184,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 TestData.ACCOUNT_ID1,
                 TestShare1.FIGI,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.0,
+                DecimalUtils.setDefaultScale(0.0),
                 null,
                 Map.of("minimumProfit", 0.01)
         );
@@ -221,7 +221,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 accountId,
                 figi,
                 candleInterval,
-                0.001,
+                DecimalUtils.setDefaultScale(0.001),
                 StrategyType.CONSERVATIVE,
                 strategyParams1
         );
@@ -239,7 +239,7 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 accountId,
                 figi,
                 candleInterval,
-                0.002,
+                DecimalUtils.setDefaultScale(0.002),
                 StrategyType.CROSS,
                 strategyParams2
         );

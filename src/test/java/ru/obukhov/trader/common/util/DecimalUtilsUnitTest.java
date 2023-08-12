@@ -243,26 +243,45 @@ class DecimalUtilsUnitTest {
         AssertUtils.assertEquals(expectedAverage, average);
     }
 
-    @Test
-    void getFraction() {
-        final BigDecimal result = DecimalUtils.getFraction(BigDecimal.valueOf(765), 0.003);
+    // region addFraction tests
 
-        AssertUtils.assertEquals(2.295, result);
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forAddFraction() {
+        return Stream.of(
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(0.003), DecimalUtils.setDefaultScale(767.295)),
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(1530))
+        );
     }
 
-    @Test
-    void addFraction() {
-        final BigDecimal result = DecimalUtils.addFraction(BigDecimal.valueOf(765), 0.003);
+    @ParameterizedTest
+    @MethodSource("getData_forAddFraction")
+    void addFraction(final BigDecimal number, final BigDecimal fraction, final BigDecimal expectedResult) {
+        final BigDecimal actualResult = DecimalUtils.addFraction(number, fraction);
 
-        AssertUtils.assertEquals(767.295, result);
+        AssertUtils.assertEquals(expectedResult, actualResult);
     }
 
-    @Test
-    void subtractFraction() {
-        final BigDecimal result = DecimalUtils.subtractFraction(BigDecimal.valueOf(765), 0.003);
+    // endregion
 
-        AssertUtils.assertEquals(762.705, result);
+    // region subtractFraction tests
+
+    @SuppressWarnings("unused")
+    static Stream<Arguments> getData_forSubtractFraction() {
+        return Stream.of(
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(0.003), DecimalUtils.setDefaultScale(762.705)),
+                Arguments.of(DecimalUtils.setDefaultScale(765), DecimalUtils.setDefaultScale(1), DecimalUtils.setDefaultScale(0))
+        );
     }
+
+    @ParameterizedTest
+    @MethodSource("getData_forSubtractFraction")
+    void subtractFraction(final BigDecimal number, final BigDecimal fraction, final BigDecimal expectedResult) {
+        final BigDecimal actualResult = DecimalUtils.subtractFraction(number, fraction);
+
+        AssertUtils.assertEquals(expectedResult, actualResult);
+    }
+
+    // endregion
 
     @Test
     void getFractionDifference() {

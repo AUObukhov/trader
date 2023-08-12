@@ -67,6 +67,7 @@ public class TestData {
         decisionData.setPosition(portfolioPosition);
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
+        decisionData.setCommission(DecimalUtils.setDefaultScale(0));
 
         return decisionData;
     }
@@ -77,7 +78,7 @@ public class TestData {
         decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
-        decisionData.setCommission(commission);
+        decisionData.setCommission(DecimalUtils.setDefaultScale(commission));
 
         return decisionData;
     }

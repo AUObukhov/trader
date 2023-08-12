@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 public record BotConfig(
@@ -22,7 +23,7 @@ public record BotConfig(
 
         @NotNull(message = "commission is mandatory")
         @ApiModelProperty(value = "Operating commission", required = true, position = 4, example = "0.003")
-        Double commission,
+        BigDecimal commission,
 
         @NotNull(message = "strategyType is mandatory")
         @ApiModelProperty(value = "Trading strategy type", required = true, position = 5, example = "cross")

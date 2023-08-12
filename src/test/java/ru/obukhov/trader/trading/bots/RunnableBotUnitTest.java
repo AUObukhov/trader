@@ -402,7 +402,7 @@ class RunnableBotUnitTest {
         Mockito.when(botConfig.accountId()).thenReturn(accountId);
         Mockito.when(botConfig.figi()).thenReturn(figi);
         Mockito.when(botConfig.candleInterval()).thenReturn(candleInterval);
-        Mockito.when(botConfig.commission()).thenReturn(commission);
+        Mockito.when(botConfig.commission()).thenReturn(DecimalUtils.setDefaultScale(commission));
     }
 
     @SuppressWarnings("SameParameterValue")

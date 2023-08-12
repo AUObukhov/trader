@@ -158,24 +158,17 @@ public class DecimalUtils {
     }
 
     /**
-     * @return {@code number} * {@code fraction}
-     */
-    public static BigDecimal getFraction(final BigDecimal number, final double fraction) {
-        return multiply(number, fraction);
-    }
-
-    /**
      * @return {@code number} * (1 + {@code fraction})
      */
-    public static BigDecimal addFraction(final BigDecimal number, final double fraction) {
-        return multiply(number, 1 + fraction);
+    public static BigDecimal addFraction(final BigDecimal number, final BigDecimal fraction) {
+        return number.multiply(setDefaultScale(1).add(fraction));
     }
 
     /**
      * @return {@code number} * (1 - {@code fraction})
      */
-    public static BigDecimal subtractFraction(final BigDecimal number, final double fraction) {
-        return multiply(number, 1 - fraction);
+    public static BigDecimal subtractFraction(final BigDecimal number, final BigDecimal fraction) {
+        return number.multiply(setDefaultScale(1).subtract(fraction));
     }
 
     /**

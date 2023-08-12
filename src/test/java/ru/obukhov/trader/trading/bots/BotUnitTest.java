@@ -174,7 +174,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -224,7 +224,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
@@ -280,7 +280,7 @@ class BotUnitTest {
                 accountId,
                 figi,
                 CandleInterval.CANDLE_INTERVAL_1_MIN,
-                0.003,
+                DecimalUtils.setDefaultScale(0.003),
                 null,
                 null
         );
