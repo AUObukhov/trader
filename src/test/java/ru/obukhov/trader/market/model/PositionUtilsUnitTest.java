@@ -88,7 +88,7 @@ class PositionUtilsUnitTest {
     }
 
     @Test
-    void cloneWithNewQuantity() {
+    void cloneWithNewCurrentPrice() {
         final String currency = TestShare1.CURRENCY;
         final Position position = new PositionBuilder()
                 .setCurrency(currency)
@@ -104,23 +104,22 @@ class PositionUtilsUnitTest {
                 .setQuantityLots(4)
                 .build();
 
-        final BigDecimal newQuantity = DecimalUtils.setDefaultScale(20);
-        final BigDecimal newQuantityLots = DecimalUtils.setDefaultScale(2);
+        final BigDecimal newCurrentPrice = DecimalUtils.setDefaultScale(30);
 
-        final Position newPosition = PositionUtils.cloneWithNewQuantity(position, newQuantity, newQuantityLots);
+        final Position newPosition = PositionUtils.cloneWithNewCurrentPrice(position, newCurrentPrice);
 
         final Position expectedPosition = new PositionBuilder()
                 .setCurrency(currency)
                 .setFigi(position.getFigi())
                 .setInstrumentType(position.getInstrumentType())
-                .setQuantity(newQuantity)
+                .setQuantity(position.getQuantity())
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(position.getExpectedYield())
                 .setCurrentNkd(position.getCurrentNkd())
                 .setAveragePositionPricePt(position.getAveragePositionPricePt())
-                .setCurrentPrice(position.getCurrentPrice())
+                .setCurrentPrice(newCurrentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(newQuantityLots)
+                .setQuantityLots(position.getQuantityLots())
                 .build();
 
         AssertUtils.assertEquals(expectedPosition, newPosition);

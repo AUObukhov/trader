@@ -26,7 +26,6 @@ import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.instrument.TestInstrument1;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
@@ -37,6 +36,7 @@ import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -313,11 +313,11 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 DecimalUtils.setDefaultScale(1000),
                 DecimalUtils.setDefaultScale(1000)
         );
-        final BackTestPosition backTestPosition2 = new BackTestPosition(
-                figi,
-                DecimalUtils.setDefaultScale(100000),
-                DecimalUtils.setDefaultScale(10)
-        );
+        final Position backTestPosition2 = Position.builder()
+                .figi(figi)
+                .currentPrice(TestData.createMoney(100000, currency))
+                .quantity(BigDecimal.valueOf(10))
+                .build();
         final BackTestResult backTestResult2 = new BackTestResult(
                 botConfig2,
                 interval,

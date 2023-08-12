@@ -5,6 +5,7 @@ import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.market.model.Candle;
 import ru.obukhov.trader.web.model.BotConfig;
 import ru.tinkoff.piapi.contract.v1.Operation;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public record BackTestResult(
         Interval interval, // back test interval
         Balances balances,
         Profits profits,
-        @JsonIgnore List<BackTestPosition> positions, // positions after back test
+        @JsonIgnore List<Position> positions, // positions after back test
         @JsonIgnore List<Operation> operations, // operations made during back test
         @JsonIgnore List<Candle> candles, // all candles in back test interval
         String error

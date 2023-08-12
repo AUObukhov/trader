@@ -77,21 +77,21 @@ public class PositionUtils {
     }
 
     /**
-     * @return equal position, but with updated quantity and quantityLots
+     * @return equal position, but with updated currentPrice
      */
-    public Position cloneWithNewQuantity(final Position position, final BigDecimal quantity, final BigDecimal quantityLots) {
+    public Position cloneWithNewCurrentPrice(final Position position, final BigDecimal currentPrice) {
         return new PositionBuilder()
                 .setCurrency(getCurrency(position))
                 .setFigi(position.getFigi())
                 .setInstrumentType(position.getInstrumentType())
-                .setQuantity(quantity)
+                .setQuantity(position.getQuantity())
                 .setAveragePositionPrice(position.getAveragePositionPrice())
                 .setExpectedYield(position.getExpectedYield())
                 .setCurrentNkd(position.getCurrentNkd())
                 .setAveragePositionPricePt(position.getAveragePositionPricePt())
-                .setCurrentPrice(position.getCurrentPrice())
+                .setCurrentPrice(currentPrice)
                 .setAveragePositionPriceFifo(position.getAveragePositionPriceFifo())
-                .setQuantityLots(quantityLots)
+                .setQuantityLots(position.getQuantityLots())
                 .build();
     }
 

@@ -16,10 +16,10 @@ import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.config.properties.BackTestProperties;
 import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PositionUtils;
 import ru.obukhov.trader.trading.backtest.interfaces.BackTester;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
-import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
@@ -200,7 +200,7 @@ public class BackTesterImpl implements BackTester {
         final String accountId = botConfig.accountId();
         final String figi = botConfig.figi();
 
-        final List<BackTestPosition> positions = getPositions(accountId, fakeBot);
+        final List<Position> positions = getPositions(fakeBot, accountId);
         final Balances balances = getBalances(accountId, interval, fakeBot, positions, figi);
         final Profits profits = getProfits(balances, interval);
         final List<Operation> operations = fakeBot.getOperations(accountId, interval, figi);
@@ -242,25 +242,23 @@ public class BackTesterImpl implements BackTester {
         );
     }
 
-    private List<BackTestPosition> getPositions(final String accountId, final FakeBot fakeBot) {
-        final List<Position> portfolioPositions = fakeBot.getPortfolioPositions(accountId);
-        final List<BackTestPosition> backTestPositions = new ArrayList<>(portfolioPositions.size());
-        for (final Position position : portfolioPositions) {
-            backTestPositions.add(createBackTestPosition(position, fakeBot));
-        }
-        return backTestPositions;
+    private List<Position> getPositions(FakeBot fakeBot, String accountId) {
+        return fakeBot.getPortfolioPositions(accountId).stream()
+                .map(position -> cloneWithActualCurrentPrice(position, fakeBot))
+                .toList();
     }
 
-    private BackTestPosition createBackTestPosition(final Position portfolioPosition, final FakeBot fakeBot) {
+    private Position cloneWithActualCurrentPrice(final Position portfolioPosition, final FakeBot fakeBot) {
         final String figi = portfolioPosition.getFigi();
-        return new BackTestPosition(figi, fakeBot.getCurrentPrice(figi), portfolioPosition.getQuantity());
+        final BigDecimal currentPrice = fakeBot.getCurrentPrice(figi);
+        return PositionUtils.cloneWithNewCurrentPrice(portfolioPosition, currentPrice);
     }
 
     private Balances getBalances(
             final String accountId,
             final Interval interval,
             final FakeBot fakeBot,
-            final List<BackTestPosition> positions,
+            final List<Position> positions,
             final String figi
     ) {
         final String currency = fakeBot.getShare(figi).getCurrency();
@@ -276,9 +274,9 @@ public class BackTesterImpl implements BackTester {
         return new Balances(initialInvestment, totalInvestment, weightedAverageInvestment, finalBalance, finalTotalSavings);
     }
 
-    private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<BackTestPosition> positions) {
+    private BigDecimal getTotalBalance(final BigDecimal currentBalance, final List<Position> positions) {
         return positions.stream()
-                .map(BackTestPosition::getTotalPrice)
+                .map(position -> position.getCurrentPrice().getValue().multiply(position.getQuantity()))
                 .reduce(currentBalance, BigDecimal::add);
     }
 

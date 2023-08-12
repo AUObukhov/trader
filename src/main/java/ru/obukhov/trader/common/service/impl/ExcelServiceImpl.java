@@ -29,7 +29,6 @@ import ru.obukhov.trader.common.util.DateUtils;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
-import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BotConfig;
@@ -37,6 +36,7 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -258,7 +258,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void putPositions(final ExtendedSheet sheet, final List<BackTestPosition> positions) {
+    private void putPositions(final ExtendedSheet sheet, final List<Position> positions) {
         final ExtendedRow labelRow = sheet.addRow();
 
         if (CollectionUtils.isEmpty(positions)) {
@@ -267,9 +267,9 @@ public class ExcelServiceImpl implements ExcelService {
             labelRow.createUnitedCell("Позиции", 3);
             final ExtendedRow headersRow = sheet.addRow();
             headersRow.createCells("Цена", "Количество");
-            for (final BackTestPosition position : positions) {
+            for (final Position position : positions) {
                 final ExtendedRow row = sheet.addRow();
-                row.createCells(position.price(), position.quantity());
+                row.createCells(position.getCurrentPrice(), position.getQuantity());
             }
         }
     }

@@ -27,7 +27,6 @@ import ru.obukhov.trader.test.utils.model.share.TestShare1;
 import ru.obukhov.trader.test.utils.model.share.TestShare2;
 import ru.obukhov.trader.trading.bots.FakeBot;
 import ru.obukhov.trader.trading.bots.FakeBotFactory;
-import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.StrategyType;
 import ru.obukhov.trader.web.model.BalanceConfig;
@@ -458,12 +457,12 @@ class BackTesterImplUnitTest {
 
     private void assertPosition(final BackTestResult backTestResult, final String figi, final double currentPrice, final int quantity) {
         Assertions.assertNull(backTestResult.error());
-        final List<BackTestPosition> positions = backTestResult.positions();
+        final List<Position> positions = backTestResult.positions();
         Assertions.assertEquals(1, positions.size());
-        final BackTestPosition backTestPosition = positions.get(0);
-        Assertions.assertEquals(figi, backTestPosition.figi());
-        AssertUtils.assertEquals(currentPrice, backTestPosition.price());
-        AssertUtils.assertEquals(quantity, backTestPosition.quantity());
+        final Position backTestPosition = positions.get(0);
+        Assertions.assertEquals(figi, backTestPosition.getFigi());
+        AssertUtils.assertEquals(currentPrice, backTestPosition.getCurrentPrice().getValue());
+        AssertUtils.assertEquals(quantity, backTestPosition.getQuantity());
     }
 
     @Test

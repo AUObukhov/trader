@@ -24,12 +24,12 @@ import ru.obukhov.trader.common.service.interfaces.ExcelFileService;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Candle;
+import ru.obukhov.trader.market.model.PositionBuilder;
 import ru.obukhov.trader.test.utils.AssertUtils;
 import ru.obukhov.trader.test.utils.model.CandleBuilder;
 import ru.obukhov.trader.test.utils.model.DateTimeTestData;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.test.utils.model.share.TestShare1;
-import ru.obukhov.trader.trading.model.BackTestPosition;
 import ru.obukhov.trader.trading.model.BackTestResult;
 import ru.obukhov.trader.trading.model.Balances;
 import ru.obukhov.trader.trading.model.Profits;
@@ -39,6 +39,7 @@ import ru.obukhov.trader.web.model.exchange.GetCandlesResponse;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
 import ru.tinkoff.piapi.contract.v1.Operation;
 import ru.tinkoff.piapi.contract.v1.OperationType;
+import ru.tinkoff.piapi.core.models.Position;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -371,8 +372,8 @@ class ExcelServiceImplUnitTest {
         AssertUtils.assertRowValues(rowIterator.next());
         AssertUtils.assertRowValues(rowIterator.next(), "Позиции");
         AssertUtils.assertRowValues(rowIterator.next(), "Цена", "Количество");
-        for (final BackTestPosition position : result.positions()) {
-            AssertUtils.assertRowValues(rowIterator.next(), position.price(), position.quantity());
+        for (final Position position : result.positions()) {
+            AssertUtils.assertRowValues(rowIterator.next(), position.getCurrentPrice().getValue(), position.getQuantity());
         }
     }
 
@@ -527,10 +528,18 @@ class ExcelServiceImplUnitTest {
         return Interval.of(from, to);
     }
 
-    private List<BackTestPosition> createPositions(String figi) {
+    private List<Position> createPositions(final String figi) {
         return List.of(
-                new BackTestPosition(figi, BigDecimal.valueOf(200), BigDecimal.valueOf(3)),
-                new BackTestPosition(figi, BigDecimal.valueOf(100), BigDecimal.valueOf(2))
+                new PositionBuilder()
+                        .setFigi(figi)
+                        .setQuantity(3)
+                        .setCurrentPrice(200)
+                        .build(),
+                new PositionBuilder()
+                        .setFigi(figi)
+                        .setQuantity(2)
+                        .setCurrentPrice(100)
+                        .build()
         );
     }
 
