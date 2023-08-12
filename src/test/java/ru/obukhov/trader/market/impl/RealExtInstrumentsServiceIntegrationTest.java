@@ -351,12 +351,12 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
         final String exchange1 = "MOEX";
         final String exchange2 = "SPB";
 
-        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule1 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+        final TradingSchedule tradingSchedule1 = TradingSchedule.newBuilder()
                 .setExchange(exchange1)
                 .addDays(TestTradingDay1.TRADING_DAY)
                 .addDays(TestTradingDay2.TRADING_DAY)
                 .build();
-        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule2 = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+        final TradingSchedule tradingSchedule2 = TradingSchedule.newBuilder()
                 .setExchange(exchange2)
                 .addDays(TestTradingDay3.TRADING_DAY)
                 .build();
@@ -379,7 +379,7 @@ class RealExtInstrumentsServiceIntegrationTest extends IntegrationTest {
     private void mockTradingSchedule(final String exchange, final Timestamp from, final Timestamp to) {
         final Instant fromInstant = TimestampUtils.toStartOfDayInstant(from);
         final Instant toInstant = TimestampUtils.toStartOfDayInstant(to);
-        final ru.tinkoff.piapi.contract.v1.TradingSchedule tradingSchedule = ru.tinkoff.piapi.contract.v1.TradingSchedule.newBuilder()
+        final TradingSchedule tradingSchedule = TradingSchedule.newBuilder()
                 .setExchange(exchange)
                 .addDays(TestTradingDay1.TRADING_DAY)
                 .addDays(TestTradingDay2.TRADING_DAY)

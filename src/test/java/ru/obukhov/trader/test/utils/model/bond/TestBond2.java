@@ -3,6 +3,7 @@ package ru.obukhov.trader.test.utils.model.bond;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
+import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
@@ -62,7 +63,7 @@ public class TestBond2 {
     public static final Timestamp FIRST_1_DAY_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1659423600L).setNanos(0).build();
     public static final RiskLevel RISK_LEVEL = RiskLevel.RISK_LEVEL_UNSPECIFIED;
 
-    public static final ru.tinkoff.piapi.contract.v1.Bond BOND = ru.tinkoff.piapi.contract.v1.Bond.newBuilder()
+    public static final Bond BOND = Bond.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)

@@ -11,6 +11,9 @@ import ru.obukhov.trader.market.interfaces.ExtInstrumentsService;
 import ru.obukhov.trader.market.interfaces.ExtOrdersService;
 import ru.obukhov.trader.test.utils.model.TestData;
 import ru.obukhov.trader.trading.bots.FakeBot;
+import ru.tinkoff.piapi.contract.v1.Bond;
+import ru.tinkoff.piapi.contract.v1.Currency;
+import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.GetTradingStatusResponse;
 import ru.tinkoff.piapi.contract.v1.Instrument;
 import ru.tinkoff.piapi.contract.v1.Operation;
@@ -98,27 +101,27 @@ public class Mocker {
 
     public static void mockInstrument(
             final InstrumentsService instrumentsService,
-            final ru.tinkoff.piapi.contract.v1.Instrument instrument
+            final Instrument instrument
     ) {
         Mockito.when(instrumentsService.getInstrumentByFigiSync(instrument.getFigi())).thenReturn(instrument);
     }
 
-    public static void mockShare(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Share share) {
+    public static void mockShare(final InstrumentsService instrumentsService, final Share share) {
         Mockito.when(instrumentsService.getShareByFigiSync(share.getFigi())).thenReturn(share);
     }
 
-    public static void mockEtf(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Etf etf) {
+    public static void mockEtf(final InstrumentsService instrumentsService, final Etf etf) {
         Mockito.when(instrumentsService.getEtfByFigiSync(etf.getFigi())).thenReturn(etf);
     }
 
     public static void mockCurrency(
             final InstrumentsService instrumentsService,
-            final ru.tinkoff.piapi.contract.v1.Currency currency
+            final Currency currency
     ) {
         Mockito.when(instrumentsService.getCurrencyByFigiSync(currency.getFigi())).thenReturn(currency);
     }
 
-    public static void mockBond(final InstrumentsService instrumentsService, final ru.tinkoff.piapi.contract.v1.Bond bond) {
+    public static void mockBond(final InstrumentsService instrumentsService, final Bond bond) {
         Mockito.when(instrumentsService.getBondByFigiSync(bond.getFigi())).thenReturn(bond);
     }
 

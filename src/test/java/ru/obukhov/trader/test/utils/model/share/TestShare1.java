@@ -8,6 +8,7 @@ import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.contract.v1.ShareType;
 
 public class TestShare1 {
@@ -52,7 +53,7 @@ public class TestShare1 {
     public static final Timestamp FIRST_1_MIN_CANDLE_DATE = TimestampUtils.newTimestamp(1516692840L, 0);
     public static final Timestamp FIRST_1_DAY_CANDLE_DATE = TimestampUtils.newTimestamp(590025600L, 0);
 
-    public static final ru.tinkoff.piapi.contract.v1.Share SHARE = ru.tinkoff.piapi.contract.v1.Share.newBuilder()
+    public static final Share SHARE = Share.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)

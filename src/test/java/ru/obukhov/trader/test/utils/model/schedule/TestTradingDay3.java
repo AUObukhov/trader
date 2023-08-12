@@ -20,7 +20,7 @@ public class TestTradingDay3 {
     public static final Timestamp PREMARKET_START_TIME = TimestampUtils.plusDays(TestTradingDay2.PREMARKET_START_TIME, 1);
     public static final Timestamp PREMARKET_END_TIME = TimestampUtils.plusDays(TestTradingDay2.PREMARKET_END_TIME, 1);
 
-    public static final TradingDay TRADING_DAY = ru.tinkoff.piapi.contract.v1.TradingDay.newBuilder()
+    public static final TradingDay TRADING_DAY = TradingDay.newBuilder()
             .setDate(DATE)
             .setIsTradingDay(IS_TRADING_DAY)
             .setStartTime(START_TIME)

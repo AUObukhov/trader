@@ -2,6 +2,7 @@ package ru.obukhov.trader.test.utils.model.etf;
 
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
+import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
@@ -47,7 +48,7 @@ public class TestEtf3 {
     public static final Timestamp FIRST_1_MIN_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1668169800L).setNanos(0).build();
     public static final Timestamp FIRST_1_DAY_CANDLE_DATE = Timestamp.newBuilder().setSeconds(1668150000L).setNanos(0).build();
 
-    public static final ru.tinkoff.piapi.contract.v1.Etf ETF = ru.tinkoff.piapi.contract.v1.Etf.newBuilder()
+    public static final Etf ETF = Etf.newBuilder()
             .setFigi(FIGI)
             .setTicker(TICKER)
             .setClassCode(CLASS_CODE)

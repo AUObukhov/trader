@@ -31,7 +31,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      */
     @Cacheable(value = "tickerByFigi", sync = true)
     public String getTickerByFigi(final String figi) {
-        final ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
+        final Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
         return instrument.getTicker();
     }
@@ -40,7 +40,7 @@ public class RealExtInstrumentsService implements ExtInstrumentsService {
      * @return exchange of instrument for given {@code figi}
      */
     public String getExchange(final String figi) {
-        ru.tinkoff.piapi.contract.v1.Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
+        Instrument instrument = instrumentsService.getInstrumentByFigiSync(figi);
         Assert.notNull(instrument, "Not found instrument for FIGI '" + figi + "'");
         return instrument.getExchange();
     }

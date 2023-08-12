@@ -243,7 +243,7 @@ public class TestData {
         return DataStructsHelper.createMoney(DecimalUtils.setDefaultScale(value), currency);
     }
 
-    public static Portfolio createPortfolio(final ru.tinkoff.piapi.contract.v1.PortfolioPosition... portfolioPositions) {
+    public static Portfolio createPortfolio(final PortfolioPosition... portfolioPositions) {
         final PortfolioResponse.Builder builder = PortfolioResponse.newBuilder()
                 .setTotalAmountShares(createMoneyValue(Currencies.RUB))
                 .setTotalAmountBonds(createMoneyValue(Currencies.RUB))
@@ -251,7 +251,7 @@ public class TestData {
                 .setTotalAmountCurrencies(createMoneyValue(Currencies.RUB))
                 .setTotalAmountFutures(createMoneyValue(Currencies.RUB))
                 .setExpectedYield(createQuotation());
-        for (final ru.tinkoff.piapi.contract.v1.PortfolioPosition portfolioPosition : portfolioPositions) {
+        for (final PortfolioPosition portfolioPosition : portfolioPositions) {
             builder.addPositions(portfolioPosition);
         }
 
