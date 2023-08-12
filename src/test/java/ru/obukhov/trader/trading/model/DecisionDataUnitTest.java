@@ -46,17 +46,17 @@ class DecisionDataUnitTest {
     }
 
     @Test
-    void getCurrentPrice_returnsLastCandleOpenPrice() {
+    void getCurrentPrice_returnsLastCandleOpen() {
         final List<Candle> candles = new ArrayList<>();
-        candles.add(new CandleBuilder().setOpenPrice(100).build());
-        candles.add(new CandleBuilder().setOpenPrice(200).build());
-        final double lastCandleOpenPrice = 300;
-        candles.add(new CandleBuilder().setOpenPrice(lastCandleOpenPrice).build());
+        candles.add(new CandleBuilder().setOpen(100).build());
+        candles.add(new CandleBuilder().setOpen(200).build());
+        final double lastCandleOpen = 300;
+        candles.add(new CandleBuilder().setOpen(lastCandleOpen).build());
 
         final DecisionData decisionData = new DecisionData();
         decisionData.setCurrentCandles(candles);
 
-        AssertUtils.assertEquals(lastCandleOpenPrice, decisionData.getCurrentPrice());
+        AssertUtils.assertEquals(lastCandleOpen, decisionData.getCurrentPrice());
     }
 
     // endregion

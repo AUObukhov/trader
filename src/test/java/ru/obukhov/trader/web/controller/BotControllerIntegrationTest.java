@@ -289,10 +289,10 @@ class BotControllerIntegrationTest extends ControllerIntegrationTest {
                 .setQuantity(1L)
                 .build();
         final Candle candle = new CandleBuilder()
-                .setOpenPrice(10000)
-                .setClosePrice(20000)
-                .setHighestPrice(30000)
-                .setLowestPrice(5000)
+                .setOpen(10000)
+                .setClose(20000)
+                .setHighest(30000)
+                .setLowest(5000)
                 .setTime(TimestampUtils.newTimestamp(from))
                 .build();
         final BackTestResult backTestResult1 = new BackTestResult(

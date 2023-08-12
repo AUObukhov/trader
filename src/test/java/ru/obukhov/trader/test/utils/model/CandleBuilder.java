@@ -6,29 +6,29 @@ import ru.obukhov.trader.market.model.Candle;
 
 public class CandleBuilder {
 
-    private Double openPrice;
-    private Double closePrice;
-    private Double highestPrice;
-    private Double lowestPrice;
+    private Double open;
+    private Double close;
+    private Double highest;
+    private Double lowest;
     private Timestamp time;
 
-    public CandleBuilder setOpenPrice(final double openPrice) {
-        this.openPrice = openPrice;
+    public CandleBuilder setOpen(final double open) {
+        this.open = open;
         return this;
     }
 
-    public CandleBuilder setClosePrice(final double closePrice) {
-        this.closePrice = closePrice;
+    public CandleBuilder setClose(final double close) {
+        this.close = close;
         return this;
     }
 
-    public CandleBuilder setHighestPrice(final double highestPrice) {
-        this.highestPrice = highestPrice;
+    public CandleBuilder setHighest(final double highest) {
+        this.highest = highest;
         return this;
     }
 
-    public CandleBuilder setLowestPrice(final double lowestPrice) {
-        this.lowestPrice = lowestPrice;
+    public CandleBuilder setLowest(final double lowest) {
+        this.lowest = lowest;
         return this;
     }
 
@@ -40,20 +40,20 @@ public class CandleBuilder {
     public Candle build() {
         final Candle candle = new Candle();
 
-        if (openPrice != null) {
-            candle.setOpenPrice(DecimalUtils.setDefaultScale(openPrice));
+        if (open != null) {
+            candle.setOpen(DecimalUtils.setDefaultScale(open));
         }
 
-        if (closePrice != null) {
-            candle.setClosePrice(DecimalUtils.setDefaultScale(closePrice));
+        if (close != null) {
+            candle.setClose(DecimalUtils.setDefaultScale(close));
         }
 
-        if (highestPrice != null) {
-            candle.setHighestPrice(DecimalUtils.setDefaultScale(highestPrice));
+        if (highest != null) {
+            candle.setHigh(DecimalUtils.setDefaultScale(highest));
         }
 
-        if (lowestPrice != null) {
-            candle.setLowestPrice(DecimalUtils.setDefaultScale(lowestPrice));
+        if (lowest != null) {
+            candle.setLow(DecimalUtils.setDefaultScale(lowest));
         }
 
         if (time != null) {

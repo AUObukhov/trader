@@ -221,11 +221,11 @@ class GrafanaServiceUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpenPrice(1000).setTime(TimestampUtils.plusHours(from, 1)).build(),
-                new CandleBuilder().setOpenPrice(2000).setTime(TimestampUtils.plusHours(from, 2)).build(),
-                new CandleBuilder().setOpenPrice(3000).setTime(TimestampUtils.plusHours(from, 3)).build(),
-                new CandleBuilder().setOpenPrice(4000).setTime(TimestampUtils.plusHours(from, 4)).build(),
-                new CandleBuilder().setOpenPrice(5000).setTime(TimestampUtils.plusHours(from, 5)).build()
+                new CandleBuilder().setOpen(1000).setTime(TimestampUtils.plusHours(from, 1)).build(),
+                new CandleBuilder().setOpen(2000).setTime(TimestampUtils.plusHours(from, 2)).build(),
+                new CandleBuilder().setOpen(3000).setTime(TimestampUtils.plusHours(from, 3)).build(),
+                new CandleBuilder().setOpen(4000).setTime(TimestampUtils.plusHours(from, 4)).build(),
+                new CandleBuilder().setOpen(5000).setTime(TimestampUtils.plusHours(from, 5)).build()
         );
 
         final OffsetDateTime currentDateTime = OffsetDateTime.now();
@@ -248,7 +248,7 @@ class GrafanaServiceUnitTest {
             final List<List<Object>> expectedRows = new ArrayList<>(5);
             for (Candle candle : candles) {
                 final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
-                expectedRows.add(List.of(dateTime, candle.getOpenPrice()));
+                expectedRows.add(List.of(dateTime, candle.getOpen()));
             }
             AssertUtils.assertEquals(expectedRows, result.getRows());
         }
@@ -283,34 +283,34 @@ class GrafanaServiceUnitTest {
         request.setInterval(interval);
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpenPrice(80).setClosePrice(15).setHighestPrice(20).setLowestPrice(5)
+                new CandleBuilder().setOpen(80).setClose(15).setHighest(20).setLowest(5)
                         .setTime(from)
                         .build(),
-                new CandleBuilder().setOpenPrice(1000).setClosePrice(20).setHighestPrice(25).setLowestPrice(10)
+                new CandleBuilder().setOpen(1000).setClose(20).setHighest(25).setLowest(10)
                         .setTime(TimestampUtils.plusMinutes(from, 1))
                         .build(),
-                new CandleBuilder().setOpenPrice(70).setClosePrice(17).setHighestPrice(24).setLowestPrice(15)
+                new CandleBuilder().setOpen(70).setClose(17).setHighest(24).setLowest(15)
                         .setTime(TimestampUtils.plusMinutes(from, 2))
                         .build(),
-                new CandleBuilder().setOpenPrice(40).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(40).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 3))
                         .build(),
-                new CandleBuilder().setOpenPrice(50).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(50).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 4))
                         .build(),
-                new CandleBuilder().setOpenPrice(10).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(10).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 5))
                         .build(),
-                new CandleBuilder().setOpenPrice(90).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(90).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 6))
                         .build(),
-                new CandleBuilder().setOpenPrice(1000).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(1000).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 7))
                         .build(),
-                new CandleBuilder().setOpenPrice(60).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(60).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 8))
                         .build(),
-                new CandleBuilder().setOpenPrice(30).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(30).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(from, 9))
                         .build()
         );
@@ -342,7 +342,7 @@ class GrafanaServiceUnitTest {
         for (int i = 0; i < candles.size(); i++) {
             final Candle candle = candles.get(i);
             final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
-            expectedRows.add(List.of(dateTime, candle.getOpenPrice(), averages1.get(i), averages2.get(i)));
+            expectedRows.add(List.of(dateTime, candle.getOpen(), averages1.get(i), averages2.get(i)));
         }
         AssertUtils.assertEquals(expectedRows, result.getRows());
     }

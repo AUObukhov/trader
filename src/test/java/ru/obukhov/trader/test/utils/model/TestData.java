@@ -62,7 +62,7 @@ public class TestData {
                 .build();
 
         decisionData.setPosition(portfolioPosition);
-        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
+        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
 
         return decisionData;
@@ -71,7 +71,7 @@ public class TestData {
     public static DecisionData createDecisionData(final double balance, final double currentPrice, final int lotSize, final double commission) {
         final DecisionData decisionData = new DecisionData();
         decisionData.setBalance(DecimalUtils.setDefaultScale(balance));
-        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpenPrice(currentPrice).build()));
+        decisionData.setCurrentCandles(List.of(new CandleBuilder().setOpen(currentPrice).build()));
         decisionData.setLastOperations(new ArrayList<>());
         decisionData.setShare(Share.newBuilder().setLot(lotSize).build());
         decisionData.setCommission(commission);

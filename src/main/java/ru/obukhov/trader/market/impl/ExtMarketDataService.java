@@ -148,7 +148,7 @@ public class ExtMarketDataService {
             final List<Candle> candles = loadCandlesBetterCacheable(figi, interval.extendToDay(), interval, CandleInterval.CANDLE_INTERVAL_1_MIN);
             final Candle lastCandle = CollectionUtils.lastElement(candles);
             if (lastCandle != null) {
-                return lastCandle.getClosePrice();
+                return lastCandle.getClose();
             }
         }
 

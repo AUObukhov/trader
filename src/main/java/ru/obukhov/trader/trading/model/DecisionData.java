@@ -33,7 +33,7 @@ public class DecisionData {
     public BigDecimal getCurrentPrice() {
         return CollectionUtils.isEmpty(currentCandles)
                 ? null
-                : currentCandles.get(currentCandles.size() - 1).getOpenPrice();
+                : currentCandles.get(currentCandles.size() - 1).getOpen();
     }
 
     public int getLotSize() {

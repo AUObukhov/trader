@@ -59,9 +59,9 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpenPrice(10).setClosePrice(15).setHighestPrice(20).setLowestPrice(5).setTime(time).build(),
-                new CandleBuilder().setOpenPrice(15).setClosePrice(20).setHighestPrice(25).setLowestPrice(10).setTime(TimestampUtils.plusMinutes(time, 1)).build(),
-                new CandleBuilder().setOpenPrice(20).setClosePrice(17).setHighestPrice(24).setLowestPrice(15).setTime(TimestampUtils.plusMinutes(time, 2)).build()
+                new CandleBuilder().setOpen(10).setClose(15).setHighest(20).setLowest(5).setTime(time).build(),
+                new CandleBuilder().setOpen(15).setClose(20).setHighest(25).setLowest(10).setTime(TimestampUtils.plusMinutes(time, 1)).build(),
+                new CandleBuilder().setOpen(20).setClose(17).setHighest(24).setLowest(15).setTime(TimestampUtils.plusMinutes(time, 2)).build()
         );
 
         Mockito.when(applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class)).thenReturn(averager);
@@ -108,34 +108,34 @@ class StatisticsServiceUnitTest {
         final int bigWindow = 2;
 
         final List<Candle> candles = List.of(
-                new CandleBuilder().setOpenPrice(80).setClosePrice(15).setHighestPrice(20).setLowestPrice(5)
+                new CandleBuilder().setOpen(80).setClose(15).setHighest(20).setLowest(5)
                         .setTime(time)
                         .build(),
-                new CandleBuilder().setOpenPrice(1000).setClosePrice(20).setHighestPrice(25).setLowestPrice(10)
+                new CandleBuilder().setOpen(1000).setClose(20).setHighest(25).setLowest(10)
                         .setTime(TimestampUtils.plusMinutes(time, 1))
                         .build(),
-                new CandleBuilder().setOpenPrice(70).setClosePrice(17).setHighestPrice(24).setLowestPrice(15)
+                new CandleBuilder().setOpen(70).setClose(17).setHighest(24).setLowest(15)
                         .setTime(TimestampUtils.plusMinutes(time, 2))
                         .build(),
-                new CandleBuilder().setOpenPrice(40).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(40).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 3))
                         .build(),
-                new CandleBuilder().setOpenPrice(50).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(50).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 4))
                         .build(),
-                new CandleBuilder().setOpenPrice(10).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(10).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 5))
                         .build(),
-                new CandleBuilder().setOpenPrice(90).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(90).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 6))
                         .build(),
-                new CandleBuilder().setOpenPrice(1000).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(1000).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 7))
                         .build(),
-                new CandleBuilder().setOpenPrice(60).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(60).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 8))
                         .build(),
-                new CandleBuilder().setOpenPrice(30).setClosePrice(18).setHighestPrice(22).setLowestPrice(14)
+                new CandleBuilder().setOpen(30).setClose(18).setHighest(22).setLowest(14)
                         .setTime(TimestampUtils.plusMinutes(time, 9))
                         .build()
         );

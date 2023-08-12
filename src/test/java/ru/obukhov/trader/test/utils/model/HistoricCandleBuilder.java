@@ -6,30 +6,30 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 public class HistoricCandleBuilder {
 
-    private Double openPrice;
-    private Double closePrice;
-    private Double highestPrice;
-    private Double lowestPrice;
+    private Double open;
+    private Double close;
+    private Double high;
+    private Double low;
     private Timestamp time;
     private Boolean isComplete;
 
-    public HistoricCandleBuilder setOpenPrice(final double openPrice) {
-        this.openPrice = openPrice;
+    public HistoricCandleBuilder setOpen(final double open) {
+        this.open = open;
         return this;
     }
 
-    public HistoricCandleBuilder setClosePrice(final double closePrice) {
-        this.closePrice = closePrice;
+    public HistoricCandleBuilder setClose(final double close) {
+        this.close = close;
         return this;
     }
 
-    public HistoricCandleBuilder setHighestPrice(final double highestPrice) {
-        this.highestPrice = highestPrice;
+    public HistoricCandleBuilder setHigh(final double high) {
+        this.high = high;
         return this;
     }
 
-    public HistoricCandleBuilder setLowestPrice(final double lowestPrice) {
-        this.lowestPrice = lowestPrice;
+    public HistoricCandleBuilder setLow(final double low) {
+        this.low = low;
         return this;
     }
 
@@ -46,20 +46,20 @@ public class HistoricCandleBuilder {
     public HistoricCandle build() {
         final HistoricCandle.Builder builder = HistoricCandle.newBuilder();
 
-        if (openPrice != null) {
-            builder.setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(openPrice)));
+        if (open != null) {
+            builder.setOpen(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(open)));
         }
 
-        if (closePrice != null) {
-            builder.setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(closePrice)));
+        if (close != null) {
+            builder.setClose(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(close)));
         }
 
-        if (highestPrice != null) {
-            builder.setHigh(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(highestPrice)));
+        if (high != null) {
+            builder.setHigh(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(high)));
         }
 
-        if (lowestPrice != null) {
-            builder.setLow(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(lowestPrice)));
+        if (low != null) {
+            builder.setLow(DecimalUtils.toQuotation(DecimalUtils.setDefaultScale(low)));
         }
 
         if (time != null) {

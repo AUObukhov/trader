@@ -432,10 +432,10 @@ class ExcelServiceImplUnitTest {
             AssertUtils.assertRowValues(
                     rowIterator.next(),
                     candle.getTime(),
-                    candle.getOpenPrice(),
-                    candle.getClosePrice(),
-                    candle.getHighestPrice(),
-                    candle.getLowestPrice()
+                    candle.getOpen(),
+                    candle.getClose(),
+                    candle.getHigh(),
+                    candle.getLow()
             );
         }
 
@@ -578,23 +578,23 @@ class ExcelServiceImplUnitTest {
 
     private List<Candle> createCandles() {
         final Candle candle1 = new CandleBuilder()
-                .setOpenPrice(150)
+                .setOpen(150)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 10))
                 .build();
         final Candle candle2 = new CandleBuilder()
-                .setOpenPrice(160)
+                .setOpen(160)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 1, 11))
                 .build();
         final Candle candle3 = new CandleBuilder()
-                .setOpenPrice(180)
+                .setOpen(180)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 5, 10, 11))
                 .build();
         final Candle candle4 = new CandleBuilder()
-                .setOpenPrice(160)
+                .setOpen(160)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 10, 10, 50))
                 .build();
         final Candle candle5 = new CandleBuilder()
-                .setOpenPrice(120)
+                .setOpen(120)
                 .setTime(TimestampUtils.newTimestamp(2020, 11, 1, 10))
                 .build();
 
@@ -603,9 +603,9 @@ class ExcelServiceImplUnitTest {
 
     private GetCandlesResponse createGetCandlesResponse() {
         final List<Candle> candles = createCandles();
-        final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();
-        final List<BigDecimal> shortAverages = averager.getAverages(openPrices, 2);
-        final List<BigDecimal> longAverages = averager.getAverages(openPrices, 5);
+        final List<BigDecimal> opens = candles.stream().map(Candle::getOpen).toList();
+        final List<BigDecimal> shortAverages = averager.getAverages(opens, 2);
+        final List<BigDecimal> longAverages = averager.getAverages(opens, 5);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }

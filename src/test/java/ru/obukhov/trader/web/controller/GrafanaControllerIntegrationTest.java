@@ -111,9 +111,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                new HistoricCandleBuilder().setOpenPrice(100).setTime(from).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpenPrice(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpenPrice(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
+                new HistoricCandleBuilder().setOpen(100).setTime(from).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -161,9 +161,9 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
         final List<HistoricCandle> historicCandles = List.of(
-                new HistoricCandleBuilder().setOpenPrice(100).setTime(from).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpenPrice(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
-                new HistoricCandleBuilder().setOpenPrice(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
+                new HistoricCandleBuilder().setOpen(100).setTime(from).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(101).setTime(TimestampUtils.plusMinutes(from, 1)).setIsComplete(true).build(),
+                new HistoricCandleBuilder().setOpen(102).setTime(TimestampUtils.plusMinutes(from, 2)).setIsComplete(true).build()
         );
         new CandleMocker(marketDataService, figi, candleInterval)
                 .add(historicCandles)
@@ -194,20 +194,20 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
         final List<List<Object>> rows = List.of(
                 List.of(
                         getTimeString(historicCandles.get(0)),
-                        getOpenPrice(historicCandles.get(0)),
-                        getOpenPrice(historicCandles.get(0)),
-                        getOpenPrice(historicCandles.get(0))
+                        getOpen(historicCandles.get(0)),
+                        getOpen(historicCandles.get(0)),
+                        getOpen(historicCandles.get(0))
                 ),
                 List.of(
                         getTimeString(historicCandles.get(1)),
-                        getOpenPrice(historicCandles.get(1)),
-                        getOpenPrice(historicCandles.get(1)),
+                        getOpen(historicCandles.get(1)),
+                        getOpen(historicCandles.get(1)),
                         DecimalUtils.setDefaultScale(100.5)
                 ),
                 List.of(
                         getTimeString(historicCandles.get(2)),
-                        getOpenPrice(historicCandles.get(2)),
-                        getOpenPrice(historicCandles.get(2)),
+                        getOpen(historicCandles.get(2)),
+                        getOpen(historicCandles.get(2)),
                         DecimalUtils.setDefaultScale(101.5)
                 )
         );
@@ -239,14 +239,14 @@ class GrafanaControllerIntegrationTest extends ControllerIntegrationTest {
     // endregion
 
     private List<Object> mapCandleToGrafanaList(final HistoricCandle candle) {
-        return List.of(getTimeString(candle), getOpenPrice(candle));
+        return List.of(getTimeString(candle), getOpen(candle));
     }
 
     private String getTimeString(final HistoricCandle candle) {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(DATE_TIME_MAPPER.timestampToOffsetDateTime(candle.getTime()));
     }
 
-    private BigDecimal getOpenPrice(final HistoricCandle candle) {
+    private BigDecimal getOpen(final HistoricCandle candle) {
         return QUOTATION_MAPPER.toBigDecimal(candle.getOpen());
     }
 

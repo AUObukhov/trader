@@ -69,12 +69,12 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getCandles(figi, Interval.of(from, to), candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(1, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(5).getClosePrice());
+        AssertUtils.assertEquals(0, candles.get(0).getClose());
+        AssertUtils.assertEquals(1, candles.get(1).getClose());
+        AssertUtils.assertEquals(2, candles.get(2).getClose());
+        AssertUtils.assertEquals(3, candles.get(3).getClose());
+        AssertUtils.assertEquals(4, candles.get(4).getClose());
+        AssertUtils.assertEquals(5, candles.get(5).getClose());
     }
 
     @Test
@@ -102,11 +102,11 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getCandles(figi, interval, candleInterval);
 
         Assertions.assertEquals(5, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(1, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(4).getClosePrice());
+        AssertUtils.assertEquals(0, candles.get(0).getClose());
+        AssertUtils.assertEquals(1, candles.get(1).getClose());
+        AssertUtils.assertEquals(2, candles.get(2).getClose());
+        AssertUtils.assertEquals(3, candles.get(3).getClose());
+        AssertUtils.assertEquals(4, candles.get(4).getClose());
     }
 
     @Test
@@ -134,12 +134,12 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getCandles(figi, interval, candleInterval);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(0, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(1, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(5).getClosePrice());
+        AssertUtils.assertEquals(0, candles.get(0).getClose());
+        AssertUtils.assertEquals(1, candles.get(1).getClose());
+        AssertUtils.assertEquals(2, candles.get(2).getClose());
+        AssertUtils.assertEquals(3, candles.get(3).getClose());
+        AssertUtils.assertEquals(4, candles.get(4).getClose());
+        AssertUtils.assertEquals(5, candles.get(5).getClose());
     }
 
     @Test
@@ -166,9 +166,9 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getCandles(figi, interval, candleInterval);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(3, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(2).getClosePrice());
+        AssertUtils.assertEquals(3, candles.get(0).getClose());
+        AssertUtils.assertEquals(4, candles.get(1).getClose());
+        AssertUtils.assertEquals(5, candles.get(2).getClose());
     }
 
     // endregion
@@ -192,18 +192,18 @@ class ExtMarketDataServiceUnitTest {
         final String figi = TestShare1.FIGI;
         final Timestamp from = TestShare1.FIRST_1_MIN_CANDLE_DATE;
         final Timestamp to = TimestampUtils.plusDays(from, 1);
-        final int closePrice = 10;
+        final int close = 10;
 
         Mockito.when(realExtInstrumentsService.getShare(figi)).thenReturn(TestShare1.SHARE);
 
         new CandleMocker(marketDataService, figi, CandleInterval.CANDLE_INTERVAL_1_MIN)
-                .add(closePrice, from)
+                .add(close, from)
                 .mock();
 
         final BigDecimal price = service.getLastPrice(figi, to);
 
         Assertions.assertNotNull(price);
-        AssertUtils.assertEquals(closePrice, price);
+        AssertUtils.assertEquals(close, price);
     }
 
     // endregion
@@ -246,11 +246,11 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(limit, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(4).getClosePrice());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+        AssertUtils.assertEquals(4, candles.get(2).getClose());
+        AssertUtils.assertEquals(5, candles.get(3).getClose());
+        AssertUtils.assertEquals(6, candles.get(4).getClose());
     }
 
     @Test
@@ -275,12 +275,12 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(5).getClosePrice());
+        AssertUtils.assertEquals(1, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.get(1).getClose());
+        AssertUtils.assertEquals(3, candles.get(2).getClose());
+        AssertUtils.assertEquals(4, candles.get(3).getClose());
+        AssertUtils.assertEquals(5, candles.get(4).getClose());
+        AssertUtils.assertEquals(6, candles.get(5).getClose());
     }
 
     @Test
@@ -304,9 +304,9 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(2).getClosePrice());
+        AssertUtils.assertEquals(1, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.get(1).getClose());
+        AssertUtils.assertEquals(3, candles.get(2).getClose());
     }
 
     // endregion
@@ -349,11 +349,11 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(limit, candles.size());
-        AssertUtils.assertEquals(2, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(4).getClosePrice());
+        AssertUtils.assertEquals(2, candles.get(0).getClose());
+        AssertUtils.assertEquals(3, candles.get(1).getClose());
+        AssertUtils.assertEquals(4, candles.get(2).getClose());
+        AssertUtils.assertEquals(5, candles.get(3).getClose());
+        AssertUtils.assertEquals(6, candles.get(4).getClose());
     }
 
     @Test
@@ -378,12 +378,12 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(5).getClosePrice());
+        AssertUtils.assertEquals(1, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.get(1).getClose());
+        AssertUtils.assertEquals(3, candles.get(2).getClose());
+        AssertUtils.assertEquals(4, candles.get(3).getClose());
+        AssertUtils.assertEquals(5, candles.get(4).getClose());
+        AssertUtils.assertEquals(6, candles.get(5).getClose());
     }
 
     @Test
@@ -408,12 +408,12 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(6, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(3, candles.get(2).getClosePrice());
-        AssertUtils.assertEquals(4, candles.get(3).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(4).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(5).getClosePrice());
+        AssertUtils.assertEquals(1, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.get(1).getClose());
+        AssertUtils.assertEquals(3, candles.get(2).getClose());
+        AssertUtils.assertEquals(4, candles.get(3).getClose());
+        AssertUtils.assertEquals(5, candles.get(4).getClose());
+        AssertUtils.assertEquals(6, candles.get(5).getClose());
     }
 
     @Test
@@ -462,9 +462,9 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(3, candles.size());
-        AssertUtils.assertEquals(4, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(5, candles.get(1).getClosePrice());
-        AssertUtils.assertEquals(6, candles.get(2).getClosePrice());
+        AssertUtils.assertEquals(4, candles.get(0).getClose());
+        AssertUtils.assertEquals(5, candles.get(1).getClose());
+        AssertUtils.assertEquals(6, candles.get(2).getClose());
     }
 
     @Test
@@ -488,8 +488,8 @@ class ExtMarketDataServiceUnitTest {
         final List<Candle> candles = service.getLastCandles(figi, limit, candleInterval, currentTimestamp);
 
         Assertions.assertEquals(2, candles.size());
-        AssertUtils.assertEquals(1, candles.get(0).getClosePrice());
-        AssertUtils.assertEquals(2, candles.get(1).getClosePrice());
+        AssertUtils.assertEquals(1, candles.get(0).getClose());
+        AssertUtils.assertEquals(2, candles.get(1).getClose());
     }
 
     // endregion
@@ -504,44 +504,44 @@ class ExtMarketDataServiceUnitTest {
         final Interval interval = Interval.of(from, to);
         final CandleInterval candleInterval = CandleInterval.CANDLE_INTERVAL_1_MIN;
 
-        final int openPrice1 = 1000;
-        final int closePrice1 = 1500;
-        final int highestPrice1 = 2000;
-        final int lowestPrice1 = 500;
+        final int open1 = 1000;
+        final int close1 = 1500;
+        final int high1 = 2000;
+        final int low1 = 500;
         final Timestamp time1 = TimestampUtils.plusMinutes(from, 1);
         final HistoricCandle historicCandle1 = new HistoricCandleBuilder()
-                .setOpenPrice(openPrice1)
-                .setClosePrice(closePrice1)
-                .setHighestPrice(highestPrice1)
-                .setLowestPrice(lowestPrice1)
+                .setOpen(open1)
+                .setClose(close1)
+                .setHigh(high1)
+                .setLow(low1)
                 .setTime(time1)
                 .setIsComplete(true)
                 .build();
 
-        final int openPrice2 = 1500;
-        final int closePrice2 = 2000;
-        final int highestPrice2 = 2500;
-        final int lowestPrice2 = 1000;
+        final int open2 = 1500;
+        final int close2 = 2000;
+        final int high2 = 2500;
+        final int low2 = 1000;
         final Timestamp time2 = TimestampUtils.plusMinutes(from, 2);
         final HistoricCandle historicCandle2 = new HistoricCandleBuilder()
-                .setOpenPrice(openPrice2)
-                .setClosePrice(closePrice2)
-                .setHighestPrice(highestPrice2)
-                .setLowestPrice(lowestPrice2)
+                .setOpen(open2)
+                .setClose(close2)
+                .setHigh(high2)
+                .setLow(low2)
                 .setTime(time2)
                 .setIsComplete(true)
                 .build();
 
-        final int openPrice3 = 2000;
-        final int closePrice3 = 2500;
-        final int highestPrice3 = 3000;
-        final int lowestPrice3 = 500;
+        final int open3 = 2000;
+        final int close3 = 2500;
+        final int high3 = 3000;
+        final int low3 = 500;
         final Timestamp time3 = TimestampUtils.plusMinutes(from, 3);
         final HistoricCandle historicCandle3 = new HistoricCandleBuilder()
-                .setOpenPrice(openPrice3)
-                .setClosePrice(closePrice3)
-                .setHighestPrice(highestPrice3)
-                .setLowestPrice(lowestPrice3)
+                .setOpen(open3)
+                .setClose(close3)
+                .setHigh(high3)
+                .setLow(low3)
                 .setTime(time3)
                 .setIsComplete(false)
                 .build();
@@ -554,17 +554,17 @@ class ExtMarketDataServiceUnitTest {
 
         Assertions.assertEquals(2, candles.size());
         final Candle expectedCandle1 = new CandleBuilder()
-                .setOpenPrice(openPrice1)
-                .setClosePrice(closePrice1)
-                .setHighestPrice(highestPrice1)
-                .setLowestPrice(lowestPrice1)
+                .setOpen(open1)
+                .setClose(close1)
+                .setHighest(high1)
+                .setLowest(low1)
                 .setTime(time1)
                 .build();
         final Candle expectedCandle2 = new CandleBuilder()
-                .setOpenPrice(openPrice2)
-                .setClosePrice(closePrice2)
-                .setHighestPrice(highestPrice2)
-                .setLowestPrice(lowestPrice2)
+                .setOpen(open2)
+                .setClose(close2)
+                .setHighest(high2)
+                .setLowest(low2)
                 .setTime(time2)
                 .build();
         Assertions.assertEquals(expectedCandle1, candles.get(0));

@@ -307,7 +307,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void putCandle(final ExtendedSheet sheet, final Candle candle) {
         final ExtendedRow row = sheet.addRow();
-        row.createCells(candle.getTime(), candle.getOpenPrice(), candle.getClosePrice(), candle.getHighestPrice(), candle.getLowestPrice());
+        row.createCells(candle.getTime(), candle.getOpen(), candle.getClose(), candle.getHigh(), candle.getLow());
     }
 
     private void putChartWithAverages(final ExtendedSheet sheet, final GetCandlesResponse response) {
@@ -340,7 +340,7 @@ public class ExcelServiceImpl implements ExcelService {
                 .map(Candle::getTime)
                 .toList();
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromTimes(times);
-        addOpenPrices(chartData, timesDataSource, response.getCandles());
+        addOpens(chartData, timesDataSource, response.getCandles());
         addLine(chartData, timesDataSource, response.getAverages1(), MarkerProperties.NO_MARKER, Color.BLUE);
         addLine(chartData, timesDataSource, response.getAverages2(), MarkerProperties.NO_MARKER, Color.YELLOW);
 
@@ -370,7 +370,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
 
         final XDDFCategoryDataSource timesDataSource = getTimesCategoryDataSourceFromCandles(innerCandles);
-        addOpenPrices(chartData, timesDataSource, innerCandles);
+        addOpens(chartData, timesDataSource, innerCandles);
         addOperations(chartData, timesDataSource, operations, operationsIndices);
 
         chartData.stretchChart();
@@ -393,9 +393,9 @@ public class ExcelServiceImpl implements ExcelService {
         return XDDFDataSourcesFactory.fromArray(times);
     }
 
-    private void addOpenPrices(final ExtendedChartData chartData, final XDDFCategoryDataSource timesDataSource, final List<Candle> candles) {
+    private void addOpens(final ExtendedChartData chartData, final XDDFCategoryDataSource timesDataSource, final List<Candle> candles) {
         final BigDecimal[] prices = candles.stream()
-                .map(Candle::getOpenPrice)
+                .map(Candle::getOpen)
                 .toArray(BigDecimal[]::new);
         addSeries(chartData, timesDataSource, prices, MarkerProperties.NO_MARKER);
     }

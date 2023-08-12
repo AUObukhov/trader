@@ -17,10 +17,10 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class Candle {
 
-    protected BigDecimal openPrice;
-    protected BigDecimal closePrice;
-    protected BigDecimal highestPrice;
-    protected BigDecimal lowestPrice;
+    protected BigDecimal open;
+    protected BigDecimal close;
+    protected BigDecimal high;
+    protected BigDecimal low;
 
     protected Timestamp time;
 
@@ -40,13 +40,13 @@ public class Candle {
     public static Candle createAverage(final Candle leftCandle, final Candle rightCandle) {
         Assert.isTrue(!TimestampUtils.isAfter(leftCandle.getTime(), rightCandle.getTime()), "leftCandle can't be after rightCandle");
 
-        final BigDecimal openPrice = leftCandle.getOpenPrice();
-        final BigDecimal closePrice = rightCandle.getClosePrice();
-        final BigDecimal highestPrice = openPrice.max(closePrice);
-        final BigDecimal lowestPrice = openPrice.min(closePrice);
+        final BigDecimal open = leftCandle.getOpen();
+        final BigDecimal close = rightCandle.getClose();
+        final BigDecimal high = open.max(close);
+        final BigDecimal low = open.min(close);
         final Timestamp time = TimestampUtils.getAverage(leftCandle.getTime(), rightCandle.getTime());
 
-        return new Candle(openPrice, closePrice, highestPrice, lowestPrice, time);
+        return new Candle(open, close, high, low, time);
     }
 
 }

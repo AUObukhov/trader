@@ -42,7 +42,7 @@ public class CrossStrategy extends AbstractTradingStrategy {
             log.debug("Exists operation in progress. Decision is {}", decision.toPrettyString());
         } else {
             final List<BigDecimal> values = data.getCurrentCandles().stream()
-                    .map(Candle::getOpenPrice)
+                    .map(Candle::getOpen)
                     .toList();
             final CrossStrategyParams crossStrategyParams = (CrossStrategyParams) params;
             final List<BigDecimal> shortAverages = averager.getAverages(values, crossStrategyParams.getSmallWindow());

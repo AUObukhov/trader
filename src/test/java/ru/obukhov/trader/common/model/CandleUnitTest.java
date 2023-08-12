@@ -24,22 +24,22 @@ class CandleUnitTest {
     @Test
     void createAverage() {
         final Candle candle1 = new CandleBuilder()
-                .setOpenPrice(100)
-                .setClosePrice(200)
+                .setOpen(100)
+                .setClose(200)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 10, 1))
                 .build();
         final Candle candle2 = new CandleBuilder()
-                .setOpenPrice(300)
-                .setClosePrice(400)
+                .setOpen(300)
+                .setClose(400)
                 .setTime(TimestampUtils.newTimestamp(2020, 10, 11, 2))
                 .build();
 
         final Candle averageCandle = Candle.createAverage(candle1, candle2);
 
-        AssertUtils.assertEquals(100, averageCandle.getOpenPrice());
-        AssertUtils.assertEquals(400, averageCandle.getClosePrice());
-        AssertUtils.assertEquals(400, averageCandle.getHighestPrice());
-        AssertUtils.assertEquals(100, averageCandle.getLowestPrice());
+        AssertUtils.assertEquals(100, averageCandle.getOpen());
+        AssertUtils.assertEquals(400, averageCandle.getClose());
+        AssertUtils.assertEquals(400, averageCandle.getHigh());
+        AssertUtils.assertEquals(100, averageCandle.getLow());
 
         final Timestamp expectedTimestamp = TimestampUtils.newTimestamp(2020, 10, 10, 13, 30);
         Assertions.assertEquals(expectedTimestamp, averageCandle.getTime());

@@ -46,9 +46,9 @@ public class StatisticsService {
         final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
 
         final MovingAverager averager = applicationContext.getBean(movingAverageType.getAveragerName(), MovingAverager.class);
-        final List<BigDecimal> openPrices = candles.stream().map(Candle::getOpenPrice).toList();
-        final List<BigDecimal> shortAverages = averager.getAverages(openPrices, smallWindow, ORDER);
-        final List<BigDecimal> longAverages = averager.getAverages(openPrices, bigWindow, ORDER);
+        final List<BigDecimal> opens = candles.stream().map(Candle::getOpen).toList();
+        final List<BigDecimal> shortAverages = averager.getAverages(opens, smallWindow, ORDER);
+        final List<BigDecimal> longAverages = averager.getAverages(opens, bigWindow, ORDER);
 
         return new GetCandlesResponse(candles, shortAverages, longAverages);
     }

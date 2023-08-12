@@ -41,9 +41,9 @@ public class CandleMocker {
         this.candles = new ArrayList<>();
     }
 
-    public CandleMocker add(@NotNull final Integer closePrice, @NotNull final Timestamp time) {
+    public CandleMocker add(@NotNull final Integer close, @NotNull final Timestamp time) {
         final HistoricCandle candle = new HistoricCandleBuilder()
-                .setClosePrice(closePrice)
+                .setClose(close)
                 .setTime(time)
                 .setIsComplete(true)
                 .build();

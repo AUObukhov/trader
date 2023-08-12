@@ -639,7 +639,7 @@ class BackTesterImplUnitTest {
         for (final Map.Entry<Timestamp, Double> entry : prices.entrySet()) {
             final Candle candle = candlesIterator.next();
             Assertions.assertEquals(entry.getKey(), candle.getTime());
-            AssertUtils.assertEquals(entry.getValue(), candle.getClosePrice());
+            AssertUtils.assertEquals(entry.getValue(), candle.getClose());
         }
     }
 
@@ -1064,8 +1064,8 @@ class BackTesterImplUnitTest {
                 .thenAnswer(invocation -> {
                     final Timestamp currentTimestamp = fakeBot.getCurrentTimestamp();
                     if (prices.containsKey(currentTimestamp)) {
-                        final double closePrice = prices.get(currentTimestamp);
-                        final Candle candle = new CandleBuilder().setClosePrice(closePrice).setTime(currentTimestamp).build();
+                        final double close = prices.get(currentTimestamp);
+                        final Candle candle = new CandleBuilder().setClose(close).setTime(currentTimestamp).build();
                         return List.of(candle);
                     } else {
                         return Collections.emptyList();

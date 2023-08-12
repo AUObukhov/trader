@@ -18,53 +18,53 @@ class CandleMapperUnitTest {
 
     @Test
     void mapHistoricCandleToCandle() {
-        final int openPrice = 100;
-        final int closePrice = 200;
-        final int highestPrice = 300;
-        final int lowestPrice = 400;
+        final int open = 100;
+        final int close = 200;
+        final int high = 300;
+        final int low = 400;
         final Timestamp timestamp = TimestampUtils.newTimestamp(2022, 1, 1, 10, 30, 15);
 
         final HistoricCandle historicCandle = new HistoricCandleBuilder()
-                .setOpenPrice(openPrice)
-                .setClosePrice(closePrice)
-                .setHighestPrice(highestPrice)
-                .setLowestPrice(lowestPrice)
+                .setOpen(open)
+                .setClose(close)
+                .setHigh(high)
+                .setLow(low)
                 .setTime(timestamp)
                 .setIsComplete(false)
                 .build();
 
         final Candle candle = candleMapper.map(historicCandle);
 
-        AssertUtils.assertEquals(openPrice, candle.getOpenPrice());
-        AssertUtils.assertEquals(closePrice, candle.getClosePrice());
-        AssertUtils.assertEquals(highestPrice, candle.getHighestPrice());
-        AssertUtils.assertEquals(lowestPrice, candle.getLowestPrice());
+        AssertUtils.assertEquals(open, candle.getOpen());
+        AssertUtils.assertEquals(close, candle.getClose());
+        AssertUtils.assertEquals(high, candle.getHigh());
+        AssertUtils.assertEquals(low, candle.getLow());
         Assertions.assertEquals(timestamp, candle.getTime());
     }
 
     @Test
     void mapCandleToHistoricCandle() {
-        final int openPrice = 100;
-        final int closePrice = 200;
-        final int highestPrice = 300;
-        final int lowestPrice = 400;
+        final int open = 100;
+        final int close = 200;
+        final int high = 300;
+        final int low = 400;
         final Timestamp time = TimestampUtils.newTimestamp(2022, 1, 1, 10, 30, 15);
 
         final Candle candle = new CandleBuilder()
-                .setOpenPrice(openPrice)
-                .setClosePrice(closePrice)
-                .setHighestPrice(highestPrice)
-                .setLowestPrice(lowestPrice)
+                .setOpen(open)
+                .setClose(close)
+                .setHighest(high)
+                .setLowest(low)
                 .setTime(time)
                 .build();
         final boolean isComplete = true;
 
         final HistoricCandle historicCandle = candleMapper.map(candle, isComplete);
 
-        AssertUtils.assertEquals(openPrice, quotationMapper.toBigDecimal(historicCandle.getOpen()));
-        AssertUtils.assertEquals(closePrice, quotationMapper.toBigDecimal(historicCandle.getClose()));
-        AssertUtils.assertEquals(highestPrice, quotationMapper.toBigDecimal(historicCandle.getHigh()));
-        AssertUtils.assertEquals(lowestPrice, quotationMapper.toBigDecimal(historicCandle.getLow()));
+        AssertUtils.assertEquals(open, quotationMapper.toBigDecimal(historicCandle.getOpen()));
+        AssertUtils.assertEquals(close, quotationMapper.toBigDecimal(historicCandle.getClose()));
+        AssertUtils.assertEquals(high, quotationMapper.toBigDecimal(historicCandle.getHigh()));
+        AssertUtils.assertEquals(low, quotationMapper.toBigDecimal(historicCandle.getLow()));
         Assertions.assertEquals(time, historicCandle.getTime());
         Assertions.assertEquals(isComplete, historicCandle.getIsComplete());
     }

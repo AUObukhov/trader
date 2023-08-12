@@ -111,7 +111,7 @@ public class GrafanaService {
         final List<Candle> candles = extMarketDataService.getCandles(figi, innerInterval, candleInterval);
         for (Candle candle : candles) {
             final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
-            rows.add(List.of(dateTime, candle.getOpenPrice()));
+            rows.add(List.of(dateTime, candle.getOpen()));
         }
         queryResult.setRows(rows);
 
@@ -144,7 +144,7 @@ public class GrafanaService {
             final OffsetDateTime dateTime = TimestampUtils.toOffsetDateTime(candle.getTime());
             final BigDecimal average1 = candlesResponse.getAverages1().get(i);
             final BigDecimal average2 = candlesResponse.getAverages2().get(i);
-            valuesAndAveragesRows.add(List.of(dateTime, candle.getOpenPrice(), average1, average2));
+            valuesAndAveragesRows.add(List.of(dateTime, candle.getOpen(), average1, average2));
         }
         valuesAndAveragesResult.setRows(valuesAndAveragesRows);
 

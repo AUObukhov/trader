@@ -158,28 +158,28 @@ class StatisticsControllerIntegrationTest extends ControllerIntegrationTest {
         Mocker.mockShare(instrumentsService, TestShare1.SHARE);
 
         final HistoricCandle candle1 = new HistoricCandleBuilder()
-                .setOpenPrice(12000)
-                .setClosePrice(8000)
-                .setHighestPrice(15000)
-                .setLowestPrice(6000)
+                .setOpen(12000)
+                .setClose(8000)
+                .setHigh(15000)
+                .setLow(6000)
                 .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10))
                 .setIsComplete(true)
                 .build();
 
         final HistoricCandle candle2 = new HistoricCandleBuilder()
-                .setOpenPrice(1200)
-                .setClosePrice(800)
-                .setHighestPrice(1500)
-                .setLowestPrice(600)
+                .setOpen(1200)
+                .setClose(800)
+                .setHigh(1500)
+                .setLow(600)
                 .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 1))
                 .setIsComplete(true)
                 .build();
 
         final HistoricCandle candle3 = new HistoricCandleBuilder()
-                .setOpenPrice(120)
-                .setClosePrice(80)
-                .setHighestPrice(150)
-                .setLowestPrice(60)
+                .setOpen(120)
+                .setClose(80)
+                .setHigh(150)
+                .setLow(60)
                 .setTime(TimestampUtils.newTimestamp(2021, 3, 25, 10, 2))
                 .setIsComplete(true)
                 .build();
