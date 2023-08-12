@@ -161,10 +161,6 @@ public class ExtendedChartData {
         return series;
     }
 
-    public void removeSeries(int n) {
-        delegate.removeSeries(n);
-    }
-
     // endregion
 
 }

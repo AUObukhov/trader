@@ -58,10 +58,8 @@ public class PoiTestData {
         }
     }
 
-    public static List<Row> addRows(ExtendedSheet extendedSheet, int... rownums) {
-        return Arrays.stream(rownums)
-                .mapToObj(extendedSheet::createRow)
-                .toList();
+    public static void addRows(ExtendedSheet extendedSheet, int... rownums) {
+        Arrays.stream(rownums).forEach(extendedSheet::createRow);
     }
 
     public static List<Sheet> createSheets(Workbook workbook, String... sheetNames) {
@@ -70,10 +68,9 @@ public class PoiTestData {
                 .toList();
     }
 
-    public static Cell createCell(Row row, int column, String value) {
+    public static void createCell(Row row, int column, String value) {
         final Cell cell = row.createCell(column);
         cell.setCellValue(value);
-        return cell;
     }
 
 }

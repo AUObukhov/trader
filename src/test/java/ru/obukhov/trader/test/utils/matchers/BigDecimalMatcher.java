@@ -12,10 +12,6 @@ public class BigDecimalMatcher implements ArgumentMatcher<BigDecimal> {
 
     private final BigDecimal value;
 
-    public static BigDecimalMatcher of(final BigDecimal value) {
-        return new BigDecimalMatcher(value);
-    }
-
     public static BigDecimalMatcher of(final double value) {
         return new BigDecimalMatcher(BigDecimal.valueOf(value));
     }

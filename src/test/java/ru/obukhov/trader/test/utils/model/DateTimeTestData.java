@@ -67,27 +67,6 @@ public class DateTimeTestData {
     }
 
     /**
-     * @return OffsetDateTime with by params, 0 hours, 0 minutes, 0 seconds, 0 nanoseconds and default offset
-     */
-    public static OffsetDateTime createDateTime(final int year) {
-        return OffsetDateTime.of(year, 1, 1, 0, 0, 0, 0, DateUtils.DEFAULT_OFFSET);
-    }
-
-    /**
-     * @return OffsetDateTime with by params, 0 seconds, 0 nanoseconds
-     */
-    public static OffsetDateTime createDateTime(
-            final int year,
-            final int month,
-            final int dayOfMonth,
-            final int hour,
-            final int minute,
-            final ZoneOffset offset
-    ) {
-        return OffsetDateTime.of(year, month, dayOfMonth, hour, minute, 0, 0, offset);
-    }
-
-    /**
      * @return OffsetDateTime with by params, 0 minutes, 0 seconds, 0 nanoseconds
      */
     public static OffsetDateTime createDateTime(final int year, final int month, final int dayOfMonth, final int hour, final ZoneOffset offset) {

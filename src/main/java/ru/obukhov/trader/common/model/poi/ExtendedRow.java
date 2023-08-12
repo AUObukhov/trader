@@ -91,8 +91,8 @@ public class ExtendedRow implements Row {
     /**
      * Same as {@link ExtendedRow#createUnitedCell(int, Object, int)} with first parameter = 0
      */
-    public ExtendedCell createUnitedCell(@Nullable final Object value, final int width) {
-        return createUnitedCell(0, value, width);
+    public void createUnitedCell(@Nullable final Object value, final int width) {
+        createUnitedCell(0, value, width);
     }
 
     /**

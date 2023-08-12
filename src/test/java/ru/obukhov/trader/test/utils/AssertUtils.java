@@ -95,14 +95,6 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(@Nullable final MoneyValue expected, @Nullable final BigDecimal actual) {
-        if (expected == null) {
-            Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual, DecimalUtils.createBigDecimal(expected))) {
-            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
-        }
-    }
-
     public static void assertEquals(@Nullable final Double expected, @Nullable final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
@@ -122,27 +114,6 @@ public class AssertUtils {
     public static void assertEquals(@Nullable final Money expected, @Nullable final Money actual) {
         if (!equals(expected, actual)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
-        }
-    }
-
-    public static void assertEquals(@Nullable final Timestamp expected, @Nullable final OffsetDateTime actual) {
-        if (expected == null) {
-            Assertions.assertNull(actual);
-        } else {
-            final OffsetDateTime expectedDateTime = TimestampUtils.toOffsetDateTime(expected);
-            if (!expectedDateTime.equals(actual)) {
-                Assertions.fail(String.format("expected: <%s> but was: <%s>", expectedDateTime, actual));
-            }
-        }
-    }
-
-    public static void assertEquals(@Nullable final OffsetDateTime expected, @Nullable final Timestamp actual) {
-        if (expected == null) {
-            Assertions.assertNull(actual);
-        } else {
-            if (!TimestampUtils.newTimestamp(expected).equals(actual)) {
-                Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
-            }
         }
     }
 

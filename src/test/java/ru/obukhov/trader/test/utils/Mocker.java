@@ -46,10 +46,9 @@ public class Mocker {
         return offsetDateTimeStaticMock;
     }
 
-    public static Timestamp mockCurrentTimestamp(final Context context) {
+    public static void mockCurrentTimestamp(final Context context) {
         final Timestamp currentTimestamp = TimestampUtils.now();
         Mockito.when(context.getCurrentTimestamp()).thenReturn(currentTimestamp);
-        return currentTimestamp;
     }
 
     public static void mockTinkoffOperations(

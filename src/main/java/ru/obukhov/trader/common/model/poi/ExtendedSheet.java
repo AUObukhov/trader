@@ -119,9 +119,9 @@ public class ExtendedSheet implements Sheet {
     /**
      * Same as {@link Sheet#addMergedRegion(CellRangeAddress)}, but with exact values of cell range address fields
      */
-    public int addMergedRegion(final int firstRow, final int lastRow, final int firstCol, final int lastCol) {
+    public void addMergedRegion(final int firstRow, final int lastRow, final int firstCol, final int lastCol) {
         final CellRangeAddress cellRangeAddress = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-        return addMergedRegion(cellRangeAddress);
+        addMergedRegion(cellRangeAddress);
     }
 
     // endregion
