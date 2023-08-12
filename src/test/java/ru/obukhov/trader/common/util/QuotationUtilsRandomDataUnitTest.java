@@ -6,19 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.obukhov.trader.common.model.ExecutionResult;
 import ru.obukhov.trader.market.model.transform.QuotationMapper;
+import ru.obukhov.trader.test.utils.model.TestData;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 
 class QuotationUtilsRandomDataUnitTest {
 
-    private static final Random RANDOM = new Random();
     private static final QuotationMapper QUOTATION_MAPPER = Mappers.getMapper(QuotationMapper.class);
 
     @Test
@@ -86,8 +85,8 @@ class QuotationUtilsRandomDataUnitTest {
             final BinaryOperator<Quotation> quotationOperator,
             final BinaryOperator<BigDecimal> bigDecimalOperator
     ) {
-        final List<Quotation> quotations1 = randomQuotations(size, origin, bound);
-        final List<Quotation> quotations2 = randomQuotations(size, origin, bound);
+        final List<Quotation> quotations1 = TestData.randomQuotations(size, origin, bound);
+        final List<Quotation> quotations2 = TestData.randomQuotations(size, origin, bound);
         final List<BigDecimal> bigDecimals1 = quotations1.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
         final List<BigDecimal> bigDecimals2 = quotations2.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
 
@@ -105,8 +104,8 @@ class QuotationUtilsRandomDataUnitTest {
             final BiFunction<Quotation, Long, Quotation> quotationLongOperator,
             final BinaryOperator<BigDecimal> bigDecimalOperator
     ) {
-        final List<Quotation> quotations = randomQuotations(size, origin, bound);
-        final List<Long> longs = randomLongs(size, origin, bound);
+        final List<Quotation> quotations = TestData.randomQuotations(size, origin, bound);
+        final List<Long> longs = TestData.randomLongs(size, origin, bound);
         final List<BigDecimal> bigDecimals1 = quotations.stream().map(QUOTATION_MAPPER::toBigDecimal).toList();
         final List<BigDecimal> bigDecimals2 = longs.stream().map(DecimalUtils::setDefaultScale).toList();
 
@@ -195,41 +194,6 @@ class QuotationUtilsRandomDataUnitTest {
             result.add(operator.apply(list1.get(i), list2.get(i)));
         }
         return result;
-    }
-
-    private List<Quotation> randomQuotations(final int size, final long origin, final long bound) {
-        final List<Quotation> quotations = new ArrayList<>(size);
-
-        for (int i = 0; i < size; i++) {
-            quotations.add(randomQuotation(origin, bound));
-        }
-
-        return quotations;
-    }
-
-    private List<Long> randomLongs(final int size, final long origin, final long bound) {
-        final List<Long> doubles = new ArrayList<>(size);
-
-        for (int i = 0; i < size; i++) {
-            doubles.add(RANDOM.nextLong(origin, bound));
-        }
-
-        return doubles;
-    }
-
-    private Quotation randomQuotation(final long origin, final long bound) {
-        long unit = RANDOM.nextLong(origin, bound);
-        int nano = RANDOM.nextInt(1, 1000000000);
-
-        if (RANDOM.nextInt(1000) == 0) {
-            if (RANDOM.nextBoolean()) {
-                unit = 0;
-            } else {
-                nano = 0;
-            }
-        }
-
-        return QuotationUtils.newNormalizedQuotation(unit, nano);
     }
 
 }

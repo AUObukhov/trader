@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
+import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
@@ -41,6 +42,8 @@ import java.util.stream.Stream;
 
 @UtilityClass
 public class TestData {
+
+    private static final Random RANDOM = new Random();
 
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
@@ -151,12 +154,50 @@ public class TestData {
     }
 
     public static List<BigDecimal> createRandomBigDecimalsList(final int size) {
-        final Random random = new Random();
         final List<BigDecimal> values = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            values.add(DecimalUtils.setDefaultScale(random.nextDouble()));
+            values.add(DecimalUtils.setDefaultScale(RANDOM.nextDouble()));
         }
         return values;
+    }
+
+    // endregion
+
+    public static List<Long> randomLongs(final int size, final long origin, final long bound) {
+        final List<Long> doubles = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            doubles.add(RANDOM.nextLong(origin, bound));
+        }
+
+        return doubles;
+    }
+
+    // region randomQuotations
+
+    public static List<Quotation> randomQuotations(final int size, final long origin, final long bound) {
+        final List<Quotation> quotations = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            quotations.add(randomQuotation(origin, bound));
+        }
+
+        return quotations;
+    }
+
+    public static Quotation randomQuotation(final long origin, final long bound) {
+        long unit = RANDOM.nextLong(origin, bound);
+        int nano = RANDOM.nextInt(1, 1000000000);
+
+        if (RANDOM.nextInt(1000) == 0) {
+            if (RANDOM.nextBoolean()) {
+                unit = 0;
+            } else {
+                nano = 0;
+            }
+        }
+
+        return QuotationUtils.newNormalizedQuotation(unit, nano);
     }
 
     // endregion
