@@ -3,15 +3,14 @@ package ru.obukhov.trader.test.utils.model;
 import com.google.protobuf.Timestamp;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.mapstruct.factory.Mappers;
 import org.quartz.CronExpression;
 import ru.obukhov.trader.common.model.Interval;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
 import ru.obukhov.trader.market.model.PositionBuilder;
-import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.market.util.DataStructsHelper;
 import ru.obukhov.trader.trading.model.DecisionData;
 import ru.obukhov.trader.trading.model.StrategyType;
@@ -43,7 +42,6 @@ import java.util.stream.Stream;
 @UtilityClass
 public class TestData {
 
-    private static final MoneyMapper MONEY_VALUE_MAPPER = Mappers.getMapper(MoneyMapper.class);
     public static final ConservativeStrategy CONSERVATIVE_STRATEGY = new ConservativeStrategy(StrategyType.CONSERVATIVE.getValue());
 
     public static final String ACCOUNT_ID1 = "2000124699";
@@ -119,7 +117,7 @@ public class TestData {
         return Operation.newBuilder()
                 .setDate(operationTimestamp)
                 .setOperationType(operationType)
-                .setPrice(MONEY_VALUE_MAPPER.doubleToMoneyValue(operationPrice))
+                .setPrice(createMoneyValue(operationPrice))
                 .setQuantity(operationQuantity)
                 .setFigi(figi)
                 .build();
@@ -221,6 +219,10 @@ public class TestData {
 
     public static MoneyValue createMoneyValue(final String currency) {
         return MoneyValue.newBuilder().setCurrency(currency).build();
+    }
+
+    public static MoneyValue createMoneyValue(final double value) {
+        return DataStructsHelper.createMoneyValue(StringUtils.EMPTY, DecimalUtils.setDefaultScale(value));
     }
 
     public static MoneyValue createMoneyValue(final double value, final String currency) {

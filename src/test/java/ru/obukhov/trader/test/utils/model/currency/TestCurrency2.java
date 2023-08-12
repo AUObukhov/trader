@@ -4,13 +4,12 @@ import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.Currency;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
-public class TestCurrency2 extends TestSecurityData {
+public class TestCurrency2 {
 
     public static final String FIGI = "RUB000UTSTOM";
     public static final String TICKER = "RUB000UTSTOM";

@@ -3,14 +3,13 @@ package ru.obukhov.trader.test.utils.model.bond;
 import com.google.protobuf.Timestamp;
 import ru.obukhov.trader.common.util.QuotationUtils;
 import ru.obukhov.trader.market.model.Currencies;
-import ru.obukhov.trader.test.utils.model.TestSecurityData;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.Quotation;
 import ru.tinkoff.piapi.contract.v1.RealExchange;
 import ru.tinkoff.piapi.contract.v1.RiskLevel;
 import ru.tinkoff.piapi.contract.v1.SecurityTradingStatus;
 
-public class TestBond2 extends TestSecurityData {
+public class TestBond2 {
 
     public static final String FIGI = "TCS00A1050H0";
     public static final String TICKER = "RU000A1050H0";
