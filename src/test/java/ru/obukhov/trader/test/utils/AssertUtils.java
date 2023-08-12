@@ -32,11 +32,10 @@ import ru.obukhov.trader.common.model.poi.ExtendedCell;
 import ru.obukhov.trader.common.model.poi.ExtendedRow;
 import ru.obukhov.trader.common.util.DecimalUtils;
 import ru.obukhov.trader.common.util.TimestampUtils;
-import ru.obukhov.trader.market.model.Money;
-import ru.obukhov.trader.market.model.transform.MoneyMapper;
 import ru.obukhov.trader.test.utils.matchers.PositionMatcher;
 import ru.tinkoff.piapi.contract.v1.MoneyValue;
 import ru.tinkoff.piapi.contract.v1.OrderState;
+import ru.tinkoff.piapi.core.models.Money;
 import ru.tinkoff.piapi.core.models.Position;
 
 import java.awt.Color;
@@ -59,7 +58,6 @@ import java.util.regex.Pattern;
 public class AssertUtils {
 
     private static final ColorMapper COLOR_MAPPER = Mappers.getMapper(ColorMapper.class);
-    private static final MoneyMapper MONEY_MAPPER = Mappers.getMapper(MoneyMapper.class);
 
     // region assertEquals
 
@@ -97,42 +95,32 @@ public class AssertUtils {
         }
     }
 
-    public static void assertEquals(@Nullable final ru.tinkoff.piapi.contract.v1.MoneyValue expected, final BigDecimal actual) {
+    public static void assertEquals(@Nullable final MoneyValue expected, @Nullable final BigDecimal actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual, MONEY_MAPPER.moneyValueToBigDecimal(expected))) {
+        } else if (!DecimalUtils.numbersEqual(actual, DecimalUtils.createBigDecimal(expected))) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
-    public static void assertEquals(Double expected, ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
+    public static void assertEquals(@Nullable final Double expected, @Nullable final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(MONEY_MAPPER.moneyValueToBigDecimal(actual), expected)) {
+        } else if (actual != null && !DecimalUtils.numbersEqual(DecimalUtils.createBigDecimal(actual), expected)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
-    public static void assertEquals(@Nullable final BigDecimal expected, final ru.tinkoff.piapi.contract.v1.MoneyValue actual) {
+    public static void assertEquals(@Nullable final BigDecimal expected, @Nullable final MoneyValue actual) {
         if (expected == null) {
             Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(expected, MONEY_MAPPER.moneyValueToBigDecimal(actual))) {
+        } else if (actual != null && !DecimalUtils.numbersEqual(expected, DecimalUtils.createBigDecimal(actual))) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
 
-    public static void assertEquals(@Nullable final Money expected, final Money actual) {
-        if (expected == null) {
-            Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual.value(), expected.value()) || !actual.currency().equals(expected.currency())) {
-            Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
-        }
-    }
-
-    public static void assertEquals(@Nullable final ru.tinkoff.piapi.core.models.Money expected, final ru.tinkoff.piapi.core.models.Money actual) {
-        if (expected == null) {
-            Assertions.assertNull(actual);
-        } else if (!DecimalUtils.numbersEqual(actual.getValue(), expected.getValue()) || !actual.getCurrency().equals(expected.getCurrency())) {
+    public static void assertEquals(@Nullable final Money expected, @Nullable final Money actual) {
+        if (!equals(expected, actual)) {
             Assertions.fail(String.format("expected: <%s> but was: <%s>", expected, actual));
         }
     }
@@ -248,7 +236,7 @@ public class AssertUtils {
         }
     }
 
-    public static boolean equals(final ru.tinkoff.piapi.core.models.Money money1, final ru.tinkoff.piapi.core.models.Money money2) {
+    public static boolean equals(final Money money1, final Money money2) {
         return money1 == money2
                 || money1 != null && money2 != null
                 && money1.getCurrency().equals(money2.getCurrency()) && DecimalUtils.numbersEqual(money1.getValue(), money2.getValue());
